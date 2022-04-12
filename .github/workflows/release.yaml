@@ -1,0 +1,14 @@
+---
+name: Release 🎈
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    name: Create release 🎉
+    uses: insightsengineering/r.pkg.template/.github/workflows/release.yaml@main
+    permissions:
+      contents: write

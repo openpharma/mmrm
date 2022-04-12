@@ -1,0 +1,7 @@
+---
+# Information about this file: https://github.com/openpharma/staged.dependencies
+current_repo:
+  repo: openpharma/mmrm
+  host: https://github.com
+upstream_repos:
+downstream_repos:

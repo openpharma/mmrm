@@ -1,0 +1,11 @@
+url: https://openpharma.github.io/mmrm
+
+template:
+  params:
+    bootswatch: cerulean
+    ganalytics: UA-125641273-1
+
+navbar:
+  right:
+    - icon: fa-github
+      href: https://github.com/openpharma/mmrm

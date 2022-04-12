@@ -1,0 +1,12 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^_pkgdown\.yml$
+^vignettes/hello\.Rmd$
+^docs$
+^\.github$
+README.*
+^\.lintr$
+^staged_dependencies\.yaml$
+coverage.*
+^\.pre-commit-config\.yaml$
+^codemeta\.json$

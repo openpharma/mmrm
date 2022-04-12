@@ -1,0 +1,12 @@
+
+---
+title: "Hello"
+date: "`r Sys.Date()`"
+---
+
+Hello World!
+
+```{r}
+library(mmrm)
+hello("mmrm!")
+```

@@ -1,0 +1,1 @@
+mmrm::shiny_app()

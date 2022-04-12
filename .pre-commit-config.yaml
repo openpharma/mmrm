@@ -1,0 +1,71 @@
+# All available hooks: https://pre-commit.com/hooks.html
+# R specific hooks: https://github.com/lorenzwalthert/precommit
+repos:
+  - repo: https://github.com/lorenzwalthert/precommit
+    rev: v0.1.3.9137
+    hooks:
+      - id: style-files
+        args: [--style_pkg=styler, --style_fun=tidyverse_style]
+      - id: roxygenize
+        additional_dependencies:
+          - plumber
+          - shiny
+      # codemeta must be above use-tidy-description when both are used
+      # -   id: codemeta-description-updated
+      - id: use-tidy-description
+      - id: spell-check
+        exclude: >
+          (?x)^(
+          data/.*|
+          (.*/|)\.Rprofile|
+          (.*/|)\.Renviron|
+          (.*/|)\.gitignore|
+          (.*/|)NAMESPACE|
+          (.*/|)DESCRIPTION|
+          (.*/|)WORDLIST|
+          (.*/|)LICENSE|
+          (.*/|)\.Rbuildignore|
+          (.*/|)\.lintr|
+          (.*/|)_pkgdown.yaml|
+          (.*/|)staged_dependencies.yaml|
+          (.*/|)\.pre-commit-.*|
+          \.github/.*|
+          .*\.[rR]|
+          .*\.Rproj|
+          .*\.py|
+          .*\.feather|
+          .*\.rds|
+          .*\.Rds|
+          .*\.sh|
+          .*\.RData
+          )$
+      - id: lintr
+      - id: readme-rmd-rendered
+      - id: parsable-R
+      - id: no-browser-statement
+      - id: deps-in-desc
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v2.4.1
+    hooks:
+      - id: prettier
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.0.1
+    hooks:
+      - id: check-added-large-files
+        args: ["--maxkb=200"]
+      - id: end-of-file-fixer
+        exclude: '\.Rd'
+      - id: trailing-whitespace
+        exclude: '\.Rd'
+      - id: check-yaml
+      - id: no-commit-to-branch
+      - id: mixed-line-ending
+        args: ["--fix=lf"]
+  - repo: local
+    hooks:
+      - id: forbid-to-commit
+        name: Don't commit common R artifacts
+        entry: Cannot commit .Rhistory, .RData, .Rds or .rds.
+        language: fail
+        files: '\.Rhistory|\.RData|\.Rds|\.rds$'
+        # `exclude: <regex>` to allow committing specific files.
