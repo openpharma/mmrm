@@ -1,14 +1,14 @@
 Type: Package
 Package: mmrm
 Title: Mixed Model for Repeated Measures
-Version: 0.0.0.9000
+Version: 0.0.0.9001
 Authors@R:
     person("openpharma", , , "openpharma@example.com", role = c("aut", "cre"))
-Description: The mixed model for repeated measures (MMRM)
-    is a popular choice for individually randomized trials with
-    longitudinal continuous outcomes. This model's appeal is due
-    to avoidance of model misspecification and its unbiasedness
-    for data missing completely at random or at random.
+Description: The mixed model for repeated measures (MMRM) is a popular
+    choice for individually randomized trials with longitudinal continuous
+    outcomes. This model's appeal is due to avoidance of model
+    misspecification and its unbiasedness for data missing completely at
+    random or at random.
 License: Apache License 2.0 | file LICENSE
 URL: https://github.com/openpharma/mmrm/
 BugReports: https://github.com/openpharma/mmrm/issues

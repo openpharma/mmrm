@@ -18,14 +18,6 @@ jobs:
     uses: insightsengineering/r.pkg.template/.github/workflows/build-check-install.yaml@main
     secrets:
       REPO_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  bioccheck:
-    name: BiocCheck 🩺
-    uses: insightsengineering/r.pkg.template/.github/workflows/bioccheck.yaml@main
-    secrets:
-      REPO_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    with:
-      enable-bioccheck: true
-      allow-failure: true
   coverage:
     if: github.event_name == 'pull_request'
     name: Coverage 📔 
@@ -41,9 +33,6 @@ jobs:
     uses: insightsengineering/r.pkg.template/.github/workflows/roxygen.yaml@main
     secrets:
       REPO_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  gitleaks:
-    name: gitleaks 💧
-    uses: insightsengineering/r.pkg.template/.github/workflows/gitleaks.yaml@main
   spelling:
     if: github.event_name == 'pull_request'
     name: Spell Check 🆎
