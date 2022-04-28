@@ -7,7 +7,7 @@ Authors@R: c(
     )
 Description: Mixed models for repeated measures (MMRM) are a popular
     choice for individually randomized trials with longitudinal continuous
-    outcomes. This package implements MMRM based on glmmTMB.
+    outcomes. This package implements MMRM based on the package `glmmTMB`.
 License: Apache License 2.0 | file LICENSE
 URL: https://github.com/openpharma/mmrm/
 BugReports: https://github.com/openpharma/mmrm/issues

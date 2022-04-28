@@ -20,7 +20,6 @@ repos:
           (.*/|)\.Renviron|
           (.*/|)\.gitignore|
           (.*/|)NAMESPACE|
-          (.*/|)DESCRIPTION|
           (.*/|)WORDLIST|
           (.*/|)LICENSE|
           (.*/|)\.Rbuildignore|
