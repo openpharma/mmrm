@@ -1,0 +1,177 @@
+---
+title: "Design for fitting MMRM"
+author: "Daniel Sabanes Bove"
+output: html_document
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Objective
+
+We would like to prototype the whole flow of fitting an MMRM in this new package.
+This will make subsequent issue solutions more efficient.
+
+```{r}
+library(checkmate)
+library(glmmTMB)
+```
+
+# Example
+
+Let's first set up some example.
+
+```{r}
+dat <- fev_data
+vs <- list(
+  response = "FEV1",
+  covariates = c("RACE", "SEX"),
+  id = "USUBJID",
+  arm = "ARMCD",
+  visit = "AVISIT"
+)
+```
+
+# Prototypes
+
+## `check_vars()`
+
+We try to simplify the function compared to the old code, using external helpers
+and splitting up the function.
+
+```{r}
+h_is_specified <- function(x, vars) {
+  !is.null(vars[[x]])
+}
+h_is_specified_and_in_data <- function(x, vars, data) {
+  h_is_specified(x, vars) && all(vars[[x]] %in% names(data))
+}
+h_check_and_get_label <- function(x, vars, data) {
+  assert_true(h_is_specified_and_in_data(x, vars, data))
+  res <- NULL
+  for (v in vars[[x]]) {
+    label <- attr(data[[v]], "label")
+    string <- ifelse(!is.null(label), label, v)
+    res <- c(res, stats::setNames(string, v))
+  }
+  res
+}
+h_get_covariate_parts <- function(covariates) {
+  unique(unlist(strsplit(covariates, split = "\\*|:")))
+}
+```
+
+Let's quickly try these out:
+
+```{r}
+h_check_and_get_label("arm", vs, dat)
+```
+
+Let's have a separate `get_labels()` function. This is mostly checking
+the variable specifications on the side, too.
+
+```{r}
+get_labels <- function(vars,
+                       data) {
+  assert_list(vars)
+  assert_data_frame(data)
+
+  labels <- list()
+
+  labels$response <- h_check_and_get_label("response", vars, data)
+  labels$id <- h_check_and_get_label("id", vars, data)
+  labels$visit <- h_check_and_get_label("visit", vars, data)
+  if (h_is_specified("arm", vars)) {
+    h_check_and_get_label("arm", vars, data)
+  }
+  if (h_is_specified("covariates", vars)) {
+    vars$parts <- h_get_covariate_parts(vars$covariates)
+    labels$parts <- h_check_and_get_label("parts", vars, data)
+  }
+
+  return(labels)
+}
+
+get_labels(vs, dat)
+```
+
+Now let's do the check function for the data. Again let's brake it down into
+manageable pieces.
+
+```{r}
+h_check_one_rec_pt_visit <- function(vars, data) {
+  # Check there is no more than one record per patient and visit.
+  form <- as.formula(paste("~", vars$visit, "+", vars$id))
+  grouped_data <- split(data, f = form)
+  n_per_group <- vapply(grouped_data, nrow, integer(1))
+
+  if (any(n_per_group > 1)) {
+    dupl_group <- which(n_per_group > 1)
+    n_dupl <- length(dupl_group)
+    stop(paste(
+      "There are", n_dupl, "subjects with more than one record per visit:",
+      toString(names(n_dupl))
+    ))
+  }
+}
+
+
+check_data <- function(vars, data) {
+  assert_list(vars)
+  assert_data_frame(data)
+
+  # First subset data to observations with complete regressors.
+  regressor_vars <- c(vars$arm, vars$visit, h_get_covariate_parts(vars$covariates))
+  has_complete_regressors <- stats::complete.cases(data[, regressor_vars])
+  data_complete_regressors <- droplevels(data[has_complete_regressors, ])
+
+  h_check_one_rec_pt_visit(vars, data_complete_regressors)
+
+  # todo cont here ----
+
+  # Check variable values in this complete data set.
+  response_values <- data_complete_regressors[[vars$response]]
+  stopifnot(is.numeric(response_values))
+
+  if (is_specified("arm")) {
+    arm_values <- data_complete_regressors[[vars$arm]]
+    assertthat::assert_that(tern::is_df_with_nlevels_factor(
+      data_complete_regressors,
+      variable = vars$arm,
+      n_levels = 2,
+      relation = ">="
+    ))
+  }
+
+  visit_values <- data_complete_regressors[[vars$visit]]
+  stopifnot(is.factor(visit_values))
+
+  # Remove all entries where response is NA, droplevels as well.
+  data_complete <- data_complete_regressors %>%
+    dplyr::filter(!is.na(data_complete_regressors[, vars$response])) %>%
+    droplevels()
+
+  if (is_specified("arm")) {
+    # Check all arms will still be present after NA filtering.
+    assertthat::assert_that(tern::is_df_with_nlevels_factor(
+      data_complete,
+      variable = vars$arm,
+      n_levels = nlevels(arm_values),
+      relation = "=="
+    ))
+
+    # Each arm should have at least have 5 records.
+    if (!all(table(data_complete[[vars$arm]]) > 5)) {
+      stop(paste("Each group / arm should have at least 5 records with non-missing", vars$response))
+    }
+  } else {
+    # The data should have at least 5 records.
+    if (!(nrow(data_complete) > 5)) {
+      stop(paste("There should be at least 5 records with non-missing", vars$response))
+    }
+  }
+}
+```
