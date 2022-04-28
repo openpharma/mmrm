@@ -2,26 +2,24 @@
 # R specific hooks: https://github.com/lorenzwalthert/precommit
 repos:
   - repo: https://github.com/lorenzwalthert/precommit
-    rev: v0.1.3.9137
+    rev: v0.2.2
     hooks:
       - id: style-files
         args: [--style_pkg=styler, --style_fun=tidyverse_style]
       - id: roxygenize
         additional_dependencies:
-          - plumber
-          - shiny
-      # codemeta must be above use-tidy-description when both are used
-      # -   id: codemeta-description-updated
+          - checkmate
+          - glmmTMB
       - id: use-tidy-description
       - id: spell-check
         exclude: >
           (?x)^(
           data/.*|
+          design/.*|
           (.*/|)\.Rprofile|
           (.*/|)\.Renviron|
           (.*/|)\.gitignore|
           (.*/|)NAMESPACE|
-          (.*/|)DESCRIPTION|
           (.*/|)WORDLIST|
           (.*/|)LICENSE|
           (.*/|)\.Rbuildignore|
@@ -40,23 +38,46 @@ repos:
           .*\.RData
           )$
       - id: lintr
+        exclude: >
+          (?x)^(
+          design/.*
+          )$
+        additional_dependencies:
+          - checkmate
+          - glmmTMB
       - id: readme-rmd-rendered
       - id: parsable-R
       - id: no-browser-statement
       - id: deps-in-desc
+        exclude: >
+          (?x)^(
+          design/.*
+          )$
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v2.4.1
+    rev: v2.5.1
     hooks:
       - id: prettier
+        exclude: >
+          (?x)^(
+          design/.*
+          )$
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.0.1
     hooks:
       - id: check-added-large-files
         args: ["--maxkb=200"]
       - id: end-of-file-fixer
-        exclude: '\.Rd'
+        exclude: >
+          (?x)^(
+          .*\.Rd|
+          tests/testthat/_snaps/.*
+          )$
       - id: trailing-whitespace
-        exclude: '\.Rd'
+        exclude: >
+          (?x)^(
+          .*\.Rd|
+          tests/testthat/_snaps/.*
+          )$
       - id: check-yaml
       - id: no-commit-to-branch
       - id: mixed-line-ending

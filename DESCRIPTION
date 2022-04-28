@@ -1,29 +1,25 @@
 Type: Package
 Package: mmrm
-Title: Mixed Model for Repeated Measures
+Title: Mixed Models for Repeated Measures
 Version: 0.0.0.9001
-Authors@R:
-    person("openpharma", , , "openpharma@example.com", role = c("aut", "cre"))
-Description: The mixed model for repeated measures (MMRM) is a popular
+Authors@R: c(
+      person("Daniel", "Sabanes Bove", , "daniel.sabanes_bove@roche.com", role = c("aut", "cre"))
+    )
+Description: Mixed models for repeated measures (MMRM) are a popular
     choice for individually randomized trials with longitudinal continuous
-    outcomes. This model's appeal is due to avoidance of model
-    misspecification and its unbiasedness for data missing completely at
-    random or at random.
+    outcomes. This package implements MMRM based on the package `glmmTMB`.
 License: Apache License 2.0 | file LICENSE
 URL: https://github.com/openpharma/mmrm/
 BugReports: https://github.com/openpharma/mmrm/issues
 Depends:
-    R (>= 3.6)
+    R (>= 4.1)
 Imports:
-    plumber,
-    shiny,
-    stringr
+    checkmate (>= 2.1),
+    lifecycle,
+    glmmTMB (>= 1.1.3)
 Suggests:
-    future,
-    httr,
     knitr,
-    shinytest,
-    testthat (>= 2.0)
+    testthat (>= 3.0.0)
 VignetteBuilder:
     knitr
 biocViews:
@@ -32,3 +28,4 @@ Language: en-US
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
+Config/testthat/edition: 3
