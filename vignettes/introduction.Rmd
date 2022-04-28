@@ -5,11 +5,15 @@ author:
   - name: Daniel Sabanés Bové
     email: daniel.sabanes_bove@roche.com
 output:
-  html
+  rmarkdown::html_document:
+          theme: "spacelab"
+          highlight: "kate"
+          toc: true
+          toc_float: true
 vignette: |
   %\VignetteIndexEntry{Introduction to `hermes`}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
 editor_options:
   chunk_output_type: console
 ---
