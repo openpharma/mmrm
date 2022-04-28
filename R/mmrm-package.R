@@ -6,4 +6,5 @@
 
 #' @import checkmate
 #' @importFrom glmmTMB addForm
+#' @importFrom lifecycle deprecated
 NULL

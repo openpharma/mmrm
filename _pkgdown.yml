@@ -9,3 +9,11 @@ navbar:
   right:
     - icon: fa-github
       href: https://github.com/openpharma/mmrm
+
+reference:
+  - title: Package
+    contents:
+      - mmrm-package
+  - title: Functions
+    contents:
+      - dummy
