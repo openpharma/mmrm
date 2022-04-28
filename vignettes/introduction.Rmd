@@ -1,0 +1,34 @@
+---
+title: "Introduction to `mmrm`"
+package: mmrm
+author:
+  - name: Daniel Sabanés Bové
+    email: daniel.sabanes_bove@roche.com
+output:
+  html
+vignette: |
+  %\VignetteIndexEntry{Introduction to `hermes`}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+editor_options:
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(mmrm)
+```
+
+# Acknowledgments
+
+The `mmrm` package is based on previous work internal in Roche, namely
+the `tern` and `tern.mmrm` packages which were based on `lme4`.
+The work done in the `rbmi` package has been important since it used `glmmTMB` already
+for fitting the models.
+
+To do: add names
+
+# Introduction
