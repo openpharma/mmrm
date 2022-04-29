@@ -16,6 +16,7 @@ We would like to prototype the whole flow of fitting an MMRM in this new package
 This will make subsequent issue solutions more efficient.
 
 ```{r}
+library(mmrm)
 library(checkmate)
 library(glmmTMB)
 ```
@@ -37,7 +38,7 @@ vs <- list(
 
 # Prototypes
 
-## `check_vars()`
+## `check_vars()` --> `get_labels()` and `assert_data()`
 
 We try to simplify the function compared to the old code, using external helpers
 and splitting up the function.
@@ -98,11 +99,11 @@ get_labels <- function(vars,
 get_labels(vs, dat)
 ```
 
-Now let's do the check function for the data. Again let's brake it down into
-manageable pieces.
+Now let's do the check (assertion) function for the data.
+Again let's brake it down into manageable pieces.
 
 ```{r}
-h_check_one_rec_pt_visit <- function(vars, data) {
+h_assert_one_rec_pt_visit <- function(vars, data) {
   # Check there is no more than one record per patient and visit.
   form <- as.formula(paste("~", vars$visit, "+", vars$id))
   grouped_data <- split(data, f = form)
@@ -118,8 +119,17 @@ h_check_one_rec_pt_visit <- function(vars, data) {
   }
 }
 
+h_assert_rsp_var <- function(vars, data) {
+  response_values <- data[[vars$response]]
+  assert_numeric(response_values)
+}
 
-check_data <- function(vars, data) {
+h_assert_visit_var <- function(vars, data) {
+  visit_values <- data[[vars$visit]]
+  assert_factor(visit_values)
+}
+
+assert_data <- function(vars, data) {
   assert_list(vars)
   assert_data_frame(data)
 
@@ -128,50 +138,110 @@ check_data <- function(vars, data) {
   has_complete_regressors <- stats::complete.cases(data[, regressor_vars])
   data_complete_regressors <- droplevels(data[has_complete_regressors, ])
 
-  h_check_one_rec_pt_visit(vars, data_complete_regressors)
+  h_assert_one_rec_pt_visit(vars, data_complete_regressors)
+  h_assert_rsp_var(vars, data_complete_regressors)
+  h_assert_visit_var(vars, data_complete_regressors)
 
-  # todo cont here ----
+  # Second only look at complete data.
+  has_complete_response <- stats::complete.cases(data_complete_regressors[, vars$response])
+  data_complete <- droplevels(data_complete_regressors[has_complete_response, ])
 
-  # Check variable values in this complete data set.
-  response_values <- data_complete_regressors[[vars$response]]
-  stopifnot(is.numeric(response_values))
-
-  if (is_specified("arm")) {
-    arm_values <- data_complete_regressors[[vars$arm]]
-    assertthat::assert_that(tern::is_df_with_nlevels_factor(
-      data_complete_regressors,
-      variable = vars$arm,
-      n_levels = 2,
-      relation = ">="
-    ))
-  }
-
-  visit_values <- data_complete_regressors[[vars$visit]]
-  stopifnot(is.factor(visit_values))
-
-  # Remove all entries where response is NA, droplevels as well.
-  data_complete <- data_complete_regressors %>%
-    dplyr::filter(!is.na(data_complete_regressors[, vars$response])) %>%
-    droplevels()
-
-  if (is_specified("arm")) {
-    # Check all arms will still be present after NA filtering.
-    assertthat::assert_that(tern::is_df_with_nlevels_factor(
-      data_complete,
-      variable = vars$arm,
-      n_levels = nlevels(arm_values),
-      relation = "=="
-    ))
-
-    # Each arm should have at least have 5 records.
-    if (!all(table(data_complete[[vars$arm]]) > 5)) {
-      stop(paste("Each group / arm should have at least 5 records with non-missing", vars$response))
-    }
+  if (h_is_specified("arm", vars)) {
+    assert_factor(data_complete_regressors[[vars$arm]], min.levels = 2L)
+    assert_factor(
+      data_complete[[vars$arm]],
+      levels = levels(data_complete_regressors[[vars$arm]])
+    )
+    assert_true(all(table(data_complete[[vars$arm]]) > 5))
   } else {
-    # The data should have at least 5 records.
-    if (!(nrow(data_complete) > 5)) {
-      stop(paste("There should be at least 5 records with non-missing", vars$response))
-    }
+    assert_data_frame(data_complete, min.rows = 5L)
   }
 }
+```
+
+Note that in production the arm checking part could be also put into a
+helper function to make the `assert_data()` function more consistent.
+
+Now let's try this out, too.
+
+```{r}
+assert_data(vs, dat)
+```
+
+
+## `build_formula()`
+
+Let's build the formula for the `glmmTMB` fit call. Basically we want something
+like this:
+
+`AVAL ~ STRATA1 + BMRKR2 + ARMCD + ARMCD + AVISIT + ARMCD * AVISIT + us(0 + AVISIT | USUBJID)`
+
+where the `us` part would look different for covariance structures other than
+this unstructured one.
+
+For the `cor_struct` argument we keep a bit more higher level syntax than
+`glmmTMB` itself, since e.g. `us` and `cs` could easily be confused by the user.
+
+Note that for now we don't put in the option to have separate covariance matrices
+per group yet, we can do this in a second pass later on (backlog).
+
+```{r}
+build_formula <- function(vars,
+                          cor_struct = c(
+                            "unstructured",
+                            "toeplitz",
+                            "auto-regressive",
+                            "compound-symmetry"
+                          )) {
+  assert_list(vars)
+  cor_struct <- match.arg(cor_struct)
+
+  covariates_part <- paste(
+    vars$covariates,
+    collapse = " + "
+  )
+  arm_visit_part <- if (is.null(vars$arm)) {
+    vars$visit
+  } else {
+    paste0(
+      vars$arm,
+      "*",
+      vars$visit
+    )
+  }
+  random_effects_fun <- switch(
+    cor_struct,
+    "unstructured" = "us",
+    "toeplitz" = "toep",
+    "auto-regressive" = "ar1",
+    "compound-symmetry" = "cs"
+  )
+  random_effects_part <- paste0(
+    random_effects_fun, "(0 + ", vars$visit, " | ", vars$id, ")"
+  )
+  rhs_formula <- paste(
+    arm_visit_part,
+    "+",
+    random_effects_part
+  )
+  if (covariates_part != "") {
+    rhs_formula <- paste(
+      covariates_part,
+      "+",
+      rhs_formula
+    )
+  }
+  stats::as.formula(paste(
+    vars$response,
+    "~",
+    rhs_formula
+  ))
+}
+```
+
+Let's try this out:
+
+```{r}
+build_formula(vs, "toeplitz")
+build_formula(vs)
 ```
