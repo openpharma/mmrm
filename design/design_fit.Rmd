@@ -245,3 +245,431 @@ Let's try this out:
 build_formula(vs, "toeplitz")
 build_formula(vs)
 ```
+
+## `get_cov_estimate()`
+
+Let's see if we even need this function.
+
+```{r}
+mod <- glmmTMB(
+  FEV1 ~ ar1(0 + AVISIT | USUBJID),
+  data = dat,
+  dispformula = ~0,
+  REML = TRUE
+)
+vc <- VarCorr(mod)
+vc$cond[[1]]
+class(mod) <- c("mmrm_fit", "glmmTMB")
+```
+
+OK so that is still not super intuitive, so let's better have the function.
+Especially as we also want to return how many variance parameters
+there are. For backwards compatibility we also return one ID which had the
+maximum number of visits. Maybe later we can remove this again.
+
+```{r}
+get_cov_estimate <- function(model) {
+  assert_class(model, "mmrm_fit")
+
+  cov_est <- VarCorr(model)$cond[[1L]]
+  theta <- getME(model, "theta")
+  id_per_obs <- model$modelInfo$reTrms$cond$flist[[1L]]
+  n_visits <- length(model$modelInfo$reTrms$cond$cnms[[1L]])
+  which_id <- which(table(id_per_obs) == n_visits)[1L]
+
+  structure(
+    cov_est,
+    id = levels(id_per_obs)[which_id],
+    n_parameters = length(theta)
+  )
+}
+
+str(get_cov_estimate(mod))
+```
+
+Here we also get the standard deviations and the correlation matrix as
+attributes but that seems useful.
+
+## `get_diagnostics()`
+
+Now we want to compute the model diagnostic statistics. Note that here
+let's start without a `cov_est` argument since it does not take any computations
+anymore, so we don't need to save time like that.
+
+```{r}
+get_diagnostics <- function(model) {
+  assert_class(model, "mmrm_fit")
+
+  n_obs <- model$modelInfo$nobs
+  cov_est <- get_cov_estimate(model)
+  df <- attr(cov_est, "n_parameters")
+  n_fixed <- ncol(getME(model, "X"))
+  m <- max(df + 2, n_obs - n_fixed)
+  log_lik <- as.numeric(stats::logLik(model))
+  n_subjects <- nlevels(model$modelInfo$reTrms$cond$flist[[1L]])
+
+  list(
+    "REML criterion" = -2 * log_lik,
+    AIC = -2 * log_lik + 2 * df,
+    AICc = -2 * log_lik + 2 * df * (m / (m - df - 1)),
+    BIC = -2 * log_lik + df * log(n_subjects)
+  )
+}
+
+get_diagnostics(mod)
+```
+
+## `h_record_all_output()`
+
+This is direct copy, and then slightly modified, from `rbmi`.
+Therefore we need to include its authors (Craig and Alessandro) as authors in `mmrm`.
+
+```{r}
+#' Capture all Output
+#'
+#' This function silences all warnings, errors & messages and instead returns a list
+#' containing the results (if it didn't error) + the warning and error messages as
+#' character vectors.
+#'
+#' @param expr (`expression`)\cr to be executed.
+#' @param remove (`list`)\cr optional list with elements `warnings`, `errors`,
+#'   `messages` which can be character vectors, which will be removed from the
+#'   results if specified.
+#'
+#' @return
+#' A list containing
+#'
+#' - `result`: The object returned by `expr` or `list()` if an error was thrown
+#' - `warnings`: `NULL` or a character vector if warnings were thrown.
+#' - `errors`: `NULL` or a string if an error was thrown.
+#' - `messages`: `NULL` or a character vector if messages were produced.
+#'
+#' @examples
+#' \dontrun{
+#' h_record_all_output({
+#'   x <- 1
+#'   y <- 2
+#'   warning("something went wrong")
+#'   message("O nearly done")
+#'   x + y
+#' })
+#' }
+h_record_all_output <- function(expr, remove = list()) {
+  # Note: We don't need to and cannot assert `expr` here.
+  assert_list(remove)
+
+  env <- new.env()
+  result <- withCallingHandlers(
+    withRestarts(
+      expr,
+      muffleStop = function() list()
+    ),
+    message = function(m) {
+      msg_without_newline <- gsub(m$message, pattern = "\n$", replacement = "")
+      env$message <- c(env$message, msg_without_newline)
+      invokeRestart("muffleMessage")
+    },
+    warning = function(w) {
+      env$warning <- c(env$warning, w$message)
+      invokeRestart("muffleWarning")
+    },
+    error = function(e) {
+      env$error <- c(env$error, e$message)
+      invokeRestart("muffleStop")
+    }
+  )
+  list(
+    result = result,
+    warnings = setdiff(env$warning, remove$warnings),
+    errors = setdiff(env$error, remove$errors),
+    messages = setdiff(env$message, remove$messages)
+  )
+}
+
+h_record_all_output({
+  x <- 1
+  y <- 2
+  warning("something went wrong")
+  message("O nearly done")
+  message("Almost done")
+  x + y
+}, remove = list(messages = c("Almost done", "bla")))
+```
+
+
+## `fit_single_optimizer()`
+
+Here the optimizers are possible multivariate ones for `stats::optim()`, with
+the default changed to `L-BFGS-B`. Note that we removed the `SANN` option since
+that needs very long computation times, so does not seem practical.
+
+We provide the new possibility for starting values.
+
+```{r}
+fit_single_optimizer <- function(formula,
+                                 data,
+                                 start = NULL,
+                                 optimizer = c("L-BFGS-B", "Nelder-Mead", "BFGS", "CG")) {
+  assert_formula(formula)
+  assert_data_frame(data)
+  assert_list(start, null.ok = TRUE)
+  optimizer <- match.arg(optimizer)
+
+  control <- glmmTMB::glmmTMBControl(
+    optimizer = stats::optim,
+    optArgs = list(method = optimizer),
+    parallel = 1L
+  )
+  quiet_fit <- h_record_all_output(
+    glmmTMB::glmmTMB(
+      formula = formula,
+      data = data,
+      dispformula = ~0,
+      REML = TRUE,
+      start = start,
+      control = control
+    ),
+    remove = list(
+      warnings = c(
+        "OpenMP not supported.",
+        "'giveCsparse' has been deprecated; setting 'repr = \"T\"' for you"
+      )
+    )
+  )
+  converged <- (length(quiet_fit$warnings) == 0L) &&
+    (length(quiet_fit$errors) == 0L) &&
+    (quiet_fit$result$fit$convergence == 0)
+  structure(
+    quiet_fit$result,
+    errors = quiet_fit$errors,
+    warnings = quiet_fit$warnings,
+    messages = quiet_fit$messages,
+    optimizer = optimizer,
+    converged = converged,
+    class = c("mmrm_fit", class(quiet_fit$result))
+  )
+}
+```
+
+OK let's try this one out:
+
+```{r}
+mod_fit <- fit_single_optimizer(
+  formula = build_formula(vs),
+  data = dat
+)
+attr(mod_fit, "converged")
+```
+
+Looks good so far!
+
+## `h_summarize_all_fits()`
+
+Note that we don't return the fixed effects as that is not used downstream.
+
+```{r}
+h_summarize_all_fits <- function(all_fits) {
+  assert_list(all_fits)
+
+  warnings <- lapply(all_fits, attr, which = "warnings")
+  messages <- lapply(all_fits, attr, which = "messages")
+  log_liks <- vapply(all_fits, stats::logLik, numeric(1L))
+  converged <- vapply(all_fits, attr, logical(1), which = "converged")
+
+  list(
+    warnings = warnings,
+    messages = messages,
+    log_liks = log_liks,
+    converged = converged
+  )
+}
+
+h_summarize_all_fits(list(mod_fit, mod_fit))
+```
+
+## `get_free_cores()`
+
+This is from the `tern.mmrm` package. Since Daniel wrote this function and
+we will take it out of `tern.mmrm` before publishing no further author
+implications.
+
+Note that we will need to add the `parallel` and `utils` packages to `Imports`.
+
+```{r}
+#' Get an approximate number of free cores.
+#'
+#' @return the approximate number of free cores, which is an integer between 1 and one less than
+#'   the total cores.
+#'
+#' @details This uses the maximum load average at 1, 5 and 15 minutes on Linux and Mac
+#'   machines to approximate the number of busy cores. For Windows, the load percentage is
+#'   multiplied with the total number of cores.
+#'   We then subtract this from the number of all detected cores. One additional core
+#'   is not used for extra safety.
+#'
+#' @noRd
+get_free_cores <- function() {
+  all_cores <- parallel::detectCores(all.tests = TRUE)
+  busy_cores <-
+    if (.Platform$OS.type == "windows") {
+      load_percent_string <- system("wmic cpu get loadpercentage", intern = TRUE)
+      # This gives e.g.: c("LoadPercentage", "10", "")
+      # So we just take the number here.
+      load_percent <- as.integer(min(load_percent_string[2L], 100))
+      assert_int(load_percent, lower = 0, upper = 100)
+      ceiling(all_cores * load_percent / 100)
+    } else if (.Platform$OS.type == "unix") {
+      uptime_string <- system("uptime", intern = TRUE)
+      # This gives e.g.:
+      # "11:00  up  1:57, 3 users, load averages: 2.71 2.64 2.62"
+      # Here we just want the last three numbers.
+      uptime_split <- strsplit(uptime_string, split = ",|\\s")[[1]] # Split at comma or white space.
+      uptime_split <- uptime_split[uptime_split != ""]
+      load_averages <- as.numeric(utils::tail(uptime_split, 3))
+      ceiling(max(load_averages))
+    }
+  assert_number(all_cores, lower = 1, finite = TRUE)
+  assert_number(busy_cores, lower = 0, upper = all_cores)
+
+  # For safety, we subtract 1 more core from all cores.
+  as.integer(max(1, all_cores - busy_cores - 1))
+}
+
+get_free_cores()
+```
+
+Right now e.g. I have total 16 cores, and I get 14 returned by this function
+which makes sense (1 is busy, and 1 is extra buffer).
+
+## `refit_multiple_optimizers()`
+
+```{r}
+refit_multiple_optimizers <- function(fit,
+                                      n_cores = 1L,
+                                      optimizers = c("L-BFGS-B", "Nelder-Mead", "BFGS", "CG")) {
+  assert_class(fit, "mmrm_fit")
+  assert_int(n_cores, lower = 1L)
+  optimizers <- match.arg(optimizers, several.ok = TRUE)
+
+  # Extract the components of the original fit.
+  old_formula <- stats::formula(fit)
+  old_data <- fit$frame
+  old_optimizer <- attr(fit, "optimizer")
+
+  # Settings for the new fits.
+  optimizers <- setdiff(optimizers, old_optimizer)
+  n_cores_used <- ifelse(
+    .Platform$OS.type == "windows",
+    1L,
+    min(
+      length(optimizers),
+      n_cores
+    )
+  )
+
+  all_fits <- parallel::mclapply(
+    X = optimizers,
+    FUN = fit_single_optimizer,
+    formula = old_formula,
+    data = old_data,
+    start = list(theta = fit$fit$par),  # Take the results from old fit as starting values.
+    mc.cores = n_cores_used,
+    mc.silent = TRUE
+  )
+  names(all_fits) <- optimizers
+  all_fits_summary <- h_summarize_all_fits(all_fits)
+
+  # Find the results that are ok:
+  is_ok <- all_fits_summary$converged
+  if (!any(is_ok)) {
+    stop(
+      "No optimizer led to a successful model fit. ",
+      "Please try to use a different covariance structure or other covariates."
+    )
+  }
+
+  # Return the best result in terms of log-likelihood.
+  best_optimizer <- names(which.max(all_fits_summary$log_liks[is_ok]))
+  best_fit <- all_fits[[best_optimizer]]
+  return(best_fit)
+}
+```
+
+OK, let's try this out. Say we don't converge with the first optimizer choice,
+and then want to run multiple ones.
+
+```{r}
+mod_fit <- fit_single_optimizer(
+  formula = build_formula(vs),
+  data = dat,
+  optimizer = "Nelder-Mead"
+)
+attr(mod_fit, "converged")
+attr(mod_fit, "warnings")
+```
+
+So Nelder-Mead does not converge, and we see a non-positive-definite Hessian
+warning.
+Now we put this into the refit function:
+
+```{r}
+mod_refit <- refit_multiple_optimizers(mod_fit)
+```
+
+## `fit_model`
+
+This is wrapping the lower level fitting functions (single and multiple optimizers).
+
+```{r}
+fit_model <- function(formula,
+                      data,
+                      optimizer = "automatic",
+                      n_cores = 1L) {
+  assert_string(optimizer)
+  use_automatic = identical(optimizer, "automatic")
+
+  fit <- fit_single_optimizer(
+    formula = formula,
+    data = data,
+    optimizer = ifelse(use_automatic, "L-BFGS-B", optimizer)
+  )
+
+  if (attr(fit, "converged")) {
+    fit
+  } else if (use_automatic) {
+    refit_multiple_optimizers(fit, n_cores = n_cores)
+  } else {
+    all_problems <- unlist(
+      attributes(fit)[c("errors", "messages", "warnings")],
+      use.names = FALSE
+    )
+    stop(paste0(
+      "Chosen optimizer '", optimizer, "' led to problems during model fit:\n",
+      paste(paste0(seq_along(all_problems), ") ", all_problems), collapse = ";\n"), "\n",
+      "Consider using the 'automatic' optimizer."
+    ))
+  }
+}
+```
+
+Let's try this out quickly too:
+
+```{r}
+fit_model(
+  formula = build_formula(vs),
+  data = dat,
+  optimizer = "Nelder-Mead"
+)
+```
+
+So this gives the expected error message.
+
+```{r}
+mod_fit2 <- fit_model(
+  formula = build_formula(vs),
+  data = dat,
+  optimizer = "BFGS"
+)
+```
+
+And this works.
