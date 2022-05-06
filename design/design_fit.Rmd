@@ -38,7 +38,7 @@ vs <- list(
 
 # Prototypes
 
-## `check_vars()` --> `get_labels()` and `assert_data()`
+## `check_vars()` --> `h_labels()` and `assert_data()`
 
 We try to simplify the function compared to the old code, using external helpers
 and splitting up the function.
@@ -71,11 +71,11 @@ Let's quickly try these out:
 h_check_and_get_label("arm", vs, dat)
 ```
 
-Let's have a separate `get_labels()` function. This is mostly checking
+Let's have a separate `h_labels()` function. This is mostly checking
 the variable specifications on the side, too.
 
 ```{r}
-get_labels <- function(vars,
+h_labels <- function(vars,
                        data) {
   assert_list(vars)
   assert_data_frame(data)
@@ -96,7 +96,7 @@ get_labels <- function(vars,
   return(labels)
 }
 
-get_labels(vs, dat)
+h_labels(vs, dat)
 ```
 
 Now let's do the check (assertion) function for the data.
@@ -169,7 +169,7 @@ assert_data(vs, dat)
 ```
 
 
-## `build_formula()`
+## `h_build_formula()`
 
 Let's build the formula for the `glmmTMB` fit call. Basically we want something
 like this:
@@ -186,7 +186,7 @@ Note that for now we don't put in the option to have separate covariance matrice
 per group yet, we can do this in a second pass later on (backlog).
 
 ```{r}
-build_formula <- function(vars,
+h_build_formula <- function(vars,
                           cor_struct = c(
                             "unstructured",
                             "toeplitz",
@@ -242,11 +242,11 @@ build_formula <- function(vars,
 Let's try this out:
 
 ```{r}
-build_formula(vs, "toeplitz")
-build_formula(vs)
+h_build_formula(vs, "toeplitz")
+h_build_formula(vs)
 ```
 
-## `get_cov_estimate()`
+## `h_cov_estimate()`
 
 Let's see if we even need this function.
 
@@ -268,7 +268,7 @@ there are. For backwards compatibility we also return one ID which had the
 maximum number of visits. Maybe later we can remove this again.
 
 ```{r}
-get_cov_estimate <- function(model) {
+h_cov_estimate <- function(model) {
   assert_class(model, "mmrm_fit")
 
   cov_est <- VarCorr(model)$cond[[1L]]
@@ -284,40 +284,11 @@ get_cov_estimate <- function(model) {
   )
 }
 
-str(get_cov_estimate(mod))
+str(h_cov_estimate(mod))
 ```
 
 Here we also get the standard deviations and the correlation matrix as
 attributes but that seems useful.
-
-## `get_diagnostics()`
-
-Now we want to compute the model diagnostic statistics. Note that here
-let's start without a `cov_est` argument since it does not take any computations
-anymore, so we don't need to save time like that.
-
-```{r}
-get_diagnostics <- function(model) {
-  assert_class(model, "mmrm_fit")
-
-  n_obs <- model$modelInfo$nobs
-  cov_est <- get_cov_estimate(model)
-  df <- attr(cov_est, "n_parameters")
-  n_fixed <- ncol(getME(model, "X"))
-  m <- max(df + 2, n_obs - n_fixed)
-  log_lik <- as.numeric(stats::logLik(model))
-  n_subjects <- nlevels(model$modelInfo$reTrms$cond$flist[[1L]])
-
-  list(
-    "REML criterion" = -2 * log_lik,
-    AIC = -2 * log_lik + 2 * df,
-    AICc = -2 * log_lik + 2 * df * (m / (m - df - 1)),
-    BIC = -2 * log_lik + df * log(n_subjects)
-  )
-}
-
-get_diagnostics(mod)
-```
 
 ## `h_record_all_output()`
 
@@ -405,6 +376,9 @@ that needs very long computation times, so does not seem practical.
 
 We provide the new possibility for starting values.
 
+While this function is not the primary user interface, it can be helpful for users.
+Therefore we don't prefix with `h_`.
+
 ```{r}
 fit_single_optimizer <- function(formula,
                                  data,
@@ -455,7 +429,7 @@ OK let's try this one out:
 
 ```{r}
 mod_fit <- fit_single_optimizer(
-  formula = build_formula(vs),
+  formula = h_build_formula(vs),
   data = dat
 )
 attr(mod_fit, "converged")
@@ -487,7 +461,7 @@ h_summarize_all_fits <- function(all_fits) {
 h_summarize_all_fits(list(mod_fit, mod_fit))
 ```
 
-## `get_free_cores()`
+## `h_free_cores()`
 
 This is from the `tern.mmrm` package. Since Daniel wrote this function and
 we will take it out of `tern.mmrm` before publishing no further author
@@ -508,7 +482,7 @@ Note that we will need to add the `parallel` and `utils` packages to `Imports`.
 #'   is not used for extra safety.
 #'
 #' @noRd
-get_free_cores <- function() {
+h_free_cores <- function() {
   all_cores <- parallel::detectCores(all.tests = TRUE)
   busy_cores <-
     if (.Platform$OS.type == "windows") {
@@ -535,7 +509,7 @@ get_free_cores <- function() {
   as.integer(max(1, all_cores - busy_cores - 1))
 }
 
-get_free_cores()
+h_free_cores()
 ```
 
 Right now e.g. I have total 16 cores, and I get 14 returned by this function
@@ -600,7 +574,7 @@ and then want to run multiple ones.
 
 ```{r}
 mod_fit <- fit_single_optimizer(
-  formula = build_formula(vs),
+  formula = h_build_formula(vs),
   data = dat,
   optimizer = "Nelder-Mead"
 )
@@ -616,7 +590,7 @@ Now we put this into the refit function:
 mod_refit <- refit_multiple_optimizers(mod_fit)
 ```
 
-## `fit_model`
+## `fit_model()`
 
 This is wrapping the lower level fitting functions (single and multiple optimizers).
 
@@ -656,7 +630,7 @@ Let's try this out quickly too:
 
 ```{r}
 fit_model(
-  formula = build_formula(vs),
+  formula = h_build_formula(vs),
   data = dat,
   optimizer = "Nelder-Mead"
 )
@@ -666,10 +640,321 @@ So this gives the expected error message.
 
 ```{r}
 mod_fit2 <- fit_model(
-  formula = build_formula(vs),
+  formula = h_build_formula(vs),
   data = dat,
   optimizer = "BFGS"
 )
 ```
 
 And this works.
+
+## `vars()`
+
+Just a little user interface list generator for the variables to use in `mmrm()`.
+
+```{r}
+vars <- function(response = "AVAL",
+                 covariates = c(),
+                 id = "USUBJID",
+                 arm = "ARM",
+                 visit = "AVISIT") {
+  list(
+    response = response,
+    covariates = covariates,
+    id = id,
+    arm = arm,
+    visit = visit
+  )
+}
+
+vars()
+```
+
+## `h_vcov_theta()`
+
+This helper function returns the covariance estimate for the variance parameters
+(`theta`) of the fitted MMRM.
+
+```{r}
+h_vcov_theta <- function(model) {
+  assert_class(model, "mmrm_fit")
+
+  model_vcov <- vcov(model, full = TRUE)
+  theta <- getME(model, "theta")
+  index_theta <- seq(to = nrow(model_vcov), length = length(theta))
+
+  unname(model_vcov[index_theta, index_theta, drop = FALSE])
+}
+
+h_vcov_theta(mod_fit)
+```
+
+## `h_covbeta_fun()`
+
+For below we need to construct a function `covbeta_fun` calculating
+the covariance matrix for the fixed effects (`beta`) as a function of the
+variance parameters.
+
+```{r}
+h_covbeta_fun <- function(model) {
+  assert_class(model, "mmrm_fit")
+
+  function(theta) {
+    sdr <- TMB::sdreport(
+      model$obj,
+      par.fixed = theta,
+      getJointPrecision = TRUE
+    )
+    q_mat <- sdr$jointPrecision
+    which_fixed <- which(rownames(q_mat) == "beta")
+    q_marginal <- glmmTMB:::GMRFmarginal(q_mat, which_fixed)
+    unname(solve(as.matrix(q_marginal)))
+  }
+}
+```
+
+Let's try this out: We can recover the usual variance-covariance matrix of the
+fixed effects when plugging in the estimated variance parameters, and we
+get a different result when using other variance parameters.
+
+```{r}
+covbeta_fun <- h_covbeta_fun(mod_refit)
+theta_est <- getME(mod_refit, "theta")
+all.equal(
+  covbeta_fun(theta = theta_est),
+  unname(vcov(mod_refit)$cond)
+)
+range(covbeta_fun(theta = theta_est) - covbeta_fun(theta = theta_est * 0.9))
+```
+
+## `h_general_jac_list()`
+
+We also need to compute the jacobian, and organize it as a list.
+
+We start with a general helper that takes a function `covbeta_fun` (see above),
+as well as `x_opt` which is the variance parameter estimate.
+
+```{r}
+h_general_jac_list <- function(covbeta_fun,
+                               x_opt,
+                               ...){
+  assert_function(covbeta_fun, nargs = 1L)
+  assert_numeric(x_opt, any.missing = FALSE, min.len = 1L)
+
+  jac_matrix <- numDeriv::jacobian(
+    func = covbeta_fun,
+    x = x_opt,
+    # Note: No need to specify further `methods.args` here.
+    ...
+  )
+  get_column_i_as_matrix <- function(i) {
+    # This column contains the p x p entries.
+    jac_col <- jac_matrix[, i]
+    p <- sqrt(length(jac_col))
+    # Obtain p x p matrix.
+    matrix(jac_col, nrow = p, ncol = p)
+  }
+  lapply(
+    seq_len(ncol(jac_matrix)),
+    FUN = get_column_i_as_matrix
+  )
+}
+```
+
+Let's try this out, too:
+
+```{r}
+jac_example <- h_general_jac_list(covbeta_fun, theta_est)
+```
+
+So this takes a few seconds to generate. However this is still in the same
+ballpark as the fitting of the MMRM itself, so should not be practical problem.
+
+## `h_jac_list()`
+
+Now we can wrap this in a function that takes the fitted MMRM directly and
+returns the Jacobian.
+
+```{r}
+h_jac_list <- function(model) {
+  covbeta_fun <- h_covbeta_fun(model)
+  theta_est <- getME(model, "theta")
+  h_general_jac_list(covbeta_fun = covbeta_fun, x_opt = theta_est)
+}
+
+jac_list <- h_jac_list(mod_refit)
+```
+
+
+## `mmrm()`
+
+This is the primary user interface for performing the MMRM analysis. It returns
+an object of class `mmrm` and further methods are provided then to work with
+these objects (summary, least square means, etc.)
+
+Note that since the least square means and model diagnostics are downstream
+calculations, we no longer include them in the object itself.
+
+```{r}
+mmrm <- function(data,
+                 vars = vars(),
+                 conf_level = 0.95,
+                 cor_struct = "unstructured",
+                 weights_emmeans = "proportional",
+                 optimizer = "automatic",
+                 parallel = FALSE) {
+  assert_data(vars, data)
+  assert_number(conf_level, lower = 0, upper = 1)
+  assert_flag(parallel)
+
+  labels <- h_labels(vars, data)
+  formula <- h_build_formula(vars, cor_struct)
+  model <- fit_model(
+    formula = formula,
+    data = data,
+    optimizer = optimizer,
+    n_cores = ifelse(parallel, h_free_cores(), 1L)
+  )
+  vcov_theta <- h_vcov_theta(model)
+  jac_list <- h_jac_list(model)
+  vcov_beta <- vcov(model)$cond
+  beta_est <- fixef(model)$cond
+  cov_est <- h_cov_estimate(model)
+  ref_level <- if (is.null(vars$arm)) NULL else levels(data[[vars$arm]])[1]
+
+  results <- list(
+    model = model,
+    vcov_theta = vcov_theta,
+    jac_list = jac_list,
+    vcov_beta = vcov_beta,
+    beta_est = beta_est,
+    cov_est = cov_est,
+    vars = vars,
+    labels = labels,
+    ref_level = ref_level,
+    conf_level = conf_level
+  )
+  class(results) <- "mmrm"
+  results
+}
+```
+
+Let's try this out:
+
+```{r}
+result <- mmrm(dat, vs)
+```
+
+Takes about 13 seconds on my computer here, so that is alright.
+
+## `diagnostics()`
+
+Now we want to compute the model diagnostic statistics. Note that here
+we start now from the full `mmrm` object which already has the covariance
+estimate, so we don't need to compute this again.
+
+Note: In production this can be a generic function with a method for `mmrm`.
+
+```{r}
+diagnostics <- function(object) {
+  assert_class(object, "mmrm")
+
+  n_obs <- object$model$modelInfo$nobs
+  cov_est <- object$cov_estimate
+  df <- attr(cov_est, "n_parameters")
+  n_fixed <- ncol(getME(object$model, "X"))
+  m <- max(df + 2, n_obs - n_fixed)
+  log_lik <- as.numeric(stats::logLik(object$model))
+  n_subjects <- nlevels(object$model$modelInfo$reTrms$cond$flist[[1L]])
+
+  list(
+    "REML criterion" = -2 * log_lik,
+    AIC = -2 * log_lik + 2 * df,
+    AICc = -2 * log_lik + 2 * df * (m / (m - df - 1)),
+    BIC = -2 * log_lik + df * log(n_subjects)
+  )
+}
+
+diagnostics(result)
+```
+
+## `h_quadratic_form()`
+
+Just a small numeric helper to compute a quadratic form of a vector and a matrix.
+
+```{r}
+h_quadratic_form <- function(vec, mat) {
+  assert_numeric(vec, any.missing = FALSE)
+  assert_matrix(mat, mode = "numeric", any.missing = FALSE, nrows = length(vec), ncols = length(vec))
+  sum(vec * (mat %*% vec))
+}
+
+h_quadratic_form(1:2, matrix(1:4, 2, 2))
+```
+
+## `h_gradient()`
+
+This is the helper to compute the gradient based on a jacobian (as a list, as above)
+and a vector `L`.
+
+```{r}
+h_gradient <- function(jac_list, L) {
+  assert_list(jac_list)
+  assert_numeric(L)
+
+  vapply(
+    jac_list,
+    h_quadratic_form, # = {L' Jac L}_i
+    vec = L,
+    numeric(1L)
+  )
+}
+
+L <- c(-1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+h_gradient(jac_example, L)
+```
+
+
+## `df_1d()`
+
+We define this function to calculate the Satterthwaite degrees of freedom for the
+one-dimensional case. It takes the `mmrm` object and the contrast matrix (here
+vector).
+
+```{r}
+df_1d <- function(object, L) {
+  assert_class(object, "mmrm")
+  assert_numeric(L, any.missing = FALSE)
+
+  L <- as.vector(L)
+  assert_numeric(L, len = length(object$beta_est))
+  contrast_est <- sum(L * object$beta_est)
+  contrast_var <- h_quadratic_form(L, object$vcov_beta)
+  contrast_grad <- h_gradient(object$jac_list, L)
+
+  v_numerator <- 2 * contrast_var ^ 2
+  v_denominator <- h_quadratic_form(contrast_grad, object$vcov_theta)
+
+  list(
+    est = contrast_est,
+    se = sqrt(contrast_var),
+    df = v_numerator / v_denominator
+  )
+}
+```
+
+Let's try it out:
+
+```{r}
+df_1d(result, L)
+```
+
+Let's quickly compare this with the existing `tern.mmrm` just to be sure
+that this is correct:
+
+```{r}
+old_result <- tern.mmrm::fit_mmrm(vars = vs, data = dat)
+lmerTest::contest1D(old_result$fit, L)
+```
+
+So unfortunately that does not give the same result.
