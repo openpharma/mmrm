@@ -629,11 +629,11 @@ fit_model <- function(formula,
 Let's try this out quickly too:
 
 ```{r}
-fit_model(
+testthat::expect_error(fit_model(
   formula = h_build_formula(vs),
   data = dat,
   optimizer = "Nelder-Mead"
-)
+))
 ```
 
 So this gives the expected error message.
@@ -686,8 +686,46 @@ h_vcov_theta <- function(model) {
   unname(model_vcov[index_theta, index_theta, drop = FALSE])
 }
 
-h_vcov_theta(mod_fit)
+vcov_theta <- h_vcov_theta(mod_refit)
 ```
+
+However one question is now which `theta` parametrization is used here
+to provide the covariance matrix of. Because it is strange that these two
+are not the same:
+
+```{r}
+mod_refit$obj$par
+mod_refit$fit$par
+```
+
+It could be that the first one are the starting values for the optimization.
+Indeed:
+
+```{r}
+identical(mod_fit$fit$par, mod_refit$obj$par)
+```
+
+## `h_num_vcov_theta()`
+
+Let's see anyway if we can recover this covariance matrix also numerically:
+
+```{r}
+h_num_vcov_theta <- function(model) {
+  assert_class(model, "mmrm_fit")
+
+  theta_est <- model$fit$par
+  devfun_theta <- model$obj$fn
+  hess_theta <- numDeriv::hessian(func = devfun_theta, x = theta_est)
+  eig_hess_theta <- eigen(hess_theta, symmetric = TRUE)
+  with(eig_hess_theta, vectors %*% diag(1/values) %*% t(vectors))
+}
+
+num_vcov_theta <- h_num_vcov_theta(mod_refit)
+all.equal(vcov_theta, num_vcov_theta)
+range(vcov_theta / num_vcov_theta)
+```
+
+So the results are quite different.
 
 ## `h_covbeta_fun()`
 
@@ -714,17 +752,18 @@ h_covbeta_fun <- function(model) {
 ```
 
 Let's try this out: We can recover the usual variance-covariance matrix of the
-fixed effects when plugging in the estimated variance parameters, and we
-get a different result when using other variance parameters.
+fixed effects when plugging in the estimated variance parameters (up to
+reasonable numeric precision), and we get a different result when using
+other variance parameters.
 
 ```{r}
 covbeta_fun <- h_covbeta_fun(mod_refit)
-theta_est <- getME(mod_refit, "theta")
-all.equal(
-  covbeta_fun(theta = theta_est),
-  unname(vcov(mod_refit)$cond)
-)
-range(covbeta_fun(theta = theta_est) - covbeta_fun(theta = theta_est * 0.9))
+mod_theta_est <- getME(mod_refit, "theta")
+covbeta_num <- covbeta_fun(theta = mod_theta_est)
+covbeta_fit <- unname(vcov(mod_refit)$cond)
+all.equal(covbeta_num, covbeta_fit)
+range(covbeta_num / covbeta_fit)
+range(covbeta_num - covbeta_fun(theta = mod_theta_est * 0.9))
 ```
 
 ## `h_general_jac_list()`
@@ -764,7 +803,7 @@ h_general_jac_list <- function(covbeta_fun,
 Let's try this out, too:
 
 ```{r}
-jac_example <- h_general_jac_list(covbeta_fun, theta_est)
+jac_example <- h_general_jac_list(covbeta_fun, mod_theta_est)
 ```
 
 So this takes a few seconds to generate. However this is still in the same
@@ -784,7 +823,6 @@ h_jac_list <- function(model) {
 
 jac_list <- h_jac_list(mod_refit)
 ```
-
 
 ## `mmrm()`
 
@@ -815,7 +853,7 @@ mmrm <- function(data,
     optimizer = optimizer,
     n_cores = ifelse(parallel, h_free_cores(), 1L)
   )
-  vcov_theta <- h_vcov_theta(model)
+  vcov_theta <- h_num_vcov_theta(model)
   jac_list <- h_jac_list(model)
   vcov_beta <- vcov(model)$cond
   beta_est <- fixef(model)$cond
@@ -860,7 +898,7 @@ diagnostics <- function(object) {
   assert_class(object, "mmrm")
 
   n_obs <- object$model$modelInfo$nobs
-  cov_est <- object$cov_estimate
+  cov_est <- object$cov_est
   df <- attr(cov_est, "n_parameters")
   n_fixed <- ncol(getME(object$model, "X"))
   m <- max(df + 2, n_obs - n_fixed)
@@ -938,6 +976,8 @@ df_1d <- function(object, L) {
   list(
     est = contrast_est,
     se = sqrt(contrast_var),
+    v_numerator = v_numerator,
+    v_denominator = v_denominator,
     df = v_numerator / v_denominator
   )
 }
@@ -954,7 +994,90 @@ that this is correct:
 
 ```{r}
 old_result <- tern.mmrm::fit_mmrm(vars = vs, data = dat)
+all.equal(result$beta_est, fixef(old_result$fit))
 lmerTest::contest1D(old_result$fit, L)
 ```
 
-So unfortunately that does not give the same result.
+So unfortunately that the degrees of freedom results are very far apart.
+The question is why?
+
+Let's look inside:
+
+```{r}
+debug(lmerTest:::contest1D.lmerModLmerTest)
+lmerTest::contest1D(old_result$fit, L)
+```
+
+The denominator of the degrees of freedom is 0.0213 so completely different
+than what we have above with 11.93. The numerator of the degrees of freedom
+is 5.303 which is similar what we have with 5.425.
+
+Now for the denominator the problem is again that the parametrization is
+different between `lme4` and `glmmTMB` so that we cannot compare directly
+the inputs, i.e. the gradient for the variance of the contrast evaluated
+at the variance parameter estimates, and the covariance matrix for variance
+parameters.
+
+Let's quickly try another path to obtain the gradient numerically.
+We write directly the contrast variance estimate as a function of `theta`.
+
+```{r}
+h_contrast_var_fun <- function(model, L) {
+  covbeta_fun <- h_covbeta_fun(model)
+  function(theta) {
+    covbeta <- covbeta_fun(theta)
+    h_quadratic_form(L, covbeta)
+  }
+}
+
+contrast_var_fun <- h_contrast_var_fun(result$model, L)
+sqrt(contrast_var_fun(theta_est))
+```
+
+OK, this matches what we have above.
+Now we can calculate the gradient again using `numDeriv`:
+
+```{r}
+num_grad_contrast_var <- numDeriv::grad(contrast_var_fun, theta_est)
+```
+
+It is interesting that this takes quite a while to compute.
+
+Now we can compare this with what we have via the Jacobian:
+
+```{r}
+contrast_grad <- h_gradient(result$jac_list, L)
+all.equal(num_grad_contrast_var, contrast_grad)
+num_grad_contrast_var - contrast_grad
+```
+
+So this is actually quite different. But even then we would get as
+denominator:
+
+```{r}
+num_v_denom <- h_quadratic_form(num_grad_contrast_var, result$vcov_theta)
+num_v_denom
+```
+
+which is not what we expect. But on the other hand
+
+```{r}
+1 / num_v_denom
+```
+
+is very close to what we would expect? But I don't understand why at all.
+
+The other problem to debug this now here is that for the `lme4` model we have 11
+variance parameters (one too much), whereas for `glmmTMB` we only have 10.
+So we cannot easily transform the variance parameters into each other.
+
+The problem is that obviously the `glmmTMB` derived degrees of freedom are
+wrong. We can e.g. have another comparison via simplified degrees of freedom:
+
+```{r}
+simple_df <- length(unique(result$model$frame$USUBJID)) -
+  Matrix::rankMatrix(model.matrix(FEV1 ~ RACE + SEX + ARMCD * AVISIT , data = dat))[1]
+simple_df
+```
+
+which is at least in a similar ballpark.
