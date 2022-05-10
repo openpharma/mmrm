@@ -1024,7 +1024,7 @@ The question is why?
 Let's look inside:
 
 ```{r}
-debug(lmerTest:::contest1D.lmerModLmerTest)
+# debug(lmerTest:::contest1D.lmerModLmerTest)
 lmerTest::contest1D(old_result$fit, L)
 ```
 
@@ -1178,11 +1178,12 @@ the multi-dimensional case. It takes the `mmrm` object and the contrast matrix
 
 ```{r}
 df_md <- function(object, L) {
+
   assert_class(object, "mmrm")
   assert_numeric(L, any.missing = FALSE)
 
   if (!is.matrix(L)) {
-    L <- as.matrix(L, ncol = length(L))
+    L <- matrix(L, ncol = length(L))
   }
   assert_matrix(L, ncol = length(object$beta_est))
 
@@ -1232,6 +1233,7 @@ L2 <- rbind(
   c(0, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0)
 )
 df_md(result, L2)
+df_md(result, L)
 ```
 
 ## `recover_data` method
@@ -1269,7 +1271,9 @@ emm_basis.mmrm <- function(object, trms, xlev, grid, vcov., ...) {
   res <- emm_basis(object$model, trms = trms, xlev = xlev, grid = grid, vcov. = vcov., component = "cond", ...)
   dfargs <- list(object = object)
   dffun <- function(k, dfargs) {
-    df_md(dfargs$object, k)$denom_df
+    # Note: Once this is `df_md` function is in the package we can just get
+    # it from there instead from global environment.
+    get("df_md", envir = globalenv())(dfargs$object, k)$denom_df
   }
   res$dfargs <- dfargs
   res$dffun <- dffun
@@ -1277,4 +1281,28 @@ emm_basis.mmrm <- function(object, trms, xlev, grid, vcov., ...) {
 }
 ```
 
+Now let's see if we can use `emmeans` on the `mmrm` object:
 
+```{r}
+emm_obj <- emmeans(result, c("ARMCD", "AVISIT"), data = dat)
+emm_obj
+```
+
+So that gives different result than calling directly the `glmmTMB` method:
+
+```{r}
+emm_obj2 <- emmeans(result$model, c("ARMCD", "AVISIT"), data = dat)
+emm_obj2
+```
+
+So our own degrees of freedom are used successfully!
+
+Based on this we can then calculate any least square means, e.g.:
+
+```{r}
+pairs(emm_obj)
+```
+
+Note that we have numerical problems here because of the wrong Satterthwaite
+calculations at this point. But all this will be fixed when `h_covbeta_fun()`
+is fixed.
