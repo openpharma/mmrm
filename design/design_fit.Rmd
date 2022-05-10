@@ -1051,14 +1051,14 @@ h_contrast_var_fun <- function(model, L) {
 }
 
 contrast_var_fun <- h_contrast_var_fun(result$model, L)
-sqrt(contrast_var_fun(theta_est))
+sqrt(contrast_var_fun(mod_theta_est))
 ```
 
 OK, this matches what we have above.
 Now we can calculate the gradient again using `numDeriv`:
 
 ```{r}
-num_grad_contrast_var <- numDeriv::grad(contrast_var_fun, theta_est)
+num_grad_contrast_var <- numDeriv::grad(contrast_var_fun, mod_theta_est)
 ```
 
 It is interesting that this takes quite a while to compute.
@@ -1233,3 +1233,48 @@ L2 <- rbind(
 )
 df_md(result, L2)
 ```
+
+## `recover_data` method
+
+Here the idea is that we just forward directly to the `glmmTMB` method so
+that we don't have to do anything ourselves.
+
+```{r}
+library(emmeans)
+recover_data.mmrm <- function(object, ...) {
+  component <- "cond"
+  emmeans::recover_data(object$model, component = "cond", ...)
+}
+```
+
+Let's try if this does something.
+
+```{r}
+test <- recover_data(result)
+class(test)
+dim(test)
+```
+
+So that seems to work fine.
+
+## `emm_basis` method
+
+Also here the majority of the work can be done by the `glmmTMB` method.
+We just need to replace the `dffun` and `dfargs` in the list that is returned
+by that before returning ourselves. For this we look at the `merMod` method in
+`emmeans` (https://github.com/rvlenth/emmeans/blob/0af291a78eaecb9e22f45b5ec064474f5f5ed61a/R/helpers.R#L192).
+
+```{r}
+emm_basis.mmrm <- function(object, trms, xlev, grid, vcov., ...) {
+  res <- emm_basis(object$model, trms = trms, xlev = xlev, grid = grid, vcov. = vcov., component = "cond", ...)
+  dfargs <- list(object = object)
+  dffun <- function(k, dfargs) {
+    df_md(dfargs$object, k)$denom_df
+  }
+  res$dfargs <- dfargs
+  res$dffun <- dffun
+  res
+}
+```
+
+
