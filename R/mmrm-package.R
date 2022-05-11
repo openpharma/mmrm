@@ -7,4 +7,5 @@
 #' @import checkmate
 #' @importFrom glmmTMB addForm
 #' @importFrom lifecycle deprecated
+#' @importFrom stats acf
 NULL

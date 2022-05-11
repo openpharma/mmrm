@@ -16,7 +16,8 @@ Depends:
 Imports:
     checkmate (>= 2.1),
     lifecycle,
-    glmmTMB (>= 1.1.3)
+    glmmTMB (>= 1.1.3),
+    stats
 Suggests:
     knitr,
     testthat (>= 3.0.0)
@@ -29,3 +30,8 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
 Config/testthat/edition: 3
+Collate:
+    'utils.R'
+    'assert_data.R'
+    'data.R'
+    'mmrm-package.R'

@@ -14,9 +14,15 @@ reference:
   - title: Package
     contents:
       - mmrm-package
+  - title: Helper Functions
+    contents:
+      - h_assert_one_rec_pt_visit
+      - h_assert_rsp_var
+      - h_assert_visit_var
+      - h_get_covariate_parts
   - title: Functions
     contents:
-      - dummy
+      - assert_data
   - title: Datasets
     contents:
       - fev_data

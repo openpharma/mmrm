@@ -10,3 +10,4 @@ README.*
 coverage.*
 ^\.pre-commit-config\.yaml$
 ^codemeta\.json$
+design
