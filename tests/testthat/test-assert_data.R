@@ -102,7 +102,8 @@ test_that("assert_data does not look at rows with incomplete regressors for chec
 
 test_that("assert_data fails when less than 5 rows in complete data set without arm", {
   vars <- list(visit = "AVISIT", id = "MYID", response = "RSP", covariates = "BLA")
-  data <- data.frame( # Only 4 rows with complete data.
+  # Only 4 rows with complete data.
+  data <- data.frame(
     MYID = c(1, 1, 2, 2, 3, 3),
     AVISIT = factor(c(1, 2, 1, 2, 1, 1)),
     BLA = c(1, 1, 1, 1, 1, NA),
@@ -116,7 +117,8 @@ test_that("assert_data fails when less than 5 rows in complete data set without 
 
 test_that("assert_data fails when less than 5 rows in complete data set per arm", {
   vars <- list(visit = "AVISIT", id = "MYID", response = "RSP", arm = "TRT")
-  data <- data.frame( # Only 4 rows with complete data for TRT 1.
+  # Only 4 rows with complete data for TRT 1.
+  data <- data.frame(
     MYID = c(1, 1, 2, 2, 3, 3, 4, 4, 5, 5),
     AVISIT = factor(c(1, 2, 1, 2, 1, 2, 1, 2, 1, 2)),
     TRT = factor(c(1, 1, 1, 1, 1, 2, 2, 2, 2, 2)),
