@@ -76,7 +76,7 @@ the variable specifications on the side, too.
 
 ```{r}
 h_labels <- function(vars,
-                       data) {
+                     data) {
   assert_list(vars)
   assert_data_frame(data)
 
