@@ -34,4 +34,5 @@ Collate:
     'utils.R'
     'assert_data.R'
     'data.R'
+    'formula.R'
     'mmrm-package.R'
