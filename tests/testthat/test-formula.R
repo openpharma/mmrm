@@ -1,6 +1,6 @@
 library(testthat)
 
-test_that("h_build_formula gives error message if incorrect inputs given", {
+test_that("h_build_formula gives error message if incorrect covariance structure is given", {
   vars <- list(response = "AVAL", id = "USUBJID", arm = "ARMCD", visit = "AVISIT", covariates = c("RACE", "SEX"))
   expect_error(h_build_formula(vars, "BLAHHH"))
 })
