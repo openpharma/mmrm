@@ -1,4 +1,4 @@
-#' Building formula for model
+#' Building Model Formula
 #'
 #' @description `r lifecycle::badge("experimental")`
 #'
