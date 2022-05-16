@@ -2,7 +2,7 @@
 % Please edit documentation in R/formula.R
 \name{h_build_formula}
 \alias{h_build_formula}
-\title{Building formula for model}
+\title{Building Model Formula}
 \usage{
 h_build_formula(
   vars,
@@ -10,9 +10,9 @@ h_build_formula(
 )
 }
 \arguments{
-\item{vars}{(\code{list})\cr variables to use in the model}
+\item{vars}{(\code{list})\cr variables to use in the model.}
 
-\item{cor_struct}{(\code{character})\cr speicify the covariance structure to use}
+\item{cor_struct}{(\code{string})\cr specify the covariance structure to use.}
 }
 \value{
 formula for model
