@@ -2,7 +2,7 @@
 #'
 #' @description `r lifecycle::badge("experimental")`
 #'
-#' @param vars (`list`)\cr variables to use in the model
+#' @param vars (`list`)\cr variables to use in the model.
 #' @param cor_struct (`character`)\cr speicify the covariance structure to use
 #' @return formula for model
 #' @export
