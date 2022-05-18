@@ -22,6 +22,10 @@ reference:
       - h_assert_visit_var
       - h_get_covariate_parts
       - h_build_formula
+      - h_is_specified
+      - h_is_specified_and_in_data
+      - h_check_and_get_label
+      - h_labels
   - title: Functions
     contents:
       - assert_data
