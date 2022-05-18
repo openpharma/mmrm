@@ -1,4 +1,4 @@
-#' Adding Labels To Variable For Model
+#' Adding Labels To Variables For Model
 #'
 #' @description `r lifecycle::badge("experimental")`
 #'
