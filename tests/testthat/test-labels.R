@@ -1,4 +1,4 @@
-
+# h_is_specified ----
 test_that("h_is_specified works as expected", {
   vars <- list(response = "AVAL", id = "MYID", arm = "ARM", visit = "AVISIT", covariates = c("SEX", "RACE"))
   result <- h_is_specified("arm", vars)
