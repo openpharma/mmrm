@@ -23,7 +23,7 @@ test_that("h_check_and_get_label works as expected", {
   data <- data.frame(
     MYID = c(1, 1, 2, 2, 3, 3),
     ARM = factor(c(1, 2, 3, 1, 2, 3)),
-    AVAL = c(2, 4, 6, 8, 10, 12),
+    AVAL = structure(c(2, 4, 6, 8, 10, 12), label = "value"),
     AVISIT = c("W1", "W2", "W3", "W1", "W2", "W3"),
     SEX = c("Female", "Female", "Female", "Male", "Male", "Male"),
     RACE = c("Asian", "Asian", "Asian", "White", "Asian", "White")
