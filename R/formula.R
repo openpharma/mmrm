@@ -8,8 +8,10 @@
 #' @export
 #'
 #' @examples
-#' vars <- list( response = "AVAL", covariates = c("RACE", "SEX"),
-#' id = "USUBJID", arm = "ARMCD", visit = "AVISIT")
+#' vars <- list(
+#'   response = "AVAL", covariates = c("RACE", "SEX"),
+#'   id = "USUBJID", arm = "ARMCD", visit = "AVISIT"
+#' )
 #' h_build_formula(vars, "compound-symmetry")
 #' h_build_formula(vars)
 h_build_formula <- function(vars,
@@ -34,8 +36,7 @@ h_build_formula <- function(vars,
       vars$visit
     )
   }
-  random_effects_fun <- switch(
-    cor_struct,
+  random_effects_fun <- switch(cor_struct,
     "unstructured" = "us",
     "toeplitz" = "toep",
     "auto-regressive" = "ar1",

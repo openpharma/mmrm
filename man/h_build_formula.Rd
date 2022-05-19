@@ -21,8 +21,10 @@ formula for model
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
 \examples{
-vars <- list( response = "AVAL", covariates = c("RACE", "SEX"),
-id = "USUBJID", arm = "ARMCD", visit = "AVISIT")
+vars <- list(
+  response = "AVAL", covariates = c("RACE", "SEX"),
+  id = "USUBJID", arm = "ARMCD", visit = "AVISIT"
+)
 h_build_formula(vars, "compound-symmetry")
 h_build_formula(vars)
 }

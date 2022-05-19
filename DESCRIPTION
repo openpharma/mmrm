@@ -35,4 +35,5 @@ Collate:
     'assert_data.R'
     'data.R'
     'formula.R'
+    'labels.R'
     'mmrm-package.R'
