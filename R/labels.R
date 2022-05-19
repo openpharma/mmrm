@@ -10,7 +10,7 @@
 #' @name labels
 NULL
 
-#' @describeIn labels checks if element in vars is not NULL.
+#' @describeIn labels checks if element in `vars` is not `NULL`.
 #' @export
 h_is_specified <- function(x, vars) {
   !is.null(vars[[x]])
