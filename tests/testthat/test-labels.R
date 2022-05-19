@@ -51,7 +51,6 @@ test_that("h_labels works as expected", {
     visit = "AVISIT",
     parts = c("SEX", "RACE")
   )
-  names(expected) <- c("response", "id", "visit", "parts")
   names(expected$response) <- "AVAL"
   names(expected$id) <- "MYID"
   names(expected$visit) <- "AVISIT"
