@@ -30,8 +30,7 @@ test_that("h_check_and_get_label works as expected", {
   )
   vars <- list(response = "AVAL", id = "MYID", arm = "ARM", visit = "AVISIT", covariates = c("SEX", "RACE"))
   result <- h_check_and_get_label("arm", vars, data)
-  expected <- c("ARM")
-  names(expected) <- "ARM"
+  expected <- c(ARM = "ARM")
   expect_identical(result, expected)
 })
 
