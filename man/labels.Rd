@@ -6,7 +6,7 @@
 \alias{h_is_specified_and_in_data}
 \alias{h_check_and_get_label}
 \alias{h_labels}
-\title{Adding Labels To Variable For Model}
+\title{Adding Labels To Variables For Model}
 \usage{
 h_is_specified(x, vars)
 
@@ -31,9 +31,9 @@ list of variables with labels
 }
 \section{Functions}{
 \itemize{
-\item \code{h_is_specified}: checks if element in vars is not NULL.
+\item \code{h_is_specified}: checks if element in \code{vars} is not \code{NULL}.
 
-\item \code{h_is_specified_and_in_data}: checks if element in vars is not NULL and in dataset.
+\item \code{h_is_specified_and_in_data}: checks if element in vars is not NULL and exists in dataset.
 
 \item \code{h_check_and_get_label}: gets label for each element in vars.
 
@@ -42,12 +42,12 @@ list of variables with labels
 
 \examples{
 data <- data.frame(
-MYID = c(1, 1, 2, 2, 3, 3),
-ARM = factor(c(1, 2, 3, 1, 2, 3)),
-AVAL = c(2, 4, 6, 8, 10, 12),
-AVISIT = c("W1", "W2", "W3", "W1","W2", "W3" ),
-SEX = c("Female", "Female", "Female", "Male", "Male", "Male"),
-RACE = c("Asian", "Asian", "Asian", "White", "Asian", "White")
+  MYID = c(1, 1, 2, 2, 3, 3),
+  ARM = factor(c(1, 2, 3, 1, 2, 3)),
+  AVAL = c(2, 4, 6, 8, 10, 12),
+  AVISIT = c("W1", "W2", "W3", "W1", "W2", "W3"),
+  SEX = c("Female", "Female", "Female", "Male", "Male", "Male"),
+  RACE = c("Asian", "Asian", "Asian", "White", "Asian", "White")
 )
 vars <- list(response = "AVAL", id = "MYID", arm = "ARM", visit = "AVISIT", covariates = c("SEX", "RACE"))
 h_labels(vars, data)
