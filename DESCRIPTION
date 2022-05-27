@@ -33,6 +33,7 @@ Config/testthat/edition: 3
 Collate:
     'utils.R'
     'assert_data.R'
+    'covariance.R'
     'data.R'
     'formula.R'
     'labels.R'
