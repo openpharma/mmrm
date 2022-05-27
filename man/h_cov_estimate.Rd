@@ -10,7 +10,7 @@ h_cov_estimate(model)
 \item{model}{(\code{list})\cr model from glmmTMB package.}
 }
 \value{
-the number of variance parameters in the model as well as one ID which has the mazimum number of visits.
+the number of variance parameters in the model as well as one ID which has the maximum number of visits.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
