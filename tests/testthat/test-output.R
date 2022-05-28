@@ -1,5 +1,5 @@
 test_that("h_record_all_outputs correctly removes specified messages", {
-  result <-a <- h_record_all_output({
+  result <- h_record_all_output({
     x <- 1
     y <- 2
     warning("something went wrong")
@@ -12,7 +12,7 @@ test_that("h_record_all_outputs correctly removes specified messages", {
 })
 
 test_that("h_record_all_outputs works as expected with no removal list given for messages", {
-  result <-h_record_all_output({
+  result <- h_record_all_output({
     x <- 1
     y <- 2
     warning("something went wrong")
@@ -20,8 +20,7 @@ test_that("h_record_all_outputs works as expected with no removal list given for
     message("oh noo")
     x + y
   })
-  expected <- list(result = 3, warnings = "something went wrong", errors = NULL, messages = c("O nearly done", "oh noo"))
+  expected <- list(result = 3, warnings = "something went wrong", errors = NULL,
+  messages = c("O nearly done", "oh noo"))
   expect_identical(result, expected)
 })
-
-
