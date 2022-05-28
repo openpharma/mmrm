@@ -37,3 +37,4 @@ Collate:
     'formula.R'
     'labels.R'
     'mmrm-package.R'
+    'parallel.R'
