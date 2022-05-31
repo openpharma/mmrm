@@ -2,7 +2,7 @@
 #'
 #' @description `r lifecycle::badge("experimental")`
 #'
-#' @param model (`list`)\cr model from glmmTMB package.
+#' @param model (`mmrm_fit`)\cr model fit.
 #' @return the number of variance parameters in the model as well as one ID which has the maximum number of visits.
 #' @export
 #'
