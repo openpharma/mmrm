@@ -7,7 +7,7 @@
 #' @export
 #'
 #' @examples
-#' mod <- glmmTMB(
+#' mod <- glmmTMB::glmmTMB(
 #'   FEV1 ~ ar1(0 + AVISIT | USUBJID),
 #'   data = fev_data,
 #'   dispformula = ~0,
