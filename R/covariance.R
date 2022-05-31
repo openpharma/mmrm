@@ -17,8 +17,8 @@
 #' h_cov_estimate(mod)
 h_cov_estimate <- function(model) {
   assert_class(model, "mmrm_fit")
-  cov_est <- VarCorr(model)$cond[[1L]]
-  theta <- getME(model, "theta")
+  cov_est <- glmmTMB::VarCorr(model)$cond[[1L]]
+  theta <- glmmTMB::getME(model, "theta")
   id_per_obs <- model$modelInfo$reTrms$cond$flist[[1L]]
   n_visits <- length(model$modelInfo$reTrms$cond$cnms[[1L]])
   which_id <- which(table(id_per_obs) == n_visits)[1L]

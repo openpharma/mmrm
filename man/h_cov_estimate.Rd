@@ -2,26 +2,25 @@
 % Please edit documentation in R/covariance.R
 \name{h_cov_estimate}
 \alias{h_cov_estimate}
-\title{Getting Number of Variance Parameters in Model}
+\title{Getting Covariance Estimate and Number of Variance Parameters in Model}
 \usage{
 h_cov_estimate(model)
 }
 \arguments{
-\item{model}{(\code{list})\cr model from glmmTMB package.}
+\item{model}{(\code{mmrm_fit})\cr model fit.}
 }
 \value{
-the number of variance parameters in the model as well as one ID which has the maximum number of visits.
+The covariance matrix estimate, with additional attributes \code{n_parameters} (the number of variance parameters in the model) as well as \code{id} (one ID which has the maximum number of visits).
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
 \examples{
-dat <- fev_data
-mod <- glmmTMB(
-FEV1 ~ ar1(0 + AVISIT | USUBJID),
-data = dat,
-dispformula = ~0,
-REML = TRUE
+mod <- glmmTMB::glmmTMB(
+  FEV1 ~ ar1(0 + AVISIT | USUBJID),
+  data = fev_data,
+  dispformula = ~0,
+  REML = TRUE
 )
 class(mod) <- c("mmrm_fit", "glmmTMB")
 h_cov_estimate(mod)
