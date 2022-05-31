@@ -12,7 +12,7 @@
 #' @return
 #' A list containing
 #'
-#' - `result`: The object returned by `expr` or `list()` if an error was thrown
+#' - `result`: The object returned by `expr` or `list()` if an error was thrown.
 #' - `warnings`: `NULL` or a character vector if warnings were thrown.
 #' - `errors`: `NULL` or a string if an error was thrown.
 #' - `messages`: `NULL` or a character vector if messages were produced.
