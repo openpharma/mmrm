@@ -3,7 +3,7 @@ pkgdown: 2.0.3
 pkgdown_sha: ~
 articles:
   introduction: introduction.html
-last_built: 2022-05-31T15:25Z
+last_built: 2022-05-31T18:29Z
 urls:
   reference: https://openpharma.github.io/mmrm/reference
   article: https://openpharma.github.io/mmrm/articles
