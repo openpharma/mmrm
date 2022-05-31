@@ -1,4 +1,4 @@
-#' Getting Number of Variance Parameters in Model
+#' Getting Covariance Estimate and Number of Variance Parameters in Model
 #'
 #' @description `r lifecycle::badge("experimental")`
 #'
