@@ -32,7 +32,7 @@ Encoding: UTF-8
 Language: en-US
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0
 Config/testthat/edition: 3
 Collate:
     'utils.R'
@@ -41,5 +41,5 @@ Collate:
     'formula.R'
     'labels.R'
     'mmrm-package.R'
-    'parallel.R'
     'output.R'
+    'parallel.R'
