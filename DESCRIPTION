@@ -3,7 +3,10 @@ Package: mmrm
 Title: Mixed Models for Repeated Measures
 Version: 0.0.0.9001
 Authors@R: c(
-      person("Daniel", "Sabanes Bove", , "daniel.sabanes_bove@roche.com", role = c("aut", "cre"))
+      person("Daniel", "Sabanes Bove", , "daniel.sabanes_bove@roche.com", role = c("aut", "cre")),
+      person("Julia", "Dedic", , "julia.dedic@roche.com", role = c("aut")),
+      person("Craig", "Gower-Page", , "craig.gower-page@roche.com", role = c("aut")),
+      person("Alessandro", "Noci", , "alessandro.noci@roche.com", role = c("aut"))
     )
 Description: Mixed models for repeated measures (MMRM) are a popular
     choice for individually randomized trials with longitudinal continuous
@@ -38,3 +41,4 @@ Collate:
     'formula.R'
     'labels.R'
     'mmrm-package.R'
+    'output.R'
