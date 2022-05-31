@@ -27,6 +27,7 @@ reference:
       - h_check_and_get_label
       - h_labels
       - h_free_cores
+      - h_record_all_output
   - title: Functions
     contents:
       - assert_data
