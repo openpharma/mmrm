@@ -9,10 +9,10 @@
 #' @examples
 #' dat <- fev_data
 #' mod <- glmmTMB(
-#' FEV1 ~ ar1(0 + AVISIT | USUBJID),
-#' data = dat,
-#' dispformula = ~0,
-#' REML = TRUE
+#'   FEV1 ~ ar1(0 + AVISIT | USUBJID),
+#'   data = fev_data,
+#'   dispformula = ~0,
+#'   REML = TRUE
 #' )
 #' class(mod) <- c("mmrm_fit", "glmmTMB")
 #' h_cov_estimate(mod)
