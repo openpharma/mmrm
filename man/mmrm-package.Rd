@@ -19,4 +19,11 @@ Useful links:
 \author{
 \strong{Maintainer}: Daniel Sabanes Bove \email{daniel.sabanes_bove@roche.com}
 
+Authors:
+\itemize{
+  \item Julia Dedic \email{julia.dedic@roche.com}
+  \item Craig Gower-Page \email{craig.gower-page@roche.com}
+  \item Alessandro Noci \email{alessandro.noci@roche.com}
+}
+
 }
