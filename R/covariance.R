@@ -1,0 +1,30 @@
+#' Getting Covariance Estimate and Number of Variance Parameters in Model
+#'
+#' @description `r lifecycle::badge("experimental")`
+#'
+#' @param model (`mmrm_fit`)\cr model fit.
+#' @return The covariance matrix estimate, with additional attributes `n_parameters` (the number of variance parameters in the model) as well as `id` (one ID which has the maximum number of visits).
+#' @export
+#'
+#' @examples
+#' mod <- glmmTMB::glmmTMB(
+#'   FEV1 ~ ar1(0 + AVISIT | USUBJID),
+#'   data = fev_data,
+#'   dispformula = ~0,
+#'   REML = TRUE
+#' )
+#' class(mod) <- c("mmrm_fit", "glmmTMB")
+#' h_cov_estimate(mod)
+h_cov_estimate <- function(model) {
+  assert_class(model, "mmrm_fit")
+  cov_est <- glmmTMB::VarCorr(model)$cond[[1L]]
+  theta <- glmmTMB::getME(model, "theta")
+  id_per_obs <- model$modelInfo$reTrms$cond$flist[[1L]]
+  n_visits <- length(model$modelInfo$reTrms$cond$cnms[[1L]])
+  which_id <- which(table(id_per_obs) == n_visits)[1L]
+  structure(
+    cov_est,
+    id = levels(id_per_obs)[which_id],
+    n_parameters = length(theta)
+  )
+}

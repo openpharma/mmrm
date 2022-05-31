@@ -16,7 +16,7 @@ results if specified.}
 \value{
 A list containing
 \itemize{
-\item \code{result}: The object returned by \code{expr} or \code{list()} if an error was thrown
+\item \code{result}: The object returned by \code{expr} or \code{list()} if an error was thrown.
 \item \code{warnings}: \code{NULL} or a character vector if warnings were thrown.
 \item \code{errors}: \code{NULL} or a string if an error was thrown.
 \item \code{messages}: \code{NULL} or a character vector if messages were produced.
