@@ -20,7 +20,8 @@ Imports:
     checkmate (>= 2.1),
     lifecycle,
     glmmTMB (>= 1.1.3),
-    stats
+    stats,
+    parallel
 Suggests:
     knitr,
     testthat (>= 3.0.0)
@@ -42,3 +43,4 @@ Collate:
     'labels.R'
     'mmrm-package.R'
     'output.R'
+    'parallel.R'
