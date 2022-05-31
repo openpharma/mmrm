@@ -2,7 +2,7 @@
 #'
 #' @description `r lifecycle::badge("experimental")`
 #'
-#' @return the approximate number of free cores, which is an integer between 1 and one less than
+#' @return The approximate number of free cores, which is an integer between 1 and one less than
 #' the total cores.
 #'
 #' @details This uses the maximum load average at 1, 5 and 15 minutes on Linux and Mac
