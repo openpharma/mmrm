@@ -7,7 +7,7 @@
 h_free_cores()
 }
 \value{
-the approximate number of free cores, which is an integer between 1 and one less than
+The approximate number of free cores, which is an integer between 1 and one less than
 the total cores.
 }
 \description{
