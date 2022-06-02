@@ -21,7 +21,8 @@ fit_single_optimizer(
 \item{optimizer}{(\code{character})\cr optimizer to be used to generate the model.}
 }
 \value{
-the fitted glmmTMB object, with additional attributes containing warnings, messages, errors, optimizer used and convergence status.
+the fitted glmmTMB object, with additional attributes containing warnings,
+messages, errors, optimizer used and convergence status.
 }
 \description{
 This function helps to fit an glmmTMB model with a single optimizer, while capturing messages and warnings.

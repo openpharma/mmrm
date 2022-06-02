@@ -1,24 +1,4 @@
-# test_that("fit_single_optimizer works as expected with no starting value inputted", {
-#   dat <- mmrm::fev_data
-#   form <- FEV1 ~ ar1(0 + AVISIT | USUBJID)
-#   result <- fit_single_optimizer(
-#     formula = form,
-#     data = dat,
-#     optimizer = "BFGS"
-#   )
-#   expected <- glmmTMB::glmmTMB(
-#     formula = FEV1 ~ ar1(0 + AVISIT | USUBJID),
-#     data = dat,
-#     dispformula = ~0,
-#     start = NULL,
-#     control = glmmTMB::glmmTMBControl(optimizer = stats::optim, optArgs = list(method = "BFGS"), parallel = 1)
-#   )
-#   expect_identical(result, expected) # failed, not getting the same values
-#   # expect_equal(result, expected, tolerance = 1)
-# })
-
-#or should the test be more like this
-test_that("fit_single_optimizer works as expected", {
+test_that("fit_single_optimizer works as expected with no warnings, errors, or messages", {
   dat <- mmrm::fev_data
   form <- FEV1 ~ ar1(0 + AVISIT | USUBJID)
   result <- fit_single_optimizer(
@@ -32,24 +12,43 @@ test_that("fit_single_optimizer works as expected", {
   expect_identical(attr(result, "messages"), NULL)
   expect_identical(attr(result, "warnings"), NULL)
   expect_true(attr(result, "converged"))
+
+  result2 <- fit_single_optimizer(
+    formula = form,
+    data = dat,
+    optimizer = "BFGS",
+    start = list(theta = c(3, 0.5))
+  )
+  expect_identical(class(result2), c("mmrm_fit", "glmmTMB"))
+  expect_identical(attr(result2, "optimizer"), "BFGS")
+  expect_identical(attr(result2, "errors"), NULL)
+  expect_identical(attr(result2, "messages"), NULL)
+  expect_identical(attr(result2, "warnings"), NULL)
+  expect_true(attr(result2, "converged"))
+
+  result3 <-
+    fit_single_optimizer(
+      formula = form,
+      data = dat
+    )
+  expect_identical(class(result3), c("mmrm_fit", "glmmTMB"))
+  expect_identical(attr(result3, "optimizer"), "L-BFGS-B")
+  expect_identical(attr(result3, "errors"), NULL)
+  expect_identical(attr(result3, "messages"), NULL)
+  expect_identical(attr(result3, "warnings"), NULL)
+  expect_true(attr(result3, "converged"))
+
+  result4 <-
+    fit_single_optimizer(
+      formula = form,
+      data = dat,
+      start = list(theta = c(3, 0.5))
+    )
+  expect_identical(class(result4), c("mmrm_fit", "glmmTMB"))
+  expect_identical(attr(result4, "optimizer"), "L-BFGS-B")
+  expect_identical(attr(result4, "errors"), NULL)
+  expect_identical(attr(result4, "messages"), NULL)
+  expect_identical(attr(result4, "warnings"), NULL)
+  expect_true(attr(result4, "converged"))
 })
 
-# test_that("fit_single_optimizer works as expected with a starting value inputted", {
-#   dat <- mmrm::fev_data
-#   form <- FEV1 ~ ar1(0 + AVISIT | USUBJID)
-#   start = list(theta = c(3, 0.5))
-#   result <- fit_single_optimizer(
-#     formula = form,
-#     data = dat,
-#     start = start,
-#     optimizer = "BFGS"
-#   )
-#   expected <- glmmTMB::glmmTMB(
-#     formula = FEV1 ~ ar1(0 + AVISIT | USUBJID),
-#     data = dat,
-#     dispformula = ~0,
-#     start = start,
-#     control = glmmTMB::glmmTMBControl(optimizer = stats::optim, optArgs = list(method = "BFGS"), parallel = 1)
-#   )
-#   expect_identical(result, expected) # failed, not getting the same values
-# })

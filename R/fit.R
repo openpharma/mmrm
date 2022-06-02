@@ -7,7 +7,8 @@
 #' @param start (`list`)\cr a list of starting values.
 #' @param optimizer (`character`)\cr optimizer to be used to generate the model.
 #'
-#' @return the fitted glmmTMB object, with additional attributes containing warnings, messages, errors, optimizer used and convergence status.
+#' @return the fitted glmmTMB object, with additional attributes containing warnings,
+#' messages, errors, optimizer used and convergence status.
 #' @export
 #'
 #' @examples
