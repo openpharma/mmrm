@@ -32,6 +32,7 @@ reference:
   - title: Functions
     contents:
       - assert_data
+      - fit_single_optimizer
   - title: Datasets
     contents:
       - fev_data

@@ -39,6 +39,7 @@ Collate:
     'assert_data.R'
     'covariance.R'
     'data.R'
+    'fit.R'
     'formula.R'
     'labels.R'
     'mmrm-package.R'
