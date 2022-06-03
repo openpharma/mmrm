@@ -25,7 +25,7 @@ the fitted glmmTMB object, with additional attributes containing warnings,
 messages, errors, optimizer used and convergence status.
 }
 \description{
-This function helps to fit an glmmTMB model with a single optimizer, while capturing messages and warnings.
+This function helps to fit a \code{glmmTMB} model with a single optimizer, while capturing messages and warnings.
 }
 \examples{
 \dontrun{
