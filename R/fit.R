@@ -1,6 +1,6 @@
 #' Fitting `glmmTMB` Model
 #'
-#' This function helps to fit an glmmTMB model with a single optimizer, while capturing messages and warnings.
+#' This function helps to fit a `glmmTMB` model with a single optimizer, while capturing messages and warnings.
 #'
 #' @param formula (`formula`)\cr the `glmmTMB` formula.
 #' @param data (`data`)\cr the data to be used for the model.
