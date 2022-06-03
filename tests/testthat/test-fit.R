@@ -61,4 +61,3 @@ test_that("fit_single_optimizer works as expected with starting values but no op
   expect_identical(attr(result, "warnings"), NULL)
   expect_true(attr(result, "converged"))
 })
-
