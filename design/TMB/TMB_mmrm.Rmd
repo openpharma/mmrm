@@ -59,7 +59,11 @@ VarCorr(glmm_model)$cond[[1]]
 ### Compiling and loading
 
 ```{r}
-compile("TMB_mmrm.cpp", flags = "-O0 -ggdb") # Note: Modify cpp file to trigger run.
+compile(
+  "TMB_mmrm.cpp", # Note: Modify cpp file to trigger run.
+  flags = "-O0 -ggdb", # For debugging with gdb use these optional flags.
+  framework = "TMBad" # Select the AD framework. Default is CppAD
+)
 dyn.load(dynlib("TMB_mmrm"))
 ```
 
@@ -127,9 +131,13 @@ tmb_parameters <- list(
 tmb_object <- MakeADFun(
   data = tmb_data,
   parameters = tmb_parameters,
+  # ADreport = TRUE,
+  hessian = TRUE,
+  intern = FALSE,
   random = "beta", # Integrate over beta to obtain REML estimate for theta.
   DLL = "TMB_mmrm", # We need to specify this because glmmTMB loads other DLLs.
-  silent = FALSE
+
+  silent = TRUE # Otherwise we get a huge number of outer mgc messages.
 )
 ```
 
@@ -220,7 +228,8 @@ For this we need to run the `sdreport` function.
 tmb_sdreport <- sdreport(
   tmb_object,
   par.fixed = tmb_fit$par,
-  getJointPrecision = TRUE
+  getJointPrecision = TRUE,
+  getReportCovariance = TRUE
 )
 
 (tmb_beta_est <- summary(tmb_sdreport, "random"))
@@ -263,3 +272,69 @@ all.equal(tmb_beta_cov, glmm_beta_cov, check.attributes = FALSE)
 ```
 
 So this looks also good.
+
+## Satterthwaite d.f.
+
+Now let's see what we get with the Satterthwaite calculations.
+
+```{r}
+get_df <- function(tmb_object, tmb_fit, L) {
+  tmb_sdreport <- sdreport(
+    tmb_object,
+    par.fixed = tmb_fit$par,
+    getJointPrecision = TRUE
+  )
+  model_theta_vcov <- tmb_sdreport$cov.fixed
+  model_theta_est <- tmb_fit$par
+  model_beta_vcov <- get_beta_cov(tmb_sdreport)
+  get_covbeta_theta <- function(theta) {
+    sdr <- sdreport(
+      tmb_object,
+      par.fixed = theta,
+      getJointPrecision = TRUE
+    )
+    get_beta_cov(sdr)
+  }
+  get_jac_list <- function(covbeta_fun, x_opt, ...) {
+    jac_matrix <- numDeriv::jacobian(
+      func = covbeta_fun,
+      x = x_opt,
+      ...
+    )
+    lapply(
+      seq_len(ncol(jac_matrix)), # For each variance parameter.
+      FUN = function(i) {
+        # This column contains the p x p entries:
+        jac_col <- jac_matrix[, i]
+        p <- sqrt(length(jac_col))
+        # Get p x p matrix.
+        matrix(jac_col, nrow = p, ncol = p)
+      }
+    )
+  }
+  model_jac_theta <- get_jac_list(get_covbeta_theta, model_theta_est)
+  get_gradient <- function(jac, L) {
+    vapply(
+      jac,
+      function(x) sum(L * x %*% L), # = {L' Jac L}_i
+      numeric(1L)
+    )
+  }
+  model_grad_theta <- get_gradient(model_jac_theta, L)
+  model_var_contrast <- drop(t(L) %*% model_beta_vcov %*% L)
+  model_v_numerator <- 2 * model_var_contrast^2
+  model_v_denominator <- sum(model_grad_theta * (model_theta_vcov %*% model_grad_theta))
+  model_df_contrast <- model_v_numerator / model_v_denominator
+  model_df_contrast
+}
+```
+
+Let's try it out:
+
+```{r}
+L <- c(1, rep(0, 10)) # get the intercept only.
+(df_intercept <- get_df(tmb_object, tmb_fit, L))
+```
+
+So we get around 219 d.f. here which is not completely off anymore, which
+is nice, but still pretty far away from the 171 that we expect.
