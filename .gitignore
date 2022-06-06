@@ -27,3 +27,5 @@ vignettes/*.html
 vignettes/*.md
 vignettes/*.R
 coverage.*
+design/TMB/*.o
+design/TMB/*.so
