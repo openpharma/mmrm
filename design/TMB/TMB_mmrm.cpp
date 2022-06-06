@@ -93,9 +93,6 @@ Type objective_function<Type>::operator() ()
     neg_log_lik += (log_sd_values(visits_i)).sum();
   }
 
-  vector<Type> log_sd_values_save = log_sd_values;
-  ADREPORT(log_sd_values_save);
-
   // Return negative log-likelihood.
   return neg_log_lik;
 }

@@ -133,7 +133,7 @@ tmb_object <- MakeADFun(
   parameters = tmb_parameters,
   # ADreport = TRUE,
   hessian = TRUE,
-  intern = FALSE,
+  intern = FALSE, # otherwise we don't get any beta estimates automatically
   random = "beta", # Integrate over beta to obtain REML estimate for theta.
   DLL = "TMB_mmrm", # We need to specify this because glmmTMB loads other DLLs.
 
@@ -338,3 +338,57 @@ L <- c(1, rep(0, 10)) # get the intercept only.
 
 So we get around 219 d.f. here which is not completely off anymore, which
 is nice, but still pretty far away from the 171 that we expect.
+
+### Explicit covariance matrix
+
+Now let's try to explicitly calculate the covariance matrix in C++ and return
+that when requested. We start a separate file `TMB_mmrm2.cpp` for that.
+
+We can see from https://github.com/kaskr/adcomp/blob/master/tmb_syntax/check_autodiff.R
+and the corresponding https://github.com/kaskr/adcomp/blob/master/tmb_syntax/check_autodiff.cpp
+how we can have different computation paths in the same C++ file, so that we
+can one time use this to return the negative log likelihood, and one time
+to return the covariance matrix (hopefully) - all we need to do is calling
+`MakeADFun()` again with different data.
+
+```{r}
+compile("TMB_mmrm2.cpp")
+dyn.load(dynlib("TMB_mmrm2"))
+```
+
+Now we construct the function object.
+
+```{r}
+tmb_data_select_cov <- tmb_data
+tmb_data_select_cov$select <- 2L
+
+tmb_parameters_cov <- tmb_parameters
+tmb_parameters_cov$theta <- tmb_fit$par
+
+tmb_cov_object <- MakeADFun(
+  data = tmb_data_select_cov,
+  parameters = tmb_parameters_cov,
+  random = "beta",
+  DLL = "TMB_mmrm2",
+  silent = TRUE
+)
+```
+
+And let's see what we get.
+
+```{r}
+# Note that we need to pass the full parameter vector, with beta values first
+# (obviously they don't matter here at all) and then with theta values.
+# (I guess this order comes from how it is defined in the C++ file.)
+tmb_cov_object$report(unlist(tmb_parameters))
+tmb_cov_object$report(c(tmb_parameters$beta, tmb_fit$par))
+
+# ls(tmb_cov_object$env)
+# tmb_cov_object$parameters
+# tmb_cov_object$fn(unlist(tmb_parameters))
+# tmb_cov_object$report(tmb_cov_object$par)
+#
+# tmb_cov_object$par
+# tmb_cov_object$gr(tmb_cov_object$par)
+# sdreport(tmb_cov_object, getJointPrecision = TRUE)
+```
