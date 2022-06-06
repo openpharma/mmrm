@@ -1,5 +1,5 @@
 // Author: Daniel Sabanes based on Ben Bolker example
-// v2 with explicit covariance matrix calculation
+// v3 with trying Jacobian calculation in C++
 
 // Idea: Prototype a specific MMRM with TMB.
 //
@@ -44,16 +44,70 @@ struct covariance_fun {
 // 1   0
 // 0   0
 // 0   1
-struct get_select_matrix {;
+struct get_select_matrix {
   template <class Type>
   matrix<Type> operator() (const vector<int>& visits_i, const int& n_visits, const matrix<Type>& cov) {
     matrix<Type> result = matrix<Type>::Zero(n_visits, visits_i.size());
     for (int i = 0; i < visits_i.size(); i++) {
-      result(visits_i(i), i) = 1.0;
+      result(visits_i(i), i) = (Type) 1.0;
     }
     return result;
   };
 };
+
+template<class Type>
+struct get_cov_beta_vector {
+
+  matrix<Type> X;
+  int n_subjects;
+  int n_visits;
+  vector<int> subject_inds;
+  vector<int> subject_n_visits;
+  vector<int> visits_zero;
+
+  // need explicit constructor.
+  get_cov_beta_vector(const matrix<Type>& X_, const int& n_subjects_, const int& n_visits_,
+                      const vector<int>& subject_inds_, const vector<int>& subject_n_visits_,
+                      const vector<int>& visits_zero_) :
+    X(X_), n_subjects(n_subjects_), n_visits(n_visits_), subject_inds(subject_inds_),
+    subject_n_visits(subject_n_visits_), visits_zero(visits_zero_) {}
+
+  vector<Type> operator()(vector<Type> theta) {
+
+    // The visits covariance matrix and corresponding precision.
+    covariance_fun f;
+    matrix<Type> cov_mat = f(theta);
+
+    // Now calculate the precision matrix of beta.
+    int dim_beta = X.cols();
+    matrix<Type> beta_prec_mat = matrix<Type>::Zero(dim_beta, dim_beta);
+
+    for (int i = 0; i < n_subjects; i++) {
+      // Going through all subjects, we add X_i^T * Sigma^-1 * X_i to beta_prec_mat.
+      int start_i = subject_inds(i);
+      int n_visits_i = subject_n_visits(i);
+      vector<int> visits_i = visits_zero.segment(start_i, n_visits_i);
+      get_select_matrix g;
+      matrix<Type> select_visits_i = g(visits_i, n_visits, cov_mat);
+      matrix<Type> this_cov_mat = select_visits_i.transpose() * cov_mat * select_visits_i;
+      matrix<Type> this_prec_mat = this_cov_mat.inverse();
+      matrix<Type> X_i = X.block(start_i, 0, n_visits_i, X.cols());
+      matrix<Type> this_contribution = X_i.transpose() * this_prec_mat * X_i;
+      beta_prec_mat += this_contribution;
+    }
+
+    // Invert that to get the covariance matrix.
+    matrix<Type> beta_cov_mat = beta_prec_mat.inverse();
+    vector<Type> beta_cov_mat_vector = vector<Type>::Zero(beta_cov_mat.rows() * beta_cov_mat.cols());
+    int i = 0;
+    for (int j = 0; j < beta_cov_mat.cols(); ++j) {
+      beta_cov_mat_vector.segment(i, beta_cov_mat.rows()) = beta_cov_mat.col(j);
+      i += beta_cov_mat.rows();
+    }
+    return beta_cov_mat_vector;
+  }
+};
+
 
 template<class Type>
 Type objective_function<Type>::operator() ()
@@ -123,33 +177,14 @@ Type objective_function<Type>::operator() ()
     }
 
   } else if (select == 2)  {
-    // 2: Calculate covariance matrix for beta.
+    // 2: Calculate covariance matrix for beta as a vector.
 
-    // The visits covariance matrix and corresponding precision.
-    covariance_fun f;
-    matrix<Type> cov_mat = f(theta);
+    get_cov_beta_vector<Type> g(X, n_subjects, n_visits, subject_inds, subject_n_visits, visits_zero);
+    vector<Type> beta_cov_mat_vector = g(theta);
+    REPORT(beta_cov_mat_vector);
 
-    // Now calculate the precision matrix of beta.
-    int dim_beta = X.cols();
-    matrix<Type> beta_prec_mat = matrix<Type>::Zero(dim_beta, dim_beta);
-
-    for (int i = 0; i < n_subjects; i++) {
-      // Going through all subjects, we add X_i^T * Sigma^-1 * X_i to beta_prec_mat.
-      int start_i = subject_inds(i);
-      int n_visits_i = subject_n_visits(i);
-      vector<int> visits_i = visits_zero.segment(start_i, n_visits_i);
-      get_select_matrix g;
-      matrix<Type> select_visits_i = g(visits_i, n_visits, cov_mat);
-      matrix<Type> this_cov_mat = select_visits_i.transpose() * cov_mat * select_visits_i;
-      matrix<Type> this_prec_mat = this_cov_mat.inverse();
-      matrix<Type> X_i = X.block(start_i, 0, n_visits_i, X.cols());
-      matrix<Type> this_contribution = X_i.transpose() * this_prec_mat * X_i;
-      beta_prec_mat += this_contribution;
-    }
-
-    // Invert that to get the covariance matrix.
-    matrix<Type> beta_cov_mat = beta_prec_mat.inverse();
-    REPORT(beta_cov_mat);
+    // matrix<Type> beta_cov_mat_jacobian = autodiff::jacobian(g, theta);
+    // REPORT(beta_cov_mat_jacobian);
 
   } else {
     // Else: Error.

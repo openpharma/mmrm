@@ -336,13 +336,71 @@ L <- c(1, rep(0, 10)) # get the intercept only.
 (df_intercept <- get_df(tmb_object, tmb_fit, L))
 ```
 
-So we get around 219 d.f. here which is not completely off anymore, which
-is nice, but still pretty far away from the 171 that we expect.
+So we get around 219 d.f. here which is not completely off anymore
+
+### SAS calculations
+
+Let's run the SAS code, I think the difference is that before we had visit 4 as
+reference and now it is visit 1. That changes the intercept estimate including
+its d.f.:
+
+```{r results = 'hide', eval = FALSE}
+sascode <- list(
+  # "show" = "
+  #   PROC CONTENTS DATA = ana.dat;
+  #   RUN;
+  # "
+  "test" = "
+    PROC MIXED DATA = ana.dat cl method=reml;
+      CLASS RACE(ref = 'Asian') AVISIT(ref = 'VIS1') SEX(ref = 'Male') ARMCD(ref = 'PBO') USUBJID;
+      MODEL FEV1 = ARMCD AVISIT ARMCD*AVISIT RACE SEX / ddfm=satterthwaite solution chisq;
+      REPEATED AVISIT / subject=USUBJID type=un r rcorr;
+    RUN;
+      "
+)
+result <- r2stream::bee_sas(data = list("dat" = df), sascode = sascode)
+result$test$sas_log
+writeLines(result$test$sas_out, con = "sas_log.txt")
+```
+
+So from this we get the following results:
+
+```{r}
+sas_results <- data.frame(
+  row.names = c(
+    "(Intercept)",
+    "ARMCDTRT",
+    "AVISITVIS2",
+    "AVISITVIS3",
+    "AVISITVIS4",
+    "RACEBlack or African American",
+    "RACEWhite",
+    "SEXFemale",
+    "ARMCDTRT:AVISITVIS2",
+    "ARMCDTRT:AVISITVIS3",
+    "ARMCDTRT:AVISITVIS4"
+  ),
+  estimate = c(
+    30.7774, 3.7745, 4.8396, 10.3422, 15.0537, 1.5305, 5.6436, 0.3262,
+    -0.04231, -0.6939, 0.6240
+  ),
+  stderror = c(
+    0.8865, 1.0741, 0.8016, 0.8227, 1.3129, 0.6244, 0.6656, 0.5319,
+    1.1292, 1.1876, 1.8510
+  ),
+  df = c(219, 146, 144, 156, 138, 169, 157, 166, 139, 158, 130)
+)
+```
+
+So actually the intercept estimate has (rounded) the 219 d.f. that we expect,
+nice!
 
 ### Explicit covariance matrix
 
 Now let's try to explicitly calculate the covariance matrix in C++ and return
-that when requested. We start a separate file `TMB_mmrm2.cpp` for that.
+that when requested. The idea is that this should be faster than the numeric
+Hessian calculations and in tendency also more precise.
+We start a separate file `TMB_mmrm2.cpp` for that.
 
 We can see from https://github.com/kaskr/adcomp/blob/master/tmb_syntax/check_autodiff.R
 and the corresponding https://github.com/kaskr/adcomp/blob/master/tmb_syntax/check_autodiff.cpp
@@ -351,8 +409,11 @@ can one time use this to return the negative log likelihood, and one time
 to return the covariance matrix (hopefully) - all we need to do is calling
 `MakeADFun()` again with different data.
 
+Let's also try the `TMBad` framework here to be even more precise and fast
+by integrating in C++ over `beta`.
+
 ```{r}
-compile("TMB_mmrm2.cpp")
+compile("TMB_mmrm2.cpp", framework = "TMBad")
 dyn.load(dynlib("TMB_mmrm2"))
 ```
 
@@ -380,15 +441,163 @@ And let's see what we get.
 # Note that we need to pass the full parameter vector, with beta values first
 # (obviously they don't matter here at all) and then with theta values.
 # (I guess this order comes from how it is defined in the C++ file.)
-tmb_cov_object$report(unlist(tmb_parameters))
+names(tmb_cov_object)
+tmb_cov_reported <- tmb_cov_object$report()$beta_cov_mat
 tmb_cov_object$report(c(tmb_parameters$beta, tmb_fit$par))
-
-# ls(tmb_cov_object$env)
-# tmb_cov_object$parameters
-# tmb_cov_object$fn(unlist(tmb_parameters))
-# tmb_cov_object$report(tmb_cov_object$par)
-#
-# tmb_cov_object$par
-# tmb_cov_object$gr(tmb_cov_object$par)
-# sdreport(tmb_cov_object, getJointPrecision = TRUE)
 ```
+
+Let's compare this what we got above.
+
+```{r}
+all.equal(tmb_beta_cov, tmb_cov_reported)
+```
+
+So there is a small difference there.
+
+### Numerical calculation
+
+Let's see if this matters in the numerical calculation of the Satterthwaite d.f.
+
+```{r}
+get_df_explicit_cov <- function(L) {
+  model_theta_vcov <- tmb_sdreport$cov.fixed
+  model_theta_est <- tmb_fit$par
+  get_covbeta_theta <- function(theta) {
+    tmb_cov_object$report(c(tmb_parameters$beta, theta))$beta_cov_mat
+  }
+  model_beta_vcov <- get_covbeta_theta(model_theta_est)
+  get_jac_list <- function(covbeta_fun, x_opt, ...) {
+    jac_matrix <- numDeriv::jacobian(
+      func = covbeta_fun,
+      x = x_opt,
+      ...
+    )
+    lapply(
+      seq_len(ncol(jac_matrix)), # For each variance parameter.
+      FUN = function(i) {
+        # This column contains the p x p entries:
+        jac_col <- jac_matrix[, i]
+        p <- sqrt(length(jac_col))
+        # Get p x p matrix.
+        matrix(jac_col, nrow = p, ncol = p)
+      }
+    )
+  }
+  model_jac_theta <- get_jac_list(get_covbeta_theta, model_theta_est)
+  get_gradient <- function(jac, L) {
+    vapply(
+      jac,
+      function(x) sum(L * x %*% L), # = {L' Jac L}_i
+      numeric(1L)
+    )
+  }
+  model_grad_theta <- get_gradient(model_jac_theta, L)
+  model_var_contrast <- drop(t(L) %*% model_beta_vcov %*% L)
+  model_v_numerator <- 2 * model_var_contrast^2
+  model_v_denominator <- sum(model_grad_theta * (model_theta_vcov %*% model_grad_theta))
+  model_df_contrast <- model_v_numerator / model_v_denominator
+  model_df_contrast
+}
+```
+
+Let's try it out:
+
+```{r}
+L <- c(1, rep(0, 10)) # get the intercept only.
+(df_intercept_explicit <- get_df_explicit_cov(L))
+df_intercept_explicit - df_intercept
+```
+
+Very nice is though that this calculation is way much faster than with the
+`sdreport`.
+
+Let's do this for all the coefficients now (very inefficiently but just to check
+the numbers):
+
+```{r}
+Lempty <- rep(0, ncol(X))
+all_dfs <- sapply(seq_len(ncol(X)), FUN = function(i) {
+  L <- Lempty
+  L[i] <- 1
+  get_df_explicit_cov(L)
+})
+all_dfs <- round(all_dfs)
+```
+
+So now we can compare the whole estimates with standard errors and degrees of
+freedom:
+
+```{r}
+tmb_results <- data.frame(
+  row.names = colnames(X),
+  estimate = sprintf("%.5f", tmb_beta_est[, "Estimate"]),
+  stderror = sprintf("%.4f", sqrt(diag(tmb_cov_reported))),
+  df = all_dfs
+)
+tmb_results
+sas_results
+```
+
+So this is very nice.
+
+### Jacobian calculation in C++
+
+Finally let's try to do the Jacobian calculation in C++, just because it would
+be even faster and accurate, not because we really need it (as the results above
+using numeric Jacobian are already very good).
+We start a separate file `TMB_mmrm3.cpp` for that.
+
+Starting point is the example at https://kaskr.github.io/adcomp/namespaceautodiff.html#aafec6d83cf272ad8af0c578e9bb91091
+We see that the function where we take the Jacobian from must be in vector form.
+So in our case we first need to store the covariance matrix in a vector shape
+and also put it in a function object.
+There we learn that we can have additional data passed to the function object
+by adding them as members of the class and creating a corresponding constructor
+to pass them in.
+
+Finally we can apply the Jacobian calculation. Unfortunately we run into
+type mismatches there which don't seem trivial to solve. In any case, this would
+be more or less the way how to do it if we really want that.
+
+```{r}
+compile("TMB_mmrm3.cpp")
+# , framework = "TMBad")
+dyn.load(dynlib("TMB_mmrm3"))
+```
+
+Now we construct the function object.
+
+```{r}
+tmb_data_select_cov <- tmb_data
+tmb_data_select_cov$select <- 2L
+
+tmb_parameters_cov <- tmb_parameters
+tmb_parameters_cov$theta <- tmb_fit$par
+
+tmb_jacobian_object <- MakeADFun(
+  data = tmb_data_select_cov,
+  parameters = tmb_parameters_cov,
+  random = "beta",
+  DLL = "TMB_mmrm3",
+  silent = TRUE
+)
+```
+
+And let's see what we get.
+
+```{r}
+tmb_jacobian_reported <- tmb_jacobian_object$report()
+# identical(tmb_jacobian_reported$beta_cov_mat_vector, as.numeric(tmb_cov_reported))
+```
+
+## Steps towards inclusion in package
+
+To do:
+
+- [ ] Come up with strategy how to implement in an at least slightly encapsulated way
+  the different covariance structures (unstructured, AR1, Toeplitz, compound symmetry,
+  antedependence) so that the other code does not need to be duplicated.
+- [ ] Start including TMB code in the package, see https://stackoverflow.com/questions/48627069/guidelines-for-including-tmb-c-code-in-an-r-package and
+  start to implement the fitting function that we need first.
+- [ ] Scope what we need to add to our package extra now that we don't have the `glmmTMB` goodies. E.g.
+  helper methods etc.
