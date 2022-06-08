@@ -10,6 +10,7 @@ repos:
         additional_dependencies:
           - checkmate
           - glmmTMB
+          - pkgbuild
       - id: use-tidy-description
       - id: spell-check
         exclude: >
@@ -45,7 +46,7 @@ repos:
           )$
         additional_dependencies:
           - checkmate
-          - glmmTMB
+          - TMB
       - id: readme-rmd-rendered
       - id: parsable-R
       - id: no-browser-statement

@@ -10,7 +10,8 @@ Authors@R: c(
     )
 Description: Mixed models for repeated measures (MMRM) are a popular
     choice for individually randomized trials with longitudinal continuous
-    outcomes. This package implements MMRM based on the package `glmmTMB`.
+    outcomes. This package implements MMRM based on Template Model Builder
+    (`TMB`).
 License: Apache License 2.0 | file LICENSE
 URL: https://github.com/openpharma/mmrm/
 BugReports: https://github.com/openpharma/mmrm/issues
@@ -19,12 +20,15 @@ Depends:
 Imports:
     checkmate (>= 2.1),
     lifecycle,
-    glmmTMB (>= 1.1.3),
+    TMB (>= 1.9.0),
     stats,
     parallel
+LinkingTo: TMB, RcppEigen
 Suggests:
     knitr,
     testthat (>= 3.0.0)
+SystemRequirements: GNU make
+NeedsCompilation: yes
 VignetteBuilder:
     knitr
 biocViews:
