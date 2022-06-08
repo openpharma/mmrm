@@ -25,14 +25,16 @@ the fitted glmmTMB object, with additional attributes containing warnings,
 messages, errors, optimizer used and convergence status.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
 This function helps to fit a \code{glmmTMB} model with a single optimizer, while capturing messages and warnings.
 }
 \examples{
 \dontrun{
 mod_fit <- fit_single_optimizer(
-formula = h_build_formula(vs),
-data = dat,
-optimizer = "BFGS"
+  formula = h_build_formula(vs),
+  data = dat,
+  optimizer = "BFGS"
 )
 attr(mod_fit, "converged")
 }

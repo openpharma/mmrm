@@ -4,7 +4,7 @@
 #'
 #' @param vars (`list`)\cr variables to use in the model.
 #' @param cor_struct (`string`)\cr specify the covariance structure to use.
-#' @return formula for model
+#' @return Formula to use in [mmrm_tmb()].
 #' @export
 #'
 #' @examples
@@ -19,7 +19,8 @@ h_build_formula <- function(vars,
                               "unstructured",
                               "toeplitz",
                               "auto-regressive",
-                              "compound-symmetry"
+                              "compound-symmetry",
+                              "ante-dependence"
                             )) {
   assert_list(vars)
   cor_struct <- match.arg(cor_struct)
@@ -40,10 +41,11 @@ h_build_formula <- function(vars,
     "unstructured" = "us",
     "toeplitz" = "toep",
     "auto-regressive" = "ar1",
-    "compound-symmetry" = "cs"
+    "compound-symmetry" = "cs",
+    "ante-dependence" = "ad"
   )
   random_effects_part <- paste0(
-    random_effects_fun, "(0 + ", vars$visit, " | ", vars$id, ")"
+    random_effects_fun, "(", vars$visit, " | ", vars$id, ")"
   )
   rhs_formula <- paste(
     arm_visit_part,

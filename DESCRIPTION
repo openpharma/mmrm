@@ -25,6 +25,7 @@ Imports:
     parallel
 LinkingTo: TMB, RcppEigen
 Suggests:
+    glmmTMB,
     knitr,
     testthat (>= 3.0.0)
 SystemRequirements: GNU make
@@ -49,3 +50,4 @@ Collate:
     'mmrm-package.R'
     'output.R'
     'parallel.R'
+    'tmb.R'

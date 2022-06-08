@@ -1,5 +1,7 @@
 #' Fitting `glmmTMB` Model
 #'
+#' @description `r lifecycle::badge("experimental")`
+#'
 #' This function helps to fit a `glmmTMB` model with a single optimizer, while capturing messages and warnings.
 #'
 #' @param formula (`formula`)\cr the `glmmTMB` formula.
@@ -14,9 +16,9 @@
 #' @examples
 #' \dontrun{
 #' mod_fit <- fit_single_optimizer(
-#' formula = h_build_formula(vs),
-#' data = dat,
-#' optimizer = "BFGS"
+#'   formula = h_build_formula(vs),
+#'   data = dat,
+#'   optimizer = "BFGS"
 #' )
 #' attr(mod_fit, "converged")
 #' }
@@ -28,25 +30,20 @@ fit_single_optimizer <- function(formula,
   assert_data_frame(data)
   assert_list(start, null.ok = TRUE)
   optimizer <- match.arg(optimizer)
-  control <- glmmTMB::glmmTMBControl(
+  control <- h_mmrm_tmb_control(
     optimizer = if (optimizer == "nlminb") stats::nlminb else stats::optim,
-    optArgs = if (optimizer == "nlminb") list() else list(method = optimizer),
+    optimizer_args = if (optimizer == "nlminb") list(iter.max = 300, eval.max = 400) else list(method = optimizer),
     parallel = 1L
   )
   quiet_fit <- h_record_all_output(
-    glmmTMB::glmmTMB(
+    mmrm_tmb(
       formula = formula,
       data = data,
-      dispformula = ~0,
-      REML = TRUE,
       start = start,
       control = control
     ),
     remove = list(
-      warnings = c(
-        "OpenMP not supported.",
-        "'giveCsparse' has been deprecated; setting 'repr = \"T\"' for you"
-      )
+      warnings = c()
     )
   )
   converged <- (length(quiet_fit$warnings) == 0L) &&
