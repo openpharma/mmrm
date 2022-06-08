@@ -10,22 +10,34 @@ mmrm_tmb(formula, data, start = NULL, control = h_mmrm_tmb_control())
 \item{formula}{(\code{formula})\cr model formula with exactly one special term
 specifying the visits within subjects, see details.}
 
-\item{data}{(\code{data.frame})\cr}
+\item{data}{(\code{data.frame})\cr input data containing the variables used
+in \code{formula}.}
 
-\item{start}{(\code{list} or \code{NULL})\cr}
+\item{start}{(\code{numeric} or \code{NULL})\cr optional start values for variance
+parameters.}
 
-\item{control}{(\code{mmrm_tmb_control})\cr}
+\item{control}{(\code{mmrm_tmb_control})\cr list of control options produced
+by \code{\link[=h_mmrm_tmb_control]{h_mmrm_tmb_control()}}.}
 }
 \value{
-
+List of class \code{mmrm_tmb} with:
+\itemize{
+\item \code{object}: The \code{TMB} object.
+\item \code{fit}: The fit result.
+}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
 \details{
 The \code{formula} typically looks like:
-\code{AVAL ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)}
+\code{FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)}
 so specifies response and covariates as usual, and exactly one special term
 defines which correlation structure is used and what are the visit and
 subject variables.
+}
+\examples{
+formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
+data <- fev_data
+result <- mmrm_tmb(formula, data)
 }

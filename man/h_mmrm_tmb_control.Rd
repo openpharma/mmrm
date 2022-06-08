@@ -2,7 +2,7 @@
 % Please edit documentation in R/tmb.R
 \name{h_mmrm_tmb_control}
 \alias{h_mmrm_tmb_control}
-\title{Control parameters for \code{TMB} fit}
+\title{Control Parameters for \code{TMB} Fit}
 \usage{
 h_mmrm_tmb_control(
   optimizer = stats::nlminb,
@@ -18,7 +18,7 @@ h_mmrm_tmb_control(
 \item{optimizer_control}{(\code{list})\cr specific \code{control} argument for optimizer.}
 }
 \value{
-List with the control parameters
+List of class \code{mmrm_tmb_control} with the control parameters.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
