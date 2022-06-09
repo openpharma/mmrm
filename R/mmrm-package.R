@@ -4,7 +4,7 @@
 #'
 "_PACKAGE"
 
-#' @useDynLib mmrm
+#' @useDynLib mmrm, .registration = TRUE
 #'
 #' @import checkmate
 #' @importFrom lifecycle deprecated

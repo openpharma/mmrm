@@ -17,6 +17,7 @@ repos:
           (?x)^(
           data/.*|
           design/.*|
+          src/.*|
           (.*/|)DESCRIPTION|
           (.*/|)\.Rprofile|
           (.*/|)\.Renviron|

@@ -23,11 +23,12 @@ Imports:
     TMB (>= 1.9.0),
     stats,
     parallel
-LinkingTo: TMB, RcppEigen
+LinkingTo: TMB, RcppEigen, testthat
 Suggests:
     glmmTMB,
     knitr,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    xml2
 SystemRequirements: GNU make
 NeedsCompilation: yes
 VignetteBuilder:
@@ -42,6 +43,7 @@ Config/testthat/edition: 3
 Collate:
     'utils.R'
     'assert_data.R'
+    'catch-routine-registration.R'
     'covariance.R'
     'data.R'
     'fit.R'
