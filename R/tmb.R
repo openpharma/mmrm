@@ -48,8 +48,8 @@ h_mmrm_tmb_control <- function(optimizer = stats::nlminb,
 #'
 #' @examples
 #' formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
-#' h_process_mmrm_tmb_formula(formula)
-h_process_mmrm_tmb_formula <- function(formula) {
+#' h_mmrm_tmb_formula_parts(formula)
+h_mmrm_tmb_formula_parts <- function(formula) {
   assert_formula(formula)
   # Ensure that there is left and right hand side in the formula.
   assert_true(identical(length(formula), 3L))
@@ -96,7 +96,7 @@ h_process_mmrm_tmb_formula <- function(formula) {
 #' @description `r lifecycle::badge("experimental")`
 #'
 #' @param formula_parts (`mmrm_tmb_formula_parts`)\cr list with formula parts
-#'   from [h_process_mmrm_tmb_formula()].
+#'   from [h_mmrm_tmb_formula_parts()].
 #' @param data (`data.frame`)\cr which contains variables used in `formula_parts`.
 #'
 #' @return List of class `mmrm_tmb_data` with elements:
@@ -115,7 +115,7 @@ h_process_mmrm_tmb_formula <- function(formula) {
 #'
 #' @examples
 #' formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
-#' formula_parts <- h_process_mmrm_tmb_formula(formula)
+#' formula_parts <- h_mmrm_tmb_formula_parts(formula)
 #' tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data)
 h_mmrm_tmb_data <- function(formula_parts,
                             data) {
@@ -158,7 +158,7 @@ h_mmrm_tmb_data <- function(formula_parts,
 #' @description `r lifecycle::badge("experimental")`
 #'
 #' @param formula_parts (`mmrm_tmb_formula_parts`)\cr produced by
-#'  [h_process_mmrm_tmb_formula()].
+#'  [h_mmrm_tmb_formula_parts()].
 #' @param tmb_data (`mmrm_tmb_data`)\cr produced by [h_mmrm_tmb_data()].
 #' @param start_values (`numeric` or `NULL`)\cr optional start values for variance
 #'   parameters.
@@ -169,7 +169,7 @@ h_mmrm_tmb_data <- function(formula_parts,
 #'
 #' @examples
 #' formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
-#' formula_parts <- h_process_mmrm_tmb_formula(formula)
+#' formula_parts <- h_mmrm_tmb_formula_parts(formula)
 #' tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data)
 #' pars <- h_mmrm_tmb_parameters(formula_parts, tmb_data, NULL)
 h_mmrm_tmb_parameters <- function(formula_parts,
@@ -227,7 +227,7 @@ mmrm_tmb <- function(formula,
                      data,
                      start = NULL,
                      control = h_mmrm_tmb_control()) {
-  formula_parts <- h_process_mmrm_tmb_formula(formula)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula)
   tmb_data <- h_mmrm_tmb_data(formula_parts, data)
   tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start)
   assert_class(control, "mmrm_tmb_control")

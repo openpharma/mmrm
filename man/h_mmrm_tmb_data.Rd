@@ -8,7 +8,7 @@ h_mmrm_tmb_data(formula_parts, data)
 }
 \arguments{
 \item{formula_parts}{(\code{mmrm_tmb_formula_parts})\cr list with formula parts
-from \code{\link[=h_process_mmrm_tmb_formula]{h_process_mmrm_tmb_formula()}}.}
+from \code{\link[=h_mmrm_tmb_formula_parts]{h_mmrm_tmb_formula_parts()}}.}
 
 \item{data}{(\code{data.frame})\cr which contains variables used in \code{formula_parts}.}
 }
@@ -32,6 +32,6 @@ observed visits for each subjects. So the sum of this vector equals \code{n}.
 }
 \examples{
 formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
-formula_parts <- h_process_mmrm_tmb_formula(formula)
+formula_parts <- h_mmrm_tmb_formula_parts(formula)
 tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data)
 }

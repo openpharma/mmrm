@@ -8,7 +8,7 @@ h_mmrm_tmb_parameters(formula_parts, tmb_data, start_values)
 }
 \arguments{
 \item{formula_parts}{(\code{mmrm_tmb_formula_parts})\cr produced by
-\code{\link[=h_process_mmrm_tmb_formula]{h_process_mmrm_tmb_formula()}}.}
+\code{\link[=h_mmrm_tmb_formula_parts]{h_mmrm_tmb_formula_parts()}}.}
 
 \item{tmb_data}{(\code{mmrm_tmb_data})\cr produced by \code{\link[=h_mmrm_tmb_data]{h_mmrm_tmb_data()}}.}
 
@@ -24,7 +24,7 @@ parameters.
 }
 \examples{
 formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
-formula_parts <- h_process_mmrm_tmb_formula(formula)
+formula_parts <- h_mmrm_tmb_formula_parts(formula)
 tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data)
 pars <- h_mmrm_tmb_parameters(formula_parts, tmb_data, NULL)
 }
