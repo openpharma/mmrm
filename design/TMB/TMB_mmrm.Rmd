@@ -594,10 +594,33 @@ tmb_jacobian_reported <- tmb_jacobian_object$report()
 
 To do:
 
-- [ ] Come up with strategy how to implement in an at least slightly encapsulated way
+- [x] Come up with strategy how to implement in an at least slightly encapsulated way
   the different covariance structures (unstructured, AR1, Toeplitz, compound symmetry,
   antedependence) so that the other code does not need to be duplicated.
-- [ ] Start including TMB code in the package, see https://stackoverflow.com/questions/48627069/guidelines-for-including-tmb-c-code-in-an-r-package and
+- [x] Start including TMB code in the package, see https://stackoverflow.com/questions/48627069/guidelines-for-including-tmb-c-code-in-an-r-package and
   start to implement the fitting function that we need first.
 - [ ] Scope what we need to add to our package extra now that we don't have the `glmmTMB` goodies. E.g.
   helper methods etc.
+
+# Detail Notes
+
+Note: It is interesting that we cannot recover the Cholesky factor
+of a subset of Sigma from the original Cholesky factor of Sigma.
+Example:
+
+```{r}
+S <- matrix(c(1, 0, 0, 0, 0, 1), nrow = 3, ncol = 2)
+set.seed(123)
+Sigma <- crossprod(matrix(rnorm(30), 10, 3))
+L <- t(chol(Sigma))
+SigmaSel <- t(S) %*% Sigma %*% S
+Lsel <- t(chol(SigmaSel))
+L
+Lsel
+Ltilde <- t(S) %*% L %*% S
+crossprod(Ltilde)
+crossprod(Lsel)
+```
+
+so we see that `Ltilde` is unfortunately not the Cholesky factor
+of `SigmaSel`.

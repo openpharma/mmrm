@@ -25,6 +25,7 @@ covariance matrix.
 indices for each subject.
 \item \code{subject_n_visits}: length \code{n_subjects} \code{integer} containing the number of
 observed visits for each subjects. So the sum of this vector equals \code{n}.
+\item \code{corr_type}: \code{int} specifying the correlation type.
 }
 }
 \description{

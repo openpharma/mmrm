@@ -110,6 +110,7 @@ h_mmrm_tmb_formula_parts <- function(formula) {
 #'     indices for each subject.
 #' - `subject_n_visits`: length `n_subjects` `integer` containing the number of
 #'     observed visits for each subjects. So the sum of this vector equals `n`.
+#' - `corr_type`: `int` specifying the correlation type.
 #'
 #' @export
 #'
@@ -139,6 +140,15 @@ h_mmrm_tmb_data <- function(formula_parts,
   subject_n_visits <- c(utils::tail(subject_zero_inds, -1L), nrow(full_frame)) - subject_zero_inds
   assert_true(identical(subject_n_visits, as.integer(table(full_frame[[formula_parts$subject_var]]))))
 
+  corr_type <- as.integer(switch(
+    formula_parts$corr_type,
+    us = 1,
+    toep = 2,
+    ar1 = 3,
+    cs = 4,
+    ad = 5
+  ))
+
   structure(
     list(
       x_matrix = x_matrix,
@@ -147,7 +157,8 @@ h_mmrm_tmb_data <- function(formula_parts,
       n_visits = n_visits,
       n_subjects = n_subjects,
       subject_inds = subject_zero_inds,
-      subject_n_visits = subject_n_visits
+      subject_n_visits = subject_n_visits,
+      corr_type = corr_type
     ),
     class = "mmrm_tmb_data"
   )
