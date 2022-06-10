@@ -9,7 +9,9 @@
 
 // All test files should include the <testthat.h>
 // header file.
-#include <testthat.h>
+#include "testthat-helpers.hpp"
+
+#include "correlation.hpp"
 
 // Normally this would be a function from your package's
 // compiled library -- you might instead just include a header
@@ -32,4 +34,18 @@ context("Sample unit tests") {
     expect_true(twoPlusTwo() == 4);
   }
 
+}
+
+context("get_unstructured") {
+  test_that("get_unstructured produces expected result") {
+    vector<double> theta {{log(1.0), log(2.0), 3.0}};
+    int n = 2;
+    matrix<double> result = get_unstructured(theta, n);
+    expect_true(result.rows() == 2);
+    expect_true(result.cols() == 2);
+    expect_equal(result(0, 0), 1.0);
+    expect_equal(result(0, 1), 0.0);
+    expect_equal(result(1, 0), 6.0);
+    expect_equal(result(1, 1), 2.0);
+  }
 }

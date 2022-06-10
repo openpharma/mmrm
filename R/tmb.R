@@ -156,7 +156,7 @@ h_mmrm_tmb_data <- function(formula_parts,
       visits_zero_inds = visits_zero_inds,
       n_visits = n_visits,
       n_subjects = n_subjects,
-      subject_inds = subject_zero_inds,
+      subject_zero_inds = subject_zero_inds,
       subject_n_visits = subject_n_visits,
       corr_type = corr_type
     ),
@@ -233,7 +233,7 @@ h_mmrm_tmb_parameters <- function(formula_parts,
 #' @examples
 #' formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
 #' data <- fev_data
-#' result <- mmrm_tmb(formula, data)
+#' system.time(result <- mmrm_tmb(formula, data))
 mmrm_tmb <- function(formula,
                      data,
                      start = NULL,
@@ -267,4 +267,11 @@ mmrm_tmb <- function(formula,
     ),
     class = "mmrm_tmb"
   )
+}
+
+#' @export
+debugit <- function() {
+  library(TMB)
+  testfile <- system.file("mmrm.R", package = "mmrm")
+  TMB::gdbsource(testfile, interactive = TRUE)
 }

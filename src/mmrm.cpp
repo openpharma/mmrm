@@ -1,10 +1,4 @@
-#ifndef TMB_INCLUDED_
-#define TMB_INCLUDED_
-#include <TMB.hpp>
-#endif
-
 #include "correlation.hpp"
-#include "leastsquares.hpp"
 
 // Definition:
 //
@@ -14,7 +8,7 @@
 //
 // and for the epsilon_i's :
 // epsilon_i ~iid N(0, Sigma) where Sigma is an covariance matrix
-// parametrized by a vector theta.
+// parametrized by a vector theta
 //
 // Note: This is a special generalized least squares model
 // Y = X * beta + epsilon,
@@ -54,7 +48,7 @@ Type objective_function<Type>::operator() ()
   Type sum_log_det = 0.0;
 
   // Dynamically create the correlation object.
-  Correlation<Type>* corr = get_correlation<Type>(theta, corr_type, n_visits);
+  matrix<Type> covariance_lower_chol = get_covariance_lower_chol<Type>(theta, corr_type, n_visits);
 
   // Go through all subjects and calculate quantities initialized above.
   for (int i = 0; i < n_subjects; i++) {
@@ -68,15 +62,14 @@ Type objective_function<Type>::operator() ()
       // Obtain the zero-based visits for this subject.
       vector<int> visits_i = visits_zero_inds.segment(start_i, n_visits_i);
       matrix<Type> sel_mat = get_select_matrix<Type>(visits_i, n_visits);
-      matrix<Type> Ltildei = sel_mat.transpose() * corr->covariance_lower_chol;
+      matrix<Type> Ltildei = sel_mat.transpose() * covariance_lower_chol;
       matrix<Type> cov_i = Ltildei * Ltildei.transpose();
       Eigen::LLT<Eigen::Matrix<Type,Eigen::Dynamic,Eigen::Dynamic> > cov_i_chol(cov_i);
       Li = cov_i_chol.matrixL();
     } else {
-      Li = corr->covariance_lower_chol;
+      Li = covariance_lower_chol;
     }
     matrix<Type> LiInverse = Li.inverse();  // Todo: improve this to use Cholesky etc.
-    // Ensure we delete the correlation object.
 
     // Calculate scaled design matrix and response vector for this subject.
     matrix<Type> Xi = x_matrix.block(start_i, 0, n_visits_i, x_matrix.cols());
@@ -111,11 +104,8 @@ Type objective_function<Type>::operator() ()
   REPORT(beta);
   REPORT(XtWX);
   REPORT(XtWXinv);
-  matrix<Type> cov_report = corr->covariance_matrix;
+  matrix<Type> cov_report = covariance_lower_chol * covariance_lower_chol.transpose();
   REPORT(cov_report);
-
-  // Ensure corr object deleted.
-  delete corr;
 
   return neg_log_lik;
 }

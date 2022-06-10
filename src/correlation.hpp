@@ -1,49 +1,23 @@
-#ifndef TMB_INCLUDED_
-#define TMB_INCLUDED_
-#include <TMB.hpp>
-#endif
-
 #ifndef CORR_INCLUDED_
 #define CORR_INCLUDED_
 
-// Common interface for all correlation classes.
+#include "tmb_includes.hpp"
+
+// Unstructured covariance.
 template <class T>
-class Correlation {
-public:
-  // Virtual destructor.
-  virtual ~Correlation() {};
-
-  // Virtual methods.
-  virtual T neg_log_dens(const vector<T>& x, const vector<int>& visits) = 0;
-
-  int n_visits;                        // Number of visits, i.e. dimension of covariance.
-  matrix<T> covariance_matrix;         // Covariance matrix.
-  matrix<T> covariance_lower_chol;     // Lower triangular Cholesky factor of covariance.
-};
-
-// Unstructured correlation class.
-template <class T>
-class Unstructured : public Correlation<T> {
-public:
-  // Constructor.
-  Unstructured(const vector<T>& theta, int n_visits_) {
-    this->n_visits = n_visits_;
-
-    vector<T> sd_values = exp(theta.head(this->n_visits));
-    vector<T> lower_tri_chol_values = theta.tail(theta.size() - this->n_visits);
-    density::UNSTRUCTURED_CORR_t<T> unscaled_neg_log_dmvnorm(lower_tri_chol_values);
-    matrix<T> corr_mat = unscaled_neg_log_dmvnorm.cov();
-    matrix<T> sd_mat = Eigen::DiagonalMatrix<T, Eigen::Dynamic>(this->n_visits);
-    sd_mat.diagonal() = sd_values;
-    this->covariance_matrix = sd_mat * corr_mat * sd_mat;
-
-    this->covariance_lower_chol = sd_mat * unscaled_neg_log_dmvnorm.L_Sigma;
+matrix<T> get_unstructured(const vector<T>& theta, int n_visits) {
+  vector<T> sd_values = exp(theta.head(n_visits));
+  vector<T> lower_tri_chol_values = theta.tail(theta.size() - n_visits);
+  matrix<T> covariance_lower_chol = matrix<T>::Zero(n_visits, n_visits);
+  int k = 0;
+  for(int i = 0; i < n_visits; i++) {
+    covariance_lower_chol(i, i) = sd_values(i);
+    for(int j = 0; j < i; j++){
+      covariance_lower_chol(i, j) = sd_values(i) * lower_tri_chol_values(k++);
+    }
   }
-
-  T neg_log_dens(const vector<T>& x, const vector<int>& visits) {
-    return 0.0;
-  }
-};
+  return covariance_lower_chol;
+}
 
 // Coding of corr_type coming from the R side.
 enum corr_type_code {
@@ -56,23 +30,26 @@ enum corr_type_code {
 
 // Creates a new correlation object dynamically.
 template <class T>
-Correlation<T>* get_correlation(const vector<T>& theta, int corr_type, int n_visits) {
-  Correlation<T>* corr;
+matrix<T> get_covariance_lower_chol(const vector<T>& theta, int corr_type, int n_visits) {
+  matrix<T> result;
   switch (corr_type) {
   case unstructured_corr:
-    corr = new Unstructured<T>(theta, n_visits);
+    result = get_unstructured<T>(theta, n_visits);
     break;
   case toeplitz_corr:
-    corr = 0;
+    // result = get_toeplitz<T>(theta, n_visits);
     break;
   case auto_regressive_corr:
-    corr = 0;
+    // result = get_auto_regressive<T>(theta, n_visits);
     break;
   case compound_symmetry_corr:
-    corr = 0;
+    // result = get_compound_symmetry<T>(theta, n_visits);
+    break;
+  case ante_dependence_corr:
+    // result = get_ante_dependence<T>(theta, n_visits);
     break;
   }
-  return corr;
+  return result;
 }
 
 template <class Type>
