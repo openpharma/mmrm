@@ -98,6 +98,8 @@ h_mmrm_tmb_formula_parts <- function(formula) {
 #' @param formula_parts (`mmrm_tmb_formula_parts`)\cr list with formula parts
 #'   from [h_mmrm_tmb_formula_parts()].
 #' @param data (`data.frame`)\cr which contains variables used in `formula_parts`.
+#' @param reml (`flag`)\cr whether restricted maximum likelihood (REML) estimation is used,
+#'   otherwise maximum likelihood (ML) is used.
 #'
 #' @return List of class `mmrm_tmb_data` with elements:
 #' - `x_matrix`: `matrix` with `n` rows and `p` columns specifying the overall design matrix.
@@ -111,15 +113,17 @@ h_mmrm_tmb_formula_parts <- function(formula) {
 #' - `subject_n_visits`: length `n_subjects` `integer` containing the number of
 #'     observed visits for each subjects. So the sum of this vector equals `n`.
 #' - `corr_type`: `int` specifying the correlation type.
+#' - `reml`: `int` specifying whether REML estimation is used (1), otherwise ML (0).
 #'
 #' @export
 #'
 #' @examples
 #' formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
 #' formula_parts <- h_mmrm_tmb_formula_parts(formula)
-#' tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data)
+#' tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = FALSE)
 h_mmrm_tmb_data <- function(formula_parts,
-                            data) {
+                            data,
+                            reml) {
   assert_class(formula_parts, "mmrm_tmb_formula_parts")
   assert_data_frame(data)
   assert_names(
@@ -128,6 +132,7 @@ h_mmrm_tmb_data <- function(formula_parts,
   )
   assert_factor(data[[formula_parts$visit_var]])
   assert_factor(data[[formula_parts$subject_var]])
+  assert_flag(reml)
 
   data <- data[order(data[[formula_parts$subject_var]], data[[formula_parts$visit_var]]), ]
   full_frame <- droplevels(stats::model.frame(formula_parts$full_formula, data = data))
@@ -158,7 +163,8 @@ h_mmrm_tmb_data <- function(formula_parts,
       n_subjects = n_subjects,
       subject_zero_inds = subject_zero_inds,
       subject_n_visits = subject_n_visits,
-      corr_type = corr_type
+      corr_type = corr_type,
+      reml = as.integer(reml)
     ),
     class = "mmrm_tmb_data"
   )
@@ -213,6 +219,7 @@ h_mmrm_tmb_parameters <- function(formula_parts,
 #'   specifying the visits within subjects, see details.
 #' @param data (`data.frame`)\cr input data containing the variables used
 #'   in `formula`.
+#' @inheritParams h_mmrm_tmb_data
 #' @param start (`numeric` or `NULL`)\cr optional start values for variance
 #'   parameters.
 #' @param control (`mmrm_tmb_control`)\cr list of control options produced
@@ -236,10 +243,11 @@ h_mmrm_tmb_parameters <- function(formula_parts,
 #' system.time(result <- mmrm_tmb(formula, data))
 mmrm_tmb <- function(formula,
                      data,
+                     reml = TRUE,
                      start = NULL,
                      control = h_mmrm_tmb_control()) {
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
-  tmb_data <- h_mmrm_tmb_data(formula_parts, data)
+  tmb_data <- h_mmrm_tmb_data(formula_parts, data, reml)
   tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start)
   assert_class(control, "mmrm_tmb_control")
 

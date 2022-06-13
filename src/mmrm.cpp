@@ -32,6 +32,7 @@ Type objective_function<Type>::operator() ()
   DATA_IVECTOR(subject_zero_inds); // Starting indices for each subject (0-based) (length n_subjects).
   DATA_IVECTOR(subject_n_visits);  // Number of observed visits for each subject (length n_subjects).
   DATA_INTEGER(corr_type);         // Correlation type.
+  DATA_INTEGER(reml);              // REML (1)? Otherwise ML (0).
 
   // Read parameters from R.
   PARAMETER_VECTOR(theta);         // Covariance parameters (length k). Contents depend on correlation type.
@@ -90,20 +91,37 @@ Type objective_function<Type>::operator() ()
   }
 
   // Solve for beta.
-  matrix<Type> XtWXinv = XtWX.inverse();
-  vector<Type> beta = XtWXinv * XtWY;
+  Eigen::LDLT<Eigen::Matrix<Type,Eigen::Dynamic,Eigen::Dynamic> > XtWX_decomposition(XtWX);
+  matrix<Type> XtWY_mat = XtWY.matrix();
+  matrix<Type> beta_mat = XtWX_decomposition.solve(XtWY_mat);
+  vector<Type> beta = beta_mat.col(0);
 
   // Define scaled residuals.
-  vector<Type> epsilonTilde = y_vec_tilde - x_mat_tilde * beta;
+  vector<Type> x_mat_tilde_beta = x_mat_tilde * beta;
+  vector<Type> epsilonTilde = y_vec_tilde - x_mat_tilde_beta;
 
   // Calculate negative log-likelihood.
-  Type neg_log_lik = epsilonTilde.size() / 2.0 * log(2.0 * M_PI) +
-    sum_log_det + 0.5 * (epsilonTilde * epsilonTilde).sum();
+  Type neg_log_lik;
+
+  if (reml == 1) {
+    // Use restricted maximum likelihood.
+    vector<Type> XtWX_D = XtWX_decomposition.vectorD();
+    Type XtWX_log_det = XtWX_D.log().sum();
+    neg_log_lik = (x_matrix.rows() - x_matrix.cols()) / 2.0 * log(2.0 * M_PI) +
+      sum_log_det +
+      XtWX_log_det / 2.0 +
+      0.5 * (y_vec_tilde * y_vec_tilde).sum() - 0.5 * (x_mat_tilde_beta * x_mat_tilde_beta).sum();
+  } else {
+    // Use maximum likelihood.
+    neg_log_lik = x_matrix.rows() / 2.0 * log(2.0 * M_PI) +
+      sum_log_det +
+      0.5 * (epsilonTilde * epsilonTilde).sum();
+  }
 
   // Report quantities to R.
   REPORT(beta);
   REPORT(XtWX);
-  REPORT(XtWXinv);
+  // REPORT(XtWXinv);
   matrix<Type> cov_report = covariance_lower_chol * covariance_lower_chol.transpose();
   REPORT(cov_report);
 

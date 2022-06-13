@@ -4,13 +4,16 @@
 \alias{h_mmrm_tmb_data}
 \title{Data for \code{TMB} Fit}
 \usage{
-h_mmrm_tmb_data(formula_parts, data)
+h_mmrm_tmb_data(formula_parts, data, reml)
 }
 \arguments{
 \item{formula_parts}{(\code{mmrm_tmb_formula_parts})\cr list with formula parts
 from \code{\link[=h_mmrm_tmb_formula_parts]{h_mmrm_tmb_formula_parts()}}.}
 
 \item{data}{(\code{data.frame})\cr which contains variables used in \code{formula_parts}.}
+
+\item{reml}{(\code{flag})\cr whether restricted maximum likelihood (REML) estimation is used,
+otherwise maximum likelihood (ML) is used.}
 }
 \value{
 List of class \code{mmrm_tmb_data} with elements:
@@ -26,6 +29,7 @@ indices for each subject.
 \item \code{subject_n_visits}: length \code{n_subjects} \code{integer} containing the number of
 observed visits for each subjects. So the sum of this vector equals \code{n}.
 \item \code{corr_type}: \code{int} specifying the correlation type.
+\item \code{reml}: \code{int} specifying whether REML estimation is used (1), otherwise ML (0).
 }
 }
 \description{
@@ -34,5 +38,5 @@ observed visits for each subjects. So the sum of this vector equals \code{n}.
 \examples{
 formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
 formula_parts <- h_mmrm_tmb_formula_parts(formula)
-tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data)
+tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = FALSE)
 }
