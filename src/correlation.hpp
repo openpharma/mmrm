@@ -30,7 +30,7 @@ enum corr_type_code {
 
 // Creates a new correlation object dynamically.
 template <class T>
-matrix<T> get_covariance_lower_chol(const vector<T>& theta, int corr_type, int n_visits) {
+matrix<T> get_covariance_lower_chol(const vector<T>& theta, int n_visits, int corr_type) {
   matrix<T> result;
   switch (corr_type) {
   case unstructured_corr:
@@ -52,11 +52,20 @@ matrix<T> get_covariance_lower_chol(const vector<T>& theta, int corr_type, int n
   return result;
 }
 
+// template <class Type>
+// matrix<Type> get_select_matrix(const vector<int>& visits_i, const int& n_visits) {
+//   matrix<Type> result = matrix<Type>::Zero(n_visits, visits_i.size());
+//   for (int i = 0; i < visits_i.size(); i++) {
+//     result(visits_i(i), i) = (Type) 1.0;
+//   }
+//   return result;
+// }
+
 template <class Type>
-matrix<Type> get_select_matrix(const vector<int>& visits_i, const int& n_visits) {
-  matrix<Type> result = matrix<Type>::Zero(n_visits, visits_i.size());
+Eigen::SparseMatrix<Type> get_select_matrix(const vector<int>& visits_i, const int& n_visits) {
+  Eigen::SparseMatrix<Type> result(visits_i.size(), n_visits);
   for (int i = 0; i < visits_i.size(); i++) {
-    result(visits_i(i), i) = (Type) 1.0;
+    result.insert(i, visits_i(i)) = (Type) 1.0;
   }
   return result;
 }

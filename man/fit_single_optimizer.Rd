@@ -2,39 +2,44 @@
 % Please edit documentation in R/fit.R
 \name{fit_single_optimizer}
 \alias{fit_single_optimizer}
-\title{Fitting \code{glmmTMB} Model}
+\title{Fitting an MMRM with Single Optimizer}
 \usage{
 fit_single_optimizer(
   formula,
   data,
+  reml = TRUE,
   start = NULL,
   optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb")
 )
 }
 \arguments{
-\item{formula}{(\code{formula})\cr the \code{glmmTMB} formula.}
+\item{formula}{(\code{formula})\cr the model formula, see \code{\link[=mmrm_tmb]{mmrm_tmb()}} for details.}
 
 \item{data}{(\code{data})\cr the data to be used for the model.}
 
-\item{start}{(\code{list})\cr a list of starting values.}
+\item{reml}{(\code{flag})\cr whether restricted maximum likelihood (REML) estimation is used,
+otherwise maximum likelihood (ML) is used.}
+
+\item{start}{(\code{numeric} or \code{NULL})\cr optional starting values for the variance parameters.}
 
 \item{optimizer}{(\code{character})\cr optimizer to be used to generate the model.}
 }
 \value{
-the fitted glmmTMB object, with additional attributes containing warnings,
+the fitted \code{mmrm_tmb} object, with additional attributes containing warnings,
 messages, errors, optimizer used and convergence status.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 
-This function helps to fit a \code{glmmTMB} model with a single optimizer, while capturing messages and warnings.
+This function helps to fit an MMRM using \code{TMB} with a single optimizer,
+while capturing messages and warnings.
 }
 \examples{
 \dontrun{
 mod_fit <- fit_single_optimizer(
-  formula = h_build_formula(vs),
-  data = dat,
-  optimizer = "BFGS"
+  formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data,
+  optimizer = "nlminb"
 )
 attr(mod_fit, "converged")
 }

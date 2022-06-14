@@ -7,18 +7,22 @@
 // over the m timepoints,
 //
 // and for the epsilon_i's :
-// epsilon_i ~iid N(0, Sigma) where Sigma is an covariance matrix
-// parametrized by a vector theta
+// epsilon_i ~iid N(0, Sigma) where Sigma is a covariance matrix
+// parameterized by a vector theta.
 //
 // Note: This is a special generalized least squares model
 // Y = X * beta + epsilon,
 // where we have a block structure for the covariance matrix of the epsilon
 // vector.
 //
-// Given theta and therefore Sigma, and writing W = Sigma^-1, we can determine
-// beta via the weighted least squares equation
-// (X^T W X) beta = X^T W Y.
-// Therefore beta itself is not a parameter for TMB here.
+// beta itself is not a parameter for TMB here:
+// - For maximum likelihood estimation:
+//   Given theta and therefore Sigma, and writing W = Sigma^-1, we can determine
+//   the beta optimizing the likelihood via the weighted least squares equation
+//   (X^T W X) beta = X^T W Y.
+// - For restricted maximum likelihood estimation:
+//   Given theta, beta is integrated out from the likelihood. Weighted least
+//   squares results are used to calculate integrated log likelihood.
 
 template<class Type>
 Type objective_function<Type>::operator() ()
@@ -48,26 +52,28 @@ Type objective_function<Type>::operator() ()
   // Sum of the log determinant will be incrementally calculated here.
   Type sum_log_det = 0.0;
 
-  // Dynamically create the correlation object.
-  matrix<Type> covariance_lower_chol = get_covariance_lower_chol<Type>(theta, corr_type, n_visits);
+  // Create the lower triangular Cholesky factor of the visit x visit covariance matrix.
+  matrix<Type> covariance_lower_chol = get_covariance_lower_chol<Type>(theta, n_visits, corr_type);
 
   // Go through all subjects and calculate quantities initialized above.
   for (int i = 0; i < n_subjects; i++) {
-    // Obtain the residuals for this subject.
+    // Start index and number of visits for this subject.
     int start_i = subject_zero_inds(i);
     int n_visits_i = subject_n_visits(i);
 
-    // Define lower triangular covariance factor for this subject.
+    // Define lower triangular covariance factor specific for this subject.
     matrix<Type> Li;
     if (n_visits_i < n_visits) {
-      // Obtain the zero-based visits for this subject.
+      // This subject has less visits, therefore we need to recalculate the Cholesky factor.
       vector<int> visits_i = visits_zero_inds.segment(start_i, n_visits_i);
-      matrix<Type> sel_mat = get_select_matrix<Type>(visits_i, n_visits);
-      matrix<Type> Ltildei = sel_mat.transpose() * covariance_lower_chol;
+      // matrix<Type> sel_mat = get_select_matrix<Type>(visits_i, n_visits);
+      Eigen::SparseMatrix<Type> sel_mat = get_select_matrix<Type>(visits_i, n_visits);
+      matrix<Type> Ltildei = sel_mat * covariance_lower_chol;
       matrix<Type> cov_i = Ltildei * Ltildei.transpose();
       Eigen::LLT<Eigen::Matrix<Type,Eigen::Dynamic,Eigen::Dynamic> > cov_i_chol(cov_i);
       Li = cov_i_chol.matrixL();
     } else {
+      // This subject has full number of visits, therefore we can just take the original matrix.
       Li = covariance_lower_chol;
     }
     matrix<Type> LiInverse = Li.inverse();  // Todo: improve this to use Cholesky etc.

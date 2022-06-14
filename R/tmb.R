@@ -39,7 +39,8 @@ h_mmrm_tmb_control <- function(optimizer = stats::nlminb,
 #'
 #' @return List of class `mmrm_tmb_formula_parts` with elements:
 #' - `model_formula`: `formula` with the correlation term is removed.
-#' - `full_formula`: same as `model_formula` but includes the `subject_var`.
+#' - `full_formula`: same as `model_formula` but includes the `subject_var` and
+#'      `visit_var`.
 #' - `corr_type`: `string` with correlation term type (e.g. `"us"`).
 #' - `visit_var`: `string` with the visit variable name.
 #' - `subject_var`: `string` with the subject variable name.
@@ -77,14 +78,16 @@ h_mmrm_tmb_formula_parts <- function(formula) {
   assert_true(identical(length(visit_term), 1L))
   assert_true(identical(length(subject_term), 1L))
   subject_var <- deparse(subject_term)
-  full_formula <- stats::update(model_formula, as.formula(paste(". ~ . +", subject_var)))
-
+  visit_var <- deparse(visit_term)
+  full_formula <- stats::update(
+    model_formula, as.formula(paste(". ~ . +", subject_var, "+", visit_var))
+  )
   structure(
     list(
       model_formula = model_formula,
       full_formula = full_formula,
       corr_type = deparse(corr_term[[1L]]),
-      visit_var = deparse(visit_term),
+      visit_var = visit_var,
       subject_var = subject_var
     ),
     class = "mmrm_tmb_formula_parts"
@@ -211,6 +214,58 @@ h_mmrm_tmb_parameters <- function(formula_parts,
   list(theta = start_values)
 }
 
+#' Asserting Sane Start Values for `TMB` Fit
+#'
+#' @description `r lifecycle::badge("experimental")`
+#'
+#' @param tmb_object (`list`)\cr created with [TMB::MakeADFun()].
+#'
+#' @return Nothing, only used for assertions.
+#' @export
+h_mmrm_tmb_assert_start <- function(tmb_object) {
+  assert_list(tmb_object)
+  assert_subset(c("fn", "gr", "par"), names(tmb_object))
+
+  if (is.na(tmb_object$fn(tmb_object$par))) {
+    stop("negative log-likelihood is NaN at starting parameter values")
+  }
+  if (any(is.na(tmb_object$gr(tmb_object$par)))) {
+    stop("some elements of gradient are NaN at starting parameter values")
+  }
+}
+
+#' Asserting and Checking `TMB` Fit Result
+#'
+#' @param tmb_object (`list`)\cr created with [TMB::MakeADFun()].
+#' @param tmb_fit (`list`)\cr created with optimizer function.
+#'
+#' @return Nothing, only used to generate messages, warnings or errors.
+#' @export
+h_mmrm_tmb_assert_fit <- function(tmb_object,
+                                  tmb_fit) {
+  assert_list(tmb_object)
+  assert_subset(c("fn", "gr", "par", "he"), names(tmb_object))
+  assert_list(tmb_fit)
+  assert_subset(c("par", "objective", "convergence", "message"), names(tmb_fit))
+
+  tmb_hessian <- tmb_object$he(tmb_fit$par)
+  eigen_vals <- try(
+    eigen(tmb_hessian, symmetric = TRUE)$values,
+    silent = TRUE
+  )
+  if (is(eigen_vals, "try-error")) {
+    stop("Model convergence problem: Cannot calculate hessian eigenvalues")
+  } else if (min(eigen_vals) < .Machine$double.eps) {
+    warning(
+      "Model convergence problem: ",
+      "hessian has negative or very small eigenvalues"
+    )
+  }
+  if (!is.null(tmb_fit$convergence) && tmb_fit$convergence != 0) {
+    warning("Model convergence problem: ", tmb_fit$message, ".")
+  }
+}
+
 #' Fitting an MMRM with `TMB`
 #'
 #' @description `r lifecycle::badge("experimental")`
@@ -258,6 +313,7 @@ mmrm_tmb <- function(formula,
     DLL = "mmrm",
     silent = TRUE
   )
+  h_mmrm_tmb_assert_start(tmb_object)
   tmb_fit <- with(
     tmb_object,
     do.call(
@@ -268,6 +324,12 @@ mmrm_tmb <- function(formula,
       )
     )
   )
+  # Ensure negative log likelihood is stored in `objective` element of list.
+  if ("value" %in% names(tmb_fit)) {
+    tmb_fit$objective <- tmb_fit$value
+    tmb_fit$value <- NULL
+  }
+  h_mmrm_tmb_assert_fit(tmb_object, tmb_fit)
   structure(
     list(
       object = tmb_object,
@@ -275,11 +337,4 @@ mmrm_tmb <- function(formula,
     ),
     class = "mmrm_tmb"
   )
-}
-
-#' @export
-debugit <- function() {
-  library(TMB)
-  testfile <- system.file("mmrm.R", package = "mmrm")
-  TMB::gdbsource(testfile, interactive = TRUE)
 }

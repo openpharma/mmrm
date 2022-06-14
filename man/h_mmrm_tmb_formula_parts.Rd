@@ -13,7 +13,8 @@ h_mmrm_tmb_formula_parts(formula)
 List of class \code{mmrm_tmb_formula_parts} with elements:
 \itemize{
 \item \code{model_formula}: \code{formula} with the correlation term is removed.
-\item \code{full_formula}: same as \code{model_formula} but includes the \code{subject_var}.
+\item \code{full_formula}: same as \code{model_formula} but includes the \code{subject_var} and
+\code{visit_var}.
 \item \code{corr_type}: \code{string} with correlation term type (e.g. \code{"us"}).
 \item \code{visit_var}: \code{string} with the visit variable name.
 \item \code{subject_var}: \code{string} with the subject variable name.

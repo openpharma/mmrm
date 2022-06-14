@@ -1,49 +1,51 @@
-#' Fitting `glmmTMB` Model
+#' Fitting an MMRM with Single Optimizer
 #'
 #' @description `r lifecycle::badge("experimental")`
 #'
-#' This function helps to fit a `glmmTMB` model with a single optimizer, while capturing messages and warnings.
+#' This function helps to fit an MMRM using `TMB` with a single optimizer,
+#' while capturing messages and warnings.
 #'
-#' @param formula (`formula`)\cr the `glmmTMB` formula.
+#' @param formula (`formula`)\cr the model formula, see [mmrm_tmb()] for details.
 #' @param data (`data`)\cr the data to be used for the model.
-#' @param start (`list`)\cr a list of starting values.
+#' @param reml (`flag`)\cr whether restricted maximum likelihood (REML) estimation is used,
+#'   otherwise maximum likelihood (ML) is used.
+#' @param start (`numeric` or `NULL`)\cr optional starting values for the variance parameters.
 #' @param optimizer (`character`)\cr optimizer to be used to generate the model.
 #'
-#' @return the fitted glmmTMB object, with additional attributes containing warnings,
-#' messages, errors, optimizer used and convergence status.
+#' @return the fitted `mmrm_tmb` object, with additional attributes containing warnings,
+#'   messages, errors, optimizer used and convergence status.
 #' @export
 #'
 #' @examples
 #' \dontrun{
 #' mod_fit <- fit_single_optimizer(
-#'   formula = h_build_formula(vs),
-#'   data = dat,
-#'   optimizer = "BFGS"
+#'   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+#'   data = fev_data,
+#'   optimizer = "nlminb"
 #' )
 #' attr(mod_fit, "converged")
 #' }
 fit_single_optimizer <- function(formula,
                                  data,
+                                 reml = TRUE,
                                  start = NULL,
                                  optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb")) {
   assert_formula(formula)
   assert_data_frame(data)
-  assert_list(start, null.ok = TRUE)
+  assert_numeric(start, null.ok = TRUE)
   optimizer <- match.arg(optimizer)
   control <- h_mmrm_tmb_control(
     optimizer = if (optimizer == "nlminb") stats::nlminb else stats::optim,
-    optimizer_args = if (optimizer == "nlminb") list(iter.max = 300, eval.max = 400) else list(method = optimizer),
-    parallel = 1L
+    optimizer_control = if (optimizer == "nlminb") list(iter.max = 300, eval.max = 400) else list(),
+    optimizer_args = if (optimizer == "nlminb") list() else list(method = optimizer)
   )
   quiet_fit <- h_record_all_output(
     mmrm_tmb(
       formula = formula,
       data = data,
+      reml = reml,
       start = start,
       control = control
-    ),
-    remove = list(
-      warnings = c()
     )
   )
   converged <- (length(quiet_fit$warnings) == 0L) &&

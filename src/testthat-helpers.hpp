@@ -2,6 +2,7 @@
 #define TESTTHAT_WRAP_H
 #include <testthat.h>
 #include <limits>
+#include "tmb_includes.hpp"
 
 
 #define expect_equal(TARGET, CURRENT)                          \
@@ -23,26 +24,22 @@
       std::abs((TARGET)) < (EPS));                             \
   else                                                         \
     expect_true(std::abs((TARGET) - (CURRENT)) < (EPS));       \
-}                                                              \
+}
 
-#define expect_equal_matrix(TARGET, CURRENT)                   \
-{                                                              \
-  int nrow = TARGET.rows();                                    \
-  int ncol = TARGET.cols();                                    \
-  expect_true(nrow = CURRENT.rows());                          \
-  expect_true(ncol = CURRENT.cols());                          \
-                                                               \
-  double const eps =                                           \
-    std::sqrt(std::numeric_limits<double>::epsilon());         \
-  for (int i = 0; i < nrow; i++) {                             \
-    for (int j = 0; j < ncol; j++) {                           \
-      if(std::abs((TARGET(i, j))) > eps)                       \
-        expect_true(std::abs((TARGET(i, j)) - (CURRENT(i, j))) /   \
-          std::abs((TARGET(i, j))) < eps);                         \
-      else                                                         \
-        expect_true(std::abs((TARGET(i, j)) - (CURRENT(i, j))) < eps);  \
-    }                                                          \
-  }                                                            \
-}                                                              \
+template <class T>
+void expect_equal_matrix(const matrix<T>& target, const matrix<T>& current)
+{
+  int nrow = target.rows();
+  int ncol = target.cols();
+
+  expect_true(nrow == current.rows());
+  expect_true(ncol == current.cols());
+
+  for (int i = 0; i < nrow; i++) {
+    for (int j = 0; j < ncol; j++) {
+      expect_equal(target(i, j), current(i, j));
+    }
+  }
+}
 
 #endif

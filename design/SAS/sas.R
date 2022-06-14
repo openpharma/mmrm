@@ -1,7 +1,8 @@
+# Real MMRM ----
 formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
 data <- fev_data
 
-# ML ----
+## ML ----
 sascode <- list(
   # "show" = "
   #   PROC CONTENTS DATA = ana.dat;
@@ -19,7 +20,7 @@ result <- r2stream::bee_sas(data = list("dat" = data), sascode = sascode)
 result$test$sas_log
 writeLines(result$test$sas_out, con = "sas_log.txt")
 
-# REML ----
+## REML ----
 sascode_reml <- list(
   # "show" = "
   #   PROC CONTENTS DATA = ana.dat;
@@ -36,3 +37,43 @@ sascode_reml <- list(
 result_reml <- r2stream::bee_sas(data = list("dat" = data), sascode = sascode_reml)
 result_reml$test$sas_log
 writeLines(result_reml$test$sas_out, con = "sas_log_reml.txt")
+
+# Simple model ----
+formula <- FEV1 ~ us(AVISIT | USUBJID)
+data <- fev_data
+
+## ML ----
+sascode <- list(
+  # "show" = "
+  #   PROC CONTENTS DATA = ana.dat;
+  #   RUN;
+  # "
+  "test" = "
+    PROC MIXED DATA = ana.dat cl method=ml;
+      CLASS AVISIT(ref = 'VIS1') USUBJID;
+      MODEL FEV1 = / ddfm=satterthwaite solution chisq;
+      REPEATED AVISIT / subject=USUBJID type=un r rcorr;
+    RUN;
+      "
+)
+result <- r2stream::bee_sas(data = list("dat" = data), sascode = sascode)
+result$test$sas_log
+writeLines(result$test$sas_out, con = "sas_log_simple.txt")
+
+## REML ----
+sascode <- list(
+  # "show" = "
+  #   PROC CONTENTS DATA = ana.dat;
+  #   RUN;
+  # "
+  "test" = "
+    PROC MIXED DATA = ana.dat cl method=reml;
+      CLASS AVISIT(ref = 'VIS1') USUBJID;
+      MODEL FEV1 = / ddfm=satterthwaite solution chisq;
+      REPEATED AVISIT / subject=USUBJID type=un r rcorr;
+    RUN;
+      "
+)
+result <- r2stream::bee_sas(data = list("dat" = data), sascode = sascode)
+result$test$sas_log
+writeLines(result$test$sas_out, con = "sas_log_simple_reml.txt")
