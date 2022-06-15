@@ -250,21 +250,22 @@ h_mmrm_tmb_assert_opt <- function(tmb_object,
   assert_list(tmb_opt)
   assert_subset(c("par", "objective", "convergence", "message"), names(tmb_opt))
 
-  tmb_hessian <- tmb_object$he(tmb_opt$par)
-  eigen_vals <- try(
-    eigen(tmb_hessian, symmetric = TRUE)$values,
-    silent = TRUE
-  )
-  if (is(eigen_vals, "try-error")) {
-    stop("Model convergence problem: Cannot calculate hessian eigenvalues")
-  } else if (min(eigen_vals) < .Machine$double.eps) {
-    warning(
-      "Model convergence problem: ",
-      "hessian has negative or very small eigenvalues"
-    )
-  }
   if (!is.null(tmb_opt$convergence) && tmb_opt$convergence != 0) {
     warning("Model convergence problem: ", tmb_opt$message, ".")
+  } else {
+    tmb_hessian <- tmb_object$he(tmb_opt$par)
+    eigen_vals <- try(
+      eigen(tmb_hessian, symmetric = TRUE)$values,
+      silent = TRUE
+    )
+    if (is(eigen_vals, "try-error")) {
+      stop("Model convergence problem: Cannot calculate hessian eigenvalues")
+    } else if (min(eigen_vals) < .Machine$double.eps) {
+      warning(
+        "Model convergence problem: ",
+        "hessian has negative or very small eigenvalues"
+      )
+    }
   }
 }
 
