@@ -39,3 +39,40 @@ context("get_select_matrix") {
     expect_equal_matrix(result_dense, expected);
   }
 }
+
+
+context("tcrossprod") {
+  test_that("tcrossprod works as expected with complete") {
+    matrix<double> lower_chol(2, 2);
+    lower_chol <<
+      1.0, 0.0,
+      6.0, 2.0;
+    matrix<double> result = tcrossprod(lower_chol, true);
+    matrix<double> expected = lower_chol * lower_chol.transpose();
+    expect_equal_matrix(result, expected);
+  }
+
+  test_that("tcrossprod works as expected without complete (default)") {
+    matrix<double> lower_chol(2, 2);
+    lower_chol <<
+      1.0, 0.0,
+      6.0, 2.0;
+    matrix<double> result = tcrossprod(lower_chol); // default: no complete.
+    matrix<double> full = lower_chol * lower_chol.transpose();
+    matrix<double> expected = full.template triangularView<Eigen::Lower>();
+    expect_equal_matrix(result, expected);
+  }
+}
+
+context("crossprod") {
+  test_that("crossprod works as expected") {
+    matrix<double> x(2, 3);
+    x <<
+      1.0, 0.0, 1.0,
+      6.0, 2.0, 4.2;
+    matrix<double> result = crossprod(x);
+    matrix<double> full = x.transpose() * x;
+    matrix<double> expected = full.template triangularView<Eigen::Lower>();
+    expect_equal_matrix(result, expected);
+  }
+}

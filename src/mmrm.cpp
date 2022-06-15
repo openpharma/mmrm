@@ -44,7 +44,7 @@ Type objective_function<Type>::operator() ()
   // X^T W X will be calculated incrementally into here.
   matrix<Type> XtWX = matrix<Type>::Zero(x_matrix.cols(), x_matrix.cols());
   // X^T W Y will be calculated incrementally into here.
-  vector<Type> XtWY = vector<Type>::Zero(x_matrix.cols());
+  matrix<Type> XtWY = matrix<Type>::Zero(x_matrix.cols(), 1);
   // W^T/2 X will be saved into here.
   matrix<Type> x_mat_tilde = matrix<Type>::Zero(x_matrix.rows(), x_matrix.cols());
   // W^T/2 Y will be saved into here.
@@ -61,45 +61,43 @@ Type objective_function<Type>::operator() ()
     int start_i = subject_zero_inds(i);
     int n_visits_i = subject_n_visits(i);
 
-    // Define lower triangular covariance factor specific for this subject.
+    // Obtain Cholesky factor Li.
     matrix<Type> Li;
     if (n_visits_i < n_visits) {
       // This subject has less visits, therefore we need to recalculate the Cholesky factor.
       vector<int> visits_i = visits_zero_inds.segment(start_i, n_visits_i);
-      // matrix<Type> sel_mat = get_select_matrix<Type>(visits_i, n_visits);
       Eigen::SparseMatrix<Type> sel_mat = get_select_matrix<Type>(visits_i, n_visits);
+      // Note: We cannot use triangular view for covariance_lower_chol here because sel_mat is sparse.
       matrix<Type> Ltildei = sel_mat * covariance_lower_chol;
-      matrix<Type> cov_i = Ltildei * Ltildei.transpose();
+      matrix<Type> cov_i = tcrossprod(Ltildei);
       Eigen::LLT<Eigen::Matrix<Type,Eigen::Dynamic,Eigen::Dynamic> > cov_i_chol(cov_i);
       Li = cov_i_chol.matrixL();
     } else {
-      // This subject has full number of visits, therefore we can just take the original matrix.
+      // This subject has full number of visits, therefore we can just take the original factor.
       Li = covariance_lower_chol;
     }
-    matrix<Type> LiInverse = Li.inverse();  // Todo: improve this to use Cholesky etc.
 
     // Calculate scaled design matrix and response vector for this subject.
     matrix<Type> Xi = x_matrix.block(start_i, 0, n_visits_i, x_matrix.cols());
-    matrix<Type> XiTilde = LiInverse * Xi;
-    vector<Type> Yi = y_vector.segment(start_i, n_visits_i);
-    vector<Type> YiTilde = LiInverse * Yi;
+    matrix<Type> XiTilde = Li.template triangularView<Eigen::Lower>().solve(Xi);
+    matrix<Type> Yi = y_vector.segment(start_i, n_visits_i).matrix();
+    matrix<Type> YiTilde = Li.template triangularView<Eigen::Lower>().solve(Yi);
 
     // Increment quantities.
-    matrix<Type> XiTildeT = XiTilde.transpose();
-    XtWX += XiTildeT * XiTilde;
-    XtWY += XiTildeT * YiTilde;
+    matrix<Type> XiTildeCrossprod = crossprod(XiTilde);
+    XtWX += XiTildeCrossprod.template triangularView<Eigen::Lower>();
+    XtWY += XiTilde.transpose() * YiTilde;
     vector<Type> LiDiag = Li.diagonal();
     sum_log_det += sum(log(LiDiag));
 
     // Save stuff.
     x_mat_tilde.block(start_i, 0, n_visits_i, x_matrix.cols()) = XiTilde;
-    y_vec_tilde.segment(start_i, n_visits_i) = YiTilde;
+    y_vec_tilde.segment(start_i, n_visits_i) = YiTilde.col(0);
   }
 
   // Solve for beta.
   Eigen::LDLT<Eigen::Matrix<Type,Eigen::Dynamic,Eigen::Dynamic> > XtWX_decomposition(XtWX);
-  matrix<Type> XtWY_mat = XtWY.matrix();
-  matrix<Type> beta_mat = XtWX_decomposition.solve(XtWY_mat);
+  matrix<Type> beta_mat = XtWX_decomposition.solve(XtWY);
   vector<Type> beta = beta_mat.col(0);
 
   // Define scaled residuals.
@@ -126,10 +124,15 @@ Type objective_function<Type>::operator() ()
 
   // Report quantities to R.
   REPORT(beta);
-  REPORT(XtWX);
-  // REPORT(XtWXinv);
-  matrix<Type> cov_report = covariance_lower_chol * covariance_lower_chol.transpose();
-  REPORT(cov_report);
+
+  // We already compute the inverse of XtWX here because we already did the
+  // matrix decomposition above.
+  matrix<Type> Identity(XtWX.rows(), XtWX.cols());
+  Identity.setIdentity();
+  matrix<Type> beta_vcov = XtWX_decomposition.solve(Identity);
+  REPORT(beta_vcov);
+
+  REPORT(covariance_lower_chol);
 
   return neg_log_lik;
 }

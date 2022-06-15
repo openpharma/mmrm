@@ -309,11 +309,11 @@ h_mmrm_tmb_fit <- function(tmb_object,
   tmb_report <- tmb_object$report(par = tmb_opt$par)
   x_matrix_cols <- colnames(tmb_data$x_matrix)
   visit_names <- levels(data[[formula_parts$visit_var]])
-  cov <- tmb_report$cov_report
+  cov <- tcrossprod(tmb_report$covariance_lower_chol)
   dimnames(cov) <- list(visit_names, visit_names)
   beta_est <- tmb_report$beta
   names(beta_est) <- x_matrix_cols
-  beta_vcov <- solve(tmb_report$XtWX)
+  beta_vcov <- tmb_report$beta_vcov
   dimnames(beta_vcov) <- list(x_matrix_cols, x_matrix_cols)
   theta_est <- tmb_opt$par
   names(theta_est) <- NULL
