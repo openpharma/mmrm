@@ -29,11 +29,7 @@ parameters.}
 by \code{\link[=h_mmrm_tmb_control]{h_mmrm_tmb_control()}}.}
 }
 \value{
-List of class \code{mmrm_tmb} with:
-\itemize{
-\item \code{object}: The \code{TMB} object.
-\item \code{fit}: The fit result.
-}
+List of class \code{mmrm_tmb}, see \code{\link[=h_mmrm_tmb_fit]{h_mmrm_tmb_fit()}} for details.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}

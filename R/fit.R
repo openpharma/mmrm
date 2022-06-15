@@ -12,19 +12,18 @@
 #' @param start (`numeric` or `NULL`)\cr optional starting values for the variance parameters.
 #' @param optimizer (`character`)\cr optimizer to be used to generate the model.
 #'
-#' @return the fitted `mmrm_tmb` object, with additional attributes containing warnings,
-#'   messages, errors, optimizer used and convergence status.
+#' @return The `mmrm_fit` object, with additional attributes containing warnings,
+#'   messages, errors, optimizer used and convergence status in addition to the
+#'   `mmrm_tmb` contents.
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' mod_fit <- fit_single_optimizer(
 #'   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
 #'   data = fev_data,
 #'   optimizer = "nlminb"
 #' )
 #' attr(mod_fit, "converged")
-#' }
 fit_single_optimizer <- function(formula,
                                  data,
                                  reml = TRUE,
@@ -50,7 +49,7 @@ fit_single_optimizer <- function(formula,
   )
   converged <- (length(quiet_fit$warnings) == 0L) &&
     (length(quiet_fit$errors) == 0L) &&
-    (quiet_fit$result$fit$convergence == 0)
+    (quiet_fit$result$opt_details$convergence == 0)
   structure(
     quiet_fit$result,
     errors = quiet_fit$errors,

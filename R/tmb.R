@@ -234,21 +234,23 @@ h_mmrm_tmb_assert_start <- function(tmb_object) {
   }
 }
 
-#' Asserting and Checking `TMB` Fit Result
+#' Asserting and Checking `TMB` Optimization Result
+#'
+#' @description `r lifecycle::badge("experimental")`
 #'
 #' @param tmb_object (`list`)\cr created with [TMB::MakeADFun()].
-#' @param tmb_fit (`list`)\cr created with optimizer function.
+#' @param tmb_opt (`list`)\cr optimization result.
 #'
 #' @return Nothing, only used to generate messages, warnings or errors.
 #' @export
-h_mmrm_tmb_assert_fit <- function(tmb_object,
-                                  tmb_fit) {
+h_mmrm_tmb_assert_opt <- function(tmb_object,
+                                  tmb_opt) {
   assert_list(tmb_object)
   assert_subset(c("fn", "gr", "par", "he"), names(tmb_object))
-  assert_list(tmb_fit)
-  assert_subset(c("par", "objective", "convergence", "message"), names(tmb_fit))
+  assert_list(tmb_opt)
+  assert_subset(c("par", "objective", "convergence", "message"), names(tmb_opt))
 
-  tmb_hessian <- tmb_object$he(tmb_fit$par)
+  tmb_hessian <- tmb_object$he(tmb_opt$par)
   eigen_vals <- try(
     eigen(tmb_hessian, symmetric = TRUE)$values,
     silent = TRUE
@@ -261,9 +263,79 @@ h_mmrm_tmb_assert_fit <- function(tmb_object,
       "hessian has negative or very small eigenvalues"
     )
   }
-  if (!is.null(tmb_fit$convergence) && tmb_fit$convergence != 0) {
-    warning("Model convergence problem: ", tmb_fit$message, ".")
+  if (!is.null(tmb_opt$convergence) && tmb_opt$convergence != 0) {
+    warning("Model convergence problem: ", tmb_opt$message, ".")
   }
+}
+
+#' Build `TMB` Fit Result List
+#'
+#' @description `r lifecycle::badge("experimental")`
+#'
+#' This helper does some simple post-processing of the `TMB` object and
+#' optimization results, including setting names, inverting matrices etc.
+#'
+#' @param tmb_object (`list`)\cr created with [TMB::MakeADFun()].
+#' @param tmb_opt (`list`)\cr optimization result.
+#' @param data (`data.frame`)\cr input data containing the variables used
+#'   in `formula`.
+#' @param formula_parts (`mmrm_tmb_formula_parts`)\cr produced by
+#'  [h_mmrm_tmb_formula_parts()].
+#' @param tmb_data (`mmrm_tmb_data`)\cr produced by [h_mmrm_tmb_data()].
+#'
+#' @return List pf class `mmrm_tmb` with:
+#'   - `cov`: estimated covariance matrix.
+#'   - `beta_est`: vector of coefficient estimates.
+#'   - `beta_vcov`: Variance-covariance matrix for coefficient estimates.
+#'   - `theta_est`: vector of variance parameter estimates.
+#'   - `theta_vcov`: variance-covariance matrix for variance parameter estimates.
+#'   - `neg_log_lik`: obtained negative log-likelihood.
+#'   - `opt_details`: list with optimization details including convergence code.
+#'   - `tmb_object`: original `TMB` object created with [TMB::MakeADFun()].
+#' @export
+h_mmrm_tmb_fit <- function(tmb_object,
+                           tmb_opt,
+                           data,
+                           formula_parts,
+                           tmb_data) {
+  assert_list(tmb_object)
+  assert_subset(c("fn", "gr", "par", "he"), names(tmb_object))
+  assert_list(tmb_opt)
+  assert_subset(c("par", "objective", "convergence", "message"), names(tmb_opt))
+  assert_data_frame(data)
+  assert_class(formula_parts, "mmrm_tmb_formula_parts")
+  assert_class(tmb_data, "mmrm_tmb_data")
+
+  tmb_report <- tmb_object$report(par = tmb_opt$par)
+  x_matrix_cols <- colnames(tmb_data$x_matrix)
+  visit_names <- levels(data[[formula_parts$visit_var]])
+  cov <- tmb_report$cov_report
+  dimnames(cov) <- list(visit_names, visit_names)
+  beta_est <- tmb_report$beta
+  names(beta_est) <- x_matrix_cols
+  beta_vcov <- solve(tmb_report$XtWX)
+  dimnames(beta_vcov) <- list(x_matrix_cols, x_matrix_cols)
+  theta_est <- tmb_opt$par
+  names(theta_est) <- NULL
+  theta_vcov <- solve(tmb_object$he(tmb_opt$par))
+  opt_details_names <- setdiff(
+    names(tmb_opt),
+    c("par", "objective")
+  )
+
+  structure(
+    list(
+      cov = cov,
+      beta_est = beta_est,
+      beta_vcov = beta_vcov,
+      theta_est = theta_est,
+      theta_vcov = theta_vcov,
+      neg_log_lik = tmb_opt$objective,
+      opt_details = tmb_opt[opt_details_names],
+      tmb_object = tmb_object
+    ),
+    class = "mmrm_tmb"
+  )
 }
 
 #' Fitting an MMRM with `TMB`
@@ -280,9 +352,7 @@ h_mmrm_tmb_assert_fit <- function(tmb_object,
 #' @param control (`mmrm_tmb_control`)\cr list of control options produced
 #'   by [h_mmrm_tmb_control()].
 #'
-#' @return List of class `mmrm_tmb` with:
-#' - `object`: The `TMB` object.
-#' - `fit`: The fit result.
+#' @return List of class `mmrm_tmb`, see [h_mmrm_tmb_fit()] for details.
 #'
 #' @details The `formula` typically looks like:
 #' `FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)`
@@ -314,7 +384,7 @@ mmrm_tmb <- function(formula,
     silent = TRUE
   )
   h_mmrm_tmb_assert_start(tmb_object)
-  tmb_fit <- with(
+  tmb_opt <- with(
     tmb_object,
     do.call(
       what = control$optimizer,
@@ -325,16 +395,10 @@ mmrm_tmb <- function(formula,
     )
   )
   # Ensure negative log likelihood is stored in `objective` element of list.
-  if ("value" %in% names(tmb_fit)) {
-    tmb_fit$objective <- tmb_fit$value
-    tmb_fit$value <- NULL
+  if ("value" %in% names(tmb_opt)) {
+    tmb_opt$objective <- tmb_opt$value
+    tmb_opt$value <- NULL
   }
-  h_mmrm_tmb_assert_fit(tmb_object, tmb_fit)
-  structure(
-    list(
-      object = tmb_object,
-      fit = tmb_fit
-    ),
-    class = "mmrm_tmb"
-  )
+  h_mmrm_tmb_assert_opt(tmb_object, tmb_opt)
+  h_mmrm_tmb_fit(tmb_object, tmb_opt, data, formula_parts, tmb_data)
 }
