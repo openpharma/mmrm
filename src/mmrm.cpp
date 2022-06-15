@@ -3,8 +3,8 @@
 // Definition:
 //
 // Y_i = X_i * beta + epsilon_i, i = 1, ..., n_subjects
-// where Y_i = (Y_i1, ..., Y_im) are the observations of subject i
-// over the m timepoints,
+// where Y_i = (Y_i1, ..., Y_im) are the observations of subject i over the m
+// timepoints,
 //
 // and for the epsilon_i's :
 // epsilon_i ~iid N(0, Sigma) where Sigma is a covariance matrix
