@@ -140,7 +140,7 @@ h_mmrm_tmb_data <- function(formula_parts,
   data <- data[order(data[[formula_parts$subject_var]], data[[formula_parts$visit_var]]), ]
   full_frame <- droplevels(stats::model.frame(formula_parts$full_formula, data = data))
   x_matrix <- stats::model.matrix(formula_parts$model_formula, data = full_frame)
-  y_vector <- stats::model.response(full_frame)
+  y_vector <- as.numeric(stats::model.response(full_frame))
   visits_zero_inds <- as.integer(full_frame[[formula_parts$visit_var]]) - 1L
   n_visits <- nlevels(full_frame[[formula_parts$visit_var]])
   n_subjects <- nlevels(full_frame[[formula_parts$subject_var]])
