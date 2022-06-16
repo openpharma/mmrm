@@ -4,9 +4,11 @@
 #'
 "_PACKAGE"
 
+#' @useDynLib mmrm, .registration = TRUE
+#'
 #' @import checkmate
-#' @importFrom glmmTMB addForm
 #' @importFrom lifecycle deprecated
+#' @importFrom methods is
 #' @importFrom stats acf
 #' @importFrom parallel clusterApply
 NULL

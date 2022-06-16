@@ -29,3 +29,5 @@ vignettes/*.R
 coverage.*
 design/TMB/*.o
 design/TMB/*.so
+src/*.o
+src/*.so

@@ -10,18 +10,17 @@ h_cov_estimate(model)
 \item{model}{(\code{mmrm_fit})\cr model fit.}
 }
 \value{
-The covariance matrix estimate, with additional attributes \code{n_parameters} (the number of variance parameters in the model) as well as \code{id} (one ID which has the maximum number of visits).
+The covariance matrix estimate, with
+additional attribute \code{n_parameters} (the number of variance parameters in
+the model).
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
 \examples{
-mod <- glmmTMB::glmmTMB(
-  FEV1 ~ ar1(0 + AVISIT | USUBJID),
-  data = fev_data,
-  dispformula = ~0,
-  REML = TRUE
+mod_fit <- fit_single_optimizer(
+  formula = FEV1 ~ ARMCD + us(AVISIT | USUBJID),
+  data = fev_data
 )
-class(mod) <- c("mmrm_fit", "glmmTMB")
-h_cov_estimate(mod)
+h_cov_estimate(mod_fit)
 }
