@@ -71,7 +71,8 @@
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">h_build_formula</span><span class="op">(</span>
   <span class="va">vars</span>,
-  cor_struct <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"unstructured"</span>, <span class="st">"toeplitz"</span>, <span class="st">"auto-regressive"</span>, <span class="st">"compound-symmetry"</span><span class="op">)</span>
+  cor_struct <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"unstructured"</span>, <span class="st">"toeplitz"</span>, <span class="st">"auto-regressive"</span>, <span class="st">"compound-symmetry"</span>,
+    <span class="st">"ante-dependence"</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
     </div>
 
@@ -79,12 +80,17 @@
     <h2>Arguments</h2>
     <dl><dt>vars</dt>
 <dd><p>(<code>list</code>)<br> variables to use in the model.</p></dd>
+
+
 <dt>cor_struct</dt>
 <dd><p>(<code>string</code>)<br> specify the covariance structure to use.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>formula for model</p>
+    
+
+<p>Formula to use in <code><a href="mmrm_tmb.html">mmrm_tmb()</a></code>.</p>
     </div>
 
     <div id="ref-examples">
@@ -94,11 +100,11 @@
 <span class="r-in">  id <span class="op">=</span> <span class="st">"USUBJID"</span>, arm <span class="op">=</span> <span class="st">"ARMCD"</span>, visit <span class="op">=</span> <span class="st">"AVISIT"</span></span>
 <span class="r-in"><span class="op">)</span></span>
 <span class="r-in"><span class="fu">h_build_formula</span><span class="op">(</span><span class="va">vars</span>, <span class="st">"compound-symmetry"</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AVAL ~ RACE + SEX + ARMCD * AVISIT + cs(0 + AVISIT | USUBJID)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55f02140a0f0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AVAL ~ RACE + SEX + ARMCD * AVISIT + cs(AVISIT | USUBJID)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5601de1b51f8&gt;</span>
 <span class="r-in"><span class="fu">h_build_formula</span><span class="op">(</span><span class="va">vars</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AVAL ~ RACE + SEX + ARMCD * AVISIT + us(0 + AVISIT | USUBJID)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55f0214749d0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AVAL ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5601de790d90&gt;</span>
 </code></pre></div>
     </div>
   </div>
@@ -113,7 +119,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

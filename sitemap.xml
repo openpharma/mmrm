@@ -49,6 +49,27 @@
     <loc>https://openpharma.github.io/mmrm/reference/h_get_covariate_parts.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/mmrm/reference/h_mmrm_tmb_assert_opt.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/reference/h_mmrm_tmb_assert_start.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/reference/h_mmrm_tmb_control.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/reference/h_mmrm_tmb_data.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/reference/h_mmrm_tmb_fit.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/reference/h_mmrm_tmb_formula_parts.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/reference/h_mmrm_tmb_parameters.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/mmrm/reference/h_record_all_output.html</loc>
   </url>
   <url>
@@ -59,5 +80,8 @@
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/reference/mmrm-package.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/reference/mmrm_tmb.html</loc>
   </url>
 </urlset>

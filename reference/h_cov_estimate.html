@@ -76,43 +76,32 @@
     <h2>Arguments</h2>
     <dl><dt>model</dt>
 <dd><p>(<code>mmrm_fit</code>)<br> model fit.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>The covariance matrix estimate, with additional attributes <code>n_parameters</code> (the number of variance parameters in the model) as well as <code>id</code> (one ID which has the maximum number of visits).</p>
+    
+
+<p>The covariance matrix estimate, with
+additional attribute <code>n_parameters</code> (the number of variance parameters in
+the model).</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu">glmmTMB</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/glmmTMB/man/glmmTMB.html" class="external-link">glmmTMB</a></span><span class="op">(</span></span>
-<span class="r-in">  <span class="va">FEV1</span> <span class="op">~</span> <span class="fu">ar1</span><span class="op">(</span><span class="fl">0</span> <span class="op">+</span> <span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
-<span class="r-in">  data <span class="op">=</span> <span class="va">fev_data</span>,</span>
-<span class="r-in">  dispformula <span class="op">=</span> <span class="op">~</span><span class="fl">0</span>,</span>
-<span class="r-in">  REML <span class="op">=</span> <span class="cn">TRUE</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">mod_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="fit_single_optimizer.html">fit_single_optimizer</a></span><span class="op">(</span></span>
+<span class="r-in">  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">ARMCD</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
+<span class="r-in">  data <span class="op">=</span> <span class="va">fev_data</span></span>
 <span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mmrm_fit"</span>, <span class="st">"glmmTMB"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">h_cov_estimate</span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            AVISITVIS1 AVISITVIS2 AVISITVIS3 AVISITVIS4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS1  88.985870   38.01224   16.23775   6.936307</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS2  38.012241   88.98587   38.01224  16.237751</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS3  16.237751   38.01224   88.98587  38.012241</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS4   6.936307   16.23775   38.01224  88.985870</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"stddev")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS1 AVISITVIS2 AVISITVIS3 AVISITVIS4 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   9.433232   9.433232   9.433232   9.433232 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"correlation")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            AVISITVIS1 AVISITVIS2 AVISITVIS3 AVISITVIS4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS1 1.00000000  0.4271716  0.1824756 0.07794841</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS2 0.42717164  1.0000000  0.4271716 0.18247561</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS3 0.18247561  0.4271716  1.0000000 0.42717164</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS4 0.07794841  0.1824756  0.4271716 1.00000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"blockCode")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ar1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   3 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"id")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "PT8"</span>
+<span class="r-in"><span class="fu">h_cov_estimate</span><span class="op">(</span><span class="va">mod_fit</span><span class="op">)</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required namespace: testthat</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            VIS1        VIS2       VIS3      VIS4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> VIS1 108.408656  45.3981509 -2.7071653 -47.02743</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> VIS2  45.398151  40.1609692  0.7783667 -13.09261</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> VIS3  -2.707165   0.7783667 24.6116801  18.73932</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> VIS4 -47.027433 -13.0926142 18.7393206 152.37792</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"n_parameters")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 10</span>
 </code></pre></div>
     </div>
   </div>
@@ -127,7 +116,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>
