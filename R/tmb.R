@@ -66,7 +66,10 @@ h_mmrm_tmb_formula_parts <- function(formula) {
   corr_term <- terms_list[[corr_index]]
 
   # Remove the correlation term to obtain the model formula.
-  model_formula <- stats::update(formula, as.formula(paste(". ~ . -", deparse(corr_term))))
+  model_formula <- stats::update(
+    formula,
+    stats::as.formula(paste(". ~ . -", deparse(corr_term)))
+  )
 
   # Parse the correlation term to get correlation type, visit and subject variables.
   assert_true(identical(length(corr_term), 2L)) # 2 because `fun (...)`.
@@ -80,7 +83,8 @@ h_mmrm_tmb_formula_parts <- function(formula) {
   subject_var <- deparse(subject_term)
   visit_var <- deparse(visit_term)
   full_formula <- stats::update(
-    model_formula, as.formula(paste(". ~ . +", subject_var, "+", visit_var))
+    model_formula,
+    stats::as.formula(paste(". ~ . +", subject_var, "+", visit_var))
   )
   structure(
     list(

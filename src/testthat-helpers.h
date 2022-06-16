@@ -2,7 +2,7 @@
 #define TESTTHAT_WRAP_H
 #include <testthat.h>
 #include <limits>
-#include "tmb_includes.hpp"
+#include "tmb_includes.h"
 
 
 #define expect_equal(TARGET, CURRENT)                          \

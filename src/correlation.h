@@ -1,7 +1,7 @@
 #ifndef CORR_INCLUDED_
 #define CORR_INCLUDED_
 
-#include "tmb_includes.hpp"
+#include "tmb_includes.h"
 
 // Unstructured covariance.
 template <class T>

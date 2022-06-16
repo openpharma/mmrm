@@ -8,6 +8,7 @@
 #'
 #' @import checkmate
 #' @importFrom lifecycle deprecated
+#' @importFrom methods is
 #' @importFrom stats acf
 #' @importFrom parallel clusterApply
 NULL

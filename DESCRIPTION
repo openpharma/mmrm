@@ -20,6 +20,7 @@ Depends:
 Imports:
     checkmate (>= 2.1),
     lifecycle,
+    methods,
     TMB (>= 1.9.0),
     stats,
     parallel
@@ -29,7 +30,6 @@ Suggests:
     knitr,
     testthat (>= 3.0.0),
     xml2
-SystemRequirements: GNU make
 NeedsCompilation: yes
 VignetteBuilder:
     knitr

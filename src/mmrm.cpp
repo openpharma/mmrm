@@ -1,4 +1,4 @@
-#include "correlation.hpp"
+#include "correlation.h"
 
 // Definition:
 //

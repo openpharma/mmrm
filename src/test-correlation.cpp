@@ -1,5 +1,5 @@
-#include "testthat-helpers.hpp"
-#include "correlation.hpp"
+#include "testthat-helpers.h"
+#include "correlation.h"
 
 context("get_unstructured") {
   test_that("get_unstructured produces expected result") {
