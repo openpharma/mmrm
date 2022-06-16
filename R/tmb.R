@@ -190,7 +190,7 @@ h_mmrm_tmb_data <- function(formula_parts,
 #' @examples
 #' formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
 #' formula_parts <- h_mmrm_tmb_formula_parts(formula)
-#' tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data)
+#' tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = FALSE)
 #' pars <- h_mmrm_tmb_parameters(formula_parts, tmb_data, NULL)
 h_mmrm_tmb_parameters <- function(formula_parts,
                                   tmb_data,
