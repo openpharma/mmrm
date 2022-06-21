@@ -11,7 +11,7 @@ output:
           toc: true
           toc_float: true
 vignette: |
-  %\VignetteIndexEntry{Introduction to `hermes`}
+  %\VignetteIndexEntry{Introduction to `mmrm`}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options:

@@ -36,11 +36,15 @@ reference:
       - h_mmrm_tmb_assert_start
       - h_mmrm_tmb_assert_opt
       - h_mmrm_tmb_fit
+      - h_summarize_all_fits
   - title: Functions
     contents:
       - assert_data
       - fit_single_optimizer
       - mmrm_tmb
+  - title: Methods
+    contents:
+      - logLik
   - title: Datasets
     contents:
       - fev_data

@@ -36,6 +36,7 @@ LazyData
 lifecycle
 lik
 LinkingTo
+logLik
 mmrm
 MMRM
 navbar

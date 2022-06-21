@@ -60,3 +60,41 @@ fit_single_optimizer <- function(formula,
     class = c("mmrm_fit", class(quiet_fit$result))
   )
 }
+
+#' Summarizing List of Fits
+#'
+#' @description `r lifecycle::badge("experimental")`
+#'
+#' @param all_fits (`list` of `mmrm_fit`)\cr list of fits.
+#'
+#' @return List with `warnings`, `messages`, `log_liks` and `converged` results.
+#' @export
+#'
+#' @examples
+#' mod_fit <- fit_single_optimizer(
+#'   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+#'   data = fev_data,
+#'   optimizer = "nlminb"
+#' )
+#' mod_fit2 <- fit_single_optimizer(
+#'   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+#'   data = fev_data,
+#'   optimizer = "L-BFGS-B"
+#' )
+#' all_fits <- list(mod_fit, mod_fit2)
+#' h_summarize_all_fits(all_fits)
+h_summarize_all_fits <- function(all_fits) {
+  assert_list(all_fits, types = "mmrm_fit")
+
+  warnings <- lapply(all_fits, attr, which = "warnings")
+  messages <- lapply(all_fits, attr, which = "messages")
+  log_liks <- vapply(all_fits, stats::logLik, numeric(1L))
+  converged <- vapply(all_fits, attr, logical(1), which = "converged")
+
+  list(
+    warnings = warnings,
+    messages = messages,
+    log_liks = log_liks,
+    converged = converged
+  )
+}

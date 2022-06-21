@@ -47,3 +47,27 @@ test_that("fit_single_optimizer works as expected with starting values and optim
   expect_identical(attr(result, "warnings"), NULL)
   expect_true(attr(result, "converged"))
 })
+
+# h_summarize_all_fits ----
+
+test_that("h_summarize_all_fits works as expected", {
+  mod_fit <- fit_single_optimizer(
+    formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+    data = fev_data,
+    optimizer = "nlminb"
+  )
+  mod_fit2 <- fit_single_optimizer(
+    formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+    data = fev_data,
+    optimizer = "L-BFGS-B"
+  )
+  all_fits <- list(mod_fit, mod_fit2)
+  result <- expect_silent(h_summarize_all_fits(all_fits))
+  expected <- list(
+    warnings = list(NULL, NULL),
+    messages = list(NULL, NULL),
+    log_liks = c(-1693.22493558573, -1693.22493812251),
+    converged = c(TRUE, TRUE)
+  )
+  expect_equal(result, expected)
+})
