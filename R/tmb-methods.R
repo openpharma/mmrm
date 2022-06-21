@@ -3,6 +3,7 @@
 #' @description `r lifecycle::badge("experimental")`
 #'
 #' @param object (`mmrm_tmb`)\cr the fitted MMRM object.
+#' @param ... not used.
 #'
 #' @name mmrm_tmb_methods
 #'

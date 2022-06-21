@@ -9,6 +9,8 @@
 }
 \arguments{
 \item{object}{(\code{mmrm_tmb})\cr the fitted MMRM object.}
+
+\item{...}{not used.}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
