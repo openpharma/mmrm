@@ -24,6 +24,7 @@ test_that("h_mmrm_tmb_formula_parts works as expected", {
   ))
   expected <- structure(
     list(
+      formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
       model_formula = FEV1 ~ RACE + SEX + ARMCD + AVISIT + ARMCD:AVISIT,
       full_formula = FEV1 ~ RACE + SEX + ARMCD + AVISIT + USUBJID + ARMCD:AVISIT,
       corr_type = "us",
@@ -41,6 +42,7 @@ test_that("h_mmrm_tmb_formula_parts works without covariates", {
   ))
   expected <- structure(
     list(
+      formula = FEV1 ~ ar1(AVISIT | USUBJID),
       model_formula = FEV1 ~ 1,
       full_formula = FEV1 ~ USUBJID + AVISIT,
       corr_type = "ar1",
@@ -233,7 +235,7 @@ test_that("h_mmrm_tmb_fit works as expected", {
   expect_class(result, "mmrm_tmb")
   expect_named(result, c(
     "cov", "beta_est", "beta_vcov", "theta_est", "theta_vcov",
-    "neg_log_lik", "opt_details", "tmb_object"
+    "neg_log_lik", "formula_parts", "data", "reml", "opt_details", "tmb_object"
   ))
   expect_identical(rownames(result$cov), c("VIS1", "VIS2", "VIS3", "VIS4"))
   expect_identical(colnames(result$cov), c("VIS1", "VIS2", "VIS3", "VIS4"))
@@ -242,6 +244,9 @@ test_that("h_mmrm_tmb_fit works as expected", {
   expect_identical(colnames(result$beta_vcov), colnames(tmb_data$x_matrix))
   expect_matrix(result$theta_vcov, nrows = length(result$theta_est), ncols = length(result$theta_est))
   expect_number(result$neg_log_lik)
+  expect_list(result$formula_parts)
+  expect_data_frame(result$data)
+  expect_false(result$reml)
   expect_list(result$opt_details)
   expect_list(result$tmb_object)
 })

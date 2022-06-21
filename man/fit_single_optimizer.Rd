@@ -22,7 +22,7 @@ otherwise maximum likelihood (ML) is used.}
 
 \item{start}{(\code{numeric} or \code{NULL})\cr optional starting values for the variance parameters.}
 
-\item{optimizer}{(\code{character})\cr optimizer to be used to generate the model.}
+\item{optimizer}{(\code{string})\cr optimizer to be used to generate the model.}
 }
 \value{
 The \code{mmrm_fit} object, with additional attributes containing warnings,

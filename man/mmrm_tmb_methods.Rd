@@ -3,14 +3,19 @@
 \name{mmrm_tmb_methods}
 \alias{mmrm_tmb_methods}
 \alias{logLik.mmrm_tmb}
+\alias{formula.mmrm_tmb}
 \title{Methods for \code{mmrm_tmb} Objects}
 \usage{
 \method{logLik}{mmrm_tmb}(object, ...)
+
+\method{formula}{mmrm_tmb}(x, ...)
 }
 \arguments{
 \item{object}{(\code{mmrm_tmb})\cr the fitted MMRM object.}
 
 \item{...}{not used.}
+
+\item{x}{(\code{mmrm_tmb})\cr same as \code{object}.}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
@@ -18,6 +23,8 @@
 \section{Functions}{
 \itemize{
 \item \code{logLik.mmrm_tmb}: obtains the attained log likelihood value.
+
+\item \code{formula.mmrm_tmb}: obtains the used formula.
 }}
 
 \examples{
@@ -26,4 +33,6 @@ data <- fev_data
 object <- mmrm_tmb(formula, data)
 # Log likelihood given the estimated parameters:
 logLik(object)
+# Formula which was used:
+formula(object)
 }

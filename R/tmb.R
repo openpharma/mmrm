@@ -38,6 +38,7 @@ h_mmrm_tmb_control <- function(optimizer = stats::nlminb,
 #' @param formula (`formula`)\cr original formula.
 #'
 #' @return List of class `mmrm_tmb_formula_parts` with elements:
+#' - `formula`: the original input.
 #' - `model_formula`: `formula` with the correlation term is removed.
 #' - `full_formula`: same as `model_formula` but includes the `subject_var` and
 #'      `visit_var`.
@@ -88,6 +89,7 @@ h_mmrm_tmb_formula_parts <- function(formula) {
   )
   structure(
     list(
+      formula = formula,
       model_formula = model_formula,
       full_formula = full_formula,
       corr_type = deparse(corr_term[[1L]]),
@@ -295,6 +297,9 @@ h_mmrm_tmb_assert_opt <- function(tmb_object,
 #'   - `theta_est`: vector of variance parameter estimates.
 #'   - `theta_vcov`: variance-covariance matrix for variance parameter estimates.
 #'   - `neg_log_lik`: obtained negative log-likelihood.
+#'   - `formula_parts`: input.
+#'   - `data`: input.
+#'   - `reml`: input as a flag.
 #'   - `opt_details`: list with optimization details including convergence code.
 #'   - `tmb_object`: original `TMB` object created with [TMB::MakeADFun()].
 #' @export
@@ -336,6 +341,9 @@ h_mmrm_tmb_fit <- function(tmb_object,
       theta_est = theta_est,
       theta_vcov = theta_vcov,
       neg_log_lik = tmb_opt$objective,
+      formula_parts = formula_parts,
+      data = data,
+      reml = as.logical(tmb_data$reml),
       opt_details = tmb_opt[opt_details_names],
       tmb_object = tmb_object
     ),

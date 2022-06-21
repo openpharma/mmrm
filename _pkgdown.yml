@@ -42,6 +42,7 @@ reference:
       - assert_data
       - fit_single_optimizer
       - mmrm_tmb
+      - refit_multiple_optimizers
   - title: Methods
     contents:
       - mmrm_tmb_methods

@@ -10,7 +10,7 @@
 #' @param reml (`flag`)\cr whether restricted maximum likelihood (REML) estimation is used,
 #'   otherwise maximum likelihood (ML) is used.
 #' @param start (`numeric` or `NULL`)\cr optional starting values for the variance parameters.
-#' @param optimizer (`character`)\cr optimizer to be used to generate the model.
+#' @param optimizer (`string`)\cr optimizer to be used to generate the model.
 #'
 #' @return The `mmrm_fit` object, with additional attributes containing warnings,
 #'   messages, errors, optimizer used and convergence status in addition to the
@@ -97,4 +97,75 @@ h_summarize_all_fits <- function(all_fits) {
     log_liks = log_liks,
     converged = converged
   )
+}
+
+#' Refitting MMRM with Multiple Optimizers
+#'
+#' @description `r lifecycle::badge("experimental")`
+#'
+#' @param fit (`mmrm_fit`)\cr original model fit from [fit_single_optimizer()].
+#' @param n_cores (`count`)\cr number of cores which could in principle be used for
+#'   parallel computations on Linux or Mac machines.
+#' @param optimizers (`character`)\cr all possible optimizers to be used for fitting.
+#'
+#' @return The best (in terms of log likelihood) fit which converged.
+#'
+#' @note For Windows, no parallel computations are currently implemented.
+#' @export
+#'
+#' @examples
+#' fit <- fit_single_optimizer(
+#'   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+#'   data = fev_data,
+#'   optimizer = "nlminb"
+#' )
+#' best_fit <- refit_multiple_optimizers(fit)
+refit_multiple_optimizers <- function(fit,
+                                      n_cores = 1L,
+                                      optimizers = c("L-BFGS-B", "BFGS", "CG", "nlminb")) {
+  assert_class(fit, "mmrm_fit")
+  assert_int(n_cores, lower = 1L)
+  optimizers <- match.arg(optimizers, several.ok = TRUE)
+
+  # Extract the components of the original fit.
+  old_formula <- formula(fit)
+  old_data <- fit$data
+  old_optimizer <- attr(fit, "optimizer")
+
+  # Settings for the new fits.
+  optimizers <- setdiff(optimizers, old_optimizer)
+  n_cores_used <- ifelse(
+    .Platform$OS.type == "windows",
+    1L,
+    min(
+      length(optimizers),
+      n_cores
+    )
+  )
+
+  # Take the results from old fit as starting values for new fits.
+  all_fits <- parallel::mclapply(
+    X = optimizers,
+    FUN = fit_single_optimizer,
+    formula = old_formula,
+    data = old_data,
+    reml = fit$reml,
+    start = fit$theta_est,
+    mc.cores = n_cores_used,
+    mc.silent = TRUE
+  )
+  all_fits <- c(all_fits, list(old_result = fit))
+  names(all_fits) <- c(optimizers, old_optimizer)
+
+  # Find the results that are ok and return best in terms of log-likelihood.
+  all_fits_summary <- h_summarize_all_fits(all_fits)
+  is_ok <- all_fits_summary$converged
+  if (!any(is_ok)) {
+    stop(
+      "No optimizer led to a successful model fit. ",
+      "Please try to use a different covariance structure or other covariates."
+    )
+  }
+  best_optimizer <- names(which.max(all_fits_summary$log_liks[is_ok]))
+  all_fits[[best_optimizer]]
 }

@@ -12,6 +12,7 @@ h_mmrm_tmb_formula_parts(formula)
 \value{
 List of class \code{mmrm_tmb_formula_parts} with elements:
 \itemize{
+\item \code{formula}: the original input.
 \item \code{model_formula}: \code{formula} with the correlation term is removed.
 \item \code{full_formula}: same as \code{model_formula} but includes the \code{subject_var} and
 \code{visit_var}.

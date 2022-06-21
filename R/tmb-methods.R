@@ -3,6 +3,7 @@
 #' @description `r lifecycle::badge("experimental")`
 #'
 #' @param object (`mmrm_tmb`)\cr the fitted MMRM object.
+#' @param x (`mmrm_tmb`)\cr same as `object`.
 #' @param ... not used.
 #'
 #' @name mmrm_tmb_methods
@@ -21,4 +22,14 @@ NULL
 #' logLik(object)
 logLik.mmrm_tmb <- function(object, ...) {
   -object$neg_log_lik
+}
+
+#' @describeIn mmrm_tmb_methods obtains the used formula.
+#' @importFrom stats formula
+#' @exportS3Method
+#' @examples
+#' # Formula which was used:
+#' formula(object)
+formula.mmrm_tmb <- function(x, ...) {
+  x$formula_parts$formula
 }
