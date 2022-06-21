@@ -1,6 +1,8 @@
 alessandro
 Alessandro
+ARMCD
 aut
+AVISIT
 biocViews
 bootswatch
 bove
@@ -46,12 +48,15 @@ openpharma
 optimizers
 Optimizers
 params
+Parm
+PBO
 roche
 Roxygen
 RoxygenNote
 rsp
 sabanes
 Sabanes
+Satterthwaite
 sd
 src
 testthat
@@ -59,7 +64,10 @@ testthat's
 tmb
 TMB
 tri
+TRT
 twoPlusTwo
 UA
 unscaled
+USUBJID
 VignetteBuilder
+VIS

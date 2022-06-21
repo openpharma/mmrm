@@ -169,3 +169,55 @@ refit_multiple_optimizers <- function(fit,
   best_optimizer <- names(which.max(all_fits_summary$log_liks[is_ok]))
   all_fits[[best_optimizer]]
 }
+
+
+#' Fit the MMRM with Multiple Optimizers if Necessary
+#'
+#' @description `r lifecycle::badge("experimental")`
+#'
+#' @inheritParams fit_single_optimizer
+#' @inheritParams refit_multiple_optimizers
+#'
+#' @details When setting `optimizer = "automatic"`, first the default optimizer
+#' (`L-BFGS-B`) is used to fit the model. If that converges, this is returned.
+#' If not, the other available optimizers from [refit_multiple_optimizers()] are
+#' tried. If none of the optimizers converge, then the function fails. Otherwise
+#' the best fit is returned.
+#'
+#' @return The `mmrm_fit` object.
+#' @export
+#'
+#' @examples
+#' fit <- fit_model(
+#'   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+#'   data = fev_data
+#' )
+fit_model <- function(formula,
+                      data,
+                      reml = TRUE,
+                      optimizer = "automatic",
+                      n_cores = 1L) {
+  assert_string(optimizer)
+  use_automatic <- identical(optimizer, "automatic")
+  fit <- fit_single_optimizer(
+    formula = formula,
+    data = data,
+    reml = reml,
+    optimizer = ifelse(use_automatic, "L-BFGS-B", optimizer)
+  )
+  if (attr(fit, "converged")) {
+    fit
+  } else if (use_automatic) {
+    refit_multiple_optimizers(fit, n_cores = n_cores)
+  } else {
+    all_problems <- unlist(
+      attributes(fit)[c("errors", "messages", "warnings")],
+      use.names = FALSE
+    )
+    stop(paste0(
+      "Chosen optimizer '", optimizer, "' led to problems during model fit:\n",
+      paste(paste0(seq_along(all_problems), ") ", all_problems), collapse = ";\n"), "\n",
+      "Consider using the 'automatic' optimizer."
+    ))
+  }
+}

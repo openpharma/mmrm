@@ -1,0 +1,129 @@
+                                                           The SAS System                     Tuesday, June 21, 2022 12:36:00 PM   1
+
+                                                        The Mixed Procedure
+
+                                                         Model Information
+
+                                       Data Set                     ANA.DAT
+                                       Dependent Variable           FEV1
+                                       Covariance Structure         Unstructured
+                                       Subject Effect               USUBJID
+                                       Estimation Method            REML
+                                       Residual Variance Method     None
+                                       Fixed Effects SE Method      Model-Based
+                                       Degrees of Freedom Method    Satterthwaite
+
+
+                                                      Class Level Information
+
+                                        Class      Levels    Values
+
+                                        RACE            3    Black or African American
+                                                             White Asian
+                                        AVISIT          4    VIS2 VIS3 VIS4 VIS1
+                                        SEX             2    Female Male
+                                        ARMCD           2    TRT PBO
+                                        USUBJID        13    PT1 PT10 PT11 PT12 PT13 PT2
+                                                             PT3 PT4 PT5 PT6 PT7 PT8 PT9
+
+
+                                                            Dimensions
+
+                                                Covariance Parameters            10
+                                                Columns in X                     20
+                                                Columns in Z                      0
+                                                Subjects                         13
+                                                Max Obs per Subject               4
+
+
+                                                      Number of Observations
+
+                                            Number of Observations Read              50
+                                            Number of Observations Used              32
+                                            Number of Observations Not Used          18
+
+
+                                                         Iteration History
+
+                                    Iteration    Evaluations    -2 Res Log Like       Criterion
+
+                                            0              1       155.57778293
+                                            1              2       145.19051399      0.00223275
+                                            2              1       144.57990016      0.00351307
+                                            3              1       144.06057001      0.00574289
+                                            4              1       144.03582973      0.00589531
+                                            5              1       144.02359160      0.00597277
+                                            6              1       144.01750490      0.00601181
+                                            7              1       144.01598785      0.00602159
+                                            8              1       144.01522982      0.00602649
+                                            9              1       144.01485094      0.00602894
+                                                           The SAS System                     Tuesday, June 21, 2022 12:36:00 PM   2
+
+                                                        The Mixed Procedure
+
+                                                         Iteration History
+
+                                    Iteration    Evaluations    -2 Res Log Like       Criterion
+
+                                           10              1       144.01466152      0.00603017
+                                           11              1       144.01456682      0.00603079
+                                           12              1       144.01451948      0.00603119
+                                           13              1       144.01451654      0.01568808
+                                           14              3       144.01451653      0.01066100
+                                           15              1       144.01451647      0.21069351
+                                           16              1       144.01451554      2.46531492
+                                           17              1       144.01451101    303.41575452
+                                           18             27       144.01450908    530.10103629
+                                           19             38       144.01450828    3419.2619139
+                                           20             42       144.01450790    1547.5245875
+                                           21             32       144.01450706    1326.9917400
+                                           22             44       144.01451176     34.65543491
+                                           23             13       144.01450703     90.21266557
+                                           24             44       144.01451294    507.02427207
+                                           25             20       144.01451136    1236.1858171
+                                           26             44       144.01451294    174.82982461
+                                           27             44       144.01451292    2331.0263619
+                                           28              3       144.01450557    3908.5645603
+                                           29             32       144.01450489    23225.225303
+                                           30             28       144.01450352    130.33439122
+                                           31             12       144.01450307    1563.8202655
+                                           32             20       144.01450766    3183.7033480
+                                           33             21       144.01450766    698.20483968
+                                           34             20       144.01450685      8.05058160
+                                           35             44       144.01450685      8.05058160
+                                           36             44       144.01450685      8.05058160
+                                           37             44       144.01450685      8.05058160
+                                           38             44       144.01450685      8.05058160
+                                           39             44       144.01450685      8.05058160
+                                           40             44       144.01450685      8.05058160
+                                           41             44       144.01450685      8.05058160
+                                           42             44       144.01450685      8.05058160
+
+
+                                                     WARNING: Did not converge.
+
+
+                                                    Covariance Parameter Values
+                                                         At Last Iteration
+
+                                                  Cov Parm    Subject    Estimate
+
+                                                  UN(1,1)     USUBJID     29.2751
+                                                  UN(2,1)     USUBJID     20.1566
+                                                  UN(2,2)     USUBJID     52.3617
+                                                  UN(3,1)     USUBJID    -22.1287
+                                                  UN(3,2)     USUBJID     13.8077
+                                                  UN(3,3)     USUBJID      125.59
+                                                  UN(4,1)     USUBJID     15.0818
+                                                  UN(4,2)     USUBJID    -12.4046
+                                                  UN(4,3)     USUBJID      0.7730
+                                                           The SAS System                     Tuesday, June 21, 2022 12:36:00 PM   3
+
+                                                        The Mixed Procedure
+
+                                                    Covariance Parameter Values
+                                                         At Last Iteration
+
+                                                  Cov Parm    Subject    Estimate
+
+                                                  UN(4,4)     USUBJID     31.1871

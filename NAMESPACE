@@ -3,6 +3,7 @@
 S3method(formula,mmrm_tmb)
 S3method(logLik,mmrm_tmb)
 export(assert_data)
+export(fit_model)
 export(fit_single_optimizer)
 export(h_assert_one_rec_pt_visit)
 export(h_assert_rsp_var)
