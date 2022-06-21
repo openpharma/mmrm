@@ -263,7 +263,7 @@ test_that("mmrm_tmb works as expected in a simple model without covariates and M
     result,
     c(
       "cov", "beta_est", "beta_vcov", "theta_est", "theta_vcov",
-      "neg_log_lik", "opt_details", "tmb_object"
+      "neg_log_lik", "formula_parts", "data", "reml", "opt_details", "tmb_object"
     )
   )
   # See design/SAS/sas_log_simple.txt for the source of numbers.
@@ -285,7 +285,7 @@ test_that("mmrm_tmb works as expected in a simple model without covariates and R
     result,
     c(
       "cov", "beta_est", "beta_vcov", "theta_est", "theta_vcov",
-      "neg_log_lik", "opt_details", "tmb_object"
+      "neg_log_lik", "formula_parts", "data", "reml", "opt_details", "tmb_object"
     )
   )
   # See design/SAS/sas_log_simple_reml.txt for the source of numbers.
