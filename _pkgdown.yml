@@ -44,7 +44,7 @@ reference:
       - mmrm_tmb
   - title: Methods
     contents:
-      - logLik
+      - mmrm_tmb_methods
   - title: Datasets
     contents:
       - fev_data
