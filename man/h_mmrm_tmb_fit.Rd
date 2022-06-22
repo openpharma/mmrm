@@ -28,6 +28,9 @@ List pf class \code{mmrm_tmb} with:
 \item \code{theta_est}: vector of variance parameter estimates.
 \item \code{theta_vcov}: variance-covariance matrix for variance parameter estimates.
 \item \code{neg_log_lik}: obtained negative log-likelihood.
+\item \code{formula_parts}: input.
+\item \code{data}: input.
+\item \code{reml}: input as a flag.
 \item \code{opt_details}: list with optimization details including convergence code.
 \item \code{tmb_object}: original \code{TMB} object created with \code{\link[TMB:MakeADFun]{TMB::MakeADFun()}}.
 }

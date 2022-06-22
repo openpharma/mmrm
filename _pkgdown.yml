@@ -36,11 +36,17 @@ reference:
       - h_mmrm_tmb_assert_start
       - h_mmrm_tmb_assert_opt
       - h_mmrm_tmb_fit
+      - h_summarize_all_fits
   - title: Functions
     contents:
       - assert_data
+      - fit_model
       - fit_single_optimizer
       - mmrm_tmb
+      - refit_multiple_optimizers
+  - title: Methods
+    contents:
+      - mmrm_tmb_methods
   - title: Datasets
     contents:
       - fev_data

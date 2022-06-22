@@ -47,3 +47,81 @@ test_that("fit_single_optimizer works as expected with starting values and optim
   expect_identical(attr(result, "warnings"), NULL)
   expect_true(attr(result, "converged"))
 })
+
+# h_summarize_all_fits ----
+
+test_that("h_summarize_all_fits works as expected", {
+  mod_fit <- fit_single_optimizer(
+    formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+    data = fev_data,
+    optimizer = "nlminb"
+  )
+  mod_fit2 <- fit_single_optimizer(
+    formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+    data = fev_data,
+    optimizer = "L-BFGS-B"
+  )
+  all_fits <- list(mod_fit, mod_fit2)
+  result <- expect_silent(h_summarize_all_fits(all_fits))
+  expected <- list(
+    warnings = list(NULL, NULL),
+    messages = list(NULL, NULL),
+    log_liks = c(-1693.22493558573, -1693.22493812251),
+    converged = c(TRUE, TRUE)
+  )
+  expect_equal(result, expected)
+})
+
+# refit_multiple_optimizers ----
+
+test_that("refit_multiple_optimizers works as expected", {
+  fit <- fit_single_optimizer(
+    formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+    data = fev_data,
+    optimizer = "nlminb"
+  )
+
+  # Mock here that it did not converge.
+  attr(fit, "converged") <- FALSE
+  fit$neg_log_lik <- fit$neg_log_lik + 10
+
+  result <- expect_silent(refit_multiple_optimizers(fit = fit))
+  expect_class(result, "mmrm_fit")
+
+  expect_true(attr(result, "converged"))
+  expect_false(identical("nlminb", attr(result, "optimizer")))
+  expect_true(logLik(result) > logLik(fit))
+})
+
+# fit_model ----
+
+test_that("fit_model works as expected", {
+  formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
+  result <- expect_silent(fit_model(formula, fev_data, reml = FALSE))
+  expect_class(result, "mmrm_fit")
+  expect_true(attr(result, "converged"))
+  expect_false(result$reml)
+})
+
+test_that("fit_model falls back to other optimizers if default does not work", {
+  formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
+  data_small <- fev_data[1:50, ]
+  # Default does not work.
+  expect_error(
+    fit_model(formula, data_small, optimizer = "L-BFGS-B"),
+    "Model convergence problem"
+  )
+  # But another one works.
+  result <- expect_silent(fit_model(formula, data_small))
+  expect_true(attr(result, "converged"))
+  expect_false(identical(attr(result, "optimizer"), "L-BFGS-B"))
+})
+
+test_that("fit_model fails if no optimizer works", {
+  formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
+  data_small <- fev_data[1:50, ]
+  expect_error(
+    fit_model(formula, data_small, reml = FALSE),
+    "No optimizer led to a successful model fit"
+  )
+})
