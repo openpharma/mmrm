@@ -37,6 +37,7 @@ reference:
       - h_mmrm_tmb_assert_opt
       - h_mmrm_tmb_fit
       - h_summarize_all_fits
+      - h_covbeta_fun
   - title: Functions
     contents:
       - assert_data

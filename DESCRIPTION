@@ -52,5 +52,6 @@ Collate:
     'mmrm-package.R'
     'output.R'
     'parallel.R'
+    'satterthwaite.R'
     'tmb-methods.R'
     'tmb.R'
