@@ -34,6 +34,9 @@
     <loc>https://openpharma.github.io/mmrm/reference/fev_data.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/mmrm/reference/fit_model.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/mmrm/reference/fit_single_optimizer.html</loc>
   </url>
   <url>
@@ -73,6 +76,9 @@
     <loc>https://openpharma.github.io/mmrm/reference/h_record_all_output.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/mmrm/reference/h_summarize_all_fits.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/mmrm/reference/index.html</loc>
   </url>
   <url>
@@ -83,5 +89,11 @@
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/reference/mmrm_tmb.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/reference/mmrm_tmb_methods.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/reference/refit_multiple_optimizers.html</loc>
   </url>
 </urlset>

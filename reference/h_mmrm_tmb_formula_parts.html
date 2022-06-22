@@ -82,7 +82,8 @@
     <h2>Value</h2>
     
 
-<p>List of class <code>mmrm_tmb_formula_parts</code> with elements:</p><ul><li><p><code>model_formula</code>: <code>formula</code> with the correlation term is removed.</p></li>
+<p>List of class <code>mmrm_tmb_formula_parts</code> with elements:</p><ul><li><p><code>formula</code>: the original input.</p></li>
+<li><p><code>model_formula</code>: <code>formula</code> with the correlation term is removed.</p></li>
 <li><p><code>full_formula</code>: same as <code>model_formula</code> but includes the <code>subject_var</code> and
 <code>visit_var</code>.</p></li>
 <li><p><code>corr_type</code>: <code>string</code> with correlation term type (e.g. <code>"us"</code>).</p></li>
@@ -94,13 +95,17 @@
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">formula</span> <span class="op">&lt;-</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">SEX</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span></span>
 <span class="r-in"><span class="fu">h_mmrm_tmb_formula_parts</span><span class="op">(</span><span class="va">formula</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $formula</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x562f56445950&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $model_formula</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> FEV1 ~ RACE + SEX + ARMCD + AVISIT + ARMCD:AVISIT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5601e6dfae70&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x562f56445950&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $full_formula</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> FEV1 ~ RACE + SEX + ARMCD + AVISIT + USUBJID + ARMCD:AVISIT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5601e6dfae70&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x562f56445950&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $corr_type</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "us"</span>
