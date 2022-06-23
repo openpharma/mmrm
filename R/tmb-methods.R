@@ -60,7 +60,7 @@ deviance.mmrm_tmb <- function(object, ...) {
 #' # AIC:
 #' AIC(object)
 #' AIC(object, corrected = TRUE)
-AIC.mmrm_tmb <- function(object, corrected = FALSE, ..., k = 2) {  # nolint
+AIC.mmrm_tmb <- function(object, corrected = FALSE, ..., k = 2) { # nolint
   assert_flag(corrected)
   assert_number(k, lower = 1)
 
@@ -75,4 +75,17 @@ AIC.mmrm_tmb <- function(object, corrected = FALSE, ..., k = 2) {  # nolint
   }
 
   2 * object$neg_log_lik + k * df
+}
+
+#' @describeIn mmrm_tmb_methods obtains the Bayesian Information Criterion,
+#'   which is using the natural logarithm of the number of subjects for the
+#'   penalty parameter `k`.
+#' @importFrom stats BIC
+#' @exportS3Method
+#' @examples
+#' # BIC:
+#' BIC(object)
+BIC.mmrm_tmb <- function(object, ...) { # nolint
+  k <- log(object$tmb_data$n_subjects)
+  AIC(object, corrected = FALSE, k = k)
 }

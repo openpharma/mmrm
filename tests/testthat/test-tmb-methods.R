@@ -51,3 +51,12 @@ test_that("corrected AIC works as expected", {
   expected <- -2 * logLik(object) + 2 * length(object$theta_est) * multiplier
   expect_equal(result, expected)
 })
+
+# BIC ----
+
+test_that("BIC works as expected", {
+  object <- get_mmrm_tmb()
+  result <- expect_silent(BIC(object))
+  expected <- -2 * logLik(object) + log(object$tmb_data$n_subjects) * length(object$theta_est)
+  expect_equal(result, expected)
+})
