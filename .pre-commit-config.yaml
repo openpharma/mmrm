@@ -9,7 +9,8 @@ repos:
       - id: roxygenize
         additional_dependencies:
           - checkmate
-          - glmmTMB
+          - numDeriv
+          - TMB
           - pkgbuild
       - id: use-tidy-description
       - id: spell-check
@@ -27,7 +28,7 @@ repos:
           (.*/|)LICENSE|
           (.*/|)\.Rbuildignore|
           (.*/|)\.lintr|
-          (.*/|)_pkgdown.yaml|
+          (.*/|)_pkgdown.yml|
           (.*/|)staged_dependencies.yaml|
           (.*/|)\.pre-commit-.*|
           \.github/.*|
@@ -47,6 +48,7 @@ repos:
           )$
         additional_dependencies:
           - checkmate
+          - numDeriv
           - TMB
       - id: readme-rmd-rendered
       - id: parsable-R

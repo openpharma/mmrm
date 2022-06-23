@@ -21,6 +21,7 @@ Imports:
     checkmate (>= 2.1),
     lifecycle,
     methods,
+    numDeriv,
     TMB (>= 1.9.0),
     stats,
     parallel

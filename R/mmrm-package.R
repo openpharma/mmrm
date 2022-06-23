@@ -9,6 +9,7 @@
 #' @import checkmate
 #' @importFrom lifecycle deprecated
 #' @importFrom methods is
+#' @importFrom numDeriv genD
 #' @importFrom stats acf
 #' @importFrom parallel clusterApply
 NULL

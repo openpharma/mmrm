@@ -38,6 +38,8 @@ reference:
       - h_mmrm_tmb_fit
       - h_summarize_all_fits
       - h_covbeta_fun
+      - h_jac_col_as_matrix
+      - h_jac_list
   - title: Functions
     contents:
       - assert_data
