@@ -56,6 +56,39 @@ recover_data.mmrm <- function(object, ...) {
 #' @seealso See [emmeans::emm_basis()] for background.
 #' @keywords internal
 #' @noRd
-emm_basis.mmrm <- function(object, trms, xlev, grid, ...) {
+emm_basis.mmrm <- function(object,
+                           trms,
+                           xlev,
+                           grid,
+                           ...) {
+  model_frame <- stats::model.frame(trms, grid, na.action = na.pass, xlev = xlev)
+  contrasts <- attr(object$tmb_data$x_matrix, "contrasts")
+  model_mat <- stats::model.matrix(trms, model_frame, contrasts.arg = contrasts)
+  beta_hat <- object$beta_est
+  nbasis <- if (length(beta_hat) < ncol(model_mat)) {
+    kept <- match(names(beta_hat), colnames(model_mat))
+    beta_hat <- NA * model_mat[1L, ]
+    beta_hat[kept] <- object$beta_est
+    orig_model_mat <- stats::model.matrix(
+      trms,
+      stats::model.frame(object$formula_parts$model_formula, data = object$data),
+      contrasts.arg = contrasts
+    )
+    estimability::nonest.basis(orig_model_mat)
+  } else {
+    estimability::all.estble
+  }
+  dfargs <- list(object = object)
+  dffun <- function(k, dfargs) {
+    mmrm::df_md(dfargs$object, contrast = k)$denom_df
+  }
 
+  list(
+    X = model_mat,
+    bhat = beta_hat,
+    nbasis = nbasis,
+    V = object$beta_vcov,
+    dffun = dffun,
+    dfargs = dfargs
+  )
 }
