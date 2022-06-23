@@ -22,6 +22,7 @@ Dedic
 DiagonalMatrix
 dmvnorm
 Eigen
+emmeans
 fev
 FEV
 ganalytics

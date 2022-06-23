@@ -52,7 +52,7 @@ test_that("emmeans works as expected", {
   )
   result <- expect_silent(emmeans::emmeans(fit, ~ ARMCD | AVISIT))
   expect_class(result, "emmGrid")
-  expect_snapshot_value(as.data.frame(result))
+  expect_snapshot_value(as.data.frame(result), style = "serialize")
 })
 
 test_that("emmeans gives values close to what is expected", {
@@ -64,7 +64,6 @@ test_that("emmeans gives values close to what is expected", {
   )
   result <- expect_silent(emmeans::emmeans(fit, ~ ARMCD | AVISIT))
   result_df <- as.data.frame(result)
-  result_df$df <- round(result_df$df)
 
   # See design/SAS/sas_log_reml.txt for the source of numbers.
   expected_df <- data.frame(
