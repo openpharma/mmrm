@@ -33,7 +33,7 @@ test_that("emm_basis method works as expected", {
   )
   # Fit a linear model with the same formula so that we don't rely on
   # emm_basis just yet.
-  lm_mod <- stats::lm(object$formula_parts$model_formula, data = fev_data)
+  lm_mod <- stats::lm(fit$formula_parts$model_formula, data = fev_data)
   grid <- emmeans::ref_grid(lm_mod)
 
   result <- emmeans::emm_basis(fit, trms = trms, xlev = xlev, grid = grid)
@@ -50,7 +50,7 @@ test_that("emmeans works as expected", {
     formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
     data = fev_data
   )
-  result <- expect_silent(emmeans(fit, ~ ARMCD | AVISIT))
+  result <- expect_silent(emmeans::emmeans(fit, ~ ARMCD | AVISIT))
   expect_class(result, "emmGrid")
   expect_snapshot_value(as.data.frame(result))
 })
@@ -62,7 +62,7 @@ test_that("emmeans gives values close to what is expected", {
     formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
     data = fev_data
   )
-  result <- expect_silent(emmeans(fit, ~ ARMCD | AVISIT))
+  result <- expect_silent(emmeans::emmeans(fit, ~ ARMCD | AVISIT))
   result_df <- as.data.frame(result)
   result_df$df <- round(result_df$df)
 

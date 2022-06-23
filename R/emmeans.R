@@ -61,7 +61,7 @@ emm_basis.mmrm <- function(object,
                            xlev,
                            grid,
                            ...) {
-  model_frame <- stats::model.frame(trms, grid, na.action = na.pass, xlev = xlev)
+  model_frame <- stats::model.frame(trms, grid, na.action = stats::na.pass, xlev = xlev)
   contrasts <- attr(object$tmb_data$x_matrix, "contrasts")
   model_mat <- stats::model.matrix(trms, model_frame, contrasts.arg = contrasts)
   beta_hat <- object$beta_est
