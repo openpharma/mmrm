@@ -108,3 +108,35 @@ h_quad_form_vec <- function(x, mat) {
 
   sum(x * (mat %*% x))
 }
+
+#' Computation of a Gradient Given Jacobian and Contrast Vector
+#'
+#' @description `r lifecycle::badge("experimental")`
+#'
+#' @param jac_list (`list`)\cr Jacobian list produced e.g. by [h_jac_list()].
+#' @param contrast (`numeric`)\cr contrast vector, which needs to have the
+#'   same number of elements as there are rows and columns in each element of
+#'   `jac_list`.
+#'
+#' @return Numeric vector which contains the quadratic forms of each element of
+#'   `jac_list` with the `contrast` vector.
+#' @export
+#'
+#' @examples
+#' jac_list <- list(
+#'   matrix(1:4, 2, 2),
+#'   matrix(5:8, 2, 2)
+#' )
+#' contrast <- c(1:2)
+#' h_gradient(jac_list, contrast)
+h_gradient <- function(jac_list, contrast) {
+  assert_list(jac_list)
+  assert_numeric(contrast)
+
+  vapply(
+    jac_list,
+    h_quad_form_vec,
+    x = contrast,
+    numeric(1L)
+  )
+}

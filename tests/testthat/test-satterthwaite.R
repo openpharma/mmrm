@@ -46,3 +46,19 @@ test_that("h_quad_form_vec works as expected", {
   expected <- as.numeric(t(x) %*% mat %*% x)
   expect_equal(result, expected)
 })
+
+# h_gradient ----
+
+test_that("h_gradient works as expected", {
+  jac_list <- list(
+    matrix(1:4, 2, 2),
+    matrix(5:8, 2, 2)
+  )
+  contrast <- c(1:2)
+  result <- expect_silent(h_gradient(jac_list, contrast))
+  expected <- c(
+    t(contrast) %*% jac_list[[1L]] %*% contrast,
+    t(contrast) %*% jac_list[[2L]] %*% contrast
+  )
+  expect_equal(result, expected)
+})

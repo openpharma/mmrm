@@ -42,6 +42,7 @@ reference:
       - h_jac_col_as_matrix
       - h_jac_list
       - h_quad_form_vec
+      - h_gradient
   - title: Functions
     contents:
       - assert_data
