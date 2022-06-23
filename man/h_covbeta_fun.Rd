@@ -18,7 +18,7 @@ for the coefficient vector \code{beta}.
 }
 \examples{
 formula <- FEV1 ~ RACE + us(AVISIT | USUBJID)
-model <- mmrm_tmb(formula, fev_data)
+model <- h_mmrm_tmb(formula, fev_data)
 fun <- h_covbeta_fun(model)
 fun(model$theta_est)
 model$beta_vcov

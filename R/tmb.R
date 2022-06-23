@@ -355,6 +355,10 @@ h_mmrm_tmb_fit <- function(tmb_object,
 #'
 #' @description `r lifecycle::badge("experimental")`
 #'
+#' This is the low-level function to fit an MMRM. Note that this does not
+#' try different optimizers or adds Jacobian information etc. in contrast to
+#' [mmrm()].
+#'
 #' @param formula (`formula`)\cr model formula with exactly one special term
 #'   specifying the visits within subjects, see details.
 #' @param data (`data.frame`)\cr input data containing the variables used
@@ -378,12 +382,12 @@ h_mmrm_tmb_fit <- function(tmb_object,
 #' @examples
 #' formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
 #' data <- fev_data
-#' system.time(result <- mmrm_tmb(formula, data))
-mmrm_tmb <- function(formula,
-                     data,
-                     reml = TRUE,
-                     start = NULL,
-                     control = h_mmrm_tmb_control()) {
+#' system.time(result <- h_mmrm_tmb(formula, data))
+h_mmrm_tmb <- function(formula,
+                       data,
+                       reml = TRUE,
+                       start = NULL,
+                       control = h_mmrm_tmb_control()) {
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   tmb_data <- h_mmrm_tmb_data(formula_parts, data, reml)
   tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start)

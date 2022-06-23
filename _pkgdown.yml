@@ -36,6 +36,7 @@ reference:
       - h_mmrm_tmb_assert_start
       - h_mmrm_tmb_assert_opt
       - h_mmrm_tmb_fit
+      - h_mmrm_tmb
       - h_summarize_all_fits
       - h_covbeta_fun
       - h_jac_col_as_matrix
@@ -43,9 +44,8 @@ reference:
   - title: Functions
     contents:
       - assert_data
-      - fit_model
       - fit_single_optimizer
-      - mmrm_tmb
+      - mmrm
       - refit_multiple_optimizers
   - title: Methods
     contents:

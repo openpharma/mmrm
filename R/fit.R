@@ -5,12 +5,8 @@
 #' This function helps to fit an MMRM using `TMB` with a single optimizer,
 #' while capturing messages and warnings.
 #'
-#' @param formula (`formula`)\cr the model formula, see [mmrm_tmb()] for details.
-#' @param data (`data`)\cr the data to be used for the model.
-#' @param reml (`flag`)\cr whether restricted maximum likelihood (REML) estimation is used,
-#'   otherwise maximum likelihood (ML) is used.
+#' @inheritParams mmrm
 #' @param start (`numeric` or `NULL`)\cr optional starting values for the variance parameters.
-#' @param optimizer (`string`)\cr optimizer to be used to generate the model.
 #'
 #' @return The `mmrm_fit` object, with additional attributes containing warnings,
 #'   messages, errors, optimizer used and convergence status in addition to the
@@ -39,7 +35,7 @@ fit_single_optimizer <- function(formula,
     optimizer_args = if (optimizer == "nlminb") list() else list(method = optimizer)
   )
   quiet_fit <- h_record_all_output(
-    mmrm_tmb(
+    h_mmrm_tmb(
       formula = formula,
       data = data,
       reml = reml,
@@ -104,8 +100,7 @@ h_summarize_all_fits <- function(all_fits) {
 #' @description `r lifecycle::badge("experimental")`
 #'
 #' @param fit (`mmrm_fit`)\cr original model fit from [fit_single_optimizer()].
-#' @param n_cores (`count`)\cr number of cores which could in principle be used for
-#'   parallel computations on Linux or Mac machines.
+#' @inheritParams mmrm
 #' @param optimizers (`character`)\cr all possible optimizers to be used for fitting.
 #'
 #' @return The best (in terms of log likelihood) fit which converged.
@@ -171,32 +166,47 @@ refit_multiple_optimizers <- function(fit,
 }
 
 
-#' Fit the MMRM with Multiple Optimizers if Necessary
+#' Fit an MMRM
 #'
 #' @description `r lifecycle::badge("experimental")`
 #'
-#' @inheritParams fit_single_optimizer
-#' @inheritParams refit_multiple_optimizers
+#' This is the main function fitting the MMRM.
 #'
-#' @details When setting `optimizer = "automatic"`, first the default optimizer
+#' @param formula (`formula`)\cr the model formula, see details.
+#' @param data (`data`)\cr the data to be used for the model.
+#' @param reml (`flag`)\cr whether restricted maximum likelihood (REML) estimation is used,
+#'   otherwise maximum likelihood (ML) is used.
+#' @param optimizer (`string`)\cr optimizer to be used to generate the model.
+#' @param n_cores (`count`)\cr number of cores which could in principle be used for
+#'   parallel computations on Linux or Mac machines.
+#'
+#' @details
+#' The `formula` typically looks like:
+#' `FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)`
+#' so specifies response and covariates as usual, and exactly one special term
+#' defines which correlation structure is used and what are the visit and
+#' subject variables.
+#'
+#' When setting `optimizer = "automatic"`, first the default optimizer
 #' (`L-BFGS-B`) is used to fit the model. If that converges, this is returned.
 #' If not, the other available optimizers from [refit_multiple_optimizers()] are
-#' tried. If none of the optimizers converge, then the function fails. Otherwise
+#' tried (in parallel if `n_cores` is set and not on Windows).
+#' If none of the optimizers converge, then the function fails. Otherwise
 #' the best fit is returned.
 #'
 #' @return The `mmrm_fit` object.
 #' @export
 #'
 #' @examples
-#' fit <- fit_model(
+#' fit <- mmrm(
 #'   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
 #'   data = fev_data
 #' )
-fit_model <- function(formula,
-                      data,
-                      reml = TRUE,
-                      optimizer = "automatic",
-                      n_cores = 1L) {
+mmrm <- function(formula,
+                 data,
+                 reml = TRUE,
+                 optimizer = "automatic",
+                 n_cores = 1L) {
   assert_string(optimizer)
   use_automatic <- identical(optimizer, "automatic")
   fit <- fit_single_optimizer(

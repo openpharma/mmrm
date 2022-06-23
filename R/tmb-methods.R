@@ -11,7 +11,7 @@
 #' @examples
 #' formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
 #' data <- fev_data
-#' object <- mmrm_tmb(formula, data)
+#' object <- h_mmrm_tmb(formula, data)
 NULL
 
 #' @describeIn mmrm_tmb_methods obtains the attained log likelihood value.

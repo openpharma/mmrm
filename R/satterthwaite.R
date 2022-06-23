@@ -10,7 +10,7 @@
 #'
 #' @examples
 #' formula <- FEV1 ~ RACE + us(AVISIT | USUBJID)
-#' model <- mmrm_tmb(formula, fev_data)
+#' model <- h_mmrm_tmb(formula, fev_data)
 #' fun <- h_covbeta_fun(model)
 #' fun(model$theta_est)
 #' model$beta_vcov
@@ -64,7 +64,7 @@ h_jac_col_as_matrix <- function(jac_matrix, col) {
 #'
 #' @examples
 #' formula <- FEV1 ~ RACE + us(AVISIT | USUBJID)
-#' model <- mmrm_tmb(formula, fev_data)
+#' model <- h_mmrm_tmb(formula, fev_data)
 #' covbeta_fun <- h_covbeta_fun(model)
 #' h_jac_list(covbeta_fun, model$theta_est)
 h_jac_list <- function(covbeta_fun,

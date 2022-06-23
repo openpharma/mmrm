@@ -251,12 +251,12 @@ test_that("h_mmrm_tmb_fit works as expected", {
   expect_list(result$tmb_object)
 })
 
-# mmrm_tmb ----
+# h_mmrm_tmb ----
 
-test_that("mmrm_tmb works as expected in a simple model without covariates and ML", {
+test_that("h_mmrm_tmb works as expected in a simple model without covariates and ML", {
   formula <- FEV1 ~ us(AVISIT | USUBJID)
   data <- fev_data
-  result <- expect_silent(mmrm_tmb(formula, data, reml = FALSE))
+  result <- expect_silent(h_mmrm_tmb(formula, data, reml = FALSE))
   expect_class(result, "mmrm_tmb")
   expect_list(result)
   expect_named(
@@ -275,10 +275,10 @@ test_that("mmrm_tmb works as expected in a simple model without covariates and M
   expect_equal(result_cov_tri, expected_cov_tri, tolerance = 1e-3)
 })
 
-test_that("mmrm_tmb works as expected in a simple model without covariates and REML", {
+test_that("h_mmrm_tmb works as expected in a simple model without covariates and REML", {
   formula <- FEV1 ~ us(AVISIT | USUBJID)
   data <- fev_data
-  result <- expect_silent(mmrm_tmb(formula, data, reml = TRUE))
+  result <- expect_silent(h_mmrm_tmb(formula, data, reml = TRUE))
   expect_class(result, "mmrm_tmb")
   expect_list(result)
   expect_named(
