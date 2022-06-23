@@ -41,6 +41,7 @@ reference:
       - h_covbeta_fun
       - h_jac_col_as_matrix
       - h_jac_list
+      - h_quad_form_vec
   - title: Functions
     contents:
       - assert_data

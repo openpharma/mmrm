@@ -83,3 +83,28 @@ h_jac_list <- function(covbeta_fun,
     jac_matrix = jac_matrix
   )
 }
+
+#' Quadratic Form Calculation
+#'
+#' @description `r lifecycle::badge("experimental")`
+#'
+#' @param x (`numeric`)\cr interpreted as a row vector.
+#' @param mat (`matrix`)\cr square matrix with the same dimensions as `x`.
+#'
+#' @return The number `x %*% mat %*% t(x)` as a numeric (not a matrix).
+#' @export
+#'
+#' @examples
+#' h_quad_form_vec(1:2, matrix(1:4, 2, 2))
+h_quad_form_vec <- function(x, mat) {
+  assert_numeric(x, any.missing = FALSE)
+  assert_matrix(
+    mat,
+    mode = "numeric",
+    any.missing = FALSE,
+    nrows = length(x),
+    ncols = length(x)
+  )
+
+  sum(x * (mat %*% x))
+}

@@ -36,3 +36,13 @@ test_that("h_jac_list works as expected", {
   expect_equal(result[[3L]], matrix(c(0, 0, 7, 0), 2, 2))
   expect_equal(result[[4L]], matrix(c(0, 0, 0, 8), 2, 2))
 })
+
+# h_quad_form_vec ----
+
+test_that("h_quad_form_vec works as expected", {
+  x <- 1:2
+  mat <- matrix(1:4, 2, 2)
+  result <- expect_silent(h_quad_form_vec(x, mat))
+  expected <- as.numeric(t(x) %*% mat %*% x)
+  expect_equal(result, expected)
+})
