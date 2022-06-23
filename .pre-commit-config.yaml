@@ -9,6 +9,7 @@ repos:
       - id: roxygenize
         additional_dependencies:
           - checkmate
+          - emmeans
           - numDeriv
           - TMB
           - pkgbuild
@@ -48,6 +49,7 @@ repos:
           )$
         additional_dependencies:
           - checkmate
+          - emmeans
           - numDeriv
           - TMB
       - id: readme-rmd-rendered
