@@ -57,6 +57,7 @@ reference:
       - refit_multiple_optimizers
   - title: Methods
     contents:
+      - emmeans_support
       - mmrm_tmb_methods
   - title: Datasets
     contents:
