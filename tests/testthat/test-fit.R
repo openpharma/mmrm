@@ -101,6 +101,7 @@ test_that("mmrm works as expected", {
   expect_class(result, c("mmrm", "mmrm_fit", "mmrm_tmb"))
   expect_true(attr(result, "converged"))
   expect_list(result$jac_list, types = "matrix")
+  expect_class(result$call, "call")
   expect_false(result$reml)
 })
 

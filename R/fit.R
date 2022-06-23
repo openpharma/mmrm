@@ -198,7 +198,8 @@ refit_multiple_optimizers <- function(fit,
 #'
 #' @note The `mmrm` object is also an `mmrm_fit` and an `mmrm_tmb` object,
 #' therefore corresponding methods also work (see [`mmrm_tmb_methods`]).
-#' In addition it contains the Jacobian information `jac_list`.
+#' In addition it contains the Jacobian information `jac_list` and the `call`.
+#' Use of the package `emmeans` is supported, see [`emmeans_support`].
 #'
 #' @export
 #'
@@ -239,6 +240,10 @@ mmrm <- function(formula,
 
   covbeta_fun <- h_covbeta_fun(fit)
   fit$jac_list <- h_jac_list(covbeta_fun, fit$theta_est)
+
+  fun_call <- match.call()
+  fun_call$formula <- eval(formula)
+  fit$call <- fun_call
 
   class(fit) <- c("mmrm", class(fit))
   fit

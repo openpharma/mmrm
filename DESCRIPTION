@@ -27,6 +27,8 @@ Imports:
     parallel
 LinkingTo: TMB, RcppEigen, testthat
 Suggests:
+    emmeans (>= 1.7),
+    estimability,
     glmmTMB,
     knitr,
     testthat (>= 3.0.0),
@@ -47,6 +49,7 @@ Collate:
     'catch-routine-registration.R'
     'covariance.R'
     'data.R'
+    'emmeans.R'
     'fit.R'
     'formula.R'
     'labels.R'
