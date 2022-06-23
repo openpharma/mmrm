@@ -4,7 +4,7 @@
 #'
 #' @param vars (`list`)\cr variables to use in the model.
 #' @param cor_struct (`string`)\cr specify the covariance structure to use.
-#' @return Formula to use in [mmrm_tmb()].
+#' @return Formula to use in [h_mmrm_tmb()].
 #' @export
 #'
 #' @examples

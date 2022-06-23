@@ -2,6 +2,7 @@
 #'
 #' `mmrm` implements mixed models with repeated measures (MMRM) in R.
 #'
+#' @aliases mmrm-package
 "_PACKAGE"
 
 #' @useDynLib mmrm, .registration = TRUE
