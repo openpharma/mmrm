@@ -33,6 +33,7 @@ List pf class \code{mmrm_tmb} with:
 \item \code{reml}: input as a flag.
 \item \code{opt_details}: list with optimization details including convergence code.
 \item \code{tmb_object}: original \code{TMB} object created with \code{\link[TMB:MakeADFun]{TMB::MakeADFun()}}.
+\item \code{tmb_data}: input.
 }
 }
 \description{

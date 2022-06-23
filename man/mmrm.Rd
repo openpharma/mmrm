@@ -43,8 +43,8 @@ the best fit is returned.
 }
 \note{
 The \code{mmrm} object is also an \code{mmrm_fit} and an \code{mmrm_tmb} object,
-therefore corresponding methods also work. In addition it contains the
-Jacobian information \code{jac_list}.
+therefore corresponding methods also work (see \code{\link{mmrm_tmb_methods}}).
+In addition it contains the Jacobian information \code{jac_list}.
 }
 \examples{
 fit <- mmrm(

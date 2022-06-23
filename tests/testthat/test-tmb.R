@@ -235,7 +235,8 @@ test_that("h_mmrm_tmb_fit works as expected", {
   expect_class(result, "mmrm_tmb")
   expect_named(result, c(
     "cov", "beta_est", "beta_vcov", "theta_est", "theta_vcov",
-    "neg_log_lik", "formula_parts", "data", "reml", "opt_details", "tmb_object"
+    "neg_log_lik", "formula_parts", "data", "reml", "opt_details", "tmb_object",
+    "tmb_data"
   ))
   expect_identical(rownames(result$cov), c("VIS1", "VIS2", "VIS3", "VIS4"))
   expect_identical(colnames(result$cov), c("VIS1", "VIS2", "VIS3", "VIS4"))
@@ -249,6 +250,7 @@ test_that("h_mmrm_tmb_fit works as expected", {
   expect_false(result$reml)
   expect_list(result$opt_details)
   expect_list(result$tmb_object)
+  expect_class(result$tmb_data, "mmrm_tmb_data")
 })
 
 # h_mmrm_tmb ----
@@ -263,7 +265,8 @@ test_that("h_mmrm_tmb works as expected in a simple model without covariates and
     result,
     c(
       "cov", "beta_est", "beta_vcov", "theta_est", "theta_vcov",
-      "neg_log_lik", "formula_parts", "data", "reml", "opt_details", "tmb_object"
+      "neg_log_lik", "formula_parts", "data", "reml", "opt_details", "tmb_object",
+      "tmb_data"
     )
   )
   # See design/SAS/sas_log_simple.txt for the source of numbers.
@@ -285,7 +288,8 @@ test_that("h_mmrm_tmb works as expected in a simple model without covariates and
     result,
     c(
       "cov", "beta_est", "beta_vcov", "theta_est", "theta_vcov",
-      "neg_log_lik", "formula_parts", "data", "reml", "opt_details", "tmb_object"
+      "neg_log_lik", "formula_parts", "data", "reml", "opt_details", "tmb_object",
+      "tmb_data"
     )
   )
   # See design/SAS/sas_log_simple_reml.txt for the source of numbers.

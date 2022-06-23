@@ -302,6 +302,7 @@ h_mmrm_tmb_assert_opt <- function(tmb_object,
 #'   - `reml`: input as a flag.
 #'   - `opt_details`: list with optimization details including convergence code.
 #'   - `tmb_object`: original `TMB` object created with [TMB::MakeADFun()].
+#'   - `tmb_data`: input.
 #' @export
 h_mmrm_tmb_fit <- function(tmb_object,
                            tmb_opt,
@@ -345,7 +346,8 @@ h_mmrm_tmb_fit <- function(tmb_object,
       data = data,
       reml = as.logical(tmb_data$reml),
       opt_details = tmb_opt[opt_details_names],
-      tmb_object = tmb_object
+      tmb_object = tmb_object,
+      tmb_data = tmb_data
     ),
     class = "mmrm_tmb"
   )

@@ -4,11 +4,17 @@
 \alias{mmrm_tmb_methods}
 \alias{logLik.mmrm_tmb}
 \alias{formula.mmrm_tmb}
+\alias{deviance.mmrm_tmb}
+\alias{AIC.mmrm_tmb}
 \title{Methods for \code{mmrm_tmb} Objects}
 \usage{
 \method{logLik}{mmrm_tmb}(object, ...)
 
 \method{formula}{mmrm_tmb}(x, ...)
+
+\method{deviance}{mmrm_tmb}(object, ...)
+
+\method{AIC}{mmrm_tmb}(object, corrected = FALSE, ..., k = 2)
 }
 \arguments{
 \item{object}{(\code{mmrm_tmb})\cr the fitted MMRM object.}
@@ -16,6 +22,11 @@
 \item{...}{not used.}
 
 \item{x}{(\code{mmrm_tmb})\cr same as \code{object}.}
+
+\item{corrected}{(\code{flag})\cr whether corrected AIC should be calculated.}
+
+\item{k}{(\code{number})\cr the penalty per parameter to be used; default \code{k = 2}
+is the classical AIC.}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
@@ -25,6 +36,16 @@
 \item \code{logLik.mmrm_tmb}: obtains the attained log likelihood value.
 
 \item \code{formula.mmrm_tmb}: obtains the used formula.
+
+\item \code{deviance.mmrm_tmb}: obtains the deviance, which is defined here
+as twice the negative log likelihood, which can either be integrated
+over the coefficients for REML fits or the usual one for ML fits.
+
+\item \code{AIC.mmrm_tmb}: obtains the Akaike Information Criterion,
+where the degrees of freedom are the number of variance parameters (\code{n_theta}).
+If \code{corrected}, then this is multiplied with \code{m / (m - n_theta - 1)} where
+\code{m} is the number of observations minus the number of coefficients, or
+\code{n_theta + 2} if it is smaller than that.
 }}
 
 \examples{
@@ -35,4 +56,9 @@ object <- h_mmrm_tmb(formula, data)
 logLik(object)
 # Formula which was used:
 formula(object)
+# REML criterion (twice the negative log likelihood):
+deviance(object)
+# AIC:
+AIC(object)
+AIC(object, corrected = TRUE)
 }

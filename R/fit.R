@@ -197,8 +197,8 @@ refit_multiple_optimizers <- function(fit,
 #' @return An `mmrm` object.
 #'
 #' @note The `mmrm` object is also an `mmrm_fit` and an `mmrm_tmb` object,
-#' therefore corresponding methods also work. In addition it contains the
-#' Jacobian information `jac_list`.
+#' therefore corresponding methods also work (see [`mmrm_tmb_methods`]).
+#' In addition it contains the Jacobian information `jac_list`.
 #'
 #' @export
 #'
