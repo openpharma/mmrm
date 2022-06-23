@@ -62,3 +62,34 @@ test_that("h_gradient works as expected", {
   )
   expect_equal(result, expected)
 })
+
+# h_df_1d_list ----
+
+test_that("h_df_1d_list works as expected", {
+  result <- expect_silent(h_df_1d_list(est = 5, var = 4, v_num = 1, v_denom = 2))
+  expected <- list(
+    est = 5,
+    se = 2,
+    df = 1 / 2,
+    t_stat = 5 / 2,
+    p_val = 2 * pt(q = 5 / 2, df = 1 / 2, lower.tail = FALSE)
+  )
+  expect_equal(result, expected)
+})
+
+# df_1d ----
+
+test_that("df_1d works as expected", {
+  object <- mmrm(
+    formula = FEV1 ~ us(AVISIT | USUBJID),
+    data = fev_data
+  )
+  # See design/SAS/sas_log_simple_reml.txt for the source of numbers.
+  result <- expect_silent(df_1d(object, 1))
+  expect_list(result)
+  expect_equal(result$est, 42.8338, tolerance = 1e-4)
+  expect_equal(result$se, 0.3509, tolerance = 1e-4)
+  expect_identical(round(result$df), 171)
+  expect_equal(result$t_stat, 122.07, tolerance = 1e-4)
+  expect_true(result$p_val < 0.0001)
+})

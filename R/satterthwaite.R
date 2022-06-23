@@ -140,3 +140,79 @@ h_gradient <- function(jac_list, contrast) {
     numeric(1L)
   )
 }
+
+#' Creating Results List for One-Dimensional Contrast
+#'
+#' @description `r lifecycle::badge("experimental")`
+#'
+#' @param est (`number`)\cr estimate.
+#' @param var (`number`)\cr variance of estimate.
+#' @param v_num (`number`)\cr numerator for Satterthwaite d.f.
+#' @param v_denom (`number`)\cr denominator for Satterthwaite d.f.
+#'
+#' @return List with `est`, `se`, `df`, `t_stat` and `p_val` (2-sided p-value).
+#' @export
+#'
+#' @examples
+#' h_df_1d_list(5, 1, 1, 2)
+h_df_1d_list <- function(est,
+                         var,
+                         v_num,
+                         v_denom) {
+  assert_number(est)
+  assert_number(var, lower = .Machine$double.xmin)
+  assert_number(v_num, lower = .Machine$double.xmin)
+  assert_number(v_denom, lower = .Machine$double.xmin)
+
+  se <- sqrt(var)
+  t_stat <- est / se
+  df <- v_num / v_denom
+  p_val <- 2 * pt(q = abs(t_stat), df = df, lower.tail = FALSE)
+
+  list(
+    est = est,
+    se = se,
+    df = df,
+    t_stat = t_stat,
+    p_val = p_val
+  )
+}
+
+#' Calculation of Satterthwaite Degrees of Freedom for One-Dimensional Contrast
+#'
+#' @description `r lifecycle::badge("experimental")`
+#'
+#' @param object (`mmrm`)\cr the MMRM fit.
+#' @param contrast (`numeric`)\cr contrast vector.
+#'
+#' @return List with `est`, `se`, `df`, `t_stat` and `p_val`.
+#' @export
+#'
+#' @examples
+#' object <- mmrm(
+#'   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+#'   data = fev_data
+#' )
+#' contrast <- numeric(length(object$beta_est))
+#' contrast[3] <- 1
+#' df_1d(object, contrast)
+df_1d <- function(object, contrast) {
+  assert_class(object, "mmrm")
+  assert_numeric(contrast, any.missing = FALSE)
+
+  contrast <- as.vector(contrast)
+  assert_numeric(contrast, len = length(object$beta_est))
+  est <- sum(contrast * object$beta_est)
+  var <- h_quad_form_vec(contrast, object$beta_vcov)
+  grad <- h_gradient(object$jac_list, contrast)
+
+  v_num <- 2 * var ^ 2
+  v_denom <- h_quad_form_vec(grad, object$theta_vcov)
+
+  h_df_1d_list(
+    est = est,
+    var = var,
+    v_num = v_num,
+    v_denom = v_denom
+  )
+}

@@ -43,9 +43,11 @@ reference:
       - h_jac_list
       - h_quad_form_vec
       - h_gradient
+      - h_df_1d_list
   - title: Functions
     contents:
       - assert_data
+      - df_1d
       - fit_single_optimizer
       - mmrm
       - refit_multiple_optimizers
