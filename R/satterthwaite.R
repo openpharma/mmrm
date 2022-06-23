@@ -84,29 +84,62 @@ h_jac_list <- function(covbeta_fun,
   )
 }
 
-#' Quadratic Form Calculation
+#' Quadratic Form Calculations
 #'
 #' @description `r lifecycle::badge("experimental")`
 #'
-#' @param x (`numeric`)\cr interpreted as a row vector.
-#' @param mat (`matrix`)\cr square matrix with the same dimensions as `x`.
+#' These helpers are mainly for easier readability and slightly better efficiency
+#' of the quadratic forms used in the Satterthwaite calculations.
 #'
-#' @return The number `x %*% mat %*% t(x)` as a numeric (not a matrix).
+#' @param center (`matrix`)\cr square numeric matrix with the same dimensions as
+#'   `x` as the center of the quadratic form.
+#'
+#' @name h_quad_form
+NULL
+
+#' @describeIn h_quad_form calculates the number `vec %*% center %*% t(vec)`
+#'   as a numeric (not a matrix).
+#'
+#' @param vec (`numeric`)\cr interpreted as a row vector.
+#'
 #' @export
-#'
 #' @examples
 #' h_quad_form_vec(1:2, matrix(1:4, 2, 2))
-h_quad_form_vec <- function(x, mat) {
-  assert_numeric(x, any.missing = FALSE)
+h_quad_form_vec <- function(vec, center) {
+  assert_numeric(vec, any.missing = FALSE)
   assert_matrix(
-    mat,
+    center,
     mode = "numeric",
     any.missing = FALSE,
-    nrows = length(x),
-    ncols = length(x)
+    nrows = length(vec),
+    ncols = length(vec)
   )
 
-  sum(x * (mat %*% x))
+  sum(vec * (center %*% vec))
+}
+
+#' @describeIn h_quad_form calculates the quadratic form `mat %*% center %*% t(mat)`
+#'   as a matrix, the result is square and has dimensions identical to the number
+#'   of rows in `mat`.
+#'
+#' @param mat (`matrix`)\cr numeric matrix to be multiplied left and right of
+#'   `center`, therefore needs to have as many columns as there are rows and columns
+#'   in `center`.
+#'
+#' @export
+#' @examples
+#' h_quad_form_mat(matrix(2:7, 3, 2), matrix(1:4, 2, 2))
+h_quad_form_mat <- function(mat, center) {
+  assert_matrix(mat, mode = "numeric", any.missing = FALSE, min.cols = 1L)
+  assert_matrix(
+    center,
+    mode = "numeric",
+    any.missing = FALSE,
+    nrows = ncol(x),
+    ncols = ncol(x)
+  )
+
+  mat %*% tcrossprod(center, mat)
 }
 
 #' Computation of a Gradient Given Jacobian and Contrast Vector
@@ -136,7 +169,7 @@ h_gradient <- function(jac_list, contrast) {
   vapply(
     jac_list,
     h_quad_form_vec,
-    x = contrast,
+    vec = contrast,
     numeric(1L)
   )
 }
@@ -214,5 +247,155 @@ df_1d <- function(object, contrast) {
     var = var,
     v_num = v_num,
     v_denom = v_denom
+  )
+}
+
+#' Calculating Denominator Degrees of Freedom for the Multi-Dimensional Case
+#'
+#' @description `r lifecycle::badge("experimental")`
+#'
+#' @param t_stat_df (`numeric`)\cr `n` t-statistic derived degrees of freedom.
+#'
+#' @return Usually the calculation is returning `2 * E / (E - n)` where
+#'   `E` is the sum of `t / (t - 2)` over all `t_stat_df` values `t`.
+#'
+#' @note If the input values are two similar to each other then just the average
+#'   of them is returned. If any of the inputs is not larger than 2 then 2 is
+#'   returned.
+#'
+#' @export
+#'
+#' @examples
+#' h_md_denom_df(c(5, 10))
+h_md_denom_df <- function(t_stat_df) {
+  assert_numeric(t_stat_df, min.len = 1L, lower = .Machine$double.xmin, any.missing = FALSE)
+
+  if (test_scalar(t_stat_df)) {
+    t_stat_df
+  } else if (all(abs(diff(t_stat_df)) < sqrt(.Machine$double.eps))) {
+    mean(t_stat_df)
+  } else if (any(t_stat_df <= 2)) {
+    2
+  } else {
+    E <- sum(t_stat_df / (t_stat_df - 2))
+    2 * E / (E - (length(t_stat_df)))
+  }
+}
+
+#' Creating Results List for Multi-Dimensional Contrast
+#'
+#' @description `r lifecycle::badge("experimental")`
+#'
+#' @param f_stat (`number`)\cr F-statistic.
+#' @param num_df (`number`)\cr numerator degrees of freedom.
+#' @param denom_df (`number`)\cr denominator degrees of freedom.
+#'
+#' @return List with `num_df`, `denom_df`, `f_stat` and `p_val` (2-sided p-value).
+#' @export
+#'
+#' @examples
+#' h_df_md_list(5, 1, 15)
+h_df_md_list <- function(f_stat, num_df, denom_df) {
+  assert_number(f_stat, lower = .Machine$double.xmin)
+  assert_number(num_df, lower = 1)
+  assert_number(denom_df, lower = 2)
+
+  p_val <- stats::pf(
+    q = f_stat,
+    df1 = num_df,
+    df2 = denom_df,
+    lower.tail = FALSE
+  )
+
+  list(
+    num_df = num_df,
+    denom_df = denom_df,
+    f_stat = f_stat,
+    p_val = p_val
+  )
+}
+
+#' Creating F-Statistic Results from One-Dimensional Contrast
+#'
+#' @description `r lifecycle::badge("experimental")`
+#'
+#' @param object (`mmrm`)\cr model fit.
+#' @param contrast (`numeric`)\cr one-dimensional contrast.
+#'
+#' @return The one-dimensional results are calculated and then returned as per
+#'   [h_df_md_list()].
+#' @export
+h_df_md_from_1d <- function(object, contrast) {
+  res_1d <- df_1d(object, contrast)
+  h_df_md_list(
+    f_stat = res_1d$t_stat^2,
+    num_df = 1,
+    denom_df = res_1d$df
+  )
+}
+
+#' Calculation of Satterthwaite Degrees of Freedom for Multi-Dimensional Contrast
+#'
+#' @description `r lifecycle::badge("experimental")`
+#'
+#' @param object (`mmrm`)\cr the MMRM fit.
+#' @param contrast (`matrix`)\cr numeric contrast matrix, if given a `numeric`
+#'   then this is coerced to a row vector.
+#'
+#' @return List with `est`, `se`, `df`, `t_stat` and `p_val`.
+#' @export
+#'
+#' @examples
+#' object <- mmrm(
+#'   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+#'   data = fev_data
+#' )
+#' contrast <- matrix(data = 0, nrow = 2, ncol = length(object$beta_est))
+#' contrast[1, 2] <- contrast[2, 3] <- 1
+#' df_md(object, contrast)
+df_md <- function(object, contrast) {
+  assert_class(object, "mmrm")
+  assert_numeric(contrast, any.missing = FALSE)
+  if (!is.matrix(contrast)) {
+    contrast <- matrix(contrast, ncol = length(contrast))
+  }
+  assert_matrix(contrast, ncol = length(object$beta_est))
+
+  # Early return if we are in the one-dimensional case.
+  if (identical(nrow(contrast), 1L)) {
+    return(h_df_md_from_1d(object, contrast))
+  }
+
+  contrast_cov <- h_quad_form_mat(contrast, object$beta_vcov)
+  eigen_cont_cov <- eigen(contrast_cov)
+  eigen_cont_cov_vctrs <- eigen_cont_cov$vectors
+  eigen_cont_cov_vals <- eigen_cont_cov$values
+
+  eps <- sqrt(.Machine$double.eps)
+  tol <- max(eps * eigen_cont_cov_vals[1], 0)
+  rank_cont_cov <- sum(eigen_cont_cov_vals > tol)
+  assert_number(rank_cont_cov, lower = .Machine$double.xmin)
+  rank_seq <- seq_len(rank_cont_cov)
+  vctrs_cont_prod <- crossprod(eigen_cont_cov_vctrs, contrast)[rank_seq, , drop = FALSE]
+
+  # Early return if rank 1.
+  if (identical(rank_cont_cov, 1L)) {
+    return(h_df_md_from_1d(object, vctrs_cont_prod))
+  }
+
+  t_squared_nums <- drop(vctrs_cont_prod %*% object$beta_est)^2
+  t_squared_denoms <- eigen_cont_cov_vals[rank_seq]
+  t_squared <- t_squared_nums / t_squared_denoms
+  f_stat <- sum(t_squared) / rank_cont_cov
+  grads_vctrs_cont_prod <- lapply(rank_seq, \(m) h_gradient(object$jac_list, contrast = vctrs_cont_prod[m, ]))
+  t_stat_df_nums <- 2 * eigen_cont_cov_vals^2
+  t_stat_df_denoms <- vapply(grads_vctrs_cont_prod, h_quad_form_vec, center = object$theta_vcov, numeric(1))
+  t_stat_df <- t_stat_df_nums / t_stat_df_denoms
+  denom_df <- h_md_denom_df(t_stat_df)
+
+  h_df_md_list(
+    f_stat = f_stat,
+    num_df = rank_cont_cov,
+    denom_df = denom_df
   )
 }

@@ -40,10 +40,28 @@ test_that("h_jac_list works as expected", {
 # h_quad_form_vec ----
 
 test_that("h_quad_form_vec works as expected", {
-  x <- 1:2
-  mat <- matrix(1:4, 2, 2)
-  result <- expect_silent(h_quad_form_vec(x, mat))
-  expected <- as.numeric(t(x) %*% mat %*% x)
+  vec <- 1:2
+  center <- matrix(1:4, 2, 2)
+  result <- expect_silent(h_quad_form_vec(vec, center))
+  expected <- as.numeric(t(vec) %*% center %*% vec)
+  expect_equal(result, expected)
+})
+
+# h_quad_form_mat ----
+
+test_that("h_quad_form_mat works as expected for a true row vector as mat", {
+  mat <- t(1:2)
+  center <- matrix(1:4, 2, 2)
+  result <- expect_silent(h_quad_form_mat(mat, center))
+  expected <- mat %*% center %*% t(mat)
+  expect_equal(result, expected)
+})
+
+test_that("h_quad_form_mat works as expected for a larger mat", {
+  mat <- matrix(2:7, 3, 2)
+  center <- matrix(1:4, 2, 2)
+  result <- expect_silent(h_quad_form_mat(mat, center))
+  expected <- mat %*% center %*% t(mat)
   expect_equal(result, expected)
 })
 
@@ -92,4 +110,90 @@ test_that("df_1d works as expected", {
   expect_identical(round(result$df), 171)
   expect_equal(result$t_stat, 122.07, tolerance = 1e-4)
   expect_true(result$p_val < 0.0001)
+})
+
+# h_md_denom_df ----
+
+test_that("h_md_denom_df works as expected in the standard case", {
+  t_stat_df <- c(3, 5, 10)
+  result <- expect_silent(h_md_denom_df(t_stat_df))
+  n <- 3
+  e_sum <- sum(t_stat_df / (t_stat_df - 2))
+  expected <- 2 * e_sum / (e_sum - n)
+  expect_equal(result, expected)
+})
+
+test_that("h_md_denom_df works as expected for a single t-statistic", {
+  t_stat_df <- 22
+  result <- expect_silent(h_md_denom_df(t_stat_df))
+  expected <- t_stat_df
+  expect_identical(result, expected)
+})
+
+test_that("h_md_denom_df works as expected when the t-statistics are almost identical", {
+  t_stat_df <- c(10 + 1e-10, 10 + 2e-10, 10 + 3e-10)
+  result <- expect_silent(h_md_denom_df(t_stat_df))
+  expected <- 10 + 2e-10 # This is the mean of `t_stat_df`.
+  expect_identical(result, expected)
+})
+
+test_that("h_md_denom_df works as expected when one t-statistic is 2 or smaller", {
+  expect_identical(h_md_denom_df(c(1.9, 5, 10, 15)), 2)
+  expect_identical(h_md_denom_df(c(2, 5, 10, 15)), 2)
+  expect_false(identical(h_md_denom_df(c(2.1, 5, 10, 15)), 2))
+})
+
+# h_df_md_list ----
+
+test_that("h_df_md_list works as expected", {
+  result <- expect_silent(h_df_md_list(f_stat = 0.38, num_df = 1, denom_df = 166))
+  expected <- list(
+    num_df = 1,
+    denom_df = 166,
+    f_stat = 0.38,
+    p_val = 0.5406
+  )
+  expect_equal(result, expected, tolerance = 1e-2)
+})
+
+# h_df_md_from_1d ----
+
+test_that("h_df_md_from_1d works as expected", {
+  object <- mmrm(
+    formula = FEV1 ~ us(AVISIT | USUBJID),
+    data = fev_data
+  )
+  result <- expect_silent(h_df_md_from_1d(object, 1))
+  expect_list(result)
+  expect_named(result, c("num_df", "denom_df", "f_stat", "p_val"))
+})
+
+# df_md ----
+
+test_that("df_md works as expected", {
+  object <- mmrm(
+    formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+    data = fev_data
+  )
+  contrast <- matrix(data = 0, nrow = 2, ncol = length(object$beta_est))
+  contrast[1, 2] <- contrast[2, 3] <- 1
+  # See design/SAS/sas_log_simple_reml.txt for the source of numbers.
+  result <- expect_silent(df_md(object, contrast))
+  expect_list(result)
+  expect_identical(result$num_df, 2L)
+  expect_identical(round(result$denom_df), 166)
+  expect_equal(result$f_stat, 36.92, tolerance = 1e-3)
+  expect_true(result$p_val < 0.0001)
+})
+
+test_that("df_md works as expected with a non-full rank contrast matrix", {
+  object <- mmrm(
+    formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+    data = fev_data
+  )
+  contrast <- matrix(data = 0, nrow = 2, ncol = length(object$beta_est))
+  contrast[2, 5] <- 1 # So the first row is all 0s still.
+  result <- expect_silent(df_md(object, contrast))
+  expected <- df_md(object, contrast[2L, , drop = FALSE])
+  expect_equal(result, expected)
 })
