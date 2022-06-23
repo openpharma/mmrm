@@ -194,7 +194,12 @@ refit_multiple_optimizers <- function(fit,
 #' If none of the optimizers converge, then the function fails. Otherwise
 #' the best fit is returned.
 #'
-#' @return The `mmrm_fit` object.
+#' @return An `mmrm` object.
+#'
+#' @note The `mmrm` object is also an `mmrm_fit` and an `mmrm_tmb` object,
+#' therefore corresponding methods also work. In addition it contains the
+#' Jacobian information `jac_list`.
+#'
 #' @export
 #'
 #' @examples
@@ -209,25 +214,32 @@ mmrm <- function(formula,
                  n_cores = 1L) {
   assert_string(optimizer)
   use_automatic <- identical(optimizer, "automatic")
+
   fit <- fit_single_optimizer(
     formula = formula,
     data = data,
     reml = reml,
     optimizer = ifelse(use_automatic, "L-BFGS-B", optimizer)
   )
-  if (attr(fit, "converged")) {
-    fit
-  } else if (use_automatic) {
-    refit_multiple_optimizers(fit, n_cores = n_cores)
-  } else {
-    all_problems <- unlist(
-      attributes(fit)[c("errors", "messages", "warnings")],
-      use.names = FALSE
-    )
-    stop(paste0(
-      "Chosen optimizer '", optimizer, "' led to problems during model fit:\n",
-      paste(paste0(seq_along(all_problems), ") ", all_problems), collapse = ";\n"), "\n",
-      "Consider using the 'automatic' optimizer."
-    ))
+  if (!attr(fit, "converged")) {
+    if (use_automatic) {
+      fit <- refit_multiple_optimizers(fit, n_cores = n_cores)
+    } else {
+      all_problems <- unlist(
+        attributes(fit)[c("errors", "messages", "warnings")],
+        use.names = FALSE
+      )
+      stop(paste0(
+        "Chosen optimizer '", optimizer, "' led to problems during model fit:\n",
+        paste(paste0(seq_along(all_problems), ") ", all_problems), collapse = ";\n"), "\n",
+        "Consider using the 'automatic' optimizer."
+      ))
+    }
   }
+
+  covbeta_fun <- h_covbeta_fun(fit)
+  fit$jac_list <- h_jac_list(covbeta_fun, fit$theta_est)
+
+  class(fit) <- c("mmrm", class(fit))
+  fit
 }

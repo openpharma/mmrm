@@ -20,7 +20,7 @@ otherwise maximum likelihood (ML) is used.}
 parallel computations on Linux or Mac machines.}
 }
 \value{
-The \code{mmrm_fit} object.
+An \code{mmrm} object.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
@@ -40,6 +40,11 @@ If not, the other available optimizers from \code{\link[=refit_multiple_optimize
 tried (in parallel if \code{n_cores} is set and not on Windows).
 If none of the optimizers converge, then the function fails. Otherwise
 the best fit is returned.
+}
+\note{
+The \code{mmrm} object is also an \code{mmrm_fit} and an \code{mmrm_tmb} object,
+therefore corresponding methods also work. In addition it contains the
+Jacobian information \code{jac_list}.
 }
 \examples{
 fit <- mmrm(

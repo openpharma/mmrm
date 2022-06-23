@@ -98,8 +98,9 @@ test_that("refit_multiple_optimizers works as expected", {
 test_that("mmrm works as expected", {
   formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
   result <- expect_silent(mmrm(formula, fev_data, reml = FALSE))
-  expect_class(result, "mmrm_fit")
+  expect_class(result, c("mmrm", "mmrm_fit", "mmrm_tmb"))
   expect_true(attr(result, "converged"))
+  expect_list(result$jac_list, types = "matrix")
   expect_false(result$reml)
 })
 
