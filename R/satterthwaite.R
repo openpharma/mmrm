@@ -200,7 +200,7 @@ h_df_1d_list <- function(est,
   se <- sqrt(var)
   t_stat <- est / se
   df <- v_num / v_denom
-  p_val <- 2 * pt(q = abs(t_stat), df = df, lower.tail = FALSE)
+  p_val <- 2 * stats::pt(q = abs(t_stat), df = df, lower.tail = FALSE)
 
   list(
     est = est,
@@ -359,7 +359,7 @@ df_md <- function(object, contrast) {
   if (!is.matrix(contrast)) {
     contrast <- matrix(contrast, ncol = length(contrast))
   }
-  assert_matrix(contrast, ncol = length(object$beta_est))
+  assert_matrix(contrast, ncols = length(object$beta_est))
 
   # Early return if we are in the one-dimensional case.
   if (identical(nrow(contrast), 1L)) {
