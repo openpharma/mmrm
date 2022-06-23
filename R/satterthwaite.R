@@ -135,8 +135,8 @@ h_quad_form_mat <- function(mat, center) {
     center,
     mode = "numeric",
     any.missing = FALSE,
-    nrows = ncol(x),
-    ncols = ncol(x)
+    nrows = ncol(center),
+    ncols = ncol(center)
   )
 
   mat %*% tcrossprod(center, mat)
