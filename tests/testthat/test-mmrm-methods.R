@@ -28,3 +28,29 @@ test_that("summary works as expected", {
     )
   )
 })
+
+# h_print_call ----
+
+test_that("h_print_call works as expected", {
+  object <- get_mmrm()
+  expect_snapshot_output(h_print_call(object$call), cran = TRUE)
+})
+
+# h_print_aic_list ----
+
+test_that("h_print_aic_list works as expected", {
+  expect_snapshot_output(
+    h_print_aic_list(
+      list(AIC = 234.234235, BIC = 234.23, logLik = -252.234234, deviance = 345235.2323)
+    ),
+    cran = TRUE
+  )
+})
+
+# print.summary.mmrm ----
+
+test_that("print.summary.mmrm works as expected", {
+  object <- get_mmrm()
+  result <- summary(object)
+  expect_snapshot_output(print(result, digits = 0), cran = FALSE)
+})

@@ -70,6 +70,43 @@ summary.mmrm <- function(object, ...) {
   )
 }
 
+#' Printing MMRM Function Call
+#'
+#' @description `r lifecycle::badge("experimental")`
+#'
+#' This is used in [print.summary.mmrm()].
+#'
+#' @param call (`call`)\cr original [mmrm()] function call.
+#'
+#' @export
+h_print_call <- function(call) {
+  pass <- 0
+  if (!is.null(tmp <- call$formula)) {
+    cat("Formula: ", deparse(tmp), fill = TRUE)
+    rhs <- tmp[[2]]
+    pass <- nchar(deparse(rhs))
+  }
+  if (!is.null(tmp <- call$data)) {
+    cat("Data:    ", deparse(tmp), fill = TRUE)
+  }
+}
+
+#' Printing AIC and other Model Fit Criteria
+#'
+#' @description `r lifecycle::badge("experimental")`
+#'
+#' This is used in [print.summary.mmrm()].
+#'
+#' @param aic_list (`list`)\cr list as part of from [summary.mmrm()].
+#'
+#' @export
+h_print_aic_list <- function(aic_list,
+                             digits = 1) {
+  diag_vals <- round(unlist(aic_list), digits)
+  diag_vals <- format(diag_vals)
+  print(diag_vals, quote = FALSE)
+}
+
 #' @describeIn mmrm_methods prints the MMRM fit summary.
 #' @exportS3Method
 #' @keywords internal
@@ -77,15 +114,26 @@ print.summary.mmrm <- function(x,
                                digits = max(3, getOption("digits") - 3),
                                signif.stars = getOption("show.signif.stars"),
                                ...) {
-  .prt.call.glmmTMB(x$call)
+  cat("mmrm fit\n\n")
+  h_print_call(x$call)
+  cat(
+    "Used", x$n_obs, "observations from", x$n_subjects,
+    "subjects with maximum", x$n_visits, "timepoints.\n"
+  )
   cat("\n")
-  .prt.aictab(x$AICtab)
+  cat("Model selection criteria:\n")
+  h_print_aic_list(x$aic_list)
   cat("\n")
+  cat("Coefficients:\n")
   stats::printCoefmat(
     x$coefficients,
     zap.ind = 3,
     digits = digits,
     signif.stars = signif.stars
   )
+  cat("\n")
+  cat("Covariance estimate:\n")
+  print(round(x$varcor, digits = digits))
+  cat("\n")
   invisible(x)
 }
