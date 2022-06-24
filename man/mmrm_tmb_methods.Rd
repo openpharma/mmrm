@@ -2,16 +2,25 @@
 % Please edit documentation in R/tmb-methods.R
 \name{mmrm_tmb_methods}
 \alias{mmrm_tmb_methods}
+\alias{coef.mmrm_tmb}
 \alias{logLik.mmrm_tmb}
 \alias{formula.mmrm_tmb}
+\alias{vcov.mmrm_tmb}
+\alias{VarCorr.mmrm_tmb}
 \alias{deviance.mmrm_tmb}
 \alias{AIC.mmrm_tmb}
 \alias{BIC.mmrm_tmb}
 \title{Methods for \code{mmrm_tmb} Objects}
 \usage{
+\method{coef}{mmrm_tmb}(object, ...)
+
 \method{logLik}{mmrm_tmb}(object, ...)
 
 \method{formula}{mmrm_tmb}(x, ...)
+
+\method{vcov}{mmrm_tmb}(x, ...)
+
+\method{VarCorr}{mmrm_tmb}(x, sigma = NA, ...)
 
 \method{deviance}{mmrm_tmb}(object, ...)
 
@@ -36,9 +45,17 @@ is the classical AIC.}
 }
 \section{Functions}{
 \itemize{
+\item \code{coef.mmrm_tmb}: obtains the estimated coefficients.
+
 \item \code{logLik.mmrm_tmb}: obtains the attained log likelihood value.
 
 \item \code{formula.mmrm_tmb}: obtains the used formula.
+
+\item \code{vcov.mmrm_tmb}: obtains the variance-covariance matrix estimate
+for the coefficients.
+
+\item \code{VarCorr.mmrm_tmb}: obtains the variance-covariance matrix estimate
+for the residuals.
 
 \item \code{deviance.mmrm_tmb}: obtains the deviance, which is defined here
 as twice the negative log likelihood, which can either be integrated
@@ -57,12 +74,17 @@ penalty parameter \code{k}.
 
 \examples{
 formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
-data <- fev_data
-object <- h_mmrm_tmb(formula, data)
+object <- h_mmrm_tmb(formula, fev_data)
+# Estimated coefficients:
+coef(object)
 # Log likelihood given the estimated parameters:
 logLik(object)
 # Formula which was used:
 formula(object)
+# Variance-covariance matrix estimate for coefficients:
+vcov(object)
+# Variance-covariance matrix estimate for residuals:
+VarCorr(object)
 # REML criterion (twice the negative log likelihood):
 deviance(object)
 # AIC:

@@ -21,6 +21,7 @@ Imports:
     checkmate (>= 2.1),
     lifecycle,
     methods,
+    nlme,
     numDeriv,
     TMB (>= 1.9.0),
     stats,
@@ -53,6 +54,7 @@ Collate:
     'fit.R'
     'formula.R'
     'labels.R'
+    'mmrm-methods.R'
     'mmrm-package.R'
     'output.R'
     'parallel.R'

@@ -1,3 +1,16 @@
+# coef ----
+
+test_that("coef works as expected", {
+  object <- get_mmrm_tmb()
+  result <- expect_silent(coef(object))
+  expected <- c(
+    "(Intercept)" = 41.2273,
+    "RACEBlack or African American" = 0.8002,
+    "RACEWhite" = 5.8791
+  )
+  expect_equal(result, expected, tolerance = 1e-4)
+})
+
 # logLik ----
 
 test_that("logLik works as expected", {
@@ -15,6 +28,28 @@ test_that("formula works as expected", {
   expected <- FEV1 ~ RACE + us(AVISIT | USUBJID)
   expect_false(identical(environment(result), environment(expected)))
   expect_equal(result, expected, ignore_attr = TRUE)
+})
+
+# vcov ----
+
+test_that("vcov works as expected", {
+  object <- get_mmrm_tmb()
+  result <- expect_silent(vcov(object))
+  expect_matrix(result, mode = "numeric")
+  nms <- c("(Intercept)", "RACEBlack or African American", "RACEWhite")
+  expect_names(rownames(result), identical.to = nms)
+  expect_names(colnames(result), identical.to = nms)
+})
+
+# VarCorr ----
+
+test_that("VarCorr works as expected", {
+  object <- get_mmrm_tmb()
+  result <- expect_silent(VarCorr(object))
+  expect_matrix(result, mode = "numeric")
+  nms <- c("VIS1", "VIS2", "VIS3", "VIS4")
+  expect_names(rownames(result), identical.to = nms)
+  expect_names(colnames(result), identical.to = nms)
 })
 
 # deviance ----
