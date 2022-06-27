@@ -59,6 +59,7 @@ vcov.mmrm_tmb <- function(object, ...) {
 #' @param sigma cannot be used (this parameter does not exist in MMRM).
 #' @importFrom nlme VarCorr
 #' @export VarCorr
+#' @aliases VarCorr
 #' @exportS3Method
 #' @examples
 #' # Variance-covariance matrix estimate for residuals:

@@ -7,6 +7,7 @@
 \alias{formula.mmrm_tmb}
 \alias{vcov.mmrm_tmb}
 \alias{VarCorr.mmrm_tmb}
+\alias{VarCorr}
 \alias{deviance.mmrm_tmb}
 \alias{AIC.mmrm_tmb}
 \alias{BIC.mmrm_tmb}
