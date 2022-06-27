@@ -18,7 +18,7 @@
 
 \method{formula}{mmrm_tmb}(x, ...)
 
-\method{vcov}{mmrm_tmb}(x, ...)
+\method{vcov}{mmrm_tmb}(object, ...)
 
 \method{VarCorr}{mmrm_tmb}(x, sigma = NA, ...)
 
@@ -34,6 +34,8 @@
 \item{...}{not used.}
 
 \item{x}{(\code{mmrm_tmb})\cr same as \code{object}.}
+
+\item{sigma}{cannot be used (this parameter does not exist in MMRM).}
 
 \item{corrected}{(\code{flag})\cr whether corrected AIC should be calculated.}
 

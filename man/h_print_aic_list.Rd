@@ -8,6 +8,8 @@ h_print_aic_list(aic_list, digits = 1)
 }
 \arguments{
 \item{aic_list}{(\code{list})\cr list as part of from \code{\link[=summary.mmrm]{summary.mmrm()}}.}
+
+\item{digits}{(\code{number})\cr number of decimal places used with \code{\link[=round]{round()}}.}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}

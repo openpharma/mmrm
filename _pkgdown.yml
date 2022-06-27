@@ -48,6 +48,8 @@ reference:
       - h_df_md_list
       - h_df_md_from_1d
       - h_coef_table
+      - h_print_aic_list
+      - h_print_call
   - title: Functions
     contents:
       - assert_data

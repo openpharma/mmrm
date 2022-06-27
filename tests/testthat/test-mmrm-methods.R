@@ -43,7 +43,7 @@ test_that("h_print_aic_list works as expected", {
     h_print_aic_list(
       list(AIC = 234.234235, BIC = 234.23, logLik = -252.234234, deviance = 345235.2323)
     ),
-    cran = TRUE
+    cran = FALSE
   )
 })
 

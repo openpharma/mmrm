@@ -64,7 +64,7 @@ summary.mmrm <- function(object, ...) {
       vcov = vcov(object),
       varcor = VarCorr(object),
       aic_list = aic_list,
-      call = getCall(object)
+      call = stats::getCall(object)
     ),
     class = "summary.mmrm"
   )
@@ -98,6 +98,7 @@ h_print_call <- function(call) {
 #' This is used in [print.summary.mmrm()].
 #'
 #' @param aic_list (`list`)\cr list as part of from [summary.mmrm()].
+#' @param digits (`number`)\cr number of decimal places used with [round()].
 #'
 #' @export
 h_print_aic_list <- function(aic_list,

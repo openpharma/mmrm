@@ -50,13 +50,15 @@ formula.mmrm_tmb <- function(x, ...) {
 #' @examples
 #' # Variance-covariance matrix estimate for coefficients:
 #' vcov(object)
-vcov.mmrm_tmb <- function(x, ...) {
-  x$beta_vcov
+vcov.mmrm_tmb <- function(object, ...) {
+  object$beta_vcov
 }
 
 #' @describeIn mmrm_tmb_methods obtains the variance-covariance matrix estimate
 #'   for the residuals.
+#' @param sigma cannot be used (this parameter does not exist in MMRM).
 #' @importFrom nlme VarCorr
+#' @export VarCorr
 #' @exportS3Method
 #' @examples
 #' # Variance-covariance matrix estimate for residuals:
