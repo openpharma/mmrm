@@ -4,6 +4,7 @@ ARMCD
 aut
 AVISIT
 biocViews
+blockdiag
 Bolker
 bootswatch
 bove
@@ -20,12 +21,14 @@ daniel
 ddots
 dedic
 Dedic
+det
 DiagonalMatrix
 dmvnorm
 dotsc
 Eigen
 fev
 FEV
+frac
 ganalytics
 github
 glmmTMB
@@ -37,6 +40,7 @@ https
 ij
 im
 io
+jj
 julia
 knitr
 LazyData
@@ -59,6 +63,7 @@ params
 Parm
 PBO
 pmatrix
+Raphson
 roche
 Roxygen
 RoxygenNote
@@ -81,3 +86,4 @@ USUBJID
 vdots
 VignetteBuilder
 VIS
+WLS
