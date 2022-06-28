@@ -387,7 +387,7 @@ df_md <- function(object, contrast) {
   t_squared_denoms <- eigen_cont_cov_vals[rank_seq]
   t_squared <- t_squared_nums / t_squared_denoms
   f_stat <- sum(t_squared) / rank_cont_cov
-  grads_vctrs_cont_prod <- lapply(rank_seq, \(m) h_gradient(object$jac_list, contrast = vctrs_cont_prod[m, ]))
+  grads_vctrs_cont_prod <- lapply(rank_seq, function(m) h_gradient(object$jac_list, contrast = vctrs_cont_prod[m, ]))
   t_stat_df_nums <- 2 * eigen_cont_cov_vals^2
   t_stat_df_denoms <- vapply(grads_vctrs_cont_prod, h_quad_form_vec, center = object$theta_vcov, numeric(1))
   t_stat_df <- t_stat_df_nums / t_stat_df_denoms

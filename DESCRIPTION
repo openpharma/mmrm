@@ -16,9 +16,9 @@ License: Apache License 2.0 | file LICENSE
 URL: https://github.com/openpharma/mmrm/
 BugReports: https://github.com/openpharma/mmrm/issues
 Depends:
-    R (>= 4.1)
+    R (>= 4.0)
 Imports:
-    checkmate (>= 2.1),
+    checkmate (>= 2.0),
     lifecycle,
     methods,
     nlme,
@@ -28,7 +28,7 @@ Imports:
     parallel
 LinkingTo: TMB, RcppEigen, testthat
 Suggests:
-    emmeans (>= 1.7),
+    emmeans (>= 1.6),
     estimability,
     glmmTMB,
     knitr,
