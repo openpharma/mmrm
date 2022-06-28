@@ -1,0 +1,56 @@
+# h_coef_table ----
+
+test_that("h_coef_table works as expected", {
+  object <- get_mmrm()
+  result <- expect_silent(h_coef_table(object))
+  expect_matrix(
+    result,
+    mode = "numeric"
+  )
+  expect_names(rownames(result), identical.to = names(coef(object)))
+  expect_names(
+    colnames(result),
+    identical.to = c("Estimate", "Std. Error", "df", "t value", "Pr(>|t|)")
+  )
+})
+
+# summary ----
+
+test_that("summary works as expected", {
+  object <- get_mmrm()
+  result <- expect_silent(summary(object))
+  expect_list(result)
+  expect_named(
+    result,
+    c(
+      "logLik", "n_subjects", "n_visits", "n_obs",
+      "coefficients", "vcov", "varcor", "aic_list", "call"
+    )
+  )
+})
+
+# h_print_call ----
+
+test_that("h_print_call works as expected", {
+  object <- get_mmrm()
+  expect_snapshot_output(h_print_call(object$call), cran = TRUE)
+})
+
+# h_print_aic_list ----
+
+test_that("h_print_aic_list works as expected", {
+  expect_snapshot_output(
+    h_print_aic_list(
+      list(AIC = 234.234235, BIC = 234.23, logLik = -252.234234, deviance = 345235.2323)
+    ),
+    cran = FALSE
+  )
+})
+
+# print.summary.mmrm ----
+
+test_that("print.summary.mmrm works as expected", {
+  object <- get_mmrm()
+  result <- summary(object)
+  expect_snapshot_output(print(result, digits = 1), cran = FALSE)
+})

@@ -10,9 +10,18 @@
 #'
 #' @examples
 #' formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
-#' data <- fev_data
-#' object <- h_mmrm_tmb(formula, data)
+#' object <- h_mmrm_tmb(formula, fev_data)
 NULL
+
+#' @describeIn mmrm_tmb_methods obtains the estimated coefficients.
+#' @importFrom stats coef
+#' @exportS3Method
+#' @examples
+#' # Estimated coefficients:
+#' coef(object)
+coef.mmrm_tmb <- function(object, ...) {
+  object$beta_est
+}
 
 #' @describeIn mmrm_tmb_methods obtains the attained log likelihood value.
 #' @importFrom stats logLik
@@ -32,6 +41,33 @@ logLik.mmrm_tmb <- function(object, ...) {
 #' formula(object)
 formula.mmrm_tmb <- function(x, ...) {
   x$formula_parts$formula
+}
+
+#' @describeIn mmrm_tmb_methods obtains the variance-covariance matrix estimate
+#'   for the coefficients.
+#' @importFrom stats vcov
+#' @exportS3Method
+#' @examples
+#' # Variance-covariance matrix estimate for coefficients:
+#' vcov(object)
+vcov.mmrm_tmb <- function(object, ...) {
+  object$beta_vcov
+}
+
+#' @describeIn mmrm_tmb_methods obtains the variance-covariance matrix estimate
+#'   for the residuals.
+#' @param sigma cannot be used (this parameter does not exist in MMRM).
+#' @importFrom nlme VarCorr
+#' @export VarCorr
+#' @aliases VarCorr
+#' @exportS3Method
+#' @examples
+#' # Variance-covariance matrix estimate for residuals:
+#' VarCorr(object)
+VarCorr.mmrm_tmb <- function(x, sigma = NA, ...) { # nolint
+  assert_scalar_na(sigma)
+
+  x$cov
 }
 
 #' @describeIn mmrm_tmb_methods obtains the deviance, which is defined here
