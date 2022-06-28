@@ -36,16 +36,28 @@ reference:
       - h_mmrm_tmb_assert_start
       - h_mmrm_tmb_assert_opt
       - h_mmrm_tmb_fit
+      - h_mmrm_tmb
       - h_summarize_all_fits
+      - h_covbeta_fun
+      - h_jac_col_as_matrix
+      - h_jac_list
+      - h_quad_form
+      - h_gradient
+      - h_df_1d_list
+      - h_md_denom_df
+      - h_df_md_list
+      - h_df_md_from_1d
   - title: Functions
     contents:
       - assert_data
-      - fit_model
+      - df_1d
+      - df_md
       - fit_single_optimizer
-      - mmrm_tmb
+      - mmrm
       - refit_multiple_optimizers
   - title: Methods
     contents:
+      - emmeans_support
       - mmrm_tmb_methods
   - title: Datasets
     contents:

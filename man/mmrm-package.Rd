@@ -2,8 +2,8 @@
 % Please edit documentation in R/mmrm-package.R
 \docType{package}
 \name{mmrm-package}
-\alias{mmrm}
 \alias{mmrm-package}
+\alias{_PACKAGE}
 \title{\code{mmrm} Package}
 \description{
 \code{mmrm} implements mixed models with repeated measures (MMRM) in R.

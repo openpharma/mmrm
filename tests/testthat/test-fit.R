@@ -93,35 +93,37 @@ test_that("refit_multiple_optimizers works as expected", {
   expect_true(logLik(result) > logLik(fit))
 })
 
-# fit_model ----
+# mmrm ----
 
-test_that("fit_model works as expected", {
+test_that("mmrm works as expected", {
   formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
-  result <- expect_silent(fit_model(formula, fev_data, reml = FALSE))
-  expect_class(result, "mmrm_fit")
+  result <- expect_silent(mmrm(formula, fev_data, reml = FALSE))
+  expect_class(result, c("mmrm", "mmrm_fit", "mmrm_tmb"))
   expect_true(attr(result, "converged"))
+  expect_list(result$jac_list, types = "matrix")
+  expect_class(result$call, "call")
   expect_false(result$reml)
 })
 
-test_that("fit_model falls back to other optimizers if default does not work", {
+test_that("mmrm falls back to other optimizers if default does not work", {
   formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
   data_small <- fev_data[1:50, ]
   # Default does not work.
   expect_error(
-    fit_model(formula, data_small, optimizer = "L-BFGS-B"),
+    mmrm(formula, data_small, optimizer = "L-BFGS-B"),
     "Model convergence problem"
   )
   # But another one works.
-  result <- expect_silent(fit_model(formula, data_small))
+  result <- expect_silent(mmrm(formula, data_small))
   expect_true(attr(result, "converged"))
   expect_false(identical(attr(result, "optimizer"), "L-BFGS-B"))
 })
 
-test_that("fit_model fails if no optimizer works", {
+test_that("mmrm fails if no optimizer works", {
   formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
   data_small <- fev_data[1:50, ]
   expect_error(
-    fit_model(formula, data_small, reml = FALSE),
+    mmrm(formula, data_small, reml = FALSE),
     "No optimizer led to a successful model fit"
   )
 })

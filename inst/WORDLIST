@@ -13,6 +13,7 @@ CMD
 Config
 COPD
 cov
+covbeta
 craig
 cre
 daniel
@@ -21,6 +22,7 @@ Dedic
 DiagonalMatrix
 dmvnorm
 Eigen
+emmeans
 fev
 FEV
 ganalytics

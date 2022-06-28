@@ -31,6 +31,7 @@ sascode_reml <- list(
       CLASS RACE(ref = 'Asian') AVISIT(ref = 'VIS1') SEX(ref = 'Male') ARMCD(ref = 'PBO') USUBJID;
       MODEL FEV1 = ARMCD AVISIT ARMCD*AVISIT RACE SEX / ddfm=satterthwaite solution chisq;
       REPEATED AVISIT / subject=USUBJID type=un r rcorr;
+      LSMEANS AVISIT*ARMCD / pdiff=all cl alpha=0.05 slice=AVISIT;
     RUN;
       "
 )
