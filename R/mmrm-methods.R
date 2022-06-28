@@ -32,7 +32,7 @@ h_coef_table <- function(object) {
   coef_table <- t(apply(
     coef_contrasts,
     MARGIN = 1L,
-    FUN = \(contrast) unlist(df_1d(object, contrast))
+    FUN = function(contrast) unlist(df_1d(object, contrast))
   ))
   assert_names(
     colnames(coef_table),
