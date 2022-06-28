@@ -52,5 +52,5 @@ test_that("h_print_aic_list works as expected", {
 test_that("print.summary.mmrm works as expected", {
   object <- get_mmrm()
   result <- summary(object)
-  expect_snapshot_output(print(result, digits = 0), cran = FALSE)
+  expect_snapshot_output(print(result, digits = 1), cran = FALSE)
 })
