@@ -23,8 +23,8 @@ h_assert_one_rec_pt_visit <- function(vars, data) {
   assert_string(vars$id)
   assert_data_frame(data)
 
-  form <- stats::as.formula(paste("~", vars$visit, "+", vars$id))
-  grouped_data <- split(data, f = form)
+  visit_id_combinations <- interaction(data[[vars$visit]], data[[vars$id]])
+  grouped_data <- split(data, f = visit_id_combinations)
   n_per_group <- vapply(grouped_data, nrow, integer(1))
 
   if (any(n_per_group > 1)) {

@@ -5,8 +5,8 @@
 #' @noRd
 .onLoad <- function(libname, pkgname) {
   if (requireNamespace("emmeans", quietly = TRUE)) {
-    if (utils::packageVersion("emmeans") < "1.7") {
-      warning("please install a newer version of emmeans (>= 1.7)")
+    if (utils::packageVersion("emmeans") < "1.6") {
+      warning("please install a newer version of emmeans (>= 1.6)")
       return(NULL)
     }
     emmeans::.emm_register("mmrm", pkgname)

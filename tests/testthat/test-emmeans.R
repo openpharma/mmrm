@@ -1,7 +1,7 @@
 # recover_data ----
 
 test_that("recover_data method works as expected", {
-  skip_if_not_installed("emmeans", minimum_version = "1.7")
+  skip_if_not_installed("emmeans", minimum_version = "1.6")
 
   fit <- mmrm(
     formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
@@ -18,7 +18,7 @@ test_that("recover_data method works as expected", {
 # emm_basis ----
 
 test_that("emm_basis method works as expected", {
-  skip_if_not_installed("emmeans", minimum_version = "1.7")
+  skip_if_not_installed("emmeans", minimum_version = "1.6")
 
   fit <- mmrm(
     formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
@@ -44,7 +44,7 @@ test_that("emm_basis method works as expected", {
 # emmeans ----
 
 test_that("emmeans works as expected", {
-  skip_if_not_installed("emmeans", minimum_version = "1.7")
+  skip_if_not_installed("emmeans", minimum_version = "1.6")
 
   fit <- mmrm(
     formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
@@ -52,11 +52,13 @@ test_that("emmeans works as expected", {
   )
   result <- expect_silent(emmeans::emmeans(fit, ~ ARMCD | AVISIT))
   expect_class(result, "emmGrid")
-  expect_snapshot_value(as.data.frame(result), style = "serialize")
+  result_emmeans_rounded <- round(as.data.frame(result)$emmean, 1)
+  expected_emmeans_rounded <- c(33.3, 37.1, 38.2, 41.9, 43.7, 46.8, 48.4, 52.8)
+  expect_equal(result_emmeans_rounded, expected_emmeans_rounded, tolerance = 1e-4)
 })
 
 test_that("emmeans gives values close to what is expected", {
-  skip_if_not_installed("emmeans", minimum_version = "1.7")
+  skip_if_not_installed("emmeans", minimum_version = "1.6")
 
   fit <- mmrm(
     formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
