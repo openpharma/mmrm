@@ -16,7 +16,7 @@ h_build_formula(
 \item{cor_struct}{(\code{string})\cr specify the covariance structure to use.}
 }
 \value{
-Formula to use in \code{\link[=mmrm_tmb]{mmrm_tmb()}}.
+Formula to use in \code{\link[=h_mmrm_tmb]{h_mmrm_tmb()}}.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}

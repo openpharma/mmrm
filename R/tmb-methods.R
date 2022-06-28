@@ -10,9 +10,18 @@
 #'
 #' @examples
 #' formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
-#' data <- fev_data
-#' object <- mmrm_tmb(formula, data)
+#' object <- h_mmrm_tmb(formula, fev_data)
 NULL
+
+#' @describeIn mmrm_tmb_methods obtains the estimated coefficients.
+#' @importFrom stats coef
+#' @exportS3Method
+#' @examples
+#' # Estimated coefficients:
+#' coef(object)
+coef.mmrm_tmb <- function(object, ...) {
+  object$beta_est
+}
 
 #' @describeIn mmrm_tmb_methods obtains the attained log likelihood value.
 #' @importFrom stats logLik
@@ -32,4 +41,87 @@ logLik.mmrm_tmb <- function(object, ...) {
 #' formula(object)
 formula.mmrm_tmb <- function(x, ...) {
   x$formula_parts$formula
+}
+
+#' @describeIn mmrm_tmb_methods obtains the variance-covariance matrix estimate
+#'   for the coefficients.
+#' @importFrom stats vcov
+#' @exportS3Method
+#' @examples
+#' # Variance-covariance matrix estimate for coefficients:
+#' vcov(object)
+vcov.mmrm_tmb <- function(object, ...) {
+  object$beta_vcov
+}
+
+#' @describeIn mmrm_tmb_methods obtains the variance-covariance matrix estimate
+#'   for the residuals.
+#' @param sigma cannot be used (this parameter does not exist in MMRM).
+#' @importFrom nlme VarCorr
+#' @export VarCorr
+#' @aliases VarCorr
+#' @exportS3Method
+#' @examples
+#' # Variance-covariance matrix estimate for residuals:
+#' VarCorr(object)
+VarCorr.mmrm_tmb <- function(x, sigma = NA, ...) { # nolint
+  assert_scalar_na(sigma)
+
+  x$cov
+}
+
+#' @describeIn mmrm_tmb_methods obtains the deviance, which is defined here
+#'   as twice the negative log likelihood, which can either be integrated
+#'   over the coefficients for REML fits or the usual one for ML fits.
+#' @importFrom stats deviance
+#' @exportS3Method
+#' @examples
+#' # REML criterion (twice the negative log likelihood):
+#' deviance(object)
+deviance.mmrm_tmb <- function(object, ...) {
+  2 * object$neg_log_lik
+}
+
+#' @describeIn mmrm_tmb_methods obtains the Akaike Information Criterion,
+#'   where the degrees of freedom are the number of variance parameters (`n_theta`).
+#'   If `corrected`, then this is multiplied with `m / (m - n_theta - 1)` where
+#'   `m` is the number of observations minus the number of coefficients, or
+#'   `n_theta + 2` if it is smaller than that.
+#' @param corrected (`flag`)\cr whether corrected AIC should be calculated.
+#' @param k (`number`)\cr the penalty per parameter to be used; default `k = 2`
+#'   is the classical AIC.
+#' @importFrom stats AIC
+#' @exportS3Method
+#' @examples
+#' # AIC:
+#' AIC(object)
+#' AIC(object, corrected = TRUE)
+AIC.mmrm_tmb <- function(object, corrected = FALSE, ..., k = 2) { # nolint
+  assert_flag(corrected)
+  assert_number(k, lower = 1)
+
+  n_theta <- length(object$theta_est)
+  df <- if (!corrected) {
+    n_theta
+  } else {
+    n_obs <- length(object$tmb_data$y_vector)
+    n_beta <- length(object$beta_est)
+    m <- max(n_theta + 2, n_obs - n_beta)
+    n_theta * (m / (m - n_theta - 1))
+  }
+
+  2 * object$neg_log_lik + k * df
+}
+
+#' @describeIn mmrm_tmb_methods obtains the Bayesian Information Criterion,
+#'   which is using the natural logarithm of the number of subjects for the
+#'   penalty parameter `k`.
+#' @importFrom stats BIC
+#' @exportS3Method
+#' @examples
+#' # BIC:
+#' BIC(object)
+BIC.mmrm_tmb <- function(object, ...) { # nolint
+  k <- log(object$tmb_data$n_subjects)
+  AIC(object, corrected = FALSE, k = k)
 }

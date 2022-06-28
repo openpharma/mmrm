@@ -235,7 +235,8 @@ test_that("h_mmrm_tmb_fit works as expected", {
   expect_class(result, "mmrm_tmb")
   expect_named(result, c(
     "cov", "beta_est", "beta_vcov", "theta_est", "theta_vcov",
-    "neg_log_lik", "formula_parts", "data", "reml", "opt_details", "tmb_object"
+    "neg_log_lik", "formula_parts", "data", "reml", "opt_details", "tmb_object",
+    "tmb_data"
   ))
   expect_identical(rownames(result$cov), c("VIS1", "VIS2", "VIS3", "VIS4"))
   expect_identical(colnames(result$cov), c("VIS1", "VIS2", "VIS3", "VIS4"))
@@ -249,21 +250,23 @@ test_that("h_mmrm_tmb_fit works as expected", {
   expect_false(result$reml)
   expect_list(result$opt_details)
   expect_list(result$tmb_object)
+  expect_class(result$tmb_data, "mmrm_tmb_data")
 })
 
-# mmrm_tmb ----
+# h_mmrm_tmb ----
 
-test_that("mmrm_tmb works as expected in a simple model without covariates and ML", {
+test_that("h_mmrm_tmb works as expected in a simple model without covariates and ML", {
   formula <- FEV1 ~ us(AVISIT | USUBJID)
   data <- fev_data
-  result <- expect_silent(mmrm_tmb(formula, data, reml = FALSE))
+  result <- expect_silent(h_mmrm_tmb(formula, data, reml = FALSE))
   expect_class(result, "mmrm_tmb")
   expect_list(result)
   expect_named(
     result,
     c(
       "cov", "beta_est", "beta_vcov", "theta_est", "theta_vcov",
-      "neg_log_lik", "formula_parts", "data", "reml", "opt_details", "tmb_object"
+      "neg_log_lik", "formula_parts", "data", "reml", "opt_details", "tmb_object",
+      "tmb_data"
     )
   )
   # See design/SAS/sas_log_simple.txt for the source of numbers.
@@ -275,17 +278,18 @@ test_that("mmrm_tmb works as expected in a simple model without covariates and M
   expect_equal(result_cov_tri, expected_cov_tri, tolerance = 1e-3)
 })
 
-test_that("mmrm_tmb works as expected in a simple model without covariates and REML", {
+test_that("h_mmrm_tmb works as expected in a simple model without covariates and REML", {
   formula <- FEV1 ~ us(AVISIT | USUBJID)
   data <- fev_data
-  result <- expect_silent(mmrm_tmb(formula, data, reml = TRUE))
+  result <- expect_silent(h_mmrm_tmb(formula, data, reml = TRUE))
   expect_class(result, "mmrm_tmb")
   expect_list(result)
   expect_named(
     result,
     c(
       "cov", "beta_est", "beta_vcov", "theta_est", "theta_vcov",
-      "neg_log_lik", "formula_parts", "data", "reml", "opt_details", "tmb_object"
+      "neg_log_lik", "formula_parts", "data", "reml", "opt_details", "tmb_object",
+      "tmb_data"
     )
   )
   # See design/SAS/sas_log_simple_reml.txt for the source of numbers.

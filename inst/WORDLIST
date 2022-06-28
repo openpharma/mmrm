@@ -1,3 +1,4 @@
+aic
 alessandro
 Alessandro
 ARMCD
@@ -15,6 +16,7 @@ CMD
 Config
 COPD
 cov
+covbeta
 craig
 cre
 daniel
@@ -26,6 +28,7 @@ DiagonalMatrix
 dmvnorm
 dotsc
 Eigen
+emmeans
 fev
 FEV
 frac

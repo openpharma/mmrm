@@ -1,4 +1,4 @@
-                                                           The SAS System                      Monday, June 13, 2022 12:04:00 PM   1
+                                                           The SAS System                    Thursday, June 23, 2022 10:11:00 PM   1
 
                                                         The Mixed Procedure
 
@@ -23,7 +23,7 @@
                                         AVISIT          4    VIS2 VIS3 VIS4 VIS1
                                         SEX             2    Female Male
                                         ARMCD           2    TRT PBO
-                                                           The SAS System                      Monday, June 13, 2022 12:04:00 PM   2
+                                                           The SAS System                    Thursday, June 23, 2022 10:11:00 PM   2
 
                                                         The Mixed Procedure
 
@@ -83,7 +83,7 @@
 
                                             Number of Observations Read             800
                                             Number of Observations Used             537
-                                                           The SAS System                      Monday, June 13, 2022 12:04:00 PM   3
+                                                           The SAS System                    Thursday, June 23, 2022 10:11:00 PM   3
 
                                                         The Mixed Procedure
 
@@ -143,7 +143,7 @@
                                                -2 Res Log Likelihood          3386.4
                                                AIC (Smaller is Better)        3406.4
                                                AICC (Smaller is Better)       3406.9
-                                                           The SAS System                      Monday, June 13, 2022 12:04:00 PM   4
+                                                           The SAS System                    Thursday, June 23, 2022 10:11:00 PM   4
 
                                                         The Mixed Procedure
 
@@ -196,3 +196,72 @@
                           AVISIT*ARMCD       3     148          0.77       0.26          0.8556    0.8555
                           RACE               2     166         73.83      36.92          <.0001    <.0001
                           SEX                1     166          0.38       0.38          0.5398    0.5406
+
+
+                                                           The SAS System                    Thursday, June 23, 2022 10:11:00 PM   5
+
+                                                        The Mixed Procedure
+
+                                                        Least Squares Means
+
+                                                     Standard
+      Effect          AVISIT    ARMCD    Estimate       Error      DF    t Value    Pr > |t|     Alpha       Lower       Upper
+
+      AVISIT*ARMCD    VIS2      TRT       41.9037      0.6023     144      69.57      <.0001      0.05     40.7131     43.0942
+      AVISIT*ARMCD    VIS2      PBO       38.1715      0.6117     147      62.40      <.0001      0.05     36.9626     39.3803
+      AVISIT*ARMCD    VIS3      TRT       46.7546      0.5086     130      91.92      <.0001      0.05     45.7484     47.7608
+      AVISIT*ARMCD    VIS3      PBO       43.6740      0.4617     130      94.58      <.0001      0.05     42.7605     44.5875
+      AVISIT*ARMCD    VIS4      TRT       52.7841      1.1877     133      44.44      <.0001      0.05     50.4347     55.1334
+      AVISIT*ARMCD    VIS4      PBO       48.3855      1.1886     134      40.71      <.0001      0.05     46.0346     50.7364
+      AVISIT*ARMCD    VIS1      TRT       37.1063      0.7626     143      48.66      <.0001      0.05     35.5990     38.6137
+      AVISIT*ARMCD    VIS1      PBO       33.3318      0.7554     148      44.13      <.0001      0.05     31.8391     34.8245
+
+
+                                                Differences of Least Squares Means
+
+                                                               Standard
+ Effect         AVISIT   ARMCD   _AVISIT   _ARMCD   Estimate      Error     DF   t Value   Pr > |t|    Alpha      Lower      Upper
+
+ AVISIT*ARMCD   VIS2     TRT     VIS2      PBO        3.7322     0.8588    145      4.35     <.0001     0.05     2.0348     5.4296
+ AVISIT*ARMCD   VIS2     TRT     VIS3      TRT       -4.8509     0.7440    148     -6.52     <.0001     0.05    -6.3211    -3.3808
+ AVISIT*ARMCD   VIS2     TRT     VIS3      PBO       -1.7703     0.7589    258     -2.33     0.0204     0.05    -3.2648    -0.2759
+ AVISIT*ARMCD   VIS2     TRT     VIS4      TRT      -10.8804     1.2704    147     -8.56     <.0001     0.05   -13.3911    -8.3698
+ AVISIT*ARMCD   VIS2     TRT     VIS4      PBO       -6.4819     1.3327    199     -4.86     <.0001     0.05    -9.1099    -3.8539
+ AVISIT*ARMCD   VIS2     TRT     VIS1      TRT        4.7973     0.7949    133      6.03     <.0001     0.05     3.2250     6.3697
+ AVISIT*ARMCD   VIS2     TRT     VIS1      PBO        8.5719     0.9661    257      8.87     <.0001     0.05     6.6694    10.4743
+ AVISIT*ARMCD   VIS2     PBO     VIS3      TRT       -8.5831     0.7988    270    -10.75     <.0001     0.05   -10.1557    -7.0106
+ AVISIT*ARMCD   VIS2     PBO     VIS3      PBO       -5.5025     0.7221    158     -7.62     <.0001     0.05    -6.9287    -4.0763
+ AVISIT*ARMCD   VIS2     PBO     VIS4      TRT      -14.6126     1.3363    199    -10.93     <.0001     0.05   -17.2478   -11.9775
+ AVISIT*ARMCD   VIS2     PBO     VIS4      PBO      -10.2141     1.2765    154     -8.00     <.0001     0.05   -12.7358    -7.6924
+ AVISIT*ARMCD   VIS2     PBO     VIS1      TRT        1.0651     0.9785    256      1.09     0.2774     0.05    -0.8618     2.9920
+ AVISIT*ARMCD   VIS2     PBO     VIS1      PBO        4.8396     0.8016    144      6.04     <.0001     0.05     3.2551     6.4241
+ AVISIT*ARMCD   VIS3     TRT     VIS3      PBO        3.0806     0.6896    131      4.47     <.0001     0.05     1.7164     4.4448
+ AVISIT*ARMCD   VIS3     TRT     VIS4      TRT       -6.0295     1.2837    148     -4.70     <.0001     0.05    -8.5663    -3.4927
+ AVISIT*ARMCD   VIS3     TRT     VIS4      PBO       -1.6309     1.2946    182     -1.26     0.2094     0.05    -4.1854     0.9235
+ AVISIT*ARMCD   VIS3     TRT     VIS1      TRT        9.6483     0.8569    161     11.26     <.0001     0.05     7.9560    11.3405
+ AVISIT*ARMCD   VIS3     TRT     VIS1      PBO       13.4228     0.9132    248     14.70     <.0001     0.05    11.6242    15.2214
+ AVISIT*ARMCD   VIS3     PBO     VIS4      TRT       -9.1101     1.2747    172     -7.15     <.0001     0.05   -11.6262    -6.5940
+ AVISIT*ARMCD   VIS3     PBO     VIS4      PBO       -4.7116     1.2636    149     -3.73     0.0003     0.05    -7.2086    -2.2145
+ AVISIT*ARMCD   VIS3     PBO     VIS1      TRT        6.5677     0.8922    228      7.36     <.0001     0.05     4.8097     8.3256
+ AVISIT*ARMCD   VIS3     PBO     VIS1      PBO       10.3422     0.8227    156     12.57     <.0001     0.05     8.7171    11.9672
+ AVISIT*ARMCD   VIS4     TRT     VIS4      PBO        4.3985     1.6805    133      2.62     0.0099     0.05     1.0746     7.7225
+ AVISIT*ARMCD   VIS4     TRT     VIS1      TRT       15.6778     1.3047    121     12.02     <.0001     0.05    13.0949    18.2607
+ AVISIT*ARMCD   VIS4     TRT     VIS1      PBO       19.4523     1.4078    225     13.82     <.0001     0.05    16.6782    22.2263
+ AVISIT*ARMCD   VIS4     PBO     VIS1      TRT       11.2792     1.4128    228      7.98     <.0001     0.05     8.4955    14.0630
+ AVISIT*ARMCD   VIS4     PBO     VIS1      PBO       15.0537     1.3129    138     11.47     <.0001     0.05    12.4578    17.6496
+ AVISIT*ARMCD   VIS1     TRT     VIS1      PBO        3.7745     1.0741    146      3.51     0.0006     0.05     1.6517     5.8974
+
+
+                                                           The SAS System                    Thursday, June 23, 2022 10:11:00 PM   6
+
+                                                        The Mixed Procedure
+
+                                                      Tests of Effect Slices
+
+                                                               Num     Den
+                                    Effect          AVISIT      DF      DF    F Value    Pr > F
+
+                                    AVISIT*ARMCD    VIS2         1     145      18.89    <.0001
+                                    AVISIT*ARMCD    VIS3         1     131      19.96    <.0001
+                                    AVISIT*ARMCD    VIS4         1     133       6.85    0.0099
+                                    AVISIT*ARMCD    VIS1         1     146      12.35    0.0006

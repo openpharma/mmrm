@@ -21,11 +21,15 @@ Imports:
     checkmate (>= 2.1),
     lifecycle,
     methods,
+    nlme,
+    numDeriv,
     TMB (>= 1.9.0),
     stats,
     parallel
 LinkingTo: TMB, RcppEigen, testthat
 Suggests:
+    emmeans (>= 1.7),
+    estimability,
     glmmTMB,
     knitr,
     testthat (>= 3.0.0),
@@ -46,11 +50,14 @@ Collate:
     'catch-routine-registration.R'
     'covariance.R'
     'data.R'
+    'emmeans.R'
     'fit.R'
     'formula.R'
     'labels.R'
+    'mmrm-methods.R'
     'mmrm-package.R'
     'output.R'
     'parallel.R'
+    'satterthwaite.R'
     'tmb-methods.R'
     'tmb.R'

@@ -13,7 +13,7 @@ fit_single_optimizer(
 )
 }
 \arguments{
-\item{formula}{(\code{formula})\cr the model formula, see \code{\link[=mmrm_tmb]{mmrm_tmb()}} for details.}
+\item{formula}{(\code{formula})\cr the model formula, see details.}
 
 \item{data}{(\code{data})\cr the data to be used for the model.}
 

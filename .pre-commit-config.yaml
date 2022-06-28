@@ -9,7 +9,9 @@ repos:
       - id: roxygenize
         additional_dependencies:
           - checkmate
-          - glmmTMB
+          - emmeans
+          - numDeriv
+          - TMB
           - pkgbuild
       - id: use-tidy-description
       - id: spell-check
@@ -27,7 +29,7 @@ repos:
           (.*/|)LICENSE|
           (.*/|)\.Rbuildignore|
           (.*/|)\.lintr|
-          (.*/|)_pkgdown.yaml|
+          (.*/|)_pkgdown.yml|
           (.*/|)staged_dependencies.yaml|
           (.*/|)\.pre-commit-.*|
           \.github/.*|
@@ -48,6 +50,8 @@ repos:
           )$
         additional_dependencies:
           - checkmate
+          - emmeans
+          - numDeriv
           - TMB
       - id: readme-rmd-rendered
       - id: parsable-R
@@ -64,6 +68,7 @@ repos:
         exclude: >
           (?x)^(
           design/.*
+          tests/testthat/_snaps/.*
           )$
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.0.1
