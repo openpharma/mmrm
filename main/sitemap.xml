@@ -49,6 +49,9 @@
     <loc>https://openpharma.github.io/mmrm/main/reference/h_build_formula.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/h_coef_table.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/h_cov_estimate.html</loc>
   </url>
   <url>
@@ -106,6 +109,12 @@
     <loc>https://openpharma.github.io/mmrm/main/reference/h_mmrm_tmb_parameters.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/h_print_aic_list.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/h_print_call.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/h_quad_form.html</loc>
   </url>
   <url>
@@ -125,6 +134,9 @@
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/mmrm.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/mmrm_methods.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/mmrm_tmb_methods.html</loc>
