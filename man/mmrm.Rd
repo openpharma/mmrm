@@ -4,7 +4,13 @@
 \alias{mmrm}
 \title{Fit an MMRM}
 \usage{
-mmrm(formula, data, reml = TRUE, optimizer = "automatic", n_cores = 1L)
+mmrm(
+  formula,
+  data,
+  reml = TRUE,
+  optimizer = "automatic",
+  n_cores = h_free_cores()
+)
 }
 \arguments{
 \item{formula}{(\code{formula})\cr the model formula, see details.}
