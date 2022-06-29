@@ -23,6 +23,30 @@ coef.mmrm_tmb <- function(object, ...) {
   object$beta_est
 }
 
+#' @describeIn mmrm_tmb_methods obtains the fitted values.
+#' @importFrom stats fitted
+#' @exportS3Method
+#' @examples
+#' # Fitted values:
+#' fitted(object)
+fitted.mmrm_tmb <- function(object, ...) {
+  fitted_col <- object$tmb_data$x_matrix %*% object$beta_est
+  fitted_col[, 1L, drop = TRUE]
+}
+
+#' @describeIn mmrm_tmb_methods obtains the model frame.
+#' @importFrom stats model.frame
+#' @exportS3Method
+#' @examples
+#' # Model frame:
+#' model.frame(object)
+model.frame.mmrm_tmb <- function(object, ...) {
+  droplevels(stats::model.frame(
+    object$formula_parts$model_formula,
+    data = object$data
+  ))
+}
+
 #' @describeIn mmrm_tmb_methods obtains the attained log likelihood value.
 #' @importFrom stats logLik
 #' @exportS3Method

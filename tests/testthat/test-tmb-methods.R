@@ -11,6 +11,22 @@ test_that("coef works as expected", {
   expect_equal(result, expected, tolerance = 1e-4)
 })
 
+# fitted ----
+
+test_that("fitted works as expected", {
+  object <- get_mmrm_tmb()
+  result <- expect_silent(fitted(object))
+  expect_numeric(result, names = "unique", len = length(object$tmb_data$y_vector))
+})
+
+# model.frame ----
+
+test_that("model.frame works as expected", {
+  object <- get_mmrm_tmb()
+  result <- expect_silent(model.frame(object))
+  expect_data_frame(result, nrows = length(object$tmb_data$y_vector))
+})
+
 # logLik ----
 
 test_that("logLik works as expected", {
