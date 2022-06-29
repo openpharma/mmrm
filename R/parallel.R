@@ -10,6 +10,8 @@
 #' multiplied with the total number of cores.
 #' We then subtract this from the number of all detected cores. One additional core
 #' is not used for extra safety.
+#'
+#' @export
 h_free_cores <- function() {
   all_cores <- parallel::detectCores(all.tests = TRUE)
   busy_cores <-
