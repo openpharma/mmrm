@@ -28,9 +28,6 @@
     <loc>https://openpharma.github.io/mmrm/main/news/index.html</loc>
   </url>
   <url>
-    <loc>https://openpharma.github.io/mmrm/main/reference/assert_data.html</loc>
-  </url>
-  <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/df_1d.html</loc>
   </url>
   <url>
@@ -44,9 +41,6 @@
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/fit_single_optimizer.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/main/reference/h_build_formula.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/h_coef_table.html</loc>
@@ -68,9 +62,6 @@
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/h_free_cores.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/main/reference/h_get_covariate_parts.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/h_gradient.html</loc>
@@ -125,9 +116,6 @@
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/main/reference/labels.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/mmrm-package.html</loc>
