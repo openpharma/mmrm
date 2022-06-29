@@ -45,15 +45,11 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.0
 Config/testthat/edition: 3
 Collate:
-    'utils.R'
-    'assert_data.R'
     'catch-routine-registration.R'
     'covariance.R'
     'data.R'
     'emmeans.R'
     'fit.R'
-    'formula.R'
-    'labels.R'
     'mmrm-methods.R'
     'mmrm-package.R'
     'output.R'
