@@ -43,7 +43,6 @@ reference:
       - h_print_call
   - title: Functions
     contents:
-      - assert_data
       - df_1d
       - df_md
       - fit_single_optimizer

@@ -19,7 +19,7 @@
 
 \method{fitted}{mmrm_tmb}(object, ...)
 
-\method{model.frame}{mmrm_tmb}(object, ...)
+\method{model.frame}{mmrm_tmb}(formula, ...)
 
 \method{logLik}{mmrm_tmb}(object, ...)
 
@@ -39,6 +39,8 @@
 \item{object}{(\code{mmrm_tmb})\cr the fitted MMRM object.}
 
 \item{...}{not used.}
+
+\item{formula}{(\code{mmrm_tmb})\cr same as \code{object}.}
 
 \item{x}{(\code{mmrm_tmb})\cr same as \code{object}.}
 

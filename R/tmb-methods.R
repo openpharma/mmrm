@@ -4,6 +4,7 @@
 #'
 #' @param object (`mmrm_tmb`)\cr the fitted MMRM object.
 #' @param x (`mmrm_tmb`)\cr same as `object`.
+#' @param formula (`mmrm_tmb`)\cr same as `object`.
 #' @param ... not used.
 #'
 #' @name mmrm_tmb_methods
@@ -40,10 +41,10 @@ fitted.mmrm_tmb <- function(object, ...) {
 #' @examples
 #' # Model frame:
 #' model.frame(object)
-model.frame.mmrm_tmb <- function(object, ...) {
+model.frame.mmrm_tmb <- function(formula, ...) {
   droplevels(stats::model.frame(
-    object$formula_parts$model_formula,
-    data = object$data
+    formula$formula_parts$model_formula,
+    data = formula$data
   ))
 }
 

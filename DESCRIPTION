@@ -30,7 +30,6 @@ LinkingTo: TMB, RcppEigen, testthat
 Suggests:
     emmeans (>= 1.6),
     estimability,
-    glmmTMB,
     knitr,
     testthat (>= 3.0.0),
     xml2
