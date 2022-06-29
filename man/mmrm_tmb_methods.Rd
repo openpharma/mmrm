@@ -3,6 +3,8 @@
 \name{mmrm_tmb_methods}
 \alias{mmrm_tmb_methods}
 \alias{coef.mmrm_tmb}
+\alias{fitted.mmrm_tmb}
+\alias{model.frame.mmrm_tmb}
 \alias{logLik.mmrm_tmb}
 \alias{formula.mmrm_tmb}
 \alias{vcov.mmrm_tmb}
@@ -14,6 +16,10 @@
 \title{Methods for \code{mmrm_tmb} Objects}
 \usage{
 \method{coef}{mmrm_tmb}(object, ...)
+
+\method{fitted}{mmrm_tmb}(object, ...)
+
+\method{model.frame}{mmrm_tmb}(formula, ...)
 
 \method{logLik}{mmrm_tmb}(object, ...)
 
@@ -34,6 +40,8 @@
 
 \item{...}{not used.}
 
+\item{formula}{(\code{mmrm_tmb})\cr same as \code{object}.}
+
 \item{x}{(\code{mmrm_tmb})\cr same as \code{object}.}
 
 \item{sigma}{cannot be used (this parameter does not exist in MMRM).}
@@ -49,6 +57,10 @@ is the classical AIC.}
 \section{Functions}{
 \itemize{
 \item \code{coef.mmrm_tmb}: obtains the estimated coefficients.
+
+\item \code{fitted.mmrm_tmb}: obtains the fitted values.
+
+\item \code{model.frame.mmrm_tmb}: obtains the model frame.
 
 \item \code{logLik.mmrm_tmb}: obtains the attained log likelihood value.
 
@@ -80,6 +92,10 @@ formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
 object <- h_mmrm_tmb(formula, fev_data)
 # Estimated coefficients:
 coef(object)
+# Fitted values:
+fitted(object)
+# Model frame:
+model.frame(object)
 # Log likelihood given the estimated parameters:
 logLik(object)
 # Formula which was used:

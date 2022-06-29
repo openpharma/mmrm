@@ -17,15 +17,6 @@ reference:
       - mmrm-package
   - title: Helper Functions
     contents:
-      - h_assert_one_rec_pt_visit
-      - h_assert_rsp_var
-      - h_assert_visit_var
-      - h_get_covariate_parts
-      - h_build_formula
-      - h_is_specified
-      - h_is_specified_and_in_data
-      - h_check_and_get_label
-      - h_labels
       - h_free_cores
       - h_cov_estimate
       - h_record_all_output
@@ -52,7 +43,6 @@ reference:
       - h_print_call
   - title: Functions
     contents:
-      - assert_data
       - df_1d
       - df_md
       - fit_single_optimizer

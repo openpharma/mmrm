@@ -38,8 +38,8 @@ NULL
 #' @keywords internal
 #' @noRd
 recover_data.mmrm <- function(object, ...) {
-  fun_call <- object$call
-  model_frame <- droplevels(stats::model.frame(object$formula_parts$model_formula, data = object$data))
+  fun_call <- stats::getCall(object)
+  model_frame <- stats::model.frame(object)
   model_terms <- stats::delete.response(stats::terms(model_frame))
   na_action <- attr(model_frame, "na.action")
   emmeans::recover_data(
