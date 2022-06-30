@@ -19,7 +19,7 @@
 
 \method{fitted}{mmrm_tmb}(object, ...)
 
-\method{model.frame}{mmrm_tmb}(formula, ...)
+\method{model.frame}{mmrm_tmb}(formula, full = FALSE, ...)
 
 \method{logLik}{mmrm_tmb}(object, ...)
 
@@ -41,6 +41,8 @@
 \item{...}{not used.}
 
 \item{formula}{(\code{mmrm_tmb})\cr same as \code{object}.}
+
+\item{full}{(\code{flag})\cr whether to include subject and visit variable.}
 
 \item{x}{(\code{mmrm_tmb})\cr same as \code{object}.}
 
@@ -96,6 +98,7 @@ coef(object)
 fitted(object)
 # Model frame:
 model.frame(object)
+model.frame(object, full = TRUE)
 # Log likelihood given the estimated parameters:
 logLik(object)
 # Formula which was used:

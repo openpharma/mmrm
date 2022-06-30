@@ -36,16 +36,23 @@ fitted.mmrm_tmb <- function(object, ...) {
 }
 
 #' @describeIn mmrm_tmb_methods obtains the model frame.
+#' @param full (`flag`)\cr whether to include subject and visit variable.
 #' @importFrom stats model.frame
 #' @exportS3Method
 #' @examples
 #' # Model frame:
 #' model.frame(object)
-model.frame.mmrm_tmb <- function(formula, ...) {
-  droplevels(stats::model.frame(
-    formula$formula_parts$model_formula,
-    data = formula$data
-  ))
+#' model.frame(object, full = TRUE)
+model.frame.mmrm_tmb <- function(formula, full = FALSE, ...) {
+  assert_flag(full)
+  if (full) {
+    formula$tmb_data$full_frame
+  } else {
+    model.frame(
+      formula = formula$formula_parts$model_formula,
+      data = formula$tmb_data$full_frame
+    )
+  }
 }
 
 #' @describeIn mmrm_tmb_methods obtains the attained log likelihood value.

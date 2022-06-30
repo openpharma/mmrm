@@ -9,7 +9,6 @@ test_that("fit_single_optimizer works as expected with defaults", {
   )
   expect_identical(class(result), c("mmrm_fit", "mmrm_tmb"))
   expect_identical(attr(result, "optimizer"), "L-BFGS-B")
-  expect_identical(attr(result, "errors"), NULL)
   expect_identical(attr(result, "messages"), NULL)
   expect_identical(attr(result, "warnings"), NULL)
   expect_true(attr(result, "converged"))
@@ -25,7 +24,6 @@ test_that("fit_single_optimizer works as expected with optimizer inputted but no
   )
   expect_identical(class(result), c("mmrm_fit", "mmrm_tmb"))
   expect_identical(attr(result, "optimizer"), "BFGS")
-  expect_identical(attr(result, "errors"), NULL)
   expect_identical(attr(result, "messages"), NULL)
   expect_identical(attr(result, "warnings"), NULL)
   expect_true(attr(result, "converged"))
@@ -42,10 +40,23 @@ test_that("fit_single_optimizer works as expected with starting values and optim
   )
   expect_identical(class(result), c("mmrm_fit", "mmrm_tmb"))
   expect_identical(attr(result, "optimizer"), "BFGS")
-  expect_identical(attr(result, "errors"), NULL)
   expect_identical(attr(result, "messages"), NULL)
   expect_identical(attr(result, "warnings"), NULL)
   expect_true(attr(result, "converged"))
+})
+
+test_that("fit_single_optimizer gives error messages", {
+  formula <- FEV1 ~ bla
+  expect_error(
+    h_mmrm_tmb(formula, fev_data),
+    "Assertion on 'identical(sum(corr_selected), 1L)' failed",
+    fixed = TRUE
+  )
+  expect_error(
+    fit_single_optimizer(formula, fev_data),
+    "Assertion on 'identical(sum(corr_selected), 1L)' failed",
+    fixed = TRUE
+  )
 })
 
 # h_summarize_all_fits ----

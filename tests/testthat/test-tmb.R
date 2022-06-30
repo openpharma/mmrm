@@ -77,6 +77,16 @@ test_that("h_mmrm_tmb_data works as expected", {
   expect_identical(result$reml, 0L) # ML.
 })
 
+test_that("h_mmrm_tmb_data works also for character ID variable", {
+  formula <- FEV1 ~ RACE + us(AVISIT | USUBJID)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula)
+  dat <- fev_data
+  dat$USUBJID <- as.character(dat$USUBJID)
+  result <- expect_silent(h_mmrm_tmb_data(formula_parts, dat, reml = FALSE))
+  expected <- expect_silent(h_mmrm_tmb_data(formula_parts, fev_data, reml = FALSE))
+  expect_identical(result, expected)
+})
+
 # h_mmrm_tmb_parameters ----
 
 test_that("h_mmrm_tmb_parameters works as expected without start values", {
@@ -299,4 +309,13 @@ test_that("h_mmrm_tmb works as expected in a simple model without covariates and
   result_cov_tri <- result$cov[lower.tri(result$cov)]
   expected_cov_tri <- c(49.8999, 2.7459, -40.4566, 4.9722, -8.5335, 23.0555)
   expect_equal(result_cov_tri, expected_cov_tri, tolerance = 1e-3)
+})
+
+test_that("h_mmrm_tmb also works with character ID variable", {
+  formula <- FEV1 ~ us(AVISIT | USUBJID)
+  data <- fev_data
+  data$USUBJID <- as.character(data$USUBJID)
+  result <- expect_silent(h_mmrm_tmb(formula, fev_data, reml = TRUE))
+  expected <- expect_silent(h_mmrm_tmb(formula, data, reml = TRUE))
+  expect_identical(result$beta_est, expected$beta_est)
 })

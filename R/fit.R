@@ -6,10 +6,11 @@
 #' while capturing messages and warnings.
 #'
 #' @inheritParams mmrm
-#' @param start (`numeric` or `NULL`)\cr optional starting values for the variance parameters.
+#' @param start (`numeric` or `NULL`)\cr optional starting values for
+#'   the variance parameters.
 #'
 #' @return The `mmrm_fit` object, with additional attributes containing warnings,
-#'   messages, errors, optimizer used and convergence status in addition to the
+#'   messages, optimizer used and convergence status in addition to the
 #'   `mmrm_tmb` contents.
 #' @export
 #'
@@ -43,8 +44,11 @@ fit_single_optimizer <- function(formula,
       control = control
     )
   )
+  if (length(quiet_fit$errors)) {
+    stop(quiet_fit$errors)
+  }
   converged <- (length(quiet_fit$warnings) == 0L) &&
-    (length(quiet_fit$errors) == 0L) &&
+    (length(quiet_fit$messages) == 0L) &&
     (quiet_fit$result$opt_details$convergence == 0)
   structure(
     quiet_fit$result,

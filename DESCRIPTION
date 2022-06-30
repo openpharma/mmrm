@@ -25,6 +25,7 @@ Imports:
     numDeriv,
     TMB (>= 1.9.0),
     stats,
+    stringr,
     parallel
 LinkingTo: TMB, RcppEigen, testthat
 Suggests:
