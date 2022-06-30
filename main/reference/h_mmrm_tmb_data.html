@@ -47,12 +47,6 @@
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/openpharma/mmrm" class="external-link">
     <span class="fa fa-github"></span>
@@ -114,6 +108,14 @@ observed visits for each subjects. So the sum of this vector equals <code>n</cod
 <li><p><code>corr_type</code>: <code>int</code> specifying the correlation type.</p></li>
 <li><p><code>reml</code>: <code>int</code> specifying whether REML estimation is used (1), otherwise ML (0).</p></li>
 </ul></div>
+    <div id="details">
+    <h2>Details</h2>
+    <p>Note that the <code>subject_var</code> must not be factor but can also be character.
+If it is character, then it will be converted to factor internally. Here
+the levels will be the unique values, sorted alphabetically and numerically if there
+is a common string prefix of numbers in the character elements. For full control
+on the order please use a factor.</p>
+    </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
