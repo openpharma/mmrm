@@ -56,6 +56,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="../articles/algorithm.html">Details of the Model Fitting in `mmrm`</a>
+    </li>
+    <li>
       <a href="../articles/introduction.html">Introduction to `mmrm`</a>
     </li>
   </ul>
@@ -63,12 +66,6 @@
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
@@ -112,8 +109,12 @@ Bové</h4>
 Roche, namely the <code>tern</code> and <code>tern.mmrm</code> packages
 which were based on <code>lme4</code>. The work done in the
 <code>rbmi</code> package has been important since it used
-<code>glmmTMB</code> already for fitting the models.</p>
-<p>To do: add names</p>
+<code>glmmTMB</code> for fitting MMRMs.</p>
+<p>We would like to thank Ben Bolker from the <code>glmmTMB</code> team
+for multiple discussions when we tried to get Satterthwaite degrees of
+freedom implemented with <code>glmmTMB</code> (see <a href="https://github.com/glmmTMB/glmmTMB/blob/satterthwaite_df/glmmTMB/vignettes/satterthwaite_unstructured_example2.Rmd" class="external-link uri">https://github.com/glmmTMB/glmmTMB/blob/satterthwaite_df/glmmTMB/vignettes/satterthwaite_unstructured_example2.Rmd</a>).
+Also Ben helped significantly with an example showing how to use
+<code>TMB</code> for a random effect vector (<a href="https://github.com/bbolker/tmb-case-studies/tree/master/vectorMixed" class="external-link uri">https://github.com/bbolker/tmb-case-studies/tree/master/vectorMixed</a>).</p>
 </div>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
