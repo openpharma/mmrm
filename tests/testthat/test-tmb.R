@@ -64,7 +64,7 @@ test_that("h_mmrm_tmb_data works as expected", {
   expect_named(
     result,
     c(
-      "x_matrix", "y_vector", "visits_zero_inds", "n_visits", "n_subjects",
+      "full_frame", "x_matrix", "y_vector", "visits_zero_inds", "n_visits", "n_subjects",
       "subject_zero_inds", "subject_n_visits", "corr_type", "reml"
     )
   )
@@ -75,6 +75,16 @@ test_that("h_mmrm_tmb_data works as expected", {
   expect_integer(result$subject_zero_inds, len = 197, unique = TRUE, sorted = TRUE, any.missing = FALSE)
   expect_identical(result$corr_type, 1L) # unstructured.
   expect_identical(result$reml, 0L) # ML.
+})
+
+test_that("h_mmrm_tmb_data works also for character ID variable", {
+  formula <- FEV1 ~ RACE + us(AVISIT | USUBJID)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula)
+  dat <- fev_data
+  dat$USUBJID <- as.character(dat$USUBJID) # nolint
+  result <- expect_silent(h_mmrm_tmb_data(formula_parts, dat, reml = FALSE))
+  expected <- expect_silent(h_mmrm_tmb_data(formula_parts, fev_data, reml = FALSE))
+  expect_identical(result, expected)
 })
 
 # h_mmrm_tmb_parameters ----
@@ -299,4 +309,13 @@ test_that("h_mmrm_tmb works as expected in a simple model without covariates and
   result_cov_tri <- result$cov[lower.tri(result$cov)]
   expected_cov_tri <- c(49.8999, 2.7459, -40.4566, 4.9722, -8.5335, 23.0555)
   expect_equal(result_cov_tri, expected_cov_tri, tolerance = 1e-3)
+})
+
+test_that("h_mmrm_tmb also works with character ID variable", {
+  formula <- FEV1 ~ us(AVISIT | USUBJID)
+  data <- fev_data
+  data$USUBJID <- as.character(data$USUBJID) # nolint
+  result <- expect_silent(h_mmrm_tmb(formula, fev_data, reml = TRUE))
+  expected <- expect_silent(h_mmrm_tmb(formula, data, reml = TRUE))
+  expect_identical(result$beta_est, expected$beta_est)
 })

@@ -124,6 +124,12 @@ h_mmrm_tmb_formula_parts <- function(formula) {
 #' - `corr_type`: `int` specifying the correlation type.
 #' - `reml`: `int` specifying whether REML estimation is used (1), otherwise ML (0).
 #'
+#' @details Note that the `subject_var` must not be factor but can also be character.
+#'   If it is character, then it will be converted to factor internally. Here
+#'   the levels will be the unique values, sorted alphabetically and numerically if there
+#'   is a common string prefix of numbers in the character elements. For full control
+#'   on the order please use a factor.
+#'
 #' @export
 #'
 #' @examples
@@ -140,9 +146,15 @@ h_mmrm_tmb_data <- function(formula_parts,
     must.include = c(formula_parts$visit_var, formula_parts$subject_var)
   )
   assert_factor(data[[formula_parts$visit_var]])
-  assert_factor(data[[formula_parts$subject_var]])
+  assert_true(is.factor(data[[formula_parts$subject_var]]) || is.character(data[[formula_parts$subject_var]]))
   assert_flag(reml)
 
+  if (is.character(data[[formula_parts$subject_var]])){
+    data[[formula_parts$subject_var]] <- factor(
+      data[[formula_parts$subject_var]],
+      levels = stringr::str_sort(unique(data[[formula_parts$subject_var]]), numeric = TRUE)
+    )
+  }
   data <- data[order(data[[formula_parts$subject_var]], data[[formula_parts$visit_var]]), ]
   full_frame <- droplevels(stats::model.frame(formula_parts$full_formula, data = data))
   x_matrix <- stats::model.matrix(formula_parts$model_formula, data = full_frame)
@@ -165,6 +177,7 @@ h_mmrm_tmb_data <- function(formula_parts,
 
   structure(
     list(
+      full_frame = full_frame,
       x_matrix = x_matrix,
       y_vector = y_vector,
       visits_zero_inds = visits_zero_inds,

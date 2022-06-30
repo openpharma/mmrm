@@ -21,10 +21,20 @@ test_that("fitted works as expected", {
 
 # model.frame ----
 
-test_that("model.frame works as expected", {
+test_that("model.frame works as expected with defaults", {
   object <- get_mmrm_tmb()
   result <- expect_silent(model.frame(object))
   expect_data_frame(result, nrows = length(object$tmb_data$y_vector))
+  expect_named(result, c("FEV1", "RACE"))
+  expect_class(attr(result, "terms"), "terms")
+})
+
+test_that("model.frame returns full model frame if requested", {
+  object <- get_mmrm_tmb()
+  result <- expect_silent(model.frame(object, full = TRUE))
+  expect_data_frame(result, nrows = length(object$tmb_data$y_vector))
+  expect_named(result, c("FEV1", "RACE", "USUBJID", "AVISIT"))
+  expect_class(attr(result, "terms"), "terms")
 })
 
 # logLik ----
