@@ -2,6 +2,7 @@
 #define CORR_INCLUDED_
 
 #include "tmb_includes.h"
+#include "utils.h"
 
 // Unstructured covariance.
 template <class T>
@@ -17,6 +18,23 @@ matrix<T> get_unstructured(const vector<T>& theta, int n_visits) {
     }
   }
   return covariance_lower_chol;
+}
+
+// Ante-dependence.
+template <class T>
+matrix<T> get_ante_dependence(const vector<T>& theta, int n_visits) {
+  vector<T> sd_values = exp(theta.head(n_visits));
+  vector<T> transformed_corrs = theta.tail(n_visits - 1);
+  vector<T> corr_values = map_to_cor(transformed_corrs);
+  matrix<T> covariance = matrix<T>::Zero(n_visits, n_visits);
+  for(int i = 0; i < n_visits; i++) {
+    for(int j = 0; j <= i; j++){
+      T corr = (i == j ? T(1) : corr_values.segment(j, i - j).prod());
+      covariance(i, j) = sd_values(i) * sd_values(j) * corr;
+    }
+  }
+  Eigen::LLT<Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> > covariance_chol(covariance);
+  return covariance_chol.matrixL();
 }
 
 // Coding of corr_type coming from the R side.
@@ -46,7 +64,7 @@ matrix<T> get_covariance_lower_chol(const vector<T>& theta, int n_visits, int co
     // result = get_compound_symmetry<T>(theta, n_visits);
     break;
   case ante_dependence_corr:
-    // result = get_ante_dependence<T>(theta, n_visits);
+    result = get_ante_dependence<T>(theta, n_visits);
     break;
   }
   return result;

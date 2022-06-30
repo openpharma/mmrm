@@ -9,3 +9,11 @@ get_mmrm_tmb <- function() {
 get_mmrm <- function() {
   .mmrm_example
 }
+
+square_matrix <- function(values_by_row) {
+  n <- length(values_by_row)
+  size <- sqrt(n)
+  assert_integerish(size)
+  size <- floor(size)
+  matrix(data = values_by_row, nrow = size, ncol = size, byrow = TRUE)
+}

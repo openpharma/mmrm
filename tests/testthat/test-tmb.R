@@ -54,6 +54,24 @@ test_that("h_mmrm_tmb_formula_parts works without covariates", {
   expect_identical(result, expected)
 })
 
+test_that("h_mmrm_tmb_formula_parts works as expected for antedependence", {
+  result <- expect_silent(h_mmrm_tmb_formula_parts(
+    FEV1 ~ RACE + SEX + ARMCD * AVISIT + ad(AVISIT | USUBJID)
+  ))
+  expected <- structure(
+    list(
+      formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + ad(AVISIT | USUBJID),
+      model_formula = FEV1 ~ RACE + SEX + ARMCD + AVISIT + ARMCD:AVISIT,
+      full_formula = FEV1 ~ RACE + SEX + ARMCD + AVISIT + USUBJID + ARMCD:AVISIT,
+      corr_type = "ad",
+      visit_var = "AVISIT",
+      subject_var = "USUBJID"
+    ),
+    class = "mmrm_tmb_formula_parts"
+  )
+  expect_identical(result, expected)
+})
+
 # h_mmrm_tmb_data ----
 
 test_that("h_mmrm_tmb_data works as expected", {
@@ -105,6 +123,15 @@ test_that("h_mmrm_tmb_parameters works as expected with start values", {
   start <- 1:10
   result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = start))
   expected <- list(theta = start)
+  expect_identical(result, expected)
+})
+
+test_that("h_mmrm_tmb_parameters works as expected with antedependence", {
+  formula <- FEV1 ~ SEX + ad(AVISIT | USUBJID)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula)
+  tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = TRUE)
+  result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
+  expected <- list(theta = rep(0, 7)) # 2 * 4 - 1 parameters.
   expect_identical(result, expected)
 })
 
@@ -265,6 +292,8 @@ test_that("h_mmrm_tmb_fit works as expected", {
 
 # h_mmrm_tmb ----
 
+## unstructured ----
+
 test_that("h_mmrm_tmb works as expected in a simple model without covariates and ML", {
   formula <- FEV1 ~ us(AVISIT | USUBJID)
   data <- fev_data
@@ -310,6 +339,50 @@ test_that("h_mmrm_tmb works as expected in a simple model without covariates and
   expected_cov_tri <- c(49.8999, 2.7459, -40.4566, 4.9722, -8.5335, 23.0555)
   expect_equal(result_cov_tri, expected_cov_tri, tolerance = 1e-3)
 })
+
+## ante-dependence ----
+
+test_that("h_mmrm_tmb works with ante-dependence correlation structure and ML", {
+  formula <- FEV1 ~ ad(AVISIT | USUBJID)
+  data <- fev_data
+  result <- expect_silent(h_mmrm_tmb(formula, data, reml = FALSE))
+  expect_class(result, "mmrm_tmb")
+  # See design/SAS/sas_antedependence_ml.txt for the source of numbers.
+  expect_equal(deviance(result), 3713.24501787)
+  expect_equal(sqrt(result$beta_vcov[1, 1]), 0.3519, tolerance = 1e-4)
+  expect_equal(as.numeric(result$beta_est), 42.9019, tolerance = 1e-4)
+  result_theta <- result$theta_est
+  trans_fun <- function(rho) {
+    sign(rho) * sqrt(rho^2 / (1 - rho^2))
+  }
+  expected_theta <- c(
+    log(sqrt(c(114.78, 44.5191, 26.7673, 158.33))),
+    trans_fun(c(0.7104, 0.09992, 0.3650))
+  )
+  expect_equal(result_theta, expected_theta, tolerance = 1e-4)
+})
+
+test_that("h_mmrm_tmb works with ante-dependence correlation structure and REML", {
+  formula <- FEV1 ~ ad(AVISIT | USUBJID)
+  data <- fev_data
+  result <- expect_silent(h_mmrm_tmb(formula, data, reml = TRUE))
+  expect_class(result, "mmrm_tmb")
+  # See design/SAS/sas_antedependence_reml.txt for the source of numbers.
+  expect_equal(deviance(result), 3713.49317786)
+  expect_equal(sqrt(result$beta_vcov[1, 1]), 0.3529, tolerance = 1e-4)
+  expect_equal(as.numeric(result$beta_est), 42.9009, tolerance = 1e-4)
+  result_theta <- result$theta_est
+  trans_fun <- function(rho) {
+    sign(rho) * sqrt(rho^2 / (1 - rho^2))
+  }
+  expected_theta <- c(
+    log(sqrt(c(114.89, 44.6313, 26.8922, 158.47))),
+    trans_fun(c(0.7106, 0.1033, 0.3657))
+  )
+  expect_equal(result_theta, expected_theta, tolerance = 1e-4)
+})
+
+## misc ----
 
 test_that("h_mmrm_tmb also works with character ID variable", {
   formula <- FEV1 ~ us(AVISIT | USUBJID)
