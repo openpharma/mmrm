@@ -64,7 +64,7 @@ test_that("h_mmrm_tmb_data works as expected", {
   expect_named(
     result,
     c(
-      "x_matrix", "y_vector", "visits_zero_inds", "n_visits", "n_subjects",
+      "full_frame", "x_matrix", "y_vector", "visits_zero_inds", "n_visits", "n_subjects",
       "subject_zero_inds", "subject_n_visits", "corr_type", "reml"
     )
   )
