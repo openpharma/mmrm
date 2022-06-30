@@ -81,7 +81,7 @@ test_that("h_mmrm_tmb_data works also for character ID variable", {
   formula <- FEV1 ~ RACE + us(AVISIT | USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   dat <- fev_data
-  dat$USUBJID <- as.character(dat$USUBJID)
+  dat$USUBJID <- as.character(dat$USUBJID) # nolint
   result <- expect_silent(h_mmrm_tmb_data(formula_parts, dat, reml = FALSE))
   expected <- expect_silent(h_mmrm_tmb_data(formula_parts, fev_data, reml = FALSE))
   expect_identical(result, expected)
@@ -314,7 +314,7 @@ test_that("h_mmrm_tmb works as expected in a simple model without covariates and
 test_that("h_mmrm_tmb also works with character ID variable", {
   formula <- FEV1 ~ us(AVISIT | USUBJID)
   data <- fev_data
-  data$USUBJID <- as.character(data$USUBJID)
+  data$USUBJID <- as.character(data$USUBJID) # nolint
   result <- expect_silent(h_mmrm_tmb(formula, fev_data, reml = TRUE))
   expected <- expect_silent(h_mmrm_tmb(formula, data, reml = TRUE))
   expect_identical(result$beta_est, expected$beta_est)
