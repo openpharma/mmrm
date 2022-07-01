@@ -2,6 +2,7 @@
 url: https://openpharma.github.io/mmrm
 
 template:
+  bootstrap: 5
   params:
     bootswatch: cerulean
     ganalytics: UA-125641273-1
