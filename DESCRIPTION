@@ -1,13 +1,13 @@
 Type: Package
 Package: mmrm
 Title: Mixed Models for Repeated Measures
-Version: 0.0.0.9001
+Version: 0.0.0.9002
 Authors@R: c(
-      person("Daniel", "Sabanes Bove", , "daniel.sabanes_bove@roche.com", role = c("aut", "cre")),
-      person("Julia", "Dedic", , "julia.dedic@roche.com", role = c("aut")),
-      person("Craig", "Gower-Page", , "craig.gower-page@roche.com", role = c("aut")),
-      person("Alessandro", "Noci", , "alessandro.noci@roche.com", role = c("aut"))
-    )
+    person("Daniel", "Sabanes Bove", , "daniel.sabanes_bove@roche.com", role = c("aut", "cre")),
+    person("Julia", "Dedic", , "julia.dedic@roche.com", role = "aut"),
+    person("Craig", "Gower-Page", , "craig.gower-page@roche.com", role = "aut"),
+    person("Alessandro", "Noci", , "alessandro.noci@roche.com", role = "aut")
+  )
 Description: Mixed models for repeated measures (MMRM) are a popular
     choice for individually randomized trials with longitudinal continuous
     outcomes. This package implements MMRM based on Template Model Builder
@@ -23,27 +23,30 @@ Imports:
     methods,
     nlme,
     numDeriv,
-    TMB (>= 1.9.0),
+    parallel,
     stats,
     stringr,
-    parallel
-LinkingTo: TMB, RcppEigen, testthat
+    TMB (>= 1.9.0)
 Suggests:
     emmeans (>= 1.6),
     estimability,
     knitr,
     testthat (>= 3.0.0),
     xml2
-NeedsCompilation: yes
+LinkingTo: 
+    RcppEigen,
+    testthat,
+    TMB
 VignetteBuilder:
     knitr
 biocViews:
+Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-US
 LazyData: true
+NeedsCompilation: yes
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.0
-Config/testthat/edition: 3
 Collate:
     'catch-routine-registration.R'
     'covariance.R'
