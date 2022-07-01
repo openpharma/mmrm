@@ -42,6 +42,7 @@ reference:
       - h_coef_table
       - h_print_aic_list
       - h_print_call
+      - h_print_cov
   - title: Functions
     contents:
       - df_1d
