@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   algorithm: algorithm.html
   introduction: introduction.html
-last_built: 2022-06-30T10:30Z
+last_built: 2022-07-01T07:18Z
 urls:
   reference: https://openpharma.github.io/mmrm/main/reference
   article: https://openpharma.github.io/mmrm/main/articles
