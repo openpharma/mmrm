@@ -1,5 +1,5 @@
 ---
-title: "Correlation Structures in `mmrm`"
+title: "Covariance Structures in `mmrm`"
 package: mmrm
 bibliography: '`r system.file("REFERENCES.bib", package = "mmrm")`'
 author:
@@ -12,7 +12,7 @@ output:
           toc: true
           toc_float: true
 vignette: |
-  %\VignetteIndexEntry{Correlation Structures in `mmrm`}
+  %\VignetteIndexEntry{Covariance Structures in `mmrm`}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options:
@@ -26,8 +26,21 @@ knitr::opts_chunk$set(
 )
 ```
 
-Here we describe the correlation structures which are currently available in
+\DeclareMathOperator{\sign}{sign}
+\DeclareMathOperator{\Corr}{Corr}
+\newcommand{\abs}[1]{\left\vert#1\right\vert}
+\newcommand{\R}{\mathbb{R}}
+
+Here we describe the covariance structures which are currently available in
 `mmrm`.
+
+# Introduction
+
+We use some concepts throughout the different covariance structures and
+introduce these here.
+
+## Covariance and Correlation Matrices
+
 The symmetric and positive definite covariance matrix
 \[
 \Sigma = \begin{pmatrix}
@@ -40,37 +53,106 @@ The symmetric and positive definite covariance matrix
 \]
 is parametrized by a vector of variance parameters
 $\theta = (\theta_1, \dotsc, \theta_k)^\top$. The meaning and the
-number ($k$) of variance parameters is different for each correlation structure.
+number ($k$) of variance parameters is different for each covariance structure.
+
+In many covariance structures we use the decomposition
+\[
+\Sigma = DPD
+\]
+where the diagonal standard deviation matrix is
+\[
+D = \begin{pmatrix}
+\sigma_1 & 0 & \cdots & & 0 \\
+0 & \sigma_2 & 0 & \cdots & 0 \\
+\vdots & & \ddots & \ddots & \vdots \\
+&  & & \sigma_{m-1} & 0 \\
+0 & \cdots & & 0 & \sigma_m
+\end{pmatrix}
+\]
+with entries $\sigma_i > 0$,
+and the symmetric correlation matrix $P$ is
+\[
+P = \begin{pmatrix}
+  1 & \rho_{12}   & \rho_{13} & \cdots & \cdots & \rho_{1,m-1} \\
+  \rho_{12} & 1      & \rho_{23} & \ddots &        & \vdots \\
+  \rho_{13} & \rho_{23}      & \ddots & \ddots & \ddots & \vdots \\
+ \vdots & \ddots & \ddots & \ddots & \rho_{m-2,m-1} & \rho_{m-2,m} \\
+ \vdots &        & \ddots & \rho_{m-2,m-1}    & 1    & \rho_{m-1,m} \\
+\rho_{1, m-1} & \cdots & \cdots & \rho_{m-2,m} & \rho_{m-1,m}    & 1
+\end{pmatrix}
+\]
+with entries $\rho_{ij} \in (-1, 1)$.
+
+## Transformation to Variance Parameters
+
+For standard deviation parameters $\sigma$ we use the natural logarithm
+$\log(\sigma)$ to map them to $\R$.
+For correlation parameters $\rho$ we consistently
+use the transformation
+\[
+\theta = f(\rho) = \sign(\rho) \sqrt{\frac{\rho^2}{1 - \rho^2}}
+\]
+which maps the correlation parameter to $\theta \in \R$.
+It has the inverse
+\[
+\rho = f^{-1}(\theta) = \frac{\theta}{\sqrt{1 + \theta^2}}.
+\]
+This is important because the resulting variance parameters $\theta$
+can be optimized without constraints over the whole of $\R$.
+
+# Covariance Structures
 
 ## Unstructured (`us`)
 
 Any covariance matrix can be represented by this saturated correlation structure.
 Here $k = m (m+1) / 2$. See the [algorithm vignette](algorithm.html) for details.
 
-## Ante-dependence (`ad`)
+## Heterogeneous Ante-dependence (`ad`)
 
 The ante-dependence correlation structure (@Gabriel1962) is useful for balanced
 designs where the observations are not necessarily equally spaced in time.
-The within subject variances are different between time points, i.e.
-we allow for different $\sigma_i^2$, $i=1, \dotsc, m$.
-Here we use an order one ante-dependence model, where the covariance matrix
-$\Sigma$ has elements
+Here we use an order one ante-dependence model, where the correlation matrix
+$P$ has elements
 \[
-\sigma_{ij} = \sigma_i \sigma_j \prod_{k=i}^{j-1} \rho_k.
+\rho_{ij} = \prod_{k=i}^{j-1} \rho_k.
 \]
-So we have $n-1$ parameters $\rho_k$, so here
+So we have correlation parameters $\rho_k$, $k = 1, \dotsc, m-1$.
+
+We use a heterogeneous covariance structure to allow for different within
+subject variances. So here we can identify
 \[
 \theta = (\log(\sigma_1), \dotsc, \log(\sigma_m), f(\rho_1), \dotsc, f(\rho_{m-1}))
 \]
-and we have in total $2m - 1$ variance parameters. Here we use the transformation
+and we have in total $2m - 1$ variance parameters.
+
+## Heterogenous Toeplitz (`toep`)
+
+Toeplitz matrices (@Toeplitz1911) are diagonal-constant matrices. Here we can
+model the correlation matrix as a Toeplitz matrix:
 \[
-\DeclareMathOperator{\sign}{sign}
-f(\rho) = \sign(\rho) \sqrt{\frac{\rho^2}{1 - \rho^2}}
+P = \begin{pmatrix}
+  1 & \rho_1   & \rho_2 & \cdots & \cdots & \rho_{m-1} \\
+  \rho_1 & 1      & \rho_1 & \ddots &        & \vdots \\
+  \rho_2 & \rho_1      & \ddots & \ddots & \ddots & \vdots \\
+ \vdots & \ddots & \ddots & \ddots & \rho_1 & \rho_2 \\
+ \vdots &        & \ddots & \rho_1    & 1    & \rho_1 \\
+\rho_{m-1} & \cdots & \cdots & \rho_2    & \rho_1    & 1
+\end{pmatrix}
 \]
-which maps the correlation parameter $\rho \in (-1, 1)$ to $x \in \mathbb{R}$.
-It has the inverse
+This means that the correlation between two time points only depends on the
+distance between them, i.e.
 \[
-f^{-1}(x) = \frac{x}{\sqrt{1 + x^2}}.
+\rho_{ij} = \rho_{\abs{i - j}}
 \]
+and we have correlation parameters $\rho_k$, $k = 1, \dotsc, m-1$.
+
+We use a heterogeneous covariance structure to allow for different within
+subject variances. So here we can identify
+\[
+\theta = (\log(\sigma_1), \dotsc, \log(\sigma_m), f(\rho_1), \dotsc, f(\rho_{m-1}))
+\]
+and we have in total $2m - 1$ variance parameters. This is similar to
+the heterogeneous ante-dependence structure, but the correlation parameters
+are used differently in the construction of $P$.
 
 # References

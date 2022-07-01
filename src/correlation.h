@@ -4,7 +4,8 @@
 #include "tmb_includes.h"
 #include "utils.h"
 
-// Unstructured covariance.
+// Unstructured covariance:
+// Cholesky factor.
 template <class T>
 matrix<T> get_unstructured(const vector<T>& theta, int n_visits) {
   vector<T> sd_values = exp(theta.head(n_visits));
@@ -20,21 +21,41 @@ matrix<T> get_unstructured(const vector<T>& theta, int n_visits) {
   return covariance_lower_chol;
 }
 
-// Ante-dependence.
+// Heterogeneous Ante-dependence:
+
+// Correlation function.
+template <class T>
+struct corr_fun_ante_dependence : generic_corr_fun<T> {
+  using generic_corr_fun<T>::generic_corr_fun;
+  const T operator() (int i, int j) const {
+    return this->corr_values.segment(j, i - j).prod();
+  }
+};
+// Cholesky factor.
 template <class T>
 matrix<T> get_ante_dependence(const vector<T>& theta, int n_visits) {
   vector<T> sd_values = exp(theta.head(n_visits));
-  vector<T> transformed_corrs = theta.tail(n_visits - 1);
-  vector<T> corr_values = map_to_cor(transformed_corrs);
-  matrix<T> covariance = matrix<T>::Zero(n_visits, n_visits);
-  for(int i = 0; i < n_visits; i++) {
-    for(int j = 0; j <= i; j++){
-      T corr = (i == j ? T(1) : corr_values.segment(j, i - j).prod());
-      covariance(i, j) = sd_values(i) * sd_values(j) * corr;
-    }
+  corr_fun_ante_dependence<T> fun(theta.tail(n_visits - 1));
+  return get_heterogeneous_cov(sd_values, fun);
+}
+
+// Heterogeneous Toeplitz:
+
+// Correlation function.
+template <class T>
+struct corr_fun_toeplitz : generic_corr_fun<T> {
+  using generic_corr_fun<T>::generic_corr_fun;
+  const T operator() (int i, int j) const {
+    int index = (i - j) - 1;  // Note: We need to start at 0.
+    return this->corr_values(index);
   }
-  Eigen::LLT<Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> > covariance_chol(covariance);
-  return covariance_chol.matrixL();
+};
+// Cholesky factor.
+template <class T>
+matrix<T> get_toeplitz(const vector<T>& theta, int n_visits) {
+  vector<T> sd_values = exp(theta.head(n_visits));
+  corr_fun_toeplitz<T> fun(theta.tail(n_visits - 1));
+  return get_heterogeneous_cov(sd_values, fun);
 }
 
 // Coding of corr_type coming from the R side.
@@ -55,7 +76,7 @@ matrix<T> get_covariance_lower_chol(const vector<T>& theta, int n_visits, int co
     result = get_unstructured<T>(theta, n_visits);
     break;
   case toeplitz_corr:
-    // result = get_toeplitz<T>(theta, n_visits);
+    result = get_toeplitz<T>(theta, n_visits);
     break;
   case auto_regressive_corr:
     // result = get_auto_regressive<T>(theta, n_visits);
@@ -69,44 +90,5 @@ matrix<T> get_covariance_lower_chol(const vector<T>& theta, int n_visits, int co
   }
   return result;
 }
-
-// Producing a sparse selection matrix to select rows and columns from
-// covariance matrix.
-template <class Type>
-Eigen::SparseMatrix<Type> get_select_matrix(const vector<int>& visits_i, const int& n_visits) {
-  Eigen::SparseMatrix<Type> result(visits_i.size(), n_visits);
-  for (int i = 0; i < visits_i.size(); i++) {
-    result.insert(i, visits_i(i)) = (Type) 1.0;
-  }
-  return result;
-}
-
-// Calculate tcrossprod(lower_chol) = lower_chol * t(lower_chol).
-// If complete, then adds the upper triangular part to the result as well.
-// By default only the lower triangular part is populated, as this should be
-// sufficient for downstream use of the result in most cases.
-template <class Type>
-matrix<Type> tcrossprod(const matrix<Type>& lower_chol, bool complete = false) {
-  int n = lower_chol.rows();
-  matrix<Type> result = matrix<Type>::Zero(n, n);
-  result.template selfadjointView<Eigen::Lower>().rankUpdate(lower_chol);
-  if (complete) {
-    result.template triangularView<Eigen::Upper>() = result.transpose();
-  }
-  return result;
-}
-
-// Calculate crossprod(x) = t(x) * x.
-// Only the lower triangular part is populated, as this should be
-// sufficient for downstream use of the result in most cases.
-// Note that x does not need to be symmetric or square.
-template <class Type>
-matrix<Type> crossprod(const matrix<Type>& x) {
-  int n = x.cols();
-  matrix<Type> result = matrix<Type>::Zero(n, n);
-  result.template selfadjointView<Eigen::Lower>().rankUpdate(x.transpose());
-  return result;
-}
-
 
 #endif

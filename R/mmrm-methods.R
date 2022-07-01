@@ -57,8 +57,10 @@ summary.mmrm <- function(object, ...) {
   structure(
     list(
       logLik = logLik(object),
+      cov_type = object$formula_parts$corr_type,
+      n_theta = length(object$theta_est),
       n_subjects = object$tmb_data$n_subjects,
-      n_visits = object$tmb_data$n_visits,
+      n_timepoints = object$tmb_data$n_visits,
       n_obs = length(object$tmb_data$y_vector),
       coefficients = h_coef_table(object),
       vcov = vcov(object),
@@ -77,18 +79,53 @@ summary.mmrm <- function(object, ...) {
 #' This is used in [print.summary.mmrm()].
 #'
 #' @param call (`call`)\cr original [mmrm()] function call.
+#' @param n_obs (`int`)\cr number of observations.
+#' @param n_subjects (`int`)\cr number of subjects.
+#' @param n_timepoints (`int`)\cr number of timepoints.
 #'
 #' @export
-h_print_call <- function(call) {
+h_print_call <- function(call, n_obs, n_subjects, n_visits) {
   pass <- 0
   if (!is.null(tmp <- call$formula)) {
-    cat("Formula: ", deparse(tmp), fill = TRUE)
+    cat("Formula:    ", deparse(tmp), fill = TRUE)
     rhs <- tmp[[2]]
     pass <- nchar(deparse(rhs))
   }
   if (!is.null(tmp <- call$data)) {
-    cat("Data:    ", deparse(tmp), fill = TRUE)
+    cat(
+      "Data:       ", deparse(tmp), "(used", n_obs, "observations from",
+      n_subjects, "subjects with maximum", n_visits, "timepoints)",
+      fill = TRUE
+    )
   }
+}
+
+#' Printing MMRM Correlation Type
+#'
+#' @description `r lifecycle::badge("experimental")`
+#'
+#' This is used in [print.summary.mmrm()].
+#'
+#' @param cov_type (`string`)\cr covariance structure abbreviation.
+#' @param n_theta (`int`)\cr number of variance parameters.
+#'
+#' @export
+h_print_cov <- function(cov_type, n_theta) {
+  assert_string(cov_type)
+  assert_int(n_theta, lower = 1)
+
+  cov_definition <- switch(cov_type,
+    us = "unstructured",
+    toep = "heterogeneous Toeplitz",
+    ar1 = "auto-regressive order one",
+    cs = "compound symmetry",
+    ad = "heterogeneous ante-dependence"
+  )
+  cat(
+    "Covariance:  ", cov_definition,
+    " (", n_theta, " variance parameters)",
+    fill = TRUE, sep = ""
+  )
 }
 
 #' Printing AIC and other Model Fit Criteria
@@ -116,11 +153,8 @@ print.summary.mmrm <- function(x,
                                signif.stars = getOption("show.signif.stars"),
                                ...) {
   cat("mmrm fit\n\n")
-  h_print_call(x$call)
-  cat(
-    "Used", x$n_obs, "observations from", x$n_subjects,
-    "subjects with maximum", x$n_visits, "timepoints.\n"
-  )
+  h_print_call(x$call, x$n_obs, x$n_subjects, x$n_timepoints)
+  h_print_cov(x$cov_type, x$n_theta)
   cat("\n")
   cat("Model selection criteria:\n")
   h_print_aic_list(x$aic_list)

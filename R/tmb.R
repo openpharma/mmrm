@@ -220,7 +220,7 @@ h_mmrm_tmb_parameters <- function(formula_parts,
   n <- tmb_data$n_visits
   theta_dim <- as.integer(switch(formula_parts$corr_type,
     us = n * (n + 1) / 2,
-    toep = 0,
+    toep = 2 * n - 1,
     ar1 = 0,
     cs = 0,
     ad = 2 * n - 1
