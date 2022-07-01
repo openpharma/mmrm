@@ -84,7 +84,7 @@ summary.mmrm <- function(object, ...) {
 #' @param n_timepoints (`int`)\cr number of timepoints.
 #'
 #' @export
-h_print_call <- function(call, n_obs, n_subjects, n_visits) {
+h_print_call <- function(call, n_obs, n_subjects, n_timepoints) {
   pass <- 0
   if (!is.null(tmp <- call$formula)) {
     cat("Formula:    ", deparse(tmp), fill = TRUE)
@@ -94,7 +94,7 @@ h_print_call <- function(call, n_obs, n_subjects, n_visits) {
   if (!is.null(tmp <- call$data)) {
     cat(
       "Data:       ", deparse(tmp), "(used", n_obs, "observations from",
-      n_subjects, "subjects with maximum", n_visits, "timepoints)",
+      n_subjects, "subjects with maximum", n_timepoints, "timepoints)",
       fill = TRUE
     )
   }

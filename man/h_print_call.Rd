@@ -4,7 +4,7 @@
 \alias{h_print_call}
 \title{Printing MMRM Function Call}
 \usage{
-h_print_call(call, n_obs, n_subjects, n_visits)
+h_print_call(call, n_obs, n_subjects, n_timepoints)
 }
 \arguments{
 \item{call}{(\code{call})\cr original \code{\link[=mmrm]{mmrm()}} function call.}
