@@ -55,7 +55,7 @@ context("toeplitz") {
     expected <<
       1.0, 0.0, 0.0,
       sqrt(2.0), sqrt(2.0), 0.0,
-      1.897367, 1.897367, 1.341641;
+      2.683282, 0.3167184, 1.303721;
     expect_equal_matrix(result, expected);
   }
 }
