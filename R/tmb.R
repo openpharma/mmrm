@@ -223,7 +223,7 @@ h_mmrm_tmb_parameters <- function(formula_parts,
     toep = 0,
     ar1 = 0,
     cs = 0,
-    ad = 0
+    ad = 2 * n - 1
   ))
   if (!is.null(start_values)) {
     assert_numeric(start_values, len = theta_dim, any.missing = FALSE, finite = TRUE)

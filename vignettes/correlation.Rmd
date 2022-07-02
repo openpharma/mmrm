@@ -1,0 +1,76 @@
+---
+title: "Correlation Structures in `mmrm`"
+package: mmrm
+bibliography: '`r system.file("REFERENCES.bib", package = "mmrm")`'
+author:
+  - name: Daniel Sabanés Bové
+    email: daniel.sabanes_bove@roche.com
+output:
+  rmarkdown::html_document:
+          theme: "spacelab"
+          highlight: "kate"
+          toc: true
+          toc_float: true
+vignette: |
+  %\VignetteIndexEntry{Correlation Structures in `mmrm`}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options:
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Here we describe the correlation structures which are currently available in
+`mmrm`.
+The symmetric and positive definite covariance matrix
+\[
+\Sigma = \begin{pmatrix}
+\sigma_1^2 & \sigma_{12} & \dots & \dots & \sigma_{1m} \\
+\sigma_{21} & \sigma_2^2 & \sigma_{23} & \dots & \sigma_{2m}\\
+\vdots & & \ddots & & \vdots \\
+\vdots & & & \ddots & \vdots \\
+\sigma_{m1} & \dots & \dots & \sigma_{m,m-1} & \sigma_m^2
+\end{pmatrix}
+\]
+is parametrized by a vector of variance parameters
+$\theta = (\theta_1, \dotsc, \theta_k)^\top$. The meaning and the
+number ($k$) of variance parameters is different for each correlation structure.
+
+## Unstructured (`us`)
+
+Any covariance matrix can be represented by this saturated correlation structure.
+Here $k = m (m+1) / 2$. See the [algorithm vignette](algorithm.html) for details.
+
+## Ante-dependence (`ad`)
+
+The ante-dependence correlation structure (@Gabriel1962) is useful for balanced
+designs where the observations are not necessarily equally spaced in time.
+The within subject variances are different between time points, i.e.
+we allow for different $\sigma_i^2$, $i=1, \dotsc, m$.
+Here we use an order one ante-dependence model, where the covariance matrix
+$\Sigma$ has elements
+\[
+\sigma_{ij} = \sigma_i \sigma_j \prod_{k=i}^{j-1} \rho_k.
+\]
+So we have $n-1$ parameters $\rho_k$, so here
+\[
+\theta = (\log(\sigma_1), \dotsc, \log(\sigma_m), f(\rho_1), \dotsc, f(\rho_{m-1}))
+\]
+and we have in total $2m - 1$ variance parameters. Here we use the transformation
+\[
+\DeclareMathOperator{\sign}{sign}
+f(\rho) = \sign(\rho) \sqrt{\frac{\rho^2}{1 - \rho^2}}
+\]
+which maps the correlation parameter $\rho \in (-1, 1)$ to $x \in \mathbb{R}$.
+It has the inverse
+\[
+f^{-1}(x) = \frac{x}{\sqrt{1 + x^2}}.
+\]
+
+# References

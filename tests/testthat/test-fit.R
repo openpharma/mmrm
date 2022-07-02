@@ -131,8 +131,10 @@ test_that("mmrm falls back to other optimizers if default does not work", {
 })
 
 test_that("mmrm fails if no optimizer works", {
+  skip_on_ci()
+
   formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
-  data_small <- fev_data[1:50, ]
+  data_small <- fev_data[1:30, ]
   expect_error(
     mmrm(formula, data_small, reml = FALSE),
     "No optimizer led to a successful model fit"

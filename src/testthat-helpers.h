@@ -4,11 +4,12 @@
 #include <limits>
 #include "tmb_includes.h"
 
-
+// Expect equal: Here use a default epsilon which gives around 1e-4 on
+// my computer here.
 #define expect_equal(TARGET, CURRENT)                          \
 {                                                              \
   double const eps =                                           \
-    std::sqrt(std::numeric_limits<double>::epsilon());         \
+    std::pow(std::numeric_limits<double>::epsilon(), 0.25);    \
                                                                \
   if(std::abs((TARGET)) > eps)                                 \
     expect_true(std::abs((TARGET) - (CURRENT)) /               \
@@ -39,6 +40,17 @@ void expect_equal_matrix(const matrix<T>& target, const matrix<T>& current)
     for (int j = 0; j < ncol; j++) {
       expect_equal(target(i, j), current(i, j));
     }
+  }
+}
+
+template <class T>
+void expect_equal_vector(const vector<T>& target, const vector<T>& current)
+{
+  int n = target.size();
+  expect_true(n == current.size());
+
+  for (int i = 0; i < n; i++) {
+    expect_equal(target(i), current(i));
   }
 }
 
