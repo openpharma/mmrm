@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9002</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9003</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,19 +31,13 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/algorithm.html">Details of the Model Fitting in `mmrm`</a>
-    <a class="dropdown-item" href="../articles/correlation.html">Correlation Structures in `mmrm`</a>
+    <a class="dropdown-item" href="../articles/correlation.html">Covariance Structures in `mmrm`</a>
     <a class="dropdown-item" href="../articles/introduction.html">Introduction to `mmrm`</a>
   </div>
 </li>
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -108,9 +102,10 @@
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> mmrm fit</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Formula:  FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Data:     fev_data</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Used 537 observations from 197 subjects with maximum 4 timepoints.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Formula:     FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Data:        fev_data (used 537 observations from 197 subjects with maximum 4 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> timepoints)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Covariance:  unstructured (10 variance parameters)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Model selection criteria:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      AIC      BIC   logLik deviance </span>

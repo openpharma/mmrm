@@ -6,12 +6,12 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="mmrm">
-<title>Correlation Structures in `mmrm` • mmrm</title>
+<title>Covariance Structures in `mmrm` • mmrm</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.1.0/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.1.0/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Correlation Structures in `mmrm`">
+<!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Covariance Structures in `mmrm`">
 <meta property="og:description" content="mmrm">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -32,7 +32,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9002</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9003</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,19 +48,13 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/algorithm.html">Details of the Model Fitting in `mmrm`</a>
-    <a class="dropdown-item" href="../articles/correlation.html">Correlation Structures in `mmrm`</a>
+    <a class="dropdown-item" href="../articles/correlation.html">Covariance Structures in `mmrm`</a>
     <a class="dropdown-item" href="../articles/introduction.html">Introduction to `mmrm`</a>
   </div>
 </li>
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -85,7 +79,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="" class="logo" alt=""><h1>Correlation Structures in `mmrm`</h1>
+      <img src="" class="logo" alt=""><h1>Covariance Structures in `mmrm`</h1>
                         <h4 data-toc-skip class="author">Daniel Sabanés
 Bové</h4>
                   <a class="author_email" href="mailto:#"></a><a href="mailto:daniel.sabanes_bove@roche.com" class="email">daniel.sabanes_bove@roche.com</a>
@@ -98,9 +92,17 @@ Bové</h4>
 
     
     
-<p>Here we describe the correlation structures which are currently
-available in <code>mmrm</code>. The symmetric and positive definite
-covariance matrix <span class="math display">\[
+<p>Here we describe the covariance structures which are currently
+available in <code>mmrm</code>.</p>
+<div class="section level2">
+<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h2>
+<p>We use some concepts throughout the different covariance structures
+and introduce these here.</p>
+<div class="section level3">
+<h3 id="covariance-and-correlation-matrices">Covariance and Correlation Matrices<a class="anchor" aria-label="anchor" href="#covariance-and-correlation-matrices"></a>
+</h3>
+<p>The symmetric and positive definite covariance matrix <span class="math display">\[
 \Sigma = \begin{pmatrix}
 \sigma_1^2 &amp; \sigma_{12} &amp; \dots &amp; \dots &amp; \sigma_{1m}
 \\
@@ -113,7 +115,55 @@ covariance matrix <span class="math display">\[
 \end{pmatrix}
 \]</span> is parametrized by a vector of variance parameters <span class="math inline">\(\theta = (\theta_1, \dotsc,
 \theta_k)^\top\)</span>. The meaning and the number (<span class="math inline">\(k\)</span>) of variance parameters is different
-for each correlation structure.</p>
+for each covariance structure.</p>
+<p>In many covariance structures we use the decomposition <span class="math display">\[
+\Sigma = DPD
+\]</span> where the diagonal standard deviation matrix is <span class="math display">\[
+D = \begin{pmatrix}
+\sigma_1 &amp; 0 &amp; \cdots &amp; &amp; 0 \\
+0 &amp; \sigma_2 &amp; 0 &amp; \cdots &amp; 0 \\
+\vdots &amp; &amp; \ddots &amp; \ddots &amp; \vdots \\
+&amp;  &amp; &amp; \sigma_{m-1} &amp; 0 \\
+0 &amp; \cdots &amp; &amp; 0 &amp; \sigma_m
+\end{pmatrix}
+\]</span> with entries <span class="math inline">\(\sigma_i &gt;
+0\)</span>, and the symmetric correlation matrix <span class="math inline">\(P\)</span> is <span class="math display">\[
+P = \begin{pmatrix}
+  1 &amp; \rho_{12}   &amp; \rho_{13} &amp; \cdots &amp; \cdots &amp;
+\rho_{1,m-1} \\
+  \rho_{12} &amp; 1      &amp; \rho_{23} &amp; \ddots &amp;        &amp;
+\vdots \\
+  \rho_{13} &amp; \rho_{23}      &amp; \ddots &amp; \ddots &amp; \ddots
+&amp; \vdots \\
+\vdots &amp; \ddots &amp; \ddots &amp; \ddots &amp; \rho_{m-2,m-1} &amp;
+\rho_{m-2,m} \\
+\vdots &amp;        &amp; \ddots &amp; \rho_{m-2,m-1}    &amp;
+1    &amp; \rho_{m-1,m} \\
+\rho_{1, m-1} &amp; \cdots &amp; \cdots &amp; \rho_{m-2,m} &amp;
+\rho_{m-1,m}    &amp; 1
+\end{pmatrix}
+\]</span> with entries <span class="math inline">\(\rho_{ij} \in (-1,
+1)\)</span>.</p>
+</div>
+<div class="section level3">
+<h3 id="transformation-to-variance-parameters">Transformation to Variance Parameters<a class="anchor" aria-label="anchor" href="#transformation-to-variance-parameters"></a>
+</h3>
+<p>For standard deviation parameters <span class="math inline">\(\sigma\)</span> we use the natural logarithm <span class="math inline">\(\log(\sigma)\)</span> to map them to <span class="math inline">\(\mathbb{R}\)</span>. For correlation parameters
+<span class="math inline">\(\rho\)</span> we consistently use the
+transformation <span class="math display">\[
+\theta = f(\rho) = \mathop{\mathrm{sign}}(\rho) \sqrt{\frac{\rho^2}{1 -
+\rho^2}}
+\]</span> which maps the correlation parameter to <span class="math inline">\(\theta \in \mathbb{R}\)</span>. It has the inverse
+<span class="math display">\[
+\rho = f^{-1}(\theta) = \frac{\theta}{\sqrt{1 + \theta^2}}.
+\]</span> This is important because the resulting variance parameters
+<span class="math inline">\(\theta\)</span> can be optimized without
+constraints over the whole of <span class="math inline">\(\mathbb{R}\)</span>.</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="covariance-structures">Covariance Structures<a class="anchor" aria-label="anchor" href="#covariance-structures"></a>
+</h2>
 <div class="section level3">
 <h3 id="unstructured-us">Unstructured (<code>us</code>)<a class="anchor" aria-label="anchor" href="#unstructured-us"></a>
 </h3>
@@ -123,27 +173,56 @@ correlation structure. Here <span class="math inline">\(k = m (m+1) /
 details.</p>
 </div>
 <div class="section level3">
-<h3 id="ante-dependence-ad">Ante-dependence (<code>ad</code>)<a class="anchor" aria-label="anchor" href="#ante-dependence-ad"></a>
+<h3 id="heterogeneous-ante-dependence-ad">Heterogeneous Ante-dependence (<code>ad</code>)<a class="anchor" aria-label="anchor" href="#heterogeneous-ante-dependence-ad"></a>
 </h3>
 <p>The ante-dependence correlation structure (<span class="citation">Gabriel (1962)</span>) is useful for balanced designs
-where the observations are not necessarily equally spaced in time. The
-within subject variances are different between time points, i.e. we
-allow for different <span class="math inline">\(\sigma_i^2\)</span>,
-<span class="math inline">\(i=1, \dotsc, m\)</span>. Here we use an
-order one ante-dependence model, where the covariance matrix <span class="math inline">\(\Sigma\)</span> has elements <span class="math display">\[
-\sigma_{ij} = \sigma_i \sigma_j \prod_{k=i}^{j-1} \rho_k.
-\]</span> So we have <span class="math inline">\(n-1\)</span> parameters
-<span class="math inline">\(\rho_k\)</span>, so here <span class="math display">\[
+where the observations are not necessarily equally spaced in time. Here
+we use an order one ante-dependence model, where the correlation matrix
+<span class="math inline">\(P\)</span> has elements <span class="math display">\[
+\rho_{ij} = \prod_{k=i}^{j-1} \rho_k.
+\]</span> So we have correlation parameters <span class="math inline">\(\rho_k\)</span>, <span class="math inline">\(k =
+1, \dotsc, m-1\)</span>.</p>
+<p>We use a heterogeneous covariance structure to allow for different
+within subject variances. So here we can identify <span class="math display">\[
 \theta = (\log(\sigma_1), \dotsc, \log(\sigma_m), f(\rho_1), \dotsc,
 f(\rho_{m-1}))
 \]</span> and we have in total <span class="math inline">\(2m -
-1\)</span> variance parameters. Here we use the transformation <span class="math display">\[
-\DeclareMathOperator{\sign}{sign}
-f(\rho) = \sign(\rho) \sqrt{\frac{\rho^2}{1 - \rho^2}}
-\]</span> which maps the correlation parameter <span class="math inline">\(\rho \in (-1, 1)\)</span> to <span class="math inline">\(x \in \mathbb{R}\)</span>. It has the inverse
-<span class="math display">\[
-f^{-1}(x) = \frac{x}{\sqrt{1 + x^2}}.
-\]</span></p>
+1\)</span> variance parameters.</p>
+</div>
+<div class="section level3">
+<h3 id="heterogenous-toeplitz-toep">Heterogenous Toeplitz (<code>toep</code>)<a class="anchor" aria-label="anchor" href="#heterogenous-toeplitz-toep"></a>
+</h3>
+<p>Toeplitz matrices (<span class="citation">Toeplitz (1911)</span>) are
+diagonal-constant matrices. Here we can model the correlation matrix as
+a Toeplitz matrix: <span class="math display">\[
+P = \begin{pmatrix}
+  1 &amp; \rho_1   &amp; \rho_2 &amp; \cdots &amp; \cdots &amp;
+\rho_{m-1} \\
+  \rho_1 &amp; 1      &amp; \rho_1 &amp; \ddots &amp;        &amp;
+\vdots \\
+  \rho_2 &amp; \rho_1      &amp; \ddots &amp; \ddots &amp; \ddots &amp;
+\vdots \\
+\vdots &amp; \ddots &amp; \ddots &amp; \ddots &amp; \rho_1 &amp; \rho_2
+\\
+\vdots &amp;        &amp; \ddots &amp; \rho_1    &amp; 1    &amp; \rho_1
+\\
+\rho_{m-1} &amp; \cdots &amp; \cdots &amp; \rho_2    &amp;
+\rho_1    &amp; 1
+\end{pmatrix}
+\]</span> This means that the correlation between two time points only
+depends on the distance between them, i.e. <span class="math display">\[
+\rho_{ij} = \rho_{\left\vert i - j\right\vert}
+\]</span> and we have correlation parameters <span class="math inline">\(\rho_k\)</span>, <span class="math inline">\(k =
+1, \dotsc, m-1\)</span>.</p>
+<p>We use a heterogeneous covariance structure to allow for different
+within subject variances. So here we can identify <span class="math display">\[
+\theta = (\log(\sigma_1), \dotsc, \log(\sigma_m), f(\rho_1), \dotsc,
+f(\rho_{m-1}))
+\]</span> and we have in total <span class="math inline">\(2m -
+1\)</span> variance parameters. This is similar to the heterogeneous
+ante-dependence structure, but the correlation parameters are used
+differently in the construction of <span class="math inline">\(P\)</span>.</p>
+</div>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -153,6 +232,12 @@ f^{-1}(x) = \frac{x}{\sqrt{1 + x^2}}.
 Gabriel, K. R. 1962. <span>“<span class="nocase">Ante-dependence
 Analysis of an Ordered Set of Variables</span>.”</span> <em>The Annals
 of Mathematical Statistics</em> 33 (1): 201–12. <a href="https://doi.org/10.1214/aoms/1177704724" class="external-link">https://doi.org/10.1214/aoms/1177704724</a>.
+</div>
+<div id="ref-Toeplitz1911" class="csl-entry">
+Toeplitz, Otto. 1911. <span>“Zur <span>Theorie</span> Der Quadratischen
+Und Bilinearen <span>Formen</span> von Unendlichvielen
+<span>Veränderlichen</span>.”</span> <em>Mathematische Annalen</em> 70
+(3): 351–76. <a href="https://doi.org/10.1007/BF01564502" class="external-link">https://doi.org/10.1007/BF01564502</a>.
 </div>
 </div>
 </div>
