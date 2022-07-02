@@ -23,7 +23,7 @@ test_that("summary works as expected", {
   expect_named(
     result,
     c(
-      "logLik", "n_subjects", "n_visits", "n_obs",
+      "logLik", "cov_type", "n_theta", "n_subjects", "n_timepoints", "n_obs",
       "coefficients", "vcov", "varcor", "aic_list", "call"
     )
   )
@@ -33,7 +33,14 @@ test_that("summary works as expected", {
 
 test_that("h_print_call works as expected", {
   object <- get_mmrm()
-  expect_snapshot_output(h_print_call(object$call), cran = TRUE)
+  expect_snapshot_output(h_print_call(object$call, 1, 2, 3), cran = TRUE)
+})
+
+# h_print_cov ----
+
+test_that("h_print_cov works as expected", {
+  object <- get_mmrm()
+  expect_snapshot_output(h_print_cov("toep", 3), cran = TRUE)
 })
 
 # h_print_aic_list ----

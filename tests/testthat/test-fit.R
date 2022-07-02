@@ -106,7 +106,9 @@ test_that("refit_multiple_optimizers works as expected", {
 
 # mmrm ----
 
-test_that("mmrm works as expected", {
+## unstructured ----
+
+test_that("mmrm works as expected for unstructured", {
   formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
   result <- expect_silent(mmrm(formula, fev_data, reml = FALSE))
   expect_class(result, c("mmrm", "mmrm_fit", "mmrm_tmb"))
@@ -115,6 +117,28 @@ test_that("mmrm works as expected", {
   expect_class(result$call, "call")
   expect_false(result$reml)
 })
+
+test_that("mmrm works as expected for antedependence", {
+  formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + ad(AVISIT | USUBJID)
+  result <- expect_silent(mmrm(formula, fev_data, reml = TRUE))
+  expect_class(result, c("mmrm", "mmrm_fit", "mmrm_tmb"))
+  expect_true(attr(result, "converged"))
+  expect_list(result$jac_list, types = "matrix")
+  expect_class(result$call, "call")
+  expect_true(result$reml)
+})
+
+test_that("mmrm works as expected for toeplitz", {
+  formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + toep(AVISIT | USUBJID)
+  result <- expect_silent(mmrm(formula, fev_data, reml = TRUE))
+  expect_class(result, c("mmrm", "mmrm_fit", "mmrm_tmb"))
+  expect_true(attr(result, "converged"))
+  expect_list(result$jac_list, types = "matrix")
+  expect_class(result$call, "call")
+  expect_true(result$reml)
+})
+
+## general ----
 
 test_that("mmrm falls back to other optimizers if default does not work", {
   formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)

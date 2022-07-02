@@ -1,7 +1,12 @@
 # h_print_call works as expected
 
-    Formula:  FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
-    Data:     fev_data
+    Formula:     FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
+    Data:        fev_data (used 1 observations from 2 subjects with maximum 3 
+    timepoints)
+
+# h_print_cov works as expected
+
+    Covariance:  heterogeneous Toeplitz (3 variance parameters)
 
 # h_print_aic_list works as expected
 
@@ -12,9 +17,10 @@
 
     mmrm fit
     
-    Formula:  FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
-    Data:     fev_data
-    Used 537 observations from 197 subjects with maximum 4 timepoints.
+    Formula:     FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
+    Data:        fev_data (used 537 observations from 197 subjects with maximum 4 
+    timepoints)
+    Covariance:  unstructured (10 variance parameters)
     
     Model selection criteria:
          AIC      BIC   logLik deviance 

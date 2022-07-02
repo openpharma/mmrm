@@ -139,7 +139,7 @@ Here $\theta$ has $k = m(m+1)/2$ entries. For example for $m = 4$ time points
 we need $k = 10$ variance parameters to model the unstructured covariance matrix.
 
 Other covariance matrix choices are explained in the
-[correlation structures vignette](correlation.html).
+[covariance structures vignette](covariance.html).
 
 ## Maximum Likelihood Estimation
 
