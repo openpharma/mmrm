@@ -13,6 +13,8 @@
 \alias{deviance.mmrm_tmb}
 \alias{AIC.mmrm_tmb}
 \alias{BIC.mmrm_tmb}
+\alias{print.mmrm_tmb}
+\alias{summary.mmrm_tmb}
 \title{Methods for \code{mmrm_tmb} Objects}
 \usage{
 \method{coef}{mmrm_tmb}(object, ...)
@@ -34,6 +36,10 @@
 \method{AIC}{mmrm_tmb}(object, corrected = FALSE, ..., k = 2)
 
 \method{BIC}{mmrm_tmb}(object, ...)
+
+\method{print}{mmrm_tmb}(x, ...)
+
+\method{summary}{mmrm_tmb}(object, ...)
 }
 \arguments{
 \item{object}{(\code{mmrm_tmb})\cr the fitted MMRM object.}
@@ -87,6 +93,10 @@ If \code{corrected}, then this is multiplied with \code{m / (m - n_theta - 1)} w
 \item \code{BIC.mmrm_tmb}: obtains the Bayesian Information Criterion,
 which is using the natural logarithm of the number of subjects for the
 penalty parameter \code{k}.
+
+\item \code{print.mmrm_tmb}: prints the MMRM_TMB object.
+
+\item \code{summary.mmrm_tmb}: summarizes the MMRM fit results.
 }}
 
 \examples{
@@ -114,4 +124,7 @@ AIC(object)
 AIC(object, corrected = TRUE)
 # BIC:
 BIC(object)
+# Summary:
+summary(object)
 }
+\keyword{internal}

@@ -347,8 +347,12 @@ h_mmrm_tmb_fit <- function(tmb_object,
     c("par", "objective")
   )
 
+  fun_call <- match.call()
+  fun_call$formula <- eval(formula_parts$formula)
+
   structure(
     list(
+      call = fun_call,
       cov = cov,
       beta_est = beta_est,
       beta_vcov = beta_vcov,

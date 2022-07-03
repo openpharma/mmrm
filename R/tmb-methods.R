@@ -157,3 +157,66 @@ BIC.mmrm_tmb <- function(object, ...) { # nolint
   k <- log(object$tmb_data$n_subjects)
   AIC(object, corrected = FALSE, k = k)
 }
+
+#' @describeIn mmrm_tmb_methods prints the MMRM_TMB object.
+#' @exportS3Method
+#' @keywords internal
+print.mmrm_tmb <- function(x,
+                           ...) {
+  summary_m <- summary(x)
+  cat(ifelse("mmrm" %in% class(x), "mmrm fit\n\n", "mmrm_tmb fit\n\n"))
+
+  # cat(paste0("Formula:     ", sub(x = toString(x$formula_parts$formula),
+  #                             pattern = "^(.),\\s(.+),\\s(.+)$",
+  #                             replacement = "\\2 \\1 \\3\n")))
+
+  h_print_call(summary_m$call, summary_m$n_obs, summary_m$n_subjects, summary_m$n_timepoints)
+  h_print_cov(summary_m$cov_type, length(summary_m$n_theta))
+
+  cat("\nModel selection criteria:\n")
+  h_print_aic_list(summary_m$aic_list)
+
+  cat("\nCoefficients:\n")
+  print(coef(x))
+
+  cat("\nModel Inference Optimization:\n")
+  cat("Optimizer: ")
+  cat(x$tmb_object$method)
+  cat("\nMethod: ")
+  cat(ifelse(x$reml, "REML", "ML"))
+  cat(ifelse(x$opt_details$convergence == 0, "\nConverged", "\nFailed to converge"))
+  cat(" with code ", x$opt_details$convergence,
+      " and message: ", tolower(x$opt_details$message))
+
+  invisible(x)
+}
+
+#' @describeIn mmrm_tmb_methods summarizes the MMRM fit results.
+#' @exportS3Method
+#' @examples
+#' # Summary:
+#' summary(object)
+summary.mmrm_tmb <- function(object, ...) {
+  aic_list <- list(
+    AIC = AIC(object),
+    BIC = BIC(object),
+    logLik = logLik(object),
+    deviance = deviance(object)
+  )
+  structure(
+    list(
+      logLik = logLik(object),
+      cov_type = object$formula_parts$corr_type,
+      n_theta = length(object$theta_est),
+      n_subjects = object$tmb_data$n_subjects,
+      n_timepoints = object$tmb_data$n_visits,
+      n_obs = length(object$tmb_data$y_vector),
+      # coefficients = h_coef_table(object),
+      vcov = vcov(object),
+      varcor = VarCorr(object),
+      aic_list = aic_list,
+      call = object$call
+    ),
+    class = "summary.mmrm_tmb"
+  )
+}
