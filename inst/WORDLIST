@@ -33,6 +33,7 @@ det
 DiagonalMatrix
 dmvnorm
 doi
+dotsb
 dotsc
 DPD
 Eigen
@@ -105,10 +106,13 @@ und
 unendlichvielen
 unscaled
 USUBJID
+varepsilon
+varphi
 vdots
 Veränderlichen
 VignetteBuilder
 VIS
 von
+WIP
 WLS
 Zur

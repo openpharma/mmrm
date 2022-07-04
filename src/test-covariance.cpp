@@ -1,5 +1,5 @@
 #include "testthat-helpers.h"
-#include "correlation.h"
+#include "covariance.h"
 
 context("unstructured") {
   test_that("get_unstructured produces expected result") {
@@ -60,10 +60,41 @@ context("toeplitz") {
   }
 }
 
+context("autoregressive") {
+  test_that("corr_fun_autoregressive works as expected") {
+    vector<double> theta {{1.0}};
+    corr_fun_autoregressive<double> test_fun(theta);
+    expect_equal(test_fun(1, 0), 1 / sqrt(2));
+    expect_equal(test_fun(4, 1), 0.3535534);
+  }
+
+  test_that("get_auto_regressive produces expected result") {
+    vector<double> theta {{log(2.0), 3.0}};
+    matrix<double> result = get_auto_regressive(theta, 3);
+    matrix<double> expected(3, 3);
+    expected <<
+      2, 0, 0,
+      1.89736659610103, 0.632455532033676, 0,
+      1.8, 0.6, 0.632455532033676;
+    expect_equal_matrix(result, expected);
+  }
+
+  test_that("get_auto_regressive_heterogeneous produces expected result") {
+    vector<double> theta {{log(1.0), log(2.0), log(3.0), 2.0}};
+    matrix<double> result = get_auto_regressive_heterogeneous(theta, 3);
+    matrix<double> expected(3, 3);
+    expected <<
+      1, 0, 0,
+      1.78885438199983, 0.894427190999916, 0,
+      2.4, 1.2, 1.34164078649987;
+    expect_equal_matrix(result, expected);
+  }
+}
+
 context("get_covariance_lower_chol") {
   test_that("get_covariance_lower_chol gives expected unstructured result") {
     vector<double> theta {{log(1.0), log(2.0), 3.0}};
-    matrix<double> result = get_covariance_lower_chol(theta, 2, unstructured_corr);
+    matrix<double> result = get_covariance_lower_chol(theta, 2, unstructured_cov);
     matrix<double> expected = get_unstructured(theta, 2);
     expect_equal_matrix(result, expected);
   }

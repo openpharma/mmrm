@@ -54,6 +54,7 @@ summary.mmrm <- function(object, ...) {
                 list(aic_list = component(object, c("AIC", "BIC", "logLik", "deviance"))),
                 list(call = stats::getCall(object))),
            component(object, c("logLik", "cov_type", "n_theta", "n_subjects", "n_timepoints", "n_obs", "vcov", "varcor"))),
+
     class = "summary.mmrm"
   )
 }
@@ -86,7 +87,7 @@ h_print_call <- function(call, n_obs, n_subjects, n_timepoints) {
   }
 }
 
-#' Printing MMRM Correlation Type
+#' Printing MMRM Covariance Type
 #'
 #' @description `r lifecycle::badge("experimental")`
 #'
@@ -104,7 +105,7 @@ h_print_cov <- function(cov_type, n_theta) {
     us = "unstructured",
     toep = "heterogeneous Toeplitz",
     ar1 = "auto-regressive order one",
-    cs = "compound symmetry",
+    ar1h = "heterogeneous auto-regressive order one",
     ad = "heterogeneous ante-dependence"
   )
   cat(

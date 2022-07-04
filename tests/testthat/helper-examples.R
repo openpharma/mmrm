@@ -17,3 +17,11 @@ square_matrix <- function(values_by_row) {
   size <- floor(size)
   matrix(data = values_by_row, nrow = size, ncol = size, byrow = TRUE)
 }
+
+map_to_cor <- function(theta) {
+  theta / sqrt(1 + theta^2)
+}
+
+map_to_theta <- function(rho) {
+  sign(rho) * sqrt(rho^2 / (1 - rho^2))
+}

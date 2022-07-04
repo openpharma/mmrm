@@ -1,0 +1,79 @@
+---
+output: github_document
+---
+<!-- markdownlint-disable-file -->
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# mmrm
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "README-"
+)
+```
+
+[![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
+\
+
+The `mmrm` package implements mixed models for repeated measures (MMRM) in R
+based on Template Model Builder (TMB).
+
+## Installation
+
+### GitHub
+
+You can install the current development version from GitHub with:
+
+```{r gh-installation, eval = FALSE}
+if (!require("remotes")) {
+  install.packages("remotes")
+}
+remotes::install_github("openpharma/mmrm")
+```
+
+## Getting Started
+
+You can get started by trying out the example:
+
+```{r getting-started}
+library(mmrm)
+fit <- mmrm(
+  formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data
+)
+```
+
+This specifies an MMRM with the given covariates and an unstructured covariance
+matrix for the timepoints (also called visits in the clinical trial context, here
+given by `AVISIT`) within the subjects (here `USUBJID`). While by default this uses
+restricted maximum likelihood (REML), it is also possible to use ML, see `?mmrm`.
+
+You can look at the results high-level:
+
+```{r print}
+fit
+```
+
+The `summary()` method then provides the coefficients table with Satterthwaite
+degrees of freedom as well as the covariance matrix estimate:
+
+```{r summary}
+summary(fit)
+```
+
+## Details
+
+For the available covariance structures, look at the covariance vignette:
+
+```{r cov-vignette, eval = FALSE}
+vignette("covariance")
+```
+
+In order to understand how `mmrm` is fitting the models, you can read the details
+at:
+
+```{r algo-vignette, eval = FALSE}
+vignette("algorithm")
+```

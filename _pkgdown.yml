@@ -19,7 +19,6 @@ reference:
   - title: Helper Functions
     contents:
       - h_free_cores
-      - h_cov_estimate
       - h_record_all_output
       - h_mmrm_tmb_control
       - h_mmrm_tmb_formula_parts

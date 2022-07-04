@@ -104,7 +104,7 @@ If \code{corrected}, then this is multiplied with \code{m / (m - n_theta - 1)} w
 which is using the natural logarithm of the number of subjects for the
 penalty parameter \code{k}.
 
-\item \code{print.mmrm_tmb}: prints the MMRM_TMB object.
+\item \code{print.mmrm_tmb}: prints the object.
 
 \item \code{component}: get components from the \code{mmrm_tmb} object
 }}

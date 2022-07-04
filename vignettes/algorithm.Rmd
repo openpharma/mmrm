@@ -27,7 +27,7 @@ knitr::opts_chunk$set(
 
 Here we describe the exact model definition as well as the estimation algorithms
 in detail. After reading through this vignette, you can follow the implementation
-of the algorithm in `mmrm.cpp` and the correlation structures in `correlation.h` in
+of the algorithm in `mmrm.cpp` and the covariance structures in `covariance.h` in
 the `src` directory of this package.
 
 ## Model definition

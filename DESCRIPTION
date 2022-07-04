@@ -1,7 +1,7 @@
 Type: Package
 Package: mmrm
 Title: Mixed Models for Repeated Measures
-Version: 0.0.0.9005
+Version: 0.0.0.9006
 Authors@R: c(
     person("Daniel", "Sabanes Bove", , "daniel.sabanes_bove@roche.com", role = c("aut", "cre")),
     person("Julia", "Dedic", , "julia.dedic@roche.com", role = "aut"),
@@ -34,7 +34,7 @@ Suggests:
     knitr,
     testthat (>= 3.0.0),
     xml2
-LinkingTo: 
+LinkingTo:
     RcppEigen,
     testthat,
     TMB
@@ -50,7 +50,6 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.0
 Collate:
     'catch-routine-registration.R'
-    'covariance.R'
     'data.R'
     'emmeans.R'
     'fit.R'

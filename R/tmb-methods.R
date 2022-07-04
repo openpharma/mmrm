@@ -159,7 +159,7 @@ BIC.mmrm_tmb <- function(object, ...) { # nolint
 }
 
 
-#' @describeIn mmrm_tmb_methods prints the MMRM_TMB object.
+#' @describeIn mmrm_tmb_methods prints the object.
 #' @exportS3Method
 #' @keywords internal
 print.mmrm_tmb <- function(x,
