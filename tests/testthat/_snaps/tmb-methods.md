@@ -6,7 +6,8 @@
     Data:        data (used 537 observations from 197 subjects with maximum 4 
     timepoints)
     Covariance:  unstructured (10 variance parameters)
-    Model deviance: 3642.395
+    Method: REML
+    Deviance: 3642.395
     
     Coefficients:
                       (Intercept) RACEBlack or African American 
@@ -16,8 +17,7 @@
     
     Model Inference Optimization:
     Optimizer: BFGS
-    Method: REML
-    Converged with code  0  and message:  relative convergence (4)
+    Converged with code 0 and message: relative convergence (4)
 
 ---
 
@@ -27,7 +27,8 @@
     Data:        fev_data (used 537 observations from 197 subjects with maximum 4 
     timepoints)
     Covariance:  unstructured (10 variance parameters)
-    Model deviance: 3386.45
+    Method: REML
+    Deviance: 3386.45
     
     Coefficients:
                       (Intercept) RACEBlack or African American 
@@ -45,6 +46,5 @@
     
     Model Inference Optimization:
     Optimizer: BFGS
-    Method: REML
-    Converged with code  0  and message:  convergence: rel_reduction_of_f <= factr*epsmch
+    Converged with code 0 and message: convergence: rel_reduction_of_f <= factr*epsmch
 
