@@ -73,6 +73,25 @@ context("generic_corr_fun") {
 }
 
 template <class T>
+struct const_cor {
+  const T operator() (int& i, int& j) const {
+    return T(0.5);
+  }
+};
+context("get_corr_mat_chol") {
+  test_that("get_corr_mat_chol works as expected") {
+    const_cor<double> const_fun;
+    matrix<double> result = get_corr_mat_chol(3, const_fun);
+    matrix<double> expected(3, 3);
+    expected <<
+      1, 0, 0,
+      0.5, 0.866025403784439, 0,
+      0.5, 0.288675134594813, 0.816496580927726;
+    expect_equal_matrix(result, expected);
+  }
+}
+
+template <class T>
 struct test_cor {
   const T operator() (int& i, int& j) const {
     return T(0.0);

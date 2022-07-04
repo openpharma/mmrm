@@ -38,5 +38,3 @@ discussions when we tried to get Satterthwaite degrees of freedom implemented
 with `glmmTMB` (see https://github.com/glmmTMB/glmmTMB/blob/satterthwaite_df/glmmTMB/vignettes/satterthwaite_unstructured_example2.Rmd).
 Also Ben helped significantly with an example showing how to
 use `TMB` for a random effect vector (https://github.com/bbolker/tmb-case-studies/tree/master/vectorMixed).
-
-# Introduction

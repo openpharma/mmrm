@@ -57,7 +57,7 @@ summary.mmrm <- function(object, ...) {
   structure(
     list(
       logLik = logLik(object),
-      cov_type = object$formula_parts$corr_type,
+      cov_type = object$formula_parts$cov_type,
       n_theta = length(object$theta_est),
       n_subjects = object$tmb_data$n_subjects,
       n_timepoints = object$tmb_data$n_visits,
@@ -100,7 +100,7 @@ h_print_call <- function(call, n_obs, n_subjects, n_timepoints) {
   }
 }
 
-#' Printing MMRM Correlation Type
+#' Printing MMRM Covariance Type
 #'
 #' @description `r lifecycle::badge("experimental")`
 #'
@@ -118,7 +118,7 @@ h_print_cov <- function(cov_type, n_theta) {
     us = "unstructured",
     toep = "heterogeneous Toeplitz",
     ar1 = "auto-regressive order one",
-    cs = "compound symmetry",
+    ar1h = "heterogeneous auto-regressive order one",
     ad = "heterogeneous ante-dependence"
   )
   cat(

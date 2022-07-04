@@ -191,7 +191,7 @@ refit_multiple_optimizers <- function(fit,
 #' The `formula` typically looks like:
 #' `FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)`
 #' so specifies response and covariates as usual, and exactly one special term
-#' defines which correlation structure is used and what are the visit and
+#' defines which covariance structure is used and what are the visit and
 #' subject variables.
 #'
 #' When setting `optimizer = "automatic"`, first the default optimizer
