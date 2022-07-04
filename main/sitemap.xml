@@ -16,7 +16,7 @@
     <loc>https://openpharma.github.io/mmrm/main/articles/algorithm.html</loc>
   </url>
   <url>
-    <loc>https://openpharma.github.io/mmrm/main/articles/correlation.html</loc>
+    <loc>https://openpharma.github.io/mmrm/main/articles/covariance.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/articles/index.html</loc>
@@ -50,9 +50,6 @@
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/h_coef_table.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/main/reference/h_cov_estimate.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/h_covbeta_fun.html</loc>

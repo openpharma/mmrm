@@ -3,9 +3,9 @@ pkgdown: 2.0.5
 pkgdown_sha: ~
 articles:
   algorithm: algorithm.html
-  correlation: correlation.html
+  covariance: covariance.html
   introduction: introduction.html
-last_built: 2022-07-04T12:00Z
+last_built: 2022-07-04T19:30Z
 urls:
   reference: https://openpharma.github.io/mmrm/main/reference
   article: https://openpharma.github.io/mmrm/main/articles

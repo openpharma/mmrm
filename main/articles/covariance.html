@@ -32,7 +32,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9004</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9005</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,19 +48,13 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/algorithm.html">Details of the Model Fitting in `mmrm`</a>
-    <a class="dropdown-item" href="../articles/correlation.html">Covariance Structures in `mmrm`</a>
+    <a class="dropdown-item" href="../articles/covariance.html">Covariance Structures in `mmrm`</a>
     <a class="dropdown-item" href="../articles/introduction.html">Introduction to `mmrm`</a>
   </div>
 </li>
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -92,8 +86,8 @@ Bové</h4>
       
                   
       
-      <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/HEAD/vignettes/correlation.Rmd" class="external-link"><code>vignettes/correlation.Rmd</code></a></small>
-      <div class="d-none name"><code>correlation.Rmd</code></div>
+      <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/HEAD/vignettes/covariance.Rmd" class="external-link"><code>vignettes/covariance.Rmd</code></a></small>
+      <div class="d-none name"><code>covariance.Rmd</code></div>
     </div>
 
     
@@ -149,7 +143,11 @@ P = \begin{pmatrix}
 \rho_{m-1,m}    &amp; 1
 \end{pmatrix}
 \]</span> with entries <span class="math inline">\(\rho_{ij} \in (-1,
-1)\)</span>.</p>
+1)\)</span>. Since these covariance structures assume different
+variances for each time point they are called “heterogeneous” covariance
+structures. Assuming a constant <span class="math inline">\(\sigma =
+\sigma_1 = \dotsb = \sigma_m\)</span> gives a “homogeneous” covariance
+structure instead.</p>
 </div>
 <div class="section level3">
 <h3 id="transformation-to-variance-parameters">Transformation to Variance Parameters<a class="anchor" aria-label="anchor" href="#transformation-to-variance-parameters"></a>
@@ -228,6 +226,24 @@ f(\rho_{m-1}))
 1\)</span> variance parameters. This is similar to the heterogeneous
 ante-dependence structure, but the correlation parameters are used
 differently in the construction of <span class="math inline">\(P\)</span>.</p>
+</div>
+<div class="section level3">
+<h3 id="homogeneous-ar1-and-heterogeneous-arh1-autoregressive">Homogeneous (<code>ar1</code>) and Heterogeneous (<code>arh1</code>)
+Autoregressive<a class="anchor" aria-label="anchor" href="#homogeneous-ar1-and-heterogeneous-arh1-autoregressive"></a>
+</h3>
+<p>The autoregressive covariance structure can be motivated by the
+corresponding state-space equation <span class="math display">\[
+y_{it} = \varphi y_{i,t-1} + \varepsilon_t
+\]</span> where the white noise <span class="math inline">\(\varepsilon_t\)</span> has a normal distribution
+with mean zero and a constant variance. It can be shown that this gives
+correlations <span class="math display">\[
+\rho_{ij} = \rho^{\left\vert i - j\right\vert}.
+\]</span> where <span class="math inline">\(\rho\)</span> is related to
+<span class="math inline">\(\varphi\)</span> and the variance and is the
+single correlation parameter here.</p>
+<p>Assuming a constant variance in the state-space equation yields a
+homogeneous autoregressive covariance structure with total only <span class="math inline">\(k=2\)</span> variance parameters, otherwise we
+obtain the heterogeneous autoregressive covariance structure with <span class="math inline">\(k = m + 1\)</span> variance parameters.</p>
 </div>
 </div>
 <div class="section level2">
