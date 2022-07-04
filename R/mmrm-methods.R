@@ -118,7 +118,7 @@ h_print_cov <- function(cov_type, n_theta) {
     us = "unstructured",
     toep = "heterogeneous Toeplitz",
     ar1 = "auto-regressive order one",
-    cs = "compound symmetry",
+    ar1h = "heterogeneous auto-regressive order one",
     ad = "heterogeneous ante-dependence"
   )
   cat(

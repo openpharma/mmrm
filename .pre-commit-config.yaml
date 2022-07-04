@@ -9,7 +9,8 @@ repos:
         exclude: >
           (?x)^(
           design/.*|
-          tests/testthat/_snaps/.*
+          tests/testthat/_snaps/.*|
+          design/.*\.txt
           )$
       - id: roxygenize
         additional_dependencies:
@@ -45,7 +46,8 @@ repos:
           .*\.rds|
           .*\.Rds|
           .*\.sh|
-          .*\.RData
+          .*\.RData|
+          design/.*/.*\.txt
           )$
       - id: lintr
         exclude: >
@@ -73,7 +75,8 @@ repos:
         exclude: >
           (?x)^(
           design/.*|
-          tests/testthat/_snaps/.*
+          tests/testthat/_snaps/.*|
+          design/.*\.txt
           )$
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.0.1

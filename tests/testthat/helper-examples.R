@@ -18,6 +18,10 @@ square_matrix <- function(values_by_row) {
   matrix(data = values_by_row, nrow = size, ncol = size, byrow = TRUE)
 }
 
-map_to_cor <- function(x) {
-  x / sqrt(1 + x^2)
+map_to_cor <- function(theta) {
+  theta / sqrt(1 + theta^2)
+}
+
+map_to_theta <- function(rho) {
+  sign(rho) * sqrt(rho^2 / (1 - rho^2))
 }

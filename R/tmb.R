@@ -346,18 +346,8 @@ h_mmrm_tmb_fit <- function(tmb_object,
     c("par", "objective")
   )
 
-  fun_call <- list()
-  fun_call$formula <- eval(formula_parts$formula)
-  fun_call$data <- ifelse(
-    !is.null(attr(data, which = "dataname")),
-    attr(data, which = "dataname"),
-    toString(match.call()$data)
-  )
-  class(fun_call) <- "call"
-
   structure(
     list(
-      call = fun_call,
       cov = cov,
       beta_est = beta_est,
       beta_vcov = beta_vcov,
@@ -441,5 +431,15 @@ h_mmrm_tmb <- function(formula,
     tmb_opt$value <- NULL
   }
   h_mmrm_tmb_assert_opt(tmb_object, tmb_opt)
-  h_mmrm_tmb_fit(tmb_object, tmb_opt, data, formula_parts, tmb_data)
+  fit <- h_mmrm_tmb_fit(tmb_object, tmb_opt, data, formula_parts, tmb_data)
+
+  fun_call <- match.call()
+  fun_call$formula <- eval(formula_parts$formula)
+  fun_call$data <- ifelse(
+    !is.null(attr(data, which = "dataname")),
+    attr(data, which = "dataname"),
+    toString(match.call()$data)
+  )
+  fit$call <- fun_call
+  fit
 }

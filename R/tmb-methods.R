@@ -175,18 +175,16 @@ print.mmrm_tmb <- function(x,
   h_print_call(x$call, n_obs, n_subjects, n_timepoints)
   h_print_cov(cov_type, n_theta)
 
-  cat("Method: ")
+  cat("Method:      ")
   cat(ifelse(x$reml, "REML", "ML"))
-  cat("\nDeviance: ")
+  cat("\n")
+  cat("Deviance:    ")
   cat(deviance(x))
 
   cat("\n\nCoefficients:\n")
   print(coef(x))
 
-  cat("\nModel Inference Optimization:\n")
-  cat("Optimizer: ")
-  cat(x$tmb_object$method)
-
+  cat("\nModel Inference Optimization:")
   cat(ifelse(x$opt_details$convergence == 0, "\nConverged", "\nFailed to converge"))
   cat(
     " with code", x$opt_details$convergence,

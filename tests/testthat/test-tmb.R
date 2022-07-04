@@ -298,7 +298,7 @@ test_that("h_mmrm_tmb_fit works as expected", {
   result <- expect_silent(h_mmrm_tmb_fit(tmb_object, tmb_opt, fev_data, formula_parts, tmb_data))
   expect_class(result, "mmrm_tmb")
   expect_named(result, c(
-    "call", "cov", "beta_est", "beta_vcov", "theta_est", "theta_vcov",
+    "cov", "beta_est", "beta_vcov", "theta_est", "theta_vcov",
     "neg_log_lik", "formula_parts", "data", "reml", "opt_details", "tmb_object",
     "tmb_data"
   ))
@@ -330,9 +330,9 @@ test_that("h_mmrm_tmb works as expected in a simple model without covariates and
   expect_named(
     result,
     c(
-      "call", "cov", "beta_est", "beta_vcov", "theta_est", "theta_vcov",
+      "cov", "beta_est", "beta_vcov", "theta_est", "theta_vcov",
       "neg_log_lik", "formula_parts", "data", "reml", "opt_details", "tmb_object",
-      "tmb_data"
+      "tmb_data", "call"
     )
   )
   # See design/SAS/sas_log_simple.txt for the source of numbers.
@@ -353,9 +353,9 @@ test_that("h_mmrm_tmb works as expected in a simple model without covariates and
   expect_named(
     result,
     c(
-      "call", "cov", "beta_est", "beta_vcov", "theta_est", "theta_vcov",
+      "cov", "beta_est", "beta_vcov", "theta_est", "theta_vcov",
       "neg_log_lik", "formula_parts", "data", "reml", "opt_details", "tmb_object",
-      "tmb_data"
+      "tmb_data", "call"
     )
   )
   # See design/SAS/sas_log_simple_reml.txt for the source of numbers.
@@ -379,12 +379,9 @@ test_that("h_mmrm_tmb works with ante-dependence covariance structure and ML", {
   expect_equal(sqrt(result$beta_vcov[1, 1]), 0.3519, tolerance = 1e-4)
   expect_equal(as.numeric(result$beta_est), 42.9019, tolerance = 1e-4)
   result_theta <- result$theta_est
-  trans_fun <- function(rho) {
-    sign(rho) * sqrt(rho^2 / (1 - rho^2))
-  }
   expected_theta <- c(
     log(sqrt(c(114.78, 44.5191, 26.7673, 158.33))),
-    trans_fun(c(0.7104, 0.09992, 0.3650))
+    map_to_theta(c(0.7104, 0.09992, 0.3650))
   )
   expect_equal(result_theta, expected_theta, tolerance = 1e-4)
 })
@@ -399,12 +396,9 @@ test_that("h_mmrm_tmb works with ante-dependence covariance structure and REML",
   expect_equal(sqrt(result$beta_vcov[1, 1]), 0.3529, tolerance = 1e-4)
   expect_equal(as.numeric(result$beta_est), 42.9009, tolerance = 1e-4)
   result_theta <- result$theta_est
-  trans_fun <- function(rho) {
-    sign(rho) * sqrt(rho^2 / (1 - rho^2))
-  }
   expected_theta <- c(
     log(sqrt(c(114.89, 44.6313, 26.8922, 158.47))),
-    trans_fun(c(0.7106, 0.1033, 0.3657))
+    map_to_theta(c(0.7106, 0.1033, 0.3657))
   )
   expect_equal(result_theta, expected_theta, tolerance = 1e-4)
 })
@@ -449,6 +443,76 @@ test_that("h_mmrm_tmb works with ante-dependence covariance structure and REML",
   expect_equal(result_low_tri, expected_low_tri, tolerance = 1e-4)
 })
 
+## autoregressive ----
+
+### homogeneous ----
+
+test_that("h_mmrm_tmb works with ar1 covariance structure and ML", {
+  formula <- FEV1 ~ ar1(AVISIT | USUBJID)
+  result <- h_mmrm_tmb(formula, fev_data, reml = FALSE)
+  expect_class(result, "mmrm_tmb")
+  # See design/SAS/sas_ar1_ml.txt for the source of numbers.
+  expect_equal(deviance(result), 3875.95352406)
+  expect_equal(sqrt(result$beta_vcov[1, 1]), 0.5000, tolerance = 1e-4)
+  expect_equal(as.numeric(result$beta_est), 42.3252, tolerance = 1e-4)
+  result_sd <- exp(result$theta_est[1])
+  expected_sd <- sqrt(88.7088)
+  expect_equal(result_sd, expected_sd, tolerance = 1e-4)
+  result_rho <- map_to_cor(result$theta_est[2])
+  expected_rho <- 0.4249
+  expect_equal(result_rho, expected_rho, tolerance = 1e-3)
+})
+
+test_that("h_mmrm_tmb works with ar1 covariance structure and REML", {
+  formula <- FEV1 ~ ar1(AVISIT | USUBJID)
+  result <- h_mmrm_tmb(formula, fev_data, reml = TRUE)
+  expect_class(result, "mmrm_tmb")
+  # See design/SAS/sas_ar1_reml.txt for the source of numbers.
+  expect_equal(deviance(result), 3875.49945459)
+  expect_equal(sqrt(result$beta_vcov[1, 1]), 0.5013, tolerance = 1e-4)
+  expect_equal(as.numeric(result$beta_est), 42.3255, tolerance = 1e-4)
+  result_sd <- exp(result$theta_est[1])
+  expected_sd <- sqrt(88.9866)
+  expect_equal(result_sd, expected_sd, tolerance = 1e-4)
+  result_rho <- map_to_cor(result$theta_est[2])
+  expected_rho <- 0.4272
+  expect_equal(result_rho, expected_rho, tolerance = 1e-3)
+})
+
+### heterogeneous ----
+
+test_that("h_mmrm_tmb works with ar1h covariance structure and ML", {
+  formula <- FEV1 ~ ar1h(AVISIT | USUBJID)
+  result <- h_mmrm_tmb(formula, fev_data, reml = FALSE)
+  expect_class(result, "mmrm_tmb")
+  # See design/SAS/sas_ar1h_ml.txt for the source of numbers.
+  expect_equal(deviance(result), 3739.94416707)
+  expect_equal(sqrt(result$beta_vcov[1, 1]), 0.3936, tolerance = 1e-4)
+  expect_equal(as.numeric(result$beta_est), 41.7017, tolerance = 1e-4)
+  result_sds <- exp(result$theta_est[1:4])
+  expected_sds <- sqrt(c(92.2283, 38.3927, 35.0194, 176.08))
+  expect_equal(result_sds, expected_sds, tolerance = 1e-4)
+  result_rho <- map_to_cor(result$theta_est[5])
+  expected_rho <- 0.4113
+  expect_equal(result_rho, expected_rho, tolerance = 1e-3)
+})
+
+test_that("h_mmrm_tmb works with ar1h covariance structure and REML", {
+  formula <- FEV1 ~ ar1h(AVISIT | USUBJID)
+  result <- h_mmrm_tmb(formula, fev_data, reml = TRUE)
+  expect_class(result, "mmrm_tmb")
+  # See design/SAS/sas_ar1h_reml.txt for the source of numbers.
+  expect_equal(deviance(result), 3739.96835012)
+  expect_equal(sqrt(result$beta_vcov[1, 1]), 0.3947, tolerance = 1e-4)
+  expect_equal(as.numeric(result$beta_est), 41.6955, tolerance = 1e-4)
+  result_sds <- exp(result$theta_est[1:4])
+  expected_sds <- sqrt(c(92.3009, 38.5178, 35.2148, 176.37))
+  expect_equal(result_sds, expected_sds, tolerance = 1e-4)
+  result_rho <- map_to_cor(result$theta_est[5])
+  expected_rho <- 0.4130
+  expect_equal(result_rho, expected_rho, tolerance = 1e-3)
+})
+
 ## misc ----
 
 test_that("h_mmrm_tmb also works with character ID variable", {
@@ -458,4 +522,12 @@ test_that("h_mmrm_tmb also works with character ID variable", {
   result <- expect_silent(h_mmrm_tmb(formula, fev_data, reml = TRUE))
   expected <- expect_silent(h_mmrm_tmb(formula, data, reml = TRUE))
   expect_identical(result$beta_est, expected$beta_est)
+})
+
+test_that("h_mmrm_tmb saves data name in call element as expected", {
+  formula <- FEV1 ~ us(AVISIT | USUBJID)
+  fit <- h_mmrm_tmb(formula, fev_data)
+  saved_call <- fit$call
+  expect_class(saved_call, "call")
+  expect_identical(saved_call$data, "fev_data")
 })
