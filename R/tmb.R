@@ -219,11 +219,11 @@ h_mmrm_tmb_parameters <- function(formula_parts,
 
   n <- tmb_data$n_visits
   theta_dim <- as.integer(switch(formula_parts$corr_type,
-    us = n * (n + 1) / 2,
-    toep = 2 * n - 1,
-    ar1 = 0,
-    cs = 0,
-    ad = 2 * n - 1
+                                 us = n * (n + 1) / 2,
+                                 toep = 2 * n - 1,
+                                 ar1 = 0,
+                                 cs = 0,
+                                 ad = 2 * n - 1
   ))
   if (!is.null(start_values)) {
     assert_numeric(start_values, len = theta_dim, any.missing = FALSE, finite = TRUE)
@@ -347,8 +347,16 @@ h_mmrm_tmb_fit <- function(tmb_object,
     c("par", "objective")
   )
 
+  fun_call <- list()
+  fun_call$formula <- eval(formula_parts$formula)
+  fun_call$data <- ifelse(!is.null(attr(data, which = "dataname")),
+                          attr(data, which = "dataname"),
+                          toString(match.call()$data))
+  class(fun_call) <- "call"
+
   structure(
     list(
+      call = fun_call,
       cov = cov,
       beta_est = beta_est,
       beta_vcov = beta_vcov,
