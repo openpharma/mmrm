@@ -37,7 +37,7 @@ This is the main function fitting the MMRM.
 The \code{formula} typically looks like:
 \code{FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)}
 so specifies response and covariates as usual, and exactly one special term
-defines which correlation structure is used and what are the visit and
+defines which covariance structure is used and what are the visit and
 subject variables.
 
 When setting \code{optimizer = "automatic"}, first the default optimizer

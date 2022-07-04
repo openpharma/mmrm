@@ -39,10 +39,10 @@ h_mmrm_tmb_control <- function(optimizer = stats::nlminb,
 #'
 #' @return List of class `mmrm_tmb_formula_parts` with elements:
 #' - `formula`: the original input.
-#' - `model_formula`: `formula` with the correlation term is removed.
+#' - `model_formula`: `formula` with the covariance term is removed.
 #' - `full_formula`: same as `model_formula` but includes the `subject_var` and
 #'      `visit_var`.
-#' - `corr_type`: `string` with correlation term type (e.g. `"us"`).
+#' - `cov_type`: `string` with covariance term type (e.g. `"us"`).
 #' - `visit_var`: `string` with the visit variable name.
 #' - `subject_var`: `string` with the subject variable name.
 #'
@@ -56,29 +56,29 @@ h_mmrm_tmb_formula_parts <- function(formula) {
   # Ensure that there is left and right hand side in the formula.
   assert_true(identical(length(formula), 3L))
 
-  # Find the correlation specification term in the formula.
-  corr_functions <- c("us", "toep", "ar1", "cs", "ad")
-  terms_object <- stats::terms(formula, specials = corr_functions)
+  # Find the covariance specification term in the formula.
+  cov_functions <- c("us", "toep", "ar1", "cs", "ad")
+  terms_object <- stats::terms(formula, specials = cov_functions)
   found_specials <- attr(terms_object, "specials")
-  corr_selected <- !sapply(found_specials, is.null)
-  assert_true(identical(sum(corr_selected), 1L))
-  corr_index <- found_specials[[which(corr_selected)]] + 1L # Subtract 1 for `list()`.
+  cov_selected <- !sapply(found_specials, is.null)
+  assert_true(identical(sum(cov_selected), 1L))
+  cov_index <- found_specials[[which(cov_selected)]] + 1L # Subtract 1 for `list()`.
   terms_list <- attr(terms_object, "variables")
-  corr_term <- terms_list[[corr_index]]
+  cov_term <- terms_list[[cov_index]]
 
-  # Remove the correlation term to obtain the model formula.
+  # Remove the covariance term to obtain the model formula.
   model_formula <- stats::update(
     formula,
-    stats::as.formula(paste(". ~ . -", deparse(corr_term)))
+    stats::as.formula(paste(". ~ . -", deparse(cov_term)))
   )
 
-  # Parse the correlation term to get correlation type, visit and subject variables.
-  assert_true(identical(length(corr_term), 2L)) # 2 because `fun (...)`.
-  corr_content <- corr_term[[2L]]
-  assert_true(identical(length(corr_content), 3L)) # 3 because `y | x`.
-  assert_true(identical(as.character(corr_content[[1L]]), "|"))
-  visit_term <- corr_content[[2L]]
-  subject_term <- corr_content[[3L]]
+  # Parse the covariance term to get covariance type, visit and subject variables.
+  assert_true(identical(length(cov_term), 2L)) # 2 because `fun (...)`.
+  cov_content <- cov_term[[2L]]
+  assert_true(identical(length(cov_content), 3L)) # 3 because `y | x`.
+  assert_true(identical(as.character(cov_content[[1L]]), "|"))
+  visit_term <- cov_content[[2L]]
+  subject_term <- cov_content[[3L]]
   assert_true(identical(length(visit_term), 1L))
   assert_true(identical(length(subject_term), 1L))
   subject_var <- deparse(subject_term)
@@ -92,7 +92,7 @@ h_mmrm_tmb_formula_parts <- function(formula) {
       formula = formula,
       model_formula = model_formula,
       full_formula = full_formula,
-      corr_type = deparse(corr_term[[1L]]),
+      cov_type = deparse(cov_term[[1L]]),
       visit_var = visit_var,
       subject_var = subject_var
     ),
@@ -121,7 +121,7 @@ h_mmrm_tmb_formula_parts <- function(formula) {
 #'     indices for each subject.
 #' - `subject_n_visits`: length `n_subjects` `integer` containing the number of
 #'     observed visits for each subjects. So the sum of this vector equals `n`.
-#' - `corr_type`: `int` specifying the correlation type.
+#' - `cov_type`: `int` specifying the covariance type.
 #' - `reml`: `int` specifying whether REML estimation is used (1), otherwise ML (0).
 #'
 #' @details Note that the `subject_var` must not be factor but can also be character.
@@ -149,7 +149,7 @@ h_mmrm_tmb_data <- function(formula_parts,
   assert_true(is.factor(data[[formula_parts$subject_var]]) || is.character(data[[formula_parts$subject_var]]))
   assert_flag(reml)
 
-  if (is.character(data[[formula_parts$subject_var]])){
+  if (is.character(data[[formula_parts$subject_var]])) {
     data[[formula_parts$subject_var]] <- factor(
       data[[formula_parts$subject_var]],
       levels = stringr::str_sort(unique(data[[formula_parts$subject_var]]), numeric = TRUE)
@@ -166,8 +166,7 @@ h_mmrm_tmb_data <- function(formula_parts,
   subject_n_visits <- c(utils::tail(subject_zero_inds, -1L), nrow(full_frame)) - subject_zero_inds
   assert_true(identical(subject_n_visits, as.integer(table(full_frame[[formula_parts$subject_var]]))))
 
-  corr_type <- as.integer(switch(
-    formula_parts$corr_type,
+  cov_type <- as.integer(switch(formula_parts$cov_type,
     us = 1,
     toep = 2,
     ar1 = 3,
@@ -185,7 +184,7 @@ h_mmrm_tmb_data <- function(formula_parts,
       n_subjects = n_subjects,
       subject_zero_inds = subject_zero_inds,
       subject_n_visits = subject_n_visits,
-      corr_type = corr_type,
+      cov_type = cov_type,
       reml = as.integer(reml)
     ),
     class = "mmrm_tmb_data"
@@ -218,7 +217,7 @@ h_mmrm_tmb_parameters <- function(formula_parts,
   assert_class(tmb_data, "mmrm_tmb_data")
 
   n <- tmb_data$n_visits
-  theta_dim <- as.integer(switch(formula_parts$corr_type,
+  theta_dim <- as.integer(switch(formula_parts$cov_type,
     us = n * (n + 1) / 2,
     toep = 2 * n - 1,
     ar1 = 0,
@@ -389,7 +388,7 @@ h_mmrm_tmb_fit <- function(tmb_object,
 #' @details The `formula` typically looks like:
 #' `FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)`
 #' so specifies response and covariates as usual, and exactly one special term
-#' defines which correlation structure is used and what are the visit and
+#' defines which covariance structure is used and what are the visit and
 #' subject variables.
 #'
 #' @export

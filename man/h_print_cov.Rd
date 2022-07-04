@@ -2,7 +2,7 @@
 % Please edit documentation in R/mmrm-methods.R
 \name{h_print_cov}
 \alias{h_print_cov}
-\title{Printing MMRM Correlation Type}
+\title{Printing MMRM Covariance Type}
 \usage{
 h_print_cov(cov_type, n_theta)
 }

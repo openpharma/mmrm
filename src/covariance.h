@@ -1,5 +1,5 @@
-#ifndef CORR_INCLUDED_
-#define CORR_INCLUDED_
+#ifndef COV_INCLUDED_
+#define COV_INCLUDED_
 
 #include "tmb_includes.h"
 #include "utils.h"
@@ -58,33 +58,33 @@ matrix<T> get_toeplitz(const vector<T>& theta, int n_visits) {
   return get_heterogeneous_cov(sd_values, fun);
 }
 
-// Coding of corr_type coming from the R side.
-enum corr_type_code {
-  unstructured_corr = 1,
-  toeplitz_corr = 2,
-  auto_regressive_corr = 3,
-  compound_symmetry_corr = 4,
-  ante_dependence_corr = 5
+// Coding of cov_type coming from the R side.
+enum cov_type_code {
+  unstructured_cov = 1,
+  toeplitz_cov = 2,
+  auto_regressive_cov = 3,
+  compound_symmetry_cov = 4,
+  ante_dependence_cov = 5
 };
 
 // Creates a new correlation object dynamically.
 template <class T>
-matrix<T> get_covariance_lower_chol(const vector<T>& theta, int n_visits, int corr_type) {
+matrix<T> get_covariance_lower_chol(const vector<T>& theta, int n_visits, int cov_type) {
   matrix<T> result;
-  switch (corr_type) {
-  case unstructured_corr:
+  switch (cov_type) {
+  case unstructured_cov:
     result = get_unstructured<T>(theta, n_visits);
     break;
-  case toeplitz_corr:
+  case toeplitz_cov:
     result = get_toeplitz<T>(theta, n_visits);
     break;
-  case auto_regressive_corr:
+  case auto_regressive_cov:
     // result = get_auto_regressive<T>(theta, n_visits);
     break;
-  case compound_symmetry_corr:
+  case compound_symmetry_cov:
     // result = get_compound_symmetry<T>(theta, n_visits);
     break;
-  case ante_dependence_corr:
+  case ante_dependence_cov:
     result = get_ante_dependence<T>(theta, n_visits);
     break;
   }

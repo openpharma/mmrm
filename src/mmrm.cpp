@@ -1,4 +1,4 @@
-#include "correlation.h"
+#include "covariance.h"
 
 // Definition:
 //
@@ -35,11 +35,11 @@ Type objective_function<Type>::operator() ()
   DATA_INTEGER(n_subjects);        // Number of subjects.
   DATA_IVECTOR(subject_zero_inds); // Starting indices for each subject (0-based) (length n_subjects).
   DATA_IVECTOR(subject_n_visits);  // Number of observed visits for each subject (length n_subjects).
-  DATA_INTEGER(corr_type);         // Correlation type.
+  DATA_INTEGER(cov_type);         // Covariance type.
   DATA_INTEGER(reml);              // REML (1)? Otherwise ML (0).
 
   // Read parameters from R.
-  PARAMETER_VECTOR(theta);         // Covariance parameters (length k). Contents depend on correlation type.
+  PARAMETER_VECTOR(theta);         // Covariance parameters (length k). Contents depend on covariance type.
 
   // X^T W X will be calculated incrementally into here.
   matrix<Type> XtWX = matrix<Type>::Zero(x_matrix.cols(), x_matrix.cols());
@@ -53,7 +53,7 @@ Type objective_function<Type>::operator() ()
   Type sum_log_det = 0.0;
 
   // Create the lower triangular Cholesky factor of the visit x visit covariance matrix.
-  matrix<Type> covariance_lower_chol = get_covariance_lower_chol<Type>(theta, n_visits, corr_type);
+  matrix<Type> covariance_lower_chol = get_covariance_lower_chol<Type>(theta, n_visits, cov_type);
 
   // Go through all subjects and calculate quantities initialized above.
   for (int i = 0; i < n_subjects; i++) {

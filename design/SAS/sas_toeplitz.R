@@ -1,4 +1,4 @@
-# Heterogeneous Toeplitz correlation structure ----
+# Heterogeneous Toeplitz covariance structure ----
 formula <- FEV1 ~ toep(AVISIT | USUBJID)
 data <- fev_data
 

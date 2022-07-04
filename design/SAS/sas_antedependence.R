@@ -1,4 +1,4 @@
-# Ante-dependence correlation structure ----
+# Ante-dependence covariance structure ----
 formula <- FEV1 ~ ad(AVISIT | USUBJID)
 data <- fev_data
 

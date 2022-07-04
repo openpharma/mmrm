@@ -27,7 +27,7 @@ test_that("h_mmrm_tmb_formula_parts works as expected", {
       formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
       model_formula = FEV1 ~ RACE + SEX + ARMCD + AVISIT + ARMCD:AVISIT,
       full_formula = FEV1 ~ RACE + SEX + ARMCD + AVISIT + USUBJID + ARMCD:AVISIT,
-      corr_type = "us",
+      cov_type = "us",
       visit_var = "AVISIT",
       subject_var = "USUBJID"
     ),
@@ -45,7 +45,7 @@ test_that("h_mmrm_tmb_formula_parts works without covariates", {
       formula = FEV1 ~ ar1(AVISIT | USUBJID),
       model_formula = FEV1 ~ 1,
       full_formula = FEV1 ~ USUBJID + AVISIT,
-      corr_type = "ar1",
+      cov_type = "ar1",
       visit_var = "AVISIT",
       subject_var = "USUBJID"
     ),
@@ -63,7 +63,7 @@ test_that("h_mmrm_tmb_formula_parts works as expected for antedependence", {
       formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + ad(AVISIT | USUBJID),
       model_formula = FEV1 ~ RACE + SEX + ARMCD + AVISIT + ARMCD:AVISIT,
       full_formula = FEV1 ~ RACE + SEX + ARMCD + AVISIT + USUBJID + ARMCD:AVISIT,
-      corr_type = "ad",
+      cov_type = "ad",
       visit_var = "AVISIT",
       subject_var = "USUBJID"
     ),
@@ -83,7 +83,7 @@ test_that("h_mmrm_tmb_data works as expected", {
     result,
     c(
       "full_frame", "x_matrix", "y_vector", "visits_zero_inds", "n_visits", "n_subjects",
-      "subject_zero_inds", "subject_n_visits", "corr_type", "reml"
+      "subject_zero_inds", "subject_n_visits", "cov_type", "reml"
     )
   )
   expect_matrix(result$x_matrix, nrows = 537, ncols = 3, any.missing = FALSE)
@@ -91,7 +91,7 @@ test_that("h_mmrm_tmb_data works as expected", {
   expect_integer(result$visits_zero_inds, len = 537, lower = 0, upper = 3, any.missing = FALSE)
   expect_identical(result$n_visits, 4L) # 4 visits.
   expect_integer(result$subject_zero_inds, len = 197, unique = TRUE, sorted = TRUE, any.missing = FALSE)
-  expect_identical(result$corr_type, 1L) # unstructured.
+  expect_identical(result$cov_type, 1L) # unstructured.
   expect_identical(result$reml, 0L) # ML.
 })
 
