@@ -173,15 +173,15 @@ print.mmrm_tmb <- function(x,
   ))
 
   h_print_call(
-    components$call, components$n_obs,
-    components$n_subjects, components$n_timepoints
+    component(x, "call"), component(x, "n_obs"),
+    component(x, "n_subjects"), component(x, "n_timepoints")
   )
-  h_print_cov(components$cov_type, components$n_theta)
+  h_print_cov(component(x, "cov_type"), component(x, "n_theta"))
 
   cat("Method: ")
-  cat(ifelse(components$reml, "REML", "ML"))
+  cat(ifelse(component(x, "reml"), "REML", "ML"))
   cat("\nDeviance: ")
-  cat(components$deviance)
+  cat(component(x, "deviance"))
 
   cat("\n\nCoefficients:\n")
   print(coef(x))
@@ -189,12 +189,12 @@ print.mmrm_tmb <- function(x,
   cat("\nModel Inference Optimization:\n")
   cat("Optimizer: ")
 
-  cat(components$method)
+  cat(component(x, "method"))
 
-  cat(ifelse(components$convergence == 0, "\nConverged", "\nFailed to converge"))
+  cat(ifelse(component(x, "convergence") == 0, "\nConverged", "\nFailed to converge"))
   cat(
-    " with code", components$convergence,
-    "and message:", tolower(components$conv_message)
+    " with code", component(x, "convergence"),
+    "and message:", tolower(component(x, "conv_message"))
   )
 
   invisible(x)
@@ -220,24 +220,15 @@ component <- function(object,
                              "conv_message", "call"
                            ),
                            ...) {
-  inherits(object, "mmrm_tmb")
-  if (missing(name)) stop("'name' must not be missing")
-  ## Deal with multiple names -- "FIXME" is inefficiently redoing things
+
+  assert_class(object, "mmrm_tmb")
+  name <- match.arg(name, several.ok = TRUE)
+
   if (length(name <- as.character(name)) > 1) {
     names(name) <- name
     return(lapply(name, component, object = object))
   }
-  if (tolower(name) == "all") { ## recursively get all provided components
-    return(sapply(eval(formals()$name),
-      component,
-      object = object, simplify = FALSE
-    ))
-  }
 
-  stopifnot(inherits(object, "mmrm_tmb"))
-  name <- match.arg(name)
-
-  ### Start of the switch
   switch(name,
     "reml" = object$reml,
     "method" = object$tmb_object$method,
@@ -253,7 +244,7 @@ component <- function(object,
     "logLik" = logLik(object),
     "deviance" = deviance(object),
     "logLik" = logLik(object),
-    "cov_type" = object$formula_parts$corr_type,
+    "cov_type" = object$formula_parts$cov_type,
     "n_theta" = length(object$theta_est),
     "n_subjects" = object$tmb_data$n_subjects,
     "n_timepoints" = object$tmb_data$n_visits,
@@ -262,15 +253,8 @@ component <- function(object,
     "varcor" = VarCorr(object),
     "formula" = deparse(object$call$formula),
     "dataset" = object$call$data,
-
-    "..foo.." = # placeholder!
-      stop(gettextf(
-        "'%s' is not implemented yet",
-        sprintf("component(*, \"%s\")", name)
-      )),
-    ## otherwise
     stop(sprintf(
-      "Mixed-Effects extraction of '%s' is not available for class \"%s\"",
+      "component '%s' is not available for class \"%s\"",
       name, class(object)
     ))
   )
