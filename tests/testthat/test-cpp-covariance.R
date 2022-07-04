@@ -26,6 +26,8 @@ test_that("prepare numbers for ante_dependence tests", {
   expect_equal(result, expected, tolerance = 1e-5)
 })
 
+# get_toeplitz ----
+
 test_that("prepare numbers for toeplitz tests", {
   theta <- c(log(1), log(2), log(3), 1, 2)
   n_visits <- 3
@@ -48,6 +50,54 @@ test_that("prepare numbers for toeplitz tests", {
     1, 0, 0,
     sqrt(2), sqrt(2), 0,
     2.683282, 0.3167184, 1.303721
+  ))
+  expect_equal(result, expected, tolerance = 1e-5)
+})
+
+# autoregressive ----
+
+test_that("prepare numbers for autoregressive correlation function test", {
+  x <- 1
+  n_visits <- 3
+  cor <- map_to_cor(x)
+  expect_equal(cor, 1 / sqrt(2))
+  expect_equal(cor^3, 0.3535534, tolerance = 1e-4)
+})
+
+test_that("prepare numbers for homogeneous autoregressive tests", {
+  theta <- c(log(2), 3)
+  n_visits <- 3
+  cor <- map_to_cor(theta[2])
+  cor_mat <- square_matrix(c(
+    1, cor, cor^2,
+    cor, 1, cor,
+    cor^2, cor, 1
+  ))
+  sd <- exp(theta[1])
+  result <- sd * t(chol(cor_mat))
+  expected <- square_matrix(c(
+    2, 0, 0,
+    1.89736659610103, 0.632455532033676, 0,
+    1.8, 0.6, 0.632455532033676
+  ))
+  expect_equal(result, expected, tolerance = 1e-5)
+})
+
+test_that("prepare numbers for heterogeneous autoregressive tests", {
+  theta <- c(log(1), log(2), log(3), 2)
+  n_visits <- 3
+  sds <- exp(theta[1:n_visits])
+  cor <- map_to_cor(theta[n_visits + 1])
+  cor_mat <- square_matrix(c(
+    1, cor, cor^2,
+    cor, 1, cor,
+    cor^2, cor, 1
+  ))
+  result <- diag(sds) %*% t(chol(cor_mat))
+  expected <- square_matrix(c(
+    1, 0, 0,
+    1.78885438199983, 0.894427190999916, 0,
+    2.4, 1.2, 1.34164078649987
   ))
   expect_equal(result, expected, tolerance = 1e-5)
 })

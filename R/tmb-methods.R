@@ -159,7 +159,7 @@ BIC.mmrm_tmb <- function(object, ...) { # nolint
 }
 
 
-#' @describeIn mmrm_tmb_methods prints the MMRM_TMB object.
+#' @describeIn mmrm_tmb_methods prints the object.
 #' @exportS3Method
 #' @keywords internal
 print.mmrm_tmb <- function(x,
@@ -169,7 +169,7 @@ print.mmrm_tmb <- function(x,
   n_subjects <- x$tmb_data$n_subjects
   n_timepoints <- x$tmb_data$n_visits
   n_obs <- length(x$tmb_data$y_vector)
-  cov_type <- x$formula_parts$corr_type
+  cov_type <- x$formula_parts$cov_type
   n_theta <- length(x$theta_est)
 
   h_print_call(x$call, n_obs, n_subjects, n_timepoints)
@@ -195,4 +195,3 @@ print.mmrm_tmb <- function(x,
 
   invisible(x)
 }
-

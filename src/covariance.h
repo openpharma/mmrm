@@ -58,12 +58,39 @@ matrix<T> get_toeplitz(const vector<T>& theta, int n_visits) {
   return get_heterogeneous_cov(sd_values, fun);
 }
 
+// Autoregressive:
+
+// Correlation function.
+template <class T>
+struct corr_fun_autoregressive : generic_corr_fun<T> {
+  using generic_corr_fun<T>::generic_corr_fun;
+  const T operator() (int i, int j) const {
+    T diff = T((i - j) * 1.0);
+    return pow(this->corr_values(0), diff);  // rho^{|i-j|}
+  }
+};
+// Homogeneous autoregressive Cholesky factor.
+template <class T>
+matrix<T> get_auto_regressive(const vector<T>& theta, int n_visits) {
+  T const_sd = exp(theta(0));
+  corr_fun_autoregressive<T> fun(theta.tail(1));
+  matrix<T> ar1_cor_mat_chol = get_corr_mat_chol(n_visits, fun);
+  return const_sd * ar1_cor_mat_chol;
+}
+// Heterogeneous autoregressive Cholesky factor.
+template <class T>
+matrix<T> get_auto_regressive_heterogeneous(const vector<T>& theta, int n_visits) {
+  vector<T> sd_values = exp(theta.head(n_visits));
+  corr_fun_autoregressive<T> fun(theta.tail(1));
+  return get_heterogeneous_cov(sd_values, fun);
+}
+
 // Coding of cov_type coming from the R side.
 enum cov_type_code {
   unstructured_cov = 1,
   toeplitz_cov = 2,
   auto_regressive_cov = 3,
-  compound_symmetry_cov = 4,
+  auto_regressive_heterogeneous_cov = 4,
   ante_dependence_cov = 5
 };
 
@@ -79,10 +106,10 @@ matrix<T> get_covariance_lower_chol(const vector<T>& theta, int n_visits, int co
     result = get_toeplitz<T>(theta, n_visits);
     break;
   case auto_regressive_cov:
-    // result = get_auto_regressive<T>(theta, n_visits);
+    result = get_auto_regressive<T>(theta, n_visits);
     break;
-  case compound_symmetry_cov:
-    // result = get_compound_symmetry<T>(theta, n_visits);
+  case auto_regressive_heterogeneous_cov:
+    result = get_auto_regressive_heterogeneous<T>(theta, n_visits);
     break;
   case ante_dependence_cov:
     result = get_ante_dependence<T>(theta, n_visits);

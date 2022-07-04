@@ -144,6 +144,24 @@ test_that("h_mmrm_tmb_parameters works as expected with Toeplitz", {
   expect_identical(result, expected)
 })
 
+test_that("h_mmrm_tmb_parameters works as expected with autoregressive", {
+  formula <- FEV1 ~ SEX + ar1(AVISIT | USUBJID)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula)
+  tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = TRUE)
+  result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
+  expected <- list(theta = rep(0, 2))
+  expect_identical(result, expected)
+})
+
+test_that("h_mmrm_tmb_parameters works as expected with heterogeneous autoregressive", {
+  formula <- FEV1 ~ SEX + ar1h(AVISIT | USUBJID)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula)
+  tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = TRUE)
+  result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
+  expected <- list(theta = rep(0, 5)) # 4 + 1 parameters.
+  expect_identical(result, expected)
+})
+
 # h_mmrm_tmb_assert_start ----
 
 test_that("h_mmrm_tmb_assert_start passes as expected for sane start values", {

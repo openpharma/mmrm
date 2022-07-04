@@ -80,7 +80,10 @@ P = \begin{pmatrix}
 \rho_{1, m-1} & \cdots & \cdots & \rho_{m-2,m} & \rho_{m-1,m}    & 1
 \end{pmatrix}
 \]
-with entries $\rho_{ij} \in (-1, 1)$.
+with entries $\rho_{ij} \in (-1, 1)$. Since these covariance structures
+assume different variances for each time point they are called "heterogeneous"
+covariance structures. Assuming a constant $\sigma = \sigma_1 = \dotsb = \sigma_m$
+gives a "homogeneous" covariance structure instead.
 
 ## Transformation to Variance Parameters
 
@@ -153,5 +156,25 @@ subject variances. So here we can identify
 and we have in total $2m - 1$ variance parameters. This is similar to
 the heterogeneous ante-dependence structure, but the correlation parameters
 are used differently in the construction of $P$.
+
+## Homogeneous (`ar1`) and Heterogeneous (`arh1`) Autoregressive
+
+The autoregressive covariance structure can be motivated by the corresponding
+state-space equation
+\[
+y_{it} = \varphi y_{i,t-1} + \varepsilon_t
+\]
+where the white noise $\varepsilon_t$ has a normal distribution with mean zero
+and a constant variance. It can be shown that this gives correlations
+\[
+\rho_{ij} = \rho^{\abs{i - j}}.
+\]
+where $\rho$ is related to $\varphi$ and the variance and is the single correlation
+parameter here.
+
+Assuming a constant variance in the state-space equation yields a homogeneous
+autoregressive covariance structure with total only $k=2$ variance parameters,
+otherwise we obtain the heterogeneous autoregressive covariance structure with $k = m + 1$
+variance parameters.
 
 # References

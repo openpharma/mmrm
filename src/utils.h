@@ -57,21 +57,29 @@ struct generic_corr_fun {
     corr_values(map_to_cor(theta)) {}
 };
 
-// Heterogeneous covariance matrix calculation given vector of standard deviations (sd_values)
-// and a correlation function (corr_fun).
+// Correlation function based Cholesky factor of correlation matrix.
+// This is used directly for homogeneous covariance matrices.
 template <class T, template<class> class F>
-matrix<T> get_heterogeneous_cov(const vector<T>& sd_values, const F<T>& corr_fun) {
-  matrix<T> correlation(sd_values.size(), sd_values.size());
+matrix<T> get_corr_mat_chol(int n_visits, const F<T>& corr_fun) {
+  matrix<T> correlation(n_visits, n_visits);
   correlation.setIdentity();
-  for(int i = 0; i < sd_values.size(); i++) {
+  for(int i = 0; i < n_visits; i++) {
     for(int j = 0; j < i; j++){
       correlation(i, j) = corr_fun(i, j);
     }
   }
   Eigen::LLT<Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> > correlation_chol(correlation);
   matrix<T> L = correlation_chol.matrixL();
+  return L;
+}
+
+// Heterogeneous covariance matrix calculation given vector of standard deviations (sd_values)
+// and a correlation function (corr_fun).
+template <class T, template<class> class F>
+matrix<T> get_heterogeneous_cov(const vector<T>& sd_values, const F<T>& corr_fun) {
+  matrix<T> correlation_chol = get_corr_mat_chol(sd_values.size(), corr_fun);
   Eigen::DiagonalMatrix<T,Eigen::Dynamic,Eigen::Dynamic> D = sd_values.matrix().asDiagonal();
-  matrix<T> result = D * L;
+  matrix<T> result = D * correlation_chol;
   return result;
 }
 

@@ -17,3 +17,7 @@ square_matrix <- function(values_by_row) {
   size <- floor(size)
   matrix(data = values_by_row, nrow = size, ncol = size, byrow = TRUE)
 }
+
+map_to_cor <- function(x) {
+  x / sqrt(1 + x^2)
+}
