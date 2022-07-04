@@ -93,7 +93,7 @@ h_print_call <- function(call, n_obs, n_subjects, n_timepoints) {
   }
   if (!is.null(tmp <- call$data)) {
     cat(
-      "Data:       ", deparse(tmp), "(used", n_obs, "observations from",
+      "Data:       ", tmp, "(used", n_obs, "observations from",
       n_subjects, "subjects with maximum", n_timepoints, "timepoints)",
       fill = TRUE
     )
