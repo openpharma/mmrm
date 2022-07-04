@@ -121,3 +121,12 @@ test_that("BIC works as expected", {
   expected <- -2 * logLik(object) + log(object$tmb_data$n_subjects) * length(object$theta_est)
   expect_equal(result, expected)
 })
+
+# print.mmrm_tmb ----
+
+test_that("print.mmrm_tmb works as expected", {
+  object_mmrm_tmb <- get_mmrm_tmb()
+  expect_snapshot_output(print(object_mmrm_tmb), cran = FALSE)
+  object_mmrm <- get_mmrm()
+  expect_snapshot_output(print(object_mmrm), cran = FALSE)
+})

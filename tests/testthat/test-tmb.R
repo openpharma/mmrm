@@ -280,7 +280,7 @@ test_that("h_mmrm_tmb_fit works as expected", {
   result <- expect_silent(h_mmrm_tmb_fit(tmb_object, tmb_opt, fev_data, formula_parts, tmb_data))
   expect_class(result, "mmrm_tmb")
   expect_named(result, c(
-    "cov", "beta_est", "beta_vcov", "theta_est", "theta_vcov",
+    "call", "cov", "beta_est", "beta_vcov", "theta_est", "theta_vcov",
     "neg_log_lik", "formula_parts", "data", "reml", "opt_details", "tmb_object",
     "tmb_data"
   ))
@@ -312,7 +312,7 @@ test_that("h_mmrm_tmb works as expected in a simple model without covariates and
   expect_named(
     result,
     c(
-      "cov", "beta_est", "beta_vcov", "theta_est", "theta_vcov",
+      "call", "cov", "beta_est", "beta_vcov", "theta_est", "theta_vcov",
       "neg_log_lik", "formula_parts", "data", "reml", "opt_details", "tmb_object",
       "tmb_data"
     )
@@ -335,7 +335,7 @@ test_that("h_mmrm_tmb works as expected in a simple model without covariates and
   expect_named(
     result,
     c(
-      "cov", "beta_est", "beta_vcov", "theta_est", "theta_vcov",
+      "call", "cov", "beta_est", "beta_vcov", "theta_est", "theta_vcov",
       "neg_log_lik", "formula_parts", "data", "reml", "opt_details", "tmb_object",
       "tmb_data"
     )

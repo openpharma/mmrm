@@ -157,3 +157,42 @@ BIC.mmrm_tmb <- function(object, ...) { # nolint
   k <- log(object$tmb_data$n_subjects)
   AIC(object, corrected = FALSE, k = k)
 }
+
+
+#' @describeIn mmrm_tmb_methods prints the MMRM_TMB object.
+#' @exportS3Method
+#' @keywords internal
+print.mmrm_tmb <- function(x,
+                           ...) {
+  cat("mmrm fit\n\n")
+
+  n_subjects <- x$tmb_data$n_subjects
+  n_timepoints <- x$tmb_data$n_visits
+  n_obs <- length(x$tmb_data$y_vector)
+  cov_type <- x$formula_parts$corr_type
+  n_theta <- length(x$theta_est)
+
+  h_print_call(x$call, n_obs, n_subjects, n_timepoints)
+  h_print_cov(cov_type, n_theta)
+
+  cat("Method: ")
+  cat(ifelse(x$reml, "REML", "ML"))
+  cat("\nDeviance: ")
+  cat(deviance(x))
+
+  cat("\n\nCoefficients:\n")
+  print(coef(x))
+
+  cat("\nModel Inference Optimization:\n")
+  cat("Optimizer: ")
+  cat(x$tmb_object$method)
+
+  cat(ifelse(x$opt_details$convergence == 0, "\nConverged", "\nFailed to converge"))
+  cat(
+    " with code", x$opt_details$convergence,
+    "and message:", tolower(x$opt_details$message)
+  )
+
+  invisible(x)
+}
+

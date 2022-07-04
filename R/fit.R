@@ -223,6 +223,8 @@ mmrm <- function(formula,
   assert_string(optimizer)
   use_automatic <- identical(optimizer, "automatic")
 
+  attr(data, which = "dataname") <- toString(match.call()$data)
+
   fit <- fit_single_optimizer(
     formula = formula,
     data = data,
@@ -247,10 +249,6 @@ mmrm <- function(formula,
 
   covbeta_fun <- h_covbeta_fun(fit)
   fit$jac_list <- h_jac_list(covbeta_fun, fit$theta_est)
-
-  fun_call <- match.call()
-  fun_call$formula <- eval(formula)
-  fit$call <- fun_call
 
   class(fit) <- c("mmrm", class(fit))
   fit
