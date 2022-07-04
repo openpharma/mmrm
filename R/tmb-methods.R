@@ -166,33 +166,112 @@ print.mmrm_tmb <- function(x,
                            ...) {
   cat("mmrm fit\n\n")
 
-  n_subjects <- x$tmb_data$n_subjects
-  n_timepoints <- x$tmb_data$n_visits
-  n_obs <- length(x$tmb_data$y_vector)
-  cov_type <- x$formula_parts$corr_type
-  n_theta <- length(x$theta_est)
+  components <- component(x, c(
+    "deviance", "cov_type", "n_theta", "n_subjects",
+    "n_timepoints", "n_obs", "reml", "method",
+    "convergence", "evaluations", "conv_message", "call"
+  ))
 
-  h_print_call(x$call, n_obs, n_subjects, n_timepoints)
-  h_print_cov(cov_type, n_theta)
+  h_print_call(
+    components$call, components$n_obs,
+    components$n_subjects, components$n_timepoints
+  )
+  h_print_cov(components$cov_type, components$n_theta)
 
   cat("Method: ")
-  cat(ifelse(x$reml, "REML", "ML"))
+  cat(ifelse(components$reml, "REML", "ML"))
   cat("\nDeviance: ")
-  cat(deviance(x))
+  cat(components$deviance)
 
   cat("\n\nCoefficients:\n")
   print(coef(x))
 
   cat("\nModel Inference Optimization:\n")
   cat("Optimizer: ")
-  cat(x$tmb_object$method)
 
-  cat(ifelse(x$opt_details$convergence == 0, "\nConverged", "\nFailed to converge"))
+  cat(components$method)
+
+  cat(ifelse(components$convergence == 0, "\nConverged", "\nFailed to converge"))
   cat(
-    " with code", x$opt_details$convergence,
-    "and message:", tolower(x$opt_details$message)
+    " with code", components$convergence,
+    "and message:", tolower(components$conv_message)
   )
 
   invisible(x)
 }
 
+#' @describeIn mmrm_tmb_methods get components from the \code{mmrm_tmb} object
+#'
+#' @aliases component
+#' @param x a \code{mmrm_tmb} object
+#' @param name of the component to be retrieved
+#' @param \dots ignored, for method compatibility
+#'
+#' @seealso \code{\link[lme4]{getME}}
+#' @seealso \code{\link[glmmTMB]{getME}}
+#'
+#' @export
+component <- function(object,
+                           name = c(
+                             "AIC", "BIC", "logLik", "deviance",
+                             "cov_type", "n_theta", "n_subjects", "n_timepoints",
+                             "n_obs", "vcov", "varcor", "formula", "dataset",
+                             "reml", "method", "convergence", "evaluations",
+                             "conv_message", "call"
+                           ),
+                           ...) {
+  inherits(object, "mmrm_tmb")
+  if (missing(name)) stop("'name' must not be missing")
+  ## Deal with multiple names -- "FIXME" is inefficiently redoing things
+  if (length(name <- as.character(name)) > 1) {
+    names(name) <- name
+    return(lapply(name, component, object = object))
+  }
+  if (tolower(name) == "all") { ## recursively get all provided components
+    return(sapply(eval(formals()$name),
+      component,
+      object = object, simplify = FALSE
+    ))
+  }
+
+  stopifnot(inherits(object, "mmrm_tmb"))
+  name <- match.arg(name)
+
+  ### Start of the switch
+  switch(name,
+    "reml" = object$reml,
+    "method" = object$tmb_object$method,
+    "convergence" = object$opt_details$convergence,
+    "conv_message" = object$opt_details$message,
+    "evaluations" = unlist(ifelse(is.null(object$opt_details$evaluations),
+      list(object$opt_details$counts),
+      list(object$opt_details$evaluations)
+    )),
+    "call" = object$call,
+    "AIC" = AIC(object),
+    "BIC" = BIC(object),
+    "logLik" = logLik(object),
+    "deviance" = deviance(object),
+    "logLik" = logLik(object),
+    "cov_type" = object$formula_parts$corr_type,
+    "n_theta" = length(object$theta_est),
+    "n_subjects" = object$tmb_data$n_subjects,
+    "n_timepoints" = object$tmb_data$n_visits,
+    "n_obs" = length(object$tmb_data$y_vector),
+    "vcov" = vcov(object),
+    "varcor" = VarCorr(object),
+    "formula" = deparse(object$call$formula),
+    "dataset" = object$call$data,
+
+    "..foo.." = # placeholder!
+      stop(gettextf(
+        "'%s' is not implemented yet",
+        sprintf("component(*, \"%s\")", name)
+      )),
+    ## otherwise
+    stop(sprintf(
+      "Mixed-Effects extraction of '%s' is not available for class \"%s\"",
+      name, class(object)
+    ))
+  )
+}

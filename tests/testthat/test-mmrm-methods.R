@@ -24,7 +24,7 @@ test_that("summary works as expected", {
     result,
     c(
       "logLik", "cov_type", "n_theta", "n_subjects", "n_timepoints", "n_obs",
-      "coefficients", "vcov", "varcor", "aic_list", "call"
+      "vcov", "varcor", "coefficients",  "aic_list", "call"
     )
   )
 })

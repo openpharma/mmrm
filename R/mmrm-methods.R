@@ -48,26 +48,12 @@ h_coef_table <- function(object) {
 #' # Summary:
 #' summary(object)
 summary.mmrm <- function(object, ...) {
-  aic_list <- list(
-    AIC = AIC(object),
-    BIC = BIC(object),
-    logLik = logLik(object),
-    deviance = deviance(object)
-  )
   structure(
-    list(
-      logLik = logLik(object),
-      cov_type = object$formula_parts$corr_type,
-      n_theta = length(object$theta_est),
-      n_subjects = object$tmb_data$n_subjects,
-      n_timepoints = object$tmb_data$n_visits,
-      n_obs = length(object$tmb_data$y_vector),
-      coefficients = h_coef_table(object),
-      vcov = vcov(object),
-      varcor = VarCorr(object),
-      aic_list = aic_list,
-      call = stats::getCall(object)
-    ),
+    Reduce(append,
+           list(list(coefficients = h_coef_table(object)),
+                list(aic_list = component(object, c("AIC", "BIC", "logLik", "deviance"))),
+                list(call = stats::getCall(object))),
+           component(object, c("logLik", "cov_type", "n_theta", "n_subjects", "n_timepoints", "n_obs", "vcov", "varcor"))),
     class = "summary.mmrm"
   )
 }
