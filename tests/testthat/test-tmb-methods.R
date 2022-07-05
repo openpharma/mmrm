@@ -130,3 +130,30 @@ test_that("print.mmrm_tmb works as expected", {
   object_mmrm <- get_mmrm()
   expect_snapshot_output(print(object_mmrm), cran = FALSE)
 })
+
+# component ----
+
+test_that("component works as expected", {
+  object_mmrm_tmb <- get_mmrm_tmb()
+  object_mmrm <- get_mmrm()
+
+  expect_snapshot_output(component(object_mmrm_tmb), cran = FALSE)
+  expect_snapshot_output(component(object_mmrm), cran = FALSE)
+
+  expect_equal(names(component(object_mmrm_tmb)),
+               c("AIC", "BIC", "logLik", "deviance",
+                 "cov_type", "n_theta", "n_subjects", "n_timepoints",
+                 "n_obs", "vcov", "varcor", "formula", "dataset",
+                 "reml", "method", "convergence", "evaluations",
+                 "conv_message", "call"))
+  expect_equal(names(component(object_mmrm)),
+               c("AIC", "BIC", "logLik", "deviance",
+                 "cov_type", "n_theta", "n_subjects", "n_timepoints",
+                 "n_obs", "vcov", "varcor", "formula", "dataset",
+                 "reml", "method", "convergence", "evaluations",
+                 "conv_message", "call"))
+
+  expect_length(component(object_mmrm_tmb, "AIC"), 1)
+  expect_length(component(object_mmrm_tmb, c("AIC", "NULL", "BIC")), 2)
+
+})
