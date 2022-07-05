@@ -166,12 +166,6 @@ print.mmrm_tmb <- function(x,
                            ...) {
   cat("mmrm fit\n\n")
 
-  components <- component(x, c(
-    "deviance", "cov_type", "n_theta", "n_subjects",
-    "n_timepoints", "n_obs", "reml", "method",
-    "convergence", "evaluations", "conv_message", "call"
-  ))
-
   h_print_call(
     component(x, "call"), component(x, "n_obs"),
     component(x, "n_subjects"), component(x, "n_timepoints")
@@ -212,24 +206,20 @@ print.mmrm_tmb <- function(x,
 #'
 #' @export
 component <- function(object,
-                           name = c(
-                             "AIC", "BIC", "logLik", "deviance",
-                             "cov_type", "n_theta", "n_subjects", "n_timepoints",
-                             "n_obs", "vcov", "varcor", "formula", "dataset",
-                             "reml", "method", "convergence", "evaluations",
-                             "conv_message", "call"
-                           ),
-                           ...) {
-
+                      name = c(
+                        "AIC", "BIC", "logLik", "deviance",
+                        "cov_type", "n_theta", "n_subjects", "n_timepoints",
+                        "n_obs", "vcov", "varcor", "formula", "dataset",
+                        "reml", "method", "convergence", "evaluations",
+                        "conv_message", "call"
+                      ),
+                      ...) {
   assert_class(object, "mmrm_tmb")
   name <- match.arg(name, several.ok = TRUE)
 
-  if (length(name <- as.character(name)) > 1) {
-    names(name) <- name
-    return(lapply(name, component, object = object))
-  }
-
-  switch(name,
+  list_components <- sapply(
+    X = name,
+    FUN = switch,
     "reml" = object$reml,
     "method" = object$tmb_object$method,
     "convergence" = object$opt_details$convergence,
@@ -258,4 +248,9 @@ component <- function(object,
       name, class(object)
     ))
   )
+
+  if (length(list_components) == 1) {
+    return(list_components[[1]])
+    } else return(list_components)
+
 }
