@@ -136,8 +136,6 @@ test_that("print.mmrm_tmb works as expected", {
 test_that("component works as expected", {
   object_mmrm_tmb <- get_mmrm_tmb()
   object_mmrm <- get_mmrm()
-  expect_snapshot_output(component(object_mmrm_tmb), cran = FALSE)
-  expect_snapshot_output(component(object_mmrm), cran = FALSE)
 
   expect_equal(names(component(object_mmrm_tmb)),
                c("AIC", "BIC", "logLik", "deviance",
