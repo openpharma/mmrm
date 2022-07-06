@@ -62,7 +62,7 @@ model.frame.mmrm_tmb <- function(formula, full = FALSE, ...) {
 #' # Log likelihood given the estimated parameters:
 #' logLik(object)
 logLik.mmrm_tmb <- function(object, ...) {
-  component(object, "logLik")
+  -component(object, "neg_log_lik")
 }
 
 #' @describeIn mmrm_tmb_methods obtains the used formula.
@@ -175,15 +175,12 @@ print.mmrm_tmb <- function(x,
   cat("Method: ")
   cat(ifelse(component(x, "reml"), "REML", "ML"))
   cat("\nDeviance: ")
-  cat(component(x, "deviance"))
+  cat(deviance(x))
 
   cat("\n\nCoefficients:\n")
   print(coef(x))
 
   cat("\nModel Inference Optimization:\n")
-  cat("Optimizer: ")
-
-  cat(component(x, "method"))
 
   cat(ifelse(component(x, "convergence") == 0, "\nConverged", "\nFailed to converge"))
   cat(
@@ -201,16 +198,38 @@ print.mmrm_tmb <- function(x,
 #' @param name of the component to be retrieved
 #' @param \dots ignored, for method compatibility
 #'
+#' @details Available `component()` names are as follows:
+#' * **call** The low-level function call which generated the model.
+#' * **formula** The model formula.
+#' * **dataset** The data set name.
+#' * **cov_type** The covariance structure type.
+#' * **n_theta** The number of parameters.
+#' * **n_subjects** The number of subjects.
+#' * **n_timepoints** The number of modeled time points.
+#' * **n_obs**
+#' * **reml** Whether REML was used (ML was used if `FALSE`)
+#' * **neg_log_lik** The negative log likelihood.
+#' * **convergence** The convergence code from optimizer.
+#' * **conv_message** The message accompanying the convergence code.
+#' * **evaluations** The number of function evaluations for optimization.
+#' * **vcov**
+#' * **varcor**
+#' * **theta_est**
+#' * **beta_est**
+#' * **theta_vcov**
+#' * **x_matrix**
+#' * **y_vector**
+#' * **jac_list**
+#'
 #' @seealso \code{\link[lme4]{getME}}
 #' @seealso \code{\link[glmmTMB]{getME}}
 #'
 #' @export
 component <- function(object,
                       name = c(
-                        "AIC", "BIC", "logLik", "deviance",
                         "cov_type", "n_theta", "n_subjects", "n_timepoints",
                         "n_obs", "vcov", "varcor", "formula", "dataset",
-                        "reml", "method", "convergence", "evaluations",
+                        "reml", "convergence", "evaluations",
                         "conv_message", "call", "theta_est",
                         "beta_est", "x_matrix", "y_vector", "neg_log_lik",
                         "jac_list", "theta_vcov"
@@ -229,14 +248,9 @@ component <- function(object,
     "formula" = deparse(object$call$formula),
     "dataset" = object$call$data,
     "reml" = object$reml,
-    "method" = object$tmb_object$method,
     "conv_message" = object$opt_details$message,
     # Numeric of length 1
     "convergence" = object$opt_details$convergence,
-    "AIC" = AIC(object),
-    "BIC" = BIC(object),
-    "deviance" = deviance(object),
-    "logLik" = -object$neg_log_lik,
     "neg_log_lik" = object$neg_log_lik,
     "n_theta" = length(object$theta_est),
     "n_subjects" = object$tmb_data$n_subjects,

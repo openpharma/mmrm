@@ -41,10 +41,10 @@
 
 component(
   object,
-  name = c("AIC", "BIC", "logLik", "deviance", "cov_type", "n_theta", "n_subjects",
-    "n_timepoints", "n_obs", "vcov", "varcor", "formula", "dataset", "reml", "method",
-    "convergence", "evaluations", "conv_message", "call", "theta_est", "beta_est",
-    "x_matrix", "y_vector", "neg_log_lik", "jac_list", "theta_vcov"),
+  name = c("cov_type", "n_theta", "n_subjects", "n_timepoints", "n_obs", "vcov",
+    "varcor", "formula", "dataset", "reml", "convergence", "evaluations", "conv_message",
+    "call", "theta_est", "beta_est", "x_matrix", "y_vector", "neg_log_lik", "jac_list",
+    "theta_vcov"),
   ...
 )
 }
@@ -72,6 +72,32 @@ is the classical AIC.}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+}
+\details{
+Available \code{component()} names are as follows:
+\itemize{
+\item \strong{call} The low-level function call which generated the model.
+\item \strong{formula} The model formula.
+\item \strong{dataset} The data set name.
+\item \strong{cov_type} The covariance structure type.
+\item \strong{n_theta} The number of parameters.
+\item \strong{n_subjects} The number of subjects.
+\item \strong{n_timepoints} The number of modeled time points.
+\item \strong{n_obs}
+\item \strong{reml} Whether REML was used (ML was used if FALSE)
+\item \strong{neg_log_lik} The negative log likelihood.
+\item \strong{convergence} The convergence code from optimizer.
+\item \strong{conv_message} The message accompanying the convergence code.
+\item \strong{evaluations} The number of function evaluations for optimization.
+\item \strong{vcov}
+\item \strong{varcor}
+\item \strong{theta_est}
+\item \strong{beta_est}
+\item \strong{theta_vcov}
+\item \strong{x_matrix}
+\item \strong{y_vector}
+\item \strong{jac_list}
+}
 }
 \section{Functions}{
 \itemize{

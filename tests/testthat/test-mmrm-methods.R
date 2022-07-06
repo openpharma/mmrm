@@ -23,7 +23,7 @@ test_that("summary works as expected", {
   expect_named(
     result,
     c(
-      "logLik", "cov_type", "n_theta", "n_subjects", "n_timepoints", "n_obs",
+      "cov_type", "n_theta", "n_subjects", "n_timepoints", "n_obs",
       "vcov", "varcor", "coefficients",  "aic_list", "call"
     )
   )
