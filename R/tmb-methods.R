@@ -212,7 +212,8 @@ component <- function(object,
                         "n_obs", "vcov", "varcor", "formula", "dataset",
                         "reml", "method", "convergence", "evaluations",
                         "conv_message", "call", "theta_est",
-                        "beta_est", "x_matrix", "y_vector", "neg_log_lik"
+                        "beta_est", "x_matrix", "y_vector", "neg_log_lik",
+                        "jac_list", "theta_vcov"
                       ),
                       ...) {
   assert_class(object, "mmrm_tmb")
@@ -243,25 +244,26 @@ component <- function(object,
     "n_obs" = length(object$tmb_data$y_vector),
     # Numeric of length > 1
     "evaluations" = unlist(ifelse(is.null(object$opt_details$evaluations),
-    list(object$opt_details$counts),
-    list(object$opt_details$evaluations)
-  )),
+      list(object$opt_details$counts),
+      list(object$opt_details$evaluations)
+    )),
     "beta_est" = object$beta_est,
     "theta_est" = object$theta_est,
     "y_vector" = object$tmb_data$y_vector,
+    "jac_list" = object$jac_list,
     # Matrices
     "vcov" = object$beta_vcov,
     "varcor" = object$cov,
     "x_matrix" = object$tmb_data$x_matrix,
+    "theta_vcov" = object$theta_vcov,
     # If not found
-  "..foo.." =
-    stop(sprintf(
-      "component '%s' is not available for class \"%s\"",
-      name, paste0(class(object),collapse =  ", ")
-    )), simplify = FALSE
+    "..foo.." =
+      stop(sprintf(
+        "component '%s' is not available for class \"%s\"",
+        name, paste0(class(object), collapse = ", ")
+      )), simplify = FALSE
   )
 
   if (length(name) == 1) list_components[[1]] else list_components
-
 }
 

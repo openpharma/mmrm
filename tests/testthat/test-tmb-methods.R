@@ -144,15 +144,17 @@ test_that("component works as expected", {
                  "cov_type", "n_theta", "n_subjects", "n_timepoints",
                  "n_obs", "vcov", "varcor", "formula", "dataset",
                  "reml", "method", "convergence", "evaluations",
-                 "conv_message", "call", "theta_est" ,
-                 "beta_est", "x_matrix", "y_vector", "neg_log_lik"))
+                 "conv_message", "call", "theta_est",
+                 "beta_est", "x_matrix", "y_vector", "neg_log_lik",
+                 "jac_list", "theta_vcov"))
   expect_equal(names(component(object_mmrm)),
                c("AIC", "BIC", "logLik", "deviance",
                  "cov_type", "n_theta", "n_subjects", "n_timepoints",
                  "n_obs", "vcov", "varcor", "formula", "dataset",
                  "reml", "method", "convergence", "evaluations",
-                 "conv_message", "call",  "theta_est" ,
-                 "beta_est", "x_matrix", "y_vector", "neg_log_lik"))
+                 "conv_message", "call",  "theta_est",
+                 "beta_est", "x_matrix", "y_vector", "neg_log_lik",
+                 "jac_list", "theta_vcov"))
 
   expect_numeric(component(object_mmrm_tmb, "AIC"), lower = 0)
 
