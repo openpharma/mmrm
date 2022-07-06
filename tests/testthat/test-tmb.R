@@ -319,10 +319,10 @@ test_that("h_mmrm_tmb_fit works as expected", {
 
 test_that("h_mmrm_tmb_fit works even in cases where AVISIT has unused factor levels", {
   tmp_data <- fev_data
-  tmp_data$FEV1_BL[1] <- tmp_data$FEV1[1] <- NA
-  tmp_data$AVISIT <- as.character(tmp_data$AVISIT)
-  tmp_data$AVISIT[1] <- "SCREENING"
-  tmp_data$AVISIT <- as.factor(tmp_data$AVISIT)
+  tmp_data$FEV1_BL[1] <- tmp_data$FEV1[1] <- NA # nolint
+  tmp_data$AVISIT <- as.character(tmp_data$AVISIT) # nolint
+  tmp_data$AVISIT[1] <- "SCREENING" # nolint
+  tmp_data$AVISIT <- as.factor(tmp_data$AVISIT) # nolint
 
   formula <- FEV1 ~ FEV1_BL + RACE + us(AVISIT | USUBJID)
   data <- tmp_data
