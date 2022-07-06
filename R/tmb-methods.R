@@ -21,7 +21,7 @@ NULL
 #' # Estimated coefficients:
 #' coef(object)
 coef.mmrm_tmb <- function(object, ...) {
-  object$beta_est
+  component(object, "beta_est")
 }
 
 #' @describeIn mmrm_tmb_methods obtains the fitted values.
@@ -31,7 +31,7 @@ coef.mmrm_tmb <- function(object, ...) {
 #' # Fitted values:
 #' fitted(object)
 fitted.mmrm_tmb <- function(object, ...) {
-  fitted_col <- object$tmb_data$x_matrix %*% object$beta_est
+  fitted_col <- component(object, "x_matrix") %*%  component(object, "beta_est")
   fitted_col[, 1L, drop = TRUE]
 }
 
@@ -62,7 +62,7 @@ model.frame.mmrm_tmb <- function(formula, full = FALSE, ...) {
 #' # Log likelihood given the estimated parameters:
 #' logLik(object)
 logLik.mmrm_tmb <- function(object, ...) {
-  -object$neg_log_lik
+  component(object, "logLik")
 }
 
 #' @describeIn mmrm_tmb_methods obtains the used formula.
@@ -83,7 +83,7 @@ formula.mmrm_tmb <- function(x, ...) {
 #' # Variance-covariance matrix estimate for coefficients:
 #' vcov(object)
 vcov.mmrm_tmb <- function(object, ...) {
-  object$beta_vcov
+  component(object, "vcov")
 }
 
 #' @describeIn mmrm_tmb_methods obtains the variance-covariance matrix estimate
@@ -99,7 +99,7 @@ vcov.mmrm_tmb <- function(object, ...) {
 VarCorr.mmrm_tmb <- function(x, sigma = NA, ...) { # nolint
   assert_scalar_na(sigma)
 
-  x$cov
+  component(x, name = "varcor")
 }
 
 #' @describeIn mmrm_tmb_methods obtains the deviance, which is defined here
@@ -111,7 +111,7 @@ VarCorr.mmrm_tmb <- function(x, sigma = NA, ...) { # nolint
 #' # REML criterion (twice the negative log likelihood):
 #' deviance(object)
 deviance.mmrm_tmb <- function(object, ...) {
-  2 * object$neg_log_lik
+  2 * component(object, "neg_log_lik")
 }
 
 #' @describeIn mmrm_tmb_methods obtains the Akaike Information Criterion,
@@ -132,17 +132,17 @@ AIC.mmrm_tmb <- function(object, corrected = FALSE, ..., k = 2) { # nolint
   assert_flag(corrected)
   assert_number(k, lower = 1)
 
-  n_theta <- length(object$theta_est)
+  n_theta <- length(component(object, "theta_est"))
   df <- if (!corrected) {
     n_theta
   } else {
-    n_obs <- length(object$tmb_data$y_vector)
-    n_beta <- length(object$beta_est)
+    n_obs <- length(component(object, "y_vector"))
+    n_beta <- length(component(object, "beta_est"))
     m <- max(n_theta + 2, n_obs - n_beta)
     n_theta * (m / (m - n_theta - 1))
   }
 
-  2 * object$neg_log_lik + k * df
+  2 * component(object, "neg_log_lik") + k * df
 }
 
 #' @describeIn mmrm_tmb_methods obtains the Bayesian Information Criterion,
@@ -154,7 +154,7 @@ AIC.mmrm_tmb <- function(object, corrected = FALSE, ..., k = 2) { # nolint
 #' # BIC:
 #' BIC(object)
 BIC.mmrm_tmb <- function(object, ...) { # nolint
-  k <- log(object$tmb_data$n_subjects)
+  k <- log(component(object, "n_subjects"))
   AIC(object, corrected = FALSE, k = k)
 }
 
@@ -211,46 +211,57 @@ component <- function(object,
                         "cov_type", "n_theta", "n_subjects", "n_timepoints",
                         "n_obs", "vcov", "varcor", "formula", "dataset",
                         "reml", "method", "convergence", "evaluations",
-                        "conv_message", "call"
+                        "conv_message", "call", "theta_est",
+                        "beta_est", "x_matrix", "y_vector", "neg_log_lik"
                       ),
                       ...) {
   assert_class(object, "mmrm_tmb")
   name <- match.arg(name, several.ok = TRUE)
 
+
   list_components <- sapply(
     X = name,
     FUN = switch,
+    "call" = object$call,
+    # Strings
+    "cov_type" = object$formula_parts$cov_type,
+    "formula" = deparse(object$call$formula),
+    "dataset" = object$call$data,
     "reml" = object$reml,
     "method" = object$tmb_object$method,
-    "convergence" = object$opt_details$convergence,
     "conv_message" = object$opt_details$message,
-    "evaluations" = unlist(ifelse(is.null(object$opt_details$evaluations),
-      list(object$opt_details$counts),
-      list(object$opt_details$evaluations)
-    )),
-    "call" = object$call,
+    # Numeric of length 1
+    "convergence" = object$opt_details$convergence,
     "AIC" = AIC(object),
     "BIC" = BIC(object),
-    "logLik" = logLik(object),
     "deviance" = deviance(object),
-    "logLik" = logLik(object),
-    "cov_type" = object$formula_parts$cov_type,
+    "logLik" = -object$neg_log_lik,
+    "neg_log_lik" = object$neg_log_lik,
     "n_theta" = length(object$theta_est),
     "n_subjects" = object$tmb_data$n_subjects,
     "n_timepoints" = object$tmb_data$n_visits,
     "n_obs" = length(object$tmb_data$y_vector),
-    "vcov" = vcov(object),
-    "varcor" = VarCorr(object),
-    "formula" = deparse(object$call$formula),
-    "dataset" = object$call$data,
+    # Numeric of length > 1
+    "evaluations" = unlist(ifelse(is.null(object$opt_details$evaluations),
+    list(object$opt_details$counts),
+    list(object$opt_details$evaluations)
+  )),
+    "beta_est" = object$beta_est,
+    "theta_est" = object$theta_est,
+    "y_vector" = object$tmb_data$y_vector,
+    # Matrices
+    "vcov" = object$beta_vcov,
+    "varcor" = object$cov,
+    "x_matrix" = object$tmb_data$x_matrix,
+    # If not found
+  "..foo.." =
     stop(sprintf(
       "component '%s' is not available for class \"%s\"",
-      name, class(object)
-    ))
+      name, paste0(class(object),collapse =  ", ")
+    )), simplify = FALSE
   )
 
-  if (length(list_components) == 1) {
-    return(list_components[[1]])
-    } else return(list_components)
+  if (length(name) == 1) list_components[[1]] else list_components
 
 }
+

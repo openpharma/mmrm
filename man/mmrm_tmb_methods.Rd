@@ -43,7 +43,8 @@ component(
   object,
   name = c("AIC", "BIC", "logLik", "deviance", "cov_type", "n_theta", "n_subjects",
     "n_timepoints", "n_obs", "vcov", "varcor", "formula", "dataset", "reml", "method",
-    "convergence", "evaluations", "conv_message", "call"),
+    "convergence", "evaluations", "conv_message", "call", "theta_est", "beta_est",
+    "x_matrix", "y_vector", "neg_log_lik"),
   ...
 )
 }

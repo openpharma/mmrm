@@ -136,7 +136,6 @@ test_that("print.mmrm_tmb works as expected", {
 test_that("component works as expected", {
   object_mmrm_tmb <- get_mmrm_tmb()
   object_mmrm <- get_mmrm()
-
   expect_snapshot_output(component(object_mmrm_tmb), cran = FALSE)
   expect_snapshot_output(component(object_mmrm), cran = FALSE)
 
@@ -145,15 +144,27 @@ test_that("component works as expected", {
                  "cov_type", "n_theta", "n_subjects", "n_timepoints",
                  "n_obs", "vcov", "varcor", "formula", "dataset",
                  "reml", "method", "convergence", "evaluations",
-                 "conv_message", "call"))
+                 "conv_message", "call", "theta_est" ,
+                 "beta_est", "x_matrix", "y_vector", "neg_log_lik"))
   expect_equal(names(component(object_mmrm)),
                c("AIC", "BIC", "logLik", "deviance",
                  "cov_type", "n_theta", "n_subjects", "n_timepoints",
                  "n_obs", "vcov", "varcor", "formula", "dataset",
                  "reml", "method", "convergence", "evaluations",
-                 "conv_message", "call"))
+                 "conv_message", "call",  "theta_est" ,
+                 "beta_est", "x_matrix", "y_vector", "neg_log_lik"))
 
-  expect_length(component(object_mmrm_tmb, "AIC"), 1)
-  expect_length(component(object_mmrm_tmb, c("AIC", "NULL", "BIC")), 2)
+  expect_numeric(component(object_mmrm_tmb, "AIC"), lower = 0)
 
+  expect_list(component(object_mmrm_tmb, c("AIC", "NULL", "BIC")),
+                 len = 2)
+  expect_list(component(object_mmrm_tmb, c("AIC", "NULL", "BIC", "varcor")),
+              len = 3)
+  expect_named(component(object_mmrm_tmb, c("AIC", "NULL", "BIC", "varcor")),
+              c("AIC", "BIC", "varcor"))
+})
+
+test_that("component returns matrices as expected", {
+  object_mmrm <- get_mmrm()
+  expect_identical(component(object_mmrm, "varcor"), component(object_mmrm)$varcor)
 })
