@@ -331,7 +331,7 @@ h_mmrm_tmb_fit <- function(tmb_object,
 
   tmb_report <- tmb_object$report(par = tmb_opt$par)
   x_matrix_cols <- colnames(tmb_data$x_matrix)
-  visit_names <- levels(data[[formula_parts$visit_var]])
+  visit_names <- levels(tmb_data$full_frame[[formula_parts$visit_var]])
   cov <- tcrossprod(tmb_report$covariance_lower_chol)
   dimnames(cov) <- list(visit_names, visit_names)
   beta_est <- tmb_report$beta
@@ -431,7 +431,7 @@ h_mmrm_tmb <- function(formula,
     tmb_opt$value <- NULL
   }
   h_mmrm_tmb_assert_opt(tmb_object, tmb_opt)
-  fit <- h_mmrm_tmb_fit(tmb_object, tmb_opt, tmb_data$full_frame, formula_parts, tmb_data)
+  fit <- h_mmrm_tmb_fit(tmb_object, tmb_opt, data, formula_parts, tmb_data)
 
   fun_call <- match.call()
   fun_call$formula <- eval(formula_parts$formula)

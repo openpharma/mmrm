@@ -317,55 +317,6 @@ test_that("h_mmrm_tmb_fit works as expected", {
   expect_class(result$tmb_data, "mmrm_tmb_data")
 })
 
-test_that("h_mmrm_tmb_fit works even in cases where AVISIT has unused factor levels", {
-  tmp_data <- fev_data
-  tmp_data$FEV1_BL[1] <- tmp_data$FEV1[1] <- NA # nolint
-  tmp_data$AVISIT <- as.character(tmp_data$AVISIT) # nolint
-  tmp_data$AVISIT[1] <- "SCREENING" # nolint
-  tmp_data$AVISIT <- as.factor(tmp_data$AVISIT) # nolint
-
-  formula <- FEV1 ~ FEV1_BL + RACE + us(AVISIT | USUBJID)
-  data <- tmp_data
-  reml <- TRUE
-  optimizer <- "L-BFGS-B"
-  start <- NULL
-
-  control <- h_mmrm_tmb_control(
-    optimizer = stats::optim,
-    optimizer_control = list(),
-    optimizer_args = list(method = optimizer)
-  )
-
-  formula_parts <- h_mmrm_tmb_formula_parts(formula)
-  tmb_data <- h_mmrm_tmb_data(formula_parts, data, reml)
-  tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start)
-
-  tmb_object <- TMB::MakeADFun(
-    data = tmb_data,
-    parameters = tmb_parameters,
-    hessian = TRUE,
-    DLL = "mmrm",
-    silent = TRUE
-  )
-  h_mmrm_tmb_assert_start(tmb_object)
-  tmb_opt <- with(
-    tmb_object,
-    do.call(
-      what = control$optimizer,
-      args = c(
-        list(par, fn, gr, control = control$optimizer_control),
-        control$optimizer_args
-      )
-    )
-  )
-  tmb_opt$objective <- tmb_opt$value
-  tmb_opt$value <- NULL
-
-  # final checks (error that was there previously and expected behavior)
-  expect_error(fit <- h_mmrm_tmb_fit(tmb_object, tmb_opt, data, formula_parts, tmb_data))
-  expect_silent(fit <- h_mmrm_tmb_fit(tmb_object, tmb_opt, tmb_data$full_frame, formula_parts, tmb_data))
-})
-
 # h_mmrm_tmb ----
 
 ## unstructured ----
@@ -579,4 +530,23 @@ test_that("h_mmrm_tmb saves data name in call element as expected", {
   saved_call <- fit$call
   expect_class(saved_call, "call")
   expect_identical(saved_call$data, "fev_data")
+})
+
+test_that("h_mmrm_tmb works even when timepoint variable has unused factor levels", {
+  # Create a data set where one visit level only has NA in the data.
+  tmp_data <- fev_data
+  tmp_data$FEV1_BL[1] <- tmp_data$FEV1[1] <- NA # nolint
+  tmp_data$AVISIT <- as.character(tmp_data$AVISIT) # nolint
+  tmp_data$AVISIT[1] <- "SCREENING" # nolint
+  tmp_data$AVISIT <- as.factor(tmp_data$AVISIT) # nolint
+
+  result <- expect_silent(h_mmrm_tmb(
+    FEV1 ~ FEV1_BL + RACE + us(AVISIT | USUBJID),
+    data = tmp_data
+  ))
+  expect_class(result, "mmrm_tmb")
+  expect_identical(
+    rownames(VarCorr(result)),
+    c("VIS1", "VIS2", "VIS3", "VIS4")
+  )
 })
