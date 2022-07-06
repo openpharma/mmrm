@@ -531,3 +531,22 @@ test_that("h_mmrm_tmb saves data name in call element as expected", {
   expect_class(saved_call, "call")
   expect_identical(saved_call$data, "fev_data")
 })
+
+test_that("h_mmrm_tmb works even when timepoint variable has unused factor levels", {
+  # Create a data set where one visit level only has NA in the data.
+  tmp_data <- fev_data
+  tmp_data$FEV1_BL[1] <- tmp_data$FEV1[1] <- NA # nolint
+  tmp_data$AVISIT <- as.character(tmp_data$AVISIT) # nolint
+  tmp_data$AVISIT[1] <- "SCREENING" # nolint
+  tmp_data$AVISIT <- as.factor(tmp_data$AVISIT) # nolint
+
+  result <- expect_silent(h_mmrm_tmb(
+    FEV1 ~ FEV1_BL + RACE + us(AVISIT | USUBJID),
+    data = tmp_data
+  ))
+  expect_class(result, "mmrm_tmb")
+  expect_identical(
+    rownames(VarCorr(result)),
+    c("VIS1", "VIS2", "VIS3", "VIS4")
+  )
+})
