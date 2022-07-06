@@ -180,7 +180,7 @@ print.mmrm_tmb <- function(x,
   cat("\n\nCoefficients:\n")
   print(coef(x))
 
-  cat("\nModel Inference Optimization:\n")
+  cat("\nModel Inference Optimization:")
 
   cat(ifelse(component(x, "convergence") == 0, "\nConverged", "\nFailed to converge"))
   cat(
@@ -199,27 +199,27 @@ print.mmrm_tmb <- function(x,
 #' @param \dots ignored, for method compatibility
 #'
 #' @details Available `component()` names are as follows:
-#' * **call** The low-level function call which generated the model.
-#' * **formula** The model formula.
-#' * **dataset** The data set name.
-#' * **cov_type** The covariance structure type.
-#' * **n_theta** The number of parameters.
-#' * **n_subjects** The number of subjects.
-#' * **n_timepoints** The number of modeled time points.
-#' * **n_obs**
-#' * **reml** Whether REML was used (ML was used if `FALSE`)
-#' * **neg_log_lik** The negative log likelihood.
-#' * **convergence** The convergence code from optimizer.
-#' * **conv_message** The message accompanying the convergence code.
-#' * **evaluations** The number of function evaluations for optimization.
-#' * **vcov**
-#' * **varcor**
-#' * **theta_est**
-#' * **beta_est**
-#' * **theta_vcov**
-#' * **x_matrix**
-#' * **y_vector**
-#' * **jac_list**
+#' - 'call': low-level function call which generated the model.
+#' - 'formula': model formula.
+#' - 'dataset': data set name.
+#' - 'cov_type': covariance structure type.
+#' - 'n_theta': number of parameters.
+#' - 'n_subjects': number of subjects.
+#' - 'n_timepoints': number of modeled time points.
+#' - 'n_obs': total number of observations.
+#' - 'reml': was REML used (ML was used if \code{FALSE}).
+#' - 'neg_log_lik': negative log likelihood.
+#' - 'convergence': convergence code from optimizer.
+#' - 'conv_message': message accompanying the convergence code.
+#' - 'evaluations': number of function evaluations for optimization.
+#' - 'vcov': estimated variance-covariance matrix of coefficients.
+#' - 'varcor': estimated covariance matrix for residuals.
+#' - 'theta_est': estimated variance parameters.
+#' - 'beta_est': estimated coefficients.
+#' - 'theta_vcov':  estimated variance-covariance matrix of variance parameters.
+#' - 'x_matrix': design matrix used.
+#' - 'y_vector': response vector used.
+#' - 'jac_list': Jacobian, see  [h_jac_list()] for details.
 #'
 #' @seealso \code{\link[lme4]{getME}}
 #' @seealso \code{\link[glmmTMB]{getME}}

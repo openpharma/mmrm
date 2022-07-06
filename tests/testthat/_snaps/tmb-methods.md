@@ -16,7 +16,6 @@
                          5.879103 
     
     Model Inference Optimization:
-    
     Converged with code 0 and message: relative convergence (4)
 
 ---
@@ -45,6 +44,5 @@
                        0.62422703 
     
     Model Inference Optimization:
-    
     Converged with code 0 and message: convergence: rel_reduction_of_f <= factr*epsmch
 

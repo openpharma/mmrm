@@ -76,27 +76,27 @@ is the classical AIC.}
 \details{
 Available \code{component()} names are as follows:
 \itemize{
-\item \strong{call} The low-level function call which generated the model.
-\item \strong{formula} The model formula.
-\item \strong{dataset} The data set name.
-\item \strong{cov_type} The covariance structure type.
-\item \strong{n_theta} The number of parameters.
-\item \strong{n_subjects} The number of subjects.
-\item \strong{n_timepoints} The number of modeled time points.
-\item \strong{n_obs}
-\item \strong{reml} Whether REML was used (ML was used if FALSE)
-\item \strong{neg_log_lik} The negative log likelihood.
-\item \strong{convergence} The convergence code from optimizer.
-\item \strong{conv_message} The message accompanying the convergence code.
-\item \strong{evaluations} The number of function evaluations for optimization.
-\item \strong{vcov}
-\item \strong{varcor}
-\item \strong{theta_est}
-\item \strong{beta_est}
-\item \strong{theta_vcov}
-\item \strong{x_matrix}
-\item \strong{y_vector}
-\item \strong{jac_list}
+\item 'call': low-level function call which generated the model.
+\item 'formula': model formula.
+\item 'dataset': data set name.
+\item 'cov_type': covariance structure type.
+\item 'n_theta': number of parameters.
+\item 'n_subjects': number of subjects.
+\item 'n_timepoints': number of modeled time points.
+\item 'n_obs': total number of observations.
+\item 'reml': was REML used (ML was used if \code{FALSE}).
+\item 'neg_log_lik': negative log likelihood.
+\item 'convergence': convergence code from optimizer.
+\item 'conv_message': message accompanying the convergence code.
+\item 'evaluations': number of function evaluations for optimization.
+\item 'vcov': estimated variance-covariance matrix of coefficients.
+\item 'varcor': estimated covariance matrix for residuals.
+\item 'theta_est': estimated variance parameters.
+\item 'beta_est': estimated coefficients.
+\item 'theta_vcov':  estimated variance-covariance matrix of variance parameters.
+\item 'x_matrix': design matrix used.
+\item 'y_vector': response vector used.
+\item 'jac_list': Jacobian, see  \code{\link[=h_jac_list]{h_jac_list()}} for details.
 }
 }
 \section{Functions}{
