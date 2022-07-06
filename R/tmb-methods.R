@@ -249,8 +249,6 @@ component <- function(object,
     ))
   )
 
-  if (length(list_components) == 1) {
-    return(list_components[[1]])
-    } else return(list_components)
+  if (length(list_components) == 1) list_components[[1]] else list_components
 
 }
