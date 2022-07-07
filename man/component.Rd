@@ -2,51 +2,48 @@
 % Please edit documentation in R/component.R
 \name{component}
 \alias{component}
-\title{Component getter for \code{mmrm_tmb} objects}
+\title{Component Access for \code{mmrm_tmb} Objects}
 \usage{
 component(
   object,
   name = c("cov_type", "n_theta", "n_subjects", "n_timepoints", "n_obs", "vcov",
     "varcor", "formula", "dataset", "reml", "convergence", "evaluations", "conv_message",
     "call", "theta_est", "beta_est", "x_matrix", "y_vector", "neg_log_lik", "jac_list",
-    "theta_vcov"),
-  ...
+    "theta_vcov")
 )
 }
 \arguments{
-\item{object}{a \code{mmrm_tmb} object}
+\item{object}{(\code{mmrm_tmb})\cr the fitted MMRM.}
 
-\item{name}{of the component to be retrieved}
-
-\item{\dots}{ignored, for method compatibility}
+\item{name}{(\code{character})\cr the component(s) to be retrieved.}
 }
 \description{
-Component getter for \code{mmrm_tmb} objects
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
 \details{
 Available \code{component()} names are as follows:
 \itemize{
-\item 'call': low-level function call which generated the model.
-\item 'formula': model formula.
-\item 'dataset': data set name.
-\item 'cov_type': covariance structure type.
-\item 'n_theta': number of parameters.
-\item 'n_subjects': number of subjects.
-\item 'n_timepoints': number of modeled time points.
-\item 'n_obs': total number of observations.
-\item 'reml': was REML used (ML was used if \code{FALSE}).
-\item 'neg_log_lik': negative log likelihood.
-\item 'convergence': convergence code from optimizer.
-\item 'conv_message': message accompanying the convergence code.
-\item 'evaluations': number of function evaluations for optimization.
-\item 'vcov': estimated variance-covariance matrix of coefficients.
-\item 'varcor': estimated covariance matrix for residuals.
-\item 'theta_est': estimated variance parameters.
-\item 'beta_est': estimated coefficients.
-\item 'theta_vcov':  estimated variance-covariance matrix of variance parameters.
-\item 'x_matrix': design matrix used.
-\item 'y_vector': response vector used.
-\item 'jac_list': Jacobian, see  \code{\link[=h_jac_list]{h_jac_list()}} for details.
+\item \code{call}: low-level function call which generated the model.
+\item \code{formula}: model formula.
+\item \code{dataset}: data set name.
+\item \code{cov_type}: covariance structure type.
+\item \code{n_theta}: number of parameters.
+\item \code{n_subjects}: number of subjects.
+\item \code{n_timepoints}: number of modeled time points.
+\item \code{n_obs}: total number of observations.
+\item \code{reml}: was REML used (ML was used if \code{FALSE}).
+\item \code{neg_log_lik}: negative log likelihood.
+\item \code{convergence}: convergence code from optimizer.
+\item \code{conv_message}: message accompanying the convergence code.
+\item \code{evaluations}: number of function evaluations for optimization.
+\item \code{vcov}: estimated variance-covariance matrix of coefficients.
+\item \code{varcor}: estimated covariance matrix for residuals.
+\item \code{theta_est}: estimated variance parameters.
+\item \code{beta_est}: estimated coefficients.
+\item \code{theta_vcov}:  estimated variance-covariance matrix of variance parameters.
+\item \code{x_matrix}: design matrix used.
+\item \code{y_vector}: response vector used.
+\item \code{jac_list}: Jacobian, see  \code{\link[=h_jac_list]{h_jac_list()}} for details.
 }
 }
 \seealso{
