@@ -51,15 +51,18 @@ summary.mmrm <- function(object, ...) {
   aic_list <- component(object, c("AIC", "BIC", "logLik", "deviance"))
   coefficients <- h_coef_table(object)
   call <- stats::getCall(object)
-  components <- component(object, c("logLik", "cov_type", "n_theta",
-                                    "n_subjects", "n_timepoints", "n_obs",
-                                    "vcov", "varcor"))
+  components <- component(object, c(
+    "logLik", "cov_type", "n_theta",
+    "n_subjects", "n_timepoints", "n_obs",
+    "vcov", "varcor"
+  ))
 
   structure(
     c(components,
       coefficients = list(coefficients),
       aic_list = list(aic_list),
-      call = list(call)),
+      call = list(call)
+    ),
     class = "summary.mmrm"
   )
 }
@@ -111,7 +114,9 @@ h_print_cov <- function(cov_type, n_theta) {
     toep = "heterogeneous Toeplitz",
     ar1 = "auto-regressive order one",
     ar1h = "heterogeneous auto-regressive order one",
-    ad = "heterogeneous ante-dependence"
+    ad = "heterogeneous ante-dependence",
+    cs = "compound symmetry",
+    csh = "heterogeneous compound symmetry"
   )
   cat(
     "Covariance:  ", cov_definition,

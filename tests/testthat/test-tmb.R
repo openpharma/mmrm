@@ -162,6 +162,24 @@ test_that("h_mmrm_tmb_parameters works as expected with heterogeneous autoregres
   expect_identical(result, expected)
 })
 
+test_that("h_mmrm_tmb_parameters works as expected with compound symmetry", {
+  formula <- FEV1 ~ SEX + cs(AVISIT | USUBJID)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula)
+  tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = TRUE)
+  result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
+  expected <- list(theta = rep(0, 2))
+  expect_identical(result, expected)
+})
+
+test_that("h_mmrm_tmb_parameters works as expected with heterogeneous compound symmetry", {
+  formula <- FEV1 ~ SEX + csh(AVISIT | USUBJID)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula)
+  tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = TRUE)
+  result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
+  expected <- list(theta = rep(0, 5)) # 4 + 1 parameters.
+  expect_identical(result, expected)
+})
+
 # h_mmrm_tmb_assert_start ----
 
 test_that("h_mmrm_tmb_assert_start passes as expected for sane start values", {
@@ -510,6 +528,78 @@ test_that("h_mmrm_tmb works with ar1h covariance structure and REML", {
   expect_equal(result_sds, expected_sds, tolerance = 1e-4)
   result_rho <- map_to_cor(result$theta_est[5])
   expected_rho <- 0.4130
+  expect_equal(result_rho, expected_rho, tolerance = 1e-3)
+})
+
+## compound symmetry ----
+
+### homogeneous ----
+
+test_that("h_mmrm_tmb works with cs covariance structure and ML", {
+  formula <- FEV1 ~ cs(AVISIT | USUBJID)
+  # We can get transient warnings here.
+  result <- suppressWarnings(h_mmrm_tmb(formula, fev_data, reml = FALSE))
+  expect_class(result, "mmrm_tmb")
+  # See design/SAS/sas_cs_ml.txt for the source of numbers.
+  expect_equal(deviance(result), 3918.12214544)
+  expect_equal(sqrt(result$beta_vcov[1, 1]), 0.4273, tolerance = 1e-3)
+  expect_equal(as.numeric(result$beta_est), 42.2897, tolerance = 1e-4)
+  result_sd <- exp(result$theta_est[1])
+  expected_sd <- sqrt(86.7143)
+  expect_equal(result_sd, expected_sd, tolerance = 1e-4)
+  result_rho <- map_to_cor(result$theta_est[2])
+  expected_rho <- 0.06596
+  expect_equal(result_rho, expected_rho, tolerance = 1e-2)
+})
+
+test_that("h_mmrm_tmb works with cs covariance structure and REML", {
+  formula <- FEV1 ~ cs(AVISIT | USUBJID)
+  # We can get transient warnings here.
+  result <- suppressWarnings(h_mmrm_tmb(formula, fev_data, reml = TRUE))
+  expect_class(result, "mmrm_tmb")
+  # See design/SAS/sas_cs_reml.txt for the source of numbers.
+  expect_equal(deviance(result), 3917.98183508)
+  expect_equal(sqrt(result$beta_vcov[1, 1]), 0.4285, tolerance = 1e-4)
+  expect_equal(as.numeric(result$beta_est), 42.2896, tolerance = 1e-4)
+  result_sd <- exp(result$theta_est[1])
+  expected_sd <- sqrt(86.8968)
+  expect_equal(result_sd, expected_sd, tolerance = 1e-4)
+  result_rho <- map_to_cor(result$theta_est[2])
+  expected_rho <- 0.06783
+  expect_equal(result_rho, expected_rho, tolerance = 1e-2)
+})
+
+### heterogeneous ----
+
+test_that("h_mmrm_tmb works with csh covariance structure and ML", {
+  formula <- FEV1 ~ csh(AVISIT | USUBJID)
+  result <- h_mmrm_tmb(formula, fev_data, reml = FALSE)
+  expect_class(result, "mmrm_tmb")
+  # See design/SAS/sas_csh_ml.txt for the source of numbers.
+  expect_equal(deviance(result), 3784.63158043)
+  expect_equal(sqrt(result$beta_vcov[1, 1]), 0.3566, tolerance = 1e-4)
+  expect_equal(as.numeric(result$beta_est), 42.0018, tolerance = 1e-4)
+  result_sds <- exp(result$theta_est[1:4])
+  expected_sds <- sqrt(c(104.54, 38.5253, 31.1656, 178.62))
+  expect_equal(result_sds, expected_sds, tolerance = 1e-4)
+  result_rho <- map_to_cor(result$theta_est[5])
+  expected_rho <- 0.1566
+  expect_equal(result_rho, expected_rho, tolerance = 1e-3)
+})
+
+test_that("h_mmrm_tmb works with csh covariance structure and REML", {
+  formula <- FEV1 ~ csh(AVISIT | USUBJID)
+  result <- h_mmrm_tmb(formula, fev_data, reml = TRUE)
+  expect_class(result, "mmrm_tmb")
+  # See design/SAS/sas_csh_reml.txt for the source of numbers.
+  expect_equal(deviance(result), 3784.85341599)
+  expect_equal(sqrt(result$beta_vcov[1, 1]), 0.3575, tolerance = 1e-4)
+  expect_equal(as.numeric(result$beta_est), 41.9964, tolerance = 1e-4)
+  result_sds <- exp(result$theta_est[1:4])
+  expected_sds <- sqrt(c(104.61, 38.6137, 31.3143, 178.91))
+  expect_equal(result_sds, expected_sds, tolerance = 1e-4)
+  result_rho <- map_to_cor(result$theta_est[5])
+  expected_rho <- 0.1582
   expect_equal(result_rho, expected_rho, tolerance = 1e-3)
 })
 

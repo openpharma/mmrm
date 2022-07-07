@@ -177,4 +177,18 @@ autoregressive covariance structure with total only $k=2$ variance parameters,
 otherwise we obtain the heterogeneous autoregressive covariance structure with $k = m + 1$
 variance parameters.
 
+## Homogeneous (`cs`) and Heterogeneous (`csh`) Compound Symmetry
+
+The compound symmetry covariance structures assume a constant correlation between
+different time points:
+\[
+\rho_{ij} = \rho
+\]
+where $\rho$ is the single correlation parameter here.
+
+Assuming a constant variance in the state-space equation yields a homogeneous
+compound symmetry covariance structure with total only $k=2$ variance parameters,
+otherwise we obtain the heterogeneous compound symmetry covariance structure with
+$k = m + 1$ variance parameters.
+
 # References
