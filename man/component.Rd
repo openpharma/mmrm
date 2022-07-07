@@ -14,11 +14,11 @@ component(
 )
 }
 \arguments{
+\item{object}{a \code{mmrm_tmb} object}
+
 \item{name}{of the component to be retrieved}
 
 \item{\dots}{ignored, for method compatibility}
-
-\item{x}{a \code{mmrm_tmb} object}
 }
 \description{
 Component getter for \code{mmrm_tmb} objects

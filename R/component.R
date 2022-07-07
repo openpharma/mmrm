@@ -1,7 +1,7 @@
 #' Component getter for \code{mmrm_tmb} objects
 #'
 #' @aliases component
-#' @param x a \code{mmrm_tmb} object
+#' @param object a \code{mmrm_tmb} object
 #' @param name of the component to be retrieved
 #' @param \dots ignored, for method compatibility
 #'
