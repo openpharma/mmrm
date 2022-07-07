@@ -88,4 +88,3 @@ component <- function(object,
 
   if (length(name) == 1) list_components[[1]] else list_components
 }
-
