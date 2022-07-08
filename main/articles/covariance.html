@@ -32,7 +32,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9007</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9008</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,12 +55,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -250,6 +244,20 @@ single correlation parameter here.</p>
 <p>Assuming a constant variance in the state-space equation yields a
 homogeneous autoregressive covariance structure with total only <span class="math inline">\(k=2\)</span> variance parameters, otherwise we
 obtain the heterogeneous autoregressive covariance structure with <span class="math inline">\(k = m + 1\)</span> variance parameters.</p>
+</div>
+<div class="section level3">
+<h3 id="homogeneous-cs-and-heterogeneous-csh-compound-symmetry">Homogeneous (<code>cs</code>) and Heterogeneous (<code>csh</code>)
+Compound Symmetry<a class="anchor" aria-label="anchor" href="#homogeneous-cs-and-heterogeneous-csh-compound-symmetry"></a>
+</h3>
+<p>The compound symmetry covariance structures assume a constant
+correlation between different time points: <span class="math display">\[
+\rho_{ij} = \rho
+\]</span> where <span class="math inline">\(\rho\)</span> is the single
+correlation parameter here.</p>
+<p>Assuming a constant variance in the state-space equation yields a
+homogeneous compound symmetry covariance structure with total only <span class="math inline">\(k=2\)</span> variance parameters, otherwise we
+obtain the heterogeneous compound symmetry covariance structure with
+<span class="math inline">\(k = m + 1\)</span> variance parameters.</p>
 </div>
 </div>
 <div class="section level2">
