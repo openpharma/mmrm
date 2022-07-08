@@ -47,7 +47,5 @@ Available \code{component()} names are as follows:
 }
 }
 \seealso{
-\code{\link[lme4]{getME.merMod}}
-
-\code{\link[glmmTMB]{getME.glmmTMB}}
+In the \code{lme4} package there is a similar function \code{getME()}.
 }
