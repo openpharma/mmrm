@@ -165,16 +165,7 @@ h_mmrm_tmb_data <- function(formula_parts,
   subject_zero_inds <- which(!duplicated(full_frame[[formula_parts$subject_var]])) - 1L
   subject_n_visits <- c(utils::tail(subject_zero_inds, -1L), nrow(full_frame)) - subject_zero_inds
   assert_true(identical(subject_n_visits, as.integer(table(full_frame[[formula_parts$subject_var]]))))
-
-  cov_type <- as.integer(switch(formula_parts$cov_type,
-    us = 1,
-    toep = 2,
-    ar1 = 3,
-    ar1h = 4,
-    ad = 5,
-    cs = 6,
-    csh = 7
-  ))
+  cov_type <- formula_parts$cov_type
 
   structure(
     list(
