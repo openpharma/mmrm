@@ -105,9 +105,9 @@ test_that("prepare numbers for heterogeneous autoregressive tests", {
 # compound symemtry ----
 
 test_that("prepare numbers for compound symmetry correlation function test", {
-  x <- 1
+  x <- 1.2
   cor <- map_to_cor(x)
-  expect_equal(cor, 1 / sqrt(2))
+  expect_equal(cor, 0.7682213)
 })
 
 test_that("prepare numbers for homogeneous compound symmetry tests", {

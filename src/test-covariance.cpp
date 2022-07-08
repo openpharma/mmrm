@@ -93,11 +93,11 @@ context("autoregressive") {
 
 context("compound symmetry") {
   test_that("corr_fun_compound_symmetry works as expected") {
-    vector<double> theta {{1.0}};
+    vector<double> theta {{1.2}};
     corr_fun_compound_symmetry<double> test_fun(theta);
-    expect_equal(test_fun(1, 0), 1 / sqrt(2));
-    expect_equal(test_fun(4, 1), 1 / sqrt(2));
-    expect_equal(test_fun(3, 1), 1 / sqrt(2));
+    expect_equal(test_fun(1, 0), 0.7682213);
+    expect_equal(test_fun(4, 1), 0.7682213);
+    expect_equal(test_fun(3, 1), 0.7682213);
   }
 
   test_that("get_compound_symmetry produces expected result") {
