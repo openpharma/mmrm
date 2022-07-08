@@ -57,7 +57,7 @@ h_mmrm_tmb_formula_parts <- function(formula) {
   assert_true(identical(length(formula), 3L))
 
   # Find the covariance specification term in the formula.
-  cov_functions <- c("us", "toep", "ar1", "ar1h", "ad")
+  cov_functions <- c("us", "toep", "ar1", "ar1h", "ad", "cs", "csh")
   terms_object <- stats::terms(formula, specials = cov_functions)
   found_specials <- attr(terms_object, "specials")
   cov_selected <- !sapply(found_specials, is.null)
@@ -171,7 +171,9 @@ h_mmrm_tmb_data <- function(formula_parts,
     toep = 2,
     ar1 = 3,
     ar1h = 4,
-    ad = 5
+    ad = 5,
+    cs = 6,
+    csh = 7
   ))
 
   structure(
@@ -222,7 +224,9 @@ h_mmrm_tmb_parameters <- function(formula_parts,
     toep = 2 * m - 1,
     ar1 = 2,
     ar1h = m + 1,
-    ad = 2 * m - 1
+    ad = 2 * m - 1,
+    cs = 2,
+    csh = m + 1
   ))
   if (!is.null(start_values)) {
     assert_numeric(start_values, len = theta_dim, any.missing = FALSE, finite = TRUE)
