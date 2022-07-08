@@ -28,9 +28,7 @@
 #' - `y_vector`: response vector used.
 #' - `jac_list`: Jacobian, see  [h_jac_list()] for details.
 #'
-#' @seealso \code{\link[lme4]{getME.merMod}}
-#'
-#' @seealso \code{\link[glmmTMB]{getME.glmmTMB}}
+#' @seealso In the `lme4` package there is a similar function `getME()`.
 #'
 #' @export
 component <- function(object,
