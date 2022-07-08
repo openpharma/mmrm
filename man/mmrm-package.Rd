@@ -25,6 +25,7 @@ Authors:
   \item Brian Matthew Lang \email{brian.lang@msd.com}
   \item Craig Gower-Page \email{craig.gower-page@roche.com}
   \item Alessandro Noci \email{alessandro.noci@roche.com}
+  \item Doug Kelkhoff \email{kelkhoff.douglas@gene.com}
 }
 
 }
