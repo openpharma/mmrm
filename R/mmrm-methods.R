@@ -62,7 +62,8 @@ summary.mmrm <- function(object, ...) {
     c(components,
       coefficients = list(coefficients),
       aic_list = list(aic_list),
-      call = list(call)),
+      call = list(call)
+    ),
     class = "summary.mmrm"
   )
 }
@@ -114,7 +115,9 @@ h_print_cov <- function(cov_type, n_theta) {
     toep = "heterogeneous Toeplitz",
     ar1 = "auto-regressive order one",
     ar1h = "heterogeneous auto-regressive order one",
-    ad = "heterogeneous ante-dependence"
+    ad = "heterogeneous ante-dependence",
+    cs = "compound symmetry",
+    csh = "heterogeneous compound symmetry"
   )
   cat(
     "Covariance:  ", cov_definition,

@@ -91,6 +91,38 @@ context("autoregressive") {
   }
 }
 
+context("compound symmetry") {
+  test_that("corr_fun_compound_symmetry works as expected") {
+    vector<double> theta {{1.2}};
+    corr_fun_compound_symmetry<double> test_fun(theta);
+    expect_equal(test_fun(1, 0), 0.7682213);
+    expect_equal(test_fun(4, 1), 0.7682213);
+    expect_equal(test_fun(3, 1), 0.7682213);
+  }
+
+  test_that("get_compound_symmetry produces expected result") {
+    vector<double> theta {{log(2.0), 3.0}};
+    matrix<double> result = get_compound_symmetry(theta, 3);
+    matrix<double> expected(3, 3);
+    expected <<
+      2, 0, 0,
+      1.89736659610103, 0.632455532033676, 0,
+      1.89736659610103, 0.307900211696917, 0.552446793489648;
+    expect_equal_matrix(result, expected);
+  }
+
+  test_that("get_compound_symmetry_heterogeneous produces expected result") {
+    vector<double> theta {{log(1.0), log(2.0), log(3.0), 2.0}};
+    matrix<double> result = get_compound_symmetry_heterogeneous(theta, 3);
+    matrix<double> expected(3, 3);
+    expected <<
+      1, 0, 0,
+      1.78885438199983, 0.894427190999916, 0,
+      2.68328157299975, 0.633436854000505, 1.18269089452568;
+    expect_equal_matrix(result, expected);
+  }
+}
+
 context("get_covariance_lower_chol") {
   test_that("get_covariance_lower_chol gives expected unstructured result") {
     vector<double> theta {{log(1.0), log(2.0), 3.0}};
