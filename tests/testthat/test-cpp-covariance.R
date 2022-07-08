@@ -1,4 +1,4 @@
-# get_ante_dependence ----
+# ante-dependence ----
 
 test_that("prepare numbers for ante_dependence tests", {
   theta <- c(log(1), log(2), log(3), 1, 2)
@@ -26,7 +26,7 @@ test_that("prepare numbers for ante_dependence tests", {
   expect_equal(result, expected, tolerance = 1e-5)
 })
 
-# get_toeplitz ----
+# toeplitz ----
 
 test_that("prepare numbers for toeplitz tests", {
   theta <- c(log(1), log(2), log(3), 1, 2)
@@ -102,12 +102,12 @@ test_that("prepare numbers for heterogeneous autoregressive tests", {
   expect_equal(result, expected, tolerance = 1e-5)
 })
 
-# compound symemtry ----
+# compound symmetry ----
 
 test_that("prepare numbers for compound symmetry correlation function test", {
   x <- 1.2
   cor <- map_to_cor(x)
-  expect_equal(cor, 0.7682213)
+  expect_equal(cor, 0.7682213, tolerance = 1e-4)
 })
 
 test_that("prepare numbers for homogeneous compound symmetry tests", {
