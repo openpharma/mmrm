@@ -14,7 +14,6 @@
 \alias{AIC.mmrm_tmb}
 \alias{BIC.mmrm_tmb}
 \alias{print.mmrm_tmb}
-\alias{component}
 \title{Methods for \code{mmrm_tmb} Objects}
 \usage{
 \method{coef}{mmrm_tmb}(object, ...)
@@ -38,15 +37,6 @@
 \method{BIC}{mmrm_tmb}(object, ...)
 
 \method{print}{mmrm_tmb}(x, ...)
-
-component(
-  object,
-  name = c("AIC", "BIC", "logLik", "deviance", "cov_type", "n_theta", "n_subjects",
-    "n_timepoints", "n_obs", "vcov", "varcor", "formula", "dataset", "reml", "method",
-    "convergence", "evaluations", "conv_message", "call", "theta_est", "beta_est",
-    "x_matrix", "y_vector", "neg_log_lik", "jac_list", "theta_vcov"),
-  ...
-)
 }
 \arguments{
 \item{object}{(\code{mmrm_tmb})\cr the fitted MMRM object.}
@@ -57,7 +47,7 @@ component(
 
 \item{full}{(\code{flag})\cr whether to include subject and visit variable.}
 
-\item{x}{a \code{mmrm_tmb} object}
+\item{x}{(\code{mmrm_tmb})\cr same as \code{object}.}
 
 \item{sigma}{cannot be used (this parameter does not exist in MMRM).}
 
@@ -65,10 +55,6 @@ component(
 
 \item{k}{(\code{number})\cr the penalty per parameter to be used; default \code{k = 2}
 is the classical AIC.}
-
-\item{name}{of the component to be retrieved}
-
-\item{\dots}{ignored, for method compatibility}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
@@ -106,8 +92,6 @@ which is using the natural logarithm of the number of subjects for the
 penalty parameter \code{k}.
 
 \item \code{print.mmrm_tmb}: prints the object.
-
-\item \code{component}: get components from the \code{mmrm_tmb} object
 }}
 
 \examples{
@@ -135,10 +119,5 @@ AIC(object)
 AIC(object, corrected = TRUE)
 # BIC:
 BIC(object)
-}
-\seealso{
-\code{\link[lme4]{getME}}
-
-\code{\link[glmmTMB]{getME}}
 }
 \keyword{internal}

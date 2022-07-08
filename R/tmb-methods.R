@@ -62,7 +62,7 @@ model.frame.mmrm_tmb <- function(formula, full = FALSE, ...) {
 #' # Log likelihood given the estimated parameters:
 #' logLik(object)
 logLik.mmrm_tmb <- function(object, ...) {
-  component(object, "logLik")
+  -component(object, "neg_log_lik")
 }
 
 #' @describeIn mmrm_tmb_methods obtains the used formula.
@@ -175,15 +175,12 @@ print.mmrm_tmb <- function(x,
   cat("Method: ")
   cat(ifelse(component(x, "reml"), "REML", "ML"))
   cat("\nDeviance: ")
-  cat(component(x, "deviance"))
+  cat(deviance(x))
 
   cat("\n\nCoefficients:\n")
   print(coef(x))
 
-  cat("\nModel Inference Optimization:\n")
-  cat("Optimizer: ")
-
-  cat(component(x, "method"))
+  cat("\nModel Inference Optimization:")
 
   cat(ifelse(component(x, "convergence") == 0, "\nConverged", "\nFailed to converge"))
   cat(
@@ -193,77 +190,3 @@ print.mmrm_tmb <- function(x,
 
   invisible(x)
 }
-
-#' @describeIn mmrm_tmb_methods get components from the \code{mmrm_tmb} object
-#'
-#' @aliases component
-#' @param x a \code{mmrm_tmb} object
-#' @param name of the component to be retrieved
-#' @param \dots ignored, for method compatibility
-#'
-#' @seealso \code{\link[lme4]{getME}}
-#' @seealso \code{\link[glmmTMB]{getME}}
-#'
-#' @export
-component <- function(object,
-                      name = c(
-                        "AIC", "BIC", "logLik", "deviance",
-                        "cov_type", "n_theta", "n_subjects", "n_timepoints",
-                        "n_obs", "vcov", "varcor", "formula", "dataset",
-                        "reml", "method", "convergence", "evaluations",
-                        "conv_message", "call", "theta_est",
-                        "beta_est", "x_matrix", "y_vector", "neg_log_lik",
-                        "jac_list", "theta_vcov"
-                      ),
-                      ...) {
-  assert_class(object, "mmrm_tmb")
-  name <- match.arg(name, several.ok = TRUE)
-
-
-  list_components <- sapply(
-    X = name,
-    FUN = switch,
-    "call" = object$call,
-    # Strings
-    "cov_type" = object$formula_parts$cov_type,
-    "formula" = deparse(object$call$formula),
-    "dataset" = object$call$data,
-    "reml" = object$reml,
-    "method" = object$tmb_object$method,
-    "conv_message" = object$opt_details$message,
-    # Numeric of length 1
-    "convergence" = object$opt_details$convergence,
-    "AIC" = AIC(object),
-    "BIC" = BIC(object),
-    "deviance" = deviance(object),
-    "logLik" = -object$neg_log_lik,
-    "neg_log_lik" = object$neg_log_lik,
-    "n_theta" = length(object$theta_est),
-    "n_subjects" = object$tmb_data$n_subjects,
-    "n_timepoints" = object$tmb_data$n_visits,
-    "n_obs" = length(object$tmb_data$y_vector),
-    # Numeric of length > 1
-    "evaluations" = unlist(ifelse(is.null(object$opt_details$evaluations),
-      list(object$opt_details$counts),
-      list(object$opt_details$evaluations)
-    )),
-    "beta_est" = object$beta_est,
-    "theta_est" = object$theta_est,
-    "y_vector" = object$tmb_data$y_vector,
-    "jac_list" = object$jac_list,
-    # Matrices
-    "vcov" = object$beta_vcov,
-    "varcor" = object$cov,
-    "x_matrix" = object$tmb_data$x_matrix,
-    "theta_vcov" = object$theta_vcov,
-    # If not found
-    "..foo.." =
-      stop(sprintf(
-        "component '%s' is not available for class \"%s\"",
-        name, paste0(class(object), collapse = ", ")
-      )), simplify = FALSE
-  )
-
-  if (length(name) == 1) list_components[[1]] else list_components
-}
-

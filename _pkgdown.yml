@@ -49,6 +49,7 @@ reference:
       - fit_single_optimizer
       - mmrm
       - refit_multiple_optimizers
+      - component
   - title: Methods
     contents:
       - emmeans_support
