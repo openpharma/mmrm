@@ -46,6 +46,19 @@ Available \code{component()} names are as follows:
 \item \code{jac_list}: Jacobian, see  \code{\link[=h_jac_list]{h_jac_list()}} for details.
 }
 }
+\examples{
+fit <- mmrm(
+  formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data
+)
+# Get all available components.
+component(fit)
+# Get convergence code and message.
+component(fit, c("convergence", "conv_message"))
+# Get modeled formula as a string.
+component(fit, c("formula"))
+
+}
 \seealso{
 In the \code{lme4} package there is a similar function \code{getME()}.
 }
