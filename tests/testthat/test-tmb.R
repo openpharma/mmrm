@@ -343,15 +343,16 @@ test_that("h_mmrm_tmb_fit errors when an invalid covariance type is used", {
   tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL)
 
   tmb_data$cov_type <- "gaaah"
-  expect_error(regex = c("Unknown covariance type 'gaaah'"), {
-    tmb_object <- TMB::MakeADFun(
+  expect_error(
+    TMB::MakeADFun(
       data = tmb_data,
       parameters = tmb_parameters,
       hessian = TRUE,
       DLL = "mmrm",
       silent = TRUE
-    )
-  })
+    ),
+    "Unknown covariance type 'gaaah'"
+  )
 })
 
 # h_mmrm_tmb ----

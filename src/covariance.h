@@ -131,7 +131,7 @@ matrix<T> get_covariance_lower_chol(const vector<T>& theta, int n_visits, const 
   } else if (cov_type == "csh") {
     result = get_compound_symmetry_heterogeneous<T>(theta, n_visits);
   } else {
-    Rf_error(("Unknown covariance type '" + cov_type + "'.").c_str());
+    error(("Unknown covariance type '" + cov_type + "'.").c_str());
   }
 
   return result;

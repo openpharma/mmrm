@@ -121,7 +121,7 @@ h_mmrm_tmb_formula_parts <- function(formula) {
 #'     indices for each subject.
 #' - `subject_n_visits`: length `n_subjects` `integer` containing the number of
 #'     observed visits for each subjects. So the sum of this vector equals `n`.
-#' - `cov_type`: `int` specifying the covariance type.
+#' - `cov_type`: `chr` value specifying the covariance type.
 #' - `reml`: `int` specifying whether REML estimation is used (1), otherwise ML (0).
 #'
 #' @details Note that the `subject_var` must not be factor but can also be character.
@@ -165,7 +165,6 @@ h_mmrm_tmb_data <- function(formula_parts,
   subject_zero_inds <- which(!duplicated(full_frame[[formula_parts$subject_var]])) - 1L
   subject_n_visits <- c(utils::tail(subject_zero_inds, -1L), nrow(full_frame)) - subject_zero_inds
   assert_true(identical(subject_n_visits, as.integer(table(full_frame[[formula_parts$subject_var]]))))
-  cov_type <- formula_parts$cov_type
 
   structure(
     list(
@@ -177,7 +176,7 @@ h_mmrm_tmb_data <- function(formula_parts,
       n_subjects = n_subjects,
       subject_zero_inds = subject_zero_inds,
       subject_n_visits = subject_n_visits,
-      cov_type = cov_type,
+      cov_type = formula_parts$cov_type,
       reml = as.integer(reml)
     ),
     class = "mmrm_tmb_data"
