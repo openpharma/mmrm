@@ -113,7 +113,7 @@ matrix<T> get_compound_symmetry_heterogeneous(const vector<T>& theta, int n_visi
 
 // Creates a new correlation object dynamically.
 template <class T>
-matrix<T> get_covariance_lower_chol(const vector<T>& theta, int n_visits, const std::string& cov_type) {
+matrix<T> get_covariance_lower_chol(const vector<T>& theta, int n_visits, std::string cov_type) {
   matrix<T> result;
 
   if (cov_type == "us") {

@@ -121,7 +121,7 @@ h_mmrm_tmb_formula_parts <- function(formula) {
 #'     indices for each subject.
 #' - `subject_n_visits`: length `n_subjects` `integer` containing the number of
 #'     observed visits for each subjects. So the sum of this vector equals `n`.
-#' - `cov_type`: `chr` value specifying the covariance type.
+#' - `cov_type`: `string` value specifying the covariance type.
 #' - `reml`: `int` specifying whether REML estimation is used (1), otherwise ML (0).
 #'
 #' @details Note that the `subject_var` must not be factor but can also be character.
