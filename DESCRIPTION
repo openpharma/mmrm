@@ -6,6 +6,7 @@ Authors@R: c(
     person("Daniel", "Sabanes Bove", , "daniel.sabanes_bove@roche.com", role = c("aut", "cre")),
     person("Julia", "Dedic", , "julia.dedic@roche.com", role = "aut"),
     person("Brian Matthew", "Lang", , "brian.lang@msd.com", role = "aut"),
+    person("Doug", "Kelkhoff", , "kelkhoff.douglas@gene.com", role = "aut"),
     person("Craig", "Gower-Page", , "craig.gower-page@roche.com", role = "aut"),
     person("Alessandro", "Noci", , "alessandro.noci@roche.com", role = "aut")
   )

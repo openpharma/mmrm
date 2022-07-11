@@ -35,7 +35,7 @@ Type objective_function<Type>::operator() ()
   DATA_INTEGER(n_subjects);        // Number of subjects.
   DATA_IVECTOR(subject_zero_inds); // Starting indices for each subject (0-based) (length n_subjects).
   DATA_IVECTOR(subject_n_visits);  // Number of observed visits for each subject (length n_subjects).
-  DATA_INTEGER(cov_type);         // Covariance type.
+  DATA_STRING(cov_type);           // Covariance type name.
   DATA_INTEGER(reml);              // REML (1)? Otherwise ML (0).
 
   // Read parameters from R.

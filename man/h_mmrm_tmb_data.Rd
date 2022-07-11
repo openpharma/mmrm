@@ -28,7 +28,7 @@ covariance matrix.
 indices for each subject.
 \item \code{subject_n_visits}: length \code{n_subjects} \code{integer} containing the number of
 observed visits for each subjects. So the sum of this vector equals \code{n}.
-\item \code{cov_type}: \code{int} specifying the covariance type.
+\item \code{cov_type}: \code{string} value specifying the covariance type.
 \item \code{reml}: \code{int} specifying whether REML estimation is used (1), otherwise ML (0).
 }
 }

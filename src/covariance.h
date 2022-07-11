@@ -111,44 +111,29 @@ matrix<T> get_compound_symmetry_heterogeneous(const vector<T>& theta, int n_visi
   return get_heterogeneous_cov(sd_values, fun);
 }
 
-// Coding of cov_type coming from the R side.
-enum cov_type_code {
-  unstructured_cov = 1,
-  toeplitz_cov = 2,
-  auto_regressive_cov = 3,
-  auto_regressive_heterogeneous_cov = 4,
-  ante_dependence_cov = 5,
-  compound_symmetry_cov = 6,
-  compound_symmetry_heterogeneous_cov = 7
-};
-
 // Creates a new correlation object dynamically.
 template <class T>
-matrix<T> get_covariance_lower_chol(const vector<T>& theta, int n_visits, int cov_type) {
+matrix<T> get_covariance_lower_chol(const vector<T>& theta, int n_visits, std::string cov_type) {
   matrix<T> result;
-  switch (cov_type) {
-  case unstructured_cov:
+
+  if (cov_type == "us") {
     result = get_unstructured<T>(theta, n_visits);
-    break;
-  case toeplitz_cov:
+  } else if (cov_type == "toep") {
     result = get_toeplitz<T>(theta, n_visits);
-    break;
-  case auto_regressive_cov:
+  } else if (cov_type == "ar1") {
     result = get_auto_regressive<T>(theta, n_visits);
-    break;
-  case auto_regressive_heterogeneous_cov:
+  } else if (cov_type == "ar1h") {
     result = get_auto_regressive_heterogeneous<T>(theta, n_visits);
-    break;
-  case ante_dependence_cov:
+  } else if (cov_type == "ad") {
     result = get_ante_dependence<T>(theta, n_visits);
-    break;
-  case compound_symmetry_cov:
+  } else if (cov_type == "cs") {
     result = get_compound_symmetry<T>(theta, n_visits);
-    break;
-  case compound_symmetry_heterogeneous_cov:
+  } else if (cov_type == "csh") {
     result = get_compound_symmetry_heterogeneous<T>(theta, n_visits);
-    break;
+  } else {
+    error(("Unknown covariance type '" + cov_type + "'.").c_str());
   }
+
   return result;
 }
 

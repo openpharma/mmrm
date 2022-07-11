@@ -126,7 +126,7 @@ context("compound symmetry") {
 context("get_covariance_lower_chol") {
   test_that("get_covariance_lower_chol gives expected unstructured result") {
     vector<double> theta {{log(1.0), log(2.0), 3.0}};
-    matrix<double> result = get_covariance_lower_chol(theta, 2, unstructured_cov);
+    matrix<double> result = get_covariance_lower_chol(theta, 2, "us");
     matrix<double> expected = get_unstructured(theta, 2);
     expect_equal_matrix(result, expected);
   }

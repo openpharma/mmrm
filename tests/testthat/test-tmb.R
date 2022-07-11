@@ -91,7 +91,7 @@ test_that("h_mmrm_tmb_data works as expected", {
   expect_integer(result$visits_zero_inds, len = 537, lower = 0, upper = 3, any.missing = FALSE)
   expect_identical(result$n_visits, 4L) # 4 visits.
   expect_integer(result$subject_zero_inds, len = 197, unique = TRUE, sorted = TRUE, any.missing = FALSE)
-  expect_identical(result$cov_type, 1L) # unstructured.
+  expect_identical(result$cov_type, "us") # unstructured.
   expect_identical(result$reml, 0L) # ML.
 })
 
@@ -333,6 +333,26 @@ test_that("h_mmrm_tmb_fit works as expected", {
   expect_list(result$opt_details)
   expect_list(result$tmb_object)
   expect_class(result$tmb_data, "mmrm_tmb_data")
+})
+
+test_that("h_mmrm_tmb_fit errors when an invalid covariance type is used", {
+  formula <- FEV1 ~ RACE + us(AVISIT | USUBJID)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula)
+
+  tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = FALSE)
+  tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL)
+
+  tmb_data$cov_type <- "gaaah"
+  expect_error(
+    TMB::MakeADFun(
+      data = tmb_data,
+      parameters = tmb_parameters,
+      hessian = TRUE,
+      DLL = "mmrm",
+      silent = TRUE
+    ),
+    "Unknown covariance type 'gaaah'"
+  )
 })
 
 # h_mmrm_tmb ----
