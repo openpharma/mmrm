@@ -106,7 +106,7 @@ test_that("AIC works as expected with different k", {
 test_that("corrected AIC works as expected", {
   object <- get_mmrm_tmb()
   result <- expect_silent(AIC(object, corrected = TRUE))
-  m <- nrow(object$tmb_data$x) - ncol(object$tmb_data$x)
+  m <- nrow(object$tmb_data$x_matrix) - ncol(object$tmb_data$x_matrix)
   n_theta <- length(object$theta_est)
   multiplier <- m / (m - n_theta - 1)
   expected <- -2 * logLik(object) + 2 * length(object$theta_est) * multiplier

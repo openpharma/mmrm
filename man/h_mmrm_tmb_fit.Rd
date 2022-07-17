@@ -20,7 +20,7 @@ in \code{formula}.}
 \item{tmb_data}{(\code{mmrm_tmb_data})\cr produced by \code{\link[=h_mmrm_tmb_data]{h_mmrm_tmb_data()}}.}
 }
 \value{
-List pf class \code{mmrm_tmb} with:
+List of class \code{mmrm_tmb} with:
 \itemize{
 \item \code{cov}: estimated covariance matrix.
 \item \code{beta_est}: vector of coefficient estimates.

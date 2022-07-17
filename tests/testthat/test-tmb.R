@@ -9,7 +9,9 @@ test_that("h_mmrm_tmb_control works as expected", {
     list(
       optimizer = stats::optim,
       optimizer_args = list(method = "L-BFGS-B"),
-      optimizer_control = list()
+      optimizer_control = list(),
+      start = NULL,
+      accept_singular = TRUE
     ),
     class = "mmrm_tmb_control"
   )
@@ -77,12 +79,12 @@ test_that("h_mmrm_tmb_formula_parts works as expected for antedependence", {
 test_that("h_mmrm_tmb_data works as expected", {
   formula <- FEV1 ~ RACE + us(AVISIT | USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
-  result <- expect_silent(h_mmrm_tmb_data(formula_parts, fev_data, reml = FALSE))
+  result <- expect_silent(h_mmrm_tmb_data(formula_parts, fev_data, reml = FALSE, accept_singular = FALSE))
   expect_class(result, "mmrm_tmb_data")
   expect_named(
     result,
     c(
-      "full_frame", "x_matrix", "y_vector", "visits_zero_inds", "n_visits", "n_subjects",
+      "full_frame", "x_matrix", "x_cols_aliased", "y_vector", "visits_zero_inds", "n_visits", "n_subjects",
       "subject_zero_inds", "subject_n_visits", "cov_type", "reml"
     )
   )
@@ -100,9 +102,33 @@ test_that("h_mmrm_tmb_data works also for character ID variable", {
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   dat <- fev_data
   dat$USUBJID <- as.character(dat$USUBJID) # nolint
-  result <- expect_silent(h_mmrm_tmb_data(formula_parts, dat, reml = FALSE))
-  expected <- expect_silent(h_mmrm_tmb_data(formula_parts, fev_data, reml = FALSE))
+  result <- expect_silent(h_mmrm_tmb_data(formula_parts, dat, reml = FALSE, accept_singular = FALSE))
+  expected <- expect_silent(h_mmrm_tmb_data(formula_parts, fev_data, reml = FALSE, accept_singular = FALSE))
   expect_identical(result, expected)
+})
+
+test_that("h_mmrm_tmb_data correctly processes design matrix below full rank correctly", {
+  formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula)
+  dat <- fev_data[11:25, ]
+  result <- expect_silent(h_mmrm_tmb_data(formula_parts, dat, reml = FALSE, accept_singular = TRUE))
+  assert_true(qr(result$x_matrix)$rank == ncol(result$x_matrix))
+  assert_true(sum(result$x_cols_aliased) == 2)
+  assert_set_equal(names(which(!result$x_cols_aliased)), colnames(result$x_matrix))
+})
+
+test_that("h_mmrm_tmb_data gives error for rank deficient design matrix when not accepted", {
+  formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula)
+  dat <- fev_data[11:25, ]
+  expect_error(
+    h_mmrm_tmb_data(formula_parts, dat, reml = FALSE, accept_singular = FALSE),
+    paste(
+      "design matrix only has rank 8 and 2 columns (ARMCDTRT:AVISITVIS2, ARMCDTRT:AVISITVIS3)",
+      "could be dropped to achieve full rank 10 by using `accept_singular = TRUE`"
+    ),
+    fixed = TRUE
+  )
 })
 
 # h_mmrm_tmb_parameters ----
@@ -110,7 +136,7 @@ test_that("h_mmrm_tmb_data works also for character ID variable", {
 test_that("h_mmrm_tmb_parameters works as expected without start values", {
   formula <- FEV1 ~ SEX + us(AVISIT | USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
-  tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = TRUE)
+  tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = TRUE, accept_singular = FALSE)
   result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
   expected <- list(theta = rep(0, 10))
   expect_identical(result, expected)
@@ -119,7 +145,7 @@ test_that("h_mmrm_tmb_parameters works as expected without start values", {
 test_that("h_mmrm_tmb_parameters works as expected with start values", {
   formula <- FEV1 ~ SEX + us(AVISIT | USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
-  tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = TRUE)
+  tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = TRUE, accept_singular = FALSE)
   start <- 1:10
   result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = start))
   expected <- list(theta = start)
@@ -129,7 +155,7 @@ test_that("h_mmrm_tmb_parameters works as expected with start values", {
 test_that("h_mmrm_tmb_parameters works as expected with antedependence", {
   formula <- FEV1 ~ SEX + ad(AVISIT | USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
-  tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = TRUE)
+  tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = TRUE, accept_singular = FALSE)
   result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
   expected <- list(theta = rep(0, 7)) # 2 * 4 - 1 parameters.
   expect_identical(result, expected)
@@ -138,7 +164,7 @@ test_that("h_mmrm_tmb_parameters works as expected with antedependence", {
 test_that("h_mmrm_tmb_parameters works as expected with Toeplitz", {
   formula <- FEV1 ~ SEX + toep(AVISIT | USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
-  tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = TRUE)
+  tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = TRUE, accept_singular = FALSE)
   result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
   expected <- list(theta = rep(0, 7)) # 2 * 4 - 1 parameters.
   expect_identical(result, expected)
@@ -147,7 +173,7 @@ test_that("h_mmrm_tmb_parameters works as expected with Toeplitz", {
 test_that("h_mmrm_tmb_parameters works as expected with autoregressive", {
   formula <- FEV1 ~ SEX + ar1(AVISIT | USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
-  tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = TRUE)
+  tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = TRUE, accept_singular = FALSE)
   result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
   expected <- list(theta = rep(0, 2))
   expect_identical(result, expected)
@@ -156,7 +182,7 @@ test_that("h_mmrm_tmb_parameters works as expected with autoregressive", {
 test_that("h_mmrm_tmb_parameters works as expected with heterogeneous autoregressive", {
   formula <- FEV1 ~ SEX + ar1h(AVISIT | USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
-  tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = TRUE)
+  tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = TRUE, accept_singular = FALSE)
   result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
   expected <- list(theta = rep(0, 5)) # 4 + 1 parameters.
   expect_identical(result, expected)
@@ -165,7 +191,7 @@ test_that("h_mmrm_tmb_parameters works as expected with heterogeneous autoregres
 test_that("h_mmrm_tmb_parameters works as expected with compound symmetry", {
   formula <- FEV1 ~ SEX + cs(AVISIT | USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
-  tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = TRUE)
+  tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = TRUE, accept_singular = FALSE)
   result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
   expected <- list(theta = rep(0, 2))
   expect_identical(result, expected)
@@ -174,7 +200,7 @@ test_that("h_mmrm_tmb_parameters works as expected with compound symmetry", {
 test_that("h_mmrm_tmb_parameters works as expected with heterogeneous compound symmetry", {
   formula <- FEV1 ~ SEX + csh(AVISIT | USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
-  tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = TRUE)
+  tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = TRUE, accept_singular = FALSE)
   result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
   expected <- list(theta = rep(0, 5)) # 4 + 1 parameters.
   expect_identical(result, expected)
@@ -297,7 +323,7 @@ test_that("h_mmrm_tmb_assert_opt warns if convergence code signals non-convergen
 test_that("h_mmrm_tmb_fit works as expected", {
   formula <- FEV1 ~ RACE + us(AVISIT | USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
-  tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = FALSE)
+  tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = FALSE, accept_singular = FALSE)
   tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL)
   tmb_object <- TMB::MakeADFun(
     data = tmb_data,
@@ -339,7 +365,7 @@ test_that("h_mmrm_tmb_fit errors when an invalid covariance type is used", {
   formula <- FEV1 ~ RACE + us(AVISIT | USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
 
-  tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = FALSE)
+  tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = FALSE, accept_singular = FALSE)
   tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL)
 
   tmb_data$cov_type <- "gaaah"

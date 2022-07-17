@@ -7,7 +7,9 @@
 h_mmrm_tmb_control(
   optimizer = stats::nlminb,
   optimizer_args = list(),
-  optimizer_control = list()
+  optimizer_control = list(),
+  start = NULL,
+  accept_singular = TRUE
 )
 }
 \arguments{
@@ -16,6 +18,12 @@ h_mmrm_tmb_control(
 \item{optimizer_args}{(\code{list})\cr additional arguments to be passed to optimizer.}
 
 \item{optimizer_control}{(\code{list})\cr specific \code{control} argument for optimizer.}
+
+\item{start}{(\code{numeric} or \code{NULL})\cr optional start values for variance
+parameters.}
+
+\item{accept_singular}{(\code{flag})\cr whether singular design matrices are reduced
+to full rank automatically and additional coefficient estimates will be missing.}
 }
 \value{
 List of class \code{mmrm_tmb_control} with the control parameters.

@@ -33,14 +33,14 @@ fit_single_optimizer <- function(formula,
   control <- h_mmrm_tmb_control(
     optimizer = if (optimizer == "nlminb") stats::nlminb else stats::optim,
     optimizer_control = if (optimizer == "nlminb") list(iter.max = 300, eval.max = 400) else list(),
-    optimizer_args = if (optimizer == "nlminb") list() else list(method = optimizer)
+    optimizer_args = if (optimizer == "nlminb") list() else list(method = optimizer),
+    start = start
   )
   quiet_fit <- h_record_all_output(
     h_mmrm_tmb(
       formula = formula,
       data = data,
       reml = reml,
-      start = start,
       control = control
     ),
     remove = list(
