@@ -688,9 +688,9 @@ test_that("h_mmrm_tmb works even when timepoint variable has unused factor level
 })
 
 test_that("h_mmrm_tmb works with below full rank original design matrix by default", {
-  formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
-  dat <- fev_data[11:25, ]
-  # We are not interested in warnings at this point.
-  result <- suppressWarnings(h_mmrm_tmb(formula, dat))
-  assert_true(component(result, "convergence") == 0)
+  formula <- FEV1 ~ RACE + SEX + SEX2 + ARMCD * AVISIT + us(AVISIT | USUBJID)
+  dat <- fev_data
+  dat$SEX2 <- dat$SEX # nolint
+  result <- expect_silent(h_mmrm_tmb(formula, dat))
+  expect_match(names(which(result$tmb_data$x_cols_aliased)), "SEX2")
 })
