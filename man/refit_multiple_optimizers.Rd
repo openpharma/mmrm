@@ -7,7 +7,8 @@
 refit_multiple_optimizers(
   fit,
   n_cores = 1L,
-  optimizers = c("L-BFGS-B", "BFGS", "CG", "nlminb")
+  optimizers = c("L-BFGS-B", "BFGS", "CG", "nlminb"),
+  accept_singular = TRUE
 )
 }
 \arguments{
@@ -17,6 +18,9 @@ refit_multiple_optimizers(
 parallel computations on Linux or Mac machines.}
 
 \item{optimizers}{(\code{character})\cr all possible optimizers to be used for fitting.}
+
+\item{accept_singular}{(\code{flag})\cr whether singular design matrices are reduced
+to full rank automatically and additional coefficient estimates will be missing.}
 }
 \value{
 The best (in terms of log likelihood) fit which converged.

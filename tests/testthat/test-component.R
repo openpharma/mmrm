@@ -9,7 +9,7 @@ test_that("component works as expected", {
     names(component(object_mmrm_tmb)),
     c(
       "cov_type", "n_theta", "n_subjects", "n_timepoints",
-      "n_obs", "beta_vcov", "varcor", "formula", "dataset",
+      "n_obs", "beta_vcov", "beta_vcov_complete", "varcor", "formula", "dataset",
       "reml", "convergence", "evaluations",
       "conv_message", "call", "theta_est",
       "beta_est", "beta_est_complete", "x_matrix", "y_vector", "neg_log_lik",
@@ -30,7 +30,7 @@ test_that("component works as expected", {
   expect_identical(component(object_mmrm_tmb, "varcor"), component(object_mmrm_tmb)$varcor)
 })
 
-## best_est ----
+## best_est_complete ----
 
 test_that("component produces complete coefficient vector as expected in full rank model", {
   object_mmrm_tmb <- get_mmrm_tmb()
@@ -54,4 +54,31 @@ test_that("component returns coefficient vectors as expected in rank deficient m
     component(object_mmrm_tmb, "beta_est"),
     c("(Intercept)", "RACEBlack or African American", "RACEWhite")
   )
+})
+
+## best_vcov_complete ----
+
+test_that("component produces complete variance-covariance matrix as expected in full rank model", {
+  object_mmrm_tmb <- get_mmrm_tmb()
+
+  result <- component(object_mmrm_tmb, "beta_vcov_complete")
+  expected <- component(object_mmrm_tmb, "beta_vcov")
+  expect_identical(result, expected)
+})
+
+test_that("component returns complete variance-covariance matrix as expected in rank deficient model", {
+  formula <- FEV1 ~ RACE + ones + us(AVISIT | USUBJID)
+  data <- fev_data
+  data$ones <- 1
+  object_mmrm_tmb <- h_mmrm_tmb(formula, data)
+
+  result <- component(object_mmrm_tmb, "beta_vcov_complete")
+  expect_identical(dim(result), c(4L, 4L))
+  expect_names(
+    rownames(result),
+    identical.to = c("(Intercept)", "RACEBlack or African American", "RACEWhite", "ones")
+  )
+  expect_true(all(is.na(result["ones", ])))
+  expect_true(all(is.na(result[, "ones"])))
+  expect_identical(component(object_mmrm_tmb, "beta_vcov"), result[1:3, 1:3])
 })

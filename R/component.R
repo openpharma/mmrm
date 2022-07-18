@@ -47,7 +47,7 @@
 component <- function(object,
                       name = c(
                         "cov_type", "n_theta", "n_subjects", "n_timepoints",
-                        "n_obs", "beta_vcov", "varcor", "formula", "dataset",
+                        "n_obs", "beta_vcov", "beta_vcov_complete", "varcor", "formula", "dataset",
                         "reml", "convergence", "evaluations",
                         "conv_message", "call", "theta_est",
                         "beta_est", "beta_est_complete", "x_matrix",
@@ -88,6 +88,11 @@ component <- function(object,
     "jac_list" = object$jac_list,
     # Matrices.
     "beta_vcov" = object$beta_vcov,
+    "beta_vcov_complete" = stats::.vcov.aliased(
+      aliased = object$tmb_data$x_cols_aliased,
+      vc = object$beta_vcov,
+      complete = TRUE
+    ),
     "varcor" = object$cov,
     "x_matrix" = object$tmb_data$x_matrix,
     "theta_vcov" = object$theta_vcov,

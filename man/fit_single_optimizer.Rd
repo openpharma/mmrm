@@ -9,7 +9,8 @@ fit_single_optimizer(
   data,
   reml = TRUE,
   start = NULL,
-  optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb")
+  optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb"),
+  accept_singular = TRUE
 )
 }
 \arguments{
@@ -20,10 +21,13 @@ fit_single_optimizer(
 \item{reml}{(\code{flag})\cr whether restricted maximum likelihood (REML) estimation is used,
 otherwise maximum likelihood (ML) is used.}
 
-\item{start}{(\code{numeric} or \code{NULL})\cr optional starting values for
-the variance parameters.}
+\item{start}{(\code{numeric} or \code{NULL})\cr optional start values for variance
+parameters.}
 
 \item{optimizer}{(\code{string})\cr optimizer to be used to generate the model.}
+
+\item{accept_singular}{(\code{flag})\cr whether singular design matrices are reduced
+to full rank automatically and additional coefficient estimates will be missing.}
 }
 \value{
 The \code{mmrm_fit} object, with additional attributes containing warnings,
