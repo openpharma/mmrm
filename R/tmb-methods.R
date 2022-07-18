@@ -118,16 +118,20 @@ deviance.mmrm_tmb <- function(object, ...) {
 #'   where the degrees of freedom are the number of variance parameters (`n_theta`).
 #'   If `corrected`, then this is multiplied with `m / (m - n_theta - 1)` where
 #'   `m` is the number of observations minus the number of coefficients, or
-#'   `n_theta + 2` if it is smaller than that.
+#'   `n_theta + 2` if it is smaller than that \insertCite{hurvich1989regression,burnham1998practical}{mmrm}.
 #' @param corrected (`flag`)\cr whether corrected AIC should be calculated.
 #' @param k (`number`)\cr the penalty per parameter to be used; default `k = 2`
 #'   is the classical AIC.
 #' @importFrom stats AIC
+#' @importFrom Rdpack reprompt
 #' @exportS3Method
 #' @examples
 #' # AIC:
 #' AIC(object)
 #' AIC(object, corrected = TRUE)
+#' @references
+#' \insertRef{hurvich1989regression}{mmrm} \cr
+#' \insertRef{burnham1998practical}{mmrm}
 AIC.mmrm_tmb <- function(object, corrected = FALSE, ..., k = 2) { # nolint
   assert_flag(corrected)
   assert_number(k, lower = 1)

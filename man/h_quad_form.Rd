@@ -28,14 +28,14 @@ of the quadratic forms used in the Satterthwaite calculations.
 }
 \section{Functions}{
 \itemize{
-\item \code{h_quad_form_vec}: calculates the number \code{vec \%*\% center \%*\% t(vec)}
+\item \code{h_quad_form_vec()}: calculates the number \code{vec \%*\% center \%*\% t(vec)}
 as a numeric (not a matrix).
 
-\item \code{h_quad_form_mat}: calculates the quadratic form \code{mat \%*\% center \%*\% t(mat)}
+\item \code{h_quad_form_mat()}: calculates the quadratic form \code{mat \%*\% center \%*\% t(mat)}
 as a matrix, the result is square and has dimensions identical to the number
 of rows in \code{mat}.
-}}
 
+}}
 \examples{
 h_quad_form_vec(1:2, matrix(1:4, 2, 2))
 h_quad_form_mat(matrix(2:7, 3, 2), matrix(1:4, 2, 2))
