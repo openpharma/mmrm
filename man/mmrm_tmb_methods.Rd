@@ -16,7 +16,7 @@
 \alias{print.mmrm_tmb}
 \title{Methods for \code{mmrm_tmb} Objects}
 \usage{
-\method{coef}{mmrm_tmb}(object, ...)
+\method{coef}{mmrm_tmb}(object, complete = TRUE, ...)
 
 \method{fitted}{mmrm_tmb}(object, ...)
 
@@ -26,7 +26,7 @@
 
 \method{formula}{mmrm_tmb}(x, ...)
 
-\method{vcov}{mmrm_tmb}(object, ...)
+\method{vcov}{mmrm_tmb}(object, complete = TRUE, ...)
 
 \method{VarCorr}{mmrm_tmb}(x, sigma = NA, ...)
 
@@ -40,6 +40,9 @@
 }
 \arguments{
 \item{object}{(\code{mmrm_tmb})\cr the fitted MMRM object.}
+
+\item{complete}{(\code{flag})\cr whether to include potential non-estimable
+coefficients.}
 
 \item{...}{not used.}
 

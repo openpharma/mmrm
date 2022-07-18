@@ -79,20 +79,30 @@ component <- function(object,
       list(object$opt_details$evaluations)
     )),
     "beta_est" = object$beta_est,
-    "beta_est_complete" = stats::setNames(
-      object$beta_est[names(object$tmb_data$x_cols_aliased)],
-      names(object$tmb_data$x_cols_aliased)
-    ),
+    "beta_est_complete" =
+      if (any(object$tmb_data$x_cols_aliased)) {
+        stats::setNames(
+          object$beta_est[names(object$tmb_data$x_cols_aliased)],
+          names(object$tmb_data$x_cols_aliased)
+        )
+      } else {
+        object$beta_est
+      },
     "theta_est" = object$theta_est,
     "y_vector" = object$tmb_data$y_vector,
     "jac_list" = object$jac_list,
     # Matrices.
     "beta_vcov" = object$beta_vcov,
-    "beta_vcov_complete" = stats::.vcov.aliased(
-      aliased = object$tmb_data$x_cols_aliased,
-      vc = object$beta_vcov,
-      complete = TRUE
-    ),
+    "beta_vcov_complete" =
+      if (any(object$tmb_data$x_cols_aliased)) {
+        stats::.vcov.aliased(
+          aliased = object$tmb_data$x_cols_aliased,
+          vc = object$beta_vcov,
+          complete = TRUE
+        )
+      } else {
+        object$beta_vcov
+      },
     "varcor" = object$cov,
     "x_matrix" = object$tmb_data$x_matrix,
     "theta_vcov" = object$theta_vcov,

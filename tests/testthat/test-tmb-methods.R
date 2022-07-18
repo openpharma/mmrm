@@ -11,6 +11,21 @@ test_that("coef works as expected", {
   expect_equal(result, expected, tolerance = 1e-4)
 })
 
+test_that("coef works as expected for rank deficient model", {
+  object <- get_mmrm_tmb_rank_deficient()
+  result <- expect_silent(coef(object))
+  expected <- c(
+    "(Intercept)" = 42.8058,
+    SEXFemale = 0.0452,
+    SEX2Female = NA
+  )
+  expect_equal(result, expected, tolerance = 1e-4)
+
+  result2 <- expect_silent(coef(object, complete = FALSE))
+  expected2 <- expected[1:2]
+  expect_equal(result2, expected2, tolerance = 1e-4)
+})
+
 # fitted ----
 
 test_that("fitted works as expected", {
@@ -65,6 +80,20 @@ test_that("vcov works as expected", {
   nms <- c("(Intercept)", "RACEBlack or African American", "RACEWhite")
   expect_names(rownames(result), identical.to = nms)
   expect_names(colnames(result), identical.to = nms)
+})
+
+test_that("vcov works as expected for rank deficient model", {
+  object <- get_mmrm_tmb_rank_deficient()
+  result <- expect_silent(vcov(object))
+  expect_matrix(result, mode = "numeric")
+  nms <- c("(Intercept)", "SEXFemale", "SEX2Female")
+  expect_names(rownames(result), identical.to = nms)
+  expect_names(colnames(result), identical.to = nms)
+
+  result2 <- expect_silent(vcov(object, complete = FALSE))
+  nms2 <- c("(Intercept)", "SEXFemale")
+  expect_names(rownames(result2), identical.to = nms2)
+  expect_names(colnames(result2), identical.to = nms2)
 })
 
 # VarCorr ----
