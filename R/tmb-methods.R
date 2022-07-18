@@ -31,7 +31,7 @@ coef.mmrm_tmb <- function(object, ...) {
 #' # Fitted values:
 #' fitted(object)
 fitted.mmrm_tmb <- function(object, ...) {
-  fitted_col <- component(object, "x_matrix") %*%  component(object, "beta_est")
+  fitted_col <- component(object, "x_matrix") %*% component(object, "beta_est")
   fitted_col[, 1L, drop = TRUE]
 }
 
@@ -83,7 +83,7 @@ formula.mmrm_tmb <- function(x, ...) {
 #' # Variance-covariance matrix estimate for coefficients:
 #' vcov(object)
 vcov.mmrm_tmb <- function(object, ...) {
-  component(object, "vcov")
+  component(object, "beta_vcov")
 }
 
 #' @describeIn mmrm_tmb_methods obtains the variance-covariance matrix estimate
@@ -96,7 +96,8 @@ vcov.mmrm_tmb <- function(object, ...) {
 #' @examples
 #' # Variance-covariance matrix estimate for residuals:
 #' VarCorr(object)
-VarCorr.mmrm_tmb <- function(x, sigma = NA, ...) { # nolint
+VarCorr.mmrm_tmb <- function(x, sigma = NA, ...) {
+  # nolint
   assert_scalar_na(sigma)
 
   component(x, name = "varcor")
@@ -128,7 +129,8 @@ deviance.mmrm_tmb <- function(object, ...) {
 #' # AIC:
 #' AIC(object)
 #' AIC(object, corrected = TRUE)
-AIC.mmrm_tmb <- function(object, corrected = FALSE, ..., k = 2) { # nolint
+AIC.mmrm_tmb <- function(object, corrected = FALSE, ..., k = 2) {
+  # nolint
   assert_flag(corrected)
   assert_number(k, lower = 1)
 
@@ -153,7 +155,8 @@ AIC.mmrm_tmb <- function(object, corrected = FALSE, ..., k = 2) { # nolint
 #' @examples
 #' # BIC:
 #' BIC(object)
-BIC.mmrm_tmb <- function(object, ...) { # nolint
+BIC.mmrm_tmb <- function(object, ...) {
+  # nolint
   k <- log(component(object, "n_subjects"))
   AIC(object, corrected = FALSE, k = k)
 }

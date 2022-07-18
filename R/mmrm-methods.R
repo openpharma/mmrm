@@ -48,15 +48,19 @@ h_coef_table <- function(object) {
 #' # Summary:
 #' summary(object)
 summary.mmrm <- function(object, ...) {
-  aic_list <- list(AIC = AIC(object),
-                   BIC = BIC(object),
-                   logLik = logLik(object),
-                   deviance = deviance(object))
+  aic_list <- list(
+    AIC = AIC(object),
+    BIC = BIC(object),
+    logLik = logLik(object),
+    deviance = deviance(object)
+  )
   coefficients <- h_coef_table(object)
   call <- stats::getCall(object)
-  components <- component(object, c("cov_type", "n_theta",
-                                    "n_subjects", "n_timepoints", "n_obs",
-                                    "vcov", "varcor"))
+  components <- component(object, c(
+    "cov_type", "n_theta",
+    "n_subjects", "n_timepoints", "n_obs",
+    "beta_vcov", "varcor"
+  ))
 
   structure(
     c(components,

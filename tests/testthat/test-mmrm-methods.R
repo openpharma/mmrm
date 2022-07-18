@@ -24,7 +24,7 @@ test_that("summary works as expected", {
     result,
     c(
       "cov_type", "n_theta", "n_subjects", "n_timepoints", "n_obs",
-      "vcov", "varcor", "coefficients",  "aic_list", "call"
+      "beta_vcov", "varcor", "coefficients", "aic_list", "call"
     )
   )
 })

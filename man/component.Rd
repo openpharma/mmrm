@@ -6,10 +6,10 @@
 \usage{
 component(
   object,
-  name = c("cov_type", "n_theta", "n_subjects", "n_timepoints", "n_obs", "vcov",
+  name = c("cov_type", "n_theta", "n_subjects", "n_timepoints", "n_obs", "beta_vcov",
     "varcor", "formula", "dataset", "reml", "convergence", "evaluations", "conv_message",
-    "call", "theta_est", "beta_est", "x_matrix", "y_vector", "neg_log_lik", "jac_list",
-    "theta_vcov")
+    "call", "theta_est", "beta_est", "beta_est_complete", "x_matrix", "y_vector",
+    "neg_log_lik", "jac_list", "theta_vcov")
 )
 }
 \arguments{
@@ -39,9 +39,10 @@ Available \code{component()} names are as follows:
 \item \code{vcov}: estimated variance-covariance matrix of coefficients.
 \item \code{varcor}: estimated covariance matrix for residuals.
 \item \code{theta_est}: estimated variance parameters.
-\item \code{beta_est}: estimated coefficients.
+\item \code{beta_est}: estimated coefficients (excluding aliased coefficients).
+\item \code{beta_est_complete}: estimated coefficients including aliased coefficients set to \code{NA}.
 \item \code{theta_vcov}:  estimated variance-covariance matrix of variance parameters.
-\item \code{x_matrix}: design matrix used.
+\item \code{x_matrix}: design matrix used (excluding aliased columns).
 \item \code{y_vector}: response vector used.
 \item \code{jac_list}: Jacobian, see  \code{\link[=h_jac_list]{h_jac_list()}} for details.
 }
