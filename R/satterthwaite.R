@@ -216,7 +216,9 @@ h_df_1d_list <- function(est,
 #' @description `r lifecycle::badge("experimental")`
 #'
 #' @param object (`mmrm`)\cr the MMRM fit.
-#' @param contrast (`numeric`)\cr contrast vector.
+#' @param contrast (`numeric`)\cr contrast vector. Note that this should not include
+#'   elements for singular coefficient estimates, i.e. only refer to the
+#'   actually estimated coefficients.
 #'
 #' @return List with `est`, `se`, `df`, `t_stat` and `p_val`.
 #' @export
@@ -340,7 +342,9 @@ h_df_md_from_1d <- function(object, contrast) {
 #'
 #' @param object (`mmrm`)\cr the MMRM fit.
 #' @param contrast (`matrix`)\cr numeric contrast matrix, if given a `numeric`
-#'   then this is coerced to a row vector.
+#'   then this is coerced to a row vector. Note that this should not include
+#'   elements for singular coefficient estimates, i.e. only refer to the
+#'   actually estimated coefficients.
 #'
 #' @return List with `est`, `se`, `df`, `t_stat` and `p_val`.
 #' @export

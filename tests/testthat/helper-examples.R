@@ -20,6 +20,16 @@ get_mmrm <- function() {
   .mmrm_example
 }
 
+.mmrm_formula_rank_deficient <- FEV1 ~ RACE + SEX + SEX2 + ARMCD * AVISIT + us(AVISIT | USUBJID)
+.mmrm_dat_rank_deficient <- cbind(fev_data, SEX2 = fev_data$SEX) # nolint
+.mmrm_example_rank_deficient <- mmrm(
+  .mmrm_formula_rank_deficient,
+  .mmrm_dat_rank_deficient
+)
+get_mmrm_rank_deficient <- function() {
+  .mmrm_example_rank_deficient
+}
+
 square_matrix <- function(values_by_row) {
   n <- length(values_by_row)
   size <- sqrt(n)
