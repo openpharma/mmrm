@@ -3,7 +3,7 @@
     mmrm fit
     
     Formula:     FEV1 ~ RACE + us(AVISIT | USUBJID)
-    Data:        data (used 537 observations from 197 subjects with maximum 4 
+    Data:        fev_data (used 537 observations from 197 subjects with maximum 4 
     timepoints)
     Covariance:  unstructured (10 variance parameters)
     Method:      REML
