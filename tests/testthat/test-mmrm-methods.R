@@ -14,6 +14,17 @@ test_that("h_coef_table works as expected", {
   )
 })
 
+test_that("h_coef_table works as expected", {
+  object <- get_mmrm_rank_deficient()
+  result <- expect_silent(h_coef_table(object))
+  expect_matrix(
+    result,
+    mode = "numeric",
+    nrows = length(component(object, "beta_est_complete"))
+  )
+  expect_true(all(is.na(result["SEX2Female", ])))
+})
+
 # summary ----
 
 test_that("summary works as expected", {
@@ -24,7 +35,7 @@ test_that("summary works as expected", {
     result,
     c(
       "cov_type", "n_theta", "n_subjects", "n_timepoints", "n_obs",
-      "beta_vcov", "varcor", "coefficients", "aic_list", "call"
+      "beta_vcov", "varcor", "coefficients", "n_singular_coefs", "aic_list", "call"
     )
   )
 })
@@ -58,6 +69,12 @@ test_that("h_print_aic_list works as expected", {
 
 test_that("print.summary.mmrm works as expected", {
   object <- get_mmrm()
+  result <- summary(object)
+  expect_snapshot_output(print(result, digits = 1), cran = FALSE)
+})
+
+test_that("print.summary.mmrm works as expected for rank deficient fits", {
+  object <- get_mmrm_rank_deficient()
   result <- summary(object)
   expect_snapshot_output(print(result, digits = 1), cran = FALSE)
 })
