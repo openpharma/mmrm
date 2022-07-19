@@ -31,7 +31,7 @@ coef.mmrm_tmb <- function(object, ...) {
 #' # Fitted values:
 #' fitted(object)
 fitted.mmrm_tmb <- function(object, ...) {
-  fitted_col <- component(object, "x_matrix") %*%  component(object, "beta_est")
+  fitted_col <- component(object, "x_matrix") %*% component(object, "beta_est")
   fitted_col[, 1L, drop = TRUE]
 }
 
@@ -96,7 +96,8 @@ vcov.mmrm_tmb <- function(object, ...) {
 #' @examples
 #' # Variance-covariance matrix estimate for residuals:
 #' VarCorr(object)
-VarCorr.mmrm_tmb <- function(x, sigma = NA, ...) { # nolint
+VarCorr.mmrm_tmb <- function(x, sigma = NA, ...) {
+  # nolint
   assert_scalar_na(sigma)
 
   component(x, name = "varcor")
@@ -123,16 +124,16 @@ deviance.mmrm_tmb <- function(object, ...) {
 #' @param k (`number`)\cr the penalty per parameter to be used; default `k = 2`
 #'   is the classical AIC.
 #' @importFrom stats AIC
-#' @importFrom Rdpack reprompt
 #' @exportS3Method
 #' @examples
 #' # AIC:
 #' AIC(object)
 #' AIC(object, corrected = TRUE)
 #' @references
-#' \insertRef{hurvich1989regression}{mmrm} \cr
-#' \insertRef{burnham1998practical}{mmrm}
-AIC.mmrm_tmb <- function(object, corrected = FALSE, ..., k = 2) { # nolint
+#' - \insertRef{hurvich1989regression}{mmrm}
+#' - \insertRef{burnham1998practical}{mmrm}
+AIC.mmrm_tmb <- function(object, corrected = FALSE, ..., k = 2) {
+  # nolint
   assert_flag(corrected)
   assert_number(k, lower = 1)
 
@@ -157,7 +158,8 @@ AIC.mmrm_tmb <- function(object, corrected = FALSE, ..., k = 2) { # nolint
 #' @examples
 #' # BIC:
 #' BIC(object)
-BIC.mmrm_tmb <- function(object, ...) { # nolint
+BIC.mmrm_tmb <- function(object, ...) {
+  # nolint
   k <- log(component(object, "n_subjects"))
   AIC(object, corrected = FALSE, k = k)
 }

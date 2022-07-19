@@ -121,7 +121,9 @@ AIC(object, corrected = TRUE)
 BIC(object)
 }
 \references{
-\insertRef{hurvich1989regression}{mmrm} \cr
-\insertRef{burnham1998practical}{mmrm}
+\itemize{
+\item \insertRef{hurvich1989regression}{mmrm}
+\item \insertRef{burnham1998practical}{mmrm}
+}
 }
 \keyword{internal}
