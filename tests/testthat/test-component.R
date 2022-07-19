@@ -12,7 +12,8 @@ test_that("component works as expected", {
       "n_obs", "beta_vcov", "beta_vcov_complete", "varcor", "formula", "dataset",
       "reml", "convergence", "evaluations",
       "conv_message", "call", "theta_est",
-      "beta_est", "beta_est_complete", "x_matrix", "y_vector", "neg_log_lik",
+      "beta_est", "beta_est_complete", "beta_aliased",
+      "x_matrix", "y_vector", "neg_log_lik",
       "jac_list", "theta_vcov"
     )
   )

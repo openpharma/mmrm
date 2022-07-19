@@ -9,7 +9,7 @@ component(
   name = c("cov_type", "n_theta", "n_subjects", "n_timepoints", "n_obs", "beta_vcov",
     "beta_vcov_complete", "varcor", "formula", "dataset", "reml", "convergence",
     "evaluations", "conv_message", "call", "theta_est", "beta_est", "beta_est_complete",
-    "x_matrix", "y_vector", "neg_log_lik", "jac_list", "theta_vcov")
+    "beta_aliased", "x_matrix", "y_vector", "neg_log_lik", "jac_list", "theta_vcov")
 )
 }
 \arguments{
@@ -36,11 +36,17 @@ Available \code{component()} names are as follows:
 \item \code{convergence}: convergence code from optimizer.
 \item \code{conv_message}: message accompanying the convergence code.
 \item \code{evaluations}: number of function evaluations for optimization.
-\item \code{vcov}: estimated variance-covariance matrix of coefficients.
+\item \code{beta_vcov}: estimated variance-covariance matrix of coefficients
+(excluding aliased coefficients).
+\item \code{beta_vcov_complete}: estimated variance-covariance matrix including
+aliased coefficients with entries set to \code{NA}.
 \item \code{varcor}: estimated covariance matrix for residuals.
 \item \code{theta_est}: estimated variance parameters.
 \item \code{beta_est}: estimated coefficients (excluding aliased coefficients).
-\item \code{beta_est_complete}: estimated coefficients including aliased coefficients set to \code{NA}.
+\item \code{beta_est_complete}: estimated coefficients including aliased coefficients
+set to \code{NA}.
+\item \code{beta_aliased}: whether each coefficient was aliased (i.e. cannot be estimated)
+or not.
 \item \code{theta_vcov}:  estimated variance-covariance matrix of variance parameters.
 \item \code{x_matrix}: design matrix used (excluding aliased columns).
 \item \code{y_vector}: response vector used.

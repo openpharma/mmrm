@@ -176,7 +176,7 @@ refit_multiple_optimizers <- function(fit,
       "Please try to use a different covariance structure or other covariates."
     )
   }
-  best_optimizer <- names(which.max(all_fits_summary$log_liks[is_ok]))
+  best_optimizer <- which.max(all_fits_summary$log_liks[is_ok])
   all_fits[[best_optimizer]]
 }
 

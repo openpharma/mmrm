@@ -6,10 +6,10 @@
     Data:        data (used 537 observations from 197 subjects with maximum 4 
     timepoints)
     Covariance:  unstructured (10 variance parameters)
-    Method: REML
-    Deviance: 3642.395
+    Method:      REML
+    Deviance:    3642.395
     
-    Coefficients:
+    Coefficients: 
                       (Intercept) RACEBlack or African American 
                         41.227284                      0.800180 
                         RACEWhite 
@@ -26,10 +26,10 @@
     Data:        fev_data (used 537 observations from 197 subjects with maximum 4 
     timepoints)
     Covariance:  unstructured (10 variance parameters)
-    Method: REML
-    Deviance: 3386.45
+    Method:      REML
+    Deviance:    3386.45
     
-    Coefficients:
+    Coefficients: 
                       (Intercept) RACEBlack or African American 
                       30.77747548                    1.53049977 
                         RACEWhite                     SEXFemale 
@@ -45,4 +45,22 @@
     
     Model Inference Optimization:
     Converged with code 0 and message: convergence: rel_reduction_of_f <= factr*epsmch
+
+# print.mmrm_tmb works as expected for rank deficient fits
+
+    mmrm fit
+    
+    Formula:     FEV1 ~ SEX + SEX2 + us(AVISIT | USUBJID)
+    Data:        .mmrm_tmb_dat_rank_deficient (used 537 observations from 197 
+    subjects with maximum 4 timepoints)
+    Covariance:  unstructured (10 variance parameters)
+    Method:      REML
+    Deviance:    3699.803
+    
+    Coefficients: (1 not defined because of singularities)
+    (Intercept)   SEXFemale  SEX2Female 
+     42.8057710   0.0451592          NA 
+    
+    Model Inference Optimization:
+    Converged with code 0 and message: relative convergence (4)
 

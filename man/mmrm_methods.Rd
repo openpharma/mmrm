@@ -25,11 +25,11 @@
 }
 \section{Functions}{
 \itemize{
-\item \code{summary.mmrm}: summarizes the MMRM fit results.
+\item \code{summary(mmrm)}: summarizes the MMRM fit results.
 
-\item \code{print.summary.mmrm}: prints the MMRM fit summary.
+\item \code{print(summary.mmrm)}: prints the MMRM fit summary.
+
 }}
-
 \examples{
 formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
 object <- mmrm(formula, fev_data)

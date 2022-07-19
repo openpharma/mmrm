@@ -181,13 +181,19 @@ print.mmrm_tmb <- function(x,
   )
   h_print_cov(component(x, "cov_type"), component(x, "n_theta"))
 
-  cat("Method: ")
+  cat("Method:      ")
   cat(ifelse(component(x, "reml"), "REML", "ML"))
-  cat("\nDeviance: ")
+  cat("\n")
+  cat("Deviance:    ")
   cat(deviance(x))
 
-  cat("\n\nCoefficients:\n")
-  print(coef(x))
+  cat("\n\nCoefficients: ")
+  n_singular_coefs <- sum(component(x, "beta_aliased"))
+  if (n_singular_coefs > 0) {
+    cat("(", n_singular_coefs, " not defined because of singularities)", sep = "")
+  }
+  cat("\n")
+  print(coef(x, complete = TRUE))
 
   cat("\nModel Inference Optimization:")
 

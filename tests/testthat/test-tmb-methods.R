@@ -159,3 +159,8 @@ test_that("print.mmrm_tmb works as expected", {
   object_mmrm <- get_mmrm()
   expect_snapshot_output(print(object_mmrm), cran = FALSE)
 })
+
+test_that("print.mmrm_tmb works as expected for rank deficient fits", {
+  object_mmrm_tmb <- get_mmrm_tmb_rank_deficient()
+  expect_snapshot_output(print(object_mmrm_tmb), cran = FALSE)
+})

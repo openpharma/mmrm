@@ -19,11 +19,17 @@
 #' - `convergence`: convergence code from optimizer.
 #' - `conv_message`: message accompanying the convergence code.
 #' - `evaluations`: number of function evaluations for optimization.
-#' - `vcov`: estimated variance-covariance matrix of coefficients.
+#' - `beta_vcov`: estimated variance-covariance matrix of coefficients
+#'      (excluding aliased coefficients).
+#' - `beta_vcov_complete`: estimated variance-covariance matrix including
+#'      aliased coefficients with entries set to `NA`.
 #' - `varcor`: estimated covariance matrix for residuals.
 #' - `theta_est`: estimated variance parameters.
 #' - `beta_est`: estimated coefficients (excluding aliased coefficients).
-#' - `beta_est_complete`: estimated coefficients including aliased coefficients set to `NA`.
+#' - `beta_est_complete`: estimated coefficients including aliased coefficients
+#'      set to `NA`.
+#' - `beta_aliased`: whether each coefficient was aliased (i.e. cannot be estimated)
+#'      or not.
 #' - `theta_vcov`:  estimated variance-covariance matrix of variance parameters.
 #' - `x_matrix`: design matrix used (excluding aliased columns).
 #' - `y_vector`: response vector used.
@@ -47,11 +53,12 @@
 component <- function(object,
                       name = c(
                         "cov_type", "n_theta", "n_subjects", "n_timepoints",
-                        "n_obs", "beta_vcov", "beta_vcov_complete", "varcor", "formula", "dataset",
+                        "n_obs", "beta_vcov", "beta_vcov_complete",
+                        "varcor", "formula", "dataset",
                         "reml", "convergence", "evaluations",
                         "conv_message", "call", "theta_est",
-                        "beta_est", "beta_est_complete", "x_matrix",
-                        "y_vector", "neg_log_lik", "jac_list", "theta_vcov"
+                        "beta_est", "beta_est_complete", "beta_aliased",
+                        "x_matrix", "y_vector", "neg_log_lik", "jac_list", "theta_vcov"
                       )) {
   assert_class(object, "mmrm_tmb")
   name <- match.arg(name, several.ok = TRUE)
@@ -88,6 +95,7 @@ component <- function(object,
       } else {
         object$beta_est
       },
+    "beta_aliased" = object$tmb_data$x_cols_aliased,
     "theta_est" = object$theta_est,
     "y_vector" = object$tmb_data$y_vector,
     "jac_list" = object$jac_list,
