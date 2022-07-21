@@ -4,7 +4,7 @@
 \alias{h_mmrm_tmb_data}
 \title{Data for \code{TMB} Fit}
 \usage{
-h_mmrm_tmb_data(formula_parts, data, reml)
+h_mmrm_tmb_data(formula_parts, data, reml, accept_singular)
 }
 \arguments{
 \item{formula_parts}{(\code{mmrm_tmb_formula_parts})\cr list with formula parts
@@ -14,11 +14,19 @@ from \code{\link[=h_mmrm_tmb_formula_parts]{h_mmrm_tmb_formula_parts()}}.}
 
 \item{reml}{(\code{flag})\cr whether restricted maximum likelihood (REML) estimation is used,
 otherwise maximum likelihood (ML) is used.}
+
+\item{accept_singular}{(\code{flag})\cr whether below full rank design matrices are reduced
+to full rank \code{x_matrix} and remaining coefficients will be missing as per
+\code{x_cols_aliased}. Otherwise the function fails for rank deficient design matrices.}
 }
 \value{
 List of class \code{mmrm_tmb_data} with elements:
 \itemize{
+\item \code{full_frame}: \code{data.frame} with \code{n} rows containing all variables needed in the model.
 \item \code{x_matrix}: \code{matrix} with \code{n} rows and \code{p} columns specifying the overall design matrix.
+\item \code{x_cols_aliased}: \code{logical} with potentially more than \code{p} elements indicating which
+columns in the original design matrix have been left out to obtain a full rank
+\code{x_matrix}.
 \item \code{y_vector}: length \code{n} \code{numeric} specifying the overall response vector.
 \item \code{visits_zero_inds}: length \code{n} \code{integer} containing zero-based visits indices.
 \item \code{n_visits}: \code{int} with the number of visits, which is the dimension of the
@@ -45,5 +53,5 @@ on the order please use a factor.
 \examples{
 formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
 formula_parts <- h_mmrm_tmb_formula_parts(formula)
-tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = FALSE)
+tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = FALSE, accept_singular = FALSE)
 }

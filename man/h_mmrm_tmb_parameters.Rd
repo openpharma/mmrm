@@ -4,7 +4,7 @@
 \alias{h_mmrm_tmb_parameters}
 \title{Start Parameters for \code{TMB} Fit}
 \usage{
-h_mmrm_tmb_parameters(formula_parts, tmb_data, start_values)
+h_mmrm_tmb_parameters(formula_parts, tmb_data, start)
 }
 \arguments{
 \item{formula_parts}{(\code{mmrm_tmb_formula_parts})\cr produced by
@@ -12,7 +12,7 @@ h_mmrm_tmb_parameters(formula_parts, tmb_data, start_values)
 
 \item{tmb_data}{(\code{mmrm_tmb_data})\cr produced by \code{\link[=h_mmrm_tmb_data]{h_mmrm_tmb_data()}}.}
 
-\item{start_values}{(\code{numeric} or \code{NULL})\cr optional start values for variance
+\item{start}{(\code{numeric} or \code{NULL})\cr optional start values for variance
 parameters.}
 }
 \value{
@@ -25,6 +25,6 @@ parameters.
 \examples{
 formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
 formula_parts <- h_mmrm_tmb_formula_parts(formula)
-tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = FALSE)
+tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = FALSE, accept_singular = FALSE)
 pars <- h_mmrm_tmb_parameters(formula_parts, tmb_data, NULL)
 }

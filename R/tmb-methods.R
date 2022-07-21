@@ -5,6 +5,8 @@
 #' @param object (`mmrm_tmb`)\cr the fitted MMRM object.
 #' @param x (`mmrm_tmb`)\cr same as `object`.
 #' @param formula (`mmrm_tmb`)\cr same as `object`.
+#' @param complete (`flag`)\cr whether to include potential non-estimable
+#'   coefficients.
 #' @param ... not used.
 #'
 #' @name mmrm_tmb_methods
@@ -20,8 +22,10 @@ NULL
 #' @examples
 #' # Estimated coefficients:
 #' coef(object)
-coef.mmrm_tmb <- function(object, ...) {
-  component(object, "beta_est")
+coef.mmrm_tmb <- function(object, complete = TRUE, ...) {
+  assert_flag(complete)
+  nm <- if (complete) "beta_est_complete" else "beta_est"
+  component(object, name = nm)
 }
 
 #' @describeIn mmrm_tmb_methods obtains the fitted values.
@@ -82,8 +86,10 @@ formula.mmrm_tmb <- function(x, ...) {
 #' @examples
 #' # Variance-covariance matrix estimate for coefficients:
 #' vcov(object)
-vcov.mmrm_tmb <- function(object, ...) {
-  component(object, "vcov")
+vcov.mmrm_tmb <- function(object, complete = TRUE, ...) {
+  assert_flag(complete)
+  nm <- if (complete) "beta_vcov_complete" else "beta_vcov"
+  component(object, name = nm)
 }
 
 #' @describeIn mmrm_tmb_methods obtains the variance-covariance matrix estimate
@@ -178,13 +184,19 @@ print.mmrm_tmb <- function(x,
   )
   h_print_cov(component(x, "cov_type"), component(x, "n_theta"))
 
-  cat("Method: ")
+  cat("Method:      ")
   cat(ifelse(component(x, "reml"), "REML", "ML"))
-  cat("\nDeviance: ")
+  cat("\n")
+  cat("Deviance:    ")
   cat(deviance(x))
 
-  cat("\n\nCoefficients:\n")
-  print(coef(x))
+  cat("\n\nCoefficients: ")
+  n_singular_coefs <- sum(component(x, "beta_aliased"))
+  if (n_singular_coefs > 0) {
+    cat("(", n_singular_coefs, " not defined because of singularities)", sep = "")
+  }
+  cat("\n")
+  print(coef(x, complete = TRUE))
 
   cat("\nModel Inference Optimization:")
 

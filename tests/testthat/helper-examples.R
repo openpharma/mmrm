@@ -4,10 +4,30 @@ get_mmrm_tmb <- function() {
   .mmrm_tmb_example
 }
 
+.tmb_formula_rank_deficient <- FEV1 ~ SEX + SEX2 + us(AVISIT | USUBJID)
+.mmrm_tmb_dat_rank_deficient <- cbind(fev_data, SEX2 = fev_data$SEX) # nolint
+.mmrm_tmb_example_rk_deficient <- h_mmrm_tmb(
+  .tmb_formula_rank_deficient,
+  .mmrm_tmb_dat_rank_deficient
+)
+get_mmrm_tmb_rank_deficient <- function() {
+  .mmrm_tmb_example_rk_deficient
+}
+
 .mmrm_formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
 .mmrm_example <- mmrm(.mmrm_formula, fev_data)
 get_mmrm <- function() {
   .mmrm_example
+}
+
+.mmrm_formula_rank_deficient <- FEV1 ~ RACE + SEX + SEX2 + ARMCD * AVISIT + us(AVISIT | USUBJID)
+.mmrm_dat_rank_deficient <- cbind(fev_data, SEX2 = fev_data$SEX) # nolint
+.mmrm_example_rank_deficient <- mmrm(
+  .mmrm_formula_rank_deficient,
+  .mmrm_dat_rank_deficient
+)
+get_mmrm_rank_deficient <- function() {
+  .mmrm_example_rank_deficient
 }
 
 square_matrix <- function(values_by_row) {

@@ -5,6 +5,10 @@
 #' @param optimizer (`function`)\cr optimization function.
 #' @param optimizer_args (`list`)\cr additional arguments to be passed to optimizer.
 #' @param optimizer_control (`list`)\cr specific `control` argument for optimizer.
+#' @param start (`numeric` or `NULL`)\cr optional start values for variance
+#'   parameters.
+#' @param accept_singular (`flag`)\cr whether singular design matrices are reduced
+#'   to full rank automatically and additional coefficient estimates will be missing.
 #'
 #' @return List of class `mmrm_tmb_control` with the control parameters.
 #' @export
@@ -16,16 +20,22 @@
 #' )
 h_mmrm_tmb_control <- function(optimizer = stats::nlminb,
                                optimizer_args = list(),
-                               optimizer_control = list()) {
+                               optimizer_control = list(),
+                               start = NULL,
+                               accept_singular = TRUE) {
   assert_function(optimizer)
   assert_list(optimizer_args)
   assert_list(optimizer_control)
+  assert_numeric(start, null.ok = TRUE)
+  assert_flag(accept_singular)
 
   structure(
     list(
       optimizer = optimizer,
       optimizer_args = optimizer_args,
-      optimizer_control = optimizer_control
+      optimizer_control = optimizer_control,
+      start = start,
+      accept_singular = accept_singular
     ),
     class = "mmrm_tmb_control"
   )
@@ -109,9 +119,16 @@ h_mmrm_tmb_formula_parts <- function(formula) {
 #' @param data (`data.frame`)\cr which contains variables used in `formula_parts`.
 #' @param reml (`flag`)\cr whether restricted maximum likelihood (REML) estimation is used,
 #'   otherwise maximum likelihood (ML) is used.
+#' @param accept_singular (`flag`)\cr whether below full rank design matrices are reduced
+#'   to full rank `x_matrix` and remaining coefficients will be missing as per
+#'   `x_cols_aliased`. Otherwise the function fails for rank deficient design matrices.
 #'
 #' @return List of class `mmrm_tmb_data` with elements:
+#' - `full_frame`: `data.frame` with `n` rows containing all variables needed in the model.
 #' - `x_matrix`: `matrix` with `n` rows and `p` columns specifying the overall design matrix.
+#' - `x_cols_aliased`: `logical` with potentially more than `p` elements indicating which
+#'      columns in the original design matrix have been left out to obtain a full rank
+#'      `x_matrix`.
 #' - `y_vector`: length `n` `numeric` specifying the overall response vector.
 #' - `visits_zero_inds`: length `n` `integer` containing zero-based visits indices.
 #' - `n_visits`: `int` with the number of visits, which is the dimension of the
@@ -135,10 +152,11 @@ h_mmrm_tmb_formula_parts <- function(formula) {
 #' @examples
 #' formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
 #' formula_parts <- h_mmrm_tmb_formula_parts(formula)
-#' tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = FALSE)
+#' tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = FALSE, accept_singular = FALSE)
 h_mmrm_tmb_data <- function(formula_parts,
                             data,
-                            reml) {
+                            reml,
+                            accept_singular) {
   assert_class(formula_parts, "mmrm_tmb_formula_parts")
   assert_data_frame(data)
   assert_names(
@@ -148,6 +166,7 @@ h_mmrm_tmb_data <- function(formula_parts,
   assert_factor(data[[formula_parts$visit_var]])
   assert_true(is.factor(data[[formula_parts$subject_var]]) || is.character(data[[formula_parts$subject_var]]))
   assert_flag(reml)
+  assert_flag(accept_singular)
 
   if (is.character(data[[formula_parts$subject_var]])) {
     data[[formula_parts$subject_var]] <- factor(
@@ -157,7 +176,27 @@ h_mmrm_tmb_data <- function(formula_parts,
   }
   data <- data[order(data[[formula_parts$subject_var]], data[[formula_parts$visit_var]]), ]
   full_frame <- droplevels(stats::model.frame(formula_parts$full_formula, data = data))
+
   x_matrix <- stats::model.matrix(formula_parts$model_formula, data = full_frame)
+  x_cols_aliased <- stats::setNames(rep(FALSE, ncol(x_matrix)), nm = colnames(x_matrix))
+  qr_x_mat <- qr(x_matrix)
+  if (qr_x_mat$rank < ncol(x_matrix)) {
+    cols_to_drop <- utils::tail(qr_x_mat$pivot, ncol(x_matrix) - qr_x_mat$rank)
+    if (!accept_singular) {
+      stop(
+        "design matrix only has rank ", qr_x_mat$rank, " and ", length(cols_to_drop),
+        " columns (", toString(colnames(x_matrix)[cols_to_drop]), ") could be dropped",
+        " to achieve full rank ", ncol(x_matrix), " by using `accept_singular = TRUE`"
+      )
+    }
+    assign_attr <- attr(x_matrix, "assign")
+    contrasts_attr <- attr(x_matrix, "contrasts")
+    x_matrix <- x_matrix[, -cols_to_drop, drop = FALSE]
+    x_cols_aliased[cols_to_drop] <- TRUE
+    attr(x_matrix, "assign") <- assign_attr[-cols_to_drop]
+    attr(x_matrix, "contrasts") <- contrasts_attr
+  }
+
   y_vector <- as.numeric(stats::model.response(full_frame))
   visits_zero_inds <- as.integer(full_frame[[formula_parts$visit_var]]) - 1L
   n_visits <- nlevels(full_frame[[formula_parts$visit_var]])
@@ -170,6 +209,7 @@ h_mmrm_tmb_data <- function(formula_parts,
     list(
       full_frame = full_frame,
       x_matrix = x_matrix,
+      x_cols_aliased = x_cols_aliased,
       y_vector = y_vector,
       visits_zero_inds = visits_zero_inds,
       n_visits = n_visits,
@@ -190,7 +230,7 @@ h_mmrm_tmb_data <- function(formula_parts,
 #' @param formula_parts (`mmrm_tmb_formula_parts`)\cr produced by
 #'  [h_mmrm_tmb_formula_parts()].
 #' @param tmb_data (`mmrm_tmb_data`)\cr produced by [h_mmrm_tmb_data()].
-#' @param start_values (`numeric` or `NULL`)\cr optional start values for variance
+#' @param start (`numeric` or `NULL`)\cr optional start values for variance
 #'   parameters.
 #'
 #' @return List with element `theta` containing the start values for the variance
@@ -200,11 +240,11 @@ h_mmrm_tmb_data <- function(formula_parts,
 #' @examples
 #' formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
 #' formula_parts <- h_mmrm_tmb_formula_parts(formula)
-#' tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = FALSE)
+#' tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = FALSE, accept_singular = FALSE)
 #' pars <- h_mmrm_tmb_parameters(formula_parts, tmb_data, NULL)
 h_mmrm_tmb_parameters <- function(formula_parts,
                                   tmb_data,
-                                  start_values) {
+                                  start) {
   assert_class(formula_parts, "mmrm_tmb_formula_parts")
   assert_class(tmb_data, "mmrm_tmb_data")
 
@@ -218,12 +258,12 @@ h_mmrm_tmb_parameters <- function(formula_parts,
     cs = 2,
     csh = m + 1
   ))
-  if (!is.null(start_values)) {
-    assert_numeric(start_values, len = theta_dim, any.missing = FALSE, finite = TRUE)
+  if (!is.null(start)) {
+    assert_numeric(start, len = theta_dim, any.missing = FALSE, finite = TRUE)
   } else {
-    start_values <- rep(0, theta_dim)
+    start <- rep(0, theta_dim)
   }
-  list(theta = start_values)
+  list(theta = start)
 }
 
 #' Asserting Sane Start Values for `TMB` Fit
@@ -296,7 +336,7 @@ h_mmrm_tmb_assert_opt <- function(tmb_object,
 #'  [h_mmrm_tmb_formula_parts()].
 #' @param tmb_data (`mmrm_tmb_data`)\cr produced by [h_mmrm_tmb_data()].
 #'
-#' @return List pf class `mmrm_tmb` with:
+#' @return List of class `mmrm_tmb` with:
 #'   - `cov`: estimated covariance matrix.
 #'   - `beta_est`: vector of coefficient estimates.
 #'   - `beta_vcov`: Variance-covariance matrix for coefficient estimates.
@@ -372,8 +412,6 @@ h_mmrm_tmb_fit <- function(tmb_object,
 #' @param data (`data.frame`)\cr input data containing the variables used
 #'   in `formula`.
 #' @inheritParams h_mmrm_tmb_data
-#' @param start (`numeric` or `NULL`)\cr optional start values for variance
-#'   parameters.
 #' @param control (`mmrm_tmb_control`)\cr list of control options produced
 #'   by [h_mmrm_tmb_control()].
 #'
@@ -394,12 +432,11 @@ h_mmrm_tmb_fit <- function(tmb_object,
 h_mmrm_tmb <- function(formula,
                        data,
                        reml = TRUE,
-                       start = NULL,
                        control = h_mmrm_tmb_control()) {
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
-  tmb_data <- h_mmrm_tmb_data(formula_parts, data, reml)
-  tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start)
   assert_class(control, "mmrm_tmb_control")
+  tmb_data <- h_mmrm_tmb_data(formula_parts, data, reml, accept_singular = control$accept_singular)
+  tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = control$start)
 
   tmb_object <- TMB::MakeADFun(
     data = tmb_data,

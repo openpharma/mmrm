@@ -10,7 +10,9 @@ df_md(object, contrast)
 \item{object}{(\code{mmrm})\cr the MMRM fit.}
 
 \item{contrast}{(\code{matrix})\cr numeric contrast matrix, if given a \code{numeric}
-then this is coerced to a row vector.}
+then this is coerced to a row vector. Note that this should not include
+elements for singular coefficient estimates, i.e. only refer to the
+actually estimated coefficients.}
 }
 \value{
 List with \code{est}, \code{se}, \code{df}, \code{t_stat} and \code{p_val}.

@@ -9,7 +9,8 @@ mmrm(
   data,
   reml = TRUE,
   optimizer = "automatic",
-  n_cores = h_free_cores()
+  n_cores = h_free_cores(),
+  accept_singular = TRUE
 )
 }
 \arguments{
@@ -24,6 +25,9 @@ otherwise maximum likelihood (ML) is used.}
 
 \item{n_cores}{(\code{count})\cr number of cores which could in principle be used for
 parallel computations on Linux or Mac machines.}
+
+\item{accept_singular}{(\code{flag})\cr whether singular design matrices are reduced
+to full rank automatically and additional coefficient estimates will be missing.}
 }
 \value{
 An \code{mmrm} object.

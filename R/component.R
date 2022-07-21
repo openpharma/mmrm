@@ -19,12 +19,19 @@
 #' - `convergence`: convergence code from optimizer.
 #' - `conv_message`: message accompanying the convergence code.
 #' - `evaluations`: number of function evaluations for optimization.
-#' - `vcov`: estimated variance-covariance matrix of coefficients.
+#' - `beta_vcov`: estimated variance-covariance matrix of coefficients
+#'      (excluding aliased coefficients).
+#' - `beta_vcov_complete`: estimated variance-covariance matrix including
+#'      aliased coefficients with entries set to `NA`.
 #' - `varcor`: estimated covariance matrix for residuals.
 #' - `theta_est`: estimated variance parameters.
-#' - `beta_est`: estimated coefficients.
+#' - `beta_est`: estimated coefficients (excluding aliased coefficients).
+#' - `beta_est_complete`: estimated coefficients including aliased coefficients
+#'      set to `NA`.
+#' - `beta_aliased`: whether each coefficient was aliased (i.e. cannot be estimated)
+#'      or not.
 #' - `theta_vcov`:  estimated variance-covariance matrix of variance parameters.
-#' - `x_matrix`: design matrix used.
+#' - `x_matrix`: design matrix used (excluding aliased columns).
 #' - `y_vector`: response vector used.
 #' - `jac_list`: Jacobian, see  [h_jac_list()] for details.
 #'
@@ -46,15 +53,15 @@
 component <- function(object,
                       name = c(
                         "cov_type", "n_theta", "n_subjects", "n_timepoints",
-                        "n_obs", "vcov", "varcor", "formula", "dataset",
+                        "n_obs", "beta_vcov", "beta_vcov_complete",
+                        "varcor", "formula", "dataset",
                         "reml", "convergence", "evaluations",
                         "conv_message", "call", "theta_est",
-                        "beta_est", "x_matrix", "y_vector", "neg_log_lik",
-                        "jac_list", "theta_vcov"
+                        "beta_est", "beta_est_complete", "beta_aliased",
+                        "x_matrix", "y_vector", "neg_log_lik", "jac_list", "theta_vcov"
                       )) {
   assert_class(object, "mmrm_tmb")
   name <- match.arg(name, several.ok = TRUE)
-
 
   list_components <- sapply(
     X = name,
@@ -75,15 +82,35 @@ component <- function(object,
     "n_obs" = length(object$tmb_data$y_vector),
     # Numeric of length > 1.
     "evaluations" = unlist(ifelse(is.null(object$opt_details$evaluations),
-                                  list(object$opt_details$counts),
-                                  list(object$opt_details$evaluations)
+      list(object$opt_details$counts),
+      list(object$opt_details$evaluations)
     )),
     "beta_est" = object$beta_est,
+    "beta_est_complete" =
+      if (any(object$tmb_data$x_cols_aliased)) {
+        stats::setNames(
+          object$beta_est[names(object$tmb_data$x_cols_aliased)],
+          names(object$tmb_data$x_cols_aliased)
+        )
+      } else {
+        object$beta_est
+      },
+    "beta_aliased" = object$tmb_data$x_cols_aliased,
     "theta_est" = object$theta_est,
     "y_vector" = object$tmb_data$y_vector,
     "jac_list" = object$jac_list,
     # Matrices.
-    "vcov" = object$beta_vcov,
+    "beta_vcov" = object$beta_vcov,
+    "beta_vcov_complete" =
+      if (any(object$tmb_data$x_cols_aliased)) {
+        stats::.vcov.aliased(
+          aliased = object$tmb_data$x_cols_aliased,
+          vc = object$beta_vcov,
+          complete = TRUE
+        )
+      } else {
+        object$beta_vcov
+      },
     "varcor" = object$cov,
     "x_matrix" = object$tmb_data$x_matrix,
     "theta_vcov" = object$theta_vcov,

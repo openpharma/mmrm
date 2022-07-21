@@ -11,6 +11,21 @@ test_that("coef works as expected", {
   expect_equal(result, expected, tolerance = 1e-4)
 })
 
+test_that("coef works as expected for rank deficient model", {
+  object <- get_mmrm_tmb_rank_deficient()
+  result <- expect_silent(coef(object))
+  expected <- c(
+    "(Intercept)" = 42.8058,
+    SEXFemale = 0.0452,
+    SEX2Female = NA
+  )
+  expect_equal(result, expected, tolerance = 1e-4)
+
+  result2 <- expect_silent(coef(object, complete = FALSE))
+  expected2 <- expected[1:2]
+  expect_equal(result2, expected2, tolerance = 1e-4)
+})
+
 # fitted ----
 
 test_that("fitted works as expected", {
@@ -67,6 +82,20 @@ test_that("vcov works as expected", {
   expect_names(colnames(result), identical.to = nms)
 })
 
+test_that("vcov works as expected for rank deficient model", {
+  object <- get_mmrm_tmb_rank_deficient()
+  result <- expect_silent(vcov(object))
+  expect_matrix(result, mode = "numeric")
+  nms <- c("(Intercept)", "SEXFemale", "SEX2Female")
+  expect_names(rownames(result), identical.to = nms)
+  expect_names(colnames(result), identical.to = nms)
+
+  result2 <- expect_silent(vcov(object, complete = FALSE))
+  nms2 <- c("(Intercept)", "SEXFemale")
+  expect_names(rownames(result2), identical.to = nms2)
+  expect_names(colnames(result2), identical.to = nms2)
+})
+
 # VarCorr ----
 
 test_that("VarCorr works as expected", {
@@ -106,7 +135,7 @@ test_that("AIC works as expected with different k", {
 test_that("corrected AIC works as expected", {
   object <- get_mmrm_tmb()
   result <- expect_silent(AIC(object, corrected = TRUE))
-  m <- nrow(object$tmb_data$x) - ncol(object$tmb_data$x)
+  m <- nrow(object$tmb_data$x_matrix) - ncol(object$tmb_data$x_matrix)
   n_theta <- length(object$theta_est)
   multiplier <- m / (m - n_theta - 1)
   expected <- -2 * logLik(object) + 2 * length(object$theta_est) * multiplier
@@ -129,4 +158,9 @@ test_that("print.mmrm_tmb works as expected", {
   expect_snapshot_output(print(object_mmrm_tmb), cran = FALSE)
   object_mmrm <- get_mmrm()
   expect_snapshot_output(print(object_mmrm), cran = FALSE)
+})
+
+test_that("print.mmrm_tmb works as expected for rank deficient fits", {
+  object_mmrm_tmb <- get_mmrm_tmb_rank_deficient()
+  expect_snapshot_output(print(object_mmrm_tmb), cran = FALSE)
 })
