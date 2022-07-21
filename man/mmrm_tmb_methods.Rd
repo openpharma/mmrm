@@ -88,7 +88,7 @@ over the coefficients for REML fits or the usual one for ML fits.
 where the degrees of freedom are the number of variance parameters (\code{n_theta}).
 If \code{corrected}, then this is multiplied with \code{m / (m - n_theta - 1)} where
 \code{m} is the number of observations minus the number of coefficients, or
-\code{n_theta + 2} if it is smaller than that.
+\code{n_theta + 2} if it is smaller than that \insertCite{hurvich1989regression,burnham1998practical}{mmrm}.
 
 \item \code{BIC(mmrm_tmb)}: obtains the Bayesian Information Criterion,
 which is using the natural logarithm of the number of subjects for the
@@ -122,5 +122,11 @@ AIC(object)
 AIC(object, corrected = TRUE)
 # BIC:
 BIC(object)
+}
+\references{
+\itemize{
+\item \insertRef{hurvich1989regression}{mmrm}
+\item \insertRef{burnham1998practical}{mmrm}
+}
 }
 \keyword{internal}

@@ -24,6 +24,7 @@ Authors:
   \item Julia Dedic \email{julia.dedic@roche.com}
   \item Brian Matthew Lang \email{brian.lang@msd.com}
   \item Doug Kelkhoff \email{kelkhoff.douglas@gene.com}
+  \item Ya Wang \email{ya.wang10@gilead.com}
   \item Craig Gower-Page \email{craig.gower-page@roche.com}
   \item Alessandro Noci \email{alessandro.noci@roche.com}
 }

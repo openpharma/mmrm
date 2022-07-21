@@ -14,4 +14,5 @@
 #' @importFrom stats acf
 #' @importFrom stringr boundary
 #' @importFrom parallel clusterApply
+#' @importFrom Rdpack reprompt
 NULL
