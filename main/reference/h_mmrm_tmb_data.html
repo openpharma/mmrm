@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9012</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9013</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,12 +38,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -71,7 +65,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">h_mmrm_tmb_data</span><span class="op">(</span><span class="va">formula_parts</span>, <span class="va">data</span>, <span class="va">reml</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">h_mmrm_tmb_data</span><span class="op">(</span><span class="va">formula_parts</span>, <span class="va">data</span>, <span class="va">reml</span>, <span class="va">accept_singular</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -89,12 +83,22 @@ from <code><a href="h_mmrm_tmb_formula_parts.html">h_mmrm_tmb_formula_parts()</a
 <dd><p>(<code>flag</code>)<br> whether restricted maximum likelihood (REML) estimation is used,
 otherwise maximum likelihood (ML) is used.</p></dd>
 
+
+<dt>accept_singular</dt>
+<dd><p>(<code>flag</code>)<br> whether below full rank design matrices are reduced
+to full rank <code>x_matrix</code> and remaining coefficients will be missing as per
+<code>x_cols_aliased</code>. Otherwise the function fails for rank deficient design matrices.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>List of class <code>mmrm_tmb_data</code> with elements:</p><ul><li><p><code>x_matrix</code>: <code>matrix</code> with <code>n</code> rows and <code>p</code> columns specifying the overall design matrix.</p></li>
+<p>List of class <code>mmrm_tmb_data</code> with elements:</p><ul><li><p><code>full_frame</code>: <code>data.frame</code> with <code>n</code> rows containing all variables needed in the model.</p></li>
+<li><p><code>x_matrix</code>: <code>matrix</code> with <code>n</code> rows and <code>p</code> columns specifying the overall design matrix.</p></li>
+<li><p><code>x_cols_aliased</code>: <code>logical</code> with potentially more than <code>p</code> elements indicating which
+columns in the original design matrix have been left out to obtain a full rank
+<code>x_matrix</code>.</p></li>
 <li><p><code>y_vector</code>: length <code>n</code> <code>numeric</code> specifying the overall response vector.</p></li>
 <li><p><code>visits_zero_inds</code>: length <code>n</code> <code>integer</code> containing zero-based visits indices.</p></li>
 <li><p><code>n_visits</code>: <code>int</code> with the number of visits, which is the dimension of the
@@ -120,7 +124,7 @@ on the order please use a factor.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">formula</span> <span class="op">&lt;-</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">SEX</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">formula_parts</span> <span class="op">&lt;-</span> <span class="fu"><a href="h_mmrm_tmb_formula_parts.html">h_mmrm_tmb_formula_parts</a></span><span class="op">(</span><span class="va">formula</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">tmb_data</span> <span class="op">&lt;-</span> <span class="fu">h_mmrm_tmb_data</span><span class="op">(</span><span class="va">formula_parts</span>, <span class="va">fev_data</span>, reml <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tmb_data</span> <span class="op">&lt;-</span> <span class="fu">h_mmrm_tmb_data</span><span class="op">(</span><span class="va">formula_parts</span>, <span class="va">fev_data</span>, reml <span class="op">=</span> <span class="cn">FALSE</span>, accept_singular <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

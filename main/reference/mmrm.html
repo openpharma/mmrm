@@ -18,7 +18,7 @@ This is the main function fitting the MMRM."><!-- mathjax --><script src="https:
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9012</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9013</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,12 +40,6 @@ This is the main function fitting the MMRM."><!-- mathjax --><script src="https:
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -79,7 +73,8 @@ This is the main function fitting the MMRM."><!-- mathjax --><script src="https:
 <span>  <span class="va">data</span>,</span>
 <span>  reml <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  optimizer <span class="op">=</span> <span class="st">"automatic"</span>,</span>
-<span>  n_cores <span class="op">=</span> <span class="fu"><a href="h_free_cores.html">h_free_cores</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  n_cores <span class="op">=</span> <span class="fu"><a href="h_free_cores.html">h_free_cores</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  accept_singular <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -105,6 +100,11 @@ otherwise maximum likelihood (ML) is used.</p></dd>
 <dt>n_cores</dt>
 <dd><p>(<code>count</code>)<br> number of cores which could in principle be used for
 parallel computations on Linux or Mac machines.</p></dd>
+
+
+<dt>accept_singular</dt>
+<dd><p>(<code>flag</code>)<br> whether singular design matrices are reduced
+to full rank automatically and additional coefficient estimates will be missing.</p></dd>
 
 </dl></div>
     <div class="section level2">
