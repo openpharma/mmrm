@@ -39,7 +39,7 @@ matrix<T> get_ante_dependence(const vector<T>& theta, int n_visits) {
   return get_heterogeneous_cov(sd_values, fun);
 }
 
-// Heterogeneous Toeplitz:
+// Toeplitz:
 
 // Correlation function.
 template <class T>
@@ -50,9 +50,17 @@ struct corr_fun_toeplitz : generic_corr_fun<T> {
     return this->corr_values(index);
   }
 };
-// Cholesky factor.
+// Homogeneous Toeplitz Cholesky factor.
 template <class T>
 matrix<T> get_toeplitz(const vector<T>& theta, int n_visits) {
+  T const_sd = exp(theta(0));
+  corr_fun_toeplitz<T> fun(theta.tail(n_visits - 1));
+  matrix<T> toep_cor_mat_chol = get_corr_mat_chol(n_visits, fun);
+  return const_sd * toep_cor_mat_chol;
+}
+// Heterogeneous Toeplitz Cholesky factor.
+template <class T>
+matrix<T> get_toeplitz_heterogeneous(const vector<T>& theta, int n_visits) {
   vector<T> sd_values = exp(theta.head(n_visits));
   corr_fun_toeplitz<T> fun(theta.tail(n_visits - 1));
   return get_heterogeneous_cov(sd_values, fun);
@@ -120,6 +128,8 @@ matrix<T> get_covariance_lower_chol(const vector<T>& theta, int n_visits, std::s
     result = get_unstructured<T>(theta, n_visits);
   } else if (cov_type == "toep") {
     result = get_toeplitz<T>(theta, n_visits);
+  } else if (cov_type == "toeph") {
+    result = get_toeplitz_heterogeneous<T>(theta, n_visits);
   } else if (cov_type == "ar1") {
     result = get_auto_regressive<T>(theta, n_visits);
   } else if (cov_type == "ar1h") {
