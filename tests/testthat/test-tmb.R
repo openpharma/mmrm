@@ -166,6 +166,15 @@ test_that("h_mmrm_tmb_parameters works as expected with Toeplitz", {
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = TRUE, accept_singular = FALSE)
   result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
+  expected <- list(theta = rep(0, 4)) # 4 parameters.
+  expect_identical(result, expected)
+})
+
+test_that("h_mmrm_tmb_parameters works as expected with heterogeneous Toeplitz", {
+  formula <- FEV1 ~ SEX + toeph(AVISIT | USUBJID)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula)
+  tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = TRUE, accept_singular = FALSE)
+  result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
   expected <- list(theta = rep(0, 7)) # 2 * 4 - 1 parameters.
   expect_identical(result, expected)
 })
@@ -469,8 +478,13 @@ test_that("h_mmrm_tmb works with ante-dependence covariance structure and REML",
 
 ## toeplitz ----
 
-test_that("h_mmrm_tmb works with toeplitz covariance structure and ML", {
-  formula <- FEV1 ~ toep(AVISIT | USUBJID)
+### homogeneous ----
+
+
+### heterogeneous ----
+
+test_that("h_mmrm_tmb works with toeph covariance structure and ML", {
+  formula <- FEV1 ~ toeph(AVISIT | USUBJID)
   data <- fev_data
   # We have seen transient NA/NaN function evaluation warnings here.
   result <- suppressWarnings(h_mmrm_tmb(formula, data, reml = FALSE))
@@ -488,8 +502,8 @@ test_that("h_mmrm_tmb works with toeplitz covariance structure and ML", {
   expect_equal(result_low_tri, expected_low_tri, tolerance = 1e-4)
 })
 
-test_that("h_mmrm_tmb works with ante-dependence covariance structure and REML", {
-  formula <- FEV1 ~ toep(AVISIT | USUBJID)
+test_that("h_mmrm_tmb works with toeph covariance structure and REML", {
+  formula <- FEV1 ~ toeph(AVISIT | USUBJID)
   data <- fev_data
   # We have seen transient NA/NaN function evaluation warnings here.
   result <- suppressWarnings(h_mmrm_tmb(formula, data, reml = TRUE))
