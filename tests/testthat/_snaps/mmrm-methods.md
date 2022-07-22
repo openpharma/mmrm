@@ -6,7 +6,7 @@
 
 # h_print_cov works as expected
 
-    Covariance:  heterogeneous Toeplitz (3 variance parameters)
+    Covariance:  Toeplitz (3 variance parameters)
 
 # h_print_aic_list works as expected
 
