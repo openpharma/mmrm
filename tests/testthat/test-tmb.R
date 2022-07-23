@@ -480,7 +480,7 @@ test_that("h_mmrm_tmb works with ante-dependence covariance structure and REML",
 
 ### homogeneous ----
 
-test_that("h_mmrm_tmb works with toeph covariance structure and ML", {
+test_that("h_mmrm_tmb works with toep covariance structure and ML", {
   formula <- FEV1 ~ toep(AVISIT | USUBJID)
   data <- fev_data
   # We have seen transient NA/NaN function evaluation warnings here.
@@ -499,7 +499,7 @@ test_that("h_mmrm_tmb works with toeph covariance structure and ML", {
   expect_equal(result_low_tri, expected_low_tri, tolerance = 1e-4)
 })
 
-test_that("h_mmrm_tmb works with toeph covariance structure and REML", {
+test_that("h_mmrm_tmb works with toep covariance structure and REML", {
   formula <- FEV1 ~ toep(AVISIT | USUBJID)
   data <- fev_data
   # We have seen transient NA/NaN function evaluation warnings here.
