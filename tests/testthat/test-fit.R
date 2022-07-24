@@ -172,7 +172,8 @@ test_that("mmrm falls back to other optimizers if default does not work", {
     "Model convergence problem"
   )
   # But another one works.
-  result <- expect_silent(mmrm(formula, data_small))
+  # Note: We disable parallel processing here to comply with CRAN checks.
+  result <- expect_silent(mmrm(formula, data_small, n_cores = 1L))
   expect_true(attr(result, "converged"))
   expect_false(identical(attr(result, "optimizer"), "L-BFGS-B"))
 })
@@ -182,8 +183,9 @@ test_that("mmrm fails if no optimizer works", {
 
   formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
   data_small <- fev_data[1:30, ]
+  # Note: We disable parallel processing here to comply with CRAN checks.
   expect_error(
-    mmrm(formula, data_small, reml = FALSE),
+    mmrm(formula, data_small, reml = FALSE, n_cores = 1L),
     "No optimizer led to a successful model fit"
   )
 })
