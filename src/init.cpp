@@ -4,10 +4,10 @@
 #include <R_ext/Rdynload.h>
 
 /* .Call calls */
-extern SEXP run_testthat_tests(SEXP);
+extern SEXP run_testthat_tests();
 
 static const R_CallMethodDef CallEntries[] = {
-  {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
+  {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 0},
   {NULL, NULL, 0}
 };
 
