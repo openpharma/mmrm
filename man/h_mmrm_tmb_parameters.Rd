@@ -20,11 +20,6 @@ List with element \code{theta} containing the start values for the variance
 parameters.
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+Start Parameters for \code{TMB} Fit
 }
-\examples{
-formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
-formula_parts <- h_mmrm_tmb_formula_parts(formula)
-tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = FALSE)
-pars <- h_mmrm_tmb_parameters(formula_parts, tmb_data, NULL)
-}
+\keyword{internal}

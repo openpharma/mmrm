@@ -19,8 +19,6 @@ h_df_1d_list(est, var, v_num, v_denom)
 List with \code{est}, \code{se}, \code{df}, \code{t_stat} and \code{p_val} (2-sided p-value).
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+Creating Results List for One-Dimensional Contrast
 }
-\examples{
-h_df_1d_list(5, 1, 1, 2)
-}
+\keyword{internal}

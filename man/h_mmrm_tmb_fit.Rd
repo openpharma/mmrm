@@ -37,8 +37,7 @@ List pf class \code{mmrm_tmb} with:
 }
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
-
 This helper does some simple post-processing of the \code{TMB} object and
 optimization results, including setting names, inverting matrices etc.
 }
+\keyword{internal}

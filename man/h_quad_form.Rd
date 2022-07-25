@@ -4,7 +4,9 @@
 \alias{h_quad_form}
 \alias{h_quad_form_vec}
 \alias{h_quad_form_mat}
-\title{Quadratic Form Calculations}
+\title{Quadratic Form Calculations
+These helpers are mainly for easier readability and slightly better efficiency
+of the quadratic forms used in the Satterthwaite calculations.}
 \usage{
 h_quad_form_vec(vec, center)
 
@@ -21,8 +23,7 @@ h_quad_form_mat(mat, center)
 in \code{center}.}
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
-
+Quadratic Form Calculations
 These helpers are mainly for easier readability and slightly better efficiency
 of the quadratic forms used in the Satterthwaite calculations.
 }
@@ -36,7 +37,4 @@ as a matrix, the result is square and has dimensions identical to the number
 of rows in \code{mat}.
 }}
 
-\examples{
-h_quad_form_vec(1:2, matrix(1:4, 2, 2))
-h_quad_form_mat(matrix(2:7, 3, 2), matrix(1:4, 2, 2))
-}
+\keyword{internal}

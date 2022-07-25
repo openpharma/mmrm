@@ -33,7 +33,7 @@ observed visits for each subjects. So the sum of this vector equals \code{n}.
 }
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+Data for \code{TMB} Fit
 }
 \details{
 Note that the \code{subject_var} must not be factor but can also be character.
@@ -42,8 +42,4 @@ the levels will be the unique values, sorted alphabetically and numerically if t
 is a common string prefix of numbers in the character elements. For full control
 on the order please use a factor.
 }
-\examples{
-formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
-formula_parts <- h_mmrm_tmb_formula_parts(formula)
-tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = FALSE)
-}
+\keyword{internal}

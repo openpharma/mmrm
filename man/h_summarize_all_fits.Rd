@@ -13,19 +13,6 @@ h_summarize_all_fits(all_fits)
 List with \code{warnings}, \code{messages}, \code{log_liks} and \code{converged} results.
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+Summarizing List of Fits
 }
-\examples{
-mod_fit <- fit_single_optimizer(
-  formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
-  data = fev_data,
-  optimizer = "nlminb"
-)
-mod_fit2 <- fit_single_optimizer(
-  formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
-  data = fev_data,
-  optimizer = "L-BFGS-B"
-)
-all_fits <- list(mod_fit, mod_fit2)
-h_summarize_all_fits(all_fits)
-}
+\keyword{internal}

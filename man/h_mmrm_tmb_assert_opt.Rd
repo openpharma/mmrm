@@ -15,5 +15,6 @@ h_mmrm_tmb_assert_opt(tmb_object, tmb_opt)
 Nothing, only used to generate messages, warnings or errors.
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+Asserting and Checking \code{TMB} Optimization Result
 }
+\keyword{internal}

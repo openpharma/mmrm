@@ -120,4 +120,3 @@ AIC(object, corrected = TRUE)
 # BIC:
 BIC(object)
 }
-\keyword{internal}

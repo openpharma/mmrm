@@ -31,16 +31,7 @@ messages, optimizer used and convergence status in addition to the
 \code{mmrm_tmb} contents.
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
-
 This function helps to fit an MMRM using \code{TMB} with a single optimizer,
 while capturing messages and warnings.
 }
-\examples{
-mod_fit <- fit_single_optimizer(
-  formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
-  data = fev_data,
-  optimizer = "nlminb"
-)
-attr(mod_fit, "converged")
-}
+\keyword{internal}
