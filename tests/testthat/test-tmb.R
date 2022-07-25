@@ -488,7 +488,7 @@ test_that("h_mmrm_tmb works with toep covariance structure and ML", {
   expect_class(result, "mmrm_tmb")
   # See design/SAS/sas_toep_ml.rtf for the source of numbers.
   expect_equal(deviance(result), 3857.00777313)
-  expect_equal(sqrt(result$beta_vcov[1, 1]), 0.4669, tolerance = 1e-4)
+  expect_equal(sqrt(result$beta_vcov[1, 1]), 0.4669, tolerance = 1e-3)
   expect_equal(as.numeric(result$beta_est), 42.3717, tolerance = 1e-4)
   expected_var <- c(88.8193)
   cor_mat <- VarCorr(result)
