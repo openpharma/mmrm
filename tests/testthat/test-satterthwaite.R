@@ -1,8 +1,7 @@
 # h_covbeta_fun ----
 
 test_that("h_covbeta_fun works as expected", {
-  formula <- FEV1 ~ RACE + us(AVISIT | USUBJID)
-  model <- h_mmrm_tmb(formula, fev_data)
+  model <- get_mmrm_tmb()
   result <- expect_silent(h_covbeta_fun(model))
   expect_function(result, args = "theta")
   value <- result(model$theta_est)
@@ -112,6 +111,22 @@ test_that("df_1d works as expected", {
   expect_true(result$p_val < 0.0001)
 })
 
+test_that("df_1d works as expected for singular fits", {
+  dat <- fev_data
+  dat$ones <- 1
+  object <- mmrm(
+    formula = FEV1 ~ ones + us(AVISIT | USUBJID),
+    data = dat
+  )
+  object2 <- mmrm(
+    formula = FEV1 ~ us(AVISIT | USUBJID),
+    data = fev_data
+  )
+  result <- expect_silent(df_1d(object, 1))
+  expected <- expect_silent(df_1d(object2, 1))
+  expect_identical(result, expected)
+})
+
 # h_md_denom_df ----
 
 test_that("h_md_denom_df works as expected in the standard case", {
@@ -171,11 +186,8 @@ test_that("h_df_md_from_1d works as expected", {
 # df_md ----
 
 test_that("df_md works as expected", {
-  object <- mmrm(
-    formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
-    data = fev_data
-  )
-  contrast <- matrix(data = 0, nrow = 2, ncol = length(object$beta_est))
+  object <- get_mmrm()
+  contrast <- matrix(data = 0, nrow = 2, ncol = length(component(object, "beta_est")))
   contrast[1, 2] <- contrast[2, 3] <- 1
   # See design/SAS/sas_log_simple_reml.txt for the source of numbers.
   result <- expect_silent(df_md(object, contrast))
@@ -187,13 +199,20 @@ test_that("df_md works as expected", {
 })
 
 test_that("df_md works as expected with a non-full rank contrast matrix", {
-  object <- mmrm(
-    formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
-    data = fev_data
-  )
-  contrast <- matrix(data = 0, nrow = 2, ncol = length(object$beta_est))
+  object <- get_mmrm()
+  contrast <- matrix(data = 0, nrow = 2, ncol = length(component(object, "beta_est")))
   contrast[2, 5] <- 1 # So the first row is all 0s still.
   result <- expect_silent(df_md(object, contrast))
   expected <- df_md(object, contrast[2L, , drop = FALSE])
   expect_equal(result, expected)
+})
+
+test_that("df_md works as expected for rank deficient model", {
+  object <- get_mmrm_rank_deficient()
+  contrast <- matrix(data = 0, nrow = 2, ncol = length(component(object, "beta_est")))
+  contrast[1, 2] <- contrast[2, 3] <- 1
+  result <- expect_silent(df_md(object, contrast))
+  object2 <- get_mmrm()
+  expected <- expect_silent(df_md(object2, contrast))
+  expect_identical(result, expected)
 })

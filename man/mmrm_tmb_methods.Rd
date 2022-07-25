@@ -16,7 +16,7 @@
 \alias{print.mmrm_tmb}
 \title{Methods for \code{mmrm_tmb} Objects}
 \usage{
-\method{coef}{mmrm_tmb}(object, ...)
+\method{coef}{mmrm_tmb}(object, complete = TRUE, ...)
 
 \method{fitted}{mmrm_tmb}(object, ...)
 
@@ -26,7 +26,7 @@
 
 \method{formula}{mmrm_tmb}(x, ...)
 
-\method{vcov}{mmrm_tmb}(object, ...)
+\method{vcov}{mmrm_tmb}(object, complete = TRUE, ...)
 
 \method{VarCorr}{mmrm_tmb}(x, sigma = NA, ...)
 
@@ -40,6 +40,9 @@
 }
 \arguments{
 \item{object}{(\code{mmrm_tmb})\cr the fitted MMRM object.}
+
+\item{complete}{(\code{flag})\cr whether to include potential non-estimable
+coefficients.}
 
 \item{...}{not used.}
 
@@ -61,39 +64,39 @@ is the classical AIC.}
 }
 \section{Functions}{
 \itemize{
-\item \code{coef.mmrm_tmb}: obtains the estimated coefficients.
+\item \code{coef(mmrm_tmb)}: obtains the estimated coefficients.
 
-\item \code{fitted.mmrm_tmb}: obtains the fitted values.
+\item \code{fitted(mmrm_tmb)}: obtains the fitted values.
 
-\item \code{model.frame.mmrm_tmb}: obtains the model frame.
+\item \code{model.frame(mmrm_tmb)}: obtains the model frame.
 
-\item \code{logLik.mmrm_tmb}: obtains the attained log likelihood value.
+\item \code{logLik(mmrm_tmb)}: obtains the attained log likelihood value.
 
-\item \code{formula.mmrm_tmb}: obtains the used formula.
+\item \code{formula(mmrm_tmb)}: obtains the used formula.
 
-\item \code{vcov.mmrm_tmb}: obtains the variance-covariance matrix estimate
+\item \code{vcov(mmrm_tmb)}: obtains the variance-covariance matrix estimate
 for the coefficients.
 
-\item \code{VarCorr.mmrm_tmb}: obtains the variance-covariance matrix estimate
+\item \code{VarCorr(mmrm_tmb)}: obtains the variance-covariance matrix estimate
 for the residuals.
 
-\item \code{deviance.mmrm_tmb}: obtains the deviance, which is defined here
+\item \code{deviance(mmrm_tmb)}: obtains the deviance, which is defined here
 as twice the negative log likelihood, which can either be integrated
 over the coefficients for REML fits or the usual one for ML fits.
 
-\item \code{AIC.mmrm_tmb}: obtains the Akaike Information Criterion,
+\item \code{AIC(mmrm_tmb)}: obtains the Akaike Information Criterion,
 where the degrees of freedom are the number of variance parameters (\code{n_theta}).
 If \code{corrected}, then this is multiplied with \code{m / (m - n_theta - 1)} where
 \code{m} is the number of observations minus the number of coefficients, or
-\code{n_theta + 2} if it is smaller than that.
+\code{n_theta + 2} if it is smaller than that \insertCite{hurvich1989regression,burnham1998practical}{mmrm}.
 
-\item \code{BIC.mmrm_tmb}: obtains the Bayesian Information Criterion,
+\item \code{BIC(mmrm_tmb)}: obtains the Bayesian Information Criterion,
 which is using the natural logarithm of the number of subjects for the
 penalty parameter \code{k}.
 
-\item \code{print.mmrm_tmb}: prints the object.
-}}
+\item \code{print(mmrm_tmb)}: prints the object.
 
+}}
 \examples{
 formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
 object <- h_mmrm_tmb(formula, fev_data)
@@ -120,3 +123,10 @@ AIC(object, corrected = TRUE)
 # BIC:
 BIC(object)
 }
+\references{
+\itemize{
+\item \insertRef{hurvich1989regression}{mmrm}
+\item \insertRef{burnham1998practical}{mmrm}
+}
+}
+\keyword{internal}

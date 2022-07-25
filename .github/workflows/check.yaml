@@ -3,11 +3,18 @@ name: Check 🛠
 
 on:
   pull_request:
+    types:
+      - opened
+      - synchronize
+      - ready_for_review
     branches:
       - main
+      - pre-release
   push:
     branches:
       - main
+      - pre-release
+  workflow_dispatch:
 
 jobs:
   audit:
@@ -33,6 +40,11 @@ jobs:
     uses: insightsengineering/r.pkg.template/.github/workflows/roxygen.yaml@main
     secrets:
       REPO_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    with:
+      auto-update: true
+  gitleaks:
+    name: gitleaks 💧
+    uses: insightsengineering/r.pkg.template/.github/workflows/gitleaks.yaml@main
   spelling:
     if: github.event_name == 'pull_request'
     name: Spell Check 🆎
@@ -43,7 +55,7 @@ jobs:
     uses: insightsengineering/r.pkg.template/.github/workflows/links.yaml@main
   vbump:
     name: Version Bump 🤜🤛
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push'
     uses: insightsengineering/r.pkg.template/.github/workflows/version-bump.yaml@main
     secrets:
       REPO_GITHUB_TOKEN: ${{ secrets.REPO_GITHUB_TOKEN }}
@@ -53,3 +65,9 @@ jobs:
   licenses:
     name: License Check 🃏
     uses: insightsengineering/r.pkg.template/.github/workflows/licenses.yaml@main
+  style:
+    if: github.event_name == 'pull_request'
+    name: Style Check 👗
+    uses: insightsengineering/r.pkg.template/.github/workflows/style.yaml@main
+    with:
+      auto-update: true

@@ -52,13 +52,13 @@ emm_basis.mmrm <- function(object,
                            grid,
                            ...) {
   model_frame <- stats::model.frame(trms, grid, na.action = stats::na.pass, xlev = xlev)
-  contrasts <- attr(object$tmb_data$x_matrix, "contrasts")
+  contrasts <- attr(component(object, "x_matrix"), "contrasts")
   model_mat <- stats::model.matrix(trms, model_frame, contrasts.arg = contrasts)
-  beta_hat <- object$beta_est
+  beta_hat <- component(object, "beta_est")
   nbasis <- if (length(beta_hat) < ncol(model_mat)) {
     kept <- match(names(beta_hat), colnames(model_mat))
     beta_hat <- NA * model_mat[1L, ]
-    beta_hat[kept] <- object$beta_est
+    beta_hat[kept] <- component(object, "beta_est")
     orig_model_mat <- stats::model.matrix(
       trms,
       stats::model.frame(object),

@@ -3,10 +3,7 @@
 test_that("recover_data method works as expected", {
   skip_if_not_installed("emmeans", minimum_version = "1.6")
 
-  fit <- mmrm(
-    formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
-    data = fev_data
-  )
+  fit <- get_mmrm()
   result <- emmeans::recover_data(fit)
   expect_data_frame(result, nrows = nrow(fit$tmb_data$x_matrix))
   expect_named(
@@ -15,15 +12,21 @@ test_that("recover_data method works as expected", {
   )
 })
 
+test_that("recover_data method works as expected for rank deficient model", {
+  skip_if_not_installed("emmeans", minimum_version = "1.6")
+
+  fit <- get_mmrm_rank_deficient()
+  result <- emmeans::recover_data(fit)
+  expect_data_frame(result, nrows = nrow(fit$tmb_data$x_matrix))
+  expect_named(result, c("RACE", "SEX", "SEX2", "ARMCD", "AVISIT"))
+})
+
 # emm_basis ----
 
 test_that("emm_basis method works as expected", {
   skip_if_not_installed("emmeans", minimum_version = "1.6")
 
-  fit <- mmrm(
-    formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
-    data = fev_data
-  )
+  fit <- get_mmrm()
   trms <- stats::delete.response(stats::terms(fit$formula_parts$model_formula))
   xlev <- list(
     AVISIT = c("VIS1", "VIS2", "VIS3", "VIS4"),
@@ -41,15 +44,34 @@ test_that("emm_basis method works as expected", {
   expect_named(result, c("X", "bhat", "nbasis", "V", "dffun", "dfargs"))
 })
 
+test_that("emm_basis method works also for rank deficient fit", {
+  skip_if_not_installed("emmeans", minimum_version = "1.6")
+
+  fit <- get_mmrm_rank_deficient()
+  trms <- stats::delete.response(stats::terms(fit$formula_parts$model_formula))
+  xlev <- list(
+    AVISIT = c("VIS1", "VIS2", "VIS3", "VIS4"),
+    ARMCD = c("PBO", "TRT"),
+    RACE = c("Asian", "Black or African American", "White"),
+    SEX = c("Male", "Female"),
+    SEX2 = c("Male", "Female")
+  )
+  # Fit a linear model with the same formula so that we don't rely on
+  # emm_basis just yet.
+  lm_mod <- stats::lm(fit$formula_parts$model_formula, data = fit$data)
+  grid <- emmeans::ref_grid(lm_mod)
+
+  result <- emmeans::emm_basis(fit, trms = trms, xlev = xlev, grid = grid)
+  expect_list(result)
+  expect_named(result, c("X", "bhat", "nbasis", "V", "dffun", "dfargs"))
+})
+
 # emmeans ----
 
 test_that("emmeans works as expected", {
   skip_if_not_installed("emmeans", minimum_version = "1.6")
 
-  fit <- mmrm(
-    formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
-    data = fev_data
-  )
+  fit <- get_mmrm()
   result <- expect_silent(emmeans::emmeans(fit, ~ ARMCD | AVISIT))
   expect_class(result, "emmGrid")
   result_emmeans_rounded <- round(as.data.frame(result)$emmean, 1)
@@ -60,10 +82,7 @@ test_that("emmeans works as expected", {
 test_that("emmeans gives values close to what is expected", {
   skip_if_not_installed("emmeans", minimum_version = "1.6")
 
-  fit <- mmrm(
-    formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
-    data = fev_data
-  )
+  fit <- get_mmrm()
   result <- expect_silent(emmeans::emmeans(fit, ~ ARMCD | AVISIT))
   result_df <- as.data.frame(result)
 
@@ -79,4 +98,34 @@ test_that("emmeans gives values close to what is expected", {
   expect_equal(result_df$emmean, expected_df$emmean, tolerance = 1e-4)
   expect_equal(result_df$SE, expected_df$SE, tolerance = 1e-4)
   expect_true(all(abs(result_df$df - expected_df$df) < 0.6))
+})
+
+test_that("emmeans works as expected also for rank deficient fit when singular coefficients are not involved", {
+  skip_if_not_installed("emmeans", minimum_version = "1.6")
+
+  fit <- get_mmrm_rank_deficient()
+  expect_message(
+    result <- emmeans::emmeans(fit, ~ ARMCD | AVISIT),
+    "A nesting structure was detected in the fitted model"
+  )
+  expect_class(result, "emmGrid")
+  result_emmeans_rounded <- round(as.data.frame(result)$emmean, 1)
+  expected_emmeans_rounded <- c(33.3, 37.1, 38.2, 41.9, 43.7, 46.8, 48.4, 52.8)
+  expect_equal(result_emmeans_rounded, expected_emmeans_rounded, tolerance = 1e-4)
+})
+
+test_that("emmeans works as expected also for rank deficient fit when singular coefficients are involved", {
+  skip_if_not_installed("emmeans", minimum_version = "1.6")
+
+  fit <- get_mmrm_rank_deficient()
+  # We get a message from `emmeans` but that is ok.
+  expect_message(
+    result <- emmeans::emmeans(fit, ~SEX2),
+    "A nesting structure was detected in the fitted model"
+  )
+  expect_class(result, "emmGrid")
+  result_emmeans_rounded <- round(as.data.frame(result)$emmean, 1)
+  expect_message(expected <- emmeans::emmeans(fit, ~SEX))
+  expected_emmeans_rounded <- round(as.data.frame(expected)$emmean, 1)
+  expect_identical(result_emmeans_rounded, expected_emmeans_rounded)
 })

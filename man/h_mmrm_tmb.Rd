@@ -4,13 +4,7 @@
 \alias{h_mmrm_tmb}
 \title{Fitting an MMRM with \code{TMB}}
 \usage{
-h_mmrm_tmb(
-  formula,
-  data,
-  reml = TRUE,
-  start = NULL,
-  control = h_mmrm_tmb_control()
-)
+h_mmrm_tmb(formula, data, reml = TRUE, control = h_mmrm_tmb_control())
 }
 \arguments{
 \item{formula}{(\code{formula})\cr model formula with exactly one special term
@@ -21,9 +15,6 @@ in \code{formula}.}
 
 \item{reml}{(\code{flag})\cr whether restricted maximum likelihood (REML) estimation is used,
 otherwise maximum likelihood (ML) is used.}
-
-\item{start}{(\code{numeric} or \code{NULL})\cr optional start values for variance
-parameters.}
 
 \item{control}{(\code{mmrm_tmb_control})\cr list of control options produced
 by \code{\link[=h_mmrm_tmb_control]{h_mmrm_tmb_control()}}.}

@@ -4,8 +4,7 @@
 #' while capturing messages and warnings.
 #'
 #' @inheritParams mmrm
-#' @param start (`numeric` or `NULL`)\cr optional starting values for
-#'   the variance parameters.
+#' @inheritParams h_mmrm_tmb_control
 #'
 #' @return The `mmrm_fit` object, with additional attributes containing warnings,
 #'   messages, optimizer used and convergence status in addition to the
@@ -15,22 +14,23 @@ fit_single_optimizer <- function(formula,
                                  data,
                                  reml = TRUE,
                                  start = NULL,
-                                 optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb")) {
+                                 optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb"),
+                                 accept_singular = TRUE) {
   assert_formula(formula)
   assert_data_frame(data)
-  assert_numeric(start, null.ok = TRUE)
   optimizer <- match.arg(optimizer)
   control <- h_mmrm_tmb_control(
     optimizer = if (optimizer == "nlminb") stats::nlminb else stats::optim,
     optimizer_control = if (optimizer == "nlminb") list(iter.max = 300, eval.max = 400) else list(),
-    optimizer_args = if (optimizer == "nlminb") list() else list(method = optimizer)
+    optimizer_args = if (optimizer == "nlminb") list() else list(method = optimizer),
+    start = start,
+    accept_singular = accept_singular
   )
   quiet_fit <- h_record_all_output(
     h_mmrm_tmb(
       formula = formula,
       data = data,
       reml = reml,
-      start = start,
       control = control
     ),
     remove = list(
@@ -56,17 +56,22 @@ fit_single_optimizer <- function(formula,
 
 #' Summarizing List of Fits
 #'
-#' @param all_fits (`list` of `mmrm_fit`)\cr list of fits.
+#' @param all_fits (`list` of `mmrm_fit` or `try-error`)\cr list of fits.
 #'
 #' @return List with `warnings`, `messages`, `log_liks` and `converged` results.
 #' @keywords internal
 h_summarize_all_fits <- function(all_fits) {
-  assert_list(all_fits, types = "mmrm_fit")
+  assert_list(all_fits, types = c("mmrm_fit", "try-error"))
+  is_error <- vapply(all_fits, is, logical(1), class2 = "try-error")
 
-  warnings <- lapply(all_fits, attr, which = "warnings")
-  messages <- lapply(all_fits, attr, which = "messages")
-  log_liks <- vapply(all_fits, stats::logLik, numeric(1L))
-  converged <- vapply(all_fits, attr, logical(1), which = "converged")
+  warnings <- messages <- vector(mode = "list", length = length(all_fits))
+  warnings[is_error] <- lapply(all_fits[is_error], as.character)
+  warnings[!is_error] <- lapply(all_fits[!is_error], attr, which = "warnings")
+  messages[!is_error] <- lapply(all_fits[!is_error], attr, which = "messages")
+  log_liks <- as.numeric(rep(NA, length = length(all_fits)))
+  log_liks[!is_error] <- vapply(all_fits[!is_error], stats::logLik, numeric(1L))
+  converged <- rep(FALSE, length = length(all_fits))
+  converged[!is_error] <- vapply(all_fits[!is_error], attr, logical(1), which = "converged")
 
   list(
     warnings = warnings,
@@ -81,6 +86,7 @@ h_summarize_all_fits <- function(all_fits) {
 #' @param fit (`mmrm_fit`)\cr original model fit from [fit_single_optimizer()].
 #' @inheritParams mmrm
 #' @param optimizers (`character`)\cr all possible optimizers to be used for fitting.
+#' @inheritParams h_mmrm_tmb_control
 #'
 #' @return The best (in terms of log likelihood) fit which converged.
 #'
@@ -88,7 +94,8 @@ h_summarize_all_fits <- function(all_fits) {
 #' @keywords internal
 refit_multiple_optimizers <- function(fit,
                                       n_cores = 1L,
-                                      optimizers = c("L-BFGS-B", "BFGS", "CG", "nlminb")) {
+                                      optimizers = c("L-BFGS-B", "BFGS", "CG", "nlminb"),
+                                      accept_singular = TRUE) {
   assert_class(fit, "mmrm_fit")
   assert_int(n_cores, lower = 1L)
   optimizers <- match.arg(optimizers, several.ok = TRUE)
@@ -110,16 +117,17 @@ refit_multiple_optimizers <- function(fit,
   )
 
   # Take the results from old fit as starting values for new fits.
-  all_fits <- parallel::mclapply(
+  all_fits <- suppressWarnings(parallel::mclapply(
     X = optimizers,
     FUN = fit_single_optimizer,
     formula = old_formula,
     data = old_data,
     reml = fit$reml,
     start = fit$theta_est,
+    accept_singular = accept_singular,
     mc.cores = n_cores_used,
     mc.silent = TRUE
-  )
+  ))
   all_fits <- c(all_fits, list(old_result = fit))
   names(all_fits) <- c(optimizers, old_optimizer)
 
@@ -132,7 +140,7 @@ refit_multiple_optimizers <- function(fit,
       "Please try to use a different covariance structure or other covariates."
     )
   }
-  best_optimizer <- names(which.max(all_fits_summary$log_liks[is_ok]))
+  best_optimizer <- which.max(all_fits_summary$log_liks[is_ok])
   all_fits[[best_optimizer]]
 }
 
@@ -150,6 +158,7 @@ refit_multiple_optimizers <- function(fit,
 #' @param optimizer (`string`)\cr optimizer to be used to generate the model.
 #' @param n_cores (`count`)\cr number of cores which could in principle be used for
 #'   parallel computations on Linux or Mac machines.
+#' @inheritParams h_mmrm_tmb_control
 #'
 #' @details
 #' The `formula` typically looks like:
@@ -183,7 +192,8 @@ mmrm <- function(formula,
                  data,
                  reml = TRUE,
                  optimizer = "automatic",
-                 n_cores = h_free_cores()) {
+                 n_cores = h_free_cores(),
+                 accept_singular = TRUE) {
   assert_string(optimizer)
   use_automatic <- identical(optimizer, "automatic")
 
@@ -193,11 +203,16 @@ mmrm <- function(formula,
     formula = formula,
     data = data,
     reml = reml,
-    optimizer = ifelse(use_automatic, "L-BFGS-B", optimizer)
+    optimizer = ifelse(use_automatic, "L-BFGS-B", optimizer),
+    accept_singular = accept_singular
   )
   if (!attr(fit, "converged")) {
     if (use_automatic) {
-      fit <- refit_multiple_optimizers(fit, n_cores = n_cores)
+      fit <- refit_multiple_optimizers(
+        fit,
+        n_cores = n_cores,
+        accept_singular = accept_singular
+      )
     } else {
       all_problems <- unlist(
         attributes(fit)[c("errors", "messages", "warnings")],

@@ -9,7 +9,9 @@ df_1d(object, contrast)
 \arguments{
 \item{object}{(\code{mmrm})\cr the MMRM fit.}
 
-\item{contrast}{(\code{numeric})\cr contrast vector.}
+\item{contrast}{(\code{numeric})\cr contrast vector. Note that this should not include
+elements for singular coefficient estimates, i.e. only refer to the
+actually estimated coefficients.}
 }
 \value{
 List with \code{est}, \code{se}, \code{df}, \code{t_stat} and \code{p_val}.

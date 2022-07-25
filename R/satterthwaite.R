@@ -176,7 +176,9 @@ h_df_1d_list <- function(est,
 #' @description `r lifecycle::badge("experimental")`
 #'
 #' @param object (`mmrm`)\cr the MMRM fit.
-#' @param contrast (`numeric`)\cr contrast vector.
+#' @param contrast (`numeric`)\cr contrast vector. Note that this should not include
+#'   elements for singular coefficient estimates, i.e. only refer to the
+#'   actually estimated coefficients.
 #'
 #' @return List with `est`, `se`, `df`, `t_stat` and `p_val`.
 #' @export
@@ -196,10 +198,10 @@ df_1d <- function(object, contrast) {
   contrast <- as.vector(contrast)
   assert_numeric(contrast, len = length(component(object, "beta_est")))
   est <- sum(contrast * component(object, "beta_est"))
-  var <- h_quad_form_vec(contrast, component(object, "vcov"))
+  var <- h_quad_form_vec(contrast, component(object, "beta_vcov"))
   grad <- h_gradient(component(object, "jac_list"), contrast)
 
-  v_num <- 2 * var ^ 2
+  v_num <- 2 * var^2
   v_denom <- h_quad_form_vec(grad, component(object, "theta_vcov"))
 
   h_df_1d_list(
@@ -290,7 +292,9 @@ h_df_md_from_1d <- function(object, contrast) {
 #'
 #' @param object (`mmrm`)\cr the MMRM fit.
 #' @param contrast (`matrix`)\cr numeric contrast matrix, if given a `numeric`
-#'   then this is coerced to a row vector.
+#'   then this is coerced to a row vector. Note that this should not include
+#'   elements for singular coefficient estimates, i.e. only refer to the
+#'   actually estimated coefficients.
 #'
 #' @return List with `est`, `se`, `df`, `t_stat` and `p_val`.
 #' @export
@@ -309,14 +313,14 @@ df_md <- function(object, contrast) {
   if (!is.matrix(contrast)) {
     contrast <- matrix(contrast, ncol = length(contrast))
   }
-  assert_matrix(contrast, ncols = length(component(object,"beta_est")))
+  assert_matrix(contrast, ncols = length(component(object, "beta_est")))
 
   # Early return if we are in the one-dimensional case.
   if (identical(nrow(contrast), 1L)) {
     return(h_df_md_from_1d(object, contrast))
   }
 
-  contrast_cov <- h_quad_form_mat(contrast, component(object,"vcov"))
+  contrast_cov <- h_quad_form_mat(contrast, component(object, "beta_vcov"))
   eigen_cont_cov <- eigen(contrast_cov)
   eigen_cont_cov_vctrs <- eigen_cont_cov$vectors
   eigen_cont_cov_vals <- eigen_cont_cov$values
@@ -337,9 +341,9 @@ df_md <- function(object, contrast) {
   t_squared_denoms <- eigen_cont_cov_vals[rank_seq]
   t_squared <- t_squared_nums / t_squared_denoms
   f_stat <- sum(t_squared) / rank_cont_cov
-  grads_vctrs_cont_prod <- lapply(rank_seq, function(m) h_gradient(component(object,"jac_list"), contrast = vctrs_cont_prod[m, ]))
+  grads_vctrs_cont_prod <- lapply(rank_seq, function(m) h_gradient(component(object, "jac_list"), contrast = vctrs_cont_prod[m, ]))
   t_stat_df_nums <- 2 * eigen_cont_cov_vals^2
-  t_stat_df_denoms <- vapply(grads_vctrs_cont_prod, h_quad_form_vec, center = component(object,"theta_vcov"), numeric(1))
+  t_stat_df_denoms <- vapply(grads_vctrs_cont_prod, h_quad_form_vec, center = component(object, "theta_vcov"), numeric(1))
   t_stat_df <- t_stat_df_nums / t_stat_df_denoms
   denom_df <- h_md_denom_df(t_stat_df)
 
