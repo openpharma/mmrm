@@ -1,7 +1,5 @@
 #' Fitting an MMRM with Single Optimizer
 #'
-#' @description `r lifecycle::badge("experimental")`
-#'
 #' This function helps to fit an MMRM using `TMB` with a single optimizer,
 #' while capturing messages and warnings.
 #'
@@ -12,15 +10,7 @@
 #' @return The `mmrm_fit` object, with additional attributes containing warnings,
 #'   messages, optimizer used and convergence status in addition to the
 #'   `mmrm_tmb` contents.
-#' @export
-#'
-#' @examples
-#' mod_fit <- fit_single_optimizer(
-#'   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
-#'   data = fev_data,
-#'   optimizer = "nlminb"
-#' )
-#' attr(mod_fit, "converged")
+#' @keywords internal
 fit_single_optimizer <- function(formula,
                                  data,
                                  reml = TRUE,
@@ -66,26 +56,10 @@ fit_single_optimizer <- function(formula,
 
 #' Summarizing List of Fits
 #'
-#' @description `r lifecycle::badge("experimental")`
-#'
 #' @param all_fits (`list` of `mmrm_fit`)\cr list of fits.
 #'
 #' @return List with `warnings`, `messages`, `log_liks` and `converged` results.
-#' @export
-#'
-#' @examples
-#' mod_fit <- fit_single_optimizer(
-#'   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
-#'   data = fev_data,
-#'   optimizer = "nlminb"
-#' )
-#' mod_fit2 <- fit_single_optimizer(
-#'   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
-#'   data = fev_data,
-#'   optimizer = "L-BFGS-B"
-#' )
-#' all_fits <- list(mod_fit, mod_fit2)
-#' h_summarize_all_fits(all_fits)
+#' @keywords internal
 h_summarize_all_fits <- function(all_fits) {
   assert_list(all_fits, types = "mmrm_fit")
 
@@ -104,8 +78,6 @@ h_summarize_all_fits <- function(all_fits) {
 
 #' Refitting MMRM with Multiple Optimizers
 #'
-#' @description `r lifecycle::badge("experimental")`
-#'
 #' @param fit (`mmrm_fit`)\cr original model fit from [fit_single_optimizer()].
 #' @inheritParams mmrm
 #' @param optimizers (`character`)\cr all possible optimizers to be used for fitting.
@@ -113,15 +85,7 @@ h_summarize_all_fits <- function(all_fits) {
 #' @return The best (in terms of log likelihood) fit which converged.
 #'
 #' @note For Windows, no parallel computations are currently implemented.
-#' @export
-#'
-#' @examples
-#' fit <- fit_single_optimizer(
-#'   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
-#'   data = fev_data,
-#'   optimizer = "nlminb"
-#' )
-#' best_fit <- refit_multiple_optimizers(fit)
+#' @keywords internal
 refit_multiple_optimizers <- function(fit,
                                       n_cores = 1L,
                                       optimizers = c("L-BFGS-B", "BFGS", "CG", "nlminb")) {

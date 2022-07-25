@@ -1,19 +1,11 @@
 #' Covariance Matrix for Coefficients Given Variance Parameters
 #'
-#' @description `r lifecycle::badge("experimental")`
-#'
 #' @param model (`mmrm_tmb`)\cr initial model fit.
 #'
 #' @return Function with argument `theta` that calculates the covariance matrix
 #'   for the coefficient vector `beta`.
-#' @export
 #'
-#' @examples
-#' formula <- FEV1 ~ RACE + us(AVISIT | USUBJID)
-#' model <- h_mmrm_tmb(formula, fev_data)
-#' fun <- h_covbeta_fun(model)
-#' fun(model$theta_est)
-#' model$beta_vcov
+#' @keywords internal
 h_covbeta_fun <- function(model) {
   assert_class(model, "mmrm_tmb")
 
@@ -25,19 +17,14 @@ h_covbeta_fun <- function(model) {
 
 #' Formatting a Column from Jacobian Matrix as Matrix
 #'
-#' @description `r lifecycle::badge("experimental")`
-#'
 #' @param jac_matrix (`matrix`)\cr full Jacobian matrix.
 #' @param col (`int`)\cr column index.
 #'
 #' @return The column `col` of `jac_matrix` as a square matrix.
 #'   Here the values in the column are used to fill the result column
 #'   by column.
-#' @export
 #'
-#' @examples
-#' jac_matrix <- matrix(1:81, 9, 9)
-#' h_jac_col_as_matrix(jac_matrix, 5)
+#' @keywords internal
 h_jac_col_as_matrix <- function(jac_matrix, col) {
   assert_int(col)
   assert_matrix(jac_matrix, min.cols = col)
@@ -50,8 +37,6 @@ h_jac_col_as_matrix <- function(jac_matrix, col) {
 
 #' Obtain List of Jacobian Matrix Entries for Covariance Matrix
 #'
-#' @description `r lifecycle::badge("experimental")`
-#'
 #' @param covbeta_fun (`function`)\cr function calculating the covariance
 #'   matrix of coefficients given variance parameters (`theta`), see
 #'   [h_covbeta_fun()] to obtain this from a `mmrm_tmb` object.
@@ -60,13 +45,8 @@ h_jac_col_as_matrix <- function(jac_matrix, col) {
 #' @return List with one element per variance parameter containing a matrix
 #'   of the same dimensions as the covariance matrix. The values are the derivatives
 #'   with regards to this variance parameter.
-#' @export
 #'
-#' @examples
-#' formula <- FEV1 ~ RACE + us(AVISIT | USUBJID)
-#' model <- h_mmrm_tmb(formula, fev_data)
-#' covbeta_fun <- h_covbeta_fun(model)
-#' h_jac_list(covbeta_fun, model$theta_est)
+#' @keywords internal
 h_jac_list <- function(covbeta_fun,
                        theta_est) {
   assert_function(covbeta_fun, args = "theta")
@@ -85,9 +65,6 @@ h_jac_list <- function(covbeta_fun,
 }
 
 #' Quadratic Form Calculations
-#'
-#' @description `r lifecycle::badge("experimental")`
-#'
 #' These helpers are mainly for easier readability and slightly better efficiency
 #' of the quadratic forms used in the Satterthwaite calculations.
 #'
@@ -102,9 +79,7 @@ NULL
 #'
 #' @param vec (`numeric`)\cr interpreted as a row vector.
 #'
-#' @export
-#' @examples
-#' h_quad_form_vec(1:2, matrix(1:4, 2, 2))
+#' @keywords internal
 h_quad_form_vec <- function(vec, center) {
   assert_numeric(vec, any.missing = FALSE)
   assert_matrix(
@@ -126,9 +101,7 @@ h_quad_form_vec <- function(vec, center) {
 #'   `center`, therefore needs to have as many columns as there are rows and columns
 #'   in `center`.
 #'
-#' @export
-#' @examples
-#' h_quad_form_mat(matrix(2:7, 3, 2), matrix(1:4, 2, 2))
+#' @keywords internal
 h_quad_form_mat <- function(mat, center) {
   assert_matrix(mat, mode = "numeric", any.missing = FALSE, min.cols = 1L)
   assert_matrix(
@@ -144,8 +117,6 @@ h_quad_form_mat <- function(mat, center) {
 
 #' Computation of a Gradient Given Jacobian and Contrast Vector
 #'
-#' @description `r lifecycle::badge("experimental")`
-#'
 #' @param jac_list (`list`)\cr Jacobian list produced e.g. by [h_jac_list()].
 #' @param contrast (`numeric`)\cr contrast vector, which needs to have the
 #'   same number of elements as there are rows and columns in each element of
@@ -153,15 +124,8 @@ h_quad_form_mat <- function(mat, center) {
 #'
 #' @return Numeric vector which contains the quadratic forms of each element of
 #'   `jac_list` with the `contrast` vector.
-#' @export
 #'
-#' @examples
-#' jac_list <- list(
-#'   matrix(1:4, 2, 2),
-#'   matrix(5:8, 2, 2)
-#' )
-#' contrast <- c(1:2)
-#' h_gradient(jac_list, contrast)
+#' @keywords internal
 h_gradient <- function(jac_list, contrast) {
   assert_list(jac_list)
   assert_numeric(contrast)
@@ -176,18 +140,14 @@ h_gradient <- function(jac_list, contrast) {
 
 #' Creating Results List for One-Dimensional Contrast
 #'
-#' @description `r lifecycle::badge("experimental")`
-#'
 #' @param est (`number`)\cr estimate.
 #' @param var (`number`)\cr variance of estimate.
 #' @param v_num (`number`)\cr numerator for Satterthwaite d.f.
 #' @param v_denom (`number`)\cr denominator for Satterthwaite d.f.
 #'
 #' @return List with `est`, `se`, `df`, `t_stat` and `p_val` (2-sided p-value).
-#' @export
 #'
-#' @examples
-#' h_df_1d_list(5, 1, 1, 2)
+#' @keywords internal
 h_df_1d_list <- function(est,
                          var,
                          v_num,
@@ -252,8 +212,6 @@ df_1d <- function(object, contrast) {
 
 #' Calculating Denominator Degrees of Freedom for the Multi-Dimensional Case
 #'
-#' @description `r lifecycle::badge("experimental")`
-#'
 #' @param t_stat_df (`numeric`)\cr `n` t-statistic derived degrees of freedom.
 #'
 #' @return Usually the calculation is returning `2 * E / (E - n)` where
@@ -263,10 +221,7 @@ df_1d <- function(object, contrast) {
 #'   of them is returned. If any of the inputs is not larger than 2 then 2 is
 #'   returned.
 #'
-#' @export
-#'
-#' @examples
-#' h_md_denom_df(c(5, 10))
+#' @keywords internal
 h_md_denom_df <- function(t_stat_df) {
   assert_numeric(t_stat_df, min.len = 1L, lower = .Machine$double.xmin, any.missing = FALSE)
 
@@ -284,17 +239,13 @@ h_md_denom_df <- function(t_stat_df) {
 
 #' Creating Results List for Multi-Dimensional Contrast
 #'
-#' @description `r lifecycle::badge("experimental")`
-#'
 #' @param f_stat (`number`)\cr F-statistic.
 #' @param num_df (`number`)\cr numerator degrees of freedom.
 #' @param denom_df (`number`)\cr denominator degrees of freedom.
 #'
 #' @return List with `num_df`, `denom_df`, `f_stat` and `p_val` (2-sided p-value).
-#' @export
 #'
-#' @examples
-#' h_df_md_list(5, 1, 15)
+#' @keywords internal
 h_df_md_list <- function(f_stat, num_df, denom_df) {
   assert_number(f_stat, lower = .Machine$double.xmin)
   assert_number(num_df, lower = 1)
@@ -317,14 +268,13 @@ h_df_md_list <- function(f_stat, num_df, denom_df) {
 
 #' Creating F-Statistic Results from One-Dimensional Contrast
 #'
-#' @description `r lifecycle::badge("experimental")`
-#'
 #' @param object (`mmrm`)\cr model fit.
 #' @param contrast (`numeric`)\cr one-dimensional contrast.
 #'
 #' @return The one-dimensional results are calculated and then returned as per
 #'   [h_df_md_list()].
-#' @export
+#'
+#' @keywords internal
 h_df_md_from_1d <- function(object, contrast) {
   res_1d <- df_1d(object, contrast)
   h_df_md_list(
