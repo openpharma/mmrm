@@ -108,7 +108,7 @@ test_that("h_summarize_all_fits works when some list elements are try-error obje
 
 # refit_multiple_optimizers ----
 
-test_that("refit_multiple_optimizers works as expected", {
+test_that("refit_multiple_optimizers works as expected with default arguments", {
   fit <- fit_single_optimizer(
     formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
     data = fev_data,
@@ -124,6 +124,31 @@ test_that("refit_multiple_optimizers works as expected", {
 
   expect_true(attr(result, "converged"))
   expect_false(identical("nlminb", attr(result, "optimizer")))
+  expect_true(logLik(result) > logLik(fit))
+})
+
+test_that("refit_multiple_optimizers works with parallel computations and selected optimizers", {
+  skip_on_cran()
+
+  fit <- fit_single_optimizer(
+    formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+    data = fev_data,
+    optimizer = "nlminb"
+  )
+
+  # Mock here that it did not converge.
+  attr(fit, "converged") <- FALSE
+  fit$neg_log_lik <- fit$neg_log_lik + 10
+
+  result <- expect_silent(refit_multiple_optimizers(
+    fit = fit,
+    n_cores = h_free_cores(),
+    optimizers = c("BFGS", "CG")
+  ))
+  expect_class(result, "mmrm_fit")
+
+  expect_true(attr(result, "converged"))
+  expect_subset(attr(result, "optimizer"), choices = c("BFGS", "CG"))
   expect_true(logLik(result) > logLik(fit))
 })
 
@@ -172,16 +197,20 @@ test_that("mmrm falls back to other optimizers if default does not work", {
     "Model convergence problem"
   )
   # But another one works.
-  result <- expect_silent(mmrm(formula, data_small))
+  # Note: We disable parallel processing here to comply with CRAN checks.
+  result <- expect_silent(mmrm(formula, data_small, n_cores = 1L))
   expect_true(attr(result, "converged"))
   expect_false(identical(attr(result, "optimizer"), "L-BFGS-B"))
 })
 
 test_that("mmrm fails if no optimizer works", {
   skip_on_ci()
+  skip_on_cran()
+  # We skip this test on CI and CRAN since it can be flaky on different platforms.
 
   formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
   data_small <- fev_data[1:30, ]
+  # Note: Here we are using parallel computations.
   expect_error(
     mmrm(formula, data_small, reml = FALSE),
     "No optimizer led to a successful model fit"

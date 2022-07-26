@@ -38,11 +38,6 @@ context("toeplitz") {
   test_that("corr_fun_toeplitz works as expected") {
     vector<double> theta {{1.0, 2.0}};
     corr_fun_toeplitz<double> test_fun(theta);
-    // std::cout << "corr_values(0): " << test_fun.corr_values(0) << std::endl;
-    // std::cout << "corr_values(1): " << test_fun.corr_values(1) << std::endl;
-    // std::cout << "1, 0: " << test_fun(1, 0) << std::endl;
-    // std::cout << "2, 0: " << test_fun(2, 0) << std::endl;
-    // std::cout << "2, 1: " << test_fun(2, 1) << std::endl;
     expect_equal(test_fun(1, 0), 0.7071068);
     expect_equal(test_fun(2, 0), 0.8944272);
     expect_equal(test_fun(2, 1), 0.7071068);
