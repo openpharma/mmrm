@@ -1,7 +1,7 @@
 Type: Package
 Package: mmrm
 Title: Mixed Models for Repeated Measures
-Version: 0.0.0.9014
+Version: 0.0.0.9016
 Authors@R: c(
     person("Daniel", "Sabanes Bove", , "daniel.sabanes_bove@roche.com", role = c("aut", "cre")),
     person("Julia", "Dedic", , "julia.dedic@roche.com", role = "aut"),
@@ -35,6 +35,7 @@ Suggests:
     emmeans (>= 1.6),
     estimability,
     knitr,
+    rmarkdown,
     testthat (>= 3.0.0),
     xml2
 LinkingTo:
