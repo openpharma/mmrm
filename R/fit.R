@@ -1,5 +1,7 @@
 #' Fitting an MMRM with Single Optimizer
 #'
+#' `r lifecycle::badge("experimental")`
+#'
 #' This function helps to fit an MMRM using `TMB` with a single optimizer,
 #' while capturing messages and warnings.
 #'
@@ -9,7 +11,15 @@
 #' @return The `mmrm_fit` object, with additional attributes containing warnings,
 #'   messages, optimizer used and convergence status in addition to the
 #'   `mmrm_tmb` contents.
-#' @keywords internal
+#' @export
+#'
+#' @examples
+#' mod_fit <- fit_single_optimizer(
+#'   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+#'   data = fev_data,
+#'   optimizer = "nlminb"
+#' )
+#' attr(mod_fit, "converged")
 fit_single_optimizer <- function(formula,
                                  data,
                                  reml = TRUE,
@@ -83,6 +93,8 @@ h_summarize_all_fits <- function(all_fits) {
 
 #' Refitting MMRM with Multiple Optimizers
 #'
+#' `r lifecycle::badge("experimental")`
+#'
 #' @param fit (`mmrm_fit`)\cr original model fit from [fit_single_optimizer()].
 #' @inheritParams mmrm
 #' @param optimizers (`character`)\cr all possible optimizers to be used for fitting.
@@ -91,7 +103,15 @@ h_summarize_all_fits <- function(all_fits) {
 #' @return The best (in terms of log likelihood) fit which converged.
 #'
 #' @note For Windows, no parallel computations are currently implemented.
-#' @keywords internal
+#' @export
+#'
+#' @examples
+#' fit <- fit_single_optimizer(
+#'   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+#'   data = fev_data,
+#'   optimizer = "nlminb"
+#' )
+#' best_fit <- refit_multiple_optimizers(fit)
 refit_multiple_optimizers <- function(fit,
                                       n_cores = 1L,
                                       optimizers = c("L-BFGS-B", "BFGS", "CG", "nlminb"),

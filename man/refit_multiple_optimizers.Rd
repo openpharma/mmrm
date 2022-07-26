@@ -26,9 +26,16 @@ to full rank automatically and additional coefficient estimates will be missing.
 The best (in terms of log likelihood) fit which converged.
 }
 \description{
-Refitting MMRM with Multiple Optimizers
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
 \note{
 For Windows, no parallel computations are currently implemented.
 }
-\keyword{internal}
+\examples{
+fit <- fit_single_optimizer(
+  formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data,
+  optimizer = "nlminb"
+)
+best_fit <- refit_multiple_optimizers(fit)
+}
