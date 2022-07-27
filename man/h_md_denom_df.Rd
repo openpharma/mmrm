@@ -14,13 +14,11 @@ Usually the calculation is returning \code{2 * E / (E - n)} where
 \code{E} is the sum of \code{t / (t - 2)} over all \code{t_stat_df} values \code{t}.
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+Calculating Denominator Degrees of Freedom for the Multi-Dimensional Case
 }
 \note{
 If the input values are two similar to each other then just the average
 of them is returned. If any of the inputs is not larger than 2 then 2 is
 returned.
 }
-\examples{
-h_md_denom_df(c(5, 10))
-}
+\keyword{internal}

@@ -173,7 +173,6 @@ BIC.mmrm_tmb <- function(object, ...) {
 
 #' @describeIn mmrm_tmb_methods prints the object.
 #' @exportS3Method
-#' @keywords internal
 print.mmrm_tmb <- function(x,
                            ...) {
   cat("mmrm fit\n\n")

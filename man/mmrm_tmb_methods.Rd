@@ -129,4 +129,3 @@ BIC(object)
 \item \insertRef{burnham1998practical}{mmrm}
 }
 }
-\keyword{internal}

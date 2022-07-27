@@ -16,7 +16,6 @@ h_print_call(call, n_obs, n_subjects, n_timepoints)
 \item{n_timepoints}{(\code{int})\cr number of timepoints.}
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
-
 This is used in \code{\link[=print.summary.mmrm]{print.summary.mmrm()}}.
 }
+\keyword{internal}

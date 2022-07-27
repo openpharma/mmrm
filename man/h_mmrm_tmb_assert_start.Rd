@@ -13,5 +13,6 @@ h_mmrm_tmb_assert_start(tmb_object)
 Nothing, only used for assertions.
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+Asserting Sane Start Values for \code{TMB} Fit
 }
+\keyword{internal}

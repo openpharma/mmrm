@@ -14,15 +14,14 @@ NULL
 
 #' Coefficients Table for MMRM Fit
 #'
-#' @description `r lifecycle::badge("experimental")`
-#'
 #' This is used by [summary.mmrm()] to obtain the coefficients table.
 #'
 #' @param object (`mmrm`)\cr model fit.
 #'
 #' @return Matrix with one row per coefficient and columns
 #'   `Estimate`, `Std. Error`, `df`, `t value` and `Pr(>|t|)`.
-#' @export
+#'
+#' @keywords internal
 h_coef_table <- function(object) {
   assert_class(object, "mmrm")
 
@@ -91,8 +90,6 @@ summary.mmrm <- function(object, ...) {
 
 #' Printing MMRM Function Call
 #'
-#' @description `r lifecycle::badge("experimental")`
-#'
 #' This is used in [print.summary.mmrm()].
 #'
 #' @param call (`call`)\cr original [mmrm()] function call.
@@ -100,7 +97,7 @@ summary.mmrm <- function(object, ...) {
 #' @param n_subjects (`int`)\cr number of subjects.
 #' @param n_timepoints (`int`)\cr number of timepoints.
 #'
-#' @export
+#' @keywords internal
 h_print_call <- function(call, n_obs, n_subjects, n_timepoints) {
   pass <- 0
   if (!is.null(tmp <- call$formula)) {
@@ -119,14 +116,12 @@ h_print_call <- function(call, n_obs, n_subjects, n_timepoints) {
 
 #' Printing MMRM Covariance Type
 #'
-#' @description `r lifecycle::badge("experimental")`
-#'
 #' This is used in [print.summary.mmrm()].
 #'
 #' @param cov_type (`string`)\cr covariance structure abbreviation.
 #' @param n_theta (`int`)\cr number of variance parameters.
 #'
-#' @export
+#' @keywords internal
 h_print_cov <- function(cov_type, n_theta) {
   assert_string(cov_type)
   assert_int(n_theta, lower = 1)
@@ -150,14 +145,12 @@ h_print_cov <- function(cov_type, n_theta) {
 
 #' Printing AIC and other Model Fit Criteria
 #'
-#' @description `r lifecycle::badge("experimental")`
-#'
 #' This is used in [print.summary.mmrm()].
 #'
 #' @param aic_list (`list`)\cr list as part of from [summary.mmrm()].
 #' @param digits (`number`)\cr number of decimal places used with [round()].
 #'
-#' @export
+#' @keywords internal
 h_print_aic_list <- function(aic_list,
                              digits = 1) {
   diag_vals <- round(unlist(aic_list), digits)

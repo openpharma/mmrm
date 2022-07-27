@@ -17,16 +17,7 @@
 #' - `errors`: `NULL` or a string if an error was thrown.
 #' - `messages`: `NULL` or a character vector if messages were produced.
 #'
-#' @examples
-#' \dontrun{
-#' h_record_all_output({
-#'   x <- 1
-#'   y <- 2
-#'   warning("something went wrong")
-#'   message("O nearly done")
-#'   x + y
-#' })
-#' }
+#' @keywords internal
 h_record_all_output <- function(expr, remove = list()) {
   # Note: We don't need to and cannot assert `expr` here.
   assert_list(remove)

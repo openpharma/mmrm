@@ -18,13 +18,6 @@ Numeric vector which contains the quadratic forms of each element of
 \code{jac_list} with the \code{contrast} vector.
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+Computation of a Gradient Given Jacobian and Contrast Vector
 }
-\examples{
-jac_list <- list(
-  matrix(1:4, 2, 2),
-  matrix(5:8, 2, 2)
-)
-contrast <- c(1:2)
-h_gradient(jac_list, contrast)
-}
+\keyword{internal}

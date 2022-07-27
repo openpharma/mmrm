@@ -3,7 +3,7 @@
 #' @seealso See `vignette("xtending", package = "emmeans")` for background.
 #' @keywords internal
 #' @noRd
-.onLoad <- function(libname, pkgname) {
+.onLoad <- function(libname, pkgname) { # nolint
   if (requireNamespace("emmeans", quietly = TRUE)) {
     if (utils::packageVersion("emmeans") < "1.6") {
       warning("please install a newer version of emmeans (>= 1.6)")
@@ -37,7 +37,7 @@ NULL
 #' @seealso See [emmeans::recover_data()] for background.
 #' @keywords internal
 #' @noRd
-recover_data.mmrm <- function(object, ...) {
+recover_data.mmrm <- function(object, ...) { # nolint
   fun_call <- stats::getCall(object)
   model_frame <- stats::model.frame(object)
   model_terms <- stats::delete.response(stats::terms(model_frame))
@@ -56,7 +56,7 @@ recover_data.mmrm <- function(object, ...) {
 #' @seealso See [emmeans::emm_basis()] for background.
 #' @keywords internal
 #' @noRd
-emm_basis.mmrm <- function(object,
+emm_basis.mmrm <- function(object, # nolint
                            trms,
                            xlev,
                            grid,

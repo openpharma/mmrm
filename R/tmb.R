@@ -43,8 +43,6 @@ h_mmrm_tmb_control <- function(optimizer = stats::nlminb,
 
 #' Processing the Formula for `TMB` Fit
 #'
-#' @description `r lifecycle::badge("experimental")`
-#'
 #' @param formula (`formula`)\cr original formula.
 #'
 #' @return List of class `mmrm_tmb_formula_parts` with elements:
@@ -56,11 +54,7 @@ h_mmrm_tmb_control <- function(optimizer = stats::nlminb,
 #' - `visit_var`: `string` with the visit variable name.
 #' - `subject_var`: `string` with the subject variable name.
 #'
-#' @export
-#'
-#' @examples
-#' formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
-#' h_mmrm_tmb_formula_parts(formula)
+#' @keywords internal
 h_mmrm_tmb_formula_parts <- function(formula) {
   assert_formula(formula)
   # Ensure that there is left and right hand side in the formula.
@@ -112,8 +106,6 @@ h_mmrm_tmb_formula_parts <- function(formula) {
 
 #' Data for `TMB` Fit
 #'
-#' @description `r lifecycle::badge("experimental")`
-#'
 #' @param formula_parts (`mmrm_tmb_formula_parts`)\cr list with formula parts
 #'   from [h_mmrm_tmb_formula_parts()].
 #' @param data (`data.frame`)\cr which contains variables used in `formula_parts`.
@@ -147,12 +139,7 @@ h_mmrm_tmb_formula_parts <- function(formula) {
 #'   is a common string prefix of numbers in the character elements. For full control
 #'   on the order please use a factor.
 #'
-#' @export
-#'
-#' @examples
-#' formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
-#' formula_parts <- h_mmrm_tmb_formula_parts(formula)
-#' tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = FALSE, accept_singular = FALSE)
+#' @keywords internal
 h_mmrm_tmb_data <- function(formula_parts,
                             data,
                             reml,
@@ -225,8 +212,6 @@ h_mmrm_tmb_data <- function(formula_parts,
 
 #' Start Parameters for `TMB` Fit
 #'
-#' @description `r lifecycle::badge("experimental")`
-#'
 #' @param formula_parts (`mmrm_tmb_formula_parts`)\cr produced by
 #'  [h_mmrm_tmb_formula_parts()].
 #' @param tmb_data (`mmrm_tmb_data`)\cr produced by [h_mmrm_tmb_data()].
@@ -235,13 +220,8 @@ h_mmrm_tmb_data <- function(formula_parts,
 #'
 #' @return List with element `theta` containing the start values for the variance
 #'   parameters.
-#' @export
 #'
-#' @examples
-#' formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
-#' formula_parts <- h_mmrm_tmb_formula_parts(formula)
-#' tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = FALSE, accept_singular = FALSE)
-#' pars <- h_mmrm_tmb_parameters(formula_parts, tmb_data, NULL)
+#' @keywords internal
 h_mmrm_tmb_parameters <- function(formula_parts,
                                   tmb_data,
                                   start) {
@@ -269,12 +249,11 @@ h_mmrm_tmb_parameters <- function(formula_parts,
 
 #' Asserting Sane Start Values for `TMB` Fit
 #'
-#' @description `r lifecycle::badge("experimental")`
-#'
 #' @param tmb_object (`list`)\cr created with [TMB::MakeADFun()].
 #'
 #' @return Nothing, only used for assertions.
-#' @export
+#'
+#' @keywords internal
 h_mmrm_tmb_assert_start <- function(tmb_object) {
   assert_list(tmb_object)
   assert_subset(c("fn", "gr", "par"), names(tmb_object))
@@ -289,13 +268,12 @@ h_mmrm_tmb_assert_start <- function(tmb_object) {
 
 #' Asserting and Checking `TMB` Optimization Result
 #'
-#' @description `r lifecycle::badge("experimental")`
-#'
 #' @param tmb_object (`list`)\cr created with [TMB::MakeADFun()].
 #' @param tmb_opt (`list`)\cr optimization result.
 #'
 #' @return Nothing, only used to generate messages, warnings or errors.
-#' @export
+#'
+#' @keywords internal
 h_mmrm_tmb_assert_opt <- function(tmb_object,
                                   tmb_opt) {
   assert_list(tmb_object)
@@ -324,8 +302,6 @@ h_mmrm_tmb_assert_opt <- function(tmb_object,
 
 #' Build `TMB` Fit Result List
 #'
-#' @description `r lifecycle::badge("experimental")`
-#'
 #' This helper does some simple post-processing of the `TMB` object and
 #' optimization results, including setting names, inverting matrices etc.
 #'
@@ -350,7 +326,8 @@ h_mmrm_tmb_assert_opt <- function(tmb_object,
 #'   - `opt_details`: list with optimization details including convergence code.
 #'   - `tmb_object`: original `TMB` object created with [TMB::MakeADFun()].
 #'   - `tmb_data`: input.
-#' @export
+#'
+#' @keywords internal
 h_mmrm_tmb_fit <- function(tmb_object,
                            tmb_opt,
                            data,

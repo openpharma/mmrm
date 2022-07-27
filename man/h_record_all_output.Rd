@@ -27,14 +27,4 @@ This function silences all warnings, errors & messages and instead returns a lis
 containing the results (if it didn't error) + the warning and error messages as
 character vectors.
 }
-\examples{
-\dontrun{
-h_record_all_output({
-  x <- 1
-  y <- 2
-  warning("something went wrong")
-  message("O nearly done")
-  x + y
-})
-}
-}
+\keyword{internal}

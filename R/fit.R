@@ -66,26 +66,10 @@ fit_single_optimizer <- function(formula,
 
 #' Summarizing List of Fits
 #'
-#' @description `r lifecycle::badge("experimental")`
-#'
 #' @param all_fits (`list` of `mmrm_fit` or `try-error`)\cr list of fits.
 #'
 #' @return List with `warnings`, `messages`, `log_liks` and `converged` results.
-#' @export
-#'
-#' @examples
-#' mod_fit <- fit_single_optimizer(
-#'   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
-#'   data = fev_data,
-#'   optimizer = "nlminb"
-#' )
-#' mod_fit2 <- fit_single_optimizer(
-#'   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
-#'   data = fev_data,
-#'   optimizer = "L-BFGS-B"
-#' )
-#' all_fits <- list(mod_fit, mod_fit2)
-#' h_summarize_all_fits(all_fits)
+#' @keywords internal
 h_summarize_all_fits <- function(all_fits) {
   assert_list(all_fits, types = c("mmrm_fit", "try-error"))
   is_error <- vapply(all_fits, is, logical(1), class2 = "try-error")

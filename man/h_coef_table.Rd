@@ -14,7 +14,6 @@ Matrix with one row per coefficient and columns
 \code{Estimate}, \verb{Std. Error}, \code{df}, \verb{t value} and \verb{Pr(>|t|)}.
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
-
 This is used by \code{\link[=summary.mmrm]{summary.mmrm()}} to obtain the coefficients table.
 }
+\keyword{internal}
