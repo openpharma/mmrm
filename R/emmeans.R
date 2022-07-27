@@ -3,7 +3,7 @@
 #' @seealso See `vignette("xtending", package = "emmeans")` for background.
 #' @keywords internal
 #' @noRd
-.onLoad <- function(libname, pkgname) { #nolint
+.onLoad <- function(libname, pkgname) { # nolint
   if (requireNamespace("emmeans", quietly = TRUE)) {
     if (utils::packageVersion("emmeans") < "1.6") {
       warning("please install a newer version of emmeans (>= 1.6)")
