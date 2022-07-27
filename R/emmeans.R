@@ -27,7 +27,7 @@ NULL
 #' @seealso See [emmeans::recover_data()] for background.
 #' @keywords internal
 #' @noRd
-recover_data.mmrm <- function(object, ...) { #nolint
+recover_data.mmrm <- function(object, ...) { # nolint
   fun_call <- stats::getCall(object)
   model_frame <- stats::model.frame(object)
   model_terms <- stats::delete.response(stats::terms(model_frame))
@@ -46,7 +46,7 @@ recover_data.mmrm <- function(object, ...) { #nolint
 #' @seealso See [emmeans::emm_basis()] for background.
 #' @keywords internal
 #' @noRd
-emm_basis.mmrm <- function(object, #nolint
+emm_basis.mmrm <- function(object, # nolint
                            trms,
                            xlev,
                            grid,
