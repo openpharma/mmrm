@@ -3,7 +3,6 @@ title: "Details of the Model Fitting in `mmrm`"
 package: mmrm
 author:
   - name: Daniel Sabanés Bové
-    email: daniel.sabanes_bove@roche.com
 output:
   rmarkdown::html_document:
           theme: "spacelab"
