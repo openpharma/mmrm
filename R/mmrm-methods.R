@@ -133,7 +133,8 @@ h_print_cov <- function(cov_type, n_theta) {
 
   cov_definition <- switch(cov_type,
     us = "unstructured",
-    toep = "heterogeneous Toeplitz",
+    toep = "Toeplitz",
+    toeph = "heterogeneous Toeplitz",
     ar1 = "auto-regressive order one",
     ar1h = "heterogeneous auto-regressive order one",
     ad = "heterogeneous ante-dependence",
