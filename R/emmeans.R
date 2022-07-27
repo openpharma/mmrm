@@ -15,10 +15,20 @@
 
 #' Support for `emmeans`
 #'
+#' @description `r lifecycle::badge("experimental")`
+#'
 #' This package includes methods that allow `mmrm` objects to be used
 #' with the `emmeans` package. `emmeans` computed estimated marginal means
 #' (also called least-square means) for the coefficients of the MMRM.
 #'
+#' @examples
+#' fit <- mmrm(
+#'   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+#'   data = fev_data
+#' )
+#' if (require(emmeans)) {
+#'   emmeans(fit, ~ ARMCD | AVISIT)
+#' }
 #' @name emmeans_support
 NULL
 
