@@ -20,7 +20,21 @@ otherwise maximum likelihood (ML) is used.}
 by \code{\link[=h_mmrm_tmb_control]{h_mmrm_tmb_control()}}.}
 }
 \value{
-List of class \code{mmrm_tmb}, see \code{\link[=h_mmrm_tmb_fit]{h_mmrm_tmb_fit()}} for details.
+List pf class \code{mmrm_tmb} with:
+\itemize{
+\item \code{cov}: estimated covariance matrix.
+\item \code{beta_est}: vector of coefficient estimates.
+\item \code{beta_vcov}: Variance-covariance matrix for coefficient estimates.
+\item \code{theta_est}: vector of variance parameter estimates.
+\item \code{theta_vcov}: variance-covariance matrix for variance parameter estimates.
+\item \code{neg_log_lik}: obtained negative log-likelihood.
+\item \code{formula_parts}: input.
+\item \code{data}: input.
+\item \code{reml}: input as a flag.
+\item \code{opt_details}: list with optimization details including convergence code.
+\item \code{tmb_object}: original \code{TMB} object created with \code{\link[TMB:MakeADFun]{TMB::MakeADFun()}}.
+\item \code{tmb_data}: input.
+}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}

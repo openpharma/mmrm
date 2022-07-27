@@ -14,12 +14,6 @@ Function with argument \code{theta} that calculates the covariance matrix
 for the coefficient vector \code{beta}.
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+Covariance Matrix for Coefficients Given Variance Parameters
 }
-\examples{
-formula <- FEV1 ~ RACE + us(AVISIT | USUBJID)
-model <- h_mmrm_tmb(formula, fev_data)
-fun <- h_covbeta_fun(model)
-fun(model$theta_est)
-model$beta_vcov
-}
+\keyword{internal}

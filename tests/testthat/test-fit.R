@@ -14,6 +14,21 @@ test_that("fit_single_optimizer works as expected with defaults", {
   expect_true(attr(result, "converged"))
 })
 
+test_that("fit_single_optimizer works as expected with nlminb optimizer but no starting values", {
+  dat <- fev_data
+  form <- FEV1 ~ SEX + us(AVISIT | USUBJID)
+  result <- fit_single_optimizer(
+    formula = form,
+    data = dat,
+    optimizer = "nlminb"
+  )
+  expect_identical(class(result), c("mmrm_fit", "mmrm_tmb"))
+  expect_identical(attr(result, "optimizer"), "nlminb")
+  expect_identical(attr(result, "messages"), NULL)
+  expect_identical(attr(result, "warnings"), NULL)
+  expect_true(attr(result, "converged"))
+})
+
 test_that("fit_single_optimizer works as expected with optimizer inputted but no starting values", {
   dat <- fev_data
   form <- FEV1 ~ SEX + us(AVISIT | USUBJID)
@@ -58,6 +73,8 @@ test_that("fit_single_optimizer gives error messages", {
     fixed = TRUE
   )
 })
+
+
 
 # h_summarize_all_fits ----
 
