@@ -22,9 +22,6 @@ List of class \code{mmrm_tmb_formula_parts} with elements:
 }
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+Processing the Formula for \code{TMB} Fit
 }
-\examples{
-formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
-h_mmrm_tmb_formula_parts(formula)
-}
+\keyword{internal}

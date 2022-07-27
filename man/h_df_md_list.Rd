@@ -17,8 +17,6 @@ h_df_md_list(f_stat, num_df, denom_df)
 List with \code{num_df}, \code{denom_df}, \code{f_stat} and \code{p_val} (2-sided p-value).
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+Creating Results List for Multi-Dimensional Contrast
 }
-\examples{
-h_df_md_list(5, 1, 15)
-}
+\keyword{internal}

@@ -17,9 +17,6 @@ Here the values in the column are used to fill the result column
 by column.
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+Formatting a Column from Jacobian Matrix as Matrix
 }
-\examples{
-jac_matrix <- matrix(1:81, 9, 9)
-h_jac_col_as_matrix(jac_matrix, 5)
-}
+\keyword{internal}

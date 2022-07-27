@@ -3,7 +3,7 @@
 #' @seealso See `vignette("xtending", package = "emmeans")` for background.
 #' @keywords internal
 #' @noRd
-.onLoad <- function(libname, pkgname) {
+.onLoad <- function(libname, pkgname) { #nolint
   if (requireNamespace("emmeans", quietly = TRUE)) {
     if (utils::packageVersion("emmeans") < "1.6") {
       warning("please install a newer version of emmeans (>= 1.6)")
@@ -15,20 +15,10 @@
 
 #' Support for `emmeans`
 #'
-#' @description `r lifecycle::badge("experimental")`
-#'
 #' This package includes methods that allow `mmrm` objects to be used
 #' with the `emmeans` package. `emmeans` computed estimated marginal means
 #' (also called least-square means) for the coefficients of the MMRM.
 #'
-#' @examples
-#' fit <- mmrm(
-#'   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
-#'   data = fev_data
-#' )
-#' if (require(emmeans)) {
-#'   emmeans(fit, ~ ARMCD | AVISIT)
-#' }
 #' @name emmeans_support
 NULL
 
@@ -37,7 +27,7 @@ NULL
 #' @seealso See [emmeans::recover_data()] for background.
 #' @keywords internal
 #' @noRd
-recover_data.mmrm <- function(object, ...) {
+recover_data.mmrm <- function(object, ...) { # nolint
   fun_call <- stats::getCall(object)
   model_frame <- stats::model.frame(object)
   model_terms <- stats::delete.response(stats::terms(model_frame))
@@ -56,7 +46,7 @@ recover_data.mmrm <- function(object, ...) {
 #' @seealso See [emmeans::emm_basis()] for background.
 #' @keywords internal
 #' @noRd
-emm_basis.mmrm <- function(object,
+emm_basis.mmrm <- function(object, # nolint
                            trms,
                            xlev,
                            grid,

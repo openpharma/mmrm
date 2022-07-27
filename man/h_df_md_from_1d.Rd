@@ -16,5 +16,6 @@ The one-dimensional results are calculated and then returned as per
 \code{\link[=h_df_md_list]{h_df_md_list()}}.
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+Creating F-Statistic Results from One-Dimensional Contrast
 }
+\keyword{internal}
