@@ -4,7 +4,18 @@
 \alias{emmeans_support}
 \title{Support for \code{emmeans}}
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
 This package includes methods that allow \code{mmrm} objects to be used
 with the \code{emmeans} package. \code{emmeans} computed estimated marginal means
 (also called least-square means) for the coefficients of the MMRM.
+}
+\examples{
+fit <- mmrm(
+  formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data
+)
+if (require(emmeans)) {
+  emmeans(fit, ~ ARMCD | AVISIT)
+}
 }
