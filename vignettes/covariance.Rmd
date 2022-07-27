@@ -28,7 +28,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{=tex}
+```
 \DeclareMathOperator{\sign}{sign}
 \newcommand{\abs}[1]{\left\vert#1\right\vert}
 \newcommand{\R}{\mathbb{R}}
