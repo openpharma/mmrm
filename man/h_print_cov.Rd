@@ -12,7 +12,6 @@ h_print_cov(cov_type, n_theta)
 \item{n_theta}{(\code{int})\cr number of variance parameters.}
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
-
 This is used in \code{\link[=print.summary.mmrm]{print.summary.mmrm()}}.
 }
+\keyword{internal}

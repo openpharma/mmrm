@@ -393,19 +393,7 @@ h_mmrm_tmb_fit <- function(tmb_object,
 #' @param control (`mmrm_tmb_control`)\cr list of control options produced
 #'   by [h_mmrm_tmb_control()].
 #'
-#' @return List pf class `mmrm_tmb` with:
-#'   - `cov`: estimated covariance matrix.
-#'   - `beta_est`: vector of coefficient estimates.
-#'   - `beta_vcov`: Variance-covariance matrix for coefficient estimates.
-#'   - `theta_est`: vector of variance parameter estimates.
-#'   - `theta_vcov`: variance-covariance matrix for variance parameter estimates.
-#'   - `neg_log_lik`: obtained negative log-likelihood.
-#'   - `formula_parts`: input.
-#'   - `data`: input.
-#'   - `reml`: input as a flag.
-#'   - `opt_details`: list with optimization details including convergence code.
-#'   - `tmb_object`: original `TMB` object created with [TMB::MakeADFun()].
-#'   - `tmb_data`: input.
+#' @return List of class `mmrm_tmb`, see [h_mmrm_tmb_fit()] for details.
 #'
 #' @details The `formula` typically looks like:
 #' `FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)`

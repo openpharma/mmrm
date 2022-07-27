@@ -21,10 +21,6 @@ reference:
       - h_free_cores
       - h_mmrm_tmb_control
       - h_mmrm_tmb
-      - h_coef_table
-      - h_print_aic_list
-      - h_print_call
-      - h_print_cov
   - title: Functions
     contents:
       - component
