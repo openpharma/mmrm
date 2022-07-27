@@ -3,8 +3,8 @@ title: "Covariance Structures in `mmrm`"
 package: mmrm
 bibliography: '`r system.file("REFERENCES.bib", package = "mmrm")`'
 author:
-  - name: Daniel Sabanés Bové
-    email: daniel.sabanes_bove@roche.com
+  - Daniel Sabanés Bové
+  - Ya Wang
 output:
   rmarkdown::html_document:
           theme: "spacelab"
@@ -17,6 +17,8 @@ vignette: |
   %\VignetteEngine{knitr::rmarkdown}
 editor_options:
   chunk_output_type: console
+  markdown:
+    wrap: 72
 ---
 
 ```{r, include = FALSE}
@@ -30,8 +32,8 @@ knitr::opts_chunk$set(
 \newcommand{\abs}[1]{\left\vert#1\right\vert}
 \newcommand{\R}{\mathbb{R}}
 
-Here we describe the covariance structures which are currently available in
-`mmrm`.
+Here we describe the covariance structures which are currently available
+in `mmrm`.
 
 # Introduction
 
@@ -51,8 +53,8 @@ The symmetric and positive definite covariance matrix
 \end{pmatrix}
 \]
 is parametrized by a vector of variance parameters
-$\theta = (\theta_1, \dotsc, \theta_k)^\top$. The meaning and the
-number ($k$) of variance parameters is different for each covariance structure.
+$\theta = (\theta_1, \dotsc, \theta_k)^\top$. The meaning and the number
+($k$) of variance parameters is different for each covariance structure.
 
 In many covariance structures we use the decomposition
 \[
@@ -68,8 +70,8 @@ D = \begin{pmatrix}
 0 & \cdots & & 0 & \sigma_m
 \end{pmatrix}
 \]
-with entries $\sigma_i > 0$,
-and the symmetric correlation matrix $P$ is
+with entries $\sigma_i > 0$, and the symmetric correlation matrix $P$
+is
 \[
 P = \begin{pmatrix}
   1 & \rho_{12}   & \rho_{13} & \cdots & \cdots & \rho_{1,m-1} \\
@@ -80,57 +82,58 @@ P = \begin{pmatrix}
 \rho_{1, m-1} & \cdots & \cdots & \rho_{m-2,m} & \rho_{m-1,m}    & 1
 \end{pmatrix}
 \]
-with entries $\rho_{ij} \in (-1, 1)$. Since these covariance structures
-assume different variances for each time point they are called "heterogeneous"
-covariance structures. Assuming a constant $\sigma = \sigma_1 = \dotsb = \sigma_m$
-gives a "homogeneous" covariance structure instead.
+with entries $\rho_{ij} \in (-1, 1)$. Since these covariance
+structures assume different variances for each time point they are
+called "heterogeneous" covariance structures. Assuming a constant
+$\sigma = \sigma_1 = \dotsb = \sigma_m$ gives a "homogeneous" covariance
+structure instead.
 
 ## Transformation to Variance Parameters
 
 For standard deviation parameters $\sigma$ we use the natural logarithm
-$\log(\sigma)$ to map them to $\R$.
-For correlation parameters $\rho$ we consistently
-use the transformation
+$\log(\sigma)$ to map them to $\mathbb{R}$. For correlation parameters
+$\rho$ we consistently use the transformation
 \[
-\theta = f(\rho) = \sign(\rho) \sqrt{\frac{\rho^2}{1 - \rho^2}}
+\theta = f(\rho) = \mathop{\mathrm{sign}}(\rho) \sqrt{\frac{\rho^2}{1 - \rho^2}}
 \]
-which maps the correlation parameter to $\theta \in \R$.
-It has the inverse
+which maps the correlation parameter to $\theta \in \mathbb{R}$. It
+has the inverse
 \[
 \rho = f^{-1}(\theta) = \frac{\theta}{\sqrt{1 + \theta^2}}.
 \]
 This is important because the resulting variance parameters $\theta$
-can be optimized without constraints over the whole of $\R$.
+can be optimized without constraints over the whole of $\mathbb{R}$.
 
 # Covariance Structures
 
 ## Unstructured (`us`)
 
-Any covariance matrix can be represented by this saturated correlation structure.
-Here $k = m (m+1) / 2$. See the [algorithm vignette](algorithm.html) for details.
+Any covariance matrix can be represented by this saturated correlation
+structure. Here $k = m (m+1) / 2$. See the [algorithm
+vignette](algorithm.html) for details.
 
 ## Heterogeneous Ante-dependence (`ad`)
 
-The ante-dependence correlation structure (@Gabriel1962) is useful for balanced
-designs where the observations are not necessarily equally spaced in time.
-Here we use an order one ante-dependence model, where the correlation matrix
-$P$ has elements
+The ante-dependence correlation structure (@Gabriel1962) is useful for
+balanced designs where the observations are not necessarily equally
+spaced in time. Here we use an order one ante-dependence model, where
+the correlation matrix $P$ has elements
 \[
 \rho_{ij} = \prod_{k=i}^{j-1} \rho_k.
 \]
 So we have correlation parameters $\rho_k$, $k = 1, \dotsc, m-1$.
 
-We use a heterogeneous covariance structure to allow for different within
-subject variances. So here we can identify
+We use a heterogeneous covariance structure to allow for different
+within subject variances. So here we can identify
 \[
 \theta = (\log(\sigma_1), \dotsc, \log(\sigma_m), f(\rho_1), \dotsc, f(\rho_{m-1}))
 \]
 and we have in total $2m - 1$ variance parameters.
 
-## Heterogenous Toeplitz (`toep`)
+## Homogeneous (`toep`) and Heterogeneous Toeplitz (`toeph`)
 
-Toeplitz matrices (@Toeplitz1911) are diagonal-constant matrices. Here we can
-model the correlation matrix as a Toeplitz matrix:
+Toeplitz matrices (@Toeplitz1911) are diagonal-constant matrices. Here
+we can model the correlation matrix as a Toeplitz matrix:
 \[
 P = \begin{pmatrix}
   1 & \rho_1   & \rho_2 & \cdots & \cdots & \rho_{m-1} \\
@@ -141,54 +144,58 @@ P = \begin{pmatrix}
 \rho_{m-1} & \cdots & \cdots & \rho_2    & \rho_1    & 1
 \end{pmatrix}
 \]
-This means that the correlation between two time points only depends on the
-distance between them, i.e.
+This means that the correlation between two time points only depends
+on the distance between them, i.e.
 \[
-\rho_{ij} = \rho_{\abs{i - j}}
+\rho_{ij} = \rho_{\left\vert i - j\right\vert}
 \]
 and we have correlation parameters $\rho_k$, $k = 1, \dotsc, m-1$.
 
-We use a heterogeneous covariance structure to allow for different within
-subject variances. So here we can identify
+We use a heterogeneous covariance structure to allow for different
+within subject variances. So here we can identify
 \[
 \theta = (\log(\sigma_1), \dotsc, \log(\sigma_m), f(\rho_1), \dotsc, f(\rho_{m-1}))
 \]
 and we have in total $2m - 1$ variance parameters. This is similar to
-the heterogeneous ante-dependence structure, but the correlation parameters
-are used differently in the construction of $P$.
+the heterogeneous ante-dependence structure, but the correlation
+parameters are used differently in the construction of $P$. Assuming a
+constant variance yields a homogeneous Toeplitz covariance structure
+with total $m$ variance parameters.
 
 ## Homogeneous (`ar1`) and Heterogeneous (`arh1`) Autoregressive
 
-The autoregressive covariance structure can be motivated by the corresponding
-state-space equation
+The autoregressive covariance structure can be motivated by the
+corresponding state-space equation
 \[
 y_{it} = \varphi y_{i,t-1} + \varepsilon_t
 \]
-where the white noise $\varepsilon_t$ has a normal distribution with mean zero
-and a constant variance. It can be shown that this gives correlations
+where the white noise $\varepsilon_t$ has a normal distribution with
+mean zero and a constant variance. It can be shown that this gives
+correlations
 \[
-\rho_{ij} = \rho^{\abs{i - j}}.
+\rho_{ij} = \rho^{\left\vert i - j\right\vert}.
 \]
-where $\rho$ is related to $\varphi$ and the variance and is the single correlation
-parameter here.
+where $\rho$ is related to $\varphi$ and the variance and is the
+single correlation parameter here.
 
-Assuming a constant variance in the state-space equation yields a homogeneous
-autoregressive covariance structure with total only $k=2$ variance parameters,
-otherwise we obtain the heterogeneous autoregressive covariance structure with $k = m + 1$
-variance parameters.
+Assuming a constant variance in the state-space equation yields a
+homogeneous autoregressive covariance structure with total only $k=2$
+variance parameters, otherwise we obtain the heterogeneous
+autoregressive covariance structure with $k = m + 1$ variance
+parameters.
 
 ## Homogeneous (`cs`) and Heterogeneous (`csh`) Compound Symmetry
 
-The compound symmetry covariance structures assume a constant correlation between
-different time points:
+The compound symmetry covariance structures assume a constant
+correlation between different time points:
 \[
 \rho_{ij} = \rho
 \]
 where $\rho$ is the single correlation parameter here.
 
-Assuming a constant variance in the state-space equation yields a homogeneous
-compound symmetry covariance structure with total only $k=2$ variance parameters,
-otherwise we obtain the heterogeneous compound symmetry covariance structure with
-$k = m + 1$ variance parameters.
+Assuming a constant variance in the state-space equation yields a
+homogeneous compound symmetry covariance structure with total only $k=2$
+variance parameters, otherwise we obtain the heterogeneous compound
+symmetry covariance structure with $k = m + 1$ variance parameters.
 
 # References

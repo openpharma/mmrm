@@ -166,6 +166,15 @@ test_that("h_mmrm_tmb_parameters works as expected with Toeplitz", {
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = TRUE, accept_singular = FALSE)
   result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
+  expected <- list(theta = rep(0, 4)) # 4 parameters.
+  expect_identical(result, expected)
+})
+
+test_that("h_mmrm_tmb_parameters works as expected with heterogeneous Toeplitz", {
+  formula <- FEV1 ~ SEX + toeph(AVISIT | USUBJID)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula)
+  tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = TRUE, accept_singular = FALSE)
+  result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
   expected <- list(theta = rep(0, 7)) # 2 * 4 - 1 parameters.
   expect_identical(result, expected)
 })
@@ -469,8 +478,50 @@ test_that("h_mmrm_tmb works with ante-dependence covariance structure and REML",
 
 ## toeplitz ----
 
-test_that("h_mmrm_tmb works with toeplitz covariance structure and ML", {
+### homogeneous ----
+
+test_that("h_mmrm_tmb works with toep covariance structure and ML", {
   formula <- FEV1 ~ toep(AVISIT | USUBJID)
+  data <- fev_data
+  # We have seen transient NA/NaN function evaluation warnings here.
+  result <- suppressWarnings(h_mmrm_tmb(formula, data, reml = FALSE))
+  expect_class(result, "mmrm_tmb")
+  # See design/SAS/sas_toep_ml.rtf for the source of numbers.
+  expect_equal(deviance(result), 3857.00777313)
+  expect_equal(sqrt(result$beta_vcov[1, 1]), 0.4669, tolerance = 1e-3)
+  expect_equal(as.numeric(result$beta_est), 42.3717, tolerance = 1e-4)
+  expected_var <- c(88.8193)
+  cor_mat <- VarCorr(result)
+  result_var <- as.numeric(diag(cor_mat)[1])
+  expect_equal(result_var, expected_var, tolerance = 1e-4)
+  result_low_tri <- cor_mat[lower.tri(cor_mat)]
+  expected_low_tri <- c(41.2525, 6.7009, -17.7604, 41.2525, 6.7009, 41.2525)
+  expect_equal(result_low_tri, expected_low_tri, tolerance = 1e-4)
+})
+
+test_that("h_mmrm_tmb works with toep covariance structure and REML", {
+  formula <- FEV1 ~ toep(AVISIT | USUBJID)
+  data <- fev_data
+  # We have seen transient NA/NaN function evaluation warnings here.
+  result <- suppressWarnings(h_mmrm_tmb(formula, data, reml = TRUE))
+  expect_class(result, "mmrm_tmb")
+  # See design/SAS/sas_toep_reml.rtf for the source of numbers.
+  expect_equal(deviance(result), 3856.68995273)
+  expect_equal(sqrt(result$beta_vcov[1, 1]), 0.4684, tolerance = 1e-4)
+  expect_equal(as.numeric(result$beta_est), 42.3721, tolerance = 1e-4)
+  expected_var <- c(89.0847)
+  cor_mat <- VarCorr(result)
+  result_var <- as.numeric(diag(cor_mat)[1])
+  expect_equal(result_var, expected_var, tolerance = 1e-4)
+  result_low_tri <- cor_mat[lower.tri(cor_mat)]
+  expected_low_tri <- c(41.5499, 6.9536, -17.6135, 41.5499, 6.9536, 41.5499)
+  expect_equal(result_low_tri, expected_low_tri, tolerance = 1e-4)
+})
+
+### heterogeneous ----
+
+test_that("h_mmrm_tmb works with toeph covariance structure and ML", {
+  formula <- FEV1 ~ toeph(AVISIT | USUBJID)
   data <- fev_data
   # We have seen transient NA/NaN function evaluation warnings here.
   result <- suppressWarnings(h_mmrm_tmb(formula, data, reml = FALSE))
@@ -488,8 +539,8 @@ test_that("h_mmrm_tmb works with toeplitz covariance structure and ML", {
   expect_equal(result_low_tri, expected_low_tri, tolerance = 1e-4)
 })
 
-test_that("h_mmrm_tmb works with ante-dependence covariance structure and REML", {
-  formula <- FEV1 ~ toep(AVISIT | USUBJID)
+test_that("h_mmrm_tmb works with toeph covariance structure and REML", {
+  formula <- FEV1 ~ toeph(AVISIT | USUBJID)
   data <- fev_data
   # We have seen transient NA/NaN function evaluation warnings here.
   result <- suppressWarnings(h_mmrm_tmb(formula, data, reml = TRUE))

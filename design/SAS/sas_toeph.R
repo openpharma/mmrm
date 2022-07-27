@@ -1,5 +1,5 @@
 # Heterogeneous Toeplitz covariance structure ----
-formula <- FEV1 ~ toep(AVISIT | USUBJID)
+formula <- FEV1 ~ toeph(AVISIT | USUBJID)
 data <- fev_data
 
 ## ML ----
@@ -18,7 +18,7 @@ sascode <- list(
 )
 result <- r2stream::bee_sas(data = list("dat" = data), sascode = sascode)
 result$test$sas_log
-writeLines(result$test$sas_out, con = "sas_toeplitz_ml.txt")
+writeLines(result$test$sas_out, con = "sas_toeph_ml.txt")
 
 ## REML ----
 sascode <- list(
@@ -36,4 +36,4 @@ sascode <- list(
 )
 result <- r2stream::bee_sas(data = list("dat" = data), sascode = sascode)
 result$test$sas_log
-writeLines(result$test$sas_out, con = "sas_toeplitz_reml.txt")
+writeLines(result$test$sas_out, con = "sas_toeph_reml.txt")
