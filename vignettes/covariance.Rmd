@@ -115,7 +115,7 @@ within subject variances. So here we can identify $$
 \theta = (\log(\sigma_1), \dotsc, \log(\sigma_m), f(\rho_1), \dotsc, f(\rho_{m-1}))
 $$ and we have in total $2m - 1$ variance parameters.
 
-## Homogeneous (`toep`) and Heterogenous Toeplitz (`toeph`)
+## Homogeneous (`toep`) and Heterogeneous Toeplitz (`toeph`)
 
 Toeplitz matrices (@Toeplitz1911) are diagonal-constant matrices. Here
 we can model the correlation matrix as a Toeplitz matrix: $$
