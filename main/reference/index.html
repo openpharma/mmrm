@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9016</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9017</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,12 +38,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -97,119 +91,14 @@
         <dd>Get an approximate number of free cores.</dd>
       </dl><dl><dt>
           
-          <code><a href="h_record_all_output.html">h_record_all_output()</a></code> 
-        </dt>
-        <dd>Capture all Output</dd>
-      </dl><dl><dt>
-          
           <code><a href="h_mmrm_tmb_control.html">h_mmrm_tmb_control()</a></code> 
         </dt>
         <dd>Control Parameters for <code>TMB</code> Fit</dd>
       </dl><dl><dt>
           
-          <code><a href="h_mmrm_tmb_formula_parts.html">h_mmrm_tmb_formula_parts()</a></code> 
-        </dt>
-        <dd>Processing the Formula for <code>TMB</code> Fit</dd>
-      </dl><dl><dt>
-          
-          <code><a href="h_mmrm_tmb_data.html">h_mmrm_tmb_data()</a></code> 
-        </dt>
-        <dd>Data for <code>TMB</code> Fit</dd>
-      </dl><dl><dt>
-          
-          <code><a href="h_mmrm_tmb_parameters.html">h_mmrm_tmb_parameters()</a></code> 
-        </dt>
-        <dd>Start Parameters for <code>TMB</code> Fit</dd>
-      </dl><dl><dt>
-          
-          <code><a href="h_mmrm_tmb_assert_start.html">h_mmrm_tmb_assert_start()</a></code> 
-        </dt>
-        <dd>Asserting Sane Start Values for <code>TMB</code> Fit</dd>
-      </dl><dl><dt>
-          
-          <code><a href="h_mmrm_tmb_assert_opt.html">h_mmrm_tmb_assert_opt()</a></code> 
-        </dt>
-        <dd>Asserting and Checking <code>TMB</code> Optimization Result</dd>
-      </dl><dl><dt>
-          
-          <code><a href="h_mmrm_tmb_fit.html">h_mmrm_tmb_fit()</a></code> 
-        </dt>
-        <dd>Build <code>TMB</code> Fit Result List</dd>
-      </dl><dl><dt>
-          
           <code><a href="h_mmrm_tmb.html">h_mmrm_tmb()</a></code> 
         </dt>
         <dd>Fitting an MMRM with <code>TMB</code></dd>
-      </dl><dl><dt>
-          
-          <code><a href="h_summarize_all_fits.html">h_summarize_all_fits()</a></code> 
-        </dt>
-        <dd>Summarizing List of Fits</dd>
-      </dl><dl><dt>
-          
-          <code><a href="h_covbeta_fun.html">h_covbeta_fun()</a></code> 
-        </dt>
-        <dd>Covariance Matrix for Coefficients Given Variance Parameters</dd>
-      </dl><dl><dt>
-          
-          <code><a href="h_jac_col_as_matrix.html">h_jac_col_as_matrix()</a></code> 
-        </dt>
-        <dd>Formatting a Column from Jacobian Matrix as Matrix</dd>
-      </dl><dl><dt>
-          
-          <code><a href="h_jac_list.html">h_jac_list()</a></code> 
-        </dt>
-        <dd>Obtain List of Jacobian Matrix Entries for Covariance Matrix</dd>
-      </dl><dl><dt>
-          
-          <code><a href="h_quad_form.html">h_quad_form_vec()</a></code> <code><a href="h_quad_form.html">h_quad_form_mat()</a></code> 
-        </dt>
-        <dd>Quadratic Form Calculations</dd>
-      </dl><dl><dt>
-          
-          <code><a href="h_gradient.html">h_gradient()</a></code> 
-        </dt>
-        <dd>Computation of a Gradient Given Jacobian and Contrast Vector</dd>
-      </dl><dl><dt>
-          
-          <code><a href="h_df_1d_list.html">h_df_1d_list()</a></code> 
-        </dt>
-        <dd>Creating Results List for One-Dimensional Contrast</dd>
-      </dl><dl><dt>
-          
-          <code><a href="h_md_denom_df.html">h_md_denom_df()</a></code> 
-        </dt>
-        <dd>Calculating Denominator Degrees of Freedom for the Multi-Dimensional Case</dd>
-      </dl><dl><dt>
-          
-          <code><a href="h_df_md_list.html">h_df_md_list()</a></code> 
-        </dt>
-        <dd>Creating Results List for Multi-Dimensional Contrast</dd>
-      </dl><dl><dt>
-          
-          <code><a href="h_df_md_from_1d.html">h_df_md_from_1d()</a></code> 
-        </dt>
-        <dd>Creating F-Statistic Results from One-Dimensional Contrast</dd>
-      </dl><dl><dt>
-          
-          <code><a href="h_coef_table.html">h_coef_table()</a></code> 
-        </dt>
-        <dd>Coefficients Table for MMRM Fit</dd>
-      </dl><dl><dt>
-          
-          <code><a href="h_print_aic_list.html">h_print_aic_list()</a></code> 
-        </dt>
-        <dd>Printing AIC and other Model Fit Criteria</dd>
-      </dl><dl><dt>
-          
-          <code><a href="h_print_call.html">h_print_call()</a></code> 
-        </dt>
-        <dd>Printing MMRM Function Call</dd>
-      </dl><dl><dt>
-          
-          <code><a href="h_print_cov.html">h_print_cov()</a></code> 
-        </dt>
-        <dd>Printing MMRM Covariance Type</dd>
       </dl></div><div class="section level2">
       <h2 id="functions">Functions<a class="anchor" aria-label="anchor" href="#functions"></a></h2>
       
@@ -222,6 +111,11 @@
       
 
       <dl><dt>
+          
+          <code><a href="component.html">component()</a></code> 
+        </dt>
+        <dd>Component Access for <code>mmrm_tmb</code> Objects</dd>
+      </dl><dl><dt>
           
           <code><a href="df_1d.html">df_1d()</a></code> 
         </dt>
@@ -246,11 +140,6 @@
           <code><a href="refit_multiple_optimizers.html">refit_multiple_optimizers()</a></code> 
         </dt>
         <dd>Refitting MMRM with Multiple Optimizers</dd>
-      </dl><dl><dt>
-          
-          <code><a href="component.html">component()</a></code> 
-        </dt>
-        <dd>Component Access for <code>mmrm_tmb</code> Objects</dd>
       </dl></div><div class="section level2">
       <h2 id="methods">Methods<a class="anchor" aria-label="anchor" href="#methods"></a></h2>
       
