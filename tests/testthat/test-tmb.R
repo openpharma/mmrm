@@ -451,6 +451,36 @@ test_that("h_mmrm_tmb works as expected in a simple model without covariates and
 
 ## ante-dependence ----
 
+### homogeneous ----
+
+test_that("h_mmrm_tmb works with ad covariance structure and ML", {
+  formula <- FEV1 ~ ad(AVISIT | USUBJID)
+  data <- fev_data
+  result <- expect_silent(h_mmrm_tmb(formula, data, reml = FALSE))
+  expect_class(result, "mmrm_tmb")
+  # See design/SAS/mmrm_ad_ml.txt for the source of numbers.
+  expect_equal(deviance(result), 3855.8794)
+  expect_equal(sqrt(result$beta_vcov[1, 1]), 0.5222, tolerance = 1e-4)
+  expect_equal(as.numeric(result$beta_est), 43.0574, tolerance = 1e-4)
+  result_theta <- result$theta_est
+  expected_theta <- c(2.2695640, 0.9147445, 0.7249571, 0.1897019)
+  expect_equal(result_theta, expected_theta, tolerance = 1e-4)
+})
+
+test_that("h_mmrm_tmb works with ad covariance structure and REML", {
+  formula <- FEV1 ~ ad(AVISIT | USUBJID)
+  data <- fev_data
+  result <- expect_silent(h_mmrm_tmb(formula, data, reml = TRUE))
+  expect_class(result, "mmrm_tmb")
+  # See design/SAS/mmrm_ad_reml.txt for the source of numbers.
+  expect_equal(deviance(result), 3855.3383)
+  expect_equal(sqrt(result$beta_vcov[1, 1]), 0.5236, tolerance = 1e-4)
+  expect_equal(as.numeric(result$beta_est), 43.0560, tolerance = 1e-4)
+  result_theta <- result$theta_est
+  expected_theta <- c(2.2713398, 0.9175433, 0.7303929, 0.1919114)
+  expect_equal(result_theta, expected_theta, tolerance = 1e-4)
+})
+
 ### heterogeneous ----
 
 test_that("h_mmrm_tmb works with adh covariance structure and ML", {
