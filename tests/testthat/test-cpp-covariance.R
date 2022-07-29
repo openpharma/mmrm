@@ -1,6 +1,32 @@
 # ante-dependence ----
 
-test_that("prepare numbers for ante_dependence tests", {
+test_that("prepare numbers for homogeneous ante_dependence tests", {
+  theta <- c(log(2), 1, 2)
+  n_visits <- 3
+  sd <- exp(theta[1])
+  x <- tail(theta, n_visits - 1)
+  cors <- x / sqrt(1 + x^2)
+  cor_mat <- square_matrix(c(
+    1, cors[1], prod(cors[1:2]),
+    cors[1], 1, cors[2],
+    prod(cors[1:2]), cors[2], 1
+  ))
+  low_tri <- lower.tri(cor_mat)
+  cor_fun_vals <- cbind(
+    row(cor_mat)[low_tri] - 1,
+    col(cor_mat)[low_tri] - 1,
+    cor_mat[low_tri]
+  )
+  result <- sd * t(chol(cor_mat))
+  expected <- square_matrix(c(
+    2.0, 0.0, 0.0,
+    sqrt(2.0), sqrt(2.0), 0.0,
+    1.264911, 1.264911, 0.8944272
+  ))
+  expect_equal(result, expected, tolerance = 1e-5)
+})
+
+test_that("prepare numbers for heterogeneous ante_dependence tests", {
   theta <- c(log(1), log(2), log(3), 1, 2)
   n_visits <- 3
   sds <- exp(theta[1:n_visits])
@@ -28,7 +54,33 @@ test_that("prepare numbers for ante_dependence tests", {
 
 # toeplitz ----
 
-test_that("prepare numbers for toeplitz tests", {
+test_that("prepare numbers for homogeneous toeplitz tests", {
+  theta <- c(log(2), 1, 2)
+  n_visits <- 3
+  sd <- exp(theta[1])
+  x <- tail(theta, n_visits - 1)
+  cors <- x / sqrt(1 + x^2)
+  cor_mat <- square_matrix(c(
+    1, cors[1], cors[2],
+    cors[1], 1, cors[1],
+    cors[2], cors[1], 1
+  ))
+  low_tri <- lower.tri(cor_mat)
+  cor_fun_vals <- cbind(
+    row(cor_mat)[low_tri] - 1,
+    col(cor_mat)[low_tri] - 1,
+    cor_mat[low_tri]
+  )
+  result <- sd * t(chol(cor_mat))
+  expected <- square_matrix(c(
+    2.0, 0.0, 0.0,
+    sqrt(2.0), sqrt(2.0), 0.0,
+    1.788854, 0.2111456, 0.8691476
+  ))
+  expect_equal(result, expected, tolerance = 1e-5)
+})
+
+test_that("prepare numbers for heterogeneous toeplitz tests", {
   theta <- c(log(1), log(2), log(3), 1, 2)
   n_visits <- 3
   sds <- exp(theta[1:n_visits])
