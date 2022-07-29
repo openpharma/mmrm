@@ -25,5 +25,3 @@ result$theta_est
 cat("\n deviance(result) \n")
 print(deviance(result), 8)
 sink(file = NULL)
-
-
