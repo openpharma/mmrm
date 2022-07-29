@@ -23,8 +23,19 @@ context("ante_dependence") {
   }
 
   test_that("get_ante_dependence produces expected result") {
-    vector<double> theta {{log(1.0), log(2.0), log(3.0), 1.0, 2.0}};
+    vector<double> theta {{log(2.0), 1.0, 2.0}};
     matrix<double> result = get_ante_dependence(theta, 3);
+    matrix<double> expected(3, 3);
+    expected <<
+      2.0, 0.0, 0.0,
+      sqrt(2.0), sqrt(2.0), 0.0,
+      1.264911, 1.264911, 0.8944272;
+    expect_equal_matrix(result, expected);
+  }
+
+  test_that("get_ante_dependence_heterogeneous produces expected result") {
+    vector<double> theta {{log(1.0), log(2.0), log(3.0), 1.0, 2.0}};
+    matrix<double> result = get_ante_dependence_heterogeneous(theta, 3);
     matrix<double> expected(3, 3);
     expected <<
       1.0, 0.0, 0.0,

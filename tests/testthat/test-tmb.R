@@ -157,6 +157,15 @@ test_that("h_mmrm_tmb_parameters works as expected with antedependence", {
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = TRUE, accept_singular = FALSE)
   result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
+  expected <- list(theta = rep(0, 4)) # 4 parameters.
+  expect_identical(result, expected)
+})
+
+test_that("h_mmrm_tmb_parameters works as expected with heterogeneous antedependence", {
+  formula <- FEV1 ~ SEX + adh(AVISIT | USUBJID)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula)
+  tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = TRUE, accept_singular = FALSE)
+  result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
   expected <- list(theta = rep(0, 7)) # 2 * 4 - 1 parameters.
   expect_identical(result, expected)
 })
@@ -442,12 +451,14 @@ test_that("h_mmrm_tmb works as expected in a simple model without covariates and
 
 ## ante-dependence ----
 
-test_that("h_mmrm_tmb works with ante-dependence covariance structure and ML", {
-  formula <- FEV1 ~ ad(AVISIT | USUBJID)
+### heterogeneous ----
+
+test_that("h_mmrm_tmb works with adh covariance structure and ML", {
+  formula <- FEV1 ~ adh(AVISIT | USUBJID)
   data <- fev_data
   result <- expect_silent(h_mmrm_tmb(formula, data, reml = FALSE))
   expect_class(result, "mmrm_tmb")
-  # See design/SAS/sas_antedependence_ml.txt for the source of numbers.
+  # See design/SAS/sas_adh_ml.txt for the source of numbers.
   expect_equal(deviance(result), 3713.24501787)
   expect_equal(sqrt(result$beta_vcov[1, 1]), 0.3519, tolerance = 1e-4)
   expect_equal(as.numeric(result$beta_est), 42.9019, tolerance = 1e-4)
@@ -459,12 +470,12 @@ test_that("h_mmrm_tmb works with ante-dependence covariance structure and ML", {
   expect_equal(result_theta, expected_theta, tolerance = 1e-4)
 })
 
-test_that("h_mmrm_tmb works with ante-dependence covariance structure and REML", {
-  formula <- FEV1 ~ ad(AVISIT | USUBJID)
+test_that("h_mmrm_tmb works with adh covariance structure and REML", {
+  formula <- FEV1 ~ adh(AVISIT | USUBJID)
   data <- fev_data
   result <- expect_silent(h_mmrm_tmb(formula, data, reml = TRUE))
   expect_class(result, "mmrm_tmb")
-  # See design/SAS/sas_antedependence_reml.txt for the source of numbers.
+  # See design/SAS/sas_adh_reml.txt for the source of numbers.
   expect_equal(deviance(result), 3713.49317786)
   expect_equal(sqrt(result$beta_vcov[1, 1]), 0.3529, tolerance = 1e-4)
   expect_equal(as.numeric(result$beta_est), 42.9009, tolerance = 1e-4)
@@ -526,7 +537,7 @@ test_that("h_mmrm_tmb works with toeph covariance structure and ML", {
   # We have seen transient NA/NaN function evaluation warnings here.
   result <- suppressWarnings(h_mmrm_tmb(formula, data, reml = FALSE))
   expect_class(result, "mmrm_tmb")
-  # See design/SAS/sas_toeplitz_ml.txt for the source of numbers.
+  # See design/SAS/sas_toeph_ml.txt for the source of numbers.
   expect_equal(deviance(result), 3722.29178558)
   expect_equal(sqrt(result$beta_vcov[1, 1]), 0.3812, tolerance = 1e-4)
   expect_equal(as.numeric(result$beta_est), 41.6769, tolerance = 1e-4)
@@ -545,7 +556,7 @@ test_that("h_mmrm_tmb works with toeph covariance structure and REML", {
   # We have seen transient NA/NaN function evaluation warnings here.
   result <- suppressWarnings(h_mmrm_tmb(formula, data, reml = TRUE))
   expect_class(result, "mmrm_tmb")
-  # See design/SAS/sas_toeplitz_reml.txt for the source of numbers.
+  # See design/SAS/sas_toeph_reml.txt for the source of numbers.
   expect_equal(deviance(result), 3722.38018329)
   expect_equal(sqrt(result$beta_vcov[1, 1]), 0.3822, tolerance = 1e-4)
   expect_equal(as.numeric(result$beta_est), 41.6726, tolerance = 1e-4)
