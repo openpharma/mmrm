@@ -21,7 +21,7 @@ matrix<T> get_unstructured(const vector<T>& theta, int n_visits) {
   return covariance_lower_chol;
 }
 
-// Heterogeneous Ante-dependence:
+// Ante-dependence:
 
 // Correlation function.
 template <class T>
@@ -31,9 +31,17 @@ struct corr_fun_ante_dependence : generic_corr_fun<T> {
     return this->corr_values.segment(j, i - j).prod();
   }
 };
-// Cholesky factor.
+// Homogeneous Ante-dependence Cholesky factor.
 template <class T>
 matrix<T> get_ante_dependence(const vector<T>& theta, int n_visits) {
+  T const_sd = exp(theta(0));
+  corr_fun_ante_dependence<T> fun(theta.tail(n_visits - 1));
+  matrix<T> ad_cor_mat_chol = get_corr_mat_chol(n_visits, fun);
+  return const_sd * ad_cor_mat_chol;
+}
+// Heterogeneous Ante-dependence Cholesky factor.
+template <class T>
+matrix<T> get_ante_dependence_heterogeneous(const vector<T>& theta, int n_visits) {
   vector<T> sd_values = exp(theta.head(n_visits));
   corr_fun_ante_dependence<T> fun(theta.tail(n_visits - 1));
   return get_heterogeneous_cov(sd_values, fun);
@@ -136,6 +144,8 @@ matrix<T> get_covariance_lower_chol(const vector<T>& theta, int n_visits, std::s
     result = get_auto_regressive_heterogeneous<T>(theta, n_visits);
   } else if (cov_type == "ad") {
     result = get_ante_dependence<T>(theta, n_visits);
+  } else if (cov_type == "adh") {
+    result = get_ante_dependence_heterogeneous<T>(theta, n_visits);
   } else if (cov_type == "cs") {
     result = get_compound_symmetry<T>(theta, n_visits);
   } else if (cov_type == "csh") {

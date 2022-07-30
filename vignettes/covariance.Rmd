@@ -112,7 +112,7 @@ Any covariance matrix can be represented by this saturated correlation
 structure. Here $k = m (m+1) / 2$. See the [algorithm
 vignette](algorithm.html) for details.
 
-## Heterogeneous Ante-dependence (`ad`)
+## Homogeneous (`ad`) and Heterogeneous Ante-dependence (`adh`)
 
 The ante-dependence correlation structure (@Gabriel1962) is useful for
 balanced designs where the observations are not necessarily equally
@@ -128,7 +128,9 @@ within subject variances. So here we can identify
 \[
 \theta = (\log(\sigma_1), \dotsc, \log(\sigma_m), f(\rho_1), \dotsc, f(\rho_{m-1}))
 \]
-and we have in total $2m - 1$ variance parameters.
+and we have in total $2m - 1$ variance parameters. Assuming a
+constant variance yields a homogeneous ante-dependence covariance structure
+with total $m$ variance parameters.
 
 ## Homogeneous (`toep`) and Heterogeneous Toeplitz (`toeph`)
 

@@ -1,0 +1,43 @@
+mmrm fit
+
+Formula:     FEV1 ~ ad(AVISIT | USUBJID)
+Data:        fev_data (used 537 observations from 197 subjects with maximum 4 
+timepoints)
+Covariance:  ante-dependence (4 variance parameters)
+Method:      ML
+Deviance:    3855.879
+
+Coefficients: 
+(Intercept) 
+    43.0574 
+
+Model Inference Optimization:
+Converged with code 0 and message: convergence: rel_reduction_of_f <= factr*epsmchmmrm fit
+
+Formula:     FEV1 ~ ad(AVISIT | USUBJID)
+Data:        fev_data (used 537 observations from 197 subjects with maximum 4 
+timepoints)
+Covariance:  ante-dependence (4 variance parameters)
+
+Model selection criteria:
+     AIC      BIC   logLik deviance 
+  3863.9   3877.0  -1927.9   3855.9 
+
+Coefficients: 
+            Estimate Std. Error       df t value Pr(>|t|)    
+(Intercept)  43.0574     0.5222 179.6600   82.46   <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Covariance estimate:
+        VIS1    VIS2    VIS3    VIS4
+VIS1 93.6091 63.1818 37.0842  6.9117
+VIS2 63.1818 93.6091 54.9434 10.2402
+VIS3 37.0842 54.9434 93.6091 17.4467
+VIS4  6.9117 10.2402 17.4467 93.6091
+
+result$theta_est 
+[1] 2.2695640 0.9147445 0.7249571 0.1897019
+
+ deviance(result) 
+[1] 3855.8794
