@@ -32,7 +32,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9017</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9018</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,12 +55,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -182,7 +176,8 @@ correlation structure. Here <span class="math inline">\(k = m (m+1) /
 details.</p>
 </div>
 <div class="section level3">
-<h3 id="heterogeneous-ante-dependence-ad">Heterogeneous Ante-dependence (<code>ad</code>)<a class="anchor" aria-label="anchor" href="#heterogeneous-ante-dependence-ad"></a>
+<h3 id="homogeneous-ad-and-heterogeneous-ante-dependence-adh">Homogeneous (<code>ad</code>) and Heterogeneous Ante-dependence
+(<code>adh</code>)<a class="anchor" aria-label="anchor" href="#homogeneous-ad-and-heterogeneous-ante-dependence-adh"></a>
 </h3>
 <p>The ante-dependence correlation structure (<span class="citation">Gabriel (1962)</span>) is useful for balanced designs
 where the observations are not necessarily equally spaced in time. Here
@@ -196,7 +191,8 @@ within subject variances. So here we can identify <span class="math display">\[
 \theta = (\log(\sigma_1), \dotsc, \log(\sigma_m), f(\rho_1), \dotsc,
 f(\rho_{m-1}))
 \]</span> and we have in total <span class="math inline">\(2m -
-1\)</span> variance parameters.</p>
+1\)</span> variance parameters. Assuming a constant variance yields a
+homogeneous ante-dependence covariance structure with total <span class="math inline">\(m\)</span> variance parameters.</p>
 </div>
 <div class="section level3">
 <h3 id="homogeneous-toep-and-heterogeneous-toeplitz-toeph">Homogeneous (<code>toep</code>) and Heterogeneous Toeplitz
