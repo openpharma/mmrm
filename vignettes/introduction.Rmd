@@ -2,7 +2,8 @@
 title: "Introduction to `mmrm`"
 package: mmrm
 author:
-  - Daniel Sabanés Bové
+  - Daniel Sabanés Bové 
+  - Brian M. Lang
 output:
   rmarkdown::html_document:
           theme: "spacelab"
@@ -24,6 +25,239 @@ knitr::opts_chunk$set(
 )
 library(mmrm)
 ```
+
+# Common usage
+
+A minimal call of [`mmrm()`](https://openpharma.github.io/mmrm/main/reference/mmrm.html),
+consisting of only formula and data arguments will produce an object of class 
+`mmrm`, `mmrm_fit`, and `mmrm_tmb`. Here we fit a mmrm
+model with `us` (unstructured) covariance structure specified, as well as the defaults
+of `reml = TRUE` and `optimizer = 'automatic'`.
+
+```{r common-usage-modelcall}
+fit <- mmrm(
+  formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data
+)
+```
+
+Printing the object will show you output which should be familiar to anyone who 
+has used any popular modeling functions such as `stats::lm()`, `stats::glm()`,
+`glmmTMB::glmmTMB()`, and `lme4::nlmer()`. From this print out we see the function call,
+the data used, the covariance structure with number of variance parameters, as well 
+as the likelihood method, and model deviance achieved. Additionally the user is 
+provided a printout of the estimated coefficients and the model convergence information.
+
+```{r common-usage-print}
+print(fit)
+```
+
+# Common customizations
+
+From the high-level [`mmrm()`](https://openpharma.github.io/mmrm/main/reference/mmrm.html) 
+interface, common changes to the default function call can be specified.
+
+## REML or ML
+
+Users can specify if REML should be used (default) or if ML should be used in 
+optimization.
+
+```{r common-changes-reml}
+fit_ml <- mmrm(
+  formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data,
+  reml = FALSE
+)
+
+print(fit_ml)
+```
+
+## Optimizer
+
+Users can specify which optimizer should be used, changing from the default of 
+`automatic` selection, which starts with `L-BFGS-B` and proceeds through the 
+other choices if optimization fails to converge. Other choices are `BFGS`, `CG`, and
+`nlminb`. 
+
+```{r common-changes-optim}
+fit_opt <- mmrm(
+  formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data,
+  optimizer = "BFGS"
+)
+
+print(fit_opt)
+```
+
+## Covariance Structure
+
+Covariance structures supported by the `mmrm` are being continuously developed. 
+For a complete list and description please visit the [vignette in the package website](https://openpharma.github.io/mmrm/main/articles/covariance.html). Below
+we see the function call for homogeneous compound symmetry (`cs`). 
+
+```{r common-changes-cov}
+fit_cs <- mmrm(
+  formula = FEV1 ~ RACE + ARMCD * AVISIT + cs(AVISIT | USUBJID),
+  data = fev_data,
+  reml = FALSE
+)
+
+print(fit_cs)
+```
+
+# Extraction of model features
+
+Similar to model objects created in other packages, components of `mmrm` and
+`mmrm_tmb` objects can be accessed with standard methods.  Additionally, 
+[`component()`](https://openpharma.github.io/mmrm/main/reference/component.html) is provided to allow deeper and more precise access for those 
+interested in digging through model output.   
+Complete documentation of standard model output methods supported for `mmrm_tmb`
+objects [can be found at the package website.](https://openpharma.github.io/mmrm/main/reference/mmrm_tmb_methods.html)
+
+## Summary extraction
+
+The `summary` method for `mmrm` objects provides easy access to frequently needed
+model components. 
+
+```{r extraction-summary-fit}
+fit <- mmrm(
+  formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data
+)
+
+fit_summary <- summary(fit)
+```
+
+From this summary object, you can easily retrieve the coefficients table.
+
+```{r extraction-summary-fit-coef}
+fit_summary$coefficients
+```
+
+Other model parameters and metadata available in the summary object is as follows:
+
+```{r extraction-summary-fit-str}
+str(fit_summary)
+```
+
+## Other components  
+
+Specific model quantities not supported by methods can be retrieved with the 
+[`component()`](https://openpharma.github.io/mmrm/main/reference/component.html) 
+function. The default will output all supported components. 
+
+For example, a user may want information about convergence:
+
+```{r extraction-summary-component}
+component(fit, name = c("convergence", "evaluations", "conv_message"))
+```
+
+or the original low-level call:
+
+```{r}
+component(fit, name = "call")
+```
+
+the user could also ask for all provided components by not specifying the `name`
+argument.
+
+```{r, eval=FALSE}
+component(fit)
+```
+
+# Lower level functions
+
+## Low-level mmrm
+
+The lower level function which is called by [`mmrm()`](https://openpharma.github.io/mmrm/main/reference/mmrm.html) is [`h_mmrm_tmb()`](https://openpharma.github.io/mmrm/main/reference/h_mmrm_tmb.html). This 
+function is exported and can be used directly. It is similar to [`mmrm()`](https://openpharma.github.io/mmrm/main/reference/mmrm.html) but lacks
+some post-processing and support for Satterthwaite d.f. calculations. However, it exposes
+an argument for fine control over optimization which may be needed by some
+users.
+
+```{r low-level-hmmrmtmb}
+h_mmrm_tmb(formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data,
+  reml = TRUE,
+  control = h_mmrm_tmb_control()
+)
+```
+
+For fine control of optimization routine, [`h_mmrm_tmb_control()`](https://openpharma.github.io/mmrm/main/reference/h_mmrm_tmb_control.html)
+is provided. This function allows the user to specify optimization routine with 
+`optimizer`, pass arguments to that optimizer with `optimizer_args`, provide a 
+list of control parameters with `optimizer_control`, provide a list of starting 
+parameter values with `start`, and decide the action to be taken when the 
+defined design matrix is singular with `accept_singular`.
+
+```{r low-level-control, eval=FALSE}
+h_mmrm_tmb_control(optimizer = stats::nlminb,
+  optimizer_args = list(upper = Inf, lower = 0),
+  optimizer_control = list(),
+  start = c(0, 1, 1, 0, 1, 0),
+  accept_singular = FALSE
+)
+```
+
+# Hypothesis testing
+
+This package supports estimation of one- and multi-dimensional contrasts 
+(t-test and F-test calculation) with the [`df_1d()`](https://openpharma.github.io/mmrm/main/reference/df_1d.html) and 
+[`df_md()`](https://openpharma.github.io/mmrm/main/reference/df_md.html) functions. 
+Both functions utilize Satterthwaite's method for the calculation of test 
+degrees of freedom.
+
+## One-dimensional contrasts
+
+Compute the test of a one-dimensional (vector) contrast for a `mmrm` object with 
+Satterthwaite degrees of freedom.
+
+```{r}
+fit <- mmrm(
+  formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data
+)
+
+contrast <- numeric(length(component(fit, "beta_est")))
+contrast[3] <- 1
+
+df_1d(fit, contrast)
+```
+
+## Multi-dimensional contrasts
+
+Compute the test of a multi-dimensional (matrix) contrast for a `mmrm` object with 
+Satterthwaite degrees of freedom.
+
+```{r}
+fit <- mmrm(
+  formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data
+)
+
+contrast <- matrix(data = 0, nrow = 2, ncol = length(component(fit, "beta_est")))
+contrast[1, 2] <- contrast[2, 3] <- 1
+
+df_md(fit, contrast)
+```
+
+## Support for emmeans
+
+This package includes methods that allow `mmrm` objects to be used with the 
+`emmeans` package. `emmeans` computes estimated marginal means (also called 
+least-square means) for the coefficients of the MMRM.
+
+```{r}
+fit <- mmrm(
+  formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data
+)
+
+if (require(emmeans)) {
+  emmeans(fit, ~ ARMCD | AVISIT)
+}
+```
+
 
 # Acknowledgments
 

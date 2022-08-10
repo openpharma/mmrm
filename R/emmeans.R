@@ -18,7 +18,7 @@
 #' @description `r lifecycle::badge("experimental")`
 #'
 #' This package includes methods that allow `mmrm` objects to be used
-#' with the `emmeans` package. `emmeans` computed estimated marginal means
+#' with the `emmeans` package. `emmeans` computes estimated marginal means
 #' (also called least-square means) for the coefficients of the MMRM.
 #'
 #' @examples
