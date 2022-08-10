@@ -77,7 +77,7 @@ S_i = \begin{pmatrix}
 Note that this follows from the well known property of the multivariate normal
 distribution that linear combinations of the random vector again have a
 multivariate normal distribution with the correspondingly modified mean
-vector and covariance matrix.
+vector and covariance matrix. When weights are specified, we replace the covariance matrix $\Sigma_i$ with $Z_i^{-1/2} \Sigma_i Z_i^{-1/2}$, where $Z_i$ is the diagonal weight matrix.
 
 Conditional on the design matrices $X_i$, the coefficient vector $\beta$ and the
 covariance matrix $\Sigma$ we assume that the observations are independent between
@@ -188,7 +188,7 @@ and similarly
 X^\top \Omega^{-1} Y = X^\top W Y =  \sum_{i=1}^{n} X_i^\top W_i Y_i
 \]
 where $W_i = \Sigma_i^{-1}$ is the weight matrix for subject $i$, the inverse
-of its covariance matrix.
+of its covariance matrix. When the diagonal weight matrix $Z_i$ is specified, we replace $W_i$ with $W_i = (Z_i^{-1/2} \Sigma_i Z_i^{-1/2})^{-1} = Z_i^{1/2} \Sigma_i^{-1} Z_i^{1/2}$.
 
 Instead of calculating this inverse explicitly, it
 is always better numerically to work with the Cholesky factorization and solve
@@ -218,7 +218,7 @@ and we can thereby calculate the left and right hand sides for the WLS estimatin
 equation. We solve this equation with a robust Cholesky decomposition with pivoting.
 The advantage is that we can reuse this decomposition for calculating the
 covariance matrix of $\hat{\beta}$, i.e. $K = (X^\top W X)^{-1}$, by supplying the
-identity matrix as alternative right hand side.
+identity matrix as alternative right hand side. When weights $Z_i$ is specified, we replace $L_i$ with $Z_i^{-1/2} L_i$ in the above calculation.
 
 ### Determinant and quadratic form
 
@@ -238,6 +238,7 @@ where $l_{i,jj}$ are the diagonal entries of the factor $L_i$ and we have used t
 - the determinant of the product of matrices is the product of the determinants,
 - the determinant of the transposed matrix is the same as the original one,
 - the determinant of a triangular matrix is the product of the diagonal.
+When weights $Z_i$ is specified, we have $\frac{1}{2}\log\det(\Omega) = \sum_{i=1}^{n}\sum_{j=1}^{m_i}\log(z_{i, j} l_{i, jj})$, where $z_{i, j}$ are the diagonal entries of the weight $Z_i$.
 
 And finally, for the quadratic form we can reuse the weighted response vector
 and design matrix:
