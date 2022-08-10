@@ -42,7 +42,7 @@ fit <- mmrm(
 ```
 
 Printing the object will show you output which should be familiar to anyone who 
-has used any popular modelling functions such as `stats::lm()`, `stats::glm()`,
+has used any popular modeling functions such as `stats::lm()`, `stats::glm()`,
 `glmmTMB::glmmTMB()`, and `lme4::nlmer()`. From this print out we see the function call,
 the data used, the covariance structure with number of variance parameters, as well 
 as the likelihood method, and model deviance achieved. Additionally the user is 
