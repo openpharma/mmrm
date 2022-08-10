@@ -156,7 +156,7 @@ str(component(fit))
 
 The lower level function which is called by `mmrm()` is `h_mmrm_tmb()`. This 
 function is exported and can be used directly. It is similar to `mmrm()` but lacks
-some post-processing and support for special d.f. calculations. However, it exposes
+some post-processing and support for Satterthwaite d.f. calculations. However, it exposes
 an argument for fine control over optimization which may be needed by some
 users.
 
