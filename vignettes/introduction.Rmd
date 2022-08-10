@@ -52,7 +52,7 @@ provided a printout of the estimated coefficients and the model convergence info
 print(fit)
 ```
 
-# Common changes
+# Common customizations
 
 From the high-level `mmrm()` interface, common changes to the default function 
 call can be specified.
