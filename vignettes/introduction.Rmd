@@ -194,7 +194,7 @@ defined design matrix is singular with `accept_singular`.
 h_mmrm_tmb_control(optimizer = stats::nlminb,
   optimizer_args = list(upper = Inf, lower = 0),
   optimizer_control = list(),
-  start = c(0,1,1,0,1,0),
+  start = c(0, 1, 1, 0, 1, 0),
   accept_singular = FALSE
 )
 ```
@@ -204,13 +204,13 @@ h_mmrm_tmb_control(optimizer = stats::nlminb,
 This package supports estimation of one- and multi-dimensional contrasts 
 (t-test and F-test calculation) with the [`df_1d()`](https://openpharma.github.io/mmrm/main/reference/df_1d.html) and 
 [`df_md()`](https://openpharma.github.io/mmrm/main/reference/df_md.html) functions. 
-Both functions utilize Satterthwaithe's method for the calculation of test 
+Both functions utilize Satterthwaite's method for the calculation of test 
 degrees of freedom.
 
 ## One-dimensional contrasts
 
 Compute the test of a one-dimensional (vector) contrast for a `mmrm` object with 
-Satterthwaithe degrees of freedom.
+Satterthwaite degrees of freedom.
 
 ```{r}
 fit <- mmrm(
@@ -227,7 +227,7 @@ df_1d(fit, contrast)
 ## Multi-dimensional contrasts
 
 Compute the test of a multi-dimensional (matrix) contrast for a `mmrm` object with 
-Satterthwaithe degrees of freedom.
+Satterthwaite degrees of freedom.
 
 ```{r}
 fit <- mmrm(
