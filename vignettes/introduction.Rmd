@@ -28,7 +28,7 @@ library(mmrm)
 
 # Common usage
 
-[A minimal call of mmrm()](https://openpharma.github.io/mmrm/main/reference/mmrm.html),
+A minimal call of [`mmrm()`](https://openpharma.github.io/mmrm/main/reference/mmrm.html),
 consisting of only formula and data arguments will produce an object of class 
 `mmrm`, `mmrm_fit`, and `mmrm_tmb`. Here we fit a mmrm
 model with `us` (unstructured) covariance structure specified, as well as the defaults
@@ -54,8 +54,8 @@ print(fit)
 
 # Common customizations
 
-From the high-level `mmrm()` interface, common changes to the default function 
-call can be specified.
+From the high-level [`mmrm()`](https://openpharma.github.io/mmrm/main/reference/mmrm.html) 
+interface, common changes to the default function call can be specified.
 
 ## REML or ML
 
@@ -109,7 +109,7 @@ print(fit_cs)
 
 Similar to model objects created in other packages, components of `mmrm` and
 `mmrm_tmb` objects can be accessed with standard methods.  Additionally, 
-`component()` is provided to allow deeper and more precise access for those 
+[`component()`](https://openpharma.github.io/mmrm/main/reference/component.html) is provided to allow deeper and more precise access for those 
 interested in digging through model output.   
 Complete documentation of standard model output methods supported for `mmrm_tmb`
 objects [can be found at the package website.](https://openpharma.github.io/mmrm/main/reference/mmrm_tmb_methods.html)
@@ -142,20 +142,35 @@ str(fit_summary)
 
 ## Other components  
 
-Specific model quantities not supported by methods [can be retrieved with the 
-`component()` function.](https://openpharma.github.io/mmrm/main/reference/component.html)
-The default will output all supported components. 
+Specific model quantities not supported by methods can be retrieved with the 
+[`component()`](https://openpharma.github.io/mmrm/main/reference/component.html) 
+function. The default will output all supported components. 
+
+For example, a user may want information about convergence:
 
 ```{r extraction-summary-component}
-str(component(fit))
+component(fit, name = c("convergence", "evaluations", "conv_message"))
+```
+
+or the original low-level call:
+
+```{r}
+component(fit, name = "call")
+```
+
+the user could also ask for all provided components by not specifying the `name`
+argument.
+
+```{r, eval=FALSE}
+component(fit)
 ```
 
 # Lower level functions
 
 ## Low-level mmrm
 
-The lower level function which is called by `mmrm()` is `h_mmrm_tmb()`. This 
-function is exported and can be used directly. It is similar to `mmrm()` but lacks
+The lower level function which is called by [`mmrm()`](https://openpharma.github.io/mmrm/main/reference/mmrm.html) is [`h_mmrm_tmb()`](https://openpharma.github.io/mmrm/main/reference/h_mmrm_tmb.html). This 
+function is exported and can be used directly. It is similar to [`mmrm()`](https://openpharma.github.io/mmrm/main/reference/mmrm.html) but lacks
 some post-processing and support for Satterthwaite d.f. calculations. However, it exposes
 an argument for fine control over optimization which may be needed by some
 users.
@@ -168,16 +183,65 @@ h_mmrm_tmb(formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
 )
 ```
 
+For fine control of optimization routine, [`h_mmrm_tmb_control()`](https://openpharma.github.io/mmrm/main/reference/h_mmrm_tmb_control.html)
+is provided. This function allows the user to specify optimization routine with 
+`optimizer`, pass arguments to that optimizer with `optimizer_args`, provide a 
+list of control parameters with `optimizer_control`, provide a list of starting 
+parameter values with `start`, and decide the action to be taken when the 
+defined design matrix is singular with `accept_singular`.
+
 ```{r low-level-control, eval=FALSE}
 h_mmrm_tmb_control(optimizer = stats::nlminb,
-  optimizer_args = list(),
+  optimizer_args = list(upper = Inf, lower = 0),
   optimizer_control = list(),
-  start = NULL,
-  accept_singular = TRUE
+  start = c(0,1,1,0,1,0),
+  accept_singular = FALSE
 )
 ```
 
-# Support for emmeans
+# Hypothesis testing
+
+This package supports estimation of one- and multi-dimensional contrasts 
+(t-test and F-test calculation) with the [`df_1d()`](https://openpharma.github.io/mmrm/main/reference/df_1d.html) and 
+[`df_md()`](https://openpharma.github.io/mmrm/main/reference/df_md.html) functions. 
+Both functions utilize Satterthwaithe's method for the calculation of test 
+degrees of freedom.
+
+## One-dimensional contrasts
+
+Compute the test of a one-dimensional (vector) contrast for a `mmrm` object with 
+Satterthwaithe degrees of freedom.
+
+```{r}
+fit <- mmrm(
+  formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data
+)
+
+contrast <- numeric(length(component(fit, "beta_est")))
+contrast[3] <- 1
+
+df_1d(fit, contrast)
+```
+
+## Multi-dimensional contrasts
+
+Compute the test of a multi-dimensional (matrix) contrast for a `mmrm` object with 
+Satterthwaithe degrees of freedom.
+
+```{r}
+fit <- mmrm(
+  formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data
+)
+
+contrast <- matrix(data = 0, nrow = 2, ncol = length(component(fit, "beta_est")))
+contrast[1, 2] <- contrast[2, 3] <- 1
+
+df_md(fit, contrast)
+```
+
+## Support for emmeans
 
 This package includes methods that allow `mmrm` objects to be used with the 
 `emmeans` package. `emmeans` computes estimated marginal means (also called 
