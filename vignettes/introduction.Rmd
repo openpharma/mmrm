@@ -75,9 +75,9 @@ print(fit_ml)
 ## Optimizer
 
 Users can specify which optimizer should be used, changing from the default of 
-"automatic" selection, which starts with `"L-BFGS-B"` and proceeds through the 
-other choices if optimization fails to converge. Other choices are "BFGS", "CG", and
-"nlminb". 
+`automatic` selection, which starts with `L-BFGS-B` and proceeds through the 
+other choices if optimization fails to converge. Other choices are `BFGS`, `CG`, and
+`nlminb`. 
 
 ```{r common-changes-optim}
 fit_opt <- mmrm(
@@ -160,14 +160,16 @@ some post-processing and support for special d.f. calculations. However, it expo
 an argument for fine control over optimization which may be needed by some
 users.
 
-```
-h_mmrm_tmb <- function(formula,
-  data,
+```{r low-level-hmmrmtmb}
+h_mmrm_tmb(formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data,
   reml = TRUE,
   control = h_mmrm_tmb_control()
 )
+```
 
-h_mmrm_tmb_control <- function(optimizer = stats::nlminb,
+```{r low-level-control, eval=FALSE}
+h_mmrm_tmb_control(optimizer = stats::nlminb,
   optimizer_args = list(),
   optimizer_control = list(),
   start = NULL,
