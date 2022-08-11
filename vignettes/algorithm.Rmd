@@ -218,7 +218,7 @@ and we can thereby calculate the left and right hand sides for the WLS estimatin
 equation. We solve this equation with a robust Cholesky decomposition with pivoting.
 The advantage is that we can reuse this decomposition for calculating the
 covariance matrix of $\hat{\beta}$, i.e. $K = (X^\top W X)^{-1}$, by supplying the
-identity matrix as alternative right hand side. When weights $Z_i$ is specified, we replace $L_i$ with $Z_i^{-1/2} L_i$ in the above calculation.
+identity matrix as alternative right hand side.
 
 ### Determinant and quadratic form
 
