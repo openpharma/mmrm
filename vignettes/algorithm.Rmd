@@ -188,7 +188,7 @@ and similarly
 X^\top \Omega^{-1} Y = X^\top W Y =  \sum_{i=1}^{n} X_i^\top W_i Y_i
 \]
 where $W_i = \Sigma_i^{-1}$ is the weight matrix for subject $i$, the inverse
-of its covariance matrix. When the diagonal weight matrix $Z_i$ is specified, we replace $W_i$ with $W_i = (Z_i^{-1/2} \Sigma_i Z_i^{-1/2})^{-1} = Z_i^{1/2} \Sigma_i^{-1} Z_i^{1/2}$.
+of its covariance matrix.
 
 Instead of calculating this inverse explicitly, it
 is always better numerically to work with the Cholesky factorization and solve
