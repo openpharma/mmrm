@@ -22,6 +22,7 @@
 #' attr(mod_fit, "converged")
 fit_single_optimizer <- function(formula,
                                  data,
+                                 weights,
                                  reml = TRUE,
                                  start = NULL,
                                  optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb"),
@@ -40,6 +41,7 @@ fit_single_optimizer <- function(formula,
     h_mmrm_tmb(
       formula = formula,
       data = data,
+      weights = weights,
       reml = reml,
       control = control
     ),
@@ -173,6 +175,7 @@ refit_multiple_optimizers <- function(fit,
 #'
 #' @param formula (`formula`)\cr the model formula, see details.
 #' @param data (`data`)\cr the data to be used for the model.
+#' @param weights (`vector`)\cr an optional vector of weights to be used in the fitting process. Should be NULL or a numeric vector.
 #' @param reml (`flag`)\cr whether restricted maximum likelihood (REML) estimation is used,
 #'   otherwise maximum likelihood (ML) is used.
 #' @param optimizer (`string`)\cr optimizer to be used to generate the model.
@@ -210,6 +213,7 @@ refit_multiple_optimizers <- function(fit,
 #' )
 mmrm <- function(formula,
                  data,
+                 weights = NULL,
                  reml = TRUE,
                  optimizer = "automatic",
                  n_cores = h_free_cores(),
@@ -219,9 +223,18 @@ mmrm <- function(formula,
 
   attr(data, which = "dataname") <- toString(match.call()$data)
 
+  nobs <- nrow(data)
+  if (is.null(weights)){
+    weights <- rep(1, nobs)
+  }
+  if(!is.null(weights) && any(weights <= 0)){
+    stop("only positive weights are allowed")
+  }
+
   fit <- fit_single_optimizer(
     formula = formula,
     data = data,
+    weights = weights,
     reml = reml,
     optimizer = ifelse(use_automatic, "L-BFGS-B", optimizer),
     accept_singular = accept_singular
