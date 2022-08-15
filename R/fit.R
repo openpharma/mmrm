@@ -175,7 +175,8 @@ refit_multiple_optimizers <- function(fit,
 #'
 #' @param formula (`formula`)\cr the model formula, see details.
 #' @param data (`data`)\cr the data to be used for the model.
-#' @param weights (`vector`)\cr an optional vector of weights to be used in the fitting process. Should be NULL or a numeric vector.
+#' @param weights (`vector`)\cr an optional vector of weights to be used in the fitting process.
+#'   Should be NULL or a numeric vector.
 #' @param reml (`flag`)\cr whether restricted maximum likelihood (REML) estimation is used,
 #'   otherwise maximum likelihood (ML) is used.
 #' @param optimizer (`string`)\cr optimizer to be used to generate the model.
