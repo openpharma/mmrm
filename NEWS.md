@@ -1,4 +1,4 @@
-# mmrm 0.0.9019.0.2
+# mmrm 0.1.0
 
 - First version of the package for fitting mixed models for repeated measures
   (MMRM) based on Template Model Builder (TMB).
