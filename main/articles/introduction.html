@@ -32,7 +32,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9018</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,12 +55,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -88,6 +82,8 @@
       <img src="" class="logo" alt=""><h1>Introduction to `mmrm`</h1>
                         <h4 data-toc-skip class="author">Daniel Sabanés
 Bové</h4>
+                        <h4 data-toc-skip class="author">Brian M.
+Lang</h4>
             
       
       <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/HEAD/vignettes/introduction.Rmd" class="external-link"><code>vignettes/introduction.Rmd</code></a></small>
@@ -96,6 +92,453 @@ Bové</h4>
 
     
     
+<div class="section level2">
+<h2 id="common-usage">Common usage<a class="anchor" aria-label="anchor" href="#common-usage"></a>
+</h2>
+<p>A minimal call of <a href="https://openpharma.github.io/mmrm/main/reference/mmrm.html"><code>mmrm()</code></a>,
+consisting of only formula and data arguments will produce an object of
+class <code>mmrm</code>, <code>mmrm_fit</code>, and
+<code>mmrm_tmb</code>. Here we fit a mmrm model with <code>us</code>
+(unstructured) covariance structure specified, as well as the defaults
+of <code>reml = TRUE</code> and
+<code>optimizer = 'automatic'</code>.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
+<span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">fev_data</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Printing the object will show you output which should be familiar to
+anyone who has used any popular modeling functions such as
+<code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">stats::lm()</a></code>, <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">stats::glm()</a></code>,
+<code><a href="https://rdrr.io/pkg/glmmTMB/man/glmmTMB.html" class="external-link">glmmTMB::glmmTMB()</a></code>, and <code><a href="https://rdrr.io/pkg/lme4/man/nlmer.html" class="external-link">lme4::nlmer()</a></code>. From
+this print out we see the function call, the data used, the covariance
+structure with number of variance parameters, as well as the likelihood
+method, and model deviance achieved. Additionally the user is provided a
+printout of the estimated coefficients and the model convergence
+information.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
+<span><span class="co">#&gt; mmrm fit</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Formula:     FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID)</span></span>
+<span><span class="co">#&gt; Data:        fev_data (used 537 observations from 197 subjects with maximum 4 </span></span>
+<span><span class="co">#&gt; timepoints)</span></span>
+<span><span class="co">#&gt; Covariance:  unstructured (10 variance parameters)</span></span>
+<span><span class="co">#&gt; Method:      REML</span></span>
+<span><span class="co">#&gt; Deviance:    3387.373</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients: </span></span>
+<span><span class="co">#&gt;                   (Intercept) RACEBlack or African American </span></span>
+<span><span class="co">#&gt;                   30.96769899                    1.50464863 </span></span>
+<span><span class="co">#&gt;                     RACEWhite                      ARMCDTRT </span></span>
+<span><span class="co">#&gt;                    5.61309565                    3.77555734 </span></span>
+<span><span class="co">#&gt;                    AVISITVIS2                    AVISITVIS3 </span></span>
+<span><span class="co">#&gt;                    4.82858803                   10.33317002 </span></span>
+<span><span class="co">#&gt;                    AVISITVIS4           ARMCDTRT:AVISITVIS2 </span></span>
+<span><span class="co">#&gt;                   15.05255715                   -0.01737409 </span></span>
+<span><span class="co">#&gt;           ARMCDTRT:AVISITVIS3           ARMCDTRT:AVISITVIS4 </span></span>
+<span><span class="co">#&gt;                   -0.66753189                    0.63094392 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Model Inference Optimization:</span></span>
+<span><span class="co">#&gt; Converged with code 0 and message: convergence: rel_reduction_of_f &lt;= factr*epsmch</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="common-customizations">Common customizations<a class="anchor" aria-label="anchor" href="#common-customizations"></a>
+</h2>
+<p>From the high-level <a href="https://openpharma.github.io/mmrm/main/reference/mmrm.html"><code>mmrm()</code></a>
+interface, common changes to the default function call can be
+specified.</p>
+<div class="section level3">
+<h3 id="reml-or-ml">REML or ML<a class="anchor" aria-label="anchor" href="#reml-or-ml"></a>
+</h3>
+<p>Users can specify if REML should be used (default) or if ML should be
+used in optimization.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit_ml</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
+<span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">fev_data</span>,</span>
+<span>  reml <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">fit_ml</span><span class="op">)</span></span>
+<span><span class="co">#&gt; mmrm fit</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Formula:     FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID)</span></span>
+<span><span class="co">#&gt; Data:        fev_data (used 537 observations from 197 subjects with maximum 4 </span></span>
+<span><span class="co">#&gt; timepoints)</span></span>
+<span><span class="co">#&gt; Covariance:  unstructured (10 variance parameters)</span></span>
+<span><span class="co">#&gt; Method:      ML</span></span>
+<span><span class="co">#&gt; Deviance:    3397.934</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients: </span></span>
+<span><span class="co">#&gt;                   (Intercept) RACEBlack or African American </span></span>
+<span><span class="co">#&gt;                    30.9663423                     1.5086851 </span></span>
+<span><span class="co">#&gt;                     RACEWhite                      ARMCDTRT </span></span>
+<span><span class="co">#&gt;                     5.6133151                     3.7761037 </span></span>
+<span><span class="co">#&gt;                    AVISITVIS2                    AVISITVIS3 </span></span>
+<span><span class="co">#&gt;                     4.8270155                    10.3353319 </span></span>
+<span><span class="co">#&gt;                    AVISITVIS4           ARMCDTRT:AVISITVIS2 </span></span>
+<span><span class="co">#&gt;                    15.0487715                    -0.0156154 </span></span>
+<span><span class="co">#&gt;           ARMCDTRT:AVISITVIS3           ARMCDTRT:AVISITVIS4 </span></span>
+<span><span class="co">#&gt;                    -0.6663598                     0.6317222 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Model Inference Optimization:</span></span>
+<span><span class="co">#&gt; Converged with code 0 and message: convergence: rel_reduction_of_f &lt;= factr*epsmch</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="optimizer">Optimizer<a class="anchor" aria-label="anchor" href="#optimizer"></a>
+</h3>
+<p>Users can specify which optimizer should be used, changing from the
+default of <code>automatic</code> selection, which starts with
+<code>L-BFGS-B</code> and proceeds through the other choices if
+optimization fails to converge. Other choices are <code>BFGS</code>,
+<code>CG</code>, and <code>nlminb</code>.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit_opt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
+<span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">fev_data</span>,</span>
+<span>  optimizer <span class="op">=</span> <span class="st">"BFGS"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">fit_opt</span><span class="op">)</span></span>
+<span><span class="co">#&gt; mmrm fit</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Formula:     FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID)</span></span>
+<span><span class="co">#&gt; Data:        fev_data (used 537 observations from 197 subjects with maximum 4 </span></span>
+<span><span class="co">#&gt; timepoints)</span></span>
+<span><span class="co">#&gt; Covariance:  unstructured (10 variance parameters)</span></span>
+<span><span class="co">#&gt; Method:      REML</span></span>
+<span><span class="co">#&gt; Deviance:    3387.373</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients: </span></span>
+<span><span class="co">#&gt;                   (Intercept) RACEBlack or African American </span></span>
+<span><span class="co">#&gt;                   30.96769004                    1.50467449 </span></span>
+<span><span class="co">#&gt;                     RACEWhite                      ARMCDTRT </span></span>
+<span><span class="co">#&gt;                    5.61310489                    3.77554263 </span></span>
+<span><span class="co">#&gt;                    AVISITVIS2                    AVISITVIS3 </span></span>
+<span><span class="co">#&gt;                    4.82858562                   10.33317692 </span></span>
+<span><span class="co">#&gt;                    AVISITVIS4           ARMCDTRT:AVISITVIS2 </span></span>
+<span><span class="co">#&gt;                   15.05257072                   -0.01735093 </span></span>
+<span><span class="co">#&gt;           ARMCDTRT:AVISITVIS3           ARMCDTRT:AVISITVIS4 </span></span>
+<span><span class="co">#&gt;                   -0.66751927                    0.63095827 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Model Inference Optimization:</span></span>
+<span><span class="co">#&gt; Converged with code 0 and message:</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="covariance-structure">Covariance Structure<a class="anchor" aria-label="anchor" href="#covariance-structure"></a>
+</h3>
+<p>Covariance structures supported by the <code>mmrm</code> are being
+continuously developed. For a complete list and description please visit
+the <a href="https://openpharma.github.io/mmrm/main/articles/covariance.html">vignette
+in the package website</a>. Below we see the function call for
+homogeneous compound symmetry (<code>cs</code>).</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit_cs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
+<span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">cs</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">fev_data</span>,</span>
+<span>  reml <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">fit_cs</span><span class="op">)</span></span>
+<span><span class="co">#&gt; mmrm fit</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Formula:     FEV1 ~ RACE + ARMCD * AVISIT + cs(AVISIT | USUBJID)</span></span>
+<span><span class="co">#&gt; Data:        fev_data (used 537 observations from 197 subjects with maximum 4 </span></span>
+<span><span class="co">#&gt; timepoints)</span></span>
+<span><span class="co">#&gt; Covariance:  compound symmetry (2 variance parameters)</span></span>
+<span><span class="co">#&gt; Method:      ML</span></span>
+<span><span class="co">#&gt; Deviance:    3536.989</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients: </span></span>
+<span><span class="co">#&gt;                   (Intercept) RACEBlack or African American </span></span>
+<span><span class="co">#&gt;                    31.4207077                     0.5357237 </span></span>
+<span><span class="co">#&gt;                     RACEWhite                      ARMCDTRT </span></span>
+<span><span class="co">#&gt;                     5.4546329                     3.4305212 </span></span>
+<span><span class="co">#&gt;                    AVISITVIS2                    AVISITVIS3 </span></span>
+<span><span class="co">#&gt;                     4.8326353                    10.2395076 </span></span>
+<span><span class="co">#&gt;                    AVISITVIS4           ARMCDTRT:AVISITVIS2 </span></span>
+<span><span class="co">#&gt;                    15.0672680                     0.2801641 </span></span>
+<span><span class="co">#&gt;           ARMCDTRT:AVISITVIS3           ARMCDTRT:AVISITVIS4 </span></span>
+<span><span class="co">#&gt;                    -0.5894964                     0.7939750 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Model Inference Optimization:</span></span>
+<span><span class="co">#&gt; Converged with code 0 and message: convergence: rel_reduction_of_f &lt;= factr*epsmch</span></span></code></pre></div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="extraction-of-model-features">Extraction of model features<a class="anchor" aria-label="anchor" href="#extraction-of-model-features"></a>
+</h2>
+<p>Similar to model objects created in other packages, components of
+<code>mmrm</code> and <code>mmrm_tmb</code> objects can be accessed with
+standard methods. Additionally, <a href="https://openpharma.github.io/mmrm/main/reference/component.html"><code>component()</code></a>
+is provided to allow deeper and more precise access for those interested
+in digging through model output.<br>
+Complete documentation of standard model output methods supported for
+<code>mmrm_tmb</code> objects <a href="https://openpharma.github.io/mmrm/main/reference/mmrm_tmb_methods.html">can
+be found at the package website.</a></p>
+<div class="section level3">
+<h3 id="summary-extraction">Summary extraction<a class="anchor" aria-label="anchor" href="#summary-extraction"></a>
+</h3>
+<p>The <code>summary</code> method for <code>mmrm</code> objects
+provides easy access to frequently needed model components.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
+<span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">fev_data</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">fit_summary</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></code></pre></div>
+<p>From this summary object, you can easily retrieve the coefficients
+table.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit_summary</span><span class="op">$</span><span class="va">coefficients</span></span>
+<span><span class="co">#&gt;                                  Estimate Std. Error       df     t value</span></span>
+<span><span class="co">#&gt; (Intercept)                   30.96769899  0.8293349 187.9132 37.34040185</span></span>
+<span><span class="co">#&gt; RACEBlack or African American  1.50464863  0.6206596 169.9454  2.42427360</span></span>
+<span><span class="co">#&gt; RACEWhite                      5.61309565  0.6630909 158.8700  8.46504747</span></span>
+<span><span class="co">#&gt; ARMCDTRT                       3.77555734  1.0762774 146.2690  3.50797778</span></span>
+<span><span class="co">#&gt; AVISITVIS2                     4.82858803  0.8017144 143.6593  6.02282805</span></span>
+<span><span class="co">#&gt; AVISITVIS3                    10.33317002  0.8224414 155.6572 12.56401918</span></span>
+<span><span class="co">#&gt; AVISITVIS4                    15.05255715  1.3128602 138.3916 11.46546844</span></span>
+<span><span class="co">#&gt; ARMCDTRT:AVISITVIS2           -0.01737409  1.1291645 138.3926 -0.01538668</span></span>
+<span><span class="co">#&gt; ARMCDTRT:AVISITVIS3           -0.66753189  1.1865359 158.2106 -0.56258887</span></span>
+<span><span class="co">#&gt; ARMCDTRT:AVISITVIS4            0.63094392  1.8507884 129.6377  0.34090549</span></span>
+<span><span class="co">#&gt;                                   Pr(&gt;|t|)</span></span>
+<span><span class="co">#&gt; (Intercept)                   7.122410e-89</span></span>
+<span><span class="co">#&gt; RACEBlack or African American 1.638725e-02</span></span>
+<span><span class="co">#&gt; RACEWhite                     1.605553e-14</span></span>
+<span><span class="co">#&gt; ARMCDTRT                      6.001485e-04</span></span>
+<span><span class="co">#&gt; AVISITVIS2                    1.366921e-08</span></span>
+<span><span class="co">#&gt; AVISITVIS3                    1.927523e-25</span></span>
+<span><span class="co">#&gt; AVISITVIS4                    8.242709e-22</span></span>
+<span><span class="co">#&gt; ARMCDTRT:AVISITVIS2           9.877459e-01</span></span>
+<span><span class="co">#&gt; ARMCDTRT:AVISITVIS3           5.745112e-01</span></span>
+<span><span class="co">#&gt; ARMCDTRT:AVISITVIS4           7.337266e-01</span></span></code></pre></div>
+<p>Other model parameters and metadata available in the summary object
+is as follows:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">fit_summary</span><span class="op">)</span></span>
+<span><span class="co">#&gt; List of 11</span></span>
+<span><span class="co">#&gt;  $ cov_type        : chr "us"</span></span>
+<span><span class="co">#&gt;  $ n_theta         : int 10</span></span>
+<span><span class="co">#&gt;  $ n_subjects      : int 197</span></span>
+<span><span class="co">#&gt;  $ n_timepoints    : int 4</span></span>
+<span><span class="co">#&gt;  $ n_obs           : int 537</span></span>
+<span><span class="co">#&gt;  $ beta_vcov       : num [1:10, 1:10] 0.688 -0.207 -0.163 -0.569 -0.422 ...</span></span>
+<span><span class="co">#&gt;   ..- attr(*, "dimnames")=List of 2</span></span>
+<span><span class="co">#&gt;   .. ..$ : chr [1:10] "(Intercept)" "RACEBlack or African American" "RACEWhite" "ARMCDTRT" ...</span></span>
+<span><span class="co">#&gt;   .. ..$ : chr [1:10] "(Intercept)" "RACEBlack or African American" "RACEWhite" "ARMCDTRT" ...</span></span>
+<span><span class="co">#&gt;  $ varcor          : num [1:4, 1:4] 40.73 14.27 5.14 13.53 14.27 ...</span></span>
+<span><span class="co">#&gt;   ..- attr(*, "dimnames")=List of 2</span></span>
+<span><span class="co">#&gt;   .. ..$ : chr [1:4] "VIS1" "VIS2" "VIS3" "VIS4"</span></span>
+<span><span class="co">#&gt;   .. ..$ : chr [1:4] "VIS1" "VIS2" "VIS3" "VIS4"</span></span>
+<span><span class="co">#&gt;  $ coefficients    : num [1:10, 1:5] 30.97 1.5 5.61 3.78 4.83 ...</span></span>
+<span><span class="co">#&gt;   ..- attr(*, "dimnames")=List of 2</span></span>
+<span><span class="co">#&gt;   .. ..$ : chr [1:10] "(Intercept)" "RACEBlack or African American" "RACEWhite" "ARMCDTRT" ...</span></span>
+<span><span class="co">#&gt;   .. ..$ : chr [1:5] "Estimate" "Std. Error" "df" "t value" ...</span></span>
+<span><span class="co">#&gt;  $ n_singular_coefs: int 0</span></span>
+<span><span class="co">#&gt;  $ aic_list        :List of 4</span></span>
+<span><span class="co">#&gt;   ..$ AIC     : num 3407</span></span>
+<span><span class="co">#&gt;   ..$ BIC     : num 3440</span></span>
+<span><span class="co">#&gt;   ..$ logLik  : num -1694</span></span>
+<span><span class="co">#&gt;   ..$ deviance: num 3387</span></span>
+<span><span class="co">#&gt;  $ call            : language h_mmrm_tmb(formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),      data = "fev_data", reml = reml, co| __truncated__</span></span>
+<span><span class="co">#&gt;  - attr(*, "class")= chr "summary.mmrm"</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="other-components">Other components<a class="anchor" aria-label="anchor" href="#other-components"></a>
+</h3>
+<p>Specific model quantities not supported by methods can be retrieved
+with the <a href="https://openpharma.github.io/mmrm/main/reference/component.html"><code>component()</code></a>
+function. The default will output all supported components.</p>
+<p>For example, a user may want information about convergence:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/component.html">component</a></span><span class="op">(</span><span class="va">fit</span>, name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"convergence"</span>, <span class="st">"evaluations"</span>, <span class="st">"conv_message"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; $convergence</span></span>
+<span><span class="co">#&gt; [1] 0</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $evaluations</span></span>
+<span><span class="co">#&gt; function gradient </span></span>
+<span><span class="co">#&gt;       17       17 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $conv_message</span></span>
+<span><span class="co">#&gt; [1] "CONVERGENCE: REL_REDUCTION_OF_F &lt;= FACTR*EPSMCH"</span></span></code></pre></div>
+<p>or the original low-level call:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/component.html">component</a></span><span class="op">(</span><span class="va">fit</span>, name <span class="op">=</span> <span class="st">"call"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; h_mmrm_tmb(formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | </span></span>
+<span><span class="co">#&gt;     USUBJID), data = "fev_data", reml = reml, control = control)</span></span></code></pre></div>
+<p>the user could also ask for all provided components by not specifying
+the <code>name</code> argument.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/component.html">component</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></code></pre></div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="lower-level-functions">Lower level functions<a class="anchor" aria-label="anchor" href="#lower-level-functions"></a>
+</h2>
+<div class="section level3">
+<h3 id="low-level-mmrm">Low-level mmrm<a class="anchor" aria-label="anchor" href="#low-level-mmrm"></a>
+</h3>
+<p>The lower level function which is called by <a href="https://openpharma.github.io/mmrm/main/reference/mmrm.html"><code>mmrm()</code></a>
+is <a href="https://openpharma.github.io/mmrm/main/reference/h_mmrm_tmb.html"><code>h_mmrm_tmb()</code></a>.
+This function is exported and can be used directly. It is similar to <a href="https://openpharma.github.io/mmrm/main/reference/mmrm.html"><code>mmrm()</code></a>
+but lacks some post-processing and support for Satterthwaite d.f.
+calculations. However, it exposes an argument for fine control over
+optimization which may be needed by some users.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/h_mmrm_tmb.html">h_mmrm_tmb</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">fev_data</span>,</span>
+<span>  reml <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  control <span class="op">=</span> <span class="fu"><a href="../reference/h_mmrm_tmb_control.html">h_mmrm_tmb_control</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; mmrm fit</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Formula:     FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID)</span></span>
+<span><span class="co">#&gt; Data:        fev_data (used 537 observations from 197 subjects with maximum 4 </span></span>
+<span><span class="co">#&gt; timepoints)</span></span>
+<span><span class="co">#&gt; Covariance:  unstructured (10 variance parameters)</span></span>
+<span><span class="co">#&gt; Method:      REML</span></span>
+<span><span class="co">#&gt; Deviance:    3387.373</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients: </span></span>
+<span><span class="co">#&gt;                   (Intercept) RACEBlack or African American </span></span>
+<span><span class="co">#&gt;                   30.96769258                    1.50467253 </span></span>
+<span><span class="co">#&gt;                     RACEWhite                      ARMCDTRT </span></span>
+<span><span class="co">#&gt;                    5.61310190                    3.77554701 </span></span>
+<span><span class="co">#&gt;                    AVISITVIS2                    AVISITVIS3 </span></span>
+<span><span class="co">#&gt;                    4.82858415                   10.33317590 </span></span>
+<span><span class="co">#&gt;                    AVISITVIS4           ARMCDTRT:AVISITVIS2 </span></span>
+<span><span class="co">#&gt;                   15.05257609                   -0.01735576 </span></span>
+<span><span class="co">#&gt;           ARMCDTRT:AVISITVIS3           ARMCDTRT:AVISITVIS4 </span></span>
+<span><span class="co">#&gt;                   -0.66752773                    0.63093842 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Model Inference Optimization:</span></span>
+<span><span class="co">#&gt; Converged with code 0 and message: relative convergence (4)</span></span></code></pre></div>
+<p>For fine control of optimization routine, <a href="https://openpharma.github.io/mmrm/main/reference/h_mmrm_tmb_control.html"><code>h_mmrm_tmb_control()</code></a>
+is provided. This function allows the user to specify optimization
+routine with <code>optimizer</code>, pass arguments to that optimizer
+with <code>optimizer_args</code>, provide a list of control parameters
+with <code>optimizer_control</code>, provide a list of starting
+parameter values with <code>start</code>, and decide the action to be
+taken when the defined design matrix is singular with
+<code>accept_singular</code>.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/h_mmrm_tmb_control.html">h_mmrm_tmb_control</a></span><span class="op">(</span>optimizer <span class="op">=</span> <span class="fu">stats</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/stats/nlminb.html" class="external-link">nlminb</a></span>,</span>
+<span>  optimizer_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>upper <span class="op">=</span> <span class="cn">Inf</span>, lower <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,</span>
+<span>  optimizer_control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,</span>
+<span>  accept_singular <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="hypothesis-testing">Hypothesis testing<a class="anchor" aria-label="anchor" href="#hypothesis-testing"></a>
+</h2>
+<p>This package supports estimation of one- and multi-dimensional
+contrasts (t-test and F-test calculation) with the <a href="https://openpharma.github.io/mmrm/main/reference/df_1d.html"><code>df_1d()</code></a>
+and <a href="https://openpharma.github.io/mmrm/main/reference/df_md.html"><code>df_md()</code></a>
+functions. Both functions utilize Satterthwaite’s method for the
+calculation of test degrees of freedom.</p>
+<div class="section level3">
+<h3 id="one-dimensional-contrasts">One-dimensional contrasts<a class="anchor" aria-label="anchor" href="#one-dimensional-contrasts"></a>
+</h3>
+<p>Compute the test of a one-dimensional (vector) contrast for a
+<code>mmrm</code> object with Satterthwaite degrees of freedom.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
+<span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">SEX</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">fev_data</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">contrast</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="../reference/component.html">component</a></span><span class="op">(</span><span class="va">fit</span>, <span class="st">"beta_est"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">contrast</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/df_1d.html">df_1d</a></span><span class="op">(</span><span class="va">fit</span>, <span class="va">contrast</span><span class="op">)</span></span>
+<span><span class="co">#&gt; $est</span></span>
+<span><span class="co">#&gt; [1] 5.643565</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $se</span></span>
+<span><span class="co">#&gt; [1] 0.6656093</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $df</span></span>
+<span><span class="co">#&gt; [1] 157.1382</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $t_stat</span></span>
+<span><span class="co">#&gt; [1] 8.478795</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $p_val</span></span>
+<span><span class="co">#&gt; [1] 1.564869e-14</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="multi-dimensional-contrasts">Multi-dimensional contrasts<a class="anchor" aria-label="anchor" href="#multi-dimensional-contrasts"></a>
+</h3>
+<p>Compute the test of a multi-dimensional (matrix) contrast for a
+<code>mmrm</code> object with Satterthwaite degrees of freedom.</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
+<span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">SEX</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">fev_data</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">contrast</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fl">0</span>, nrow <span class="op">=</span> <span class="fl">2</span>, ncol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="../reference/component.html">component</a></span><span class="op">(</span><span class="va">fit</span>, <span class="st">"beta_est"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">contrast</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">contrast</span><span class="op">[</span><span class="fl">2</span>, <span class="fl">3</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/df_md.html">df_md</a></span><span class="op">(</span><span class="va">fit</span>, <span class="va">contrast</span><span class="op">)</span></span>
+<span><span class="co">#&gt; $num_df</span></span>
+<span><span class="co">#&gt; [1] 2</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $denom_df</span></span>
+<span><span class="co">#&gt; [1] 165.5553</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $f_stat</span></span>
+<span><span class="co">#&gt; [1] 36.91143</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $p_val</span></span>
+<span><span class="co">#&gt; [1] 5.544575e-14</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="support-for-emmeans">Support for emmeans<a class="anchor" aria-label="anchor" href="#support-for-emmeans"></a>
+</h3>
+<p>This package includes methods that allow <code>mmrm</code> objects to
+be used with the <code>emmeans</code> package. <code>emmeans</code>
+computes estimated marginal means (also called least-square means) for
+the coefficients of the MMRM.</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
+<span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">fev_data</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rvlenth/emmeans" class="external-link">emmeans</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/emmeans/man/emmeans.html" class="external-link">emmeans</a></span><span class="op">(</span><span class="va">fit</span>, <span class="op">~</span> <span class="va">ARMCD</span> <span class="op">|</span> <span class="va">AVISIT</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="co">#&gt; Loading required package: emmeans</span></span>
+<span><span class="co">#&gt; AVISIT = VIS1:</span></span>
+<span><span class="co">#&gt;  ARMCD emmean    SE  df lower.CL upper.CL</span></span>
+<span><span class="co">#&gt;  PBO     33.3 0.757 149     31.8     34.8</span></span>
+<span><span class="co">#&gt;  TRT     37.1 0.764 144     35.6     38.6</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; AVISIT = VIS2:</span></span>
+<span><span class="co">#&gt;  ARMCD emmean    SE  df lower.CL upper.CL</span></span>
+<span><span class="co">#&gt;  PBO     38.2 0.608 150     37.0     39.4</span></span>
+<span><span class="co">#&gt;  TRT     41.9 0.598 146     40.7     43.1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; AVISIT = VIS3:</span></span>
+<span><span class="co">#&gt;  ARMCD emmean    SE  df lower.CL upper.CL</span></span>
+<span><span class="co">#&gt;  PBO     43.7 0.462 131     42.8     44.6</span></span>
+<span><span class="co">#&gt;  TRT     46.8 0.507 130     45.8     47.8</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; AVISIT = VIS4:</span></span>
+<span><span class="co">#&gt;  ARMCD emmean    SE  df lower.CL upper.CL</span></span>
+<span><span class="co">#&gt;  PBO     48.4 1.189 134     46.0     50.7</span></span>
+<span><span class="co">#&gt;  TRT     52.8 1.188 133     50.4     55.1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Results are averaged over the levels of: RACE </span></span>
+<span><span class="co">#&gt; Confidence level used: 0.95</span></span></code></pre></div>
+</div>
+</div>
 <div class="section level2">
 <h2 id="acknowledgments">Acknowledgments<a class="anchor" aria-label="anchor" href="#acknowledgments"></a>
 </h2>
