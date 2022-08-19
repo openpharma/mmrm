@@ -166,7 +166,7 @@ h_mmrm_tmb_data <- function(formula_parts,
     )
   }
   data <- data[order(data[[formula_parts$subject_var]], data[[formula_parts$visit_var]]), ]
-  full_frame <- droplevels(stats::model.frame(formula_parts$full_formula, data = data, weights = weights))
+  full_frame <- droplevels(stats::model.frame(formula_parts$full_formula, data = data))
 
   x_matrix <- stats::model.matrix(formula_parts$model_formula, data = full_frame)
   x_cols_aliased <- stats::setNames(rep(FALSE, ncol(x_matrix)), nm = colnames(x_matrix))
@@ -189,7 +189,7 @@ h_mmrm_tmb_data <- function(formula_parts,
   }
 
   y_vector <- as.numeric(stats::model.response(full_frame))
-  weights_vector <- as.numeric(stats::model.weights(full_frame))
+  weights_vector <- as.numeric(weights)
   visits_zero_inds <- as.integer(full_frame[[formula_parts$visit_var]]) - 1L
   n_visits <- nlevels(full_frame[[formula_parts$visit_var]])
   n_subjects <- nlevels(full_frame[[formula_parts$subject_var]])

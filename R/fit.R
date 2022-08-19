@@ -29,6 +29,7 @@ fit_single_optimizer <- function(formula,
                                  accept_singular = TRUE) {
   assert_formula(formula)
   assert_data_frame(data)
+  assert_vector(weights)
   optimizer <- match.arg(optimizer)
   control <- h_mmrm_tmb_control(
     optimizer = if (optimizer == "nlminb") stats::nlminb else stats::optim,
