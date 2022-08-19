@@ -1,3 +1,4 @@
+
 <!-- markdownlint-disable-file -->
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
@@ -5,7 +6,10 @@
 
 [![Project Status: WIP – Initial development is in progress, but there
 has not yet been a stable, usable release suitable for the
-public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
+public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)  
+<p align="center">
+<img src="man/figures/logo.svg" align="right" alt="mmrm-logo" style="width: 150px">
+</p>
 
 The `mmrm` package implements mixed models for repeated measures (MMRM)
 in R based on Template Model Builder (TMB).
@@ -16,7 +20,7 @@ in R based on Template Model Builder (TMB).
 
 You can install the current development version from GitHub with:
 
-```r
+``` r
 if (!require("remotes")) {
   install.packages("remotes")
 }
@@ -27,7 +31,7 @@ remotes::install_github("openpharma/mmrm")
 
 You can get started by trying out the example:
 
-```r
+``` r
 library(mmrm)
 fit <- mmrm(
   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
@@ -43,31 +47,31 @@ trial context, here given by `AVISIT`) within the subjects (here
 
 You can look at the results high-level:
 
-```r
+``` r
 fit
 #> mmrm fit
-#>
+#> 
 #> Formula:     FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
-#> Data:        fev_data (used 537 observations from 197 subjects with maximum 4
+#> Data:        fev_data (used 537 observations from 197 subjects with maximum 4 
 #> timepoints)
 #> Covariance:  unstructured (10 variance parameters)
 #> Method:      REML
 #> Deviance:    3386.45
-#>
-#> Coefficients:
-#>                   (Intercept) RACEBlack or African American
-#>                   30.77747548                    1.53049977
-#>                     RACEWhite                     SEXFemale
-#>                    5.64356535                    0.32606192
-#>                      ARMCDTRT                    AVISITVIS2
-#>                    3.77423004                    4.83958845
-#>                    AVISITVIS3                    AVISITVIS4
-#>                   10.34211288                   15.05389826
-#>           ARMCDTRT:AVISITVIS2           ARMCDTRT:AVISITVIS3
-#>                   -0.04192625                   -0.69368537
-#>           ARMCDTRT:AVISITVIS4
-#>                    0.62422703
-#>
+#> 
+#> Coefficients: 
+#>                   (Intercept) RACEBlack or African American 
+#>                   30.77747548                    1.53049977 
+#>                     RACEWhite                     SEXFemale 
+#>                    5.64356535                    0.32606192 
+#>                      ARMCDTRT                    AVISITVIS2 
+#>                    3.77423004                    4.83958845 
+#>                    AVISITVIS3                    AVISITVIS4 
+#>                   10.34211288                   15.05389826 
+#>           ARMCDTRT:AVISITVIS2           ARMCDTRT:AVISITVIS3 
+#>                   -0.04192625                   -0.69368537 
+#>           ARMCDTRT:AVISITVIS4 
+#>                    0.62422703 
+#> 
 #> Model Inference Optimization:
 #> Converged with code 0 and message: convergence: rel_reduction_of_f <= factr*epsmch
 ```
@@ -76,20 +80,20 @@ The `summary()` method then provides the coefficients table with
 Satterthwaite degrees of freedom as well as the covariance matrix
 estimate:
 
-```r
+``` r
 summary(fit)
 #> mmrm fit
-#>
+#> 
 #> Formula:     FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
-#> Data:        fev_data (used 537 observations from 197 subjects with maximum 4
+#> Data:        fev_data (used 537 observations from 197 subjects with maximum 4 
 #> timepoints)
 #> Covariance:  unstructured (10 variance parameters)
-#>
+#> 
 #> Model selection criteria:
-#>      AIC      BIC   logLik deviance
-#>   3406.4   3439.3  -1693.2   3386.4
-#>
-#> Coefficients:
+#>      AIC      BIC   logLik deviance 
+#>   3406.4   3439.3  -1693.2   3386.4 
+#> 
+#> Coefficients: 
 #>                                Estimate Std. Error        df t value Pr(>|t|)
 #> (Intercept)                    30.77748    0.88656 218.80000  34.715  < 2e-16
 #> RACEBlack or African American   1.53050    0.62448 168.67000   2.451 0.015272
@@ -102,21 +106,21 @@ summary(fit)
 #> ARMCDTRT:AVISITVIS2            -0.04193    1.12932 138.56000  -0.037 0.970439
 #> ARMCDTRT:AVISITVIS3            -0.69369    1.18765 158.17000  -0.584 0.559996
 #> ARMCDTRT:AVISITVIS4             0.62423    1.85085 129.72000   0.337 0.736463
-#>
+#>                                  
 #> (Intercept)                   ***
-#> RACEBlack or African American *
+#> RACEBlack or African American *  
 #> RACEWhite                     ***
-#> SEXFemale
+#> SEXFemale                        
 #> ARMCDTRT                      ***
 #> AVISITVIS2                    ***
 #> AVISITVIS3                    ***
 #> AVISITVIS4                    ***
-#> ARMCDTRT:AVISITVIS2
-#> ARMCDTRT:AVISITVIS3
-#> ARMCDTRT:AVISITVIS4
+#> ARMCDTRT:AVISITVIS2              
+#> ARMCDTRT:AVISITVIS3              
+#> ARMCDTRT:AVISITVIS4              
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-#>
+#> 
 #> Covariance estimate:
 #>         VIS1    VIS2    VIS3    VIS4
 #> VIS1 40.5537 14.3960  4.9747 13.3867
@@ -130,13 +134,13 @@ summary(fit)
 For the available covariance structures, look at the covariance
 vignette:
 
-```r
+``` r
 vignette("covariance")
 ```
 
 In order to understand how `mmrm` is fitting the models, you can read
 the details at:
 
-```r
+``` r
 vignette("algorithm")
 ```
