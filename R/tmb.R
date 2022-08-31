@@ -64,11 +64,23 @@ h_mmrm_tmb_formula_parts <- function(formula) {
   cov_functions <- c("us", "toep", "toeph", "ar1", "ar1h", "ad", "adh", "cs", "csh")
   terms_object <- stats::terms(formula, specials = cov_functions)
   found_specials <- attr(terms_object, "specials")
-  cov_selected <- !sapply(found_specials, is.null)
-  assert_true(identical(sum(cov_selected), 1L))
-  cov_index <- found_specials[[which(cov_selected)]] + 1L # Subtract 1 for `list()`.
+  cov_selected <- Filter(Negate(is.null), found_specials)
+  if (length(cov_selected) == 0) {
+    stop(
+      "Covariance matrix must be specified in formula. ",
+      "Possible covariance matrix include: ",
+      paste0(cov_functions, collapse = ", ")
+    )
+  }
+  if (length(cov_selected) > 1) {
+    stop(
+      "Only one covariance matrix can be specified. ",
+      "Currently specified covariance matrix is:",
+      paste0(names(cov_selected), collapse = ", ")
+    )
+  }
   terms_list <- attr(terms_object, "variables")
-  cov_term <- terms_list[[cov_index]]
+  cov_term <- terms_list[[unlist(cov_selected) + 1L]]
 
   # Remove the covariance term to obtain the model formula.
   model_formula <- stats::update(
