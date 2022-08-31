@@ -164,7 +164,7 @@ parameters are used differently in the construction of $P$. Assuming a
 constant variance yields a homogeneous Toeplitz covariance structure
 with total $m$ variance parameters.
 
-## Homogeneous (`ar1`) and Heterogeneous (`arh1`) Autoregressive
+## Homogeneous (`ar1`) and Heterogeneous (`ar1h`) Autoregressive
 
 The autoregressive covariance structure can be motivated by the
 corresponding state-space equation

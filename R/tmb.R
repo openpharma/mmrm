@@ -64,11 +64,22 @@ h_mmrm_tmb_formula_parts <- function(formula) {
   cov_functions <- c("us", "toep", "toeph", "ar1", "ar1h", "ad", "adh", "cs", "csh")
   terms_object <- stats::terms(formula, specials = cov_functions)
   found_specials <- attr(terms_object, "specials")
-  cov_selected <- !sapply(found_specials, is.null)
-  assert_true(identical(sum(cov_selected), 1L))
-  cov_index <- found_specials[[which(cov_selected)]] + 1L # Subtract 1 for `list()`.
+  cov_selected <- Filter(Negate(is.null), found_specials)
+  if (length(cov_selected) == 0) {
+    stop(
+      "Covariance structure must be specified in formula. ",
+      "Possible covariance structures include: ",
+      toString(cov_functions)
+    )
+  } else if (length(cov_selected) > 1) {
+    stop(
+      "Only one covariance structure can be specified. ",
+      "Currently specified covariance structures are: ",
+      toString(names(cov_selected))
+    )
+  }
   terms_list <- attr(terms_object, "variables")
-  cov_term <- terms_list[[cov_index]]
+  cov_term <- terms_list[[unlist(cov_selected) + 1L]]
 
   # Remove the covariance term to obtain the model formula.
   model_formula <- stats::update(
@@ -79,8 +90,13 @@ h_mmrm_tmb_formula_parts <- function(formula) {
   # Parse the covariance term to get covariance type, visit and subject variables.
   assert_true(identical(length(cov_term), 2L)) # 2 because `fun (...)`.
   cov_content <- cov_term[[2L]]
-  assert_true(identical(length(cov_content), 3L)) # 3 because `y | x`.
-  assert_true(identical(as.character(cov_content[[1L]]), "|"))
+  if (!identical(length(cov_content), 3L) || !identical(as.character(cov_content[[1L]]), "|")) {
+    stop(
+      "Covariance structure must be of the form `",
+      cov_term[[1]],
+      "(time|subject)`"
+    )
+  }
   visit_term <- cov_content[[2L]]
   subject_term <- cov_content[[3L]]
   assert_true(identical(length(visit_term), 1L))

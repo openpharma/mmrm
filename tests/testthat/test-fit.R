@@ -64,12 +64,18 @@ test_that("fit_single_optimizer gives error messages", {
   formula <- FEV1 ~ bla
   expect_error(
     h_mmrm_tmb(formula, fev_data),
-    "Assertion on 'identical(sum(cov_selected), 1L)' failed",
+    paste(
+      "Covariance structure must be specified in formula.",
+      "Possible covariance structures include: us, toep, toeph, ar1, ar1h, ad, adh, cs, csh"
+    ),
     fixed = TRUE
   )
   expect_error(
     fit_single_optimizer(formula, fev_data),
-    "Assertion on 'identical(sum(cov_selected), 1L)' failed",
+    paste(
+      "Covariance structure must be specified in formula.",
+      "Possible covariance structures include: us, toep, toeph, ar1, ar1h, ad, adh, cs, csh"
+    ),
     fixed = TRUE
   )
 })
