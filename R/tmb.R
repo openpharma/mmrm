@@ -71,8 +71,7 @@ h_mmrm_tmb_formula_parts <- function(formula) {
       "Possible covariance structures include: ",
       toString(cov_functions)
     )
-  }
-  if (length(cov_selected) > 1) {
+  } else if (length(cov_selected) > 1) {
     stop(
       "Only one covariance structure can be specified. ",
       "Currently specified covariance structures are: ",
