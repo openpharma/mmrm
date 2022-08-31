@@ -166,9 +166,9 @@ h_mmrm_tmb_data <- function(formula_parts,
     )
   }
 
-  # browser()
-
   data <- data[order(data[[formula_parts$subject_var]], data[[formula_parts$visit_var]]), ]
+
+  assign("weights", weights, envir = environment(formula_parts$full_formula))
   full_frame <- droplevels(stats::model.frame(formula_parts$full_formula, data = data, weights = weights))
 
   x_matrix <- stats::model.matrix(formula_parts$model_formula, data = full_frame)
