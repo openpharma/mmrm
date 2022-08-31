@@ -95,7 +95,7 @@ h_mmrm_tmb_formula_parts <- function(formula) {
     stop(
       "Covariance structure must be of the form `",
       cov_term[[1]],
-      "(VISIT|ID)`"
+      "(time|subject)`"
     )
   }
   visit_term <- cov_content[[2L]]

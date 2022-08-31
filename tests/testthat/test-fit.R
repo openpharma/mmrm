@@ -66,7 +66,7 @@ test_that("fit_single_optimizer gives error messages", {
     h_mmrm_tmb(formula, fev_data),
     paste(
       "Covariance structure must be specified in formula.",
-      "Possible covariance structure include: us, toep, toeph, ar1, ar1h, ad, adh, cs, csh"
+      "Possible covariance structures include: us, toep, toeph, ar1, ar1h, ad, adh, cs, csh"
     ),
     fixed = TRUE
   )
@@ -74,7 +74,7 @@ test_that("fit_single_optimizer gives error messages", {
     fit_single_optimizer(formula, fev_data),
     paste(
       "Covariance structure must be specified in formula.",
-      "Possible covariance structure include: us, toep, toeph, ar1, ar1h, ad, adh, cs, csh"
+      "Possible covariance structures include: us, toep, toeph, ar1, ar1h, ad, adh, cs, csh"
     ),
     fixed = TRUE
   )
