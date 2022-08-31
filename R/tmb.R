@@ -165,8 +165,11 @@ h_mmrm_tmb_data <- function(formula_parts,
       levels = stringr::str_sort(unique(data[[formula_parts$subject_var]]), numeric = TRUE)
     )
   }
+
+  # browser()
+
   data <- data[order(data[[formula_parts$subject_var]], data[[formula_parts$visit_var]]), ]
-  full_frame <- droplevels(stats::model.frame(formula_parts$full_formula, data = data))
+  full_frame <- droplevels(stats::model.frame(formula_parts$full_formula, data = data, weights = weights))
 
   x_matrix <- stats::model.matrix(formula_parts$model_formula, data = full_frame)
   x_cols_aliased <- stats::setNames(rep(FALSE, ncol(x_matrix)), nm = colnames(x_matrix))
@@ -189,7 +192,7 @@ h_mmrm_tmb_data <- function(formula_parts,
   }
 
   y_vector <- as.numeric(stats::model.response(full_frame))
-  weights_vector <- as.numeric(weights)
+  weights_vector <- as.numeric(stats::model.weights(full_frame))
   visits_zero_inds <- as.integer(full_frame[[formula_parts$visit_var]]) - 1L
   n_visits <- nlevels(full_frame[[formula_parts$visit_var]])
   n_subjects <- nlevels(full_frame[[formula_parts$subject_var]])
@@ -422,6 +425,7 @@ h_mmrm_tmb <- function(formula,
                        control = h_mmrm_tmb_control()) {
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   assert_class(control, "mmrm_tmb_control")
+  assert_vector(weights)
   tmb_data <- h_mmrm_tmb_data(formula_parts, data, weights, reml, accept_singular = control$accept_singular)
   tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = control$start)
 
