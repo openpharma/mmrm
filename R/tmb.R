@@ -75,7 +75,7 @@ h_mmrm_tmb_formula_parts <- function(formula) {
   if (length(cov_selected) > 1) {
     stop(
       "Only one covariance structure can be specified. ",
-      "Currently specified covariance structure is: ",
+      "Currently specified covariance structures are: ",
       paste0(names(cov_selected), collapse = ", ")
     )
   }
