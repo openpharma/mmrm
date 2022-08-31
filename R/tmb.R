@@ -67,15 +67,15 @@ h_mmrm_tmb_formula_parts <- function(formula) {
   cov_selected <- Filter(Negate(is.null), found_specials)
   if (length(cov_selected) == 0) {
     stop(
-      "Covariance matrix must be specified in formula. ",
-      "Possible covariance matrix include: ",
+      "Covariance structure must be specified in formula. ",
+      "Possible covariance structure include: ",
       paste0(cov_functions, collapse = ", ")
     )
   }
   if (length(cov_selected) > 1) {
     stop(
-      "Only one covariance matrix can be specified. ",
-      "Currently specified covariance matrix is:",
+      "Only one covariance structure can be specified. ",
+      "Currently specified covariance structure is:",
       paste0(names(cov_selected), collapse = ", ")
     )
   }
@@ -91,8 +91,13 @@ h_mmrm_tmb_formula_parts <- function(formula) {
   # Parse the covariance term to get covariance type, visit and subject variables.
   assert_true(identical(length(cov_term), 2L)) # 2 because `fun (...)`.
   cov_content <- cov_term[[2L]]
-  assert_true(identical(length(cov_content), 3L)) # 3 because `y | x`.
-  assert_true(identical(as.character(cov_content[[1L]]), "|"))
+  if (!identical(length(cov_content), 3L) || !identical(as.character(cov_content[[1L]]), "|")) {
+    stop(
+      "Covariance structure must be of the form `",
+      cov_term[[1]],
+      "(VISIT|ID)`"
+    )
+  }
   visit_term <- cov_content[[2L]]
   subject_term <- cov_content[[3L]]
   assert_true(identical(length(visit_term), 1L))

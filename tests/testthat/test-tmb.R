@@ -38,15 +38,19 @@ test_that("h_mmrm_tmb_formula_parts works as expected", {
   expect_identical(result, expected)
   expect_error(
     h_mmrm_tmb_formula_parts(FEV1 ~ RACE + AVISIT + USUBJID),
-    "Covariance matrix must be specified in formula. Possible covariance matrix include: us, toep, toeph, ar1, ar1h, ad, adh, cs, csh"
+    "Covariance structure must be specified in formula. Possible covariance structure include: us, toep, toeph, ar1, ar1h, ad, adh, cs, csh"
   )
   expect_error(
     h_mmrm_tmb_formula_parts(FEV1 ~ RACE + arh1(AVISIT|USUBJID)),
-    "Covariance matrix must be specified in formula. Possible covariance matrix include: us, toep, toeph, ar1, ar1h, ad, adh, cs, csh"
+    "Covariance structure must be specified in formula. Possible covariance structure include: us, toep, toeph, ar1, ar1h, ad, adh, cs, csh"
   )
   expect_error(
     h_mmrm_tmb_formula_parts(FEV1 ~ RACE + ar1h(AVISIT|USUBJID) + cs(AVISIT|USUBJID)),
-    "Only one covariance matrix can be specified. Currently specified covariance matrix is:ar1h, cs"
+    "Only one covariance structure can be specified. Currently specified covariance structure is:ar1h, cs"
+  )
+  expect_error(
+    h_mmrm_tmb_formula_parts(FEV1 ~ RACE + cs(AVISIT)),
+    "Covariance structure must be of the form `cs\\(VISIT\\|ID\\)`"
   )
 })
 
