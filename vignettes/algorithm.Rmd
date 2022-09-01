@@ -88,7 +88,7 @@ We can write the linear model for all subjects together as
 Y = X\beta + \epsilon
 \]
 where $Y \in \mathbb{R}^N$ combines all subject specific observations vectors $Y_i$
-such that we have in total $N = \sum_{i = 1}^{m_i}$ observations,
+such that we have in total $N = \sum_{i = 1}^{n}{m_i}$ observations,
 $X \in \mathbb{R}^{N \times p}$ combines all subject specific design matrices
 and $\epsilon \in \mathbb{R}^N$ has a multivariate normal distribution
 \[
@@ -96,6 +96,36 @@ and $\epsilon \in \mathbb{R}^N$ has a multivariate normal distribution
 \]
 where $\Omega \in \mathbb{R}^{N \times N}$ is block-diagonal containing the
 subject specific $\Sigma_i$ covariance matrices on the diagonal and 0 in the
+remaining entries.
+
+### Linear model with group covariance matrix
+
+In some cases, the covariance matrix is different in different groups, while the covariance structures remain the same across groups.
+Following the notations in the previous section, for subject $i$ in group $j$, we have
+
+\[
+Y_{ij} \sim N(X_{ij}\beta, \Sigma_{ij})
+\]
+where $X_{ij}$ is the design matrix of subject $i$ in group $j$.
+$\beta$ is shared across groups.
+
+The covariance matrix $\Sigma_{ij} \in \mathbb{R}^{m_i \times m_i}$ is derived
+by subsetting the overall covariance matrix $\Sigma_{j} \in \mathbb{R}^{m \times m}$
+appropriately by
+
+\[
+\Sigma_{ij} = S_i^\top \Sigma_{j} S_i
+\]
+
+where $\Sigma_{j}$ is the covariance matrix of group $j$.
+The resulting $\epsilon$ has similar property with covariance matrix $\Omega$ changed
+
+\[
+\epsilon \sim N(0, \Omega)
+\]
+
+where $\Omega \in \mathbb{R}^{N \times N}$ is block-diagonal containing the
+subject specific $\Sigma_{ij}$ covariance matrices on the diagonal and 0 in the
 remaining entries.
 
 ### Covariance matrix model
