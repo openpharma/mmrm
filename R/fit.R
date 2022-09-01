@@ -126,6 +126,7 @@ refit_multiple_optimizers <- function(fit,
   # Extract the components of the original fit.
   old_formula <- formula(fit)
   old_data <- fit$data
+  old_weights <- fit$weights
   old_optimizer <- attr(fit, "optimizer")
 
   # Settings for the new fits.
@@ -145,6 +146,7 @@ refit_multiple_optimizers <- function(fit,
     FUN = fit_single_optimizer,
     formula = old_formula,
     data = old_data,
+    weights = old_weights,
     reml = fit$reml,
     start = fit$theta_est,
     accept_singular = accept_singular,

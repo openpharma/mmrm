@@ -334,6 +334,7 @@ h_mmrm_tmb_assert_opt <- function(tmb_object,
 #'   - `neg_log_lik`: obtained negative log-likelihood.
 #'   - `formula_parts`: input.
 #'   - `data`: input.
+#'   - `weights`: input.
 #'   - `reml`: input as a flag.
 #'   - `opt_details`: list with optimization details including convergence code.
 #'   - `tmb_object`: original `TMB` object created with [TMB::MakeADFun()].
@@ -343,6 +344,7 @@ h_mmrm_tmb_assert_opt <- function(tmb_object,
 h_mmrm_tmb_fit <- function(tmb_object,
                            tmb_opt,
                            data,
+                           weights,
                            formula_parts,
                            tmb_data) {
   assert_list(tmb_object)
@@ -380,6 +382,7 @@ h_mmrm_tmb_fit <- function(tmb_object,
       neg_log_lik = tmb_opt$objective,
       formula_parts = formula_parts,
       data = data,
+      weights = weights,
       reml = as.logical(tmb_data$reml),
       opt_details = tmb_opt[opt_details_names],
       tmb_object = tmb_object,
@@ -455,7 +458,7 @@ h_mmrm_tmb <- function(formula,
     tmb_opt$value <- NULL
   }
   h_mmrm_tmb_assert_opt(tmb_object, tmb_opt)
-  fit <- h_mmrm_tmb_fit(tmb_object, tmb_opt, data, formula_parts, tmb_data)
+  fit <- h_mmrm_tmb_fit(tmb_object, tmb_opt, data, weights, formula_parts, tmb_data)
 
   fun_call <- match.call()
   fun_call$formula <- eval(formula_parts$formula)

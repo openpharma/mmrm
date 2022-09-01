@@ -45,7 +45,7 @@ test_that("component returns coefficient vectors as expected in rank deficient m
   formula <- FEV1 ~ RACE + ones + us(AVISIT | USUBJID)
   data <- fev_data
   data$ones <- 1
-  object_mmrm_tmb <- h_mmrm_tmb(formula, data)
+  object_mmrm_tmb <- h_mmrm_tmb(formula, data, weights = rep(1, nrow(data)))
 
   result <- component(object_mmrm_tmb, "beta_est_complete")
   expect_named(result, c("(Intercept)", "RACEBlack or African American", "RACEWhite", "ones"))
@@ -71,7 +71,7 @@ test_that("component returns complete variance-covariance matrix as expected in 
   formula <- FEV1 ~ RACE + ones + us(AVISIT | USUBJID)
   data <- fev_data
   data$ones <- 1
-  object_mmrm_tmb <- h_mmrm_tmb(formula, data)
+  object_mmrm_tmb <- h_mmrm_tmb(formula, data, weights = rep(1, nrow(data)))
 
   result <- component(object_mmrm_tmb, "beta_vcov_complete")
   expect_identical(dim(result), c(4L, 4L))

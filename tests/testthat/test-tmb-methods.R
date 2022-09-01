@@ -48,7 +48,7 @@ test_that("model.frame returns full model frame if requested", {
   object <- get_mmrm_tmb()
   result <- expect_silent(model.frame(object, full = TRUE))
   expect_data_frame(result, nrows = length(object$tmb_data$y_vector))
-  expect_named(result, c("FEV1", "RACE", "USUBJID", "AVISIT"))
+  expect_named(result, c("FEV1", "RACE", "USUBJID", "AVISIT", "(weights)"))
   expect_class(attr(result, "terms"), "terms")
 })
 
