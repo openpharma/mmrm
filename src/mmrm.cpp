@@ -38,7 +38,8 @@ Type objective_function<Type>::operator() ()
   DATA_IVECTOR(subject_n_visits);  // Number of observed visits for each subject (length n_subjects).
   DATA_STRING(cov_type);           // Covariance type name.
   DATA_INTEGER(reml);              // REML (1)? Otherwise ML (0).
-
+  DATA_VECTOR(subject_groups);     // subject groups vector(0-based) (length n_subjects).
+  DATA_INTEGER(n_groups);          // number of total groups
   // Read parameters from R.
   PARAMETER_VECTOR(theta);         // Covariance parameters (length k). Contents depend on covariance type.
 
@@ -52,30 +53,40 @@ Type objective_function<Type>::operator() ()
   vector<Type> y_vec_tilde = vector<Type>::Zero(y_vector.rows());
   // Sum of the log determinant will be incrementally calculated here.
   Type sum_log_det = 0.0;
-
   // Create the lower triangular Cholesky factor of the visit x visit covariance matrix.
-  matrix<Type> covariance_lower_chol = get_covariance_lower_chol<Type>(theta, n_visits, cov_type);
-
+  matrix<Type> covariance_lower_chol = matrix<Type>::Zero(n_visits, n_visits * n_groups);
+  int covariance_size = theta.size() / n_groups;
+  for (int i = 0; i < n_groups; i++) {
+    matrix<Type> lower_chol = get_covariance_lower_chol<Type>(theta.segment(i * n_groups, covariance_size), n_visits, cov_type);
+    for (int j = 0; j < n_visits; j++) {
+      covariance_lower_chol.col(j + i * n_visits) = lower_chol.col(j);
+    }
+  }
+  
   // Go through all subjects and calculate quantities initialized above.
   for (int i = 0; i < n_subjects; i++) {
     // Start index and number of visits for this subject.
     int start_i = subject_zero_inds(i);
     int n_visits_i = subject_n_visits(i);
-
+    int group = subject_groups(i);
     // Obtain Cholesky factor Li.
     matrix<Type> Li;
+    matrix<Type> lower_chol = matrix<Type>::Zero(n_visits, n_visits);
+    for (int j = 0; j < n_visits; j++) {
+      lower_chol.col(j) = covariance_lower_chol.col(j + group * n_visits);
+    }
     if (n_visits_i < n_visits) {
       // This subject has less visits, therefore we need to recalculate the Cholesky factor.
       vector<int> visits_i = visits_zero_inds.segment(start_i, n_visits_i);
       Eigen::SparseMatrix<Type> sel_mat = get_select_matrix<Type>(visits_i, n_visits);
       // Note: We cannot use triangular view for covariance_lower_chol here because sel_mat is sparse.
-      matrix<Type> Ltildei = sel_mat * covariance_lower_chol;
+      matrix<Type> Ltildei = sel_mat * lower_chol;
       matrix<Type> cov_i = tcrossprod(Ltildei);
       Eigen::LLT<Eigen::Matrix<Type,Eigen::Dynamic,Eigen::Dynamic> > cov_i_chol(cov_i);
       Li = cov_i_chol.matrixL();
     } else {
       // This subject has full number of visits, therefore we can just take the original factor.
-      Li = covariance_lower_chol;
+      Li = lower_chol;
     }
 
     // Calculate scaled design matrix and response vector for this subject.

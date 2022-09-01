@@ -94,11 +94,25 @@ h_mmrm_tmb_formula_parts <- function(formula) {
     stop(
       "Covariance structure must be of the form `",
       cov_term[[1]],
-      "(time|subject)`"
+      "(time|(group/)subject)`"
     )
   }
   visit_term <- cov_content[[2L]]
-  subject_term <- cov_content[[3L]]
+  if (identical(length(cov_content[[3L]]), 1L)) {
+    subject_term <- cov_content[[3L]]
+    group_var <- NULL
+  } else if (identical(length(cov_content[[3L]]), 3L) && identical(as.character(cov_content[[3L]][[1L]]), "/")) {
+    subject_term <- cov_content[[3L]][[3L]]
+    group_term <- cov_content[[3L]][[2L]]
+    assert_true(identical(length(group_term), 1L))
+    group_var <- deparse(group_term)
+  } else {
+    stop(
+      "Covariance structure with grouping must be of the form `",
+      cov_term[[1]],
+      "(time|group/subject)`"
+    )
+  }
   assert_true(identical(length(visit_term), 1L))
   assert_true(identical(length(subject_term), 1L))
   subject_var <- deparse(subject_term)
@@ -107,6 +121,12 @@ h_mmrm_tmb_formula_parts <- function(formula) {
     model_formula,
     stats::as.formula(paste(". ~ . +", subject_var, "+", visit_var))
   )
+  if (!is.null(group_var)) {
+    full_formula <- stats::update(
+      full_formula,
+      stats::as.formula(sprintf(". ~ . + %s", group_var))
+    )
+  }
   structure(
     list(
       formula = formula,
@@ -114,7 +134,8 @@ h_mmrm_tmb_formula_parts <- function(formula) {
       full_formula = full_formula,
       cov_type = deparse(cov_term[[1L]]),
       visit_var = visit_var,
-      subject_var = subject_var
+      subject_var = subject_var,
+      group_var = group_var
     ),
     class = "mmrm_tmb_formula_parts"
   )
@@ -162,9 +183,10 @@ h_mmrm_tmb_data <- function(formula_parts,
                             accept_singular) {
   assert_class(formula_parts, "mmrm_tmb_formula_parts")
   assert_data_frame(data)
+  varname <- formula_parts[grepl("_var", names(formula_parts))]
   assert_names(
     names(data),
-    must.include = c(formula_parts$visit_var, formula_parts$subject_var)
+    must.include = unlist(varname, use.names = FALSE)
   )
   assert_factor(data[[formula_parts$visit_var]])
   assert_true(is.factor(data[[formula_parts$subject_var]]) || is.character(data[[formula_parts$subject_var]]))
@@ -208,6 +230,16 @@ h_mmrm_tmb_data <- function(formula_parts,
   subject_n_visits <- c(utils::tail(subject_zero_inds, -1L), nrow(full_frame)) - subject_zero_inds
   assert_true(identical(subject_n_visits, as.integer(table(full_frame[[formula_parts$subject_var]]))))
 
+  if (!is.null(formula_parts$group_var)) {
+    assert_factor(data[[formula_parts$group_var]])
+    groups <- data[[formula_parts$group_var]][[subject_zero_inds + 1L]]
+    subject_groups <- as.integer(groups) - 1L
+    n_group <- length(levels(groups))
+  } else {
+    subject_groups <- rep(0L, n_subjects)
+    n_group <- 1L
+  }
+
   structure(
     list(
       full_frame = full_frame,
@@ -220,7 +252,9 @@ h_mmrm_tmb_data <- function(formula_parts,
       subject_zero_inds = subject_zero_inds,
       subject_n_visits = subject_n_visits,
       cov_type = formula_parts$cov_type,
-      reml = as.integer(reml)
+      reml = as.integer(reml),
+      subject_groups = subject_groups,
+      n_group = n_group
     ),
     class = "mmrm_tmb_data"
   )
@@ -240,7 +274,8 @@ h_mmrm_tmb_data <- function(formula_parts,
 #' @keywords internal
 h_mmrm_tmb_parameters <- function(formula_parts,
                                   tmb_data,
-                                  start) {
+                                  start,
+                                  n_group = 1L) {
   assert_class(formula_parts, "mmrm_tmb_formula_parts")
   assert_class(tmb_data, "mmrm_tmb_data")
 
@@ -256,6 +291,7 @@ h_mmrm_tmb_parameters <- function(formula_parts,
     cs = 2,
     csh = m + 1
   ))
+  theta_dim <- theta_dim * n_group
   if (!is.null(start)) {
     assert_numeric(start, len = theta_dim, any.missing = FALSE, finite = TRUE)
   } else {
@@ -431,7 +467,7 @@ h_mmrm_tmb <- function(formula,
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   assert_class(control, "mmrm_tmb_control")
   tmb_data <- h_mmrm_tmb_data(formula_parts, data, reml, accept_singular = control$accept_singular)
-  tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = control$start)
+  tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = control$start, n_group = tmb_data$n_group)
 
   tmb_object <- TMB::MakeADFun(
     data = tmb_data,
