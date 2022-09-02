@@ -22,7 +22,7 @@ in \code{formula}.}
 \value{
 List of class \code{mmrm_tmb} with:
 \itemize{
-\item \code{cov}: estimated covariance matrix, or named list of estimated grouped covariance matrix
+\item \code{cov}: estimated covariance matrix, or named list of estimated group specific covariance matrices.
 \item \code{beta_est}: vector of coefficient estimates.
 \item \code{beta_vcov}: Variance-covariance matrix for coefficient estimates.
 \item \code{theta_est}: vector of variance parameter estimates.
