@@ -7,7 +7,7 @@
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 
 This package includes methods that allow \code{mmrm} objects to be used
-with the \code{emmeans} package. \code{emmeans} computed estimated marginal means
+with the \code{emmeans} package. \code{emmeans} computes estimated marginal means
 (also called least-square means) for the coefficients of the MMRM.
 }
 \examples{
