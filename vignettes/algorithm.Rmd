@@ -155,7 +155,7 @@ where $g(i)$ is the group of subject $i$ and $\Sigma_{g(i)}$ is the covariance m
 
 The parametrization of $\theta$ is similar to other non-grouped $\theta$.
 Assume that there are total number of $G$ groups, the length of $\theta$ is multiplied by $G$, and for each part, $\theta$ is parametrized in the same fashion.
-Following unstructured covariance matrix, $\theta$ has $k = G * m(m+1)/2$ entries.
+For example, for an unstructured covariance matrix, $\theta$ has $k = G * m(m+1)/2$ entries.
 
 ## Maximum Likelihood Estimation
 
