@@ -39,7 +39,7 @@ Type objective_function<Type>::operator() ()
   DATA_STRING(cov_type);           // Covariance type name.
   DATA_INTEGER(reml);              // REML (1)? Otherwise ML (0).
   DATA_FACTOR(subject_groups);     // subject groups vector(0-based) (length n_subjects).
-  DATA_INTEGER(n_groups);          // number of total groups
+  DATA_INTEGER(n_groups);          // number of total groups.
   // Read parameters from R.
   PARAMETER_VECTOR(theta);         // Covariance parameters (length k). Contents depend on covariance type.
 
