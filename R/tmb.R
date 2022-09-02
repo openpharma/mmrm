@@ -53,7 +53,8 @@ h_mmrm_tmb_control <- function(optimizer = stats::nlminb,
 #' - `cov_type`: `string` with covariance term type (e.g. `"us"`).
 #' - `visit_var`: `string` with the visit variable name.
 #' - `subject_var`: `string` with the subject variable name.
-#'
+#' - `group_var`: `string` with the group variable name. If no group specified, this element
+#'      is dropped.
 #' @keywords internal
 h_mmrm_tmb_formula_parts <- function(formula) {
   assert_formula(formula)
@@ -172,6 +173,8 @@ h_mmrm_tmb_formula_parts <- function(formula) {
 #'     observed visits for each subjects. So the sum of this vector equals `n`.
 #' - `cov_type`: `string` value specifying the covariance type.
 #' - `reml`: `int` specifying whether REML estimation is used (1), otherwise ML (0).
+#' - `subject_groups`: `factor` or `integer` specifying the grouping for each subject.
+#' - `n_groups`: `int` with the number of total groups
 #'
 #' @details Note that the `subject_var` must not be factor but can also be character.
 #'   If it is character, then it will be converted to factor internally. Here
@@ -269,7 +272,7 @@ h_mmrm_tmb_data <- function(formula_parts,
 #' @param tmb_data (`mmrm_tmb_data`)\cr produced by [h_mmrm_tmb_data()].
 #' @param start (`numeric` or `NULL`)\cr optional start values for variance
 #'   parameters.
-#'
+#' @param n_group `int` number of groups. Default set to 1L.
 #' @return List with element `theta` containing the start values for the variance
 #'   parameters.
 #'
