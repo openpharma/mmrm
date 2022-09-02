@@ -278,7 +278,7 @@ h_mmrm_tmb_data <- function(formula_parts,
 h_mmrm_tmb_parameters <- function(formula_parts,
                                   tmb_data,
                                   start,
-                                  n_group = 1L) {
+                                  n_groups = 1L) {
   assert_class(formula_parts, "mmrm_tmb_formula_parts")
   assert_class(tmb_data, "mmrm_tmb_data")
 
