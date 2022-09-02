@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9002</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9003</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,12 +38,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -190,17 +184,17 @@ Springer.</p></li>
 <span class="r-in"><span><span class="co"># Estimated coefficients:</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                   (Intercept) RACEBlack or African American </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                    30.7774010                     1.5305918 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                   30.77740097                    1.53059182 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                     RACEWhite                     SEXFemale </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                     5.6435688                     0.3260377 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                    5.64356877                    0.32603764 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                      ARMCDTRT                    AVISITVIS2 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                     3.7744170                     4.8396061 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                    3.77441699                    4.83960614 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                    AVISITVIS3                    AVISITVIS4 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                    10.3421689                    15.0537862 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                   10.34216893                   15.05378622 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           ARMCDTRT:AVISITVIS2           ARMCDTRT:AVISITVIS3 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                    -0.0420969                    -0.6938117 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                   -0.04209689                   -0.69381172 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           ARMCDTRT:AVISITVIS4 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                     0.6241162 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                    0.62411624 </span>
 <span class="r-in"><span><span class="co"># Fitted values:</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/fitted.values.html" class="external-link">fitted</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        2        4        6        7        8       10       12       13 </span>
@@ -1424,76 +1418,76 @@ Springer.</p></li>
 <span class="r-in"><span><span class="co"># Formula which was used:</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/formula.html" class="external-link">formula</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55ab74ea5a48&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5614178ed4b8&gt;</span>
 <span class="r-in"><span><span class="co"># Variance-covariance matrix estimate for coefficients:</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/vcov.html" class="external-link">vcov</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                               (Intercept) RACEBlack or African American</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)                     0.7859969                  -0.226202583</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> RACEBlack or African American  -0.2262026                   0.389949544</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> RACEWhite                      -0.1771022                   0.181456473</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)                     0.7859969                  -0.226202585</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> RACEBlack or African American  -0.2262026                   0.389949547</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> RACEWhite                      -0.1771022                   0.181456474</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> SEXFemale                      -0.1684043                   0.031536614</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT                       -0.5674920                   0.028373173</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS2                     -0.4227692                   0.002975203</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS3                     -0.5231225                   0.010827225</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS4                     -0.4407389                   0.002206352</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT:AVISITVIS2             0.4225399                   0.005381309</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS3                     -0.5231225                   0.010827226</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS4                     -0.4407389                   0.002206353</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT:AVISITVIS2             0.4225399                   0.005381310</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT:AVISITVIS3             0.5218961                   0.011420293</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT:AVISITVIS4             0.4490212                  -0.012591464</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                  RACEWhite    SEXFemale     ARMCDTRT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)                   -0.177102160 -0.168404273 -0.567492039</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> RACEBlack or African American  0.181456473  0.031536614  0.028373173</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> RACEWhite                      0.443009670  0.023362344 -0.042966923</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SEXFemale                      0.023362344  0.282955704  0.001813942</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT                      -0.042966923  0.001813942  1.153814370</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS2                    -0.003147370  0.006471253  0.419540239</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS3                    -0.002951287  0.006770354  0.517277178</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS4                    -0.008230919  0.004088502  0.440748367</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT:AVISITVIS2            0.013485997 -0.016800949 -0.845781722</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)                   -0.177102161 -0.168404273 -0.567492042</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> RACEBlack or African American  0.181456474  0.031536614  0.028373173</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> RACEWhite                      0.443009672  0.023362344 -0.042966923</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SEXFemale                      0.023362344  0.282955706  0.001813942</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT                      -0.042966923  0.001813942  1.153814378</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS2                    -0.003147370  0.006471253  0.419540240</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS3                    -0.002951286  0.006770353  0.517277178</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS4                    -0.008230918  0.004088502  0.440748366</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT:AVISITVIS2            0.013485997 -0.016800949 -0.845781723</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT:AVISITVIS3            0.006720665 -0.024695337 -1.044354125</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT:AVISITVIS4            0.002966413 -0.009039702 -0.877812751</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT:AVISITVIS4            0.002966413 -0.009039702 -0.877812748</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                 AVISITVIS2   AVISITVIS3   AVISITVIS4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)                   -0.422769224 -0.523122498 -0.440738924</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> RACEBlack or African American  0.002975203  0.010827225  0.002206352</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> RACEWhite                     -0.003147370 -0.002951287 -0.008230919</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SEXFemale                      0.006471253  0.006770354  0.004088502</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT                       0.419540239  0.517277178  0.440748367</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS2                     0.642763904  0.399030624  0.368462964</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS3                     0.399030624  0.676812702  0.401841363</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS4                     0.368462964  0.401841363  1.723666958</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT:AVISITVIS2           -0.643034242 -0.399184849 -0.368746905</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT:AVISITVIS3           -0.399220404 -0.676473418 -0.401834205</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT:AVISITVIS4           -0.368629537 -0.402209194 -1.723775074</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)                   -0.422769225 -0.523122498 -0.440738922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> RACEBlack or African American  0.002975203  0.010827226  0.002206353</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> RACEWhite                     -0.003147370 -0.002951286 -0.008230918</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SEXFemale                      0.006471253  0.006770353  0.004088502</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT                       0.419540240  0.517277178  0.440748366</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS2                     0.642763903  0.399030618  0.368462962</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS3                     0.399030618  0.676812701  0.401841356</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS4                     0.368462962  0.401841356  1.723666955</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT:AVISITVIS2           -0.643034241 -0.399184843 -0.368746904</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT:AVISITVIS3           -0.399220398 -0.676473418 -0.401834199</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT:AVISITVIS4           -0.368629535 -0.402209188 -1.723775071</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                               ARMCDTRT:AVISITVIS2 ARMCDTRT:AVISITVIS3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)                           0.422539881         0.521896096</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> RACEBlack or African American         0.005381309         0.011420293</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> RACEWhite                             0.013485997         0.006720665</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SEXFemale                            -0.016800949        -0.024695337</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT                             -0.845781722        -1.044354125</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS2                           -0.643034242        -0.399220404</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS3                           -0.399184849        -0.676473418</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS4                           -0.368746905        -0.401834205</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT:AVISITVIS2                   1.275387285         0.805808539</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT:AVISITVIS3                   0.805808539         1.410477399</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT:AVISITVIS4                   0.728974996         0.796509365</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)                            0.42253988         0.521896096</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> RACEBlack or African American          0.00538131         0.011420293</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> RACEWhite                              0.01348600         0.006720665</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SEXFemale                             -0.01680095        -0.024695337</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT                              -0.84578172        -1.044354125</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS2                            -0.64303424        -0.399220398</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS3                            -0.39918484        -0.676473418</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS4                            -0.36874690        -0.401834199</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT:AVISITVIS2                    1.27538728         0.805808527</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT:AVISITVIS3                    0.80580853         1.410477398</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT:AVISITVIS4                    0.72897499         0.796509351</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                               ARMCDTRT:AVISITVIS4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)                           0.449021186</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)                           0.449021184</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> RACEBlack or African American        -0.012591464</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> RACEWhite                             0.002966413</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> SEXFemale                            -0.009039702</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT                             -0.877812751</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS2                           -0.368629537</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS3                           -0.402209194</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS4                           -1.723775074</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT:AVISITVIS2                   0.728974996</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT:AVISITVIS3                   0.796509365</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT:AVISITVIS4                   3.426059698</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT                             -0.877812748</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS2                           -0.368629535</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS3                           -0.402209188</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS4                           -1.723775071</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT:AVISITVIS2                   0.728974992</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT:AVISITVIS3                   0.796509351</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT:AVISITVIS4                   3.426059690</span>
 <span class="r-in"><span><span class="co"># Variance-covariance matrix estimate for residuals:</span></span></span>
 <span class="r-in"><span><span class="fu">VarCorr</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           VIS1      VIS2       VIS3       VIS4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> VIS1 40.554180 14.396017  4.9759855 13.3775455</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> VIS2 14.396017 26.571631  2.7836358  7.4773140</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> VIS3  4.975985  2.783636 14.8979315  0.9035494</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> VIS4 13.377546  7.477314  0.9035494 95.5564603</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> VIS1 40.554180 14.396017  4.9759858 13.3775461</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> VIS2 14.396017 26.571631  2.7836355  7.4773143</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> VIS3  4.975986  2.783636 14.8979317  0.9035493</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> VIS4 13.377546  7.477314  0.9035493 95.5564606</span>
 <span class="r-in"><span><span class="co"># REML criterion (twice the negative log likelihood):</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/deviance.html" class="external-link">deviance</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 3386.45</span>
