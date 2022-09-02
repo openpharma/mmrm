@@ -272,7 +272,7 @@ h_mmrm_tmb_data <- function(formula_parts,
 #' @param tmb_data (`mmrm_tmb_data`)\cr produced by [h_mmrm_tmb_data()].
 #' @param start (`numeric` or `NULL`)\cr optional start values for variance
 #'   parameters.
-#' @param n_group `int` number of groups. Default set to 1L.
+#' @param n_groups (`int`)\cr number of groups.
 #' @return List with element `theta` containing the start values for the variance
 #'   parameters.
 #'
