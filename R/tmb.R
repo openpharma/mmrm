@@ -166,9 +166,9 @@ h_mmrm_tmb_data <- function(formula_parts,
     )
   }
 
-  data$order_id <- c(1:nrow(data))
-  data <- data[order(data[[formula_parts$subject_var]], data[[formula_parts$visit_var]]), ]
-  weights <- weights[data$order_id]
+  data_order <- order(data[[formula_parts$subject_var]], data[[formula_parts$visit_var]])
+  data <- data[data_order, ]
+  weights <- weights[data_order]
 
   assign("weights", weights, envir = environment(formula_parts$full_formula))
   full_frame <- droplevels(stats::model.frame(formula_parts$full_formula, data = data, weights = weights))
