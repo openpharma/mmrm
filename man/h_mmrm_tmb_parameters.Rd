@@ -4,7 +4,7 @@
 \alias{h_mmrm_tmb_parameters}
 \title{Start Parameters for \code{TMB} Fit}
 \usage{
-h_mmrm_tmb_parameters(formula_parts, tmb_data, start)
+h_mmrm_tmb_parameters(formula_parts, tmb_data, start, n_group = 1L)
 }
 \arguments{
 \item{formula_parts}{(\code{mmrm_tmb_formula_parts})\cr produced by
