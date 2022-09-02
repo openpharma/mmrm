@@ -294,7 +294,7 @@ h_mmrm_tmb_parameters <- function(formula_parts,
     cs = 2,
     csh = m + 1
   ))
-  theta_dim <- theta_dim * n_group
+  theta_dim <- theta_dim * n_groups
   if (!is.null(start)) {
     assert_numeric(start, len = theta_dim, any.missing = FALSE, finite = TRUE)
   } else {
