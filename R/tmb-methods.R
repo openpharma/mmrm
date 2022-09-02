@@ -204,6 +204,6 @@ print.mmrm_tmb <- function(x,
     " with code", component(x, "convergence"),
     "and message:", tolower(component(x, "conv_message"))
   )
-
+  cat('\n')
   invisible(x)
 }

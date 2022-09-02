@@ -38,7 +38,7 @@ Type objective_function<Type>::operator() ()
   DATA_IVECTOR(subject_n_visits);  // Number of observed visits for each subject (length n_subjects).
   DATA_STRING(cov_type);           // Covariance type name.
   DATA_INTEGER(reml);              // REML (1)? Otherwise ML (0).
-  DATA_VECTOR(subject_groups);     // subject groups vector(0-based) (length n_subjects).
+  DATA_FACTOR(subject_groups);     // subject groups vector(0-based) (length n_subjects).
   DATA_INTEGER(n_groups);          // number of total groups
   // Read parameters from R.
   PARAMETER_VECTOR(theta);         // Covariance parameters (length k). Contents depend on covariance type.
@@ -68,12 +68,11 @@ Type objective_function<Type>::operator() ()
     // Start index and number of visits for this subject.
     int start_i = subject_zero_inds(i);
     int n_visits_i = subject_n_visits(i);
-    int group = subject_groups(i);
     // Obtain Cholesky factor Li.
     matrix<Type> Li;
     matrix<Type> lower_chol = matrix<Type>::Zero(n_visits, n_visits);
     for (int j = 0; j < n_visits; j++) {
-      lower_chol.col(j) = covariance_lower_chol.col(j + group * n_visits);
+      lower_chol.col(j) = covariance_lower_chol.col(j + subject_groups(i) * n_visits);
     }
     if (n_visits_i < n_visits) {
       // This subject has less visits, therefore we need to recalculate the Cholesky factor.

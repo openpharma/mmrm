@@ -186,7 +186,12 @@ print.summary.mmrm <- function(x,
   )
   cat("\n")
   cat("Covariance estimate:\n")
-  print(round(x$varcor, digits = digits))
+  if (is.list(x$varcor)) {
+    for (v in names(x$varcor)) {
+      cat(sprintf("Group: %s\n", v))
+      print(round(x$varcor[[v]], digits = digits))
+    }
+  }
   cat("\n")
   invisible(x)
 }

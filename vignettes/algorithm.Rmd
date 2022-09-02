@@ -98,36 +98,6 @@ where $\Omega \in \mathbb{R}^{N \times N}$ is block-diagonal containing the
 subject specific $\Sigma_i$ covariance matrices on the diagonal and 0 in the
 remaining entries.
 
-### Linear model with group covariance matrix
-
-In some cases, the covariance matrix is different in different groups, while the covariance structures remain the same across groups.
-Following the notations in the previous section, for subject $i$ in group $j$, we have
-
-\[
-Y_{ij} \sim N(X_{ij}\beta, \Sigma_{ij})
-\]
-where $X_{ij}$ is the design matrix of subject $i$ in group $j$.
-$\beta$ is shared across groups.
-
-The covariance matrix $\Sigma_{ij} \in \mathbb{R}^{m_i \times m_i}$ is derived
-by subsetting the overall covariance matrix $\Sigma_{j} \in \mathbb{R}^{m \times m}$
-appropriately by
-
-\[
-\Sigma_{ij} = S_i^\top \Sigma_{j} S_i
-\]
-
-where $\Sigma_{j}$ is the covariance matrix of group $j$.
-The resulting $\epsilon$ has similar property with covariance matrix $\Omega$ changed
-
-\[
-\epsilon \sim N(0, \Omega)
-\]
-
-where $\Omega \in \mathbb{R}^{N \times N}$ is block-diagonal containing the
-subject specific $\Sigma_{ij}$ covariance matrices on the diagonal and 0 in the
-remaining entries.
-
 ### Covariance matrix model
 
 The symmetric and positive definite covariance matrix
@@ -169,6 +139,24 @@ we need $k = 10$ variance parameters to model the unstructured covariance matrix
 
 Other covariance matrix choices are explained in the
 [covariance structures vignette](covariance.html).
+
+#### Grouped covariance matrix
+
+In some cases, the covariance matrix is different in different groups, while the covariance structures remain the same across groups.
+Following the notations in the previous section, for subject $i$ in group $g(i)$, we have
+
+\[
+\Sigma_{i} = S_i^\top \Sigma_{g(i)} S_i
+\]
+
+where $g(i)$ is the group of subject $i$ and $\Sigma_{g(i)}$ is the covariance matrix of group $g(i)$.
+
+##### Parametrization
+
+The parametrization of $\theta$ is similar to other non-grouped $\theta$.
+Assume that there are total number of $G$ groups, the length of $\theta$ is multiplied by $G$, and for each part, $\theta$ is parametrized in the same fasion.
+Following unstructured covariance matrix, $\theta$ has $k = G * m(m+1)/2$ entries.
+Similarly for other covariance matrix choices.
 
 ## Maximum Likelihood Estimation
 

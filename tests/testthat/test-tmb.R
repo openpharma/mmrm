@@ -36,6 +36,24 @@ test_that("h_mmrm_tmb_formula_parts works as expected", {
     class = "mmrm_tmb_formula_parts"
   )
   expect_identical(result, expected)
+
+  result_group <- expect_silent(h_mmrm_tmb_formula_parts(
+    FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | ARMCD / USUBJID)
+  ))
+  expected_group <- structure(
+    list(
+      formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | ARMCD / USUBJID),
+      model_formula = FEV1 ~ RACE + SEX + ARMCD + AVISIT + ARMCD:AVISIT,
+      full_formula = FEV1 ~ RACE + SEX + ARMCD + AVISIT + USUBJID + ARMCD:AVISIT,
+      cov_type = "us",
+      visit_var = "AVISIT",
+      subject_var = "USUBJID",
+      group_var = "ARMCD"
+    ),
+    class = "mmrm_tmb_formula_parts"
+  )
+  expect_identical(result_group, expected_group)
+
   expect_error(
     h_mmrm_tmb_formula_parts(FEV1 ~ RACE + AVISIT + USUBJID),
     paste(
@@ -56,7 +74,11 @@ test_that("h_mmrm_tmb_formula_parts works as expected", {
   )
   expect_error(
     h_mmrm_tmb_formula_parts(FEV1 ~ RACE + cs(AVISIT)),
-    "Covariance structure must be of the form `cs\\(time\\|subject\\)`"
+    "Covariance structure must be of the form `cs\\(time\\|\\(group/\\)subject\\)`"
+  )
+  expect_error(
+    h_mmrm_tmb_formula_parts(FEV1 ~ RACE + cs(AVISIT | RACE + ARMCD / USUBJID)),
+    "Covariance structure must be of the form `cs\\(time|group/subject\\)`"
   )
 })
 
@@ -107,7 +129,7 @@ test_that("h_mmrm_tmb_data works as expected", {
     result,
     c(
       "full_frame", "x_matrix", "x_cols_aliased", "y_vector", "visits_zero_inds", "n_visits", "n_subjects",
-      "subject_zero_inds", "subject_n_visits", "cov_type", "reml"
+      "subject_zero_inds", "subject_n_visits", "cov_type", "reml", "subject_groups", "n_groups"
     )
   )
   expect_matrix(result$x_matrix, nrows = 537, ncols = 3, any.missing = FALSE)
@@ -117,6 +139,31 @@ test_that("h_mmrm_tmb_data works as expected", {
   expect_integer(result$subject_zero_inds, len = 197, unique = TRUE, sorted = TRUE, any.missing = FALSE)
   expect_identical(result$cov_type, "us") # unstructured.
   expect_identical(result$reml, 0L) # ML.
+  expect_identical(result$subject_groups, rep(0L, 197)) # all in the same group
+  expect_identical(result$n_groups, 1L) # number of groups
+})
+
+test_that("h_mmrm_tmb_data works as expected for grouped covariance", {
+  formula <- FEV1 ~ RACE + us(AVISIT | ARMCD / USUBJID)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula)
+  result <- expect_silent(h_mmrm_tmb_data(formula_parts, fev_data, reml = FALSE, accept_singular = FALSE))
+  expect_class(result, "mmrm_tmb_data")
+  expect_named(
+    result,
+    c(
+      "full_frame", "x_matrix", "x_cols_aliased", "y_vector", "visits_zero_inds", "n_visits", "n_subjects",
+      "subject_zero_inds", "subject_n_visits", "cov_type", "reml", "subject_groups", "n_groups"
+    )
+  )
+  expect_matrix(result$x_matrix, nrows = 537, ncols = 3, any.missing = FALSE)
+  expect_numeric(result$y_vector, len = 537, any.missing = FALSE)
+  expect_integer(result$visits_zero_inds, len = 537, lower = 0, upper = 3, any.missing = FALSE)
+  expect_identical(result$n_visits, 4L) # 4 visits.
+  expect_integer(result$subject_zero_inds, len = 197, unique = TRUE, sorted = TRUE, any.missing = FALSE)
+  expect_identical(result$cov_type, "us") # unstructured.
+  expect_identical(result$reml, 0L) # ML.
+  expect_factor(result$subject_groups, levels = c("PBO", "TRT")) # ARMCD is the group
+  expect_identical(result$n_groups, 2L) # number of groups
 })
 
 test_that("h_mmrm_tmb_data works also for character ID variable", {
@@ -364,6 +411,47 @@ test_that("h_mmrm_tmb_fit works as expected", {
   formula <- FEV1 ~ RACE + us(AVISIT | USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = FALSE, accept_singular = FALSE)
+  tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL)
+  tmb_object <- TMB::MakeADFun(
+    data = tmb_data,
+    parameters = tmb_parameters,
+    hessian = TRUE,
+    DLL = "mmrm",
+    silent = TRUE
+  )
+  tmb_opt <- with(
+    tmb_object,
+    do.call(
+      what = stats::nlminb,
+      args = list(par, fn, gr)
+    )
+  )
+  result <- expect_silent(h_mmrm_tmb_fit(tmb_object, tmb_opt, fev_data, formula_parts, tmb_data))
+  expect_class(result, "mmrm_tmb")
+  expect_named(result, c(
+    "cov", "beta_est", "beta_vcov", "theta_est", "theta_vcov",
+    "neg_log_lik", "formula_parts", "data", "reml", "opt_details", "tmb_object",
+    "tmb_data"
+  ))
+  expect_identical(rownames(result$cov), c("VIS1", "VIS2", "VIS3", "VIS4"))
+  expect_identical(colnames(result$cov), c("VIS1", "VIS2", "VIS3", "VIS4"))
+  expect_named(result$beta_est, colnames(tmb_data$x_matrix))
+  expect_identical(rownames(result$beta_vcov), colnames(tmb_data$x_matrix))
+  expect_identical(colnames(result$beta_vcov), colnames(tmb_data$x_matrix))
+  expect_matrix(result$theta_vcov, nrows = length(result$theta_est), ncols = length(result$theta_est))
+  expect_number(result$neg_log_lik)
+  expect_list(result$formula_parts)
+  expect_data_frame(result$data)
+  expect_false(result$reml)
+  expect_list(result$opt_details)
+  expect_list(result$tmb_object)
+  expect_class(result$tmb_data, "mmrm_tmb_data")
+})
+
+test_that("h_mmrm_tmb_fit works as expected for grouped covariance", {
+  formula <- FEV1 ~ RACE + ar1(AVISIT | ARMCD / USUBJID)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula)
+  tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = TRUE, accept_singular = FALSE)
   tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL)
   tmb_object <- TMB::MakeADFun(
     data = tmb_data,

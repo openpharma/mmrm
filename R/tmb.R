@@ -127,16 +127,19 @@ h_mmrm_tmb_formula_parts <- function(formula) {
       stats::as.formula(sprintf(". ~ . + %s", group_var))
     )
   }
+  ret <- list(
+    formula = formula,
+    model_formula = model_formula,
+    full_formula = full_formula,
+    cov_type = deparse(cov_term[[1L]]),
+    visit_var = visit_var,
+    subject_var = subject_var
+  )
+  if (!is.null(group_var)) {
+    ret <- c(ret, list(group_var = group_var))
+  }
   structure(
-    list(
-      formula = formula,
-      model_formula = model_formula,
-      full_formula = full_formula,
-      cov_type = deparse(cov_term[[1L]]),
-      visit_var = visit_var,
-      subject_var = subject_var,
-      group_var = group_var
-    ),
+    .Data = ret,
     class = "mmrm_tmb_formula_parts"
   )
 }
@@ -232,12 +235,11 @@ h_mmrm_tmb_data <- function(formula_parts,
 
   if (!is.null(formula_parts$group_var)) {
     assert_factor(data[[formula_parts$group_var]])
-    groups <- data[[formula_parts$group_var]][[subject_zero_inds + 1L]]
-    subject_groups <- as.integer(groups) - 1L
-    n_group <- length(levels(groups))
+    subject_groups <- full_frame[[formula_parts$group_var]][subject_zero_inds + 1L]
+    n_groups <- nlevels(subject_groups)
   } else {
     subject_groups <- rep(0L, n_subjects)
-    n_group <- 1L
+    n_groups <- 1L
   }
 
   structure(
@@ -254,7 +256,7 @@ h_mmrm_tmb_data <- function(formula_parts,
       cov_type = formula_parts$cov_type,
       reml = as.integer(reml),
       subject_groups = subject_groups,
-      n_group = n_group
+      n_groups = n_groups
     ),
     class = "mmrm_tmb_data"
   )
@@ -367,7 +369,7 @@ h_mmrm_tmb_assert_opt <- function(tmb_object,
 #' @param tmb_data (`mmrm_tmb_data`)\cr produced by [h_mmrm_tmb_data()].
 #'
 #' @return List of class `mmrm_tmb` with:
-#'   - `cov`: estimated covariance matrix.
+#'   - `cov`: estimated covariance matrix, or named list of estimated grouped covariance matrix
 #'   - `beta_est`: vector of coefficient estimates.
 #'   - `beta_vcov`: Variance-covariance matrix for coefficient estimates.
 #'   - `theta_est`: vector of variance parameter estimates.
@@ -393,12 +395,24 @@ h_mmrm_tmb_fit <- function(tmb_object,
   assert_data_frame(data)
   assert_class(formula_parts, "mmrm_tmb_formula_parts")
   assert_class(tmb_data, "mmrm_tmb_data")
-
+  
   tmb_report <- tmb_object$report(par = tmb_opt$par)
   x_matrix_cols <- colnames(tmb_data$x_matrix)
   visit_names <- levels(tmb_data$full_frame[[formula_parts$visit_var]])
-  cov <- tcrossprod(tmb_report$covariance_lower_chol)
-  dimnames(cov) <- list(visit_names, visit_names)
+  d <- dim(tmb_report$covariance_lower_chol)
+  cov <- lapply(
+    seq_len(d[2] / d[1]),
+    function(i) {
+      ret <- tcrossprod(tmb_report$covariance_lower_chol[, seq(1 + (i - 1) * d[1], i * d[1])])
+      dimnames(ret) <- list(visit_names, visit_names)
+      return(ret)
+    }
+  )
+  if (identical(tmb_data$n_groups, 1L)) {
+    cov <- cov[[1]]
+  } else {
+    names(cov) <- levels(tmb_data$subject_groups)
+  }
   beta_est <- tmb_report$beta
   names(beta_est) <- x_matrix_cols
   beta_vcov <- tmb_report$beta_vcov
