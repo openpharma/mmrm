@@ -50,7 +50,6 @@ h_record_all_output <- function(expr, remove = list()) {
 }
 
 
-
 #' Get an approximate number of free cores.
 #'
 #' @description `r lifecycle::badge("experimental")`
