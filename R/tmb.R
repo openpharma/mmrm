@@ -134,11 +134,9 @@ h_mmrm_tmb_formula_parts <- function(formula) {
     full_formula = full_formula,
     cov_type = deparse(cov_term[[1L]]),
     visit_var = visit_var,
-    subject_var = subject_var
+    subject_var = subject_var,
+    group_var = group_var
   )
-  if (!is.null(group_var)) {
-    ret <- c(ret, list(group_var = group_var))
-  }
   structure(
     .Data = ret,
     class = "mmrm_tmb_formula_parts"
