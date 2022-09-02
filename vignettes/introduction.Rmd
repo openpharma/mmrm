@@ -105,6 +105,26 @@ fit_cs <- mmrm(
 print(fit_cs)
 ```
 
+## Grouped Covariance Structure
+
+Grouped ovariance structures is supported by `mmrm` package. 
+Covariance matrix for each group are of identical structure(unstructured, compound symmetry, etc) but the values can be different.
+We use the form `cs(time|group/subject)` to specify the group variable.
+
+Here is an example of how we use `ARMCD` as group variable.
+
+```{r group-cov}
+fit_cs <- mmrm(
+  formula = FEV1 ~ RACE + ARMCD * AVISIT + cs(AVISIT | ARMCD / USUBJID),
+  data = fev_data,
+  reml = FALSE
+)
+
+print(fit_cs$cov)
+```
+
+We cam see that the covariance is different in different ARMCD group.
+
 # Extraction of model features
 
 Similar to model objects created in other packages, components of `mmrm` and
