@@ -4,7 +4,7 @@
 \alias{h_mmrm_tmb_parameters}
 \title{Start Parameters for \code{TMB} Fit}
 \usage{
-h_mmrm_tmb_parameters(formula_parts, tmb_data, start, n_group = 1L)
+h_mmrm_tmb_parameters(formula_parts, tmb_data, start, n_groups = 1L)
 }
 \arguments{
 \item{formula_parts}{(\code{mmrm_tmb_formula_parts})\cr produced by
@@ -15,7 +15,7 @@ h_mmrm_tmb_parameters(formula_parts, tmb_data, start, n_group = 1L)
 \item{start}{(\code{numeric} or \code{NULL})\cr optional start values for variance
 parameters.}
 
-\item{n_group}{\code{int} number of groups. Default set to 1L.}
+\item{n_groups}{(\code{int})\cr number of groups.}
 }
 \value{
 List with element \code{theta} containing the start values for the variance
