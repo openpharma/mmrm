@@ -7,6 +7,7 @@
 mmrm(
   formula,
   data,
+  weights = NULL,
   reml = TRUE,
   optimizer = "automatic",
   n_cores = h_free_cores(),
@@ -17,6 +18,9 @@ mmrm(
 \item{formula}{(\code{formula})\cr the model formula, see details.}
 
 \item{data}{(\code{data})\cr the data to be used for the model.}
+
+\item{weights}{(\code{vector})\cr an optional vector of weights to be used in the fitting process.
+Should be NULL or a numeric vector.}
 
 \item{reml}{(\code{flag})\cr whether restricted maximum likelihood (REML) estimation is used,
 otherwise maximum likelihood (ML) is used.}

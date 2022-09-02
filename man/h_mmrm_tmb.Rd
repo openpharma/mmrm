@@ -4,7 +4,7 @@
 \alias{h_mmrm_tmb}
 \title{Fitting an MMRM with \code{TMB}}
 \usage{
-h_mmrm_tmb(formula, data, reml = TRUE, control = h_mmrm_tmb_control())
+h_mmrm_tmb(formula, data, weights, reml = TRUE, control = h_mmrm_tmb_control())
 }
 \arguments{
 \item{formula}{(\code{formula})\cr model formula with exactly one special term
@@ -12,6 +12,8 @@ specifying the visits within subjects, see details.}
 
 \item{data}{(\code{data.frame})\cr input data containing the variables used
 in \code{formula}.}
+
+\item{weights}{(\code{vector})\cr input vector containing the weights.}
 
 \item{reml}{(\code{flag})\cr whether restricted maximum likelihood (REML) estimation is used,
 otherwise maximum likelihood (ML) is used.}

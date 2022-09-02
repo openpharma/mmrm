@@ -4,13 +4,15 @@
 \alias{h_mmrm_tmb_data}
 \title{Data for \code{TMB} Fit}
 \usage{
-h_mmrm_tmb_data(formula_parts, data, reml, accept_singular)
+h_mmrm_tmb_data(formula_parts, data, weights, reml, accept_singular)
 }
 \arguments{
 \item{formula_parts}{(\code{mmrm_tmb_formula_parts})\cr list with formula parts
 from \code{\link[=h_mmrm_tmb_formula_parts]{h_mmrm_tmb_formula_parts()}}.}
 
 \item{data}{(\code{data.frame})\cr which contains variables used in \code{formula_parts}.}
+
+\item{weights}{(\code{vector})\cr weights to be used in the fitting process.}
 
 \item{reml}{(\code{flag})\cr whether restricted maximum likelihood (REML) estimation is used,
 otherwise maximum likelihood (ML) is used.}
@@ -28,6 +30,7 @@ List of class \code{mmrm_tmb_data} with elements:
 columns in the original design matrix have been left out to obtain a full rank
 \code{x_matrix}.
 \item \code{y_vector}: length \code{n} \code{numeric} specifying the overall response vector.
+\item \code{weights_vector}: length \code{n} \code{numeric} specifying the weights vector.
 \item \code{visits_zero_inds}: length \code{n} \code{integer} containing zero-based visits indices.
 \item \code{n_visits}: \code{int} with the number of visits, which is the dimension of the
 covariance matrix.
