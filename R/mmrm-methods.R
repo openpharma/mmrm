@@ -191,6 +191,8 @@ print.summary.mmrm <- function(x,
       cat(sprintf("Group: %s\n", v))
       print(round(x$varcor[[v]], digits = digits))
     }
+  } else {
+    print(round(x$varcor, digits = digits))
   }
   cat("\n")
   invisible(x)

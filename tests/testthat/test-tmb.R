@@ -449,10 +449,10 @@ test_that("h_mmrm_tmb_fit works as expected", {
 })
 
 test_that("h_mmrm_tmb_fit works as expected for grouped covariance", {
-  formula <- FEV1 ~ RACE + ar1(AVISIT | ARMCD / USUBJID)
+  formula <- FEV1 ~ RACE + cs(AVISIT | ARMCD / USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
-  tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = TRUE, accept_singular = FALSE)
-  tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL)
+  tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = TRUE, accept_singular = TRUE)
+  tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL, n_group = tmb_data$n_groups)
   tmb_object <- TMB::MakeADFun(
     data = tmb_data,
     parameters = tmb_parameters,
@@ -474,8 +474,10 @@ test_that("h_mmrm_tmb_fit works as expected for grouped covariance", {
     "neg_log_lik", "formula_parts", "data", "reml", "opt_details", "tmb_object",
     "tmb_data"
   ))
-  expect_identical(rownames(result$cov), c("VIS1", "VIS2", "VIS3", "VIS4"))
-  expect_identical(colnames(result$cov), c("VIS1", "VIS2", "VIS3", "VIS4"))
+  expect_identical(rownames(result$cov$PBO), c("VIS1", "VIS2", "VIS3", "VIS4"))
+  expect_identical(colnames(result$cov$PBO), c("VIS1", "VIS2", "VIS3", "VIS4"))
+  expect_identical(rownames(result$cov$TRT), c("VIS1", "VIS2", "VIS3", "VIS4"))
+  expect_identical(colnames(result$cov$TRT), c("VIS1", "VIS2", "VIS3", "VIS4"))
   expect_named(result$beta_est, colnames(tmb_data$x_matrix))
   expect_identical(rownames(result$beta_vcov), colnames(tmb_data$x_matrix))
   expect_identical(colnames(result$beta_vcov), colnames(tmb_data$x_matrix))
@@ -483,7 +485,7 @@ test_that("h_mmrm_tmb_fit works as expected for grouped covariance", {
   expect_number(result$neg_log_lik)
   expect_list(result$formula_parts)
   expect_data_frame(result$data)
-  expect_false(result$reml)
+  expect_true(result$reml)
   expect_list(result$opt_details)
   expect_list(result$tmb_object)
   expect_class(result$tmb_data, "mmrm_tmb_data")
