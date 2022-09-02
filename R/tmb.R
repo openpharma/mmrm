@@ -370,7 +370,7 @@ h_mmrm_tmb_assert_opt <- function(tmb_object,
 #' @param tmb_data (`mmrm_tmb_data`)\cr produced by [h_mmrm_tmb_data()].
 #'
 #' @return List of class `mmrm_tmb` with:
-#'   - `cov`: estimated covariance matrix, or named list of estimated grouped covariance matrix
+#'   - `cov`: estimated covariance matrix, or named list of estimated group specific covariance matrices.
 #'   - `beta_est`: vector of coefficient estimates.
 #'   - `beta_vcov`: Variance-covariance matrix for coefficient estimates.
 #'   - `theta_est`: vector of variance parameter estimates.
