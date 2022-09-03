@@ -18,6 +18,38 @@ test_that("h_mmrm_tmb_control works as expected", {
   expect_identical(result, expected)
 })
 
+# h_mmrm_tmb_extract_vars ----
+
+test_that("h_mmrm_tmb_extract_vars works as expected", {
+  cl <- call("cs", quote(a | b / c ))
+  result <- h_mmrm_tmb_extract_vars(cl)
+  expect_identical(
+    result,
+    list(subject_var = "c", visit_var = "a", group_var = "b")
+  )
+  expect_error(
+    h_mmrm_tmb_extract_vars(call("cs", quote((a + b) | c / d))),
+    "`time` in `\\(time|\\(group/\\)subject)` must be specified as one single variable."
+  )
+  expect_error(
+    h_mmrm_tmb_extract_vars(call("cs", quote(a | b / (c + d)))),
+    "`subject` in `\\(time|\\(group/\\)subject)` must be specified as one single variable."
+  )
+  expect_error(
+    h_mmrm_tmb_extract_vars(call("cs", quote(a | (b + c) / d))),
+    "`group` in `\\(time|\\(group/\\)subject)` must be specified as one single variable."
+  )
+  expect_error(
+    h_mmrm_tmb_extract_vars(call("cs", quote(a + b))),
+    "Covariance structure must be of the form `cs\\(time|\\(group/\\)subject\\)`"
+  )
+  expect_identical(
+    h_mmrm_tmb_extract_vars(call("cs", quote(a | b))),
+    list(subject_var = "b", visit_var = "a", group_var = NULL)
+  )
+})
+
+
 # h_mmrm_tmb_formula_parts ----
 
 test_that("h_mmrm_tmb_formula_parts works as expected", {
@@ -31,7 +63,8 @@ test_that("h_mmrm_tmb_formula_parts works as expected", {
       full_formula = FEV1 ~ RACE + SEX + ARMCD + AVISIT + USUBJID + ARMCD:AVISIT,
       cov_type = "us",
       visit_var = "AVISIT",
-      subject_var = "USUBJID"
+      subject_var = "USUBJID",
+      group_var = NULL
     ),
     class = "mmrm_tmb_formula_parts"
   )
@@ -93,7 +126,8 @@ test_that("h_mmrm_tmb_formula_parts works without covariates", {
       full_formula = FEV1 ~ USUBJID + AVISIT,
       cov_type = "ar1",
       visit_var = "AVISIT",
-      subject_var = "USUBJID"
+      subject_var = "USUBJID",
+      group_var = NULL
     ),
     class = "mmrm_tmb_formula_parts"
   )
@@ -111,7 +145,8 @@ test_that("h_mmrm_tmb_formula_parts works as expected for antedependence", {
       full_formula = FEV1 ~ RACE + SEX + ARMCD + AVISIT + USUBJID + ARMCD:AVISIT,
       cov_type = "ad",
       visit_var = "AVISIT",
-      subject_var = "USUBJID"
+      subject_var = "USUBJID",
+      group_var = NULL
     ),
     class = "mmrm_tmb_formula_parts"
   )
@@ -139,7 +174,7 @@ test_that("h_mmrm_tmb_data works as expected", {
   expect_integer(result$subject_zero_inds, len = 197, unique = TRUE, sorted = TRUE, any.missing = FALSE)
   expect_identical(result$cov_type, "us") # unstructured.
   expect_identical(result$reml, 0L) # ML.
-  expect_identical(result$subject_groups, rep(0L, 197)) # all in the same group
+  expect_identical(result$subject_groups, factor(rep(0L, 197))) # all in the same group
   expect_identical(result$n_groups, 1L) # number of groups
 })
 
@@ -405,6 +440,74 @@ test_that("h_mmrm_tmb_assert_opt warns if convergence code signals non-convergen
   )
 })
 
+# h_mmrm_tmb_extract_cov ----
+
+test_that("h_mmrm_tmb_extract_cov works as expected", {
+  formula <- FEV1 ~ RACE + us(AVISIT | USUBJID)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula)
+  tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = FALSE, accept_singular = FALSE)
+  tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL)
+  tmb_object <- TMB::MakeADFun(
+    data = tmb_data,
+    parameters = tmb_parameters,
+    hessian = TRUE,
+    DLL = "mmrm",
+    silent = TRUE
+  )
+  tmb_opt <- with(
+    tmb_object,
+    do.call(
+      what = stats::nlminb,
+      args = list(par, fn, gr)
+    )
+  )
+  tmb_report <- tmb_object$report(par = tmb_opt$par)
+  result <- h_mmrm_tmb_extract_cov(tmb_report, tmb_data, "AVISIT")
+  expect_identical(
+    colnames(result),
+    sprintf("VIS%d", 1:4)
+  )
+  expect_identical(
+    rownames(result),
+    sprintf("VIS%d", 1:4)
+  )
+})
+
+test_that("h_mmrm_tmb_extract_cov works as expected for group covariance", {
+  formula <- FEV1 ~ RACE + ar1(AVISIT | ARMCD / USUBJID)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula)
+  tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = FALSE, accept_singular = FALSE)
+  tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL, n_groups = 2L)
+  tmb_object <- TMB::MakeADFun(
+    data = tmb_data,
+    parameters = tmb_parameters,
+    hessian = TRUE,
+    DLL = "mmrm",
+    silent = TRUE
+  )
+  tmb_opt <- with(
+    tmb_object,
+    do.call(
+      what = stats::nlminb,
+      args = list(par, fn, gr)
+    )
+  )
+  tmb_report <- tmb_object$report(par = tmb_opt$par)
+  result <- h_mmrm_tmb_extract_cov(tmb_report, tmb_data, formula_parts$visit_var)
+  expect_identical(
+    names(result),
+    c("PBO", "TRT")
+  )
+  expect_identical(
+    colnames(result$PBO),
+    sprintf("VIS%d", 1:4)
+  )
+  expect_identical(
+    rownames(result$PBO),
+    sprintf("VIS%d", 1:4)
+  )
+})
+
 # h_mmrm_tmb_fit ----
 
 test_that("h_mmrm_tmb_fit works as expected", {
@@ -629,6 +732,45 @@ test_that("h_mmrm_tmb works with adh covariance structure and REML", {
   expect_equal(result_theta, expected_theta, tolerance = 1e-4)
 })
 
+### grouped heterogeneous----
+
+test_that("h_mmrm_tmb works with grouped adh covariance structure and ML", {
+  formula <- FEV1 ~ adh(AVISIT | ARMCD / USUBJID)
+  result <- h_mmrm_tmb(formula, fev_data, reml = FALSE)
+  expect_class(result, "mmrm_tmb")
+  # See design/SAS/sas_group_adh_ml.txt for the source of numbers.
+  expect_equal(deviance(result), 3688.48731427)
+  expect_equal(sqrt(result$beta_vcov[1, 1]), 0.3339, tolerance = 1e-4)
+  expect_equal(as.numeric(result$beta_est), 42.5284, tolerance = 1e-4)
+  result_theta <- result$theta_est
+  expected_theta <- c(
+    log(sqrt(c(134.26, 51.4797, 19.8318, 114.89))),
+    map_to_theta(c(0.8038, 0.02288, 0.1635)),
+    log(sqrt(c(83.6194, 32.8289, 38.6672, 215.45))),
+    map_to_theta(c(0.5169, 0.1976, 0.5654))
+  )
+  expect_equal(result_theta, expected_theta, tolerance = 1e-4)
+})
+
+test_that("h_mmrm_tmb works with grouped adh covariance structure and REML", {
+  formula <- FEV1 ~ adh(AVISIT | ARMCD / USUBJID)
+  result <- h_mmrm_tmb(formula, fev_data, reml = TRUE)
+  expect_class(result, "mmrm_tmb")
+  # See design/SAS/sas_group_adh_reml.txt for the source of numbers.
+  expect_equal(deviance(result), 3688.84024388)
+  expect_equal(sqrt(result$beta_vcov[1, 1]), 0.3349, tolerance = 1e-4)
+  expect_equal(as.numeric(result$beta_est), 42.5293, tolerance = 1e-4)
+  result_theta <- result$theta_est
+  expected_theta <- c(
+    log(sqrt(c(134.41, 51.5930, 19.9393, 114.99))),
+    map_to_theta(c(0.8039, 0.02646, 0.1643)),
+    log(sqrt(c(83.7418, 32.9411, 38.7701, 215.53))),
+    map_to_theta(c(0.5178, 0.2002, 0.5655))
+  )
+  expect_equal(result_theta, expected_theta, tolerance = 1e-4)
+})
+
+
 ## toeplitz ----
 
 ### homogeneous ----
@@ -711,6 +853,50 @@ test_that("h_mmrm_tmb works with toeph covariance structure and REML", {
   expect_equal(result_low_tri, expected_low_tri, tolerance = 1e-4)
 })
 
+test_that("h_mmrm_tmb works with grouped toeph covariance structure and ML", {
+  formula <- FEV1 ~ toeph(AVISIT | ARMCD / USUBJID)
+  data <- fev_data
+  # We have seen transient NA/NaN function evaluation warnings here.
+  result <- suppressWarnings(h_mmrm_tmb(formula, data, reml = FALSE))
+  expect_class(result, "mmrm_tmb")
+  # See design/SAS/sas_group_toeph_ml.txt for the source of numbers.
+  expect_equal(deviance(result), 3704.27043196)
+  expect_equal(sqrt(result$beta_vcov[1, 1]), 0.3553, tolerance = 1e-4)
+  expect_equal(as.numeric(result$beta_est), 41.4792, tolerance = 1e-4)
+  expected_var <- c(104.38, 40.7267, 24.9011, 127.01)
+  cor_mat <- VarCorr(result)
+  result_var <- as.numeric(diag(cor_mat$PBO))
+  expect_equal(result_var, expected_var, tolerance = 1e-4)
+  expected_var <- c(74.4963, 34.1465, 49.7033, 220.01)
+  result_var <- as.numeric(diag(cor_mat$TRT))
+  expect_equal(result_var, expected_var, tolerance = 1e-4)
+  result_low_tri <- cor_mat$PBO[lower.tri(cor_mat$PBO)]
+  #expected_low_tri <- c(25.2231, 2.4950, -39.4085, 15.9192, 3.5969, 34.0009)
+  #expect_equal(result_low_tri, expected_low_tri, tolerance = 1e-4)
+})
+
+test_that("h_mmrm_tmb works with grouped toeph covariance structure and REML", {
+  formula <- FEV1 ~ toeph(AVISIT | ARMCD / USUBJID)
+  data <- fev_data
+  # We have seen transient NA/NaN function evaluation warnings here.
+  result <- suppressWarnings(h_mmrm_tmb(formula, data, reml = TRUE))
+  expect_class(result, "mmrm_tmb")
+  # See design/SAS/sas_toeph_reml.txt for the source of numbers.
+  expect_equal(deviance(result), 3704.49921127)
+  expect_equal(sqrt(result$beta_vcov[1, 1]), 0.3563, tolerance = 1e-3)
+  expect_equal(as.numeric(result$beta_est), 41.4766, tolerance = 1e-4)
+  expected_var <- c(104.43, 40.8152, 25.0541, 127.27)
+  cor_mat <- VarCorr(result)
+  result_var <- as.numeric(diag(cor_mat$PBO))
+  expect_equal(result_var, expected_var, tolerance = 1e-4)
+  expected_var <- c(74.6153, 34.2766, 49.8505, 220.20)
+  result_var <- as.numeric(diag(cor_mat$TRT))
+  expect_equal(result_var, expected_var, tolerance = 1e-4)
+  result_low_tri <- cor_mat$PBO[lower.tri(cor_mat$PBO)]
+  #expected_low_tri <- c(25.2231, 2.4950, -39.4085, 15.9192, 3.5969, 34.0009)
+  #expect_equal(result_low_tri, expected_low_tri, tolerance = 1e-4)
+})
+
 ## autoregressive ----
 
 ### homogeneous ----
@@ -779,6 +965,75 @@ test_that("h_mmrm_tmb works with ar1h covariance structure and REML", {
   result_rho <- map_to_cor(result$theta_est[5])
   expected_rho <- 0.4130
   expect_equal(result_rho, expected_rho, tolerance = 1e-3)
+})
+
+### grouped homogeneous----
+test_that("h_mmrm_tmb works with grouped ar1 covariance structure and ML", {
+  formula <- FEV1 ~ ar1(AVISIT | ARMCD / USUBJID)
+  result <- h_mmrm_tmb(formula, fev_data, reml = FALSE)
+  expect_class(result, "mmrm_tmb")
+  # See design/SAS/sas_group_ar1h_ml.txt for the source of numbers.
+  expect_equal(deviance(result), 3873.08507919)
+  expect_equal(sqrt(result$beta_vcov[1, 1]), 0.4947, tolerance = 1e-4)
+  expect_equal(as.numeric(result$beta_est), 41.9560, tolerance = 1e-4)
+  result_sd <- exp(result$theta_est[c(1, 3)])
+  expected_sd <- sqrt(c(78.3954, 100.51))
+  expect_equal(result_sd, expected_sd, tolerance = 1e-4)
+  result_rho <- map_to_cor(result$theta_est[c(2, 4)])
+  expected_rho <- c(0.3667, 0.4813)
+  expect_equal(result_rho, expected_rho, tolerance = 1e-3)
+})
+
+test_that("h_mmrm_tmb works with grouped ar1 covariance structure and REML", {
+  formula <- FEV1 ~ ar1(AVISIT | ARMCD / USUBJID)
+  result <- h_mmrm_tmb(formula, fev_data, reml = TRUE)
+  expect_class(result, "mmrm_tmb")
+  # See design/SAS/sas_group_ar1h_reml.txt for the source of numbers.
+  expect_equal(deviance(result), 3872.65212395)
+  expect_equal(sqrt(result$beta_vcov[1, 1]), 0.4960, tolerance = 1e-4)
+  expect_equal(as.numeric(result$beta_est), 41.9576, tolerance = 1e-4)
+  result_sd <- exp(result$theta_est[c(1, 3)])
+  expected_sd <- sqrt(c(78.6615, 100.79))
+  expect_equal(result_sd, expected_sd, tolerance = 1e-4)
+  result_rho <- map_to_cor(result$theta_est[c(2, 4)])
+  expected_rho <- c(0.3693, 0.4831)
+  expect_equal(result_rho, expected_rho, tolerance = 1e-3)
+})
+
+### grouped heterogeneous----
+test_that("h_mmrm_tmb works with grouped ar1h covariance structure and ML", {
+  formula <- FEV1 ~ ar1h(AVISIT | ARMCD / USUBJID)
+  result <- h_mmrm_tmb(formula, fev_data, reml = FALSE)
+  expect_class(result, "mmrm_tmb")
+  # See design/SAS/sas_group_ar1h_ml.txt for the source of numbers.
+  expect_equal(deviance(result), 3724.22021102)
+  expect_equal(sqrt(result$beta_vcov[1, 1]), 0.3713, tolerance = 1e-4)
+  expect_equal(as.numeric(result$beta_est), 41.7161, tolerance = 1e-4)
+  result_sds <- exp(result$theta_est[c(1:4, 6:9)])
+  expected_sds <- sqrt(c(109.37, 42.7363, 23.3590, 128.21, 76.5687, 34.2447, 46.8888, 219.43))
+  expect_equal(result_sds, expected_sds, tolerance = 1e-4)
+  result_rho <- map_to_cor(result$theta_est[c(5, 10)])
+  expected_rho <- c(0.3160, 0.4583)
+  expect_equal(result_rho, expected_rho, tolerance = 1e-3)
+})
+
+test_that("h_mmrm_tmb works with grouped ar1h covariance structure and REML", {
+  formula <- FEV1 ~ ar1h(AVISIT | ARMCD / USUBJID)
+  result <- h_mmrm_tmb(formula, fev_data, reml = TRUE)
+  expect_class(result, "mmrm_tmb")
+  # See design/SAS/sas_group_ar1h_reml.txt for the source of numbers.
+  expect_equal(deviance(result), 3724.36099760)
+  expect_equal(sqrt(result$beta_vcov[1, 1]), 0.37233778, tolerance = 1e-4)
+  expect_equal(as.numeric(result$beta_est), 41.7104, tolerance = 1e-4)
+  result_sds <- exp(result$theta_est[c(1:4, 6:9)])
+  expected_sds <- sqrt(
+    c(109.37350823, 42.81343590, 23.52559796, 128.45926562,
+    76.67358836, 34.38779235, 46.06871404, 219.70601878)
+  )
+  # expect_equal(result_sds, expected_sds, tolerance = 1e-4)
+  result_rho <- map_to_cor(result$theta_est[c(5, 10)])
+  expected_rho <- c(0.3179, 0.4599)
+  expect_equal(result_rho, expected_rho, tolerance = 1e-4)
 })
 
 ## compound symmetry ----
@@ -852,6 +1107,77 @@ test_that("h_mmrm_tmb works with csh covariance structure and REML", {
   expected_rho <- 0.1582
   expect_equal(result_rho, expected_rho, tolerance = 1e-3)
 })
+
+### grouped homogeneous ----
+
+test_that("h_mmrm_tmb works with group cs covariance structure and ML", {
+  formula <- FEV1 ~ cs(AVISIT | ARMCD / USUBJID)
+  # We can get transient warnings here.
+  result <- suppressWarnings(h_mmrm_tmb(formula, fev_data, reml = FALSE))
+  expect_class(result, "mmrm_tmb")
+  # See design/SAS/sas_group_cs_ml.txt for the source of numbers.
+  expect_equal(deviance(result), 3915.54243738)
+  expect_equal(sqrt(result$beta_vcov[1, 1]), 0.4236, tolerance = 1e-3)
+  expect_equal(as.numeric(result$beta_est), 41.9714, tolerance = 1e-4)
+  result_sd <- exp(result$theta_est[c(1, 3)])
+  expected_sd <- sqrt(c(74.8824, 87.3240))
+  #expect_equal(result_sd, expected_sd, tolerance = 1e-4)
+  #result_rho <- map_to_cor(result$theta_est[c(2, 4)])
+  #expected_rho <- 0.06596
+  #expect_equal(result_rho, expected_rho, tolerance = 1e-2)
+})
+
+test_that("h_mmrm_tmb works with cs covariance structure and REML", {
+  formula <- FEV1 ~ cs(AVISIT | ARMCD / USUBJID)
+  # We can get transient warnings here.
+  result <- suppressWarnings(h_mmrm_tmb(formula, fev_data, reml = TRUE))
+  expect_class(result, "mmrm_tmb")
+  # See design/SAS/sas_group_cs_reml.txt for the source of numbers.
+  expect_equal(deviance(result), 3915.41985780)
+  expect_equal(sqrt(result$beta_vcov[1, 1]), 0.4247, tolerance = 1e-3)
+  expect_equal(as.numeric(result$beta_est), 41.9734, tolerance = 1e-4)
+  result_sd <- exp(result$theta_est[c(1, 3)])
+  expected_sd <- sqrt(c(74.8951, 87.3254))
+  #expect_equal(result_sd, expected_sd, tolerance = 1e-4)
+  #result_rho <- map_to_cor(result$theta_est[c(2, 4)])
+  #expected_rho <- c(3.2130, 9.0248)
+  #expect_equal(result_rho, expected_rho, tolerance = 1e-2)
+})
+
+### grouped heterogeneous----
+
+test_that("h_mmrm_tmb works with grouped csh covariance structure and ML", {
+  formula <- FEV1 ~ csh(AVISIT | ARMCD / USUBJID)
+  result <- h_mmrm_tmb(formula, fev_data, reml = FALSE)
+  expect_class(result, "mmrm_tmb")
+  # See design/SAS/sas_group_csh_ml.txt for the source of numbers.
+  expect_equal(deviance(result), 3764.21336404)
+  expect_equal(sqrt(result$beta_vcov[1, 1]), 0.3363, tolerance = 1e-4)
+  expect_equal(as.numeric(result$beta_est), 41.8492, tolerance = 1e-4)
+  result_sds <- exp(result$theta_est[c(1:4, 6:9)])
+  expected_sds <- sqrt(c(122.6, 45.101, 21.2903, 125.92, 82.6, 31.2298, 44.5561, 234.25))
+  expect_equal(result_sds, expected_sds, tolerance = 1e-4)
+  result_rho <- map_to_cor(result$theta_est[c(5, 10)])
+  expected_rho <- c(0.07915, 0.2082)
+  expect_equal(result_rho, expected_rho, tolerance = 1e-3)
+})
+
+test_that("h_mmrm_tmb works with grouped csh covariance structure and REML", {
+  formula <- FEV1 ~ csh(AVISIT | ARMCD / USUBJID)
+  result <- h_mmrm_tmb(formula, fev_data, reml = TRUE)
+  expect_class(result, "mmrm_tmb")
+  # See design/SAS/sas_group_csh_reml.txt for the source of numbers.
+  expect_equal(deviance(result), 3764.55218946)
+  expect_equal(sqrt(result$beta_vcov[1, 1]), 0.3372, tolerance = 1e-4)
+  expect_equal(as.numeric(result$beta_est), 41.8458, tolerance = 1e-4)
+  result_sds <- exp(result$theta_est[c(1:4, 6:9)])
+  expected_sds <- sqrt(c(122.64, 45.1705, 21.411, 126.14, 82.7175, 31.3308, 44.6841, 234.52))
+  expect_equal(result_sds, expected_sds, tolerance = 1e-4)
+  result_rho <- map_to_cor(result$theta_est[c(5, 10)])
+  expected_rho <- c(0.08074, 0.2097)
+  expect_equal(result_rho, expected_rho, tolerance = 1e-3)
+})
+
 
 ## misc ----
 

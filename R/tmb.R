@@ -41,6 +41,63 @@ h_mmrm_tmb_control <- function(optimizer = stats::nlminb,
   )
 }
 
+#' Processing the covariance term
+#'
+#' @param cov_term (`call`)\cr covariance term.
+#'
+#' @return Named list of with elements:
+#' - `visit_var`: `string` with the visit variable name.
+#' - `subject_var`: `string` with the subject variable name.
+#' - `group_var`: `string` with the group variable name. If no group specified, this element
+#'      is NULL.
+#' @keywords internal
+h_mmrm_tmb_extract_vars <- function(cov_term) {
+  assert_true(identical(length(cov_term), 2L)) # 2 because `fun (...)`.
+  cov_content <- cov_term[[2L]]
+  if (!identical(length(cov_content), 3L) || !identical(as.character(cov_content[[1L]]), "|")) {
+    stop(
+      "Covariance structure must be of the form `",
+      cov_term[[1]],
+      "(time|(group/)subject)`"
+    )
+  }
+  visit_term <- cov_content[[2L]]
+  if (!identical(length(visit_term), 1L)) {
+    stop(
+      "`time` in `(time|(group/)subject)` must be specified as one single variable."
+    )
+  }
+  if (identical(length(cov_content[[3L]]), 1L)) {
+    subject_term <- cov_content[[3L]]
+    group_var <- NULL
+  } else if (identical(length(cov_content[[3L]]), 3L) && identical(as.character(cov_content[[3L]][[1L]]), "/")) {
+    subject_term <- cov_content[[3L]][[3L]]
+    group_term <- cov_content[[3L]][[2L]]
+    if (!identical(length(group_term), 1L)) {
+      stop(
+        "`group` in `(time|group/subject)` must be specified as one single variable."
+      )
+    }
+    group_var <- deparse(group_term)
+  } else {
+    stop(
+      "Covariance structure with grouping must be of the form `",
+      cov_term[[1]],
+      "(time|group/subject)`"
+    )
+  }
+  if (!identical(length(subject_term), 1L)) {
+    stop(
+      "`subject` in `(time|(group/)subject)` must be specified as one single variable."
+    )
+  }
+  subject_var <- deparse(subject_term)
+  visit_var <- deparse(visit_term)
+  return(
+    list(subject_var = subject_var, visit_var = visit_var, group_var = group_var)
+  )
+}
+
 #' Processing the Formula for `TMB` Fit
 #'
 #' @param formula (`formula`)\cr original formula.
@@ -54,7 +111,7 @@ h_mmrm_tmb_control <- function(optimizer = stats::nlminb,
 #' - `visit_var`: `string` with the visit variable name.
 #' - `subject_var`: `string` with the subject variable name.
 #' - `group_var`: `string` with the group variable name. If no group specified, this element
-#'      is dropped.
+#'      is NULL.
 #' @keywords internal
 h_mmrm_tmb_formula_parts <- function(formula) {
   assert_formula(formula)
@@ -81,64 +138,32 @@ h_mmrm_tmb_formula_parts <- function(formula) {
   }
   terms_list <- attr(terms_object, "variables")
   cov_term <- terms_list[[unlist(cov_selected) + 1L]]
-
   # Remove the covariance term to obtain the model formula.
   model_formula <- stats::update(
     formula,
     stats::as.formula(paste(". ~ . -", deparse(cov_term)))
   )
-
-  # Parse the covariance term to get covariance type, visit and subject variables.
-  assert_true(identical(length(cov_term), 2L)) # 2 because `fun (...)`.
-  cov_content <- cov_term[[2L]]
-  if (!identical(length(cov_content), 3L) || !identical(as.character(cov_content[[1L]]), "|")) {
-    stop(
-      "Covariance structure must be of the form `",
-      cov_term[[1]],
-      "(time|(group/)subject)`"
-    )
-  }
-  visit_term <- cov_content[[2L]]
-  if (identical(length(cov_content[[3L]]), 1L)) {
-    subject_term <- cov_content[[3L]]
-    group_var <- NULL
-  } else if (identical(length(cov_content[[3L]]), 3L) && identical(as.character(cov_content[[3L]][[1L]]), "/")) {
-    subject_term <- cov_content[[3L]][[3L]]
-    group_term <- cov_content[[3L]][[2L]]
-    assert_true(identical(length(group_term), 1L))
-    group_var <- deparse(group_term)
-  } else {
-    stop(
-      "Covariance structure with grouping must be of the form `",
-      cov_term[[1]],
-      "(time|group/subject)`"
-    )
-  }
-  assert_true(identical(length(visit_term), 1L))
-  assert_true(identical(length(subject_term), 1L))
-  subject_var <- deparse(subject_term)
-  visit_var <- deparse(visit_term)
+  cov_vars <- h_mmrm_tmb_extract_vars(cov_term)
   full_formula <- stats::update(
     model_formula,
-    stats::as.formula(paste(". ~ . +", subject_var, "+", visit_var))
+    stats::as.formula(paste(". ~ . +", cov_vars$subject_var, "+", cov_vars$visit_var))
   )
-  if (!is.null(group_var)) {
+  if (!is.null(cov_vars$group_var)) {
     full_formula <- stats::update(
       full_formula,
-      stats::as.formula(sprintf(". ~ . + %s", group_var))
+      stats::as.formula(paste(". ~ . +", cov_vars$group_var))
     )
   }
-  ret <- list(
-    formula = formula,
-    model_formula = model_formula,
-    full_formula = full_formula,
-    cov_type = deparse(cov_term[[1L]]),
-    visit_var = visit_var,
-    subject_var = subject_var,
-    group_var = group_var
-  )
   structure(
-    .Data = ret,
+    .Data = list(
+      formula = formula,
+      model_formula = model_formula,
+      full_formula = full_formula,
+      cov_type = deparse(cov_term[[1L]]),
+      visit_var = cov_vars$visit_var,
+      subject_var = cov_vars$subject_var,
+      group_var = cov_vars$group_var
+    ),
     class = "mmrm_tmb_formula_parts"
   )
 }
@@ -171,7 +196,7 @@ h_mmrm_tmb_formula_parts <- function(formula) {
 #'     observed visits for each subjects. So the sum of this vector equals `n`.
 #' - `cov_type`: `string` value specifying the covariance type.
 #' - `reml`: `int` specifying whether REML estimation is used (1), otherwise ML (0).
-#' - `subject_groups`: `factor` or `integer` specifying the grouping for each subject.
+#' - `subject_groups`: `factor` specifying the grouping for each subject.
 #' - `n_groups`: `int` with the number of total groups
 #'
 #' @details Note that the `subject_var` must not be factor but can also be character.
@@ -239,7 +264,7 @@ h_mmrm_tmb_data <- function(formula_parts,
     subject_groups <- full_frame[[formula_parts$group_var]][subject_zero_inds + 1L]
     n_groups <- nlevels(subject_groups)
   } else {
-    subject_groups <- rep(0L, n_subjects)
+    subject_groups <- factor(rep(0L, n_subjects))
     n_groups <- 1L
   }
 
@@ -356,6 +381,37 @@ h_mmrm_tmb_assert_opt <- function(tmb_object,
   }
 }
 
+#' Extract covariance matrix from `TMB` report and tmb data
+#'
+#' This helper does some simple post-processing to extract covariance matrix or named
+#' list of covariance matrice if the fitting is using grouped covariance matrice.
+#'
+#' @param tmb_report (`list`)\cr report created with [TMB::MakeADFun()$report()].
+#' @param tmb_data (`mmrm_tmb_data`)\cr produced by [h_mmrm_tmb_data()].
+#' @param visit_var `character`\cr character vector of length 1 of the visit variable
+#' @return Return a simple covariance matrix if there is no grouping, or a named list of estimated grouped covariance matrice,
+#' with its name equal to the group levels.
+#'
+#' @keywords internal
+h_mmrm_tmb_extract_cov <- function(tmb_report, tmb_data, visit_var) {
+  d <- dim(tmb_report$covariance_lower_chol)
+  visit_names <- levels(tmb_data$full_frame[[visit_var]])
+  cov <- lapply(
+    seq_len(d[1] / d[2]),
+    function(i) {
+      ret <- tcrossprod(tmb_report$covariance_lower_chol[seq(1 + (i - 1) * d[2], i * d[2]), ])
+      dimnames(ret) <- list(visit_names, visit_names)
+      return(ret)
+    }
+  )
+  if (identical(tmb_data$n_groups, 1L)) {
+    cov <- cov[[1]]
+  } else {
+    names(cov) <- levels(tmb_data$subject_groups)
+  }
+  return(cov)
+}
+
 #' Build `TMB` Fit Result List
 #'
 #' This helper does some simple post-processing of the `TMB` object and
@@ -399,21 +455,7 @@ h_mmrm_tmb_fit <- function(tmb_object,
   
   tmb_report <- tmb_object$report(par = tmb_opt$par)
   x_matrix_cols <- colnames(tmb_data$x_matrix)
-  visit_names <- levels(tmb_data$full_frame[[formula_parts$visit_var]])
-  d <- dim(tmb_report$covariance_lower_chol)
-  cov <- lapply(
-    seq_len(d[2] / d[1]),
-    function(i) {
-      ret <- tcrossprod(tmb_report$covariance_lower_chol[, seq(1 + (i - 1) * d[1], i * d[1])])
-      dimnames(ret) <- list(visit_names, visit_names)
-      return(ret)
-    }
-  )
-  if (identical(tmb_data$n_groups, 1L)) {
-    cov <- cov[[1]]
-  } else {
-    names(cov) <- levels(tmb_data$subject_groups)
-  }
+  cov <- h_mmrm_tmb_extract_cov(tmb_report, tmb_data, formula_parts$visit_var)
   beta_est <- tmb_report$beta
   names(beta_est) <- x_matrix_cols
   beta_vcov <- tmb_report$beta_vcov

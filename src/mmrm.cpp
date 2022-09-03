@@ -54,15 +54,7 @@ Type objective_function<Type>::operator() ()
   // Sum of the log determinant will be incrementally calculated here.
   Type sum_log_det = 0.0;
   // Create the lower triangular Cholesky factor of the visit x visit covariance matrix.
-  matrix<Type> covariance_lower_chol = matrix<Type>::Zero(n_visits, n_visits * n_groups);
-  int covariance_size = theta.size() / n_groups;
-  for (int i = 0; i < n_groups; i++) {
-    matrix<Type> lower_chol = get_covariance_lower_chol<Type>(theta.segment(i * n_groups, covariance_size), n_visits, cov_type);
-    for (int j = 0; j < n_visits; j++) {
-      covariance_lower_chol.col(j + i * n_visits) = lower_chol.col(j);
-    }
-  }
-  
+  matrix<Type> covariance_lower_chol  = get_cov_lower_chol_grouped(theta, n_visits, cov_type, n_groups);
   // Go through all subjects and calculate quantities initialized above.
   for (int i = 0; i < n_subjects; i++) {
     // Start index and number of visits for this subject.
@@ -70,10 +62,7 @@ Type objective_function<Type>::operator() ()
     int n_visits_i = subject_n_visits(i);
     // Obtain Cholesky factor Li.
     matrix<Type> Li;
-    matrix<Type> lower_chol = matrix<Type>::Zero(n_visits, n_visits);
-    for (int j = 0; j < n_visits; j++) {
-      lower_chol.col(j) = covariance_lower_chol.col(j + subject_groups(i) * n_visits);
-    }
+    matrix<Type> lower_chol = covariance_lower_chol.block(subject_groups(i) * n_visits, 0,  n_visits, n_visits);
     if (n_visits_i < n_visits) {
       // This subject has less visits, therefore we need to recalculate the Cholesky factor.
       vector<int> visits_i = visits_zero_inds.segment(start_i, n_visits_i);
