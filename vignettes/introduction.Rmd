@@ -108,7 +108,7 @@ print(fit_cs)
 ## Grouped Covariance Structure
 
 Grouped covariance structures is supported by `mmrm` package. 
-Covariance matrix for each group are of identical structure(unstructured, compound symmetry, etc) but the values can be different.
+Covariance matrices for each group are identically structured (unstructured, compound symmetry, etc) but the estimates are allowed to vary across groups.
 We use the form `cs(time | group / subject)` to specify the group variable.
 
 Here is an example of how we use `ARMCD` as group variable.
