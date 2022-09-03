@@ -853,6 +853,8 @@ test_that("h_mmrm_tmb works with toeph covariance structure and REML", {
   expect_equal(result_low_tri, expected_low_tri, tolerance = 1e-4)
 })
 
+### grouped heterogeneous ----
+
 test_that("h_mmrm_tmb works with grouped toeph covariance structure and ML", {
   formula <- FEV1 ~ toeph(AVISIT | ARMCD / USUBJID)
   data <- fev_data
@@ -881,7 +883,7 @@ test_that("h_mmrm_tmb works with grouped toeph covariance structure and REML", {
   # We have seen transient NA/NaN function evaluation warnings here.
   result <- suppressWarnings(h_mmrm_tmb(formula, data, reml = TRUE))
   expect_class(result, "mmrm_tmb")
-  # See design/SAS/sas_toeph_reml.txt for the source of numbers.
+  # See design/SAS/sas_group_toeph_reml.txt for the source of numbers.
   expect_equal(deviance(result), 3704.49921127)
   expect_equal(sqrt(result$beta_vcov[1, 1]), 0.3563, tolerance = 1e-3)
   expect_equal(as.numeric(result$beta_est), 41.4766, tolerance = 1e-4)
@@ -1030,7 +1032,7 @@ test_that("h_mmrm_tmb works with grouped ar1h covariance structure and REML", {
     c(109.37350823, 42.81343590, 23.52559796, 128.45926562,
     76.67358836, 34.38779235, 46.06871404, 219.70601878)
   )
-  # expect_equal(result_sds, expected_sds, tolerance = 1e-4)
+  expect_equal(result_sds, expected_sds, tolerance = 1e-3)
   result_rho <- map_to_cor(result$theta_est[c(5, 10)])
   expected_rho <- c(0.3179, 0.4599)
   expect_equal(result_rho, expected_rho, tolerance = 1e-4)
