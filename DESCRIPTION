@@ -1,7 +1,7 @@
 Type: Package
 Package: mmrm
 Title: Mixed Models for Repeated Measures
-Version: 0.1.0.9002
+Version: 0.1.0.9004
 Authors@R: c(
     person("Daniel", "Sabanes Bove", , "daniel.sabanes_bove@roche.com", role = c("aut", "cre")),
     person("Julia", "Dedic", , "julia.dedic@roche.com", role = "aut"),
@@ -63,8 +63,7 @@ Collate:
     'fit.R'
     'mmrm-methods.R'
     'mmrm-package.R'
-    'output.R'
-    'parallel.R'
+    'utils.R'
     'satterthwaite.R'
     'tmb-methods.R'
     'tmb.R'
