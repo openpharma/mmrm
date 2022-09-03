@@ -40,7 +40,9 @@ Available \code{component()} names are as follows:
 (excluding aliased coefficients).
 \item \code{beta_vcov_complete}: estimated variance-covariance matrix including
 aliased coefficients with entries set to \code{NA}.
-\item \code{varcor}: estimated covariance matrix for residuals (by groups).
+\item \code{varcor}: estimated covariance matrix for residuals. If there are multiple
+groups, a named list of estimated covariance matrix for residuals will be
+returned. The names are the group levels.
 \item \code{theta_est}: estimated variance parameters.
 \item \code{beta_est}: estimated coefficients (excluding aliased coefficients).
 \item \code{beta_est_complete}: estimated coefficients including aliased coefficients
