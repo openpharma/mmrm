@@ -142,7 +142,7 @@ Other covariance matrix choices are explained in the
 
 #### Grouped covariance matrix
 
-In some cases, the covariance matrix is different in different groups, while the covariance structures remain the same across groups.
+In some cases, we would like to estimate unique covariance matrices across groups, while keeping the covariance structure (unstructured, ante-dependence, Toeplitz, etc.) consistent across groups.
 Following the notations in the previous section, for subject $i$ in group $g(i)$, we have
 
 \[
