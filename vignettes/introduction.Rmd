@@ -107,7 +107,7 @@ print(fit_cs)
 
 ## Grouped Covariance Structure
 
-Grouped ovariance structures is supported by `mmrm` package. 
+Grouped covariance structures is supported by `mmrm` package. 
 Covariance matrix for each group are of identical structure(unstructured, compound symmetry, etc) but the values can be different.
 We use the form `cs(time|group/subject)` to specify the group variable.
 
