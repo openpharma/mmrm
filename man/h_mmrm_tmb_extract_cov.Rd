@@ -7,18 +7,18 @@
 h_mmrm_tmb_extract_cov(tmb_report, tmb_data, visit_var)
 }
 \arguments{
-\item{tmb_report}{(\code{list})\cr report created with \code{\link[TMB:MakeADFun()$report]{TMB::MakeADFun()$report()}}.}
+\item{tmb_report}{(\code{list})\cr report created with \code{\link[TMB:MakeADFun]{TMB::MakeADFun()}} report function.}
 
 \item{tmb_data}{(\code{mmrm_tmb_data})\cr produced by \code{\link[=h_mmrm_tmb_data]{h_mmrm_tmb_data()}}.}
 
 \item{visit_var}{\code{character}\cr character vector of length 1 of the visit variable}
 }
 \value{
-Return a simple covariance matrix if there is no grouping, or a named list of estimated grouped covariance matrice,
+Return a simple covariance matrix if there is no grouping, or a named list of estimated grouped covariance matrices,
 with its name equal to the group levels.
 }
 \description{
 This helper does some simple post-processing to extract covariance matrix or named
-list of covariance matrice if the fitting is using grouped covariance matrice.
+list of covariance matrices if the fitting is using grouped covariance matrices.
 }
 \keyword{internal}

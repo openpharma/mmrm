@@ -384,12 +384,12 @@ h_mmrm_tmb_assert_opt <- function(tmb_object,
 #' Extract covariance matrix from `TMB` report and tmb data
 #'
 #' This helper does some simple post-processing to extract covariance matrix or named
-#' list of covariance matrice if the fitting is using grouped covariance matrice.
+#' list of covariance matrices if the fitting is using grouped covariance matrices.
 #'
-#' @param tmb_report (`list`)\cr report created with [TMB::MakeADFun()$report()].
+#' @param tmb_report (`list`)\cr report created with [TMB::MakeADFun()] report function.
 #' @param tmb_data (`mmrm_tmb_data`)\cr produced by [h_mmrm_tmb_data()].
 #' @param visit_var `character`\cr character vector of length 1 of the visit variable
-#' @return Return a simple covariance matrix if there is no grouping, or a named list of estimated grouped covariance matrice,
+#' @return Return a simple covariance matrix if there is no grouping, or a named list of estimated grouped covariance matrices,
 #' with its name equal to the group levels.
 #'
 #' @keywords internal
