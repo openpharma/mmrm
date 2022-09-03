@@ -20,7 +20,7 @@ List of class \code{mmrm_tmb_formula_parts} with elements:
 \item \code{visit_var}: \code{string} with the visit variable name.
 \item \code{subject_var}: \code{string} with the subject variable name.
 \item \code{group_var}: \code{string} with the group variable name. If no group specified, this element
-is dropped.
+is NULL.
 }
 }
 \description{
