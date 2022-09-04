@@ -200,4 +200,32 @@ homogeneous compound symmetry covariance structure with total only $k=2$
 variance parameters, otherwise we obtain the heterogeneous compound
 symmetry covariance structure with $k = m + 1$ variance parameters.
 
+# Spatial Covariance Structure
+
+Spatial covariance structures, unlike other covariance structures,
+does not require that the timepoints be consistent between subjects.
+Instead, as long as the distance between visits can be quantified,
+the spatial covariance structure can be applied.
+Euclidean distrance is the most common case.
+For each subject, the covariance structure can be different,
+as they can have totally different timepoints.
+Only homogeneous structures are allowed(the variance is constant in all timepoints).
+
+## Spatial exponential
+
+For spatial exponential, the covariance structure is defined as follows:
+
+\[
+  \rho_{ij} = \rho^{-d_{ij}}
+\]
+
+where $d_{ij}$ is the distance between timepoint $i$ and timepoint $j$,
+$\theta$ is a parameter to control the time-wise correlation.
+
+A total number of parameters $k = 2$ is needed:
+
+\[
+  \theta = (log(\sigma), f(\rho)) 
+\]
+
 # References

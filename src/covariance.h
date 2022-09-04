@@ -127,6 +127,17 @@ matrix<T> get_compound_symmetry_heterogeneous(const vector<T>& theta, int n_visi
   return get_heterogeneous_cov(sd_values, fun);
 }
 
+//Spatial Exponential Cholesky factor.
+template <class T>
+matrix<T> get_spatial_exponential(const vector<T>& theta, const matrix<T>& distance) {
+  T const_sd = exp(theta(0));
+  T const_div = exp(theta(1));
+  vector<T> expdist = exp(-distance) / const_div;
+  matrix<T> result = expdist.resize(distance.rows(), distance.cols());
+  result = result * const_sd;
+  return result.matrixL();
+}
+
 // Creates a new correlation object dynamically.
 template <class T>
 matrix<T> get_covariance_lower_chol(const vector<T>& theta, int n_visits, std::string cov_type) {
@@ -165,6 +176,18 @@ matrix<T> get_cov_lower_chol_grouped(const vector<T>& theta, int n_visits, std::
   for (int i = 0; i < n_groups; i++) {
     matrix<T> lower_chol = get_covariance_lower_chol<T>(theta.segment(i * covariance_size, covariance_size), n_visits, cov_type);
     result << result.block(0, 0, n_visits * i, n_visits), lower_chol;
+  }
+  return result;
+}
+
+// Creates a new spatial covariance cholesky.
+template <class T>
+matrix<T> get_spatial_covariance_lower_chol(const vector<T>& theta, const matrix<T>& distance, std::string cov_type) {
+  matrix<T> result;
+  if (cov_type == "sp_exp") {
+    result = get_spatial_exponential<T>(theta, distance);
+  } else {
+    Rf_error(("Unknown covariance type '" + cov_type + "'.").c_str());
   }
   return result;
 }
