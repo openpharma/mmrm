@@ -19,9 +19,21 @@ test_that("h_mmrm_tmb_control works as expected", {
 })
 
 # h_mmrm_tmb_extract_vars ----
+test_that("h_mmrm_tmb_extract_vars works for non-grouped formula as expected", {
+  cl <- call("cs", quote(a | b))
+  result <- h_mmrm_tmb_extract_vars(cl)
+  expect_identical(
+    result,
+    list(subject_var = "b", visit_var = "a", group_var = NULL)
+  )
+  expect_error(
+    h_mmrm_tmb_extract_vars(call("cs", quote(a + b))),
+    "Covariance structure must be of the form `cs\\(time|\\(group/\\)subject\\)`"
+  )
+})
 
-test_that("h_mmrm_tmb_extract_vars works as expected", {
-  cl <- call("cs", quote(a | b / c ))
+test_that("h_mmrm_tmb_extract_vars works for grouped formula as expected", {
+  cl <- call("cs", quote(a | b / c))
   result <- h_mmrm_tmb_extract_vars(cl)
   expect_identical(
     result,
@@ -38,14 +50,6 @@ test_that("h_mmrm_tmb_extract_vars works as expected", {
   expect_error(
     h_mmrm_tmb_extract_vars(call("cs", quote(a | (b + c) / d))),
     "`group` in `\\(time|\\(group/\\)subject)` must be specified as one single variable."
-  )
-  expect_error(
-    h_mmrm_tmb_extract_vars(call("cs", quote(a + b))),
-    "Covariance structure must be of the form `cs\\(time|\\(group/\\)subject\\)`"
-  )
-  expect_identical(
-    h_mmrm_tmb_extract_vars(call("cs", quote(a | b))),
-    list(subject_var = "b", visit_var = "a", group_var = NULL)
   )
 })
 
@@ -1030,7 +1034,7 @@ test_that("h_mmrm_tmb works with grouped ar1h covariance structure and REML", {
   result_sds <- exp(result$theta_est[c(1:4, 6:9)])
   expected_sds <- sqrt(
     c(109.37350823, 42.81343590, 23.52559796, 128.45926562,
-    76.67358836, 34.38779235, 46.06871404, 219.70601878)
+    76.67358836, 34.38779235, 47.06871404, 219.70601878)
   )
   expect_equal(result_sds, expected_sds, tolerance = 1e-3)
   result_rho <- map_to_cor(result$theta_est[c(5, 10)])
