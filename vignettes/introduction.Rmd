@@ -123,7 +123,7 @@ fit_cs <- mmrm(
 print(fit_cs$cov)
 ```
 
-We cam see that the covariance is different in different ARMCD group.
+We can see that the estimated covariance matrices are different in different `ARMCD` groups.
 
 # Extraction of model features
 
