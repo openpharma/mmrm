@@ -111,7 +111,7 @@ h_mmrm_tmb_extract_vars <- function(cov_term) {
 #' - `visit_var`: `string` with the visit variable name.
 #' - `subject_var`: `string` with the subject variable name.
 #' - `group_var`: `string` with the group variable name. If no group specified, this element
-#'      is NULL.
+#'      is `NULL`.
 #' @keywords internal
 h_mmrm_tmb_formula_parts <- function(formula) {
   assert_formula(formula)
