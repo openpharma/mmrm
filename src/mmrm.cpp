@@ -32,6 +32,7 @@ Type objective_function<Type>::operator() ()
   DATA_MATRIX(x_matrix);           // Model matrix (dimension n x p).
   DATA_VECTOR(y_vector);           // Response vector (length n).
   DATA_IVECTOR(visits_zero_inds);  // Zero-based Visits vector (length n).
+  DATA_SPARSE_MATRIX(distance);    // Distance matrix (block diagonal sparse matrix).
   DATA_INTEGER(n_visits);          // Number of visits, which is the dimension of the covariance matrix.
   DATA_INTEGER(n_subjects);        // Number of subjects.
   DATA_IVECTOR(subject_zero_inds); // Starting indices for each subject (0-based) (length n_subjects).
@@ -53,8 +54,11 @@ Type objective_function<Type>::operator() ()
   vector<Type> y_vec_tilde = vector<Type>::Zero(y_vector.rows());
   // Sum of the log determinant will be incrementally calculated here.
   Type sum_log_det = 0.0;
+  // Get theta_size
+  int theta_size = theta.size() / n_groups;
+
   // Create the lower triangular Cholesky factor of the visit x visit covariance matrix.
-  matrix<Type> covariance_lower_chol  = get_cov_lower_chol_grouped(theta, n_visits, cov_type, n_groups);
+  matrix<Type> covariance_lower_chol = get_cov_lower_chol_grouped(theta, n_visits, cov_type, n_groups);
   // Go through all subjects and calculate quantities initialized above.
   for (int i = 0; i < n_subjects; i++) {
     // Start index and number of visits for this subject.
@@ -62,20 +66,28 @@ Type objective_function<Type>::operator() ()
     int n_visits_i = subject_n_visits(i);
     // Obtain Cholesky factor Li.
     matrix<Type> Li;
-    matrix<Type> lower_chol = covariance_lower_chol.block(subject_groups(i) * n_visits, 0,  n_visits, n_visits);
-    if (n_visits_i < n_visits) {
-      // This subject has less visits, therefore we need to recalculate the Cholesky factor.
-      vector<int> visits_i = visits_zero_inds.segment(start_i, n_visits_i);
-      Eigen::SparseMatrix<Type> sel_mat = get_select_matrix<Type>(visits_i, n_visits);
-      // Note: We cannot use triangular view for covariance_lower_chol here because sel_mat is sparse.
-      matrix<Type> Ltildei = sel_mat * lower_chol;
-      matrix<Type> cov_i = tcrossprod(Ltildei);
-      Eigen::LLT<Eigen::Matrix<Type,Eigen::Dynamic,Eigen::Dynamic> > cov_i_chol(cov_i);
-      Li = cov_i_chol.matrixL();
+    if (cov_type != "gp_exp") {
+      matrix<Type> lower_chol = covariance_lower_chol.block(subject_groups(i) * n_visits, 0,  n_visits, n_visits);
+      if (n_visits_i < n_visits) {
+        // This subject has less visits, therefore we need to recalculate the Cholesky factor.
+        vector<int> visits_i = visits_zero_inds.segment(start_i, n_visits_i);
+        Eigen::SparseMatrix<Type> sel_mat = get_select_matrix<Type>(visits_i, n_visits);
+        // Note: We cannot use triangular view for covariance_lower_chol here because sel_mat is sparse.
+        matrix<Type> Ltildei = sel_mat * lower_chol;
+        matrix<Type> cov_i = tcrossprod(Ltildei);
+        Eigen::LLT<Eigen::Matrix<Type,Eigen::Dynamic,Eigen::Dynamic> > cov_i_chol(cov_i);
+        Li = cov_i_chol.matrixL();
+      } else {
+        // This subject has full number of visits, therefore we can just take the original factor.
+        Li = lower_chol;
+      }
     } else {
-      // This subject has full number of visits, therefore we can just take the original factor.
-      Li = lower_chol;
+      matrix<Type> distance_i = distance.block(start_i, start_i, n_visits_i, n_visits_i);
+      // Obtain Cholesky factor Li.
+      vector<Type> theta_i = theta.segment(subject_groups(i) * theta_size, theta_size);
+      Li = get_spatial_covariance_lower_chol(theta_i, distance_i, cov_type);
     }
+    
 
     // Calculate scaled design matrix and response vector for this subject.
     matrix<Type> Xi = x_matrix.block(start_i, 0, n_visits_i, x_matrix.cols());
@@ -132,7 +144,7 @@ Type objective_function<Type>::operator() ()
   matrix<Type> beta_vcov = XtWX_decomposition.solve(Identity);
   REPORT(beta_vcov);
 
-  REPORT(covariance_lower_chol);
+  REPORT(covariance_lower_chol);  
 
   return neg_log_lik;
 }

@@ -131,11 +131,13 @@ matrix<T> get_compound_symmetry_heterogeneous(const vector<T>& theta, int n_visi
 template <class T>
 matrix<T> get_spatial_exponential(const vector<T>& theta, const matrix<T>& distance) {
   T const_sd = exp(theta(0));
-  T const_div = exp(theta(1));
-  vector<T> expdist = exp(-distance) / const_div;
-  matrix<T> result = expdist.resize(distance.rows(), distance.cols());
-  result = result * const_sd;
-  return result.matrixL();
+  T logrho = exp(theta(1));
+  matrix<T> expdist = exp(-distance.array() *  logrho);
+  matrix<T> result = expdist * const_sd;
+  matrix<T> chol(distance.rows(), distance.cols());
+  Eigen::LLT<Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> > cov_i_chol(result);
+  chol = cov_i_chol.matrixL();
+  return chol;
 }
 
 // Creates a new correlation object dynamically.
@@ -168,27 +170,40 @@ matrix<T> get_covariance_lower_chol(const vector<T>& theta, int n_visits, std::s
   return result;
 }
 
-// Creates a grouped correlation object dynamically.
-template <class T>
-matrix<T> get_cov_lower_chol_grouped(const vector<T>& theta, int n_visits, std::string cov_type, int n_groups) {
-  matrix<T> result(n_visits * n_groups, n_visits);
-  int covariance_size = theta.size() / n_groups;
-  for (int i = 0; i < n_groups; i++) {
-    matrix<T> lower_chol = get_covariance_lower_chol<T>(theta.segment(i * covariance_size, covariance_size), n_visits, cov_type);
-    result << result.block(0, 0, n_visits * i, n_visits), lower_chol;
-  }
-  return result;
-}
-
 // Creates a new spatial covariance cholesky.
 template <class T>
 matrix<T> get_spatial_covariance_lower_chol(const vector<T>& theta, const matrix<T>& distance, std::string cov_type) {
   matrix<T> result;
-  if (cov_type == "sp_exp") {
+  if (cov_type == "gp_exp") {
     result = get_spatial_exponential<T>(theta, distance);
   } else {
     Rf_error(("Unknown covariance type '" + cov_type + "'.").c_str());
   }
+  return result;
+}
+
+// Creates a grouped correlation object dynamically.
+template <class T>
+matrix<T> get_cov_lower_chol_grouped(const vector<T>& theta, int n_visits, std::string cov_type, int n_groups) {
+  if (cov_type == "gp_exp") {
+    n_visits = 2;
+  }
+  matrix<T> result(n_visits * n_groups, n_visits);
+  int covariance_size = theta.size() / n_groups;
+  if (cov_type == "gp_exp") {
+    matrix<T> standard_dist(2, 2);
+    standard_dist << 0, 1, 1, 0;
+    for (int i = 0; i < n_groups; i++) {
+      matrix<T> lower_chol = get_spatial_covariance_lower_chol(vector<T>(theta.segment(2 * i, covariance_size)), standard_dist, cov_type);
+      result << result.block(0, 0, n_visits * i, n_visits), lower_chol;
+    }
+  } else {
+    for (int i = 0; i < n_groups; i++) {
+      matrix<T> lower_chol = get_covariance_lower_chol<T>(theta.segment(i * covariance_size, covariance_size), n_visits, cov_type);
+      result << result.block(0, 0, n_visits * i, n_visits), lower_chol;
+    }
+  }
+  
   return result;
 }
 

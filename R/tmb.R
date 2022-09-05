@@ -119,7 +119,7 @@ h_mmrm_tmb_formula_parts <- function(formula) {
   assert_true(identical(length(formula), 3L))
 
   # Find the covariance specification term in the formula.
-  cov_functions <- c("us", "toep", "toeph", "ar1", "ar1h", "ad", "adh", "cs", "csh")
+  cov_functions <- c(cov_type, cov_type_spatial)
   terms_object <- stats::terms(formula, specials = cov_functions)
   found_specials <- attr(terms_object, "specials")
   cov_selected <- Filter(Negate(is.null), found_specials)
@@ -217,7 +217,11 @@ h_mmrm_tmb_data <- function(formula_parts,
     names(data),
     must.include = unlist(varname, use.names = FALSE)
   )
-  assert_factor(data[[formula_parts$visit_var]])
+  if (formula_parts$cov_type %in% cov_type) {
+    assert_factor(data[[formula_parts$visit_var]])
+  } else {
+    assert_numeric(data[[formula_parts$visit_var]])
+  }
   assert_true(is.factor(data[[formula_parts$subject_var]]) || is.character(data[[formula_parts$subject_var]]))
   assert_flag(reml)
   assert_flag(accept_singular)
@@ -252,13 +256,10 @@ h_mmrm_tmb_data <- function(formula_parts,
   }
 
   y_vector <- as.numeric(stats::model.response(full_frame))
-  visits_zero_inds <- as.integer(full_frame[[formula_parts$visit_var]]) - 1L
-  n_visits <- nlevels(full_frame[[formula_parts$visit_var]])
   n_subjects <- nlevels(full_frame[[formula_parts$subject_var]])
   subject_zero_inds <- which(!duplicated(full_frame[[formula_parts$subject_var]])) - 1L
   subject_n_visits <- c(utils::tail(subject_zero_inds, -1L), nrow(full_frame)) - subject_zero_inds
   assert_true(identical(subject_n_visits, as.integer(table(full_frame[[formula_parts$subject_var]]))))
-
   if (!is.null(formula_parts$group_var)) {
     assert_factor(data[[formula_parts$group_var]])
     subject_groups <- full_frame[[formula_parts$group_var]][subject_zero_inds + 1L]
@@ -267,25 +268,58 @@ h_mmrm_tmb_data <- function(formula_parts,
     subject_groups <- factor(rep(0L, n_subjects))
     n_groups <- 1L
   }
-
-  structure(
-    list(
-      full_frame = full_frame,
-      x_matrix = x_matrix,
-      x_cols_aliased = x_cols_aliased,
-      y_vector = y_vector,
-      visits_zero_inds = visits_zero_inds,
-      n_visits = n_visits,
-      n_subjects = n_subjects,
-      subject_zero_inds = subject_zero_inds,
-      subject_n_visits = subject_n_visits,
-      cov_type = formula_parts$cov_type,
-      reml = as.integer(reml),
-      subject_groups = subject_groups,
-      n_groups = n_groups
-    ),
-    class = "mmrm_tmb_data"
-  )
+  if (formula_parts$cov_type %in% cov_type) {
+    visits_zero_inds <- as.integer(full_frame[[formula_parts$visit_var]]) - 1L
+    n_visits <- nlevels(full_frame[[formula_parts$visit_var]])
+    ret <- structure(
+      list(
+        full_frame = full_frame,
+        x_matrix = x_matrix,
+        x_cols_aliased = x_cols_aliased,
+        distance = as(Matrix::sparseMatrix(i = 1, j = 1, x= 0), "dgTMatrix"),
+        y_vector = y_vector,
+        visits_zero_inds = visits_zero_inds,
+        n_visits = n_visits,
+        n_subjects = n_subjects,
+        subject_zero_inds = subject_zero_inds,
+        subject_n_visits = subject_n_visits,
+        cov_type = formula_parts$cov_type,
+        reml = as.integer(reml),
+        subject_groups = subject_groups,
+        n_groups = n_groups
+      ),
+      class = "mmrm_tmb_data"
+    )
+  } else {
+    distance_list <- lapply(
+      split(full_frame[[formula_parts$visit_var]], full_frame[[formula_parts$subject_var]]),
+      function(x) {
+        as.matrix(dist(x))
+      }
+    )
+    n_visits <- max(subject_n_visits)
+    distance <- Matrix::bdiag(distance_list)
+    ret <- structure(
+      list(
+        full_frame = full_frame,
+        x_matrix = x_matrix,
+        x_cols_aliased = x_cols_aliased,
+        y_vector = y_vector,
+        distance = distance,
+        n_subjects = n_subjects,
+        n_visits = n_visits,
+        visits_zero_inds = 0L,
+        subject_zero_inds = subject_zero_inds,
+        subject_n_visits = subject_n_visits,
+        cov_type = formula_parts$cov_type,
+        reml = as.integer(reml),
+        subject_groups = subject_groups,
+        n_groups = n_groups
+      ),
+      class = "mmrm_tmb_data"
+    )
+  }
+  
 }
 
 #' Start Parameters for `TMB` Fit
@@ -317,7 +351,8 @@ h_mmrm_tmb_parameters <- function(formula_parts,
     ad = m,
     adh = 2 * m - 1,
     cs = 2,
-    csh = m + 1
+    csh = m + 1,
+    gp_exp = 2
   ))
   theta_dim <- theta_dim * n_groups
   if (!is.null(start)) {
@@ -395,7 +430,12 @@ h_mmrm_tmb_assert_opt <- function(tmb_object,
 #' @keywords internal
 h_mmrm_tmb_extract_cov <- function(tmb_report, tmb_data, visit_var) {
   d <- dim(tmb_report$covariance_lower_chol)
-  visit_names <- levels(tmb_data$full_frame[[visit_var]])
+  visits <- tmb_data$full_frame[[visit_var]]
+  if (is.factor(visits)) {
+    visit_names <- levels(visits)
+  } else {
+    visit_names <- c(0, 1)
+  }
   cov <- lapply(
     seq_len(d[1] / d[2]),
     function(i) {
@@ -452,7 +492,6 @@ h_mmrm_tmb_fit <- function(tmb_object,
   assert_data_frame(data)
   assert_class(formula_parts, "mmrm_tmb_formula_parts")
   assert_class(tmb_data, "mmrm_tmb_data")
-  
   tmb_report <- tmb_object$report(par = tmb_opt$par)
   x_matrix_cols <- colnames(tmb_data$x_matrix)
   cov <- h_mmrm_tmb_extract_cov(tmb_report, tmb_data, formula_parts$visit_var)
@@ -467,7 +506,6 @@ h_mmrm_tmb_fit <- function(tmb_object,
     names(tmb_opt),
     c("par", "objective")
   )
-
   structure(
     list(
       cov = cov,

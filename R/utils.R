@@ -88,3 +88,9 @@ h_free_cores <- function() {
   # For safety, we subtract 1 more core from all cores.
   as.integer(max(1, all_cores - busy_cores - 1))
 }
+
+#' covariance type
+#' @rdname covariance_type.Rd
+cov_type <- c("us", "toep", "toeph", "ar1", "ar1h", "ad", "adh", "cs", "csh")
+#' @rdname covariance_type.Rd
+cov_type_spatial <- c("gp_exp")
