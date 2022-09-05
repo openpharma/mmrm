@@ -155,7 +155,7 @@ h_mmrm_tmb_formula_parts <- function(formula) {
     )
   }
   structure(
-    .Data = list(
+    list(
       formula = formula,
       model_formula = model_formula,
       full_formula = full_formula,
