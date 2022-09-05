@@ -2,7 +2,7 @@
 % Please edit documentation in R/tmb.R
 \name{h_mmrm_tmb_extract_cov}
 \alias{h_mmrm_tmb_extract_cov}
-\title{Extract covariance matrix from \code{TMB} report and tmb data}
+\title{Extract covariance matrix from \code{TMB} report and input data}
 \usage{
 h_mmrm_tmb_extract_cov(tmb_report, tmb_data, visit_var)
 }
