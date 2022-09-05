@@ -220,7 +220,6 @@ For spatial exponential, the covariance structure is defined as follows:
 \]
 
 where $d_{ij}$ is the distance between timepoint $i$ and timepoint $j$,
-$\theta$ is a parameter to control the time-wise correlation.
 
 A total number of parameters $k = 2$ is needed:
 
