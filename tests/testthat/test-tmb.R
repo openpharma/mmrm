@@ -774,7 +774,6 @@ test_that("h_mmrm_tmb works with grouped adh covariance structure and REML", {
   expect_equal(result_theta, expected_theta, tolerance = 1e-4)
 })
 
-
 ## toeplitz ----
 
 ### homogeneous ----
@@ -877,8 +876,8 @@ test_that("h_mmrm_tmb works with grouped toeph covariance structure and ML", {
   result_var <- as.numeric(diag(cor_mat$TRT))
   expect_equal(result_var, expected_var, tolerance = 1e-4)
   result_low_tri <- cor_mat$PBO[lower.tri(cor_mat$PBO)]
-  #expected_low_tri <- c(25.2231, 2.4950, -39.4085, 15.9192, 3.5969, 34.0009)
-  #expect_equal(result_low_tri, expected_low_tri, tolerance = 1e-4)
+  expected_low_tri <- c(25.2231, 2.4950, -39.4085, 15.9192, 3.5969, 34.0009)
+  expect_equal(result_low_tri, expected_low_tri, tolerance = 1e-4)
 })
 
 test_that("h_mmrm_tmb works with grouped toeph covariance structure and REML", {
@@ -891,16 +890,21 @@ test_that("h_mmrm_tmb works with grouped toeph covariance structure and REML", {
   expect_equal(deviance(result), 3704.49921127)
   expect_equal(sqrt(result$beta_vcov[1, 1]), 0.3563, tolerance = 1e-3)
   expect_equal(as.numeric(result$beta_est), 41.4766, tolerance = 1e-4)
-  expected_var <- c(104.43, 40.8152, 25.0541, 127.27)
   cor_mat <- VarCorr(result)
-  result_var <- as.numeric(diag(cor_mat$PBO))
-  expect_equal(result_var, expected_var, tolerance = 1e-4)
-  expected_var <- c(74.6153, 34.2766, 49.8505, 220.20)
-  result_var <- as.numeric(diag(cor_mat$TRT))
-  expect_equal(result_var, expected_var, tolerance = 1e-4)
-  result_low_tri <- cor_mat$PBO[lower.tri(cor_mat$PBO)]
-  #expected_low_tri <- c(25.2231, 2.4950, -39.4085, 15.9192, 3.5969, 34.0009)
-  #expect_equal(result_low_tri, expected_low_tri, tolerance = 1e-4)
+  # PBO covariance matrix.
+  expected_pbo_var <- c(104.43, 40.8152, 25.0541, 127.27)
+  result_pbo_var <- as.numeric(diag(cor_mat$PBO))
+  expect_equal(result_pbo_var, expected_pbo_var, tolerance = 1e-4)
+  expected_pbo_rho <- c(0.3315, -0.1172, -0.3567)
+  result_pbo_rho <- map_to_cor(result$theta_est[5:7])
+  expect_equal(result_pbo_rho, expected_pbo_rho, tolerance = 1e-2)
+  # TRT covariance matrix.
+  expected_trt_var <- c(74.6153, 34.2766, 49.8505, 220.20)
+  result_trt_var <- as.numeric(diag(cor_mat$TRT))
+  expect_equal(result_trt_var, expected_trt_var, tolerance = 1e-4)
+  expected_trt_rho <- c(0.4677, 0.1540, -0.2741)
+  result_trt_rho <- map_to_cor(result$theta_est[12:14])
+  expect_equal(result_trt_rho, expected_trt_rho, tolerance = 1e-2)
 })
 
 ## autoregressive ----
@@ -1033,8 +1037,10 @@ test_that("h_mmrm_tmb works with grouped ar1h covariance structure and REML", {
   expect_equal(as.numeric(result$beta_est), 41.7104, tolerance = 1e-4)
   result_sds <- exp(result$theta_est[c(1:4, 6:9)])
   expected_sds <- sqrt(
-    c(109.37350823, 42.81343590, 23.52559796, 128.45926562,
-    76.67358836, 34.38779235, 47.06871404, 219.70601878)
+    c(
+      109.37350823, 42.81343590, 23.52559796, 128.45926562,
+      76.67358836, 34.38779235, 47.06871404, 219.70601878
+    )
   )
   expect_equal(result_sds, expected_sds, tolerance = 1e-3)
   result_rho <- map_to_cor(result$theta_est[c(5, 10)])
@@ -1127,10 +1133,10 @@ test_that("h_mmrm_tmb works with group cs covariance structure and ML", {
   expect_equal(as.numeric(result$beta_est), 41.9714, tolerance = 1e-4)
   result_sd <- exp(result$theta_est[c(1, 3)])
   expected_sd <- sqrt(c(74.8824, 87.3240))
-  #expect_equal(result_sd, expected_sd, tolerance = 1e-4)
-  #result_rho <- map_to_cor(result$theta_est[c(2, 4)])
-  #expected_rho <- 0.06596
-  #expect_equal(result_rho, expected_rho, tolerance = 1e-2)
+  # expect_equal(result_sd, expected_sd, tolerance = 1e-4)
+  # result_rho <- map_to_cor(result$theta_est[c(2, 4)])
+  # expected_rho <- 0.06596
+  # expect_equal(result_rho, expected_rho, tolerance = 1e-2)
 })
 
 test_that("h_mmrm_tmb works with cs covariance structure and REML", {
@@ -1144,10 +1150,10 @@ test_that("h_mmrm_tmb works with cs covariance structure and REML", {
   expect_equal(as.numeric(result$beta_est), 41.9734, tolerance = 1e-4)
   result_sd <- exp(result$theta_est[c(1, 3)])
   expected_sd <- sqrt(c(74.8951, 87.3254))
-  #expect_equal(result_sd, expected_sd, tolerance = 1e-4)
-  #result_rho <- map_to_cor(result$theta_est[c(2, 4)])
-  #expected_rho <- c(3.2130, 9.0248)
-  #expect_equal(result_rho, expected_rho, tolerance = 1e-2)
+  # expect_equal(result_sd, expected_sd, tolerance = 1e-4)
+  # result_rho <- map_to_cor(result$theta_est[c(2, 4)])
+  # expected_rho <- c(3.2130, 9.0248)
+  # expect_equal(result_rho, expected_rho, tolerance = 1e-2)
 })
 
 ### grouped heterogeneous----
