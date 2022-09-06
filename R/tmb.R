@@ -447,7 +447,8 @@ h_mmrm_tmb <- function(formula,
                        control = h_mmrm_tmb_control()) {
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   assert_class(control, "mmrm_tmb_control")
-  assert_vector(weights)
+  assert_numeric(weights, any.missing = FALSE)
+  assert_true(all(weights > 0))
   tmb_data <- h_mmrm_tmb_data(formula_parts, data, weights, reml, accept_singular = control$accept_singular)
   tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = control$start)
 
