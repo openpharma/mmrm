@@ -217,11 +217,6 @@ h_mmrm_tmb_data <- function(formula_parts,
     names(data),
     must.include = unlist(varname, use.names = FALSE)
   )
-  if (formula_parts$cov_type %in% cov_type) {
-    assert_factor(data[[formula_parts$visit_var]])
-  } else {
-    assert_numeric(data[[formula_parts$visit_var]])
-  }
   assert_true(is.factor(data[[formula_parts$subject_var]]) || is.character(data[[formula_parts$subject_var]]))
   assert_flag(reml)
   assert_flag(accept_singular)
@@ -268,57 +263,41 @@ h_mmrm_tmb_data <- function(formula_parts,
     subject_groups <- factor(rep(0L, n_subjects))
     n_groups <- 1L
   }
-  if (formula_parts$cov_type %in% cov_type) {
-    visits_zero_inds <- as.integer(full_frame[[formula_parts$visit_var]]) - 1L
-    n_visits <- nlevels(full_frame[[formula_parts$visit_var]])
-    ret <- structure(
-      list(
-        full_frame = full_frame,
-        x_matrix = x_matrix,
-        x_cols_aliased = x_cols_aliased,
-        distance = as(Matrix::sparseMatrix(i = 1, j = 1, x= 0), "dgTMatrix"),
-        y_vector = y_vector,
-        visits_zero_inds = visits_zero_inds,
-        n_visits = n_visits,
-        n_subjects = n_subjects,
-        subject_zero_inds = subject_zero_inds,
-        subject_n_visits = subject_n_visits,
-        cov_type = formula_parts$cov_type,
-        reml = as.integer(reml),
-        subject_groups = subject_groups,
-        n_groups = n_groups
-      ),
-      class = "mmrm_tmb_data"
+  coordinates <- full_frame[formula_parts$visit_var]
+  if (formula_parts$cov_type %in% cov_type_spatial) {
+    lapply(
+      coordinates,
+      assert_numeric
     )
+    coordinates_matrix <- as.matrix(coordinates)
+    visits_zero_inds <- 0L
+    n_visits <- 2L
   } else {
-    distance_list <- lapply(
-      split(full_frame[[formula_parts$visit_var]], full_frame[[formula_parts$subject_var]]),
-      function(x) {
-        as.matrix(dist(x))
-      }
-    )
-    n_visits <- max(subject_n_visits)
-    distance <- Matrix::bdiag(distance_list)
-    ret <- structure(
-      list(
-        full_frame = full_frame,
-        x_matrix = x_matrix,
-        x_cols_aliased = x_cols_aliased,
-        y_vector = y_vector,
-        distance = distance,
-        n_subjects = n_subjects,
-        n_visits = n_visits,
-        visits_zero_inds = 0L,
-        subject_zero_inds = subject_zero_inds,
-        subject_n_visits = subject_n_visits,
-        cov_type = formula_parts$cov_type,
-        reml = as.integer(reml),
-        subject_groups = subject_groups,
-        n_groups = n_groups
-      ),
-      class = "mmrm_tmb_data"
-    )
+    assert(identical(ncol(coordinates), 1L))
+    assert_factor(coordinates[[1L]])
+    visits_zero_inds <- as.integer(coordinates[[1L]]) - 1L
+    coordinates_matrix <- as.matrix(visits_zero_inds, ncol = 1)
+    n_visits <- nlevels(coordinates[[1L]])
   }
+  ret <- structure(
+    list(
+      full_frame = full_frame,
+      x_matrix = x_matrix,
+      x_cols_aliased = x_cols_aliased,
+      coordinates = coordinates_matrix,
+      y_vector = y_vector,
+      visits_zero_inds = visits_zero_inds,
+      n_visits = n_visits,
+      n_subjects = n_subjects,
+      subject_zero_inds = subject_zero_inds,
+      subject_n_visits = subject_n_visits,
+      cov_type = formula_parts$cov_type,
+      reml = as.integer(reml),
+      subject_groups = subject_groups,
+      n_groups = n_groups
+    ),
+    class = "mmrm_tmb_data"
+  )
   
 }
 
@@ -563,7 +542,6 @@ h_mmrm_tmb <- function(formula,
   assert_class(control, "mmrm_tmb_control")
   tmb_data <- h_mmrm_tmb_data(formula_parts, data, reml, accept_singular = control$accept_singular)
   tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = control$start, n_groups = tmb_data$n_groups)
-
   tmb_object <- TMB::MakeADFun(
     data = tmb_data,
     parameters = tmb_parameters,

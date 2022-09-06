@@ -223,8 +223,12 @@ where $d_{ij}$ is the distance between timepoint $i$ and timepoint $j$,
 
 A total number of parameters $k = 2$ is needed:
 
+The parameterization for $\theta$ is a little different from previous examples.
+In previous examples, $\rho$ can take values from -1 to 1, but here we need to restrict $\rho$ to (0, 1).
+Hence we have the following parametrization form.
+
 \[
-  \theta = (log(\sigma), f(\rho)) 
+  \theta = (\log(\sigma), \log(-\log(\rho)))
 \]
 
 # References
