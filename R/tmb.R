@@ -165,7 +165,7 @@ h_mmrm_tmb_data <- function(formula_parts,
                             accept_singular) {
   assert_class(formula_parts, "mmrm_tmb_formula_parts")
   assert_data_frame(data)
-  assert_vector(weights)
+  assert_numeric(weights, len = nrow(data))
   assert_names(
     names(data),
     must.include = c(formula_parts$visit_var, formula_parts$subject_var)
