@@ -230,6 +230,9 @@ mmrm <- function(formula,
   nobs <- nrow(data)
   if (is.null(weights)){
     weights <- rep(1, nobs)
+    attr(weights, which = "dataname") <- "None"
+  }else{
+    attr(weights, which = "dataname") <- deparse(match.call()$weights)
   }
 
   fit <- fit_single_optimizer(

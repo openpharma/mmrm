@@ -112,6 +112,9 @@ h_print_call <- function(call, n_obs, n_subjects, n_timepoints) {
       fill = TRUE
     )
   }
+  if (!is.null(tmp <- call$weights)) {
+    cat("Weights:    ", tmp, fill = TRUE)
+  }
 }
 
 #' Printing MMRM Covariance Type
