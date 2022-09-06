@@ -40,7 +40,7 @@ fitted.mmrm_tmb <- function(object, ...) {
 }
 
 #' @describeIn mmrm_tmb_methods obtains the model frame.
-#' @param full (`flag`)\cr whether to include subject, visit and weight variable.
+#' @param full (`flag`)\cr whether to include subject, visit and weight variables.
 #' @importFrom stats model.frame
 #' @exportS3Method
 #' @examples
