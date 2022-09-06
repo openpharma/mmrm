@@ -181,7 +181,7 @@ print.mmrm_tmb <- function(x,
     component(x, "call"), component(x, "n_obs"),
     component(x, "n_subjects"), component(x, "n_timepoints")
   )
-  h_print_cov(component(x, "cov_type"), component(x, "n_theta"))
+  h_print_cov(component(x, "cov_type"), component(x, "n_theta"), component(x, "n_groups"))
 
   cat("Method:      ")
   cat(ifelse(component(x, "reml"), "REML", "ML"))

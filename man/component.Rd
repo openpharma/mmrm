@@ -7,9 +7,10 @@
 component(
   object,
   name = c("cov_type", "n_theta", "n_subjects", "n_timepoints", "n_obs", "beta_vcov",
-    "beta_vcov_complete", "varcor", "formula", "dataset", "reml", "convergence",
-    "evaluations", "conv_message", "call", "theta_est", "beta_est", "beta_est_complete",
-    "beta_aliased", "x_matrix", "y_vector", "neg_log_lik", "jac_list", "theta_vcov")
+    "beta_vcov_complete", "varcor", "formula", "dataset", "n_groups", "reml",
+    "convergence", "evaluations", "conv_message", "call", "theta_est", "beta_est",
+    "beta_est_complete", "beta_aliased", "x_matrix", "y_vector", "neg_log_lik",
+    "jac_list", "theta_vcov")
 )
 }
 \arguments{
