@@ -48,7 +48,7 @@ coefficients.}
 
 \item{formula}{(\code{mmrm_tmb})\cr same as \code{object}.}
 
-\item{full}{(\code{flag})\cr whether to include subject, visit and weight variable.}
+\item{full}{(\code{flag})\cr whether to include subject, visit and weight variables.}
 
 \item{x}{(\code{mmrm_tmb})\cr same as \code{object}.}
 
