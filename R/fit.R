@@ -231,9 +231,6 @@ mmrm <- function(formula,
   if (is.null(weights)){
     weights <- rep(1, nobs)
   }
-  if(!is.null(weights) && any(weights <= 0)){
-    stop("only positive weights are allowed")
-  }
 
   fit <- fit_single_optimizer(
     formula = formula,
