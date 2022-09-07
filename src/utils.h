@@ -99,7 +99,4 @@ matrix<T> euclidean(const matrix<T>& coordinates) {
   return result;
 }
 
-// Check if spatial covariance matrix is needed
-bool is_spatial(std::string cov_type);
-
 #endif

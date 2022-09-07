@@ -110,3 +110,17 @@ context("get_heterogeneous_cov") {
     expect_equal_matrix(result, expected);
   }
 }
+
+context("euclidean distance") {
+  test_that("euclidean works as expected") {
+    matrix<double> coord(4, 1);
+    coord << 1, 2, 3, 4;
+    matrix<double> expected(4, 4);
+    expected <<
+      0, 1, sqrt(2), sqrt(3),
+      1, 0, 1, sqrt(2),
+      sqrt(2), 1, 0, 1,
+      sqrt(3), sqrt(2), 1, 0;
+    expect_equal_matrix(euclidean(coord), expected);
+  }
+}

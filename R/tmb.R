@@ -154,12 +154,14 @@ h_mmrm_tmb_formula_parts <- function(formula) {
       stats::as.formula(paste(". ~ . +", cov_vars$group_var))
     )
   }
+  cov_type <- deparse(cov_term[[1L]])
   structure(
     .Data = list(
       formula = formula,
       model_formula = model_formula,
       full_formula = full_formula,
-      cov_type = deparse(cov_term[[1L]]),
+      cov_type = cov_type,
+      spatial = cov_type %in% cov_type_spatial,
       visit_var = cov_vars$visit_var,
       subject_var = cov_vars$subject_var,
       group_var = cov_vars$group_var
@@ -292,6 +294,7 @@ h_mmrm_tmb_data <- function(formula_parts,
       subject_zero_inds = subject_zero_inds,
       subject_n_visits = subject_n_visits,
       cov_type = formula_parts$cov_type,
+      spatial = as.integer(formula_parts$cov_type %in% cov_type_spatial),
       reml = as.integer(reml),
       subject_groups = subject_groups,
       n_groups = n_groups

@@ -62,6 +62,7 @@ test_that("h_mmrm_tmb_formula_parts works as expected", {
       model_formula = FEV1 ~ RACE + SEX + ARMCD + AVISIT + ARMCD:AVISIT,
       full_formula = FEV1 ~ RACE + SEX + ARMCD + AVISIT + USUBJID + ARMCD:AVISIT,
       cov_type = "us",
+      spatial = FALSE,
       visit_var = "AVISIT",
       subject_var = "USUBJID",
       group_var = NULL
@@ -79,6 +80,7 @@ test_that("h_mmrm_tmb_formula_parts works as expected", {
       model_formula = FEV1 ~ RACE + SEX + ARMCD + AVISIT + ARMCD:AVISIT,
       full_formula = FEV1 ~ RACE + SEX + ARMCD + AVISIT + USUBJID + ARMCD:AVISIT,
       cov_type = "us",
+      spatial = FALSE,
       visit_var = "AVISIT",
       subject_var = "USUBJID",
       group_var = "ARMCD"
@@ -125,6 +127,7 @@ test_that("h_mmrm_tmb_formula_parts works without covariates", {
       model_formula = FEV1 ~ 1,
       full_formula = FEV1 ~ USUBJID + AVISIT,
       cov_type = "ar1",
+      spatial = FALSE,
       visit_var = "AVISIT",
       subject_var = "USUBJID",
       group_var = NULL
@@ -164,7 +167,7 @@ test_that("h_mmrm_tmb_data works as expected", {
     result,
     c(
       "full_frame", "x_matrix", "x_cols_aliased", "y_vector", "visits_zero_inds", "n_visits", "n_subjects",
-      "subject_zero_inds", "subject_n_visits", "cov_type", "reml", "subject_groups", "n_groups"
+      "subject_zero_inds", "subject_n_visits", "cov_type", "spatial", "reml", "subject_groups", "n_groups"
     )
   )
   expect_matrix(result$x_matrix, nrows = 537, ncols = 3, any.missing = FALSE)
@@ -187,7 +190,7 @@ test_that("h_mmrm_tmb_data works as expected for grouped covariance", {
     result,
     c(
       "full_frame", "x_matrix", "x_cols_aliased", "y_vector", "visits_zero_inds", "n_visits", "n_subjects",
-      "subject_zero_inds", "subject_n_visits", "cov_type", "reml", "subject_groups", "n_groups"
+      "subject_zero_inds", "subject_n_visits", "cov_type", "spatial", "reml", "subject_groups", "n_groups"
     )
   )
   expect_matrix(result$x_matrix, nrows = 537, ncols = 3, any.missing = FALSE)
