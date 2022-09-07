@@ -3,6 +3,7 @@
     Formula:     FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
     Data:        fev_data (used 1 observations from 2 subjects with maximum 3 
     timepoints)
+    Weights:     None
 
 # h_print_cov works as expected
 
@@ -20,6 +21,7 @@
     Formula:     FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
     Data:        fev_data (used 537 observations from 197 subjects with maximum 4 
     timepoints)
+    Weights:     None
     Covariance:  unstructured (10 variance parameters)
     
     Model selection criteria:
@@ -57,6 +59,7 @@
     Formula:     FEV1 ~ RACE + SEX + SEX2 + ARMCD * AVISIT + us(AVISIT | USUBJID)
     Data:        .mmrm_dat_rank_deficient (used 537 observations from 197 
     subjects with maximum 4 timepoints)
+    Weights:     None
     Covariance:  unstructured (10 variance parameters)
     
     Model selection criteria:
