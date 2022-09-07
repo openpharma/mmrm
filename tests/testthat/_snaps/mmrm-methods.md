@@ -3,7 +3,13 @@
     Formula:     FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
     Data:        fev_data (used 1 observations from 2 subjects with maximum 3 
     timepoints)
-    Weights:     None
+
+# h_print_call works as expected for weighted fits
+
+    Formula:     FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
+    Data:        fev_data (used 1 observations from 2 subjects with maximum 3 
+    timepoints)
+    Weights:     .mmrm_weights
 
 # h_print_cov works as expected
 
@@ -21,8 +27,8 @@
     Formula:     FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
     Data:        fev_data (used 537 observations from 197 subjects with maximum 4 
     timepoints)
-    Weights:     None
     Covariance:  unstructured (10 variance parameters)
+    Method:      REML
     
     Model selection criteria:
          AIC      BIC   logLik deviance 
@@ -52,6 +58,45 @@
     VIS4 13.4  7.5  0.9 95.6
     
 
+# print.summary.mmrm works as expected for weighted models
+
+    mmrm fit
+    
+    Formula:     FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
+    Data:        fev_data (used 537 observations from 197 subjects with maximum 4 
+    timepoints)
+    Weights:     .mmrm_weights
+    Covariance:  unstructured (10 variance parameters)
+    Method:      REML
+    
+    Model selection criteria:
+         AIC      BIC   logLik deviance 
+      3446.0   3478.8  -1713.0   3426.0 
+    
+    Coefficients: 
+                                  Estimate Std. Error     df t value Pr(>|t|)    
+    (Intercept)                      30.34       0.91 222.00    33.5   <2e-16 ***
+    RACEBlack or African American     1.91       0.61 180.00     3.1    0.002 ** 
+    RACEWhite                         6.07       0.65 163.00     9.3   <2e-16 ***
+    SEXFemale                         0.56       0.52 175.00     1.1    0.281    
+    ARMCDTRT                          3.67       1.09 146.00     3.4    1e-03 ***
+    AVISITVIS2                        4.86       0.83 144.00     5.8    4e-08 ***
+    AVISITVIS3                       10.48       0.85 159.00    12.3   <2e-16 ***
+    AVISITVIS4                       15.58       1.29 128.00    12.1   <2e-16 ***
+    ARMCDTRT:AVISITVIS2              -0.03       1.15 140.00     0.0    0.977    
+    ARMCDTRT:AVISITVIS3              -0.65       1.21 163.00    -0.5    0.596    
+    ARMCDTRT:AVISITVIS4               0.02       1.82 120.00     0.0    0.990    
+    ---
+    Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    
+    Covariance estimate:
+          VIS1  VIS2 VIS3  VIS4
+    VIS1 251.6  88.5 27.9  87.7
+    VIS2  88.5 159.5 13.4  48.7
+    VIS3  27.9  13.4 90.7   2.3
+    VIS4  87.7  48.7  2.3 542.6
+    
+
 # print.summary.mmrm works as expected for rank deficient fits
 
     mmrm fit
@@ -59,8 +104,8 @@
     Formula:     FEV1 ~ RACE + SEX + SEX2 + ARMCD * AVISIT + us(AVISIT | USUBJID)
     Data:        .mmrm_dat_rank_deficient (used 537 observations from 197 
     subjects with maximum 4 timepoints)
-    Weights:     None
     Covariance:  unstructured (10 variance parameters)
+    Method:      REML
     
     Model selection criteria:
          AIC      BIC   logLik deviance 

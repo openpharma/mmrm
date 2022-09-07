@@ -227,11 +227,9 @@ mmrm <- function(formula,
 
   attr(data, which = "dataname") <- toString(match.call()$data)
 
-  nobs <- nrow(data)
-  if (is.null(weights)){
-    weights <- rep(1, nobs)
-    attr(weights, which = "dataname") <- "None"
-  }else{
+  if (is.null(weights)) {
+    weights <- rep(1, nrow(data))
+  } else {
     attr(weights, which = "dataname") <- deparse(match.call()$weights)
   }
 

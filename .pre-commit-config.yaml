@@ -19,6 +19,7 @@ repos:
           - numDeriv
           - TMB
           - pkgbuild
+          - Rdpack
       - id: use-tidy-description
       - id: spell-check
         exclude: >
@@ -60,6 +61,7 @@ repos:
           - emmeans
           - numDeriv
           - TMB
+          - Rdpack
       - id: readme-rmd-rendered
       - id: parsable-R
       - id: no-browser-statement

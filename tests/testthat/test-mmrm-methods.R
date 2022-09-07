@@ -34,7 +34,7 @@ test_that("summary works as expected", {
   expect_named(
     result,
     c(
-      "cov_type", "n_theta", "n_subjects", "n_timepoints", "n_obs",
+      "cov_type", "reml", "n_theta", "n_subjects", "n_timepoints", "n_obs",
       "beta_vcov", "varcor", "coefficients", "n_singular_coefs", "aic_list", "call"
     )
   )
@@ -44,6 +44,11 @@ test_that("summary works as expected", {
 
 test_that("h_print_call works as expected", {
   object <- get_mmrm()
+  expect_snapshot_output(h_print_call(object$call, 1, 2, 3), cran = TRUE)
+})
+
+test_that("h_print_call works as expected for weighted fits", {
+  object <- get_mmrm_weighted()
   expect_snapshot_output(h_print_call(object$call, 1, 2, 3), cran = TRUE)
 })
 
@@ -69,6 +74,12 @@ test_that("h_print_aic_list works as expected", {
 
 test_that("print.summary.mmrm works as expected", {
   object <- get_mmrm()
+  result <- summary(object)
+  expect_snapshot_output(print(result, digits = 1), cran = FALSE)
+})
+
+test_that("print.summary.mmrm works as expected for weighted models", {
+  object <- get_mmrm_weighted()
   result <- summary(object)
   expect_snapshot_output(print(result, digits = 1), cran = FALSE)
 })

@@ -485,11 +485,10 @@ h_mmrm_tmb <- function(formula,
     attr(data, which = "dataname"),
     toString(match.call()$data)
   )
-  fun_call$weights <- ifelse(
-    !is.null(attr(weights, which = "dataname")),
-    attr(weights, which = "dataname"),
-    deparse(match.call()$weights)
-  )
+  weights_str <- attr(weights, which = "dataname")
+  if (!is.null(weights_str)) {
+    fun_call$weights <- weights_str
+  }
   fit$call <- fun_call
   fit
 }
