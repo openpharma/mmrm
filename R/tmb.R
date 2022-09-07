@@ -532,7 +532,7 @@ h_mmrm_tmb_fit <- function(tmb_object,
 #' @examples
 #' formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
 #' data <- fev_data
-#' system.time(result <- h_mmrm_tmb(formula, data))
+#' system.time(result <- h_mmrm_tmb(formula, data, rep(1, nrow(fev_data))))
 h_mmrm_tmb <- function(formula,
                        data,
                        weights,

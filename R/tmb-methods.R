@@ -13,7 +13,7 @@
 #'
 #' @examples
 #' formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
-#' object <- h_mmrm_tmb(formula, fev_data)
+#' object <- h_mmrm_tmb(formula, fev_data, weights = rep(1, nrow(fev_data)))
 NULL
 
 #' @describeIn mmrm_tmb_methods obtains the estimated coefficients.

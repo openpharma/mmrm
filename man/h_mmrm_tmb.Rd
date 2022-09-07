@@ -41,5 +41,5 @@ subject variables.
 \examples{
 formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
 data <- fev_data
-system.time(result <- h_mmrm_tmb(formula, data))
+system.time(result <- h_mmrm_tmb(formula, data, rep(1, nrow(fev_data))))
 }
