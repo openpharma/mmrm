@@ -105,6 +105,20 @@ fit_cs <- mmrm(
 print(fit_cs)
 ```
 
+## Weighting
+
+Users can perform weighted MMRM by specifying a numeric vector `weights` with positive values.
+
+```{r common-changes-weights}
+fit_wt <- mmrm(
+  formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data,
+  weights = fev_data$WEIGHT
+)
+
+print(fit_wt)
+```
+
 # Extraction of model features
 
 Similar to model objects created in other packages, components of `mmrm` and
