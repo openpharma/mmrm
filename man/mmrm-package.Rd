@@ -27,6 +27,7 @@ Authors:
   \item Ya Wang \email{ya.wang10@gilead.com}
   \item Craig Gower-Page \email{craig.gower-page@roche.com}
   \item Alessandro Noci \email{alessandro.noci@roche.com}
+  \item Liming Li \email{liming.li@roche.com}
 }
 
 }

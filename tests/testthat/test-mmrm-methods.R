@@ -34,7 +34,7 @@ test_that("summary works as expected", {
   expect_named(
     result,
     c(
-      "cov_type", "reml", "n_theta", "n_subjects", "n_timepoints", "n_obs",
+      "cov_type", "reml", "n_groups", "n_theta", "n_subjects", "n_timepoints", "n_obs",
       "beta_vcov", "varcor", "coefficients", "n_singular_coefs", "aic_list", "call"
     )
   )
@@ -56,7 +56,8 @@ test_that("h_print_call works as expected for weighted fits", {
 
 test_that("h_print_cov works as expected", {
   object <- get_mmrm()
-  expect_snapshot_output(h_print_cov("toep", 3), cran = TRUE)
+  expect_snapshot_output(h_print_cov("toep", 3, 1L), cran = TRUE)
+  expect_snapshot_output(h_print_cov("toep", 6, 2L), cran = TRUE)
 })
 
 # h_print_aic_list ----

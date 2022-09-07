@@ -19,6 +19,8 @@ List of class \code{mmrm_tmb_formula_parts} with elements:
 \item \code{cov_type}: \code{string} with covariance term type (e.g. \code{"us"}).
 \item \code{visit_var}: \code{string} with the visit variable name.
 \item \code{subject_var}: \code{string} with the subject variable name.
+\item \code{group_var}: \code{string} with the group variable name. If no group specified, this element
+is \code{NULL}.
 }
 }
 \description{

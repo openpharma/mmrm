@@ -157,4 +157,16 @@ matrix<T> get_covariance_lower_chol(const vector<T>& theta, int n_visits, std::s
   return result;
 }
 
+// Creates a grouped correlation object dynamically.
+template <class T>
+matrix<T> get_cov_lower_chol_grouped(const vector<T>& theta, int n_visits, std::string cov_type, int n_groups) {
+  matrix<T> result(n_visits * n_groups, n_visits);
+  int covariance_size = theta.size() / n_groups;
+  for (int i = 0; i < n_groups; i++) {
+    matrix<T> lower_chol = get_covariance_lower_chol<T>(theta.segment(i * covariance_size, covariance_size), n_visits, cov_type);
+    result << result.block(0, 0, n_visits * i, n_visits), lower_chol;
+  }
+  return result;
+}
+
 #endif

@@ -1,0 +1,246 @@
+                                                           The SAS System               Saturday, September  3, 2022 02:55:00 AM   1
+
+                                                        The Mixed Procedure
+
+                                                         Model Information
+
+                                       Data Set                     ANA.DAT                  
+                                       Dependent Variable           FEV1                     
+                                       Covariance Structure         Heterogeneous Toeplitz   
+                                       Subject Effect               USUBJID                  
+                                       Group Effect                 ARMCD                    
+                                       Estimation Method            REML                     
+                                       Residual Variance Method     None                     
+                                       Fixed Effects SE Method      Model-Based              
+                                       Degrees of Freedom Method    Satterthwaite            
+
+
+                                                      Class Level Information
+ 
+                                        Class      Levels    Values
+
+                                        AVISIT          4    VIS1 VIS2 VIS3 VIS4           
+                                        USUBJID       200    PT1 PT10 PT100 PT101 PT102    
+                                                             PT103 PT104 PT105 PT106 PT107 
+                                                             PT108 PT109 PT11 PT110 PT111  
+                                                             PT112 PT113 PT114 PT115 PT116 
+                                                             PT117 PT118 PT119 PT12 PT120  
+                                                             PT121 PT122 PT123 PT124 PT125 
+                                                             PT126 PT127 PT128 PT129 PT13  
+                                                             PT130 PT131 PT132 PT133 PT134 
+                                                             PT135 PT136 PT137 PT138 PT139 
+                                                             PT14 PT140 PT141 PT142 PT143  
+                                                             PT144 PT145 PT146 PT147 PT148 
+                                                             PT149 PT15 PT150 PT151 PT152  
+                                                             PT153 PT154 PT155 PT156 PT157 
+                                                             PT158 PT159 PT16 PT160 PT161  
+                                                             PT162 PT163 PT164 PT165 PT166 
+                                                             PT167 PT168 PT169 PT17 PT170  
+                                                             PT171 PT172 PT173 PT174 PT175 
+                                                             PT176 PT177 PT178 PT179 PT18  
+                                                             PT180 PT181 PT182 PT183 PT184 
+                                                             PT185 PT186 PT187 PT188 PT189 
+                                                             PT19 PT190 PT191 PT192 PT193  
+                                                             PT194 PT195 PT196 PT197 PT198 
+                                                             PT199 PT2 PT20 PT200 PT21 PT22
+                                                             PT23 PT24 PT25 PT26 PT27 PT28 
+                                                             PT29 PT3 PT30 PT31 PT32 PT33  
+                                                             PT34 PT35 PT36 PT37 PT38 PT39 
+                                                             PT4 PT40 PT41 PT42 PT43 PT44  
+                                                             PT45 PT46 PT47 PT48 PT49 PT5  
+                                                             PT50 PT51 PT52 PT53 PT54 PT55 
+                                                             PT56 PT57 PT58 PT59 PT6 PT60  
+                                                             PT61 PT62 PT63 PT64 PT65 PT66 
+                                                             PT67 PT68 PT69 PT7 PT70 PT71  
+                                                             PT72 PT73 PT74 PT75 PT76 PT77 
+                                                             PT78 PT79 PT8 PT80 PT81 PT82  
+                                                             PT83 PT84 PT85 PT86 PT87 PT88 
+                                                             PT89 PT9 PT90 PT91 PT92 PT93  
+                                                             PT94 PT95 PT96 PT97 PT98 PT99 
+                                        ARMCD           2    PBO TRT                       
+                                                           The SAS System               Saturday, September  3, 2022 02:55:00 AM   2
+
+                                                        The Mixed Procedure
+
+                                                            Dimensions
+
+                                                Covariance Parameters            14
+                                                Columns in X                      1
+                                                Columns in Z                      0
+                                                Subjects                        200
+                                                Max Obs per Subject               4
+
+
+                                                      Number of Observations
+
+                                            Number of Observations Read             800
+                                            Number of Observations Used             537
+                                            Number of Observations Not Used         263
+
+
+                                                         Iteration History
+ 
+                                    Iteration    Evaluations    -2 Res Log Like       Criterion
+
+                                            0              1      3920.48098100                
+                                            1              2      3733.10604147      0.01047443
+                                            2              1      3714.85122756      0.00440116
+                                            3              1      3707.29806583      0.00149254
+                                            4              1      3704.86080027      0.00023484
+                                            5              1      3704.50920550      0.00000719
+                                            6              1      3704.49921127      0.00000001
+
+
+                                                     Convergence criteria met.                    
+
+
+                                                         Estimated R Matrix
+                                                           for USUBJID PT1
+ 
+                                                     Row        Col1        Col2
+
+                                                       1     34.2766     13.3760
+                                                       2     13.3760      220.20
+
+
+                                                       Estimated R Correlation
+                                                       Matrix for USUBJID PT1
+ 
+                                                     Row        Col1        Col2
+
+                                                       1      1.0000      0.1540
+                                                       2      0.1540      1.0000
+
+
+                                                           The SAS System               Saturday, September  3, 2022 02:55:00 AM   3
+
+                                                        The Mixed Procedure
+
+                                                             Estimated R
+                                                             Matrix for
+                                                            USUBJID PT10
+ 
+                                                           Row        Col1
+
+                                                             1     25.0541
+
+
+                                                Estimated R Matrix for USUBJID PT100
+ 
+                                               Row        Col1        Col2        Col3
+
+                                                 1      104.43     21.6421     -5.9969
+                                                 2     21.6421     40.8152     10.6006
+                                                 3     -5.9969     10.6006     25.0541
+
+
+                                                         Estimated R Matrix
+                                                          for USUBJID PT101
+ 
+                                                     Row        Col1        Col2
+
+                                                       1     34.2766     19.3333
+                                                       2     19.3333     49.8505
+
+
+                                                Estimated R Matrix for USUBJID PT102
+ 
+                                         Row        Col1        Col2        Col3        Col4
+
+                                           1      104.43     21.6421     -5.9969    -41.1236
+                                           2     21.6421     40.8152     10.6006     -8.4500
+                                           3     -5.9969     10.6006     25.0541     18.7191
+                                           4    -41.1236     -8.4500     18.7191      127.27
+
+
+                                                Estimated R Matrix for USUBJID PT103
+ 
+                                               Row        Col1        Col2        Col3
+
+                                                 1      104.43     21.6421     -5.9969
+                                                 2     21.6421     40.8152     10.6006
+                                                 3     -5.9969     10.6006     25.0541
+
+
+                                                Estimated R Matrix for USUBJID PT104
+ 
+                                               Row        Col1        Col2        Col3
+
+                                                 1      104.43     -5.9969    -41.1236
+                                                 2     -5.9969     25.0541     18.7191
+                                                 3    -41.1236     18.7191      127.27
+                                                           The SAS System               Saturday, September  3, 2022 02:55:00 AM   4
+
+                                                        The Mixed Procedure
+
+                                                         Estimated R Matrix
+                                                          for USUBJID PT105
+ 
+                                                     Row        Col1        Col2
+
+                                                       1     34.2766     19.3333
+                                                       2     19.3333     49.8505
+
+
+                                                Estimated R Matrix for USUBJID PT106
+ 
+                                         Row        Col1        Col2        Col3        Col4
+
+                                           1     74.6153     23.6529      9.3900    -35.1371
+                                           2     23.6529     34.2766     19.3333     13.3760
+                                           3      9.3900     19.3333     49.8505     49.0025
+                                           4    -35.1371     13.3760     49.0025      220.20
+
+
+                                                         Estimated R Matrix
+                                                          for USUBJID PT107
+ 
+                                                     Row        Col1        Col2
+
+                                                       1     25.0541     18.7191
+                                                       2     18.7191      127.27
+
+
+                                                  Covariance Parameter Estimates
+ 
+                          Cov Parm     Subject    Group        Estimate     Alpha       Lower       Upper
+
+                          Var(1)       USUBJID    ARMCD PBO      104.43      0.05     75.4855      154.00
+                          Var(2)       USUBJID    ARMCD PBO     40.8152      0.05     29.6289     59.8251
+                          Var(3)       USUBJID    ARMCD PBO     25.0541      0.05     17.9322     37.4767
+                          Var(4)       USUBJID    ARMCD PBO      127.27      0.05     93.2262      184.18
+                          TOEPH(1)     USUBJID    ARMCD PBO      0.3315      0.05      0.2083      0.4547
+                          TOEPH(2)     USUBJID    ARMCD PBO     -0.1172      0.05     -0.3118     0.07727
+                          TOEPH(3)     USUBJID    ARMCD PBO     -0.3567      0.05     -0.6283    -0.08509
+                          Var(1)       USUBJID    ARMCD TRT     74.6153      0.05     54.7856      107.62
+                          Var(2)       USUBJID    ARMCD TRT     34.2766      0.05     25.2376     49.2445
+                          Var(3)       USUBJID    ARMCD TRT     49.8505      0.05     35.0345     76.5906
+                          Var(4)       USUBJID    ARMCD TRT      220.20      0.05      163.17      313.56
+                          TOEPH(1)     USUBJID    ARMCD TRT      0.4677      0.05      0.3426      0.5928
+                          TOEPH(2)     USUBJID    ARMCD TRT      0.1540      0.05    -0.02929      0.3372
+                          TOEPH(3)     USUBJID    ARMCD TRT     -0.2741      0.05     -0.5278    -0.02044
+
+
+                                                          Fit Statistics
+
+                                               -2 Res Log Likelihood          3704.5
+                                               AIC (Smaller is Better)        3732.5
+                                               AICC (Smaller is Better)       3733.3
+                                               BIC (Smaller is Better)        3778.7
+                                                           The SAS System               Saturday, September  3, 2022 02:55:00 AM   5
+
+                                                        The Mixed Procedure
+
+                                                  Null Model Likelihood Ratio Test
+ 
+                                                    DF    Chi-Square      Pr > ChiSq
+
+                                                    13        215.98          <.0001
+
+
+                                                     Solution for Fixed Effects
+ 
+                                                           Standard
+                                  Effect       Estimate       Error      DF    t Value    Pr > |t|
+
+                                  Intercept     41.4766      0.3563     170     116.39      <.0001

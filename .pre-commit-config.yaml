@@ -22,6 +22,7 @@ repos:
           - TMB
           - pkgbuild
           - Rdpack
+          - testthat
       - id: use-tidy-description
       - id: spell-check
         exclude: >
@@ -64,6 +65,7 @@ repos:
           - numDeriv
           - TMB
           - Rdpack
+          - testthat
       - id: readme-rmd-rendered
       - id: parsable-R
       - id: no-browser-statement

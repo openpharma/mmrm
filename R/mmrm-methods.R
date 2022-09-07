@@ -69,7 +69,7 @@ summary.mmrm <- function(object, ...) {
   coefficients <- h_coef_table(object)
   call <- stats::getCall(object)
   components <- component(object, c(
-    "cov_type", "reml", "n_theta",
+    "cov_type", "reml", "n_groups", "n_theta",
     "n_subjects", "n_timepoints", "n_obs",
     "beta_vcov", "varcor"
   ))
@@ -124,12 +124,12 @@ h_print_call <- function(call, n_obs, n_subjects, n_timepoints) {
 #'
 #' @param cov_type (`string`)\cr covariance structure abbreviation.
 #' @param n_theta (`int`)\cr number of variance parameters.
-#'
+#' @param n_groups (`int`)\cr number of groups
 #' @keywords internal
-h_print_cov <- function(cov_type, n_theta) {
+h_print_cov <- function(cov_type, n_theta, n_groups) {
   assert_string(cov_type)
-  assert_int(n_theta, lower = 1)
-
+  assert_int(n_theta, lower = 1L)
+  assert_int(n_groups, lower = 1L)
   cov_definition <- switch(cov_type,
     us = "unstructured",
     toep = "Toeplitz",
@@ -141,11 +141,14 @@ h_print_cov <- function(cov_type, n_theta) {
     cs = "compound symmetry",
     csh = "heterogeneous compound symmetry"
   )
-  cat(
-    "Covariance:  ", cov_definition,
-    " (", n_theta, " variance parameters)",
-    fill = TRUE, sep = ""
+
+  catstr <- sprintf(
+    "Covariance:  %s (%d variance parameters%s)\n",
+    cov_definition,
+    n_theta,
+    ifelse(n_groups == 1L, "", sprintf(" of %d groups", n_groups))
   )
+  cat(catstr)
 }
 
 #' Printing AIC and other Model Fit Criteria
@@ -172,7 +175,7 @@ print.summary.mmrm <- function(x,
                                ...) {
   cat("mmrm fit\n\n")
   h_print_call(x$call, x$n_obs, x$n_subjects, x$n_timepoints)
-  h_print_cov(x$cov_type, x$n_theta)
+  h_print_cov(x$cov_type, x$n_theta, x$n_groups)
   cat("Method:      ")
   cat(ifelse(x$reml, "REML", "ML"))
   cat("\n\n")
@@ -192,7 +195,14 @@ print.summary.mmrm <- function(x,
   )
   cat("\n")
   cat("Covariance estimate:\n")
-  print(round(x$varcor, digits = digits))
+  if (is.list(x$varcor)) {
+    for (v in names(x$varcor)) {
+      cat(sprintf("Group: %s\n", v))
+      print(round(x$varcor[[v]], digits = digits))
+    }
+  } else {
+    print(round(x$varcor, digits = digits))
+  }
   cat("\n")
   invisible(x)
 }
