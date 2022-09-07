@@ -17,6 +17,7 @@
 #' mod_fit <- fit_single_optimizer(
 #'   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
 #'   data = fev_data,
+#'   weights = rep(1, nrow(fev_data)),
 #'   optimizer = "nlminb"
 #' )
 #' attr(mod_fit, "converged")
@@ -112,6 +113,7 @@ h_summarize_all_fits <- function(all_fits) {
 #' fit <- fit_single_optimizer(
 #'   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
 #'   data = fev_data,
+#'   weights = rep(1, nrow(fev_data)),
 #'   optimizer = "nlminb"
 #' )
 #' best_fit <- refit_multiple_optimizers(fit)
