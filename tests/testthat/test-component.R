@@ -10,7 +10,7 @@ test_that("component works as expected", {
     c(
       "cov_type", "n_theta", "n_subjects", "n_timepoints",
       "n_obs", "beta_vcov", "beta_vcov_complete", "varcor", "formula", "dataset",
-      "reml", "convergence", "evaluations",
+      "n_groups", "reml", "convergence", "evaluations",
       "conv_message", "call", "theta_est",
       "beta_est", "beta_est_complete", "beta_aliased",
       "x_matrix", "y_vector", "neg_log_lik",
@@ -19,7 +19,7 @@ test_that("component works as expected", {
   )
 
   expect_numeric(component(object_mmrm_tmb, "n_theta"), lower = 0)
-
+  expect_identical(component(object_mmrm_tmb, "n_groups"), 1L)
   test_list <- component(object_mmrm_tmb,
     name = c("n_theta", "NULL", "x_matrix", "varcor")
   )

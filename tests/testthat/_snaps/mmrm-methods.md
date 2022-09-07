@@ -8,6 +8,10 @@
 
     Covariance:  Toeplitz (3 variance parameters)
 
+---
+
+    Covariance:  Toeplitz (6 variance parameters of 2 groups)
+
 # h_print_aic_list works as expected
 
          AIC      BIC   logLik deviance 

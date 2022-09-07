@@ -88,7 +88,7 @@ We can write the linear model for all subjects together as
 Y = X\beta + \epsilon
 \]
 where $Y \in \mathbb{R}^N$ combines all subject specific observations vectors $Y_i$
-such that we have in total $N = \sum_{i = 1}^{m_i}$ observations,
+such that we have in total $N = \sum_{i = 1}^{n}{m_i}$ observations,
 $X \in \mathbb{R}^{N \times p}$ combines all subject specific design matrices
 and $\epsilon \in \mathbb{R}^N$ has a multivariate normal distribution
 \[
@@ -139,6 +139,22 @@ we need $k = 10$ variance parameters to model the unstructured covariance matrix
 
 Other covariance matrix choices are explained in the
 [covariance structures vignette](covariance.html).
+
+#### Grouped covariance matrix
+
+In some cases, we would like to estimate unique covariance matrices across groups, while keeping the covariance structure (unstructured, ante-dependence, Toeplitz, etc.) consistent across groups.
+Following the notations in the previous section, for subject $i$ in group $g(i)$, we have
+
+\[
+\Sigma_{i} = S_i^\top \Sigma_{g(i)} S_i
+\]
+
+where $g(i)$ is the group of subject $i$ and $\Sigma_{g(i)}$ is the covariance matrix of group $g(i)$.
+
+
+The parametrization of $\theta$ is similar to other non-grouped $\theta$.
+Assume that there are total number of $G$ groups, the length of $\theta$ is multiplied by $G$, and for each part, $\theta$ is parametrized in the same fashion.
+For example, for an unstructured covariance matrix, $\theta$ has $k = G * m(m+1)/2$ entries.
 
 ## Maximum Likelihood Estimation
 

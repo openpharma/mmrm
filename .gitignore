@@ -31,4 +31,5 @@ design/TMB/*.o
 design/TMB/*.so
 src/*.o
 src/*.so
+.vscode
 src/*.dll
