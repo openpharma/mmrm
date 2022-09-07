@@ -19,9 +19,21 @@ test_that("h_mmrm_tmb_control works as expected", {
 })
 
 # h_mmrm_tmb_extract_vars ----
+test_that("h_mmrm_tmb_extract_vars works for non-grouped formula as expected", {
+  cl <- call("cs", quote(a | b))
+  result <- h_mmrm_tmb_extract_vars(cl)
+  expect_identical(
+    result,
+    list(subject_var = "b", visit_var = "a", group_var = NULL)
+  )
+  expect_error(
+    h_mmrm_tmb_extract_vars(call("cs", quote(a + b))),
+    "Covariance structure must be of the form `cs\\(time|\\(group/\\)subject\\)`"
+  )
+})
 
-test_that("h_mmrm_tmb_extract_vars works as expected", {
-  cl <- call("cs", quote(a | b / c ))
+test_that("h_mmrm_tmb_extract_vars works for grouped formula as expected", {
+  cl <- call("cs", quote(a | b / c))
   result <- h_mmrm_tmb_extract_vars(cl)
   expect_identical(
     result,
@@ -38,14 +50,6 @@ test_that("h_mmrm_tmb_extract_vars works as expected", {
   expect_error(
     h_mmrm_tmb_extract_vars(call("cs", quote(a | (b + c) / d))),
     "`group` in `\\(time|\\(group/\\)subject)` must be specified as one single variable."
-  )
-  expect_error(
-    h_mmrm_tmb_extract_vars(call("cs", quote(a + b))),
-    "Covariance structure must be of the form `cs\\(time|\\(group/\\)subject\\)`"
-  )
-  expect_identical(
-    h_mmrm_tmb_extract_vars(call("cs", quote(a | b))),
-    list(subject_var = "b", visit_var = "a", group_var = NULL)
   )
 })
 
@@ -147,6 +151,7 @@ test_that("h_mmrm_tmb_formula_parts works as expected for antedependence", {
       model_formula = FEV1 ~ RACE + SEX + ARMCD + AVISIT + ARMCD:AVISIT,
       full_formula = FEV1 ~ RACE + SEX + ARMCD + AVISIT + USUBJID + ARMCD:AVISIT,
       cov_type = "ad",
+      spatial = FALSE,
       visit_var = "AVISIT",
       subject_var = "USUBJID",
       group_var = NULL
@@ -166,8 +171,8 @@ test_that("h_mmrm_tmb_data works as expected", {
   expect_named(
     result,
     c(
-      "full_frame", "x_matrix", "x_cols_aliased", "y_vector", "visits_zero_inds", "n_visits", "n_subjects",
-      "subject_zero_inds", "subject_n_visits", "cov_type", "spatial", "reml", "subject_groups", "n_groups"
+      "full_frame", "x_matrix", "x_cols_aliased", "coordinates", "y_vector", "visits_zero_inds", "n_visits",
+      "n_subjects", "subject_zero_inds", "subject_n_visits", "cov_type", "spatial", "reml", "subject_groups", "n_groups"
     )
   )
   expect_matrix(result$x_matrix, nrows = 537, ncols = 3, any.missing = FALSE)
@@ -189,8 +194,8 @@ test_that("h_mmrm_tmb_data works as expected for grouped covariance", {
   expect_named(
     result,
     c(
-      "full_frame", "x_matrix", "x_cols_aliased", "y_vector", "visits_zero_inds", "n_visits", "n_subjects",
-      "subject_zero_inds", "subject_n_visits", "cov_type", "spatial", "reml", "subject_groups", "n_groups"
+      "full_frame", "x_matrix", "x_cols_aliased", "coordinates", "y_vector", "visits_zero_inds", "n_visits",
+      "n_subjects", "subject_zero_inds", "subject_n_visits", "cov_type", "spatial", "reml", "subject_groups", "n_groups"
     )
   )
   expect_matrix(result$x_matrix, nrows = 537, ncols = 3, any.missing = FALSE)
@@ -328,6 +333,16 @@ test_that("h_mmrm_tmb_parameters works as expected with heterogeneous compound s
   tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = TRUE, accept_singular = FALSE)
   result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
   expected <- list(theta = rep(0, 5)) # 4 + 1 parameters.
+  expect_identical(result, expected)
+})
+
+test_that("h_mmrm_tmb_parameters works as expected with spatial exponential", {
+  formula <- FEV1 ~ SEX + gp_exp(AVISIT | USUBJID)
+  fev_data$AVISIT <- as.integer(fev_data$AVISIT)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula)
+  tmb_data <- h_mmrm_tmb_data(formula_parts, fev_data, reml = TRUE, accept_singular = FALSE)
+  result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
+  expected <- list(theta = rep(0, 2)) # 1 + 1 parameters.
   expect_identical(result, expected)
 })
 
@@ -773,7 +788,6 @@ test_that("h_mmrm_tmb works with grouped adh covariance structure and REML", {
   expect_equal(result_theta, expected_theta, tolerance = 1e-4)
 })
 
-
 ## toeplitz ----
 
 ### homogeneous ----
@@ -870,14 +884,20 @@ test_that("h_mmrm_tmb works with grouped toeph covariance structure and ML", {
   expect_equal(as.numeric(result$beta_est), 41.4792, tolerance = 1e-4)
   expected_var <- c(104.38, 40.7267, 24.9011, 127.01)
   cor_mat <- VarCorr(result)
-  result_var <- as.numeric(diag(cor_mat$PBO))
-  expect_equal(result_var, expected_var, tolerance = 1e-4)
-  expected_var <- c(74.4963, 34.1465, 49.7033, 220.01)
-  result_var <- as.numeric(diag(cor_mat$TRT))
-  expect_equal(result_var, expected_var, tolerance = 1e-4)
-  result_low_tri <- cor_mat$PBO[lower.tri(cor_mat$PBO)]
-  #expected_low_tri <- c(25.2231, 2.4950, -39.4085, 15.9192, 3.5969, 34.0009)
-  #expect_equal(result_low_tri, expected_low_tri, tolerance = 1e-4)
+  # PBO covariance matrix.
+  expected_pbo_var <- c(104.38, 40.7267, 24.9011, 127.01)
+  result_pbo_var <- as.numeric(diag(cor_mat$PBO))
+  expect_equal(result_pbo_var, expected_pbo_var, tolerance = 1e-4)
+  expected_pbo_rho <- c(0.3296, -0.1196, -0.3575)
+  result_pbo_rho <- map_to_cor(result$theta_est[5:7])
+  expect_equal(result_pbo_rho, expected_pbo_rho, tolerance = 1e-2)
+  # TRT covariance matrix.
+  expected_trt_var <- c(74.4963, 34.1465, 49.7033, 220.01)
+  result_trt_var <- as.numeric(diag(cor_mat$TRT))
+  expect_equal(result_trt_var, expected_trt_var, tolerance = 1e-4)
+  expected_trt_rho <- c(0.4663, 0.1525, -0.2756)
+  result_trt_rho <- map_to_cor(result$theta_est[12:14])
+  expect_equal(result_trt_rho, expected_trt_rho, tolerance = 1e-2)
 })
 
 test_that("h_mmrm_tmb works with grouped toeph covariance structure and REML", {
@@ -890,16 +910,21 @@ test_that("h_mmrm_tmb works with grouped toeph covariance structure and REML", {
   expect_equal(deviance(result), 3704.49921127)
   expect_equal(sqrt(result$beta_vcov[1, 1]), 0.3563, tolerance = 1e-3)
   expect_equal(as.numeric(result$beta_est), 41.4766, tolerance = 1e-4)
-  expected_var <- c(104.43, 40.8152, 25.0541, 127.27)
   cor_mat <- VarCorr(result)
-  result_var <- as.numeric(diag(cor_mat$PBO))
-  expect_equal(result_var, expected_var, tolerance = 1e-4)
-  expected_var <- c(74.6153, 34.2766, 49.8505, 220.20)
-  result_var <- as.numeric(diag(cor_mat$TRT))
-  expect_equal(result_var, expected_var, tolerance = 1e-4)
-  result_low_tri <- cor_mat$PBO[lower.tri(cor_mat$PBO)]
-  #expected_low_tri <- c(25.2231, 2.4950, -39.4085, 15.9192, 3.5969, 34.0009)
-  #expect_equal(result_low_tri, expected_low_tri, tolerance = 1e-4)
+  # PBO covariance matrix.
+  expected_pbo_var <- c(104.43, 40.8152, 25.0541, 127.27)
+  result_pbo_var <- as.numeric(diag(cor_mat$PBO))
+  expect_equal(result_pbo_var, expected_pbo_var, tolerance = 1e-4)
+  expected_pbo_rho <- c(0.3315, -0.1172, -0.3567)
+  result_pbo_rho <- map_to_cor(result$theta_est[5:7])
+  expect_equal(result_pbo_rho, expected_pbo_rho, tolerance = 1e-2)
+  # TRT covariance matrix.
+  expected_trt_var <- c(74.6153, 34.2766, 49.8505, 220.20)
+  result_trt_var <- as.numeric(diag(cor_mat$TRT))
+  expect_equal(result_trt_var, expected_trt_var, tolerance = 1e-4)
+  expected_trt_rho <- c(0.4677, 0.1540, -0.2741)
+  result_trt_rho <- map_to_cor(result$theta_est[12:14])
+  expect_equal(result_trt_rho, expected_trt_rho, tolerance = 1e-2)
 })
 
 ## autoregressive ----
@@ -1032,8 +1057,10 @@ test_that("h_mmrm_tmb works with grouped ar1h covariance structure and REML", {
   expect_equal(as.numeric(result$beta_est), 41.7104, tolerance = 1e-4)
   result_sds <- exp(result$theta_est[c(1:4, 6:9)])
   expected_sds <- sqrt(
-    c(109.37350823, 42.81343590, 23.52559796, 128.45926562,
-    76.67358836, 34.38779235, 46.06871404, 219.70601878)
+    c(
+      109.37350823, 42.81343590, 23.52559796, 128.45926562,
+      76.67358836, 34.38779235, 47.06871404, 219.70601878
+    )
   )
   expect_equal(result_sds, expected_sds, tolerance = 1e-3)
   result_rho <- map_to_cor(result$theta_est[c(5, 10)])
@@ -1125,11 +1152,11 @@ test_that("h_mmrm_tmb works with group cs covariance structure and ML", {
   expect_equal(sqrt(result$beta_vcov[1, 1]), 0.4236, tolerance = 1e-3)
   expect_equal(as.numeric(result$beta_est), 41.9714, tolerance = 1e-4)
   result_sd <- exp(result$theta_est[c(1, 3)])
-  expected_sd <- sqrt(c(74.8824, 87.3240))
-  #expect_equal(result_sd, expected_sd, tolerance = 1e-4)
-  #result_rho <- map_to_cor(result$theta_est[c(2, 4)])
-  #expected_rho <- 0.06596
-  #expect_equal(result_rho, expected_rho, tolerance = 1e-2)
+  expected_sd <- sqrt(c(77.9218, 96.1798))
+  expect_equal(result_sd, expected_sd, tolerance = 1e-4)
+  result_rho <- map_to_cor(result$theta_est[c(2, 4)])
+  expected_rho <- c(3.0393, 8.8558) / c(77.9218, 96.1798)
+  expect_equal(result_rho, expected_rho, tolerance = 1e-2)
 })
 
 test_that("h_mmrm_tmb works with cs covariance structure and REML", {
@@ -1142,11 +1169,11 @@ test_that("h_mmrm_tmb works with cs covariance structure and REML", {
   expect_equal(sqrt(result$beta_vcov[1, 1]), 0.4247, tolerance = 1e-3)
   expect_equal(as.numeric(result$beta_est), 41.9734, tolerance = 1e-4)
   result_sd <- exp(result$theta_est[c(1, 3)])
-  expected_sd <- sqrt(c(74.8951, 87.3254))
-  #expect_equal(result_sd, expected_sd, tolerance = 1e-4)
-  #result_rho <- map_to_cor(result$theta_est[c(2, 4)])
-  #expected_rho <- c(3.2130, 9.0248)
-  #expect_equal(result_rho, expected_rho, tolerance = 1e-2)
+  expected_sd <- sqrt(c(78.1081, 96.3502))
+  expect_equal(result_sd, expected_sd, tolerance = 1e-3)
+  result_rho <- map_to_cor(result$theta_est[c(2, 4)])
+  expected_rho <- c(3.2130, 9.0248) / c(78.1081, 96.3502)
+  expect_equal(result_rho, expected_rho, tolerance = 1e-2)
 })
 
 ### grouped heterogeneous----
@@ -1183,6 +1210,31 @@ test_that("h_mmrm_tmb works with grouped csh covariance structure and REML", {
   expect_equal(result_rho, expected_rho, tolerance = 1e-3)
 })
 
+## spatial exponential ----
+
+test_that("h_mmrm_tmb works with gp_exp covariance structure and ML", {
+  formula <- FEV1 ~ gp_exp(AVISIT | USUBJID)
+  fev_data$AVISIT <- as.integer(fev_data$AVISIT)
+  result <- h_mmrm_tmb(formula, fev_data, reml = FALSE)
+  expect_class(result, "mmrm_tmb")
+  # See design/SAS/sas_gp_exp_ml.txt for the source of numbers.
+  expect_equal(deviance(result), 3875.95353357)
+  expect_equal(as.numeric(result$beta_est[1]), 42.3252, tolerance = 1e-4)
+  expect_equal(exp(-exp(result$theta_est[2]))^2, 0.1805, tolerance = 1e-3)
+  expect_equal(exp(result$theta_est[1]), 88.7005, tolerance = 1e-3)
+})
+
+test_that("h_mmrm_tmb works with gp_exp covariance structure and REML", {
+  formula <- FEV1 ~ gp_exp(AVISIT | USUBJID)
+  fev_data$AVISIT <- as.integer(fev_data$AVISIT)
+  result <- h_mmrm_tmb(formula, fev_data, reml = TRUE)
+  expect_class(result, "mmrm_tmb")
+  # See design/SAS/sas_gp_exp_reml.txt for the source of numbers.
+  expect_equal(deviance(result), 3875.49946734)
+  expect_equal(as.numeric(result$beta_est[1]), 42.3254, tolerance = 1e-4)
+  expect_equal(exp(-exp(result$theta_est[2]))^2, 0.1823, tolerance = 1e-3)
+  expect_equal(exp(result$theta_est[1]), 88.9768, tolerance = 1e-3)
+})
 
 ## misc ----
 

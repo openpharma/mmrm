@@ -111,7 +111,7 @@ h_mmrm_tmb_extract_vars <- function(cov_term) {
 #' - `visit_var`: `string` with the visit variable name.
 #' - `subject_var`: `string` with the subject variable name.
 #' - `group_var`: `string` with the group variable name. If no group specified, this element
-#'      is NULL.
+#'      is `NULL`.
 #' @keywords internal
 h_mmrm_tmb_formula_parts <- function(formula) {
   assert_formula(formula)
@@ -294,7 +294,7 @@ h_mmrm_tmb_data <- function(formula_parts,
       subject_zero_inds = subject_zero_inds,
       subject_n_visits = subject_n_visits,
       cov_type = formula_parts$cov_type,
-      spatial = as.integer(formula_parts$cov_type %in% cov_type_spatial),
+      spatial = formula_parts$spatial,
       reml = as.integer(reml),
       subject_groups = subject_groups,
       n_groups = n_groups
@@ -474,6 +474,7 @@ h_mmrm_tmb_fit <- function(tmb_object,
   assert_data_frame(data)
   assert_class(formula_parts, "mmrm_tmb_formula_parts")
   assert_class(tmb_data, "mmrm_tmb_data")
+  
   tmb_report <- tmb_object$report(par = tmb_opt$par)
   x_matrix_cols <- colnames(tmb_data$x_matrix)
   cov <- h_mmrm_tmb_extract_cov(tmb_report, tmb_data, formula_parts$visit_var)
@@ -545,6 +546,7 @@ h_mmrm_tmb <- function(formula,
   assert_class(control, "mmrm_tmb_control")
   tmb_data <- h_mmrm_tmb_data(formula_parts, data, reml, accept_singular = control$accept_singular)
   tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = control$start, n_groups = tmb_data$n_groups)
+
   tmb_object <- TMB::MakeADFun(
     data = tmb_data,
     parameters = tmb_parameters,

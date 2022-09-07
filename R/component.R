@@ -24,7 +24,7 @@
 #' - `beta_vcov_complete`: estimated variance-covariance matrix including
 #'      aliased coefficients with entries set to `NA`.
 #' - `varcor`: estimated covariance matrix for residuals. If there are multiple
-#'      groups, a named list of estimated covariance matrix for residuals will be
+#'      groups, a named list of estimated covariance matrices for residuals will be
 #'      returned. The names are the group levels.
 #' - `theta_est`: estimated variance parameters.
 #' - `beta_est`: estimated coefficients (excluding aliased coefficients).
@@ -56,7 +56,7 @@ component <- function(object,
                       name = c(
                         "cov_type", "n_theta", "n_subjects", "n_timepoints",
                         "n_obs", "beta_vcov", "beta_vcov_complete",
-                        "varcor", "formula", "dataset",
+                        "varcor", "formula", "dataset", "n_groups",
                         "reml", "convergence", "evaluations",
                         "conv_message", "call", "theta_est",
                         "beta_est", "beta_est_complete", "beta_aliased",
@@ -82,6 +82,7 @@ component <- function(object,
     "n_subjects" = object$tmb_data$n_subjects,
     "n_timepoints" = object$tmb_data$n_visits,
     "n_obs" = length(object$tmb_data$y_vector),
+    "n_groups" = ifelse(is.list(object$cov), length(object$cov), 1L),
     # Numeric of length > 1.
     "evaluations" = unlist(ifelse(is.null(object$opt_details$evaluations),
       list(object$opt_details$counts),
