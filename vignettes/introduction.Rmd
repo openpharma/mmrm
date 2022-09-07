@@ -215,6 +215,7 @@ users.
 h_mmrm_tmb(
   formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data,
+  weights = rep(1, nrow(fev_data)),
   reml = TRUE,
   control = h_mmrm_tmb_control()
 )
