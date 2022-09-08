@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9003</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9004</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,12 +38,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -71,7 +65,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">h_print_cov</span><span class="op">(</span><span class="va">cov_type</span>, <span class="va">n_theta</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">h_print_cov</span><span class="op">(</span><span class="va">cov_type</span>, <span class="va">n_theta</span>, <span class="va">n_groups</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -83,6 +77,10 @@
 <dt>n_theta</dt>
 <dd><p>(<code>int</code>)<br> number of variance parameters.</p></dd>
 
+
+<dt>n_groups</dt>
+<dd><p>(<code>int</code>)<br> number of groups</p></dd>
+
 </dl></div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -90,7 +88,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by Daniel Sabanes Bove, Julia Dedic, Brian Matthew Lang, Doug Kelkhoff, Ya Wang, Craig Gower-Page, Alessandro Noci.</p>
+  <p></p><p>Developed by Daniel Sabanes Bove, Julia Dedic, Brian Matthew Lang, Doug Kelkhoff, Ya Wang, Craig Gower-Page, Alessandro Noci, Liming Li.</p>
 </div>
 
 <div class="pkgdown-footer-right">

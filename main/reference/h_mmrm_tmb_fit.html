@@ -18,7 +18,7 @@ optimization results, including setting names, inverting matrices etc."><meta pr
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9003</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9004</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,12 +40,6 @@ optimization results, including setting names, inverting matrices etc."><meta pr
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -74,7 +68,7 @@ optimization results, including setting names, inverting matrices etc.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">h_mmrm_tmb_fit</span><span class="op">(</span><span class="va">tmb_object</span>, <span class="va">tmb_opt</span>, <span class="va">data</span>, <span class="va">formula_parts</span>, <span class="va">tmb_data</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">h_mmrm_tmb_fit</span><span class="op">(</span><span class="va">tmb_object</span>, <span class="va">tmb_opt</span>, <span class="va">data</span>, <span class="va">weights</span>, <span class="va">formula_parts</span>, <span class="va">tmb_data</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -92,6 +86,10 @@ optimization results, including setting names, inverting matrices etc.</p>
 in <code>formula</code>.</p></dd>
 
 
+<dt>weights</dt>
+<dd><p>(<code>vector</code>)<br> weights to be used in the fitting process.</p></dd>
+
+
 <dt>formula_parts</dt>
 <dd><p>(<code>mmrm_tmb_formula_parts</code>)<br> produced by
 <code><a href="h_mmrm_tmb_formula_parts.html">h_mmrm_tmb_formula_parts()</a></code>.</p></dd>
@@ -105,7 +103,7 @@ in <code>formula</code>.</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>List of class <code>mmrm_tmb</code> with:</p><ul><li><p><code>cov</code>: estimated covariance matrix.</p></li>
+<p>List of class <code>mmrm_tmb</code> with:</p><ul><li><p><code>cov</code>: estimated covariance matrix, or named list of estimated group specific covariance matrices.</p></li>
 <li><p><code>beta_est</code>: vector of coefficient estimates.</p></li>
 <li><p><code>beta_vcov</code>: Variance-covariance matrix for coefficient estimates.</p></li>
 <li><p><code>theta_est</code>: vector of variance parameter estimates.</p></li>
@@ -113,6 +111,7 @@ in <code>formula</code>.</p></dd>
 <li><p><code>neg_log_lik</code>: obtained negative log-likelihood.</p></li>
 <li><p><code>formula_parts</code>: input.</p></li>
 <li><p><code>data</code>: input.</p></li>
+<li><p><code>weights</code>: input.</p></li>
 <li><p><code>reml</code>: input as a flag.</p></li>
 <li><p><code>opt_details</code>: list with optimization details including convergence code.</p></li>
 <li><p><code>tmb_object</code>: original <code>TMB</code> object created with <code><a href="https://rdrr.io/pkg/TMB/man/MakeADFun.html" class="external-link">TMB::MakeADFun()</a></code>.</p></li>
@@ -124,7 +123,7 @@ in <code>formula</code>.</p></dd>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by Daniel Sabanes Bove, Julia Dedic, Brian Matthew Lang, Doug Kelkhoff, Ya Wang, Craig Gower-Page, Alessandro Noci.</p>
+  <p></p><p>Developed by Daniel Sabanes Bove, Julia Dedic, Brian Matthew Lang, Doug Kelkhoff, Ya Wang, Craig Gower-Page, Alessandro Noci, Liming Li.</p>
 </div>
 
 <div class="pkgdown-footer-right">

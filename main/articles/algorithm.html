@@ -39,7 +39,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9003</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9004</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,12 +62,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -133,7 +127,7 @@ Y_i \sim N(X_i\beta, \Sigma_i)
 \]</span> where the covariance matrix <span class="math inline">\(\Sigma_i \in \mathbb{R}^{m_i \times m_i}\)</span>
 is derived by subsetting the overall covariance matrix <span class="math inline">\(\Sigma \in \mathbb{R}^{m \times m}\)</span>
 appropriately by <span class="math display">\[
-\Sigma_i = S_i^\top \Sigma S_i
+\Sigma_i = G_i^{-1/2} S_i^\top \Sigma S_i G_i^{-1/2}
 \]</span> where the subsetting matrix <span class="math inline">\(S_i
 \in \{0, 1\}^{m \times m_i}\)</span> contains in each of its <span class="math inline">\(m_i\)</span> columns contains a single 1
 indicating which overall time point is matching <span class="math inline">\(t_{ij}\)</span>. Each row contains at most a
@@ -147,16 +141,19 @@ S_i = \begin{pmatrix}
 0 &amp; 0 &amp; 1 \\
 0 &amp; 0 &amp; 0
 \end{pmatrix}.
-\]</span> Note that this follows from the well known property of the
-multivariate normal distribution that linear combinations of the random
-vector again have a multivariate normal distribution with the
-correspondingly modified mean vector and covariance matrix.</p>
+\]</span> <span class="math inline">\(G_i \in \mathbb{R}_{\gt 0}^{m_i
+\times m_i}\)</span> is the diagonal weight matrix, which is the
+identity matrix if no weights are specified. Note that this follows from
+the well known property of the multivariate normal distribution that
+linear combinations of the random vector again have a multivariate
+normal distribution with the correspondingly modified mean vector and
+covariance matrix.</p>
 <p>Conditional on the design matrices <span class="math inline">\(X_i\)</span>, the coefficient vector <span class="math inline">\(\beta\)</span> and the covariance matrix <span class="math inline">\(\Sigma\)</span> we assume that the observations
 are independent between the subjects.</p>
 <p>We can write the linear model for all subjects together as <span class="math display">\[
 Y = X\beta + \epsilon
 \]</span> where <span class="math inline">\(Y \in \mathbb{R}^N\)</span>
-combines all subject specific observations vectors <span class="math inline">\(Y_i\)</span> such that we have in total <span class="math inline">\(N = \sum_{i = 1}^{m_i}\)</span> observations,
+combines all subject specific observations vectors <span class="math inline">\(Y_i\)</span> such that we have in total <span class="math inline">\(N = \sum_{i = 1}^{n}{m_i}\)</span> observations,
 <span class="math inline">\(X \in \mathbb{R}^{N \times p}\)</span>
 combines all subject specific design matrices and <span class="math inline">\(\epsilon \in \mathbb{R}^N\)</span> has a
 multivariate normal distribution <span class="math display">\[
@@ -204,6 +201,26 @@ m}\)</span>: <span class="math display">\[
 <span class="math inline">\(m = 4\)</span> time points we need <span class="math inline">\(k = 10\)</span> variance parameters to model the
 unstructured covariance matrix.</p>
 <p>Other covariance matrix choices are explained in the <a href="covariance.html">covariance structures vignette</a>.</p>
+</div>
+<div class="section level4">
+<h4 id="grouped-covariance-matrix">Grouped covariance matrix<a class="anchor" aria-label="anchor" href="#grouped-covariance-matrix"></a>
+</h4>
+<p>In some cases, we would like to estimate unique covariance matrices
+across groups, while keeping the covariance structure (unstructured,
+ante-dependence, Toeplitz, etc.) consistent across groups. Following the
+notations in the previous section, for subject <span class="math inline">\(i\)</span> in group <span class="math inline">\(g(i)\)</span>, we have</p>
+<p><span class="math display">\[
+\Sigma_{i} = S_i^\top \Sigma_{g(i)} S_i
+\]</span></p>
+<p>where <span class="math inline">\(g(i)\)</span> is the group of
+subject <span class="math inline">\(i\)</span> and <span class="math inline">\(\Sigma_{g(i)}\)</span> is the covariance matrix of
+group <span class="math inline">\(g(i)\)</span>.</p>
+<p>The parametrization of <span class="math inline">\(\theta\)</span> is
+similar to other non-grouped <span class="math inline">\(\theta\)</span>. Assume that there are total
+number of <span class="math inline">\(G\)</span> groups, the length of
+<span class="math inline">\(\theta\)</span> is multiplied by <span class="math inline">\(G\)</span>, and for each part, <span class="math inline">\(\theta\)</span> is parametrized in the same
+fashion. For example, for an unstructured covariance matrix, <span class="math inline">\(\theta\)</span> has <span class="math inline">\(k
+= G * m(m+1)/2\)</span> entries.</p>
 </div>
 </div>
 </div>
@@ -403,7 +420,7 @@ library supports this efficiently through automatic differentiation.</p>
 
     <footer><div class="pkgdown-footer-left">
   <p></p>
-<p>Developed by Daniel Sabanes Bove, Julia Dedic, Brian Matthew Lang, Doug Kelkhoff, Ya Wang, Craig Gower-Page, Alessandro Noci.</p>
+<p>Developed by Daniel Sabanes Bove, Julia Dedic, Brian Matthew Lang, Doug Kelkhoff, Ya Wang, Craig Gower-Page, Alessandro Noci, Liming Li.</p>
 </div>
 
 <div class="pkgdown-footer-right">

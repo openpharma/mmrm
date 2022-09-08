@@ -39,7 +39,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9003</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9004</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,12 +62,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -97,6 +91,8 @@
 Bové</h4>
                         <h4 data-toc-skip class="author">Brian M.
 Lang</h4>
+                        <h4 data-toc-skip class="author">Liming Li</h4>
+                        <h4 data-toc-skip class="author">Ya Wang</h4>
             
       
       <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/HEAD/vignettes/introduction.Rmd" class="external-link"><code>vignettes/introduction.Rmd</code></a></small>
@@ -278,6 +274,79 @@ homogeneous compound symmetry (<code>cs</code>).</p>
 <span><span class="co">#&gt; Model Inference Optimization:</span></span>
 <span><span class="co">#&gt; Converged with code 0 and message: convergence: rel_reduction_of_f &lt;= factr*epsmch</span></span></code></pre></div>
 </div>
+<div class="section level3">
+<h3 id="weighting">Weighting<a class="anchor" aria-label="anchor" href="#weighting"></a>
+</h3>
+<p>Users can perform weighted MMRM by specifying a numeric vector
+<code>weights</code> with positive values.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit_wt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
+<span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">fev_data</span>,</span>
+<span>  weights <span class="op">=</span> <span class="va">fev_data</span><span class="op">$</span><span class="va">WEIGHT</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">fit_wt</span><span class="op">)</span></span>
+<span><span class="co">#&gt; mmrm fit</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Formula:     FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID)</span></span>
+<span><span class="co">#&gt; Data:        fev_data (used 537 observations from 197 subjects with maximum 4 </span></span>
+<span><span class="co">#&gt; timepoints)</span></span>
+<span><span class="co">#&gt; Weights:     fev_data$WEIGHT</span></span>
+<span><span class="co">#&gt; Covariance:  unstructured (10 variance parameters)</span></span>
+<span><span class="co">#&gt; Method:      REML</span></span>
+<span><span class="co">#&gt; Deviance:    3476.526</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients: </span></span>
+<span><span class="co">#&gt;                   (Intercept) RACEBlack or African American </span></span>
+<span><span class="co">#&gt;                   31.20065229                    1.18452837 </span></span>
+<span><span class="co">#&gt;                     RACEWhite                      ARMCDTRT </span></span>
+<span><span class="co">#&gt;                    5.36525917                    3.39695951 </span></span>
+<span><span class="co">#&gt;                    AVISITVIS2                    AVISITVIS3 </span></span>
+<span><span class="co">#&gt;                    4.85890820                   10.03942420 </span></span>
+<span><span class="co">#&gt;                    AVISITVIS4           ARMCDTRT:AVISITVIS2 </span></span>
+<span><span class="co">#&gt;                   14.79354054                    0.03418184 </span></span>
+<span><span class="co">#&gt;           ARMCDTRT:AVISITVIS3           ARMCDTRT:AVISITVIS4 </span></span>
+<span><span class="co">#&gt;                    0.01308088                    0.86701567 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Model Inference Optimization:</span></span>
+<span><span class="co">#&gt; Converged with code 0 and message: convergence: rel_reduction_of_f &lt;= factr*epsmch</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="grouped-covariance-structure">Grouped Covariance Structure<a class="anchor" aria-label="anchor" href="#grouped-covariance-structure"></a>
+</h3>
+<p>Grouped covariance structures are supported by the<code>mmrm</code>
+package. Covariance matrices for each group are identically structured
+(unstructured, compound symmetry, etc) but the estimates are allowed to
+vary across groups. We use the form
+<code>cs(time | group / subject)</code> to specify the group
+variable.</p>
+<p>Here is an example of how we use <code>ARMCD</code> as group
+variable.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit_cs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
+<span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">cs</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">ARMCD</span> <span class="op">/</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">fev_data</span>,</span>
+<span>  reml <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">fit_cs</span><span class="op">$</span><span class="va">cov</span><span class="op">)</span></span>
+<span><span class="co">#&gt; $PBO</span></span>
+<span><span class="co">#&gt;           VIS1      VIS2      VIS3      VIS4</span></span>
+<span><span class="co">#&gt; VIS1 37.823638  3.601296  3.601296  3.601296</span></span>
+<span><span class="co">#&gt; VIS2  3.601296 37.823638  3.601296  3.601296</span></span>
+<span><span class="co">#&gt; VIS3  3.601296  3.601296 37.823638  3.601296</span></span>
+<span><span class="co">#&gt; VIS4  3.601296  3.601296  3.601296 37.823638</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $TRT</span></span>
+<span><span class="co">#&gt;          VIS1     VIS2     VIS3     VIS4</span></span>
+<span><span class="co">#&gt; VIS1 49.58110 10.98112 10.98112 10.98112</span></span>
+<span><span class="co">#&gt; VIS2 10.98112 49.58110 10.98112 10.98112</span></span>
+<span><span class="co">#&gt; VIS3 10.98112 10.98112 49.58110 10.98112</span></span>
+<span><span class="co">#&gt; VIS4 10.98112 10.98112 10.98112 49.58110</span></span></code></pre></div>
+<p>We can see that the estimated covariance matrices are different in
+different <code>ARMCD</code> groups.</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="extraction-of-model-features">Extraction of model features<a class="anchor" aria-label="anchor" href="#extraction-of-model-features"></a>
@@ -286,16 +355,15 @@ homogeneous compound symmetry (<code>cs</code>).</p>
 <code>mmrm</code> and <code>mmrm_tmb</code> objects can be accessed with
 standard methods. Additionally, <a href="https://openpharma.github.io/mmrm/main/reference/component.html"><code>component()</code></a>
 is provided to allow deeper and more precise access for those interested
-in digging through model output.<br>
-Complete documentation of standard model output methods supported for
-<code>mmrm_tmb</code> objects <a href="https://openpharma.github.io/mmrm/main/reference/mmrm_tmb_methods.html">can
+in digging through model output. Complete documentation of standard
+model output methods supported for <code>mmrm_tmb</code> objects <a href="https://openpharma.github.io/mmrm/main/reference/mmrm_tmb_methods.html">can
 be found at the package website.</a></p>
 <div class="section level3">
 <h3 id="summary-extraction">Summary extraction<a class="anchor" aria-label="anchor" href="#summary-extraction"></a>
 </h3>
 <p>The <code>summary</code> method for <code>mmrm</code> objects
 provides easy access to frequently needed model components.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">fev_data</span></span>
@@ -304,7 +372,7 @@ provides easy access to frequently needed model components.</p>
 <span><span class="va">fit_summary</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></code></pre></div>
 <p>From this summary object, you can easily retrieve the coefficients
 table.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit_summary</span><span class="op">$</span><span class="va">coefficients</span></span>
 <span><span class="co">#&gt;                                  Estimate Std. Error       df     t value</span></span>
 <span><span class="co">#&gt; (Intercept)                   30.96769899  0.8293349 187.9132 37.34040185</span></span>
@@ -318,22 +386,24 @@ table.</p>
 <span><span class="co">#&gt; ARMCDTRT:AVISITVIS3           -0.66753189  1.1865359 158.2106 -0.56258887</span></span>
 <span><span class="co">#&gt; ARMCDTRT:AVISITVIS4            0.63094392  1.8507884 129.6377  0.34090549</span></span>
 <span><span class="co">#&gt;                                   Pr(&gt;|t|)</span></span>
-<span><span class="co">#&gt; (Intercept)                   7.122410e-89</span></span>
+<span><span class="co">#&gt; (Intercept)                   7.122405e-89</span></span>
 <span><span class="co">#&gt; RACEBlack or African American 1.638725e-02</span></span>
 <span><span class="co">#&gt; RACEWhite                     1.605553e-14</span></span>
 <span><span class="co">#&gt; ARMCDTRT                      6.001485e-04</span></span>
 <span><span class="co">#&gt; AVISITVIS2                    1.366921e-08</span></span>
 <span><span class="co">#&gt; AVISITVIS3                    1.927523e-25</span></span>
-<span><span class="co">#&gt; AVISITVIS4                    8.242709e-22</span></span>
+<span><span class="co">#&gt; AVISITVIS4                    8.242710e-22</span></span>
 <span><span class="co">#&gt; ARMCDTRT:AVISITVIS2           9.877459e-01</span></span>
 <span><span class="co">#&gt; ARMCDTRT:AVISITVIS3           5.745112e-01</span></span>
 <span><span class="co">#&gt; ARMCDTRT:AVISITVIS4           7.337266e-01</span></span></code></pre></div>
 <p>Other model parameters and metadata available in the summary object
 is as follows:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">fit_summary</span><span class="op">)</span></span>
-<span><span class="co">#&gt; List of 11</span></span>
+<span><span class="co">#&gt; List of 13</span></span>
 <span><span class="co">#&gt;  $ cov_type        : chr "us"</span></span>
+<span><span class="co">#&gt;  $ reml            : logi TRUE</span></span>
+<span><span class="co">#&gt;  $ n_groups        : int 1</span></span>
 <span><span class="co">#&gt;  $ n_theta         : int 10</span></span>
 <span><span class="co">#&gt;  $ n_subjects      : int 197</span></span>
 <span><span class="co">#&gt;  $ n_timepoints    : int 4</span></span>
@@ -356,7 +426,7 @@ is as follows:</p>
 <span><span class="co">#&gt;   ..$ BIC     : num 3440</span></span>
 <span><span class="co">#&gt;   ..$ logLik  : num -1694</span></span>
 <span><span class="co">#&gt;   ..$ deviance: num 3387</span></span>
-<span><span class="co">#&gt;  $ call            : language h_mmrm_tmb(formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),      data = "fev_data", reml = reml, co| __truncated__</span></span>
+<span><span class="co">#&gt;  $ call            : language h_mmrm_tmb(formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),      data = "fev_data", weights = weigh| __truncated__</span></span>
 <span><span class="co">#&gt;  - attr(*, "class")= chr "summary.mmrm"</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -366,7 +436,7 @@ is as follows:</p>
 with the <a href="https://openpharma.github.io/mmrm/main/reference/component.html"><code>component()</code></a>
 function. The default will output all supported components.</p>
 <p>For example, a user may want information about convergence:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/component.html">component</a></span><span class="op">(</span><span class="va">fit</span>, name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"convergence"</span>, <span class="st">"evaluations"</span>, <span class="st">"conv_message"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $convergence</span></span>
 <span><span class="co">#&gt; [1] 0</span></span>
@@ -378,13 +448,14 @@ function. The default will output all supported components.</p>
 <span><span class="co">#&gt; $conv_message</span></span>
 <span><span class="co">#&gt; [1] "CONVERGENCE: REL_REDUCTION_OF_F &lt;= FACTR*EPSMCH"</span></span></code></pre></div>
 <p>or the original low-level call:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/component.html">component</a></span><span class="op">(</span><span class="va">fit</span>, name <span class="op">=</span> <span class="st">"call"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; h_mmrm_tmb(formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | </span></span>
-<span><span class="co">#&gt;     USUBJID), data = "fev_data", reml = reml, control = control)</span></span></code></pre></div>
+<span><span class="co">#&gt;     USUBJID), data = "fev_data", weights = weights, reml = reml, </span></span>
+<span><span class="co">#&gt;     control = control)</span></span></code></pre></div>
 <p>the user could also ask for all provided components by not specifying
 the <code>name</code> argument.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/component.html">component</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
@@ -400,9 +471,11 @@ This function is exported and can be used directly. It is similar to <a href="ht
 but lacks some post-processing and support for Satterthwaite d.f.
 calculations. However, it exposes an argument for fine control over
 optimization which may be needed by some users.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/h_mmrm_tmb.html">h_mmrm_tmb</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/h_mmrm_tmb.html">h_mmrm_tmb</a></span><span class="op">(</span></span>
+<span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">fev_data</span>,</span>
+<span>  weights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">fev_data</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  reml <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  control <span class="op">=</span> <span class="fu"><a href="../reference/h_mmrm_tmb_control.html">h_mmrm_tmb_control</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
@@ -437,8 +510,9 @@ with <code>optimizer_control</code>, provide a list of starting
 parameter values with <code>start</code>, and decide the action to be
 taken when the defined design matrix is singular with
 <code>accept_singular</code>.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/h_mmrm_tmb_control.html">h_mmrm_tmb_control</a></span><span class="op">(</span>optimizer <span class="op">=</span> <span class="fu">stats</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/stats/nlminb.html" class="external-link">nlminb</a></span>,</span>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/h_mmrm_tmb_control.html">h_mmrm_tmb_control</a></span><span class="op">(</span></span>
+<span>  optimizer <span class="op">=</span> <span class="fu">stats</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/stats/nlminb.html" class="external-link">nlminb</a></span>,</span>
 <span>  optimizer_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>upper <span class="op">=</span> <span class="cn">Inf</span>, lower <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,</span>
 <span>  optimizer_control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,</span>
@@ -459,7 +533,7 @@ calculation of test degrees of freedom.</p>
 </h3>
 <p>Compute the test of a one-dimensional (vector) contrast for a
 <code>mmrm</code> object with Satterthwaite degrees of freedom.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">SEX</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">fev_data</span></span>
@@ -489,7 +563,7 @@ calculation of test degrees of freedom.</p>
 </h3>
 <p>Compute the test of a multi-dimensional (matrix) contrast for a
 <code>mmrm</code> object with Satterthwaite degrees of freedom.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">SEX</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">fev_data</span></span>
@@ -518,7 +592,7 @@ calculation of test degrees of freedom.</p>
 be used with the <code>emmeans</code> package. <code>emmeans</code>
 computes estimated marginal means (also called least-square means) for
 the coefficients of the MMRM.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">fev_data</span></span>
@@ -574,7 +648,7 @@ Also Ben helped significantly with an example showing how to use
 
     <footer><div class="pkgdown-footer-left">
   <p></p>
-<p>Developed by Daniel Sabanes Bove, Julia Dedic, Brian Matthew Lang, Doug Kelkhoff, Ya Wang, Craig Gower-Page, Alessandro Noci.</p>
+<p>Developed by Daniel Sabanes Bove, Julia Dedic, Brian Matthew Lang, Doug Kelkhoff, Ya Wang, Craig Gower-Page, Alessandro Noci, Liming Li.</p>
 </div>
 
 <div class="pkgdown-footer-right">

@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9003</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9004</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,12 +38,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -71,7 +65,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">h_mmrm_tmb_data</span><span class="op">(</span><span class="va">formula_parts</span>, <span class="va">data</span>, <span class="va">reml</span>, <span class="va">accept_singular</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">h_mmrm_tmb_data</span><span class="op">(</span><span class="va">formula_parts</span>, <span class="va">data</span>, <span class="va">weights</span>, <span class="va">reml</span>, <span class="va">accept_singular</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -83,6 +77,10 @@ from <code><a href="h_mmrm_tmb_formula_parts.html">h_mmrm_tmb_formula_parts()</a
 
 <dt>data</dt>
 <dd><p>(<code>data.frame</code>)<br> which contains variables used in <code>formula_parts</code>.</p></dd>
+
+
+<dt>weights</dt>
+<dd><p>(<code>vector</code>)<br> weights to be used in the fitting process.</p></dd>
 
 
 <dt>reml</dt>
@@ -106,6 +104,7 @@ to full rank <code>x_matrix</code> and remaining coefficients will be missing as
 columns in the original design matrix have been left out to obtain a full rank
 <code>x_matrix</code>.</p></li>
 <li><p><code>y_vector</code>: length <code>n</code> <code>numeric</code> specifying the overall response vector.</p></li>
+<li><p><code>weights_vector</code>: length <code>n</code> <code>numeric</code> specifying the weights vector.</p></li>
 <li><p><code>visits_zero_inds</code>: length <code>n</code> <code>integer</code> containing zero-based visits indices.</p></li>
 <li><p><code>n_visits</code>: <code>int</code> with the number of visits, which is the dimension of the
 covariance matrix.</p></li>
@@ -116,6 +115,8 @@ indices for each subject.</p></li>
 observed visits for each subjects. So the sum of this vector equals <code>n</code>.</p></li>
 <li><p><code>cov_type</code>: <code>string</code> value specifying the covariance type.</p></li>
 <li><p><code>reml</code>: <code>int</code> specifying whether REML estimation is used (1), otherwise ML (0).</p></li>
+<li><p><code>subject_groups</code>: <code>factor</code> specifying the grouping for each subject.</p></li>
+<li><p><code>n_groups</code>: <code>int</code> with the number of total groups</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -131,7 +132,7 @@ on the order please use a factor.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by Daniel Sabanes Bove, Julia Dedic, Brian Matthew Lang, Doug Kelkhoff, Ya Wang, Craig Gower-Page, Alessandro Noci.</p>
+  <p></p><p>Developed by Daniel Sabanes Bove, Julia Dedic, Brian Matthew Lang, Doug Kelkhoff, Ya Wang, Craig Gower-Page, Alessandro Noci, Liming Li.</p>
 </div>
 
 <div class="pkgdown-footer-right">
