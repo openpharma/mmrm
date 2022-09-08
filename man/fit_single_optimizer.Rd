@@ -7,6 +7,7 @@
 fit_single_optimizer(
   formula,
   data,
+  weights,
   reml = TRUE,
   start = NULL,
   optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb"),
@@ -17,6 +18,9 @@ fit_single_optimizer(
 \item{formula}{(\code{formula})\cr the model formula, see details.}
 
 \item{data}{(\code{data})\cr the data to be used for the model.}
+
+\item{weights}{(\code{vector})\cr an optional vector of weights to be used in the fitting process.
+Should be NULL or a numeric vector.}
 
 \item{reml}{(\code{flag})\cr whether restricted maximum likelihood (REML) estimation is used,
 otherwise maximum likelihood (ML) is used.}
@@ -44,6 +48,7 @@ while capturing messages and warnings.
 mod_fit <- fit_single_optimizer(
   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data,
+  weights = rep(1, nrow(fev_data)),
   optimizer = "nlminb"
 )
 attr(mod_fit, "converged")

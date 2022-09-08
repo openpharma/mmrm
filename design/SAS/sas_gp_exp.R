@@ -1,7 +1,7 @@
 # Spatial exponential covariance structure ----
 formula <- FEV1 ~ cs(TIME | USUBJID)
 data <- fev_data
-data$TIME <- as.integer(data$AVISIT)
+data$TIME <- data$VISITN
 
 ## ML ----
 sascode <- list(

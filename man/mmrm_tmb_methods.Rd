@@ -48,7 +48,7 @@ coefficients.}
 
 \item{formula}{(\code{mmrm_tmb})\cr same as \code{object}.}
 
-\item{full}{(\code{flag})\cr whether to include subject and visit variable.}
+\item{full}{(\code{flag})\cr whether to include subject, visit and weight variables.}
 
 \item{x}{(\code{mmrm_tmb})\cr same as \code{object}.}
 
@@ -99,7 +99,7 @@ penalty parameter \code{k}.
 }}
 \examples{
 formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
-object <- h_mmrm_tmb(formula, fev_data)
+object <- h_mmrm_tmb(formula, fev_data, weights = rep(1, nrow(fev_data)))
 # Estimated coefficients:
 coef(object)
 # Fitted values:
