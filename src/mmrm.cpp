@@ -31,6 +31,7 @@ Type objective_function<Type>::operator() ()
   // Read data from R.
   DATA_MATRIX(x_matrix);           // Model matrix (dimension n x p).
   DATA_VECTOR(y_vector);           // Response vector (length n).
+  DATA_VECTOR(weights_vector);     // Weights vector (length n).
   DATA_IVECTOR(visits_zero_inds);  // Zero-based Visits vector (length n).
   DATA_INTEGER(n_visits);          // Number of visits, which is the dimension of the covariance matrix.
   DATA_INTEGER(n_subjects);        // Number of subjects.
@@ -76,6 +77,10 @@ Type objective_function<Type>::operator() ()
       // This subject has full number of visits, therefore we can just take the original factor.
       Li = lower_chol;
     }
+
+    // Calculate weighted Cholesky factor for this subject.
+    Eigen::DiagonalMatrix<Type,Eigen::Dynamic,Eigen::Dynamic> Gi_inv_sqrt = weights_vector.segment(start_i, n_visits_i).cwiseInverse().sqrt().matrix().asDiagonal();
+    Li = Gi_inv_sqrt * Li;
 
     // Calculate scaled design matrix and response vector for this subject.
     matrix<Type> Xi = x_matrix.block(start_i, 0, n_visits_i, x_matrix.cols());

@@ -69,7 +69,7 @@ summary.mmrm <- function(object, ...) {
   coefficients <- h_coef_table(object)
   call <- stats::getCall(object)
   components <- component(object, c(
-    "cov_type", "n_theta", "n_groups",
+    "cov_type", "reml", "n_groups", "n_theta",
     "n_subjects", "n_timepoints", "n_obs",
     "beta_vcov", "varcor"
   ))
@@ -111,6 +111,10 @@ h_print_call <- function(call, n_obs, n_subjects, n_timepoints) {
       n_subjects, "subjects with maximum", n_timepoints, "timepoints)",
       fill = TRUE
     )
+  }
+  # Only if call$weights is a string then it was explicitly given by the user.
+  if (test_string(tmp <- call$weights)) {
+    cat("Weights:    ", tmp, fill = TRUE)
   }
 }
 
@@ -172,7 +176,9 @@ print.summary.mmrm <- function(x,
   cat("mmrm fit\n\n")
   h_print_call(x$call, x$n_obs, x$n_subjects, x$n_timepoints)
   h_print_cov(x$cov_type, x$n_theta, x$n_groups)
-  cat("\n")
+  cat("Method:      ")
+  cat(ifelse(x$reml, "REML", "ML"))
+  cat("\n\n")
   cat("Model selection criteria:\n")
   h_print_aic_list(x$aic_list)
   cat("\n")

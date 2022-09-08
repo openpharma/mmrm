@@ -173,6 +173,7 @@ h_mmrm_tmb_formula_parts <- function(formula) {
 #' @param formula_parts (`mmrm_tmb_formula_parts`)\cr list with formula parts
 #'   from [h_mmrm_tmb_formula_parts()].
 #' @param data (`data.frame`)\cr which contains variables used in `formula_parts`.
+#' @param weights (`vector`)\cr weights to be used in the fitting process.
 #' @param reml (`flag`)\cr whether restricted maximum likelihood (REML) estimation is used,
 #'   otherwise maximum likelihood (ML) is used.
 #' @param accept_singular (`flag`)\cr whether below full rank design matrices are reduced
@@ -186,6 +187,7 @@ h_mmrm_tmb_formula_parts <- function(formula) {
 #'      columns in the original design matrix have been left out to obtain a full rank
 #'      `x_matrix`.
 #' - `y_vector`: length `n` `numeric` specifying the overall response vector.
+#' - `weights_vector`: length `n` `numeric` specifying the weights vector.
 #' - `visits_zero_inds`: length `n` `integer` containing zero-based visits indices.
 #' - `n_visits`: `int` with the number of visits, which is the dimension of the
 #'      covariance matrix.
@@ -208,6 +210,7 @@ h_mmrm_tmb_formula_parts <- function(formula) {
 #' @keywords internal
 h_mmrm_tmb_data <- function(formula_parts,
                             data,
+                            weights,
                             reml,
                             accept_singular) {
   assert_class(formula_parts, "mmrm_tmb_formula_parts")
@@ -219,6 +222,7 @@ h_mmrm_tmb_data <- function(formula_parts,
   )
   assert_factor(data[[formula_parts$visit_var]])
   assert_true(is.factor(data[[formula_parts$subject_var]]) || is.character(data[[formula_parts$subject_var]]))
+  assert_numeric(weights, len = nrow(data))
   assert_flag(reml)
   assert_flag(accept_singular)
 
@@ -228,8 +232,13 @@ h_mmrm_tmb_data <- function(formula_parts,
       levels = stringr::str_sort(unique(data[[formula_parts$subject_var]]), numeric = TRUE)
     )
   }
-  data <- data[order(data[[formula_parts$subject_var]], data[[formula_parts$visit_var]]), ]
-  full_frame <- droplevels(stats::model.frame(formula_parts$full_formula, data = data))
+
+  data_order <- order(data[[formula_parts$subject_var]], data[[formula_parts$visit_var]])
+  data <- data[data_order, ]
+  weights <- weights[data_order]
+
+  assign("weights", weights, envir = environment(formula_parts$full_formula))
+  full_frame <- droplevels(stats::model.frame(formula_parts$full_formula, data = data, weights = weights))
 
   x_matrix <- stats::model.matrix(formula_parts$model_formula, data = full_frame)
   x_cols_aliased <- stats::setNames(rep(FALSE, ncol(x_matrix)), nm = colnames(x_matrix))
@@ -252,6 +261,7 @@ h_mmrm_tmb_data <- function(formula_parts,
   }
 
   y_vector <- as.numeric(stats::model.response(full_frame))
+  weights_vector <- as.numeric(stats::model.weights(full_frame))
   visits_zero_inds <- as.integer(full_frame[[formula_parts$visit_var]]) - 1L
   n_visits <- nlevels(full_frame[[formula_parts$visit_var]])
   n_subjects <- nlevels(full_frame[[formula_parts$subject_var]])
@@ -274,6 +284,7 @@ h_mmrm_tmb_data <- function(formula_parts,
       x_matrix = x_matrix,
       x_cols_aliased = x_cols_aliased,
       y_vector = y_vector,
+      weights_vector = weights_vector,
       visits_zero_inds = visits_zero_inds,
       n_visits = n_visits,
       n_subjects = n_subjects,
@@ -421,6 +432,7 @@ h_mmrm_tmb_extract_cov <- function(tmb_report, tmb_data, visit_var) {
 #' @param tmb_opt (`list`)\cr optimization result.
 #' @param data (`data.frame`)\cr input data containing the variables used
 #'   in `formula`.
+#' @param weights (`vector`)\cr weights to be used in the fitting process.
 #' @param formula_parts (`mmrm_tmb_formula_parts`)\cr produced by
 #'  [h_mmrm_tmb_formula_parts()].
 #' @param tmb_data (`mmrm_tmb_data`)\cr produced by [h_mmrm_tmb_data()].
@@ -434,6 +446,7 @@ h_mmrm_tmb_extract_cov <- function(tmb_report, tmb_data, visit_var) {
 #'   - `neg_log_lik`: obtained negative log-likelihood.
 #'   - `formula_parts`: input.
 #'   - `data`: input.
+#'   - `weights`: input.
 #'   - `reml`: input as a flag.
 #'   - `opt_details`: list with optimization details including convergence code.
 #'   - `tmb_object`: original `TMB` object created with [TMB::MakeADFun()].
@@ -443,6 +456,7 @@ h_mmrm_tmb_extract_cov <- function(tmb_report, tmb_data, visit_var) {
 h_mmrm_tmb_fit <- function(tmb_object,
                            tmb_opt,
                            data,
+                           weights,
                            formula_parts,
                            tmb_data) {
   assert_list(tmb_object)
@@ -452,7 +466,7 @@ h_mmrm_tmb_fit <- function(tmb_object,
   assert_data_frame(data)
   assert_class(formula_parts, "mmrm_tmb_formula_parts")
   assert_class(tmb_data, "mmrm_tmb_data")
-  
+
   tmb_report <- tmb_object$report(par = tmb_opt$par)
   x_matrix_cols <- colnames(tmb_data$x_matrix)
   cov <- h_mmrm_tmb_extract_cov(tmb_report, tmb_data, formula_parts$visit_var)
@@ -478,6 +492,7 @@ h_mmrm_tmb_fit <- function(tmb_object,
       neg_log_lik = tmb_opt$objective,
       formula_parts = formula_parts,
       data = data,
+      weights = weights,
       reml = as.logical(tmb_data$reml),
       opt_details = tmb_opt[opt_details_names],
       tmb_object = tmb_object,
@@ -499,6 +514,7 @@ h_mmrm_tmb_fit <- function(tmb_object,
 #'   specifying the visits within subjects, see details.
 #' @param data (`data.frame`)\cr input data containing the variables used
 #'   in `formula`.
+#' @param weights (`vector`)\cr input vector containing the weights.
 #' @inheritParams h_mmrm_tmb_data
 #' @param control (`mmrm_tmb_control`)\cr list of control options produced
 #'   by [h_mmrm_tmb_control()].
@@ -516,14 +532,17 @@ h_mmrm_tmb_fit <- function(tmb_object,
 #' @examples
 #' formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
 #' data <- fev_data
-#' system.time(result <- h_mmrm_tmb(formula, data))
+#' system.time(result <- h_mmrm_tmb(formula, data, rep(1, nrow(fev_data))))
 h_mmrm_tmb <- function(formula,
                        data,
+                       weights,
                        reml = TRUE,
                        control = h_mmrm_tmb_control()) {
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   assert_class(control, "mmrm_tmb_control")
-  tmb_data <- h_mmrm_tmb_data(formula_parts, data, reml, accept_singular = control$accept_singular)
+  assert_numeric(weights, any.missing = FALSE)
+  assert_true(all(weights > 0))
+  tmb_data <- h_mmrm_tmb_data(formula_parts, data, weights, reml, accept_singular = control$accept_singular)
   tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = control$start, n_groups = tmb_data$n_groups)
 
   tmb_object <- TMB::MakeADFun(
@@ -550,7 +569,7 @@ h_mmrm_tmb <- function(formula,
     tmb_opt$value <- NULL
   }
   h_mmrm_tmb_assert_opt(tmb_object, tmb_opt)
-  fit <- h_mmrm_tmb_fit(tmb_object, tmb_opt, data, formula_parts, tmb_data)
+  fit <- h_mmrm_tmb_fit(tmb_object, tmb_opt, data, weights, formula_parts, tmb_data)
 
   fun_call <- match.call()
   fun_call$formula <- eval(formula_parts$formula)
@@ -559,6 +578,10 @@ h_mmrm_tmb <- function(formula,
     attr(data, which = "dataname"),
     toString(match.call()$data)
   )
+  weights_str <- attr(weights, which = "dataname")
+  if (!is.null(weights_str)) {
+    fun_call$weights <- weights_str
+  }
   fit$call <- fun_call
   fit
 }

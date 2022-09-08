@@ -4,7 +4,7 @@
 \alias{h_mmrm_tmb_fit}
 \title{Build \code{TMB} Fit Result List}
 \usage{
-h_mmrm_tmb_fit(tmb_object, tmb_opt, data, formula_parts, tmb_data)
+h_mmrm_tmb_fit(tmb_object, tmb_opt, data, weights, formula_parts, tmb_data)
 }
 \arguments{
 \item{tmb_object}{(\code{list})\cr created with \code{\link[TMB:MakeADFun]{TMB::MakeADFun()}}.}
@@ -13,6 +13,8 @@ h_mmrm_tmb_fit(tmb_object, tmb_opt, data, formula_parts, tmb_data)
 
 \item{data}{(\code{data.frame})\cr input data containing the variables used
 in \code{formula}.}
+
+\item{weights}{(\code{vector})\cr weights to be used in the fitting process.}
 
 \item{formula_parts}{(\code{mmrm_tmb_formula_parts})\cr produced by
 \code{\link[=h_mmrm_tmb_formula_parts]{h_mmrm_tmb_formula_parts()}}.}
@@ -30,6 +32,7 @@ List of class \code{mmrm_tmb} with:
 \item \code{neg_log_lik}: obtained negative log-likelihood.
 \item \code{formula_parts}: input.
 \item \code{data}: input.
+\item \code{weights}: input.
 \item \code{reml}: input as a flag.
 \item \code{opt_details}: list with optimization details including convergence code.
 \item \code{tmb_object}: original \code{TMB} object created with \code{\link[TMB:MakeADFun]{TMB::MakeADFun()}}.

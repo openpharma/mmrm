@@ -17,17 +17,20 @@
 #' mod_fit <- fit_single_optimizer(
 #'   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
 #'   data = fev_data,
+#'   weights = rep(1, nrow(fev_data)),
 #'   optimizer = "nlminb"
 #' )
 #' attr(mod_fit, "converged")
 fit_single_optimizer <- function(formula,
                                  data,
+                                 weights,
                                  reml = TRUE,
                                  start = NULL,
                                  optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb"),
                                  accept_singular = TRUE) {
   assert_formula(formula)
   assert_data_frame(data)
+  assert_vector(weights)
   optimizer <- match.arg(optimizer)
   control <- h_mmrm_tmb_control(
     optimizer = if (optimizer == "nlminb") stats::nlminb else stats::optim,
@@ -40,6 +43,7 @@ fit_single_optimizer <- function(formula,
     h_mmrm_tmb(
       formula = formula,
       data = data,
+      weights = weights,
       reml = reml,
       control = control
     ),
@@ -109,6 +113,7 @@ h_summarize_all_fits <- function(all_fits) {
 #' fit <- fit_single_optimizer(
 #'   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
 #'   data = fev_data,
+#'   weights = rep(1, nrow(fev_data)),
 #'   optimizer = "nlminb"
 #' )
 #' best_fit <- refit_multiple_optimizers(fit)
@@ -123,6 +128,7 @@ refit_multiple_optimizers <- function(fit,
   # Extract the components of the original fit.
   old_formula <- formula(fit)
   old_data <- fit$data
+  old_weights <- fit$weights
   old_optimizer <- attr(fit, "optimizer")
 
   # Settings for the new fits.
@@ -142,6 +148,7 @@ refit_multiple_optimizers <- function(fit,
     FUN = fit_single_optimizer,
     formula = old_formula,
     data = old_data,
+    weights = old_weights,
     reml = fit$reml,
     start = fit$theta_est,
     accept_singular = accept_singular,
@@ -173,6 +180,8 @@ refit_multiple_optimizers <- function(fit,
 #'
 #' @param formula (`formula`)\cr the model formula, see details.
 #' @param data (`data`)\cr the data to be used for the model.
+#' @param weights (`vector`)\cr an optional vector of weights to be used in the fitting process.
+#'   Should be NULL or a numeric vector.
 #' @param reml (`flag`)\cr whether restricted maximum likelihood (REML) estimation is used,
 #'   otherwise maximum likelihood (ML) is used.
 #' @param optimizer (`string`)\cr optimizer to be used to generate the model.
@@ -210,6 +219,7 @@ refit_multiple_optimizers <- function(fit,
 #' )
 mmrm <- function(formula,
                  data,
+                 weights = NULL,
                  reml = TRUE,
                  optimizer = "automatic",
                  n_cores = h_free_cores(),
@@ -219,9 +229,16 @@ mmrm <- function(formula,
 
   attr(data, which = "dataname") <- toString(match.call()$data)
 
+  if (is.null(weights)) {
+    weights <- rep(1, nrow(data))
+  } else {
+    attr(weights, which = "dataname") <- deparse(match.call()$weights)
+  }
+
   fit <- fit_single_optimizer(
     formula = formula,
     data = data,
+    weights = weights,
     reml = reml,
     optimizer = ifelse(use_automatic, "L-BFGS-B", optimizer),
     accept_singular = accept_singular

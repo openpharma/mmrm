@@ -1,5 +1,5 @@
 .tmb_formula <- FEV1 ~ RACE + us(AVISIT | USUBJID)
-.mmrm_tmb_example <- h_mmrm_tmb(.tmb_formula, fev_data)
+.mmrm_tmb_example <- h_mmrm_tmb(.tmb_formula, fev_data, weights = rep(1, nrow(fev_data)))
 get_mmrm_tmb <- function() {
   .mmrm_tmb_example
 }
@@ -8,7 +8,8 @@ get_mmrm_tmb <- function() {
 .mmrm_tmb_dat_rank_deficient <- cbind(fev_data, SEX2 = fev_data$SEX) # nolint
 .mmrm_tmb_example_rk_deficient <- h_mmrm_tmb(
   .tmb_formula_rank_deficient,
-  .mmrm_tmb_dat_rank_deficient
+  .mmrm_tmb_dat_rank_deficient,
+  weights = rep(1, nrow(fev_data))
 )
 get_mmrm_tmb_rank_deficient <- function() {
   .mmrm_tmb_example_rk_deficient
@@ -18,6 +19,13 @@ get_mmrm_tmb_rank_deficient <- function() {
 .mmrm_example <- mmrm(.mmrm_formula, fev_data)
 get_mmrm <- function() {
   .mmrm_example
+}
+
+set.seed(123, kind = "Mersenne-Twister")
+.mmrm_weights <- rpois(nrow(fev_data), lambda = 5) + 1
+.mmrm_weighted_example <- mmrm(.mmrm_formula, fev_data, weights = .mmrm_weights)
+get_mmrm_weighted <- function() {
+  .mmrm_weighted_example
 }
 
 .mmrm_formula_rank_deficient <- FEV1 ~ RACE + SEX + SEX2 + ARMCD * AVISIT + us(AVISIT | USUBJID)

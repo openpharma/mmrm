@@ -57,7 +57,7 @@ where the covariance matrix $\Sigma_i \in \mathbb{R}^{m_i \times m_i}$ is derive
 by subsetting the overall covariance matrix $\Sigma \in \mathbb{R}^{m \times m}$
 appropriately by
 \[
-\Sigma_i = S_i^\top \Sigma S_i
+\Sigma_i = G_i^{-1/2} S_i^\top \Sigma S_i G_i^{-1/2}
 \]
 where the subsetting matrix $S_i \in \{0, 1\}^{m \times m_i}$ contains
 in each of its $m_i$ columns contains a single 1 indicating which overall time point
@@ -74,6 +74,7 @@ S_i = \begin{pmatrix}
 0 & 0 & 0
 \end{pmatrix}.
 \]
+$G_i \in \mathbb{R}_{\gt 0}^{m_i \times m_i}$ is the diagonal weight matrix, which is the identity matrix if no weights are specified.
 Note that this follows from the well known property of the multivariate normal
 distribution that linear combinations of the random vector again have a
 multivariate normal distribution with the correspondingly modified mean

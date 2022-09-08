@@ -5,7 +5,8 @@ test_that("fit_single_optimizer works as expected with defaults", {
   form <- FEV1 ~ ARMCD * RACE + us(AVISIT | USUBJID)
   result <- fit_single_optimizer(
     formula = form,
-    data = dat
+    data = dat,
+    weights = rep(1, nrow(dat))
   )
   expect_identical(class(result), c("mmrm_fit", "mmrm_tmb"))
   expect_identical(attr(result, "optimizer"), "L-BFGS-B")
@@ -20,6 +21,7 @@ test_that("fit_single_optimizer works as expected with nlminb optimizer but no s
   result <- fit_single_optimizer(
     formula = form,
     data = dat,
+    weights = rep(1, nrow(dat)),
     optimizer = "nlminb"
   )
   expect_identical(class(result), c("mmrm_fit", "mmrm_tmb"))
@@ -35,6 +37,7 @@ test_that("fit_single_optimizer works as expected with optimizer inputted but no
   result <- fit_single_optimizer(
     formula = form,
     data = dat,
+    weights = rep(1, nrow(dat)),
     optimizer = "BFGS"
   )
   expect_identical(class(result), c("mmrm_fit", "mmrm_tmb"))
@@ -50,6 +53,7 @@ test_that("fit_single_optimizer works as expected with starting values and optim
   result <- fit_single_optimizer(
     formula = form,
     data = dat,
+    weights = rep(1, nrow(dat)),
     optimizer = "BFGS",
     start = 1:10
   )
@@ -71,7 +75,7 @@ test_that("fit_single_optimizer gives error messages", {
     fixed = TRUE
   )
   expect_error(
-    fit_single_optimizer(formula, fev_data),
+    fit_single_optimizer(formula, fev_data, weights = rep(1, nrow(fev_data))),
     paste(
       "Covariance structure must be specified in formula.",
       "Possible covariance structures include: us, toep, toeph, ar1, ar1h, ad, adh, cs, csh"
@@ -88,11 +92,13 @@ test_that("h_summarize_all_fits works as expected", {
   mod_fit <- fit_single_optimizer(
     formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
     data = fev_data,
+    weights = rep(1, nrow(fev_data)),
     optimizer = "nlminb"
   )
   mod_fit2 <- fit_single_optimizer(
     formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
     data = fev_data,
+    weights = rep(1, nrow(fev_data)),
     optimizer = "L-BFGS-B"
   )
   all_fits <- list(mod_fit, mod_fit2)
@@ -110,12 +116,14 @@ test_that("h_summarize_all_fits works when some list elements are try-error obje
   mod_fit <- fit_single_optimizer(
     formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
     data = fev_data,
+    weights = rep(1, nrow(fev_data)),
     optimizer = "nlminb"
   )
   mod_fit2 <- try(stop("bla"), silent = TRUE)
   mod_fit3 <- fit_single_optimizer(
     formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
     data = fev_data,
+    weights = rep(1, nrow(fev_data)),
     optimizer = "L-BFGS-B"
   )
   all_fits <- list(mod_fit, mod_fit2, mod_fit3)
@@ -135,6 +143,7 @@ test_that("refit_multiple_optimizers works as expected with default arguments", 
   fit <- fit_single_optimizer(
     formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
     data = fev_data,
+    weights = rep(1, nrow(fev_data)),
     optimizer = "nlminb"
   )
 
@@ -156,6 +165,7 @@ test_that("refit_multiple_optimizers works with parallel computations and select
   fit <- fit_single_optimizer(
     formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
     data = fev_data,
+    weights = rep(1, nrow(fev_data)),
     optimizer = "nlminb"
   )
 

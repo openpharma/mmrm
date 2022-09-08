@@ -13,7 +13,7 @@
 #'
 #' @examples
 #' formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
-#' object <- h_mmrm_tmb(formula, fev_data)
+#' object <- h_mmrm_tmb(formula, fev_data, weights = rep(1, nrow(fev_data)))
 NULL
 
 #' @describeIn mmrm_tmb_methods obtains the estimated coefficients.
@@ -40,7 +40,7 @@ fitted.mmrm_tmb <- function(object, ...) {
 }
 
 #' @describeIn mmrm_tmb_methods obtains the model frame.
-#' @param full (`flag`)\cr whether to include subject and visit variable.
+#' @param full (`flag`)\cr whether to include subject, visit and weight variables.
 #' @importFrom stats model.frame
 #' @exportS3Method
 #' @examples

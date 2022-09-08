@@ -33,3 +33,4 @@ src/*.o
 src/*.so
 .vscode
 src/*.dll
+testthat-problems.rds
