@@ -91,7 +91,7 @@ h_free_cores <- function() {
 
 #' covariance type
 #' @details
-#' abberiviations for covariance structures
+#' abbreviation for covariance structures
 #' us: "unstructured"
 #' toep: "Toeplitz"
 #' toeph: "heterogeneous Toeplitz"

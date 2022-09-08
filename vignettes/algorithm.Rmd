@@ -166,12 +166,12 @@ Following the notations in the previous section, for subject $i$ with total numb
 \Sigma_{i}(m_{ij}, m_{ik}) = \sigma * f(dist(t_{m_j}, t_{m_k}))
 \]
 
-The $(m_{ij}, m_{ik})$ element of $\Sigma_{i}$ is a function of the distance between $m_{ij}$ and $m_{ik}$ visit occuring on $t_{m_{ij}}$ and $t_{m_{ik}}$.
+The $(m_{ij}, m_{ik})$ element of $\Sigma_{i}$ is a function of the distance between $m_{ij}$ and $m_{ik}$ visit occurring on $t_{m_{ij}}$ and $t_{m_{ik}}$.
 $t_{m_{ij}}$ is the coordinate(time) of $m_{ij}$ visit for subject $i$.
 $\sigma$ is the constant variance.
 Usually we use Euclidean distance.
 
-Currently only spatial exponential covariance structure is implemented(with onely one continuous time variable).
+Currently only spatial exponential covariance structure is implemented(with only one continuous time variable).
 
 ## Maximum Likelihood Estimation
 
