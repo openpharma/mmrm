@@ -149,7 +149,7 @@ Type objective_function<Type>::operator() ()
   matrix<Type> beta_vcov = XtWX_decomposition.solve(Identity);
   REPORT(beta_vcov);
 
-  REPORT(covariance_lower_chol);  
+  REPORT(covariance_lower_chol);
 
   return neg_log_lik;
 }

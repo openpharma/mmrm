@@ -90,3 +90,15 @@ test_that("print.summary.mmrm works as expected for rank deficient fits", {
   result <- summary(object)
   expect_snapshot_output(print(result, digits = 1), cran = FALSE)
 })
+
+test_that("print.summary.mmrm works as expected for grouped fits", {
+  object <- get_mmrm_group()
+  result <- summary(object)
+  expect_snapshot_output(print(result, digits = 1), cran = FALSE)
+})
+
+test_that("print.summary.mmrm works as expected for spatial fits", {
+  object <- get_mmrm_spatial()
+  result <- summary(object)
+  expect_snapshot_output(print(result, digits = 1), cran = FALSE)
+})

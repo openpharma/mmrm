@@ -38,6 +38,18 @@ get_mmrm_rank_deficient <- function() {
   .mmrm_example_rank_deficient
 }
 
+.mmrm_group_formula <- FEV1 ~ ARMCD + us(AVISIT | ARMCD / USUBJID)
+.mmrm_grouped <- mmrm(.mmrm_group_formula, data = fev_data)
+get_mmrm_group <- function() {
+  .mmrm_grouped
+}
+
+.mmrm_spatial_formula <- FEV1 ~ ARMCD + gp_exp(VISITN | USUBJID)
+.mmrm_spatial <- mmrm(.mmrm_spatial_formula, data = fev_data)
+get_mmrm_spatial <- function() {
+  .mmrm_spatial
+}
+
 square_matrix <- function(values_by_row) {
   n <- length(values_by_row)
   size <- sqrt(n)
