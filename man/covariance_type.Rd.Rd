@@ -18,4 +18,17 @@ cov_type_spatial
 \description{
 covariance type
 }
+\details{
+abberiviations for covariance structures
+us: "unstructured"
+toep: "Toeplitz",
+toeph: "heterogeneous Toeplitz",
+ar1: "auto-regressive order one",
+ar1h: "heterogeneous auto-regressive order one",
+ad: "ante-dependence",
+adh: "heterogeneous ante-dependence",
+cs: "compound symmetry",
+csh: "heterogeneous compound symmetry",
+gp_exp: "spatial exponential"
+}
 \keyword{datasets}
