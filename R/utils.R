@@ -93,14 +93,14 @@ h_free_cores <- function() {
 #' @details
 #' abberiviations for covariance structures
 #' us: "unstructured"
-#' toep: "Toeplitz",
-#' toeph: "heterogeneous Toeplitz",
-#' ar1: "auto-regressive order one",
-#' ar1h: "heterogeneous auto-regressive order one",
-#' ad: "ante-dependence",
-#' adh: "heterogeneous ante-dependence",
-#' cs: "compound symmetry",
-#' csh: "heterogeneous compound symmetry",
+#' toep: "Toeplitz"
+#' toeph: "heterogeneous Toeplitz"
+#' ar1: "auto-regressive order one"
+#' ar1h: "heterogeneous auto-regressive order one"
+#' ad: "ante-dependence"
+#' adh: "heterogeneous ante-dependence"
+#' cs: "compound symmetry"
+#' csh: "heterogeneous compound symmetry"
 #' gp_exp: "spatial exponential"
 #' @rdname covariance_type.Rd
 cov_type <- c("us", "toep", "toeph", "ar1", "ar1h", "ad", "adh", "cs", "csh")
