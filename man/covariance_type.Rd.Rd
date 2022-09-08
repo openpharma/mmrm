@@ -19,7 +19,7 @@ cov_type_spatial
 covariance type
 }
 \details{
-abberiviations for covariance structures
+abbreviation for covariance structures
 us: "unstructured"
 toep: "Toeplitz"
 toeph: "heterogeneous Toeplitz"
