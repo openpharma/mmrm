@@ -90,7 +90,7 @@ h_free_cores <- function() {
 }
 
 #' covariance type
-#' @format vector of supported covariance strucures. `cov_type` for common time points covariance structures,
+#' @format vector of supported covariance structures. `cov_type` for common time points covariance structures,
 #' `cov_type_spatial` for spatial covariance structures.
 #' @details
 #' abbreviation for covariance structures
@@ -104,7 +104,7 @@ h_free_cores <- function() {
 #' * adh: "heterogeneous ante-dependence"
 #' * cs: "compound symmetry"
 #' * csh: "heterogeneous compound symmetry"
-#' ## Spatial Covariance Strucures
+#' ## Spatial Covariance structures
 #' * sp_exp: "spatial exponential"
 #' @rdname covariance_type
 cov_type <- c("us", "toep", "toeph", "ar1", "ar1h", "ad", "adh", "cs", "csh")
