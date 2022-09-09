@@ -177,7 +177,7 @@ matrix<T> get_spatial_covariance_lower_chol(const vector<T>& theta, const matrix
   if (cov_type == "gp_exp") {
     result = get_spatial_exponential<T>(theta, distance);
   } else {
-    Rf_error(("Unknown covariance type '" + cov_type + "'.").c_str());
+    Rf_error(("Unknown spatial covariance type '" + cov_type + "'.").c_str());
   }
   return result;
 }
