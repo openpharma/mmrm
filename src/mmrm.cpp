@@ -56,8 +56,8 @@ Type objective_function<Type>::operator() ()
   vector<Type> y_vec_tilde = vector<Type>::Zero(y_vector.rows());
   // Sum of the log determinant will be incrementally calculated here.
   Type sum_log_det = 0.0;
-  // Get theta_size
-  int theta_size = theta.size() / n_groups;
+  // Get number of variance parameters for one group.
+  int theta_one_group_size = theta.size() / n_groups;
   // Create the lower triangular Cholesky factor of the visit x visit covariance matrix.
   matrix<Type> covariance_lower_chol = get_cov_lower_chol_grouped(theta, n_visits, cov_type, n_groups, spatial);
   // Go through all subjects and calculate quantities initialized above.
