@@ -293,7 +293,7 @@ h_mmrm_tmb_data <- function(formula_parts,
     coordinates_matrix <- as.matrix(visits_zero_inds, ncol = 1)
     n_visits <- nlevels(coordinates[[1L]])
   }
-  ret <- structure(
+  structure(
     list(
       full_frame = full_frame,
       x_matrix = x_matrix,
