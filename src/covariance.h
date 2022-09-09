@@ -131,8 +131,8 @@ matrix<T> get_compound_symmetry_heterogeneous(const vector<T>& theta, int n_visi
 template <class T>
 matrix<T> get_spatial_exponential(const vector<T>& theta, const matrix<T>& distance) {
   T const_sd = exp(theta(0));
-  T logrho = exp(theta(1));
-  matrix<T> expdist = exp(-distance.array() *  logrho);
+  T rho = invlogit(theta(1));
+  matrix<T> expdist = exp(distance.array() * log(rho));
   matrix<T> result = expdist * const_sd;
   Eigen::LLT<Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> > cov_i_chol(result);
   return cov_i_chol.matrixL();

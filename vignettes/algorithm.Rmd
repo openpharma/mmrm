@@ -171,7 +171,8 @@ $t_{m_{ij}}$ is the coordinate(time) of $m_{ij}$ visit for subject $i$.
 $\sigma$ is the constant variance.
 Usually we use Euclidean distance.
 
-Currently only spatial exponential covariance structure is implemented(with only one continuous time variable).
+Currently only spatial exponential covariance structure is implemented.
+For coordinates with multiple dimensions, the Euclidean distance is used without transformations.
 
 ## Maximum Likelihood Estimation
 

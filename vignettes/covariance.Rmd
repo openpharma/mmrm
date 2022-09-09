@@ -227,7 +227,7 @@ In previous examples, $\rho$ can take values from -1 to 1, but here we need to r
 Hence we have the following parametrization form.
 
 \[
-  \theta = (\log(\sigma), \log(-\log(\rho)))
+  \theta = (\log(\sigma), logit(\rho)))
 \]
 
 # References
