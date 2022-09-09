@@ -408,7 +408,7 @@ h_mmrm_tmb_assert_opt <- function(tmb_object,
   }
 }
 
-#' Extract covariance matrix from `TMB` report and tmb data
+#' Extract covariance matrix from `TMB` report and input data
 #'
 #' This helper does some simple post-processing to extract covariance matrix or named
 #' list of covariance matrices if the fitting is using grouped covariance matrices.
