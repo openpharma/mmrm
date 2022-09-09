@@ -19,7 +19,7 @@ in R based on Template Model Builder (TMB).
         ante-dependence.
     -   Groups: shared covariance structure for all subjects, or shared
         by group.
-    -   Time homogeneous or heterogeneous.
+    -   Supports both time-homogeneous and heterogeneous structures.
 -   Hypothesis testing:
     -   Least square means: `emmeans` package can be used with model
         outputs to obtain least square means.
