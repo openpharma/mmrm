@@ -58,6 +58,14 @@ test_that("h_mmrm_tmb_extract_vars works for grouped formula as expected", {
 })
 
 
+test_that("h_mmrm_tmb_extract_vars works for multiple coordinates as expected", {
+  cl <- call("sp_exp", quote(dist(a1, a2 + a3) | b))
+  expect_error(
+    result <- h_mmrm_tmb_extract_vars(cl),
+    "`time` in `\\(time|\\(group/\\)subject)` must be specified as one single variable."
+  )
+})
+
 # h_mmrm_tmb_formula_parts ----
 
 test_that("h_mmrm_tmb_formula_parts works as expected", {
@@ -121,6 +129,10 @@ test_that("h_mmrm_tmb_formula_parts works as expected", {
   )
   expect_error(
     h_mmrm_tmb_formula_parts(FEV1 ~ RACE + cs(AVISIT | RACE + ARMCD / USUBJID)),
+    "Covariance structure must be of the form `cs\\(time|group/subject\\)`"
+  )
+  expect_error(
+    h_mmrm_tmb_formula_parts(FEV1 ~ RACE + cs(dist(AVISIT, AVISIT) | RACE + ARMCD / USUBJID)),
     "Covariance structure must be of the form `cs\\(time|group/subject\\)`"
   )
 })

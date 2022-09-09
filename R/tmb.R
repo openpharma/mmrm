@@ -70,6 +70,13 @@ h_mmrm_tmb_extract_vars <- function(cov_term) {
   } else if (identical(length(visit_term), 1L)) {
     visit_var <- as.character(visit_term)
   } else {
+    vl <- vapply(visit_term[-1L], length, FUN.VALUE = 1L)
+    if (any(vl != 1L)) {
+      stop(
+        "`time` in `(time|(group/)subject)` must be specified as one single variable, ",
+        "or specified as `(dist(time1, time2, ...) | (group/)subject) for spatial coordinates"
+      )
+    }
     visit_var <- as.character(visit_term[-1L])
   }
   if (identical(length(cov_content[[3L]]), 1L)) {
@@ -159,6 +166,11 @@ h_mmrm_tmb_formula_parts <- function(formula) {
     )
   }
   cov_term_type <- deparse(cov_term[[1L]])
+  if (length(cov_vars$visit_var) > 1L && !cov_term_type %in% cov_type_spatial) {
+    stop(
+      "Only spatial covariance support multiple coordinates"
+    )
+  }
   structure(
     list(
       formula = formula,
