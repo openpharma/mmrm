@@ -156,7 +156,7 @@ h_mmrm_tmb_formula_parts <- function(formula) {
   }
   cov_type <- deparse(cov_term[[1L]])
   structure(
-    .Data = list(
+    list(
       formula = formula,
       model_formula = model_formula,
       full_formula = full_formula,
