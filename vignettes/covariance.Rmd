@@ -203,13 +203,12 @@ symmetry covariance structure with $k = m + 1$ variance parameters.
 # Spatial Covariance Structure
 
 Spatial covariance structures, unlike other covariance structures,
-does not require that the timepoints be consistent between subjects.
-Instead, as long as the distance between visits can be quantified,
+does not require that the timepoints are consistent between subjects.
+Instead, as long as the distance between visits can be quantified in terms of time and/or other coordinates,
 the spatial covariance structure can be applied.
 Euclidean distance is the most common case.
-For each subject, the covariance structure can be different,
-as they can have totally different timepoints.
-Only homogeneous structures are allowed(the variance is constant in all timepoints).
+For each subject, the covariance structure can be different.
+Only homogeneous structures are allowed (i.e. a common variance is used).
 
 ## Spatial exponential
 
