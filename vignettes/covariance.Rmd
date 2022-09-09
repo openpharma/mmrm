@@ -1,7 +1,7 @@
 ---
 title: "Covariance Structures in `mmrm`"
 package: mmrm
-bibliography: '`r system.file("REFERENCES.bib", package = "mmrm")`'
+#bibliography: '`r system.file("REFERENCES.bib", package = "mmrm")`'
 author:
   - Daniel Sabanés Bové
   - Ya Wang
@@ -29,6 +29,7 @@ knitr::opts_chunk$set(
 ```
 
 \DeclareMathOperator{\sign}{sign}
+\DeclareMathOperator{\logit}{logit}
 \newcommand{\abs}[1]{\left\vert#1\right\vert}
 \newcommand{\R}{\mathbb{R}}
 
@@ -227,7 +228,7 @@ In previous examples, $\rho$ can take values from -1 to 1, but here we need to r
 Hence we have the following parametrization form.
 
 \[
-  \theta = (\log(\sigma), logit(\rho)))
+  \theta = (\log(\sigma), \logit(\rho))
 \]
 
 # References
