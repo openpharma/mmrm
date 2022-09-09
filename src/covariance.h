@@ -127,7 +127,7 @@ matrix<T> get_compound_symmetry_heterogeneous(const vector<T>& theta, int n_visi
   return get_heterogeneous_cov(sd_values, fun);
 }
 
-//Spatial Exponential Cholesky factor.
+// Spatial Exponential Cholesky factor.
 template <class T>
 matrix<T> get_spatial_exponential(const vector<T>& theta, const matrix<T>& distance) {
   T const_sd = exp(theta(0));
