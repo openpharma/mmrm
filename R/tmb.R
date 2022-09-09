@@ -423,10 +423,10 @@ h_mmrm_tmb_assert_opt <- function(tmb_object,
 h_mmrm_tmb_extract_cov <- function(tmb_report, tmb_data, visit_var) {
   d <- dim(tmb_report$covariance_lower_chol)
   visits <- tmb_data$full_frame[[visit_var]]
-  if (is.factor(visits)) {
-    visit_names <- levels(visits)
+  visit_names <- if (is.factor(visits)) {
+    levels(visits)
   } else {
-    visit_names <- c(0, 1)
+    c(0, 1)
   }
   cov <- lapply(
     seq_len(d[1] / d[2]),
