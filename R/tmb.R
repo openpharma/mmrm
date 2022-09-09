@@ -161,7 +161,7 @@ h_mmrm_tmb_formula_parts <- function(formula) {
       model_formula = model_formula,
       full_formula = full_formula,
       cov_type = cov_type,
-      spatial = cov_type %in% cov_type_spatial,
+      is_spatial = cov_type %in% cov_type_spatial,
       visit_var = cov_vars$visit_var,
       subject_var = cov_vars$subject_var,
       group_var = cov_vars$group_var
