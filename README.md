@@ -23,7 +23,7 @@ in R based on Template Model Builder (TMB).
 -   Hypothesis testing:
     -   Least square means: `emmeans` package can be used with model
         outputs to obtain least square means.
-    -   Satterthwaite-adjusted one- and multi-dimenstional contrasts.
+    -   Satterthwaite-adjusted one- and multi-dimensional contrasts.
         (future work: Kenward-Roger)
 -   Model inference:
     -   Supports REML and ML.
