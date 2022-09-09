@@ -20,6 +20,19 @@ knitr::opts_chunk$set(
 The `mmrm` package implements mixed models for repeated measures (MMRM) in R
 based on Template Model Builder (TMB).
 
+*Main Features*  
+
+* Responses are assumed normally distributed.
+* Covariances: 
+  * Structures: unstructured, Toeplitz, AR1, and compound symmetry.
+  * Groups: shared covariance structure for all subjects, or shared by group.
+  * Time homogeneous or heterogeneous.
+* Model estimates:
+  * Least square means: `emmeans` package can be used with model outputs to obtain
+least square means.
+  * Degrees of freedom: Satterthwaite adjustment (planned is to add Kenward-Roger adjustment as alternative)
+* and others, please look through vignettes for major features.
+
 ## Installation
 
 ### GitHub
@@ -64,6 +77,13 @@ summary(fit)
 ```
 
 ## Details
+
+For a more detailed introduction to all of the features of this package, look
+at the introduction vignette:
+
+```{r intro-vignette, eval = FALSE}
+vignette("introduction")
+```
 
 For the available covariance structures, look at the covariance vignette:
 
