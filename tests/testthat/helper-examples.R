@@ -44,7 +44,7 @@ get_mmrm_group <- function() {
   .mmrm_grouped
 }
 
-.mmrm_spatial_formula <- FEV1 ~ ARMCD + gp_exp(VISITN | USUBJID)
+.mmrm_spatial_formula <- FEV1 ~ ARMCD + sp_exp(VISITN | USUBJID)
 .mmrm_spatial <- mmrm(.mmrm_spatial_formula, data = fev_data)
 get_mmrm_spatial <- function() {
   .mmrm_spatial

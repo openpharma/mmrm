@@ -140,7 +140,7 @@ h_print_cov <- function(cov_type, n_theta, n_groups) {
     adh = "heterogeneous ante-dependence",
     cs = "compound symmetry",
     csh = "heterogeneous compound symmetry",
-    gp_exp = "spatial exponential"
+    sp_exp = "spatial exponential"
   )
 
   catstr <- sprintf(

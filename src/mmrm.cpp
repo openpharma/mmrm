@@ -39,7 +39,7 @@ Type objective_function<Type>::operator() ()
   DATA_IVECTOR(subject_zero_inds); // Starting indices for each subject (0-based) (length n_subjects).
   DATA_IVECTOR(subject_n_visits);  // Number of observed visits for each subject (length n_subjects).
   DATA_STRING(cov_type);           // Covariance type name.
-  DATA_INTEGER(spatial);           // Spatial covariance (1)? Otherwise non-spatial covariance.
+  DATA_INTEGER(is_spatial_int);    // Spatial covariance (1)? Otherwise non-spatial covariance.
   DATA_INTEGER(reml);              // REML (1)? Otherwise ML (0).
   DATA_FACTOR(subject_groups);     // subject groups vector(0-based) (length n_subjects).
   DATA_INTEGER(n_groups);          // number of total groups.
@@ -58,8 +58,10 @@ Type objective_function<Type>::operator() ()
   Type sum_log_det = 0.0;
   // Get number of variance parameters for one group.
   int theta_one_group_size = theta.size() / n_groups;
+  // Convert is_spatial_int to bool.
+  bool is_spatial = (is_spatial_int == 1);
   // Create the lower triangular Cholesky factor of the visit x visit covariance matrix.
-  matrix<Type> covariance_lower_chol = get_cov_lower_chol_grouped(theta, n_visits, cov_type, n_groups, spatial);
+  matrix<Type> covariance_lower_chol = get_cov_lower_chol_grouped(theta, n_visits, cov_type, n_groups, is_spatial);
   // Go through all subjects and calculate quantities initialized above.
   for (int i = 0; i < n_subjects; i++) {
     // Start index and number of visits for this subject.
@@ -67,7 +69,7 @@ Type objective_function<Type>::operator() ()
     int n_visits_i = subject_n_visits(i);
     // Obtain Cholesky factor Li.
     matrix<Type> Li;
-    if (spatial != 1) {
+    if (is_spatial != 1) {
       matrix<Type> lower_chol = covariance_lower_chol.block(subject_groups(i) * n_visits, 0,  n_visits, n_visits);
       if (n_visits_i < n_visits) {
         // This subject has less visits, therefore we need to recalculate the Cholesky factor.
@@ -85,7 +87,7 @@ Type objective_function<Type>::operator() ()
     } else {
       matrix<Type> distance_i = euclidean(matrix<Type>(coordinates.block(start_i, 0, n_visits_i, coordinates.cols())));
       // Obtain Cholesky factor Li.
-      vector<Type> theta_i = theta.segment(subject_groups(i) * theta_size, theta_size);
+      vector<Type> theta_i = theta.segment(subject_groups(i) * theta_one_group_size, theta_one_group_size);
       Li = get_spatial_covariance_lower_chol(theta_i, distance_i, cov_type);
     }
     

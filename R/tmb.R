@@ -62,10 +62,15 @@ h_mmrm_tmb_extract_vars <- function(cov_term) {
     )
   }
   visit_term <- cov_content[[2L]]
-  if (!identical(length(visit_term), 1L)) {
+  if (!identical(length(visit_term), 1L) && !identical(as.character(visit_term[[1]]), "dist")) {
     stop(
-      "`time` in `(time|(group/)subject)` must be specified as one single variable."
+      "`time` in `(time|(group/)subject)` must be specified as one single variable, ",
+      "or specified as `(dist(time1, time2, ...) | (group/)subject) for spatial coordinates"
     )
+  } else if (identical(length(visit_term), 1L)) {
+    visit_var <- as.character(visit_term)
+  } else {
+    visit_var <- as.character(visit_term[-1L])
   }
   if (identical(length(cov_content[[3L]]), 1L)) {
     subject_term <- cov_content[[3L]]
@@ -92,7 +97,6 @@ h_mmrm_tmb_extract_vars <- function(cov_term) {
     )
   }
   subject_var <- deparse(subject_term)
-  visit_var <- deparse(visit_term)
   return(
     list(subject_var = subject_var, visit_var = visit_var, group_var = group_var)
   )
@@ -146,7 +150,7 @@ h_mmrm_tmb_formula_parts <- function(formula) {
   cov_vars <- h_mmrm_tmb_extract_vars(cov_term)
   full_formula <- stats::update(
     model_formula,
-    stats::as.formula(paste(". ~ . +", cov_vars$subject_var, "+", cov_vars$visit_var))
+    stats::as.formula(paste(". ~ . +", cov_vars$subject_var, "+", paste0(cov_vars$visit_var, collapse = "+")))
   )
   if (!is.null(cov_vars$group_var)) {
     full_formula <- stats::update(
@@ -154,14 +158,14 @@ h_mmrm_tmb_formula_parts <- function(formula) {
       stats::as.formula(paste(". ~ . +", cov_vars$group_var))
     )
   }
-  cov_type <- deparse(cov_term[[1L]])
+  cov_term_type <- deparse(cov_term[[1L]])
   structure(
     list(
       formula = formula,
       model_formula = model_formula,
       full_formula = full_formula,
-      cov_type = cov_type,
-      is_spatial = cov_type %in% cov_type_spatial,
+      cov_type = cov_term_type,
+      is_spatial = cov_term_type %in% cov_type_spatial,
       visit_var = cov_vars$visit_var,
       subject_var = cov_vars$subject_var,
       group_var = cov_vars$group_var
@@ -233,8 +237,11 @@ h_mmrm_tmb_data <- function(formula_parts,
       levels = stringr::str_sort(unique(data[[formula_parts$subject_var]]), numeric = TRUE)
     )
   }
-
-  data_order <- order(data[[formula_parts$subject_var]], data[[formula_parts$visit_var]])
+  if (!formula_parts$is_spatial) {
+    data_order <- order(data[[formula_parts$subject_var]], data[[formula_parts$visit_var]])
+  } else {
+    data_order <- order(data[[formula_parts$subject_var]])
+  }
   data <- data[data_order, ]
   weights <- weights[data_order]
 
@@ -263,8 +270,6 @@ h_mmrm_tmb_data <- function(formula_parts,
 
   y_vector <- as.numeric(stats::model.response(full_frame))
   weights_vector <- as.numeric(stats::model.weights(full_frame))
-  visits_zero_inds <- as.integer(full_frame[[formula_parts$visit_var]]) - 1L
-  n_visits <- nlevels(full_frame[[formula_parts$visit_var]])
   n_subjects <- nlevels(full_frame[[formula_parts$subject_var]])
   subject_zero_inds <- which(!duplicated(full_frame[[formula_parts$subject_var]])) - 1L
   subject_n_visits <- c(utils::tail(subject_zero_inds, -1L), nrow(full_frame)) - subject_zero_inds
@@ -277,8 +282,8 @@ h_mmrm_tmb_data <- function(formula_parts,
     subject_groups <- factor(rep(0L, n_subjects))
     n_groups <- 1L
   }
-  coordinates <- full_frame[formula_parts$visit_var]
-  if (formula_parts$cov_type %in% cov_type_spatial) {
+  coordinates <- full_frame[, formula_parts$visit_var, drop = FALSE]
+  if (formula_parts$is_spatial) {
     lapply(coordinates, assert_numeric)
     coordinates_matrix <- as.matrix(coordinates)
     visits_zero_inds <- 0L
@@ -304,7 +309,7 @@ h_mmrm_tmb_data <- function(formula_parts,
       subject_zero_inds = subject_zero_inds,
       subject_n_visits = subject_n_visits,
       cov_type = formula_parts$cov_type,
-      spatial = formula_parts$spatial,
+      is_spatial_int = as.integer(formula_parts$is_spatial),
       reml = as.integer(reml),
       subject_groups = subject_groups,
       n_groups = n_groups
@@ -344,7 +349,7 @@ h_mmrm_tmb_parameters <- function(formula_parts,
     adh = 2 * m - 1,
     cs = 2,
     csh = m + 1,
-    gp_exp = 2
+    sp_exp = 2
   ))
   theta_dim <- theta_dim * n_groups
   if (!is.null(start)) {
@@ -416,15 +421,15 @@ h_mmrm_tmb_assert_opt <- function(tmb_object,
 #' @param tmb_report (`list`)\cr report created with [TMB::MakeADFun()] report function.
 #' @param tmb_data (`mmrm_tmb_data`)\cr produced by [h_mmrm_tmb_data()].
 #' @param visit_var `character`\cr character vector of length 1 of the visit variable
+#' @param is_spatial `logical`\cr logical value indicating the covariance structure is spatial.
 #' @return Return a simple covariance matrix if there is no grouping, or a named list of estimated grouped covariance matrices,
 #' with its name equal to the group levels.
 #'
 #' @keywords internal
-h_mmrm_tmb_extract_cov <- function(tmb_report, tmb_data, visit_var) {
+h_mmrm_tmb_extract_cov <- function(tmb_report, tmb_data, visit_var, is_spatial) {
   d <- dim(tmb_report$covariance_lower_chol)
-  visits <- tmb_data$full_frame[[visit_var]]
-  visit_names <- if (is.factor(visits)) {
-    levels(visits)
+  visit_names <- if (!is_spatial) {
+    levels(tmb_data$full_frame[[visit_var]])
   } else {
     c(0, 1)
   }
@@ -490,7 +495,7 @@ h_mmrm_tmb_fit <- function(tmb_object,
   
   tmb_report <- tmb_object$report(par = tmb_opt$par)
   x_matrix_cols <- colnames(tmb_data$x_matrix)
-  cov <- h_mmrm_tmb_extract_cov(tmb_report, tmb_data, formula_parts$visit_var)
+  cov <- h_mmrm_tmb_extract_cov(tmb_report, tmb_data, formula_parts$visit_var, formula_parts$is_spatial)
   beta_est <- tmb_report$beta
   names(beta_est) <- x_matrix_cols
   beta_vcov <- tmb_report$beta_vcov

@@ -26,6 +26,10 @@ test_that("h_mmrm_tmb_extract_vars works for non-grouped formula as expected", {
     result,
     list(subject_var = "b", visit_var = "a", group_var = NULL)
   )
+  expect_identical(
+    h_mmrm_tmb_extract_vars(call("cs", quote(dist(a1, a2) | b))),
+    list(subject_var = "b", visit_var = c("a1", "a2"), group_var = NULL)
+  )
   expect_error(
     h_mmrm_tmb_extract_vars(call("cs", quote(a + b))),
     "Covariance structure must be of the form `cs\\(time|\\(group/\\)subject\\)`"
@@ -66,7 +70,7 @@ test_that("h_mmrm_tmb_formula_parts works as expected", {
       model_formula = FEV1 ~ RACE + SEX + ARMCD + AVISIT + ARMCD:AVISIT,
       full_formula = FEV1 ~ RACE + SEX + ARMCD + AVISIT + USUBJID + ARMCD:AVISIT,
       cov_type = "us",
-      spatial = FALSE,
+      is_spatial = FALSE,
       visit_var = "AVISIT",
       subject_var = "USUBJID",
       group_var = NULL
@@ -84,7 +88,7 @@ test_that("h_mmrm_tmb_formula_parts works as expected", {
       model_formula = FEV1 ~ RACE + SEX + ARMCD + AVISIT + ARMCD:AVISIT,
       full_formula = FEV1 ~ RACE + SEX + ARMCD + AVISIT + USUBJID + ARMCD:AVISIT,
       cov_type = "us",
-      spatial = FALSE,
+      is_spatial = FALSE,
       visit_var = "AVISIT",
       subject_var = "USUBJID",
       group_var = "ARMCD"
@@ -131,7 +135,7 @@ test_that("h_mmrm_tmb_formula_parts works without covariates", {
       model_formula = FEV1 ~ 1,
       full_formula = FEV1 ~ USUBJID + AVISIT,
       cov_type = "ar1",
-      spatial = FALSE,
+      is_spatial = FALSE,
       visit_var = "AVISIT",
       subject_var = "USUBJID",
       group_var = NULL
@@ -151,7 +155,7 @@ test_that("h_mmrm_tmb_formula_parts works as expected for antedependence", {
       model_formula = FEV1 ~ RACE + SEX + ARMCD + AVISIT + ARMCD:AVISIT,
       full_formula = FEV1 ~ RACE + SEX + ARMCD + AVISIT + USUBJID + ARMCD:AVISIT,
       cov_type = "ad",
-      spatial = FALSE,
+      is_spatial = FALSE,
       visit_var = "AVISIT",
       subject_var = "USUBJID",
       group_var = NULL
@@ -176,7 +180,7 @@ test_that("h_mmrm_tmb_data works as expected", {
     c(
       "full_frame", "x_matrix", "x_cols_aliased", "coordinates", "y_vector",
       "weights_vector", "visits_zero_inds", "n_visits", "n_subjects",
-      "subject_zero_inds", "subject_n_visits", "cov_type", "spatial", "reml",
+      "subject_zero_inds", "subject_n_visits", "cov_type", "is_spatial_int", "reml",
       "subject_groups", "n_groups"
     )
   )
@@ -204,7 +208,7 @@ test_that("h_mmrm_tmb_data works as expected for grouped covariance", {
     c(
       "full_frame", "x_matrix", "x_cols_aliased", "coordinates", "y_vector",
       "weights_vector", "visits_zero_inds", "n_visits", "n_subjects", "subject_zero_inds",
-      "subject_n_visits", "cov_type", "spatial", "reml", "subject_groups", "n_groups"
+      "subject_n_visits", "cov_type", "is_spatial_int", "reml", "subject_groups", "n_groups"
     )
   )
   expect_matrix(result$x_matrix, nrows = 537, ncols = 3, any.missing = FALSE)
@@ -216,6 +220,33 @@ test_that("h_mmrm_tmb_data works as expected for grouped covariance", {
   expect_identical(result$reml, 0L) # ML.
   expect_factor(result$subject_groups, levels = c("PBO", "TRT")) # ARMCD is the group
   expect_identical(result$n_groups, 2L) # number of groups
+})
+
+test_that("h_mmrm_tmb_data works as expected for mutli-dimensional spatial exponential covariance", {
+  formula <- FEV1 ~ RACE + sp_exp(dist(VISITN, VISITN) | ARMCD / USUBJID)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula)
+  result <- expect_silent(h_mmrm_tmb_data(
+    formula_parts, fev_data,
+    reml = FALSE, weights = rep(1, nrow(fev_data)), accept_singular = FALSE
+  ))
+  expect_class(result, "mmrm_tmb_data")
+  expect_named(
+    result,
+    c(
+      "full_frame", "x_matrix", "x_cols_aliased", "coordinates", "y_vector",
+      "weights_vector", "visits_zero_inds", "n_visits", "n_subjects", "subject_zero_inds",
+      "subject_n_visits", "cov_type", "is_spatial_int", "reml", "subject_groups", "n_groups"
+    )
+  )
+  expect_matrix(result$x_matrix, nrows = 537, ncols = 3, any.missing = FALSE)
+  expect_numeric(result$y_vector, len = 537, any.missing = FALSE)
+  expect_identical(result$n_visits, 2L)
+  expect_integer(result$subject_zero_inds, len = 197, unique = TRUE, sorted = TRUE, any.missing = FALSE)
+  expect_identical(result$cov_type, "sp_exp") # spatial exponential
+  expect_identical(result$reml, 0L) # ML.
+  expect_factor(result$subject_groups, levels = c("PBO", "TRT")) # ARMCD is the group
+  expect_identical(result$n_groups, 2L) # number of groups
+  expect_matrix(result$coordinates, nrows = 537L, ncols = 2L)
 })
 
 test_that("h_mmrm_tmb_data works also for character ID variable", {
@@ -388,7 +419,7 @@ test_that("h_mmrm_tmb_parameters works as expected with heterogeneous compound s
 })
 
 test_that("h_mmrm_tmb_parameters works as expected with spatial exponential", {
-  formula <- FEV1 ~ SEX + gp_exp(VISITN | USUBJID)
+  formula <- FEV1 ~ SEX + sp_exp(VISITN | USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   tmb_data <- h_mmrm_tmb_data(
     formula_parts,
@@ -539,7 +570,7 @@ test_that("h_mmrm_tmb_extract_cov works as expected", {
     )
   )
   tmb_report <- tmb_object$report(par = tmb_opt$par)
-  result <- h_mmrm_tmb_extract_cov(tmb_report, tmb_data, "AVISIT")
+  result <- h_mmrm_tmb_extract_cov(tmb_report, tmb_data, "AVISIT", FALSE)
   expect_identical(
     colnames(result),
     sprintf("VIS%d", 1:4)
@@ -573,7 +604,7 @@ test_that("h_mmrm_tmb_extract_cov works as expected for group covariance", {
     )
   )
   tmb_report <- tmb_object$report(par = tmb_opt$par)
-  result <- h_mmrm_tmb_extract_cov(tmb_report, tmb_data, formula_parts$visit_var)
+  result <- h_mmrm_tmb_extract_cov(tmb_report, tmb_data, formula_parts$visit_var, formula_parts$is_spatial)
   expect_identical(
     names(result),
     c("PBO", "TRT")
@@ -718,7 +749,7 @@ test_that("h_mmrm_tmb_fit errors when an invalid covariance type is used", {
     ),
     "Unknown covariance type 'gaaah'"
   )
-  tmb_data$spatial <- TRUE
+  tmb_data$is_spatial <- TRUE
   expect_error(
     TMB::MakeADFun(
       data = tmb_data,
@@ -1420,8 +1451,8 @@ test_that("h_mmrm_tmb works with grouped csh covariance structure and REML", {
 
 ## spatial exponential ----
 
-test_that("h_mmrm_tmb works with gp_exp covariance structure and ML", {
-  formula <- FEV1 ~ gp_exp(VISITN | USUBJID)
+test_that("h_mmrm_tmb works with sp_exp covariance structure and ML", {
+  formula <- FEV1 ~ sp_exp(VISITN | USUBJID)
   result <- h_mmrm_tmb(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = FALSE)
   expect_class(result, "mmrm_tmb")
   # See design/SAS/sas_gp_exp_ml.txt for the source of numbers.
@@ -1431,8 +1462,8 @@ test_that("h_mmrm_tmb works with gp_exp covariance structure and ML", {
   expect_equal(exp(result$theta_est[1]), 88.7005, tolerance = 1e-3)
 })
 
-test_that("h_mmrm_tmb works with gp_exp covariance structure and REML", {
-  formula <- FEV1 ~ gp_exp(VISITN | USUBJID)
+test_that("h_mmrm_tmb works with sp_exp covariance structure and REML", {
+  formula <- FEV1 ~ sp_exp(VISITN | USUBJID)
   result <- h_mmrm_tmb(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = TRUE)
   expect_class(result, "mmrm_tmb")
   # See design/SAS/sas_gp_exp_reml.txt for the source of numbers.

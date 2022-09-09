@@ -134,10 +134,8 @@ matrix<T> get_spatial_exponential(const vector<T>& theta, const matrix<T>& dista
   T logrho = exp(theta(1));
   matrix<T> expdist = exp(-distance.array() *  logrho);
   matrix<T> result = expdist * const_sd;
-  matrix<T> chol(distance.rows(), distance.cols());
   Eigen::LLT<Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> > cov_i_chol(result);
-  chol = cov_i_chol.matrixL();
-  return chol;
+  return cov_i_chol.matrixL();
 }
 
 // Creates a new correlation object dynamically.
@@ -174,7 +172,7 @@ matrix<T> get_covariance_lower_chol(const vector<T>& theta, int n_visits, std::s
 template <class T>
 matrix<T> get_spatial_covariance_lower_chol(const vector<T>& theta, const matrix<T>& distance, std::string cov_type) {
   matrix<T> result;
-  if (cov_type == "gp_exp") {
+  if (cov_type == "sp_exp") {
     result = get_spatial_exponential<T>(theta, distance);
   } else {
     Rf_error(("Unknown spatial covariance type '" + cov_type + "'.").c_str());
@@ -184,13 +182,13 @@ matrix<T> get_spatial_covariance_lower_chol(const vector<T>& theta, const matrix
 
 // Creates a grouped correlation object dynamically.
 template <class T>
-matrix<T> get_cov_lower_chol_grouped(const vector<T>& theta, int n_visits, std::string cov_type, int n_groups, int spatial) {
-  if (spatial == 1) {
+matrix<T> get_cov_lower_chol_grouped(const vector<T>& theta, int n_visits, std::string cov_type, int n_groups, bool is_spatial) {
+  if (is_spatial) {
     n_visits = 2;
   }
   matrix<T> result(n_visits * n_groups, n_visits);
   int covariance_size = theta.size() / n_groups;
-  if (spatial == 1) {
+  if (is_spatial) {
     matrix<T> standard_dist(2, 2);
     standard_dist << 0, 1, 1, 0;
     for (int i = 0; i < n_groups; i++) {

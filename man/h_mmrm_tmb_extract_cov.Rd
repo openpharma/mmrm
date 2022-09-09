@@ -2,9 +2,9 @@
 % Please edit documentation in R/tmb.R
 \name{h_mmrm_tmb_extract_cov}
 \alias{h_mmrm_tmb_extract_cov}
-\title{Extract covariance matrix from \code{TMB} report and tmb data}
+\title{Extract covariance matrix from \code{TMB} report and input data}
 \usage{
-h_mmrm_tmb_extract_cov(tmb_report, tmb_data, visit_var)
+h_mmrm_tmb_extract_cov(tmb_report, tmb_data, visit_var, is_spatial)
 }
 \arguments{
 \item{tmb_report}{(\code{list})\cr report created with \code{\link[TMB:MakeADFun]{TMB::MakeADFun()}} report function.}
@@ -12,6 +12,8 @@ h_mmrm_tmb_extract_cov(tmb_report, tmb_data, visit_var)
 \item{tmb_data}{(\code{mmrm_tmb_data})\cr produced by \code{\link[=h_mmrm_tmb_data]{h_mmrm_tmb_data()}}.}
 
 \item{visit_var}{\code{character}\cr character vector of length 1 of the visit variable}
+
+\item{is_spatial}{\code{logical}\cr logical value indicating the covariance structure is spatial.}
 }
 \value{
 Return a simple covariance matrix if there is no grouping, or a named list of estimated grouped covariance matrices,

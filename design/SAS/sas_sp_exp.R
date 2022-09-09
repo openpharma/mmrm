@@ -1,5 +1,5 @@
 # Spatial exponential covariance structure ----
-formula <- FEV1 ~ cs(TIME | USUBJID)
+formula <- FEV1 ~ sp_exp(TIME | USUBJID)
 data <- fev_data
 data$TIME <- data$VISITN
 
