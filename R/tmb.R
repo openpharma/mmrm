@@ -279,10 +279,7 @@ h_mmrm_tmb_data <- function(formula_parts,
   }
   coordinates <- full_frame[formula_parts$visit_var]
   if (formula_parts$cov_type %in% cov_type_spatial) {
-    lapply(
-      coordinates,
-      assert_numeric
-    )
+    lapply(coordinates, assert_numeric)
     coordinates_matrix <- as.matrix(coordinates)
     visits_zero_inds <- 0L
     n_visits <- 2L
