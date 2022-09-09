@@ -24,14 +24,18 @@ based on Template Model Builder (TMB).
 
 * Responses are assumed normally distributed.
 * Covariances: 
-  * Structures: unstructured, Toeplitz, AR1, and compound symmetry.
+  * Structures: unstructured, Toeplitz, AR1, compound symmetry, and ante-dependence.
   * Groups: shared covariance structure for all subjects, or shared by group.
   * Time homogeneous or heterogeneous.
-* Model estimates:
+* Hypothesis testing:
   * Least square means: `emmeans` package can be used with model outputs to obtain
 least square means.
-  * Degrees of freedom: Satterthwaite adjustment (planned is to add Kenward-Roger adjustment as alternative)
-* and others, please look through vignettes for major features.
+  * Satterthwaite-adjusted one- and multi-dimenstional contrasts. (future work: Kenward-Roger)
+* Model inference:
+  * Supports REML and ML.
+  * Supports weights. 
+  * Automatic changing of optimizer in the case of non-convergence.
+  * Manual control of optimization routine.
 
 ## Installation
 
