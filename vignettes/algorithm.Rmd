@@ -163,7 +163,7 @@ Under spatial covariance structure, the covariance matrix is different for all s
 Following the notations in the previous section, for subject $i$ with total number of $m_i$ visits, we have
 
 \[
-\Sigma_{i}(m_{ij}, m_{ik}) = \sigma * f(dist(t_{m_j}, t_{m_k}))
+\sigma_{ijk} = \sigma * f(dist(\boldsymbol{c}_{ij}, \boldsymbol{c}_{ik}))
 \]
 
 The $(m_{ij}, m_{ik})$ element of $\Sigma_{i}$ is a function of the distance between $m_{ij}$ and $m_{ik}$ visit occurring on $t_{m_{ij}}$ and $t_{m_{ik}}$.
