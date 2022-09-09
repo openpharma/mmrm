@@ -6,7 +6,7 @@
 \alias{cov_type_spatial}
 \title{covariance type}
 \format{
-vector of supported covariance strucures. \code{cov_type} for common time points covariance structures,
+vector of supported covariance structures. \code{cov_type} for common time points covariance structures,
 \code{cov_type_spatial} for spatial covariance structures.
 }
 \usage{
@@ -33,7 +33,7 @@ abbreviation for covariance structures
 }
 }
 
-\subsection{Spatial Covariance Strucures}{
+\subsection{Spatial Covariance structures}{
 \itemize{
 \item sp_exp: "spatial exponential"
 }
