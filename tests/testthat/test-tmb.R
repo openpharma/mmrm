@@ -18,21 +18,55 @@ test_that("h_mmrm_tmb_control works as expected", {
   expect_identical(result, expected)
 })
 
+# h_mmrm_tmb_exract_terms ---
+test_that("h_mmrm_tmb_extract_terms works for covariance terms as expected", {
+  cl <- call("|", quote(a), quote(b))
+  expect_identical(
+    h_mmrm_tmb_extract_terms(cl),
+    list(subject_var = "b", visit_var = "a", group_var = NULL)
+  )
+  cl2 <- call("|", quote(a + b), quote(b))
+  expect_error(
+    h_mmrm_tmb_extract_terms(cl2),
+    "`time` in `time|\\(group/\\)subject` must be specified as one single variable."
+  )
+  cl3 <- call("|", quote(a), quote(b + c))
+  expect_error(
+    h_mmrm_tmb_extract_terms(cl3),
+    "Covariance structure must be of the form `time|\\(group/\\)subject`."
+  )
+  cl4 <- call("|", quote(a), quote(b / c))
+  expect_identical(
+    h_mmrm_tmb_extract_terms(cl4),
+    list(subject_var = "c", visit_var = "a", group_var = "b")
+  )
+  cl5 <- call("|", quote(a), quote((b + d) / c))
+  expect_error(
+    h_mmrm_tmb_extract_terms(cl5),
+    "`group` in `time|\\(group/\\)subject` must be specified as one single variable."
+  )
+  cl6 <- call("|", quote(a), quote(b / (c + d)))
+  expect_error(
+    h_mmrm_tmb_extract_terms(cl6),
+    "`subject` in `time|\\(group/\\)subject` must be specified as one single variable."
+  )
+})
+
 # h_mmrm_tmb_extract_vars ----
 test_that("h_mmrm_tmb_extract_vars works for non-grouped formula as expected", {
   cl <- call("cs", quote(a | b))
   result <- h_mmrm_tmb_extract_vars(cl)
   expect_identical(
     result,
-    list(subject_var = "b", visit_var = "a", group_var = NULL)
+    list(subject_var = "b", visit_var = "a", group_var = NULL, is_spatial = FALSE)
   )
   expect_identical(
-    h_mmrm_tmb_extract_vars(call("cs", quote(dist(a1, a2) | b))),
-    list(subject_var = "b", visit_var = c("a1", "a2"), group_var = NULL)
+    h_mmrm_tmb_extract_vars(call("sp_exp", quote(a1), quote(a2 | b))),
+    list(subject_var = "b", visit_var = c("a1", "a2"), group_var = NULL, is_spatial = TRUE)
   )
   expect_error(
     h_mmrm_tmb_extract_vars(call("cs", quote(a + b))),
-    "Covariance structure must be of the form `cs\\(time|\\(group/\\)subject\\)`"
+    "Covariance structure must be of the form `time|\\(group/\\)subject`."
   )
 })
 
@@ -41,28 +75,33 @@ test_that("h_mmrm_tmb_extract_vars works for grouped formula as expected", {
   result <- h_mmrm_tmb_extract_vars(cl)
   expect_identical(
     result,
-    list(subject_var = "c", visit_var = "a", group_var = "b")
+    list(subject_var = "c", visit_var = "a", group_var = "b", is_spatial = FALSE)
   )
   expect_error(
     h_mmrm_tmb_extract_vars(call("cs", quote((a + b) | c / d))),
-    "`time` in `\\(time|\\(group/\\)subject)` must be specified as one single variable."
+    "`time` in `time|\\(group/\\)subject` must be specified as one single variable."
   )
   expect_error(
     h_mmrm_tmb_extract_vars(call("cs", quote(a | b / (c + d)))),
-    "`subject` in `\\(time|\\(group/\\)subject)` must be specified as one single variable."
+    "`subject` in `time|\\(group/\\)subject` must be specified as one single variable."
   )
   expect_error(
     h_mmrm_tmb_extract_vars(call("cs", quote(a | (b + c) / d))),
-    "`group` in `\\(time|\\(group/\\)subject)` must be specified as one single variable."
+    "`group` in `time|\\(group/\\)subject` must be specified as one single variable."
   )
 })
 
 
 test_that("h_mmrm_tmb_extract_vars works for multiple coordinates as expected", {
-  cl <- call("sp_exp", quote(dist(a1, a2 + a3) | b))
+  cl <- call("sp_exp", quote(a1), quote(a2), quote(a3 | b))
+  expect_identical(
+    h_mmrm_tmb_extract_vars(cl),
+    list(subject_var = "b", visit_var = c("a1", "a2", "a3"), group_var = NULL, is_spatial = TRUE)
+  )
+  cl2 <- call("us", quote(a1), quote(a2), quote(a3 | b))
   expect_error(
-    result <- h_mmrm_tmb_extract_vars(cl),
-    "`time` in `\\(time|\\(group/\\)subject)` must be specified as one single variable."
+    h_mmrm_tmb_extract_vars(cl2),
+    "Non-spatial covariance term should not include multiple `time` variables."
   )
 })
 
@@ -125,15 +164,15 @@ test_that("h_mmrm_tmb_formula_parts works as expected", {
   )
   expect_error(
     h_mmrm_tmb_formula_parts(FEV1 ~ RACE + cs(AVISIT)),
-    "Covariance structure must be of the form `cs\\(time\\|\\(group/\\)subject\\)`"
+    "Covariance structure must be of the form `time\\|\\(group/\\)subject`"
   )
   expect_error(
     h_mmrm_tmb_formula_parts(FEV1 ~ RACE + cs(AVISIT | RACE + ARMCD / USUBJID)),
-    "Covariance structure must be of the form `cs\\(time|group/subject\\)`"
+    "Covariance structure must be of the form `time\\|\\(group/\\)subject`"
   )
   expect_error(
-    h_mmrm_tmb_formula_parts(FEV1 ~ RACE + cs(dist(AVISIT, AVISIT) | RACE + ARMCD / USUBJID)),
-    "Covariance structure must be of the form `cs\\(time|group/subject\\)`"
+    h_mmrm_tmb_formula_parts(FEV1 ~ RACE + cs(AVISIT, AVISIT | RACE + ARMCD / USUBJID)),
+    "Covariance structure must be of the form `time\\|\\(group/\\)subject`"
   )
 })
 
@@ -235,7 +274,7 @@ test_that("h_mmrm_tmb_data works as expected for grouped covariance", {
 })
 
 test_that("h_mmrm_tmb_data works as expected for mutli-dimensional spatial exponential covariance", {
-  formula <- FEV1 ~ RACE + sp_exp(dist(VISITN, VISITN) | ARMCD / USUBJID)
+  formula <- FEV1 ~ RACE + sp_exp(VISITN, VISITN | ARMCD / USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   result <- expect_silent(h_mmrm_tmb_data(
     formula_parts, fev_data,

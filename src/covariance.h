@@ -183,9 +183,6 @@ matrix<T> get_spatial_covariance_lower_chol(const vector<T>& theta, const matrix
 // Creates a grouped correlation object dynamically.
 template <class T>
 matrix<T> get_cov_lower_chol_grouped(const vector<T>& theta, int n_visits, std::string cov_type, int n_groups, bool is_spatial) {
-  if (is_spatial) {
-    n_visits = 2;
-  }
   matrix<T> result(n_visits * n_groups, n_visits);
   int covariance_size = theta.size() / n_groups;
   if (is_spatial) {

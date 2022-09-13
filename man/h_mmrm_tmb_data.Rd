@@ -40,6 +40,7 @@ indices for each subject.
 \item \code{subject_n_visits}: length \code{n_subjects} \code{integer} containing the number of
 observed visits for each subjects. So the sum of this vector equals \code{n}.
 \item \code{cov_type}: \code{string} value specifying the covariance type.
+\item \code{is_spatial_int}: \code{int} specifying whether the covariance structure is spatial(1) or not(0).
 \item \code{reml}: \code{int} specifying whether REML estimation is used (1), otherwise ML (0).
 \item \code{subject_groups}: \code{factor} specifying the grouping for each subject.
 \item \code{n_groups}: \code{int} with the number of total groups

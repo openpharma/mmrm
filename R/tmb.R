@@ -41,43 +41,32 @@ h_mmrm_tmb_control <- function(optimizer = stats::nlminb,
   )
 }
 
-#' Processing the covariance term
-#'
-#' @param cov_term (`call`)\cr covariance term.
-#'
-#' @return Named list of with elements:
+#' Extract group/subject vars from covariance term
+#' @param cov_content (`call`)\cr covarinace term
+#' @details a covariance term, which takes the following form:
+#' `us(time | group / subject)`, or `sp_exp(time1, time2, ... | group / subject)`.
+#' Only for spatial covariance structure can have multiple time coordinates.
+#' This function, take the call of `time | group / subject`, last element of the covariance term,
+#' extract the corresponding grouping var, time var and subject var.
+#' @return Named list with elements:
 #' - `visit_var`: `string` with the visit variable name.
 #' - `subject_var`: `string` with the subject variable name.
 #' - `group_var`: `string` with the group variable name. If no group specified, this element
 #'      is NULL.
 #' @keywords internal
-h_mmrm_tmb_extract_vars <- function(cov_term) {
-  assert_true(identical(length(cov_term), 2L)) # 2 because `fun (...)`.
-  cov_content <- cov_term[[2L]]
+h_mmrm_tmb_extract_terms <- function(cov_content) {
   if (!identical(length(cov_content), 3L) || !identical(as.character(cov_content[[1L]]), "|")) {
     stop(
-      "Covariance structure must be of the form `",
-      cov_term[[1]],
-      "(time|(group/)subject)`"
+      "Covariance structure must be of the form `time|(group/)subject`."
     )
   }
   visit_term <- cov_content[[2L]]
-  if (!identical(length(visit_term), 1L) && !identical(as.character(visit_term[[1]]), "dist")) {
+  if (!identical(length(visit_term), 1L)) {
     stop(
-      "`time` in `(time|(group/)subject)` must be specified as one single variable, ",
-      "or specified as `(dist(time1, time2, ...) | (group/)subject) for spatial coordinates"
+      "`time` in `time|(group/)subject` must be specified as one single variable."
     )
   } else if (identical(length(visit_term), 1L)) {
     visit_var <- as.character(visit_term)
-  } else {
-    vl <- vapply(visit_term[-1L], length, FUN.VALUE = 1L)
-    if (any(vl != 1L)) {
-      stop(
-        "`time` in `(time|(group/)subject)` must be specified as one single variable, ",
-        "or specified as `(dist(time1, time2, ...) | (group/)subject) for spatial coordinates"
-      )
-    }
-    visit_var <- as.character(visit_term[-1L])
   }
   if (identical(length(cov_content[[3L]]), 1L)) {
     subject_term <- cov_content[[3L]]
@@ -87,26 +76,66 @@ h_mmrm_tmb_extract_vars <- function(cov_term) {
     group_term <- cov_content[[3L]][[2L]]
     if (!identical(length(group_term), 1L)) {
       stop(
-        "`group` in `(time|group/subject)` must be specified as one single variable."
+        "`group` in `time|group/subject` must be specified as one single variable."
       )
     }
     group_var <- deparse(group_term)
   } else {
     stop(
-      "Covariance structure with grouping must be of the form `",
-      cov_term[[1]],
-      "(time|group/subject)`"
+      "Covariance structure must be of the form `time|(group/)subject`."
     )
   }
   if (!identical(length(subject_term), 1L)) {
     stop(
-      "`subject` in `(time|(group/)subject)` must be specified as one single variable."
+      "`subject` in `time|(group/)subject` must be specified as one single variable."
     )
   }
   subject_var <- deparse(subject_term)
   return(
     list(subject_var = subject_var, visit_var = visit_var, group_var = group_var)
   )
+}
+
+#' Processing the covariance term
+#'
+#' @param cov_term (`call`)\cr covariance term.
+#'
+#' @return Named list of with elements:
+#' - `visit_var`: `string` with the visit variable name.
+#' - `subject_var`: `string` with the subject variable name.
+#' - `group_var`: `string` with the group variable name. If no group specified, this element
+#'      is NULL.
+#' - `is_spatial`: `logical` indicator of whether the covariance structure is spatial
+#' @keywords internal
+h_mmrm_tmb_extract_vars <- function(cov_term) {
+  assert_true(length(cov_term) >= 2L) # 2 because `fun (...)`.
+  is_spatial <- as.character(cov_term[[1]]) %in% cov_type_spatial
+  cov_content <- cov_term[[length(cov_term)]] # this content is time | group / subject, last element
+  cov_terms <- h_mmrm_tmb_extract_terms(cov_content)
+  cov_terms$is_spatial <- is_spatial
+  if (is_spatial) {
+    # spatial can have sp_exp(time1, ... | group / subject)
+    visit_terms <- cov_term[c(-1L, -length(cov_term))]
+    term_lengths <- vapply(
+      visit_terms,
+      length,
+      1L
+    )
+    if (any(term_lengths != 1L)) {
+      stop(
+        "Spatial covariance term shoul have all `time` variables as single."
+      )
+    }
+    visit_vars <- as.character(visit_terms)
+    cov_terms$visit_var <- c(visit_vars, cov_terms$visit_var)
+  } else {
+    if (length(cov_term) > 2L) {
+      stop(
+        "Non-spatial covariance term should not include multiple `time` variables."
+      )
+    }
+  }
+  return(cov_terms)
 }
 
 #' Processing the Formula for `TMB` Fit
@@ -119,6 +148,7 @@ h_mmrm_tmb_extract_vars <- function(cov_term) {
 #' - `full_formula`: same as `model_formula` but includes the `subject_var` and
 #'      `visit_var`.
 #' - `cov_type`: `string` with covariance term type (e.g. `"us"`).
+#' - `is_spatial`: `logical` indicator of whether the covariance structure is spatial
 #' - `visit_var`: `string` with the visit variable name.
 #' - `subject_var`: `string` with the subject variable name.
 #' - `group_var`: `string` with the group variable name. If no group specified, this element
@@ -177,7 +207,7 @@ h_mmrm_tmb_formula_parts <- function(formula) {
       model_formula = model_formula,
       full_formula = full_formula,
       cov_type = cov_term_type,
-      is_spatial = cov_term_type %in% cov_type_spatial,
+      is_spatial = cov_vars$is_spatial,
       visit_var = cov_vars$visit_var,
       subject_var = cov_vars$subject_var,
       group_var = cov_vars$group_var
@@ -215,6 +245,7 @@ h_mmrm_tmb_formula_parts <- function(formula) {
 #' - `subject_n_visits`: length `n_subjects` `integer` containing the number of
 #'     observed visits for each subjects. So the sum of this vector equals `n`.
 #' - `cov_type`: `string` value specifying the covariance type.
+#' - `is_spatial_int`: `int` specifying whether the covariance structure is spatial(1) or not(0).
 #' - `reml`: `int` specifying whether REML estimation is used (1), otherwise ML (0).
 #' - `subject_groups`: `factor` specifying the grouping for each subject.
 #' - `n_groups`: `int` with the number of total groups

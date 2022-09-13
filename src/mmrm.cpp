@@ -69,7 +69,7 @@ Type objective_function<Type>::operator() ()
     int n_visits_i = subject_n_visits(i);
     // Obtain Cholesky factor Li.
     matrix<Type> Li;
-    if (is_spatial != 1) {
+    if (!is_spatial) {
       matrix<Type> lower_chol = covariance_lower_chol.block(subject_groups(i) * n_visits, 0,  n_visits, n_visits);
       if (n_visits_i < n_visits) {
         // This subject has less visits, therefore we need to recalculate the Cholesky factor.
