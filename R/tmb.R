@@ -149,7 +149,7 @@ h_mmrm_tmb_extract_vars <- function(cov_term) {
 #' - `full_formula`: same as `model_formula` but includes the `subject_var` and
 #'      `visit_var`.
 #' - `cov_type`: `string` with covariance term type (e.g. `"us"`).
-#' - `is_spatial`: `logical` indicator of whether the covariance structure is spatial
+#' - `is_spatial`: `flag` indicator of whether the covariance structure is spatial
 #' - `visit_var`: `string` with the visit variable name.
 #' - `subject_var`: `string` with the subject variable name.
 #' - `group_var`: `string` with the group variable name. If no group specified, this element
