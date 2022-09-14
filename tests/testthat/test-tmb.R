@@ -1506,22 +1506,44 @@ test_that("h_mmrm_tmb works with sp_exp covariance structure and ML", {
   formula <- FEV1 ~ sp_exp(VISITN | USUBJID)
   result <- h_mmrm_tmb(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = FALSE)
   expect_class(result, "mmrm_tmb")
-  # See design/SAS/sas_gp_exp_ml.txt for the source of numbers.
+  # See design/SAS/sas_sp_exp_ml.txt for the source of numbers.
   expect_equal(deviance(result), 3875.95353357)
   expect_equal(as.numeric(result$beta_est[1]), 42.3252, tolerance = 1e-4)
   expect_equal(plogis(result$theta_est[2])^2, 0.1805, tolerance = 1e-3)
   expect_equal(exp(result$theta_est[1]), 88.7005, tolerance = 1e-3)
 })
 
+test_that("h_mmrm_tmb works with sp_exp covariance structure and ML(2-dimension)", {
+  formula <- FEV1 ~ sp_exp(VISITN, VISITN | USUBJID)
+  result <- h_mmrm_tmb(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = FALSE)
+  expect_class(result, "mmrm_tmb")
+  # See design/SAS/sas_sp_exp2_ml.txt for the source of numbers.
+  expect_equal(deviance(result), 3875.95352482)
+  expect_equal(as.numeric(result$beta_est[1]), 42.3252, tolerance = 1e-4)
+  expect_equal(plogis(result$theta_est[2])^(2 * sqrt(2)), 0.1805, tolerance = 1e-3)
+  expect_equal(exp(result$theta_est[1]), 88.7064, tolerance = 1e-3)
+})
+
 test_that("h_mmrm_tmb works with sp_exp covariance structure and REML", {
   formula <- FEV1 ~ sp_exp(VISITN | USUBJID)
   result <- h_mmrm_tmb(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = TRUE)
   expect_class(result, "mmrm_tmb")
-  # See design/SAS/sas_gp_exp_reml.txt for the source of numbers.
+  # See design/SAS/sas_sp_exp_reml.txt for the source of numbers.
   expect_equal(deviance(result), 3875.49946734)
   expect_equal(as.numeric(result$beta_est[1]), 42.3254, tolerance = 1e-4)
   expect_equal(plogis(result$theta_est[2])^2, 0.1823, tolerance = 1e-3)
   expect_equal(exp(result$theta_est[1]), 88.9768, tolerance = 1e-3)
+})
+
+test_that("h_mmrm_tmb works with sp_exp covariance structure and REML(2-dimension)", {
+  formula <- FEV1 ~ sp_exp(VISITN, VISITN | USUBJID)
+  result <- h_mmrm_tmb(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = TRUE)
+  expect_class(result, "mmrm_tmb")
+  # See design/SAS/sas_sp_exp2_reml.txt for the source of numbers.
+  expect_equal(deviance(result), 3875.49945550)
+  expect_equal(as.numeric(result$beta_est[1]), 42.3255, tolerance = 1e-4)
+  expect_equal(plogis(result$theta_est[2])^(2 * sqrt(2)), 0.1824, tolerance = 1e-3)
+  expect_equal(exp(result$theta_est[1]), 88.9839, tolerance = 1e-3)
 })
 
 ## misc ----
