@@ -48,7 +48,7 @@ so specifies response and covariates as usual, and exactly one special term
 defines which covariance structure is used and what are the visit and
 subject variables.
 
-The covariance structures in the formula can be found in (\code{covariance_types})\cr.
+The covariance structures in the formula can be found in \code{\link{covariance_types}}.
 
 When setting \code{optimizer = "automatic"}, first the default optimizer
 (\code{L-BFGS-B}) is used to fit the model. If that converges, this is returned.
