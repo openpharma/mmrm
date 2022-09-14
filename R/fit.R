@@ -196,7 +196,7 @@ refit_multiple_optimizers <- function(fit,
 #' defines which covariance structure is used and what are the visit and
 #' subject variables.
 #'
-#' The covariance structures in the formula can be found in (`covariance_types`)\cr.
+#' The covariance structures in the formula can be found in [`covariance_types`].
 #' 
 #' When setting `optimizer = "automatic"`, first the default optimizer
 #' (`L-BFGS-B`) is used to fit the model. If that converges, this is returned.
