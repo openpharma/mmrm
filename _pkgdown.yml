@@ -36,7 +36,7 @@ reference:
       - mmrm_tmb_methods
   - title: Covariance Structures
     contents:
-      - covariance_type
+      - covariance_types
   - title: Datasets
     contents:
       - fev_data
