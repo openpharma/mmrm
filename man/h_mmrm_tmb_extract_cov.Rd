@@ -11,7 +11,7 @@ h_mmrm_tmb_extract_cov(tmb_report, tmb_data, visit_var, is_spatial)
 
 \item{tmb_data}{(\code{mmrm_tmb_data})\cr produced by \code{\link[=h_mmrm_tmb_data]{h_mmrm_tmb_data()}}.}
 
-\item{visit_var}{\code{character}\cr character vector of length 1 of the visit variable}
+\item{visit_var}{\code{character}\cr character vector of the visit variable}
 
 \item{is_spatial}{\code{logical}\cr logical value indicating the covariance structure is spatial.}
 }

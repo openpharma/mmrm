@@ -52,7 +52,7 @@ h_mmrm_tmb_control <- function(optimizer = stats::nlminb,
 #' @param cov_content (`call`)\cr covariance term
 #' 
 #' @return Named list with elements:
-#' - `visit_var`: `string` with the visit variable name.
+#' - `visit_var`: `character` with the visit variable name.
 #' - `subject_var`: `string` with the subject variable name.
 #' - `group_var`: `string` with the group variable name. If no group specified, this element
 #'      is NULL.
@@ -104,7 +104,7 @@ h_mmrm_tmb_extract_terms <- function(cov_content) {
 #' @param cov_term (`call`)\cr covariance term.
 #'
 #' @return Named list of with elements:
-#' - `visit_var`: `string` with the visit variable name.
+#' - `visit_var`: `character` with the visit variable name.
 #' - `subject_var`: `string` with the subject variable name.
 #' - `group_var`: `string` with the group variable name. If no group specified, this element
 #'      is NULL.
@@ -152,7 +152,7 @@ h_mmrm_tmb_extract_vars <- function(cov_term) {
 #'      `visit_var`.
 #' - `cov_type`: `string` with covariance term type (e.g. `"us"`).
 #' - `is_spatial`: `flag` indicator of whether the covariance structure is spatial
-#' - `visit_var`: `string` with the visit variable name.
+#' - `visit_var`: `character` with the visit variable name.
 #' - `subject_var`: `string` with the subject variable name.
 #' - `group_var`: `string` with the group variable name. If no group specified, this element
 #'      is `NULL`.
@@ -466,7 +466,7 @@ h_mmrm_tmb_assert_opt <- function(tmb_object,
 #'
 #' @param tmb_report (`list`)\cr report created with [TMB::MakeADFun()] report function.
 #' @param tmb_data (`mmrm_tmb_data`)\cr produced by [h_mmrm_tmb_data()].
-#' @param visit_var `character`\cr character vector of length 1 of the visit variable
+#' @param visit_var `character`\cr character vector of the visit variable
 #' @param is_spatial `logical`\cr logical value indicating the covariance structure is spatial.
 #' @return Return a simple covariance matrix if there is no grouping, or a named list of estimated grouped covariance matrices,
 #' with its name equal to the group levels.

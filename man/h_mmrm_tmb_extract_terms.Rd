@@ -12,7 +12,7 @@ h_mmrm_tmb_extract_terms(cov_content)
 \value{
 Named list with elements:
 \itemize{
-\item \code{visit_var}: \code{string} with the visit variable name.
+\item \code{visit_var}: \code{character} with the visit variable name.
 \item \code{subject_var}: \code{string} with the subject variable name.
 \item \code{group_var}: \code{string} with the group variable name. If no group specified, this element
 is NULL.
