@@ -109,9 +109,9 @@ h_free_cores <- function() {
 #' * sp_exp: "spatial exponential"
 #' @name covariance_types
 NULL
-#' @describeIn covariance_type non-spatial covariance structure
+#' @describeIn covariance_types non-spatial covariance structure
 #' @format NULL
 cov_type <- c("us", "toep", "toeph", "ar1", "ar1h", "ad", "adh", "cs", "csh")
-#' @describeIn covariance_type spatial covariance structure
+#' @describeIn covariance_types spatial covariance structure
 #' @format NULL
 cov_type_spatial <- c("sp_exp")

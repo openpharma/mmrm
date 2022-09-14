@@ -211,6 +211,17 @@ Euclidean distance is the most common case.
 For each subject, the covariance structure can be different.
 Only homogeneous structures are allowed (i.e. a common variance is used).
 
+Please note that while printing the summary of an `mmrm` fit, the covariance displayed is a 2 * 2 square matrix.
+As the distance will be used to derive the corresponding element in that matrix, unit distance is used here.
+The distance matrix is
+
+\[
+    \begin{pmatrix}
+    0 & 1\\
+    1 & 0\\
+    \end{pmatrix}
+\]
+
 ## Spatial exponential
 
 For spatial exponential, the covariance structure is defined as follows:

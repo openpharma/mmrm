@@ -43,12 +43,14 @@ h_mmrm_tmb_control <- function(optimizer = stats::nlminb,
 
 #' Extract group/subject vars from covariance term
 #' 
-#' @param cov_content (`call`)\cr covariance term
 #' @details a covariance term, which takes the following form:
 #' `us(time | group / subject)`, or `sp_exp(time1, time2, ... | group / subject)`.
 #' Only for spatial covariance structure can have multiple time coordinates.
 #' This function, take the call of `time | group / subject`, last element of the covariance term,
 #' extract the corresponding grouping var, time var and subject var.
+#' 
+#' @param cov_content (`call`)\cr covariance term
+#' 
 #' @return Named list with elements:
 #' - `visit_var`: `string` with the visit variable name.
 #' - `subject_var`: `string` with the subject variable name.
@@ -331,7 +333,7 @@ h_mmrm_tmb_data <- function(formula_parts,
     lapply(coordinates, assert_numeric)
     coordinates_matrix <- as.matrix(coordinates)
     visits_zero_inds <- 0L
-    n_visits <- 2L
+    n_visits <- max(subject_n_visits)
   } else {
     assert(identical(ncol(coordinates), 1L))
     assert_factor(coordinates[[1L]])

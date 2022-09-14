@@ -181,7 +181,7 @@
     mmrm fit
     
     Formula:     FEV1 ~ ARMCD + sp_exp(VISITN | USUBJID)
-    Data:        fev_data (used 537 observations from 197 subjects with maximum 2 
+    Data:        fev_data (used 537 observations from 197 subjects with maximum 4 
     timepoints)
     Covariance:  spatial exponential (2 variance parameters)
     Method:      REML

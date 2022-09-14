@@ -291,7 +291,7 @@ test_that("h_mmrm_tmb_data works as expected for mutli-dimensional spatial expon
   )
   expect_matrix(result$x_matrix, nrows = 537, ncols = 3, any.missing = FALSE)
   expect_numeric(result$y_vector, len = 537, any.missing = FALSE)
-  expect_identical(result$n_visits, 2L)
+  expect_identical(result$n_visits, 4L)
   expect_integer(result$subject_zero_inds, len = 197, unique = TRUE, sorted = TRUE, any.missing = FALSE)
   expect_identical(result$cov_type, "sp_exp") # spatial exponential
   expect_identical(result$reml, 0L) # ML.
