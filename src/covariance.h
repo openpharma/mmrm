@@ -182,20 +182,20 @@ matrix<T> get_spatial_covariance_lower_chol(const vector<T>& theta, const matrix
 
 // Creates a grouped correlation object dynamically.
 template <class T>
-matrix<T> get_cov_lower_chol_grouped(const vector<T>& theta, int n_visits, std::string cov_type, int n_groups, bool is_spatial) {
-  matrix<T> result(n_visits * n_groups, n_visits);
+matrix<T> get_cov_lower_chol_grouped(const vector<T>& theta, int dim_cov_mat, std::string cov_type, int n_groups, bool is_spatial) {
+  matrix<T> result(dim_cov_mat * n_groups, dim_cov_mat);
   int covariance_size = theta.size() / n_groups;
   if (is_spatial) {
     matrix<T> standard_dist(2, 2);
     standard_dist << 0, 1, 1, 0;
     for (int i = 0; i < n_groups; i++) {
       matrix<T> lower_chol = get_spatial_covariance_lower_chol(vector<T>(theta.segment(2 * i, covariance_size)), standard_dist, cov_type);
-      result << result.block(0, 0, n_visits * i, n_visits), lower_chol;
+      result << result.block(0, 0, dim_cov_mat * i, dim_cov_mat), lower_chol;
     }
   } else {
     for (int i = 0; i < n_groups; i++) {
-      matrix<T> lower_chol = get_covariance_lower_chol<T>(theta.segment(i * covariance_size, covariance_size), n_visits, cov_type);
-      result << result.block(0, 0, n_visits * i, n_visits), lower_chol;
+      matrix<T> lower_chol = get_covariance_lower_chol<T>(theta.segment(i * covariance_size, covariance_size), dim_cov_mat, cov_type);
+      result << result.block(0, 0, dim_cov_mat * i, dim_cov_mat), lower_chol;
     }
   }
   

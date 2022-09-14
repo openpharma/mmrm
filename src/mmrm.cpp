@@ -61,10 +61,13 @@ Type objective_function<Type>::operator() ()
   // Convert is_spatial_int to bool.
   bool is_spatial = (is_spatial_int == 1);
   // Create the lower triangular Cholesky factor of the visit x visit covariance matrix.
+  int dim_cov_mat;
   if (is_spatial) {
-    n_visits = 2;
+    dim_cov_mat = 2;
+  } else {
+    dim_cov_mat = n_visits;
   }
-  matrix<Type> covariance_lower_chol = get_cov_lower_chol_grouped(theta, n_visits, cov_type, n_groups, is_spatial);
+  matrix<Type> covariance_lower_chol = get_cov_lower_chol_grouped(theta, dim_cov_mat, cov_type, n_groups, is_spatial);
   // Go through all subjects and calculate quantities initialized above.
   for (int i = 0; i < n_subjects; i++) {
     // Start index and number of visits for this subject.
