@@ -107,7 +107,7 @@ h_free_cores <- function() {
 #' * csh: "heterogeneous compound symmetry"
 #' ## Spatial Covariance structures
 #' * sp_exp: "spatial exponential"
-#' @name covariance_type
+#' @name covariance_types
 NULL
 #' @describeIn covariance_type non-spatial covariance structure
 #' @format NULL
