@@ -6,12 +6,12 @@
 #' @param ... not used.
 #'
 #' @details
-#' While printting the summary of (`mmrm`)\cr object, the following will be displayed:
+#' While printing the summary of (`mmrm`)\cr object, the following will be displayed:
 #' 1. Formula. The formula used in the model.
 #' 2. Data. The data used for analysis, including number of subjects, number of valid observations.
 #' 3. Covariance. The covariance structure and number of variance parameters.
-#' 4. Method. Restricted maximum likehood(REML) or maximum likihood(ML).
-#' 5. Model selection criteria. AIC, BIC, log likelood and deviance.
+#' 4. Method. Restricted maximum likelihood(REML) or maximum likelihood(ML).
+#' 5. Model selection criteria. AIC, BIC, log likelihood and deviance.
 #' 6. Coefficients. Coefficients of the covariates.
 #' 7. Covariance estimate. The covariance estimate(for each group).
 #'    1. If the covariance structure is non-spatial, the covariance matrix of all categorical time points available

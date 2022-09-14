@@ -24,13 +24,13 @@
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
 \details{
-While printting the summary of (\code{mmrm})\cr object, the following will be displayed:
+While printing the summary of (\code{mmrm})\cr object, the following will be displayed:
 \enumerate{
 \item Formula. The formula used in the model.
 \item Data. The data used for analysis, including number of subjects, number of valid observations.
 \item Covariance. The covariance structure and number of variance parameters.
-\item Method. Restricted maximum likehood(REML) or maximum likihood(ML).
-\item Model selection criteria. AIC, BIC, log likelood and deviance.
+\item Method. Restricted maximum likelihood(REML) or maximum likelihood(ML).
+\item Model selection criteria. AIC, BIC, log likelihood and deviance.
 \item Coefficients. Coefficients of the covariates.
 \item Covariance estimate. The covariance estimate(for each group).
 \enumerate{
