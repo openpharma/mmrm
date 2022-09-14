@@ -124,7 +124,7 @@ h_mmrm_tmb_extract_vars <- function(cov_term) {
     )
     if (any(term_lengths != 1L)) {
       stop(
-        "Spatial covariance term shoul have all `time` variables as single."
+        "Spatial covariance term should have all `time` variables as single."
       )
     }
     visit_vars <- as.character(visit_terms)
