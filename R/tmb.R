@@ -42,6 +42,7 @@ h_mmrm_tmb_control <- function(optimizer = stats::nlminb,
 }
 
 #' Extract group/subject vars from covariance term
+#' 
 #' @param cov_content (`call`)\cr covariance term
 #' @details a covariance term, which takes the following form:
 #' `us(time | group / subject)`, or `sp_exp(time1, time2, ... | group / subject)`.
