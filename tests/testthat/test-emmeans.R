@@ -59,7 +59,7 @@ test_that("emm_basis method works also for rank deficient fit", {
   # Fit a linear model with the same formula so that we don't rely on
   # emm_basis just yet.
   lm_mod <- stats::lm(fit$formula_parts$model_formula, data = fit$data)
-  grid <- emmeans::ref_grid(lm_mod)
+  grid <- suppressMessages(emmeans::ref_grid(lm_mod))
 
   result <- emmeans::emm_basis(fit, trms = trms, xlev = xlev, grid = grid)
   expect_list(result)

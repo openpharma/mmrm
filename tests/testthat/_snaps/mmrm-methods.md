@@ -140,3 +140,66 @@
     VIS4 13.4  7.5  0.9 95.6
     
 
+# print.summary.mmrm works as expected for grouped fits
+
+    mmrm fit
+    
+    Formula:     FEV1 ~ ARMCD + us(AVISIT | ARMCD/USUBJID)
+    Data:        fev_data (used 537 observations from 197 subjects with maximum 4 
+    timepoints)
+    Covariance:  unstructured (20 variance parameters of 2 groups)
+    Method:      REML
+    
+    Model selection criteria:
+         AIC      BIC   logLik deviance 
+      3702.7   3768.3  -1831.3   3662.7 
+    
+    Coefficients: 
+                Estimate Std. Error    df t value Pr(>|t|)    
+    (Intercept)     41.2        0.4  94.0     101   <2e-16 ***
+    ARMCDTRT         3.5        0.6 147.0       6    2e-07 ***
+    ---
+    Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    
+    Covariance estimate:
+    Group: PBO
+          VIS1  VIS2 VIS3  VIS4
+    VIS1 110.7  49.2 -7.0 -47.0
+    VIS2  49.2  40.1 -2.7 -22.4
+    VIS3  -7.0  -2.7 23.5  17.7
+    VIS4 -47.0 -22.4 17.7 132.0
+    Group: TRT
+          VIS1 VIS2 VIS3  VIS4
+    VIS1 106.8 42.6  2.8 -46.3
+    VIS2  42.6 40.7  4.6  -4.8
+    VIS3   2.8  4.6 26.0  20.5
+    VIS4 -46.3 -4.8 20.5 172.9
+    
+
+# print.summary.mmrm works as expected for spatial fits
+
+    mmrm fit
+    
+    Formula:     FEV1 ~ ARMCD + sp_exp(VISITN | USUBJID)
+    Data:        fev_data (used 537 observations from 197 subjects with maximum 4 
+    timepoints)
+    Covariance:  spatial exponential (2 variance parameters)
+    Method:      REML
+    
+    Model selection criteria:
+         AIC      BIC   logLik deviance 
+      3859.1   3865.7  -1927.6   3855.1 
+    
+    Coefficients: 
+                Estimate Std. Error    df t value Pr(>|t|)    
+    (Intercept)     40.3        0.7 194.0      60   <2e-16 ***
+    ARMCDTRT         4.2        1.0 188.0       4    2e-05 ***
+    ---
+    Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    
+    Covariance estimate:
+         0    1
+    0 84.4 33.0
+    1 33.0 84.4
+    
+

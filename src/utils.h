@@ -83,4 +83,20 @@ matrix<T> get_heterogeneous_cov(const vector<T>& sd_values, const F<T>& corr_fun
   return result;
 }
 
+// Obtain the Euclidean distance
+template <class T>
+matrix<T> euclidean(const matrix<T>& coordinates) {
+  matrix<T> result(coordinates.rows(), coordinates.rows());
+  for (int i = 0; i < coordinates.rows(); i++) {
+    result(i, i) = 0;
+    for (int j = 0; j < i; j ++) {
+      vector<T> diff = coordinates.row(i) - coordinates.row(j); 
+      T d = sqrt((diff * diff).sum());
+      result(i, j) = d;
+      result(j, i) = d;
+    }
+  }
+  return result;
+}
+
 #endif

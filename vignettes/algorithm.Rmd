@@ -157,6 +157,23 @@ The parametrization of $\theta$ is similar to other non-grouped $\theta$.
 Assume that there are total number of $G$ groups, the length of $\theta$ is multiplied by $G$, and for each part, $\theta$ is parametrized in the same fashion.
 For example, for an unstructured covariance matrix, $\theta$ has $k = G * m(m+1)/2$ entries.
 
+#### Spatial covariance matrix
+
+Under spatial covariance structure, the covariance matrix is different for all subjects, if they have different visit timepoints.
+Following the notations in the previous section, for subject $i$ with total number of $m_i$ visits, we have
+
+\[
+\sigma_{ijk} = \sigma * f(dist(\boldsymbol{c}_{ij}, \boldsymbol{c}_{ik}))
+\]
+
+The $(m_{ij}, m_{ik})$ element of $\Sigma_{i}$ is a function of the distance between $m_{ij}$ and $m_{ik}$ visit occurring on $t_{m_{ij}}$ and $t_{m_{ik}}$.
+$t_{m_{ij}}$ is the coordinate(time) of $m_{ij}$ visit for subject $i$.
+$\sigma$ is the constant variance.
+Usually we use Euclidean distance.
+
+Currently only spatial exponential covariance structure is implemented.
+For coordinates with multiple dimensions, the Euclidean distance is used without transformations.
+
 ## Maximum Likelihood Estimation
 
 Given the general linear model above, and conditional on $\theta$, we know that

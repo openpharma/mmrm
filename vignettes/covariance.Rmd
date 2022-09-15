@@ -29,6 +29,7 @@ knitr::opts_chunk$set(
 ```
 
 \DeclareMathOperator{\sign}{sign}
+\DeclareMathOperator{\logit}{logit}
 \newcommand{\abs}[1]{\left\vert#1\right\vert}
 \newcommand{\R}{\mathbb{R}}
 
@@ -199,5 +200,46 @@ Assuming a constant variance in the state-space equation yields a
 homogeneous compound symmetry covariance structure with total only $k=2$
 variance parameters, otherwise we obtain the heterogeneous compound
 symmetry covariance structure with $k = m + 1$ variance parameters.
+
+# Spatial Covariance Structure
+
+Spatial covariance structures, unlike other covariance structures,
+does not require that the timepoints are consistent between subjects.
+Instead, as long as the distance between visits can be quantified in terms of time and/or other coordinates,
+the spatial covariance structure can be applied.
+Euclidean distance is the most common case.
+For each subject, the covariance structure can be different.
+Only homogeneous structures are allowed (i.e. a common variance is used).
+
+Please note that while printing the summary of an `mmrm` fit, the covariance displayed is a 2 * 2 square matrix.
+As the distance will be used to derive the corresponding element in that matrix, unit distance is used here.
+The distance matrix is
+
+\[
+    \begin{pmatrix}
+    0 & 1\\
+    1 & 0\\
+    \end{pmatrix}
+\]
+
+## Spatial exponential
+
+For spatial exponential, the covariance structure is defined as follows:
+
+\[
+  \rho_{ij} = \rho^{-d_{ij}}
+\]
+
+where $d_{ij}$ is the distance between time point $i$ and time point $j$,
+
+A total number of parameters $k = 2$ is needed:
+
+The parameterization for $\theta$ is a little different from previous examples.
+In previous examples, $\rho$ can take values from -1 to 1, but here we need to restrict $\rho$ to (0, 1).
+Hence we have the following parametrization form.
+
+\[
+  \theta = (\log(\sigma), \logit(\rho))
+\]
 
 # References
