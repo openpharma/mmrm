@@ -1,7 +1,8 @@
 # Spatial exponential covariance structure ----
 formula <- FEV1 ~ sp_exp(VISITN | USUBJID)
-formula2 <- FEV1 ~ sp_exp(VISITN, VISITN | USUBJID)
+formula2 <- FEV1 ~ sp_exp(VISITN, VISITN2 | USUBJID)
 data <- fev_data
+data$VISITN2 <- data$VISITN + 1
 
 ## ML ----
 sascode <- list(
@@ -31,7 +32,7 @@ sascode <- list(
     PROC MIXED DATA = ana.dat cl method=ml;
       CLASS USUBJID;
       MODEL FEV1 = / ddfm=satterthwaite solution chisq;
-      REPEATED / subject=USUBJID type=sp(exp)(visitn visitn) rcorr;
+      REPEATED / subject=USUBJID type=sp(exp)(visitn visitn2) rcorr;
     RUN;
       "
 )
@@ -66,7 +67,7 @@ sascode <- list(
     PROC MIXED DATA = ana.dat cl method=reml;
       CLASS USUBJID;
       MODEL FEV1 = / ddfm=satterthwaite solution chisq;
-      REPEATED / subject=USUBJID type=sp(exp)(visitn visitn) rcorr;
+      REPEATED / subject=USUBJID type=sp(exp)(visitn visitn2) rcorr;
     RUN;
       "
 )

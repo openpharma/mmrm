@@ -1514,8 +1514,10 @@ test_that("h_mmrm_tmb works with sp_exp covariance structure and ML", {
 })
 
 test_that("h_mmrm_tmb works with sp_exp covariance structure and ML(2-dimension)", {
-  formula <- FEV1 ~ sp_exp(VISITN, VISITN | USUBJID)
-  result <- h_mmrm_tmb(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = FALSE)
+  data <- fev_data
+  data$VISITN2 <- data$VISITN + 1
+  formula <- FEV1 ~ sp_exp(VISITN, VISITN2 | USUBJID)
+  result <- h_mmrm_tmb(formula, data, weights = rep(1, nrow(fev_data)), reml = FALSE)
   expect_class(result, "mmrm_tmb")
   # See design/SAS/sas_sp_exp2_ml.txt for the source of numbers.
   expect_equal(deviance(result), 3875.95352482)
@@ -1536,8 +1538,10 @@ test_that("h_mmrm_tmb works with sp_exp covariance structure and REML", {
 })
 
 test_that("h_mmrm_tmb works with sp_exp covariance structure and REML(2-dimension)", {
-  formula <- FEV1 ~ sp_exp(VISITN, VISITN | USUBJID)
-  result <- h_mmrm_tmb(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = TRUE)
+  data <- fev_data
+  data$VISITN2 <- data$VISITN + 1
+  formula <- FEV1 ~ sp_exp(VISITN, VISITN2 | USUBJID)
+  result <- h_mmrm_tmb(formula, data, weights = rep(1, nrow(fev_data)), reml = TRUE)
   expect_class(result, "mmrm_tmb")
   # See design/SAS/sas_sp_exp2_reml.txt for the source of numbers.
   expect_equal(deviance(result), 3875.49945550)
