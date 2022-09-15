@@ -2,7 +2,6 @@
 formula <- FEV1 ~ sp_exp(VISITN | USUBJID)
 formula2 <- FEV1 ~ sp_exp(VISITN, VISITN2 | USUBJID)
 data <- fev_data
-data$VISITN2 <- data$VISITN + 1
 
 ## ML ----
 sascode <- list(

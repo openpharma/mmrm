@@ -1,4 +1,4 @@
-                                                           The SAS System                Tuesday, September  6, 2022 08:29:00 AM   1
+                                                           The SAS System               Thursday, September 15, 2022 01:35:00 PM   1
 
                                                         The Mixed Procedure
 
@@ -55,7 +55,7 @@
                                                              PT83 PT84 PT85 PT86 PT87 PT88 
                                                              PT89 PT9 PT90 PT91 PT92 PT93  
                                                              PT94 PT95 PT96 PT97 PT98 PT99 
-                                                           The SAS System                Tuesday, September  6, 2022 08:29:00 AM   2
+                                                           The SAS System               Thursday, September 15, 2022 01:35:00 PM   2
 
                                                         The Mixed Procedure
 
@@ -112,7 +112,7 @@
                                                BIC (Smaller is Better)        3886.1
 
 
-                                                           The SAS System                Tuesday, September  6, 2022 08:29:00 AM   3
+                                                           The SAS System               Thursday, September 15, 2022 01:35:00 PM   3
 
                                                         The Mixed Procedure
 

@@ -1,4 +1,4 @@
-                                                           The SAS System              Wednesday, September 14, 2022 05:15:00 PM   1
+                                                           The SAS System               Thursday, September 15, 2022 01:35:00 PM   1
 
                                                         The Mixed Procedure
 
@@ -55,7 +55,7 @@
                                                              PT83 PT84 PT85 PT86 PT87 PT88 
                                                              PT89 PT9 PT90 PT91 PT92 PT93  
                                                              PT94 PT95 PT96 PT97 PT98 PT99 
-                                                           The SAS System              Wednesday, September 14, 2022 05:15:00 PM   2
+                                                           The SAS System               Thursday, September 15, 2022 01:35:00 PM   2
 
                                                         The Mixed Procedure
 
@@ -80,9 +80,8 @@
                                     Iteration    Evaluations    -2 Res Log Like       Criterion
 
                                             0              1      3920.48098100                
-                                            1              2      3876.04677852      0.00035173
-                                            2              1      3875.50529943      0.00000401
-                                            3              1      3875.49945550      0.00000000
+                                            1              2      3894.62146454      0.00001374
+                                            2              1      3894.60123182      0.00000000
 
 
                                                      Convergence criteria met.                    
@@ -93,25 +92,27 @@
  
                                                      Row        Col1        Col2
 
-                                                       1      1.0000      0.1824
-                                                       2      0.1824      1.0000
+                                                       1      1.0000      0.1393
+                                                       2      0.1393      1.0000
 
 
                                                    Covariance Parameter Estimates
  
                                  Cov Parm     Subject    Estimate     Alpha       Lower       Upper
 
-                                 SP(EXP)      USUBJID      1.6624      0.05      1.2701      2.2705
-                                 Residual                 88.9839      0.05     78.1722      102.22
+                                 SP(EXP)      USUBJID      1.2418      0.05      0.9304      1.7412
+                                 Residual                 87.8870      0.05     77.7025      100.22
 
 
                                                           Fit Statistics
 
-                                               -2 Res Log Likelihood          3875.5
-                                               AIC (Smaller is Better)        3879.5
-                                               AICC (Smaller is Better)       3879.5
-                                               BIC (Smaller is Better)        3886.1
-                                                           The SAS System              Wednesday, September 14, 2022 05:15:00 PM   3
+                                               -2 Res Log Likelihood          3894.6
+                                               AIC (Smaller is Better)        3898.6
+                                               AICC (Smaller is Better)       3898.6
+                                               BIC (Smaller is Better)        3905.2
+
+
+                                                           The SAS System               Thursday, September 15, 2022 01:35:00 PM   3
 
                                                         The Mixed Procedure
 
@@ -119,7 +120,7 @@
  
                                                     DF    Chi-Square      Pr > ChiSq
 
-                                                     1         44.98          <.0001
+                                                     1         25.88          <.0001
 
 
                                                      Solution for Fixed Effects
@@ -127,5 +128,4 @@
                                                            Standard
                                   Effect       Estimate       Error      DF    t Value    Pr > |t|
 
-                                  Intercept     42.3255      0.5013     188      84.44      <.0001
-
+                                  Intercept     42.2202      0.4754     194      88.82      <.0001

@@ -131,6 +131,13 @@ h_mmrm_tmb_extract_vars <- function(cov_term) {
     }
     visit_vars <- as.character(visit_terms)
     cov_terms$visit_var <- c(visit_vars, cov_terms$visit_var)
+    if (any(duplicated(cov_terms$visit_var))) {
+      warning(
+        "Duplicated `time` variable spotted: ",
+        toString(cov_terms$visit_var[unique(duplicated(cov_terms$visit_var))]),
+        ". This may indicate input errors in the formula."
+      )
+    }
   } else {
     if (length(cov_term) > 2L) {
       stop(

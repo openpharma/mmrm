@@ -20,88 +20,80 @@ test_that("h_mmrm_tmb_control works as expected", {
 
 # h_mmrm_tmb_exract_terms ---
 test_that("h_mmrm_tmb_extract_terms works for covariance terms as expected", {
-  cl <- call("|", quote(a), quote(b))
   expect_identical(
-    h_mmrm_tmb_extract_terms(cl),
+    h_mmrm_tmb_extract_terms(quote(a | b)),
     list(subject_var = "b", visit_var = "a", group_var = NULL)
   )
-  cl2 <- call("|", quote(a + b), quote(b))
   expect_error(
-    h_mmrm_tmb_extract_terms(cl2),
+    h_mmrm_tmb_extract_terms(quote(a + b | b)),
     "`time` in `time|\\(group/\\)subject` must be specified as one single variable."
   )
-  cl3 <- call("|", quote(a), quote(b + c))
   expect_error(
-    h_mmrm_tmb_extract_terms(cl3),
+    h_mmrm_tmb_extract_terms(quote(a | (b + c))),
     "Covariance structure must be of the form `time|\\(group/\\)subject`."
   )
-  cl4 <- call("|", quote(a), quote(b / c))
   expect_identical(
-    h_mmrm_tmb_extract_terms(cl4),
+    h_mmrm_tmb_extract_terms(quote(a | b / c)),
     list(subject_var = "c", visit_var = "a", group_var = "b")
   )
-  cl5 <- call("|", quote(a), quote((b + d) / c))
   expect_error(
-    h_mmrm_tmb_extract_terms(cl5),
+    h_mmrm_tmb_extract_terms(quote(a | (b + d) / c)),
     "`group` in `time|\\(group/\\)subject` must be specified as one single variable."
   )
-  cl6 <- call("|", quote(a), quote(b / (c + d)))
   expect_error(
-    h_mmrm_tmb_extract_terms(cl6),
+    h_mmrm_tmb_extract_terms(quote(a | b / (c + d))),
     "`subject` in `time|\\(group/\\)subject` must be specified as one single variable."
   )
 })
 
 # h_mmrm_tmb_extract_vars ----
 test_that("h_mmrm_tmb_extract_vars works for non-grouped formula as expected", {
-  cl <- call("cs", quote(a | b))
-  result <- h_mmrm_tmb_extract_vars(cl)
   expect_identical(
-    result,
+    h_mmrm_tmb_extract_vars(quote(cs(a | b))),
     list(subject_var = "b", visit_var = "a", group_var = NULL, is_spatial = FALSE)
   )
   expect_identical(
-    h_mmrm_tmb_extract_vars(call("sp_exp", quote(a1), quote(a2 | b))),
+    h_mmrm_tmb_extract_vars(quote(sp_exp(a1, a2 | b))),
     list(subject_var = "b", visit_var = c("a1", "a2"), group_var = NULL, is_spatial = TRUE)
   )
   expect_error(
-    h_mmrm_tmb_extract_vars(call("cs", quote(a + b))),
+    h_mmrm_tmb_extract_vars(quote(cs(a + b))),
     "Covariance structure must be of the form `time|\\(group/\\)subject`."
   )
 })
 
 test_that("h_mmrm_tmb_extract_vars works for grouped formula as expected", {
-  cl <- call("cs", quote(a | b / c))
-  result <- h_mmrm_tmb_extract_vars(cl)
   expect_identical(
-    result,
+    h_mmrm_tmb_extract_vars(quote(cs(a | b / c))),
     list(subject_var = "c", visit_var = "a", group_var = "b", is_spatial = FALSE)
   )
   expect_error(
-    h_mmrm_tmb_extract_vars(call("cs", quote((a + b) | c / d))),
+    h_mmrm_tmb_extract_vars(quote(cs((a + b) | c / d))),
     "`time` in `time|\\(group/\\)subject` must be specified as one single variable."
   )
   expect_error(
-    h_mmrm_tmb_extract_vars(call("cs", quote(a | b / (c + d)))),
+    h_mmrm_tmb_extract_vars(quote(cs(a | b / (c + d)))),
     "`subject` in `time|\\(group/\\)subject` must be specified as one single variable."
   )
   expect_error(
-    h_mmrm_tmb_extract_vars(call("cs", quote(a | (b + c) / d))),
+    h_mmrm_tmb_extract_vars(quote(cs(a | (b + c) / d))),
     "`group` in `time|\\(group/\\)subject` must be specified as one single variable."
   )
 })
 
 
 test_that("h_mmrm_tmb_extract_vars works for multiple coordinates as expected", {
-  cl <- call("sp_exp", quote(a1), quote(a2), quote(a3 | b))
   expect_identical(
-    h_mmrm_tmb_extract_vars(cl),
+    h_mmrm_tmb_extract_vars(quote(sp_exp(a1, a2, a3 | b))),
     list(subject_var = "b", visit_var = c("a1", "a2", "a3"), group_var = NULL, is_spatial = TRUE)
   )
-  cl2 <- call("us", quote(a1), quote(a2), quote(a3 | b))
   expect_error(
-    h_mmrm_tmb_extract_vars(cl2),
+    h_mmrm_tmb_extract_vars(quote(us(a1, a2, a3 | b))),
     "Non-spatial covariance term should not include multiple `time` variables."
+  )
+  expect_warning(
+    h_mmrm_tmb_extract_vars(quote(sp_exp(a1, a1 | b))),
+    "Duplicated `time` variable spotted: a1. This may indicate input errors in the formula."
   )
 })
 
@@ -274,7 +266,7 @@ test_that("h_mmrm_tmb_data works as expected for grouped covariance", {
 })
 
 test_that("h_mmrm_tmb_data works as expected for mutli-dimensional spatial exponential covariance", {
-  formula <- FEV1 ~ RACE + sp_exp(VISITN, VISITN | ARMCD / USUBJID)
+  formula <- FEV1 ~ RACE + sp_exp(VISITN, VISITN2 | ARMCD / USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   result <- expect_silent(h_mmrm_tmb_data(
     formula_parts, fev_data,
@@ -1514,16 +1506,14 @@ test_that("h_mmrm_tmb works with sp_exp covariance structure and ML", {
 })
 
 test_that("h_mmrm_tmb works with sp_exp covariance structure and ML(2-dimension)", {
-  data <- fev_data
-  data$VISITN2 <- data$VISITN + 1
   formula <- FEV1 ~ sp_exp(VISITN, VISITN2 | USUBJID)
-  result <- h_mmrm_tmb(formula, data, weights = rep(1, nrow(fev_data)), reml = FALSE)
+  result <- h_mmrm_tmb(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = FALSE)
   expect_class(result, "mmrm_tmb")
   # See design/SAS/sas_sp_exp2_ml.txt for the source of numbers.
-  expect_equal(deviance(result), 3875.95352482)
-  expect_equal(as.numeric(result$beta_est[1]), 42.3252, tolerance = 1e-4)
-  expect_equal(plogis(result$theta_est[2])^(2 * sqrt(2)), 0.1805, tolerance = 1e-3)
-  expect_equal(exp(result$theta_est[1]), 88.7064, tolerance = 1e-3)
+  expect_equal(deviance(result), 3894.94943409)
+  expect_equal(as.numeric(result$beta_est[1]), 42.2203, tolerance = 1e-4)
+  expect_equal(plogis(result$theta_est[2])^dist(fev_data[c(2, 4), c("VISITN", "VISITN2")])[1], 0.1375, tolerance = 1e-3)
+  expect_equal(exp(result$theta_est[1]), 87.6472, tolerance = 1e-3)
 })
 
 test_that("h_mmrm_tmb works with sp_exp covariance structure and REML", {
@@ -1538,16 +1528,14 @@ test_that("h_mmrm_tmb works with sp_exp covariance structure and REML", {
 })
 
 test_that("h_mmrm_tmb works with sp_exp covariance structure and REML(2-dimension)", {
-  data <- fev_data
-  data$VISITN2 <- data$VISITN + 1
   formula <- FEV1 ~ sp_exp(VISITN, VISITN2 | USUBJID)
-  result <- h_mmrm_tmb(formula, data, weights = rep(1, nrow(fev_data)), reml = TRUE)
+  result <- h_mmrm_tmb(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = TRUE)
   expect_class(result, "mmrm_tmb")
   # See design/SAS/sas_sp_exp2_reml.txt for the source of numbers.
-  expect_equal(deviance(result), 3875.49945550)
-  expect_equal(as.numeric(result$beta_est[1]), 42.3255, tolerance = 1e-4)
-  expect_equal(plogis(result$theta_est[2])^(2 * sqrt(2)), 0.1824, tolerance = 1e-3)
-  expect_equal(exp(result$theta_est[1]), 88.9839, tolerance = 1e-3)
+  expect_equal(deviance(result), 3894.60123182)
+  expect_equal(as.numeric(result$beta_est[1]), 42.2202, tolerance = 1e-4)
+  expect_equal(plogis(result$theta_est[2])^dist(fev_data[c(2, 4), c("VISITN", "VISITN2")])[1], 0.1393, tolerance = 1e-3)
+  expect_equal(exp(result$theta_est[1]), 87.8870, tolerance = 1e-3)
 })
 
 ## misc ----
