@@ -33,11 +33,13 @@ Type objective_function<Type>::operator() ()
   DATA_VECTOR(y_vector);           // Response vector (length n).
   DATA_VECTOR(weights_vector);     // Weights vector (length n).
   DATA_IVECTOR(visits_zero_inds);  // Zero-based Visits vector (length n).
+  DATA_MATRIX(coordinates);        // Coordinates matrix.
   DATA_INTEGER(n_visits);          // Number of visits, which is the dimension of the covariance matrix.
   DATA_INTEGER(n_subjects);        // Number of subjects.
   DATA_IVECTOR(subject_zero_inds); // Starting indices for each subject (0-based) (length n_subjects).
   DATA_IVECTOR(subject_n_visits);  // Number of observed visits for each subject (length n_subjects).
   DATA_STRING(cov_type);           // Covariance type name.
+  DATA_INTEGER(is_spatial_int);    // Spatial covariance (1)? Otherwise non-spatial covariance.
   DATA_INTEGER(reml);              // REML (1)? Otherwise ML (0).
   DATA_FACTOR(subject_groups);     // subject groups vector(0-based) (length n_subjects).
   DATA_INTEGER(n_groups);          // number of total groups.
@@ -54,8 +56,18 @@ Type objective_function<Type>::operator() ()
   vector<Type> y_vec_tilde = vector<Type>::Zero(y_vector.rows());
   // Sum of the log determinant will be incrementally calculated here.
   Type sum_log_det = 0.0;
+  // Get number of variance parameters for one group.
+  int theta_one_group_size = theta.size() / n_groups;
+  // Convert is_spatial_int to bool.
+  bool is_spatial = (is_spatial_int == 1);
   // Create the lower triangular Cholesky factor of the visit x visit covariance matrix.
-  matrix<Type> covariance_lower_chol  = get_cov_lower_chol_grouped(theta, n_visits, cov_type, n_groups);
+  int dim_cov_mat;
+  if (is_spatial) {
+    dim_cov_mat = 2;
+  } else {
+    dim_cov_mat = n_visits;
+  }
+  matrix<Type> covariance_lower_chol = get_cov_lower_chol_grouped(theta, dim_cov_mat, cov_type, n_groups, is_spatial);
   // Go through all subjects and calculate quantities initialized above.
   for (int i = 0; i < n_subjects; i++) {
     // Start index and number of visits for this subject.
@@ -63,20 +75,28 @@ Type objective_function<Type>::operator() ()
     int n_visits_i = subject_n_visits(i);
     // Obtain Cholesky factor Li.
     matrix<Type> Li;
-    matrix<Type> lower_chol = covariance_lower_chol.block(subject_groups(i) * n_visits, 0,  n_visits, n_visits);
-    if (n_visits_i < n_visits) {
-      // This subject has less visits, therefore we need to recalculate the Cholesky factor.
-      vector<int> visits_i = visits_zero_inds.segment(start_i, n_visits_i);
-      Eigen::SparseMatrix<Type> sel_mat = get_select_matrix<Type>(visits_i, n_visits);
-      // Note: We cannot use triangular view for covariance_lower_chol here because sel_mat is sparse.
-      matrix<Type> Ltildei = sel_mat * lower_chol;
-      matrix<Type> cov_i = tcrossprod(Ltildei);
-      Eigen::LLT<Eigen::Matrix<Type,Eigen::Dynamic,Eigen::Dynamic> > cov_i_chol(cov_i);
-      Li = cov_i_chol.matrixL();
+    if (!is_spatial) {
+      matrix<Type> lower_chol = covariance_lower_chol.block(subject_groups(i) * n_visits, 0,  n_visits, n_visits);
+      if (n_visits_i < n_visits) {
+        // This subject has less visits, therefore we need to recalculate the Cholesky factor.
+        vector<int> visits_i = visits_zero_inds.segment(start_i, n_visits_i);
+        Eigen::SparseMatrix<Type> sel_mat = get_select_matrix<Type>(visits_i, n_visits);
+        // Note: We cannot use triangular view for covariance_lower_chol here because sel_mat is sparse.
+        matrix<Type> Ltildei = sel_mat * lower_chol;
+        matrix<Type> cov_i = tcrossprod(Ltildei);
+        Eigen::LLT<Eigen::Matrix<Type,Eigen::Dynamic,Eigen::Dynamic> > cov_i_chol(cov_i);
+        Li = cov_i_chol.matrixL();
+      } else {
+        // This subject has full number of visits, therefore we can just take the original factor.
+        Li = lower_chol;
+      }
     } else {
-      // This subject has full number of visits, therefore we can just take the original factor.
-      Li = lower_chol;
+      matrix<Type> distance_i = euclidean(matrix<Type>(coordinates.block(start_i, 0, n_visits_i, coordinates.cols())));
+      // Obtain Cholesky factor Li.
+      vector<Type> theta_i = theta.segment(subject_groups(i) * theta_one_group_size, theta_one_group_size);
+      Li = get_spatial_covariance_lower_chol(theta_i, distance_i, cov_type);
     }
+    
 
     // Calculate weighted Cholesky factor for this subject.
     Eigen::DiagonalMatrix<Type,Eigen::Dynamic,Eigen::Dynamic> Gi_inv_sqrt = weights_vector.segment(start_i, n_visits_i).cwiseInverse().sqrt().matrix().asDiagonal();

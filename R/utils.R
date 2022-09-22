@@ -88,3 +88,30 @@ h_free_cores <- function() {
   # For safety, we subtract 1 more core from all cores.
   as.integer(max(1, all_cores - busy_cores - 1))
 }
+
+#' covariance type
+#' 
+#' @format vector of supported covariance structures. `cov_type` for common time points covariance structures,
+#' `cov_type_spatial` for spatial covariance structures.
+#' @details
+#' abbreviation for covariance structures
+#' ## Common Covariance Structures
+#' * us: "unstructured"
+#' * toep: "Toeplitz"
+#' * toeph: "heterogeneous Toeplitz"
+#' * ar1: "auto-regressive order one"
+#' * ar1h: "heterogeneous auto-regressive order one"
+#' * ad: "ante-dependence"
+#' * adh: "heterogeneous ante-dependence"
+#' * cs: "compound symmetry"
+#' * csh: "heterogeneous compound symmetry"
+#' ## Spatial Covariance structures
+#' * sp_exp: "spatial exponential"
+#' @name covariance_types
+NULL
+#' @describeIn covariance_types non-spatial covariance structure
+#' @format NULL
+cov_type <- c("us", "toep", "toeph", "ar1", "ar1h", "ad", "adh", "cs", "csh")
+#' @describeIn covariance_types spatial covariance structure
+#' @format NULL
+cov_type_spatial <- c("sp_exp")
