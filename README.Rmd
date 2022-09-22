@@ -29,7 +29,7 @@ The `mmrm` package implements mixed models for repeated measures (MMRM) in R.
 * Hypothesis testing:
   * Least square means: `emmeans` package can be used with model outputs to obtain
 least square means.
-  * Satterthwaite-adjusted one- and multi-dimensional contrasts. (future work: Kenward-Roger)
+  * Degrees of freedom adjustment: Satterthwaite-adjusted one- and multi-dimensional contrasts.
 * Model inference:
   * Supports REML and ML.
   * Supports weights. 
