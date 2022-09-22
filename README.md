@@ -9,7 +9,27 @@ has not yet been a stable, usable release suitable for the
 public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)  
 
 The `mmrm` package implements mixed models for repeated measures (MMRM)
-in R based on Template Model Builder (TMB).
+in R.
+
+## Main Features
+
+-   Responses are assumed normally distributed.
+-   Covariances:
+    -   Structures: unstructured, Toeplitz, AR1, compound symmetry, and
+        ante-dependence.
+    -   Groups: shared covariance structure for all subjects, or group
+        specific covariance structures.
+    -   Variances: homogeneous or heterogeneous across time points.
+-   Hypothesis testing:
+    -   Least square means: `emmeans` package can be used with model
+        outputs to obtain least square means.
+    -   Degrees of freedom adjustment: Satterthwaite-adjusted one- and
+        multi-dimensional contrasts.
+-   Model inference:
+    -   Supports REML and ML.
+    -   Supports weights.
+    -   Automatic changing of optimizer in the case of non-convergence.
+    -   Manual control of optimization routine.
 
 ## Installation
 
@@ -85,6 +105,7 @@ summary(fit)
 #> Data:        fev_data (used 537 observations from 197 subjects with maximum 4 
 #> timepoints)
 #> Covariance:  unstructured (10 variance parameters)
+#> Method:      REML
 #> 
 #> Model selection criteria:
 #>      AIC      BIC   logLik deviance 
@@ -127,6 +148,13 @@ summary(fit)
 ```
 
 ## Details
+
+For a more detailed introduction to all of the features of this package,
+look at the introduction vignette:
+
+``` r
+vignette("introduction")
+```
 
 For the available covariance structures, look at the covariance
 vignette:
