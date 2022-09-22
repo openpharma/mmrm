@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 The `mmrm` package implements mixed models for repeated measures (MMRM) in R.
 
-*Main Features*  
+## Main Features
 
 * Responses are assumed normally distributed.
 * Covariances: 
