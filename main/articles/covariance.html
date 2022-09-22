@@ -39,7 +39,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9004</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9005</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,12 +62,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -274,6 +268,49 @@ correlation parameter here.</p>
 homogeneous compound symmetry covariance structure with total only <span class="math inline">\(k=2\)</span> variance parameters, otherwise we
 obtain the heterogeneous compound symmetry covariance structure with
 <span class="math inline">\(k = m + 1\)</span> variance parameters.</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="spatial-covariance-structure">Spatial Covariance Structure<a class="anchor" aria-label="anchor" href="#spatial-covariance-structure"></a>
+</h2>
+<p>Spatial covariance structures, unlike other covariance structures,
+does not require that the timepoints are consistent between subjects.
+Instead, as long as the distance between visits can be quantified in
+terms of time and/or other coordinates, the spatial covariance structure
+can be applied. Euclidean distance is the most common case. For each
+subject, the covariance structure can be different. Only homogeneous
+structures are allowed (i.e. a common variance is used).</p>
+<p>Please note that while printing the summary of an <code>mmrm</code>
+fit, the covariance displayed is a 2 * 2 square matrix. As the distance
+will be used to derive the corresponding element in that matrix, unit
+distance is used here. The distance matrix is</p>
+<p><span class="math display">\[
+    \begin{pmatrix}
+    0 &amp; 1\\
+    1 &amp; 0\\
+    \end{pmatrix}
+\]</span></p>
+<div class="section level3">
+<h3 id="spatial-exponential">Spatial exponential<a class="anchor" aria-label="anchor" href="#spatial-exponential"></a>
+</h3>
+<p>For spatial exponential, the covariance structure is defined as
+follows:</p>
+<p><span class="math display">\[
+  \rho_{ij} = \rho^{-d_{ij}}
+\]</span></p>
+<p>where <span class="math inline">\(d_{ij}\)</span> is the distance
+between time point <span class="math inline">\(i\)</span> and time point
+<span class="math inline">\(j\)</span>,</p>
+<p>A total number of parameters <span class="math inline">\(k =
+2\)</span> is needed:</p>
+<p>The parameterization for <span class="math inline">\(\theta\)</span>
+is a little different from previous examples. In previous examples,
+<span class="math inline">\(\rho\)</span> can take values from -1 to 1,
+but here we need to restrict <span class="math inline">\(\rho\)</span>
+to (0, 1). Hence we have the following parametrization form.</p>
+<p><span class="math display">\[
+  \theta = (\log(\sigma), \mathop{\mathrm{logit}}(\rho))
+\]</span></p>
 </div>
 </div>
 <div class="section level2">

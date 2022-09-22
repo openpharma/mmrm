@@ -37,6 +37,9 @@
     <loc>https://openpharma.github.io/mmrm/main/reference/component.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/covariance_types.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/df_1d.html</loc>
   </url>
   <url>
@@ -98,6 +101,9 @@
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/h_mmrm_tmb_extract_cov.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/h_mmrm_tmb_extract_terms.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/h_mmrm_tmb_extract_vars.html</loc>

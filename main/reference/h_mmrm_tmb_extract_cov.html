@@ -18,7 +18,7 @@ list of covariance matrices if the fitting is using grouped covariance matrices.
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9004</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9005</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,12 +40,6 @@ list of covariance matrices if the fitting is using grouped covariance matrices.
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -74,7 +68,7 @@ list of covariance matrices if the fitting is using grouped covariance matrices.
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">h_mmrm_tmb_extract_cov</span><span class="op">(</span><span class="va">tmb_report</span>, <span class="va">tmb_data</span>, <span class="va">visit_var</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">h_mmrm_tmb_extract_cov</span><span class="op">(</span><span class="va">tmb_report</span>, <span class="va">tmb_data</span>, <span class="va">visit_var</span>, <span class="va">is_spatial</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -88,7 +82,11 @@ list of covariance matrices if the fitting is using grouped covariance matrices.
 
 
 <dt>visit_var</dt>
-<dd><p><code>character</code><br> character vector of length 1 of the visit variable</p></dd>
+<dd><p><code>character</code><br> character vector of the visit variable</p></dd>
+
+
+<dt>is_spatial</dt>
+<dd><p><code>logical</code><br> logical value indicating the covariance structure is spatial.</p></dd>
 
 </dl></div>
     <div class="section level2">

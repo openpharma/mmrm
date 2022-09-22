@@ -39,7 +39,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9004</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9005</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,12 +62,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -227,6 +221,25 @@ number of <span class="math inline">\(G\)</span> groups, the length of
 <span class="math inline">\(\theta\)</span> is multiplied by <span class="math inline">\(G\)</span>, and for each part, <span class="math inline">\(\theta\)</span> is parametrized in the same
 fashion. For example, for an unstructured covariance matrix, <span class="math inline">\(\theta\)</span> has <span class="math inline">\(k
 = G * m(m+1)/2\)</span> entries.</p>
+</div>
+<div class="section level4">
+<h4 id="spatial-covariance-matrix">Spatial covariance matrix<a class="anchor" aria-label="anchor" href="#spatial-covariance-matrix"></a>
+</h4>
+<p>Under spatial covariance structure, the covariance matrix is
+different for all subjects, if they have different visit timepoints.
+Following the notations in the previous section, for subject <span class="math inline">\(i\)</span> with total number of <span class="math inline">\(m_i\)</span> visits, we have</p>
+<p><span class="math display">\[
+\sigma_{ijk} = \sigma * f(dist(\boldsymbol{c}_{ij},
+\boldsymbol{c}_{ik}))
+\]</span></p>
+<p>The <span class="math inline">\((m_{ij}, m_{ik})\)</span> element of
+<span class="math inline">\(\Sigma_{i}\)</span> is a function of the
+distance between <span class="math inline">\(m_{ij}\)</span> and <span class="math inline">\(m_{ik}\)</span> visit occurring on <span class="math inline">\(t_{m_{ij}}\)</span> and <span class="math inline">\(t_{m_{ik}}\)</span>. <span class="math inline">\(t_{m_{ij}}\)</span> is the coordinate(time) of
+<span class="math inline">\(m_{ij}\)</span> visit for subject <span class="math inline">\(i\)</span>. <span class="math inline">\(\sigma\)</span> is the constant variance. Usually
+we use Euclidean distance.</p>
+<p>Currently only spatial exponential covariance structure is
+implemented. For coordinates with multiple dimensions, the Euclidean
+distance is used without transformations.</p>
 </div>
 </div>
 </div>

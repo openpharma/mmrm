@@ -45,7 +45,7 @@
     
     <a class="navbar-brand me-2" href="index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9004</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9005</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,12 +68,6 @@
 <li class="nav-item">
   <a class="nav-link" href="news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -99,7 +93,35 @@
 </h1>
 </div>
 
-<p>The <code>mmrm</code> package implements mixed models for repeated measures (MMRM) in R based on Template Model Builder (TMB).</p>
+<p>The <code>mmrm</code> package implements mixed models for repeated measures (MMRM) in R.</p>
+<div class="section level2">
+<h2 id="main-features">Main Features<a class="anchor" aria-label="anchor" href="#main-features"></a>
+</h2>
+<ul>
+<li>Responses are assumed normally distributed.</li>
+<li>Covariances:
+<ul>
+<li>Structures: unstructured, Toeplitz, AR1, compound symmetry, and ante-dependence.</li>
+<li>Groups: shared covariance structure for all subjects, or group specific covariance structures.</li>
+<li>Variances: homogeneous or heterogeneous across time points.</li>
+</ul>
+</li>
+<li>Hypothesis testing:
+<ul>
+<li>Least square means: <code>emmeans</code> package can be used with model outputs to obtain least square means.</li>
+<li>Degrees of freedom adjustment: Satterthwaite-adjusted one- and multi-dimensional contrasts.</li>
+</ul>
+</li>
+<li>Model inference:
+<ul>
+<li>Supports REML and ML.</li>
+<li>Supports weights.</li>
+<li>Automatic changing of optimizer in the case of non-convergence.</li>
+<li>Manual control of optimization routine.</li>
+</ul>
+</li>
+</ul>
+</div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -162,6 +184,7 @@
 <span><span class="co">#&gt; Data:        fev_data (used 537 observations from 197 subjects with maximum 4 </span></span>
 <span><span class="co">#&gt; timepoints)</span></span>
 <span><span class="co">#&gt; Covariance:  unstructured (10 variance parameters)</span></span>
+<span><span class="co">#&gt; Method:      REML</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Model selection criteria:</span></span>
 <span><span class="co">#&gt;      AIC      BIC   logLik deviance </span></span>
@@ -205,11 +228,14 @@
 <div class="section level2">
 <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a>
 </h2>
-<p>For the available covariance structures, look at the covariance vignette:</p>
+<p>For a more detailed introduction to all of the features of this package, look at the introduction vignette:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"introduction"</span><span class="op">)</span></span></code></pre></div>
+<p>For the available covariance structures, look at the covariance vignette:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"covariance"</span><span class="op">)</span></span></code></pre></div>
 <p>In order to understand how <code>mmrm</code> is fitting the models, you can read the details at:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"algorithm"</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>

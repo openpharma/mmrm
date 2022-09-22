@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9004</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9005</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,12 +38,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -89,7 +83,8 @@
 <li><p><code>full_formula</code>: same as <code>model_formula</code> but includes the <code>subject_var</code> and
 <code>visit_var</code>.</p></li>
 <li><p><code>cov_type</code>: <code>string</code> with covariance term type (e.g. <code>"us"</code>).</p></li>
-<li><p><code>visit_var</code>: <code>string</code> with the visit variable name.</p></li>
+<li><p><code>is_spatial</code>: <code>flag</code> indicator of whether the covariance structure is spatial</p></li>
+<li><p><code>visit_var</code>: <code>character</code> with the visit variable name.</p></li>
 <li><p><code>subject_var</code>: <code>string</code> with the subject variable name.</p></li>
 <li><p><code>group_var</code>: <code>string</code> with the group variable name. If no group specified, this element
 is <code>NULL</code>.</p></li>
