@@ -24,7 +24,7 @@ The `mmrm` package implements mixed models for repeated measures (MMRM) in R.
 * Responses are assumed normally distributed.
 * Covariances: 
   * Structures: unstructured, Toeplitz, AR1, compound symmetry, and ante-dependence.
-  * Groups: shared covariance structure for all subjects, or shared by group.
+  * Groups: shared covariance structure for all subjects, or group specific covariance structures.
   * Supports both time-homogeneous and heterogeneous structures.
 * Hypothesis testing:
   * Least square means: `emmeans` package can be used with model outputs to obtain
