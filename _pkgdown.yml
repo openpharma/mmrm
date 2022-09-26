@@ -25,10 +25,10 @@ reference:
       - mmrm_control
       - fit_single_optimizer
       - refit_multiple_optimizers
-      - component
       - df_1d
       - df_md
-      - h_free_cores
+      - component
+      - free_cores
   - title: Methods
     contents:
       - mmrm_methods
