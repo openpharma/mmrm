@@ -39,7 +39,7 @@ Note the \strong{ante-dependence} covariance structure in this package refers to
 
 \subsection{Spatial Covariance structures}{\tabular{llll}{
    \strong{Structure} \tab \strong{Description} \tab \strong{Parms} \tab \strong{\eqn{(i, j)} element} \cr
-   sp_exp \tab spatial exponential \tab \eqn{2} \tab \eqn{\sigma^{2}\exp{(-d_{ij}/\theta)}} \cr
+   sp_exp \tab spatial exponential \tab \eqn{2} \tab \eqn{\sigma^{2}\rho^{-d_{ij}}} \cr
 }
 
 }

@@ -115,7 +115,7 @@ h_free_cores <- function() {
 #'
 #' | **Structure**     | **Description**                       | **Parms**      | **\eqn{(i, j)} element**         |
 #' | ------------- |-------------------------------------------|:---------------|----------------------------------|
-#' | sp_exp        | spatial exponential                       | \eqn{2}        | \eqn{\sigma^{2}\exp{(-d_{ij}/\theta)}} |
+#' | sp_exp        | spatial exponential                       | \eqn{2}        | \eqn{\sigma^{2}\rho^{-d_{ij}}} |
 #' @md
 #' @name covariance_types
 NULL
