@@ -63,7 +63,7 @@ h_record_all_output <- function(expr, remove = list()) {
 #' is not used for extra safety.
 #'
 #' @export
-h_free_cores <- function() {
+free_cores <- function() {
   all_cores <- parallel::detectCores(all.tests = TRUE)
   busy_cores <-
     if (.Platform$OS.type == "windows") {
@@ -90,7 +90,7 @@ h_free_cores <- function() {
 }
 
 #' covariance type
-#' 
+#'
 #' @format vector of supported covariance structures. `cov_type` for common time points covariance structures,
 #' `cov_type_spatial` for spatial covariance structures.
 #' @details

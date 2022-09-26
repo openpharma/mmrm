@@ -224,7 +224,7 @@ mmrm <- function(formula,
                  weights = NULL,
                  reml = TRUE,
                  optimizer = "automatic",
-                 n_cores = h_free_cores(),
+                 n_cores = free_cores(),
                  accept_singular = TRUE) {
   assert_string(optimizer)
   use_automatic <- identical(optimizer, "automatic")

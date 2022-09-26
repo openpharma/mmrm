@@ -18,17 +18,17 @@ reference:
       - mmrm-package
   - title: Helper Functions
     contents:
-      - h_free_cores
       - h_mmrm_tmb
   - title: Functions
     contents:
+      - mmrm
+      - mmrm_control
+      - fit_single_optimizer
+      - refit_multiple_optimizers
       - component
       - df_1d
       - df_md
-      - fit_single_optimizer
-      - mmrm
-      - mmrm_control
-      - refit_multiple_optimizers
+      - h_free_cores
   - title: Methods
     contents:
       - mmrm_methods
