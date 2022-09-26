@@ -10,7 +10,7 @@ mmrm(
   weights = NULL,
   reml = TRUE,
   optimizer = "automatic",
-  n_cores = h_free_cores(),
+  n_cores = free_cores(),
   accept_singular = TRUE
 )
 }
