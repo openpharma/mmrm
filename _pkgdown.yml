@@ -19,7 +19,6 @@ reference:
   - title: Helper Functions
     contents:
       - h_free_cores
-      - h_mmrm_tmb_control
       - h_mmrm_tmb
   - title: Functions
     contents:
@@ -28,15 +27,18 @@ reference:
       - df_md
       - fit_single_optimizer
       - mmrm
+      - mmrm_control
       - refit_multiple_optimizers
   - title: Methods
     contents:
-      - emmeans_support
       - mmrm_methods
       - mmrm_tmb_methods
   - title: Covariance Structures
     contents:
       - covariance_types
+  - title: Estimate Marginal Means
+    contents:
+      - emmeans_support
   - title: Datasets
     contents:
       - fev_data

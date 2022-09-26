@@ -10,15 +10,15 @@
 #' @param accept_singular (`flag`)\cr whether singular design matrices are reduced
 #'   to full rank automatically and additional coefficient estimates will be missing.
 #'
-#' @return List of class `mmrm_tmb_control` with the control parameters.
+#' @return List of class `mmrm_control` with the control parameters.
 #' @export
 #'
 #' @examples
-#' h_mmrm_tmb_control(
+#' mmrm_control(
 #'   optimizer = stats::optim,
 #'   optimizer_args = list(method = "L-BFGS-B")
 #' )
-h_mmrm_tmb_control <- function(optimizer = stats::nlminb,
+mmrm_control <- function(optimizer = stats::nlminb,
                                optimizer_args = list(),
                                optimizer_control = list(),
                                start = NULL,
@@ -37,20 +37,20 @@ h_mmrm_tmb_control <- function(optimizer = stats::nlminb,
       start = start,
       accept_singular = accept_singular
     ),
-    class = "mmrm_tmb_control"
+    class = "mmrm_control"
   )
 }
 
 #' Extract group/subject vars from covariance term
-#' 
+#'
 #' @details a covariance term, which takes the following form:
 #' `us(time | group / subject)`, or `sp_exp(time1, time2, ... | group / subject)`.
 #' Only for spatial covariance structure can have multiple time coordinates.
 #' This function, take the call of `time | group / subject`, last element of the covariance term,
 #' extract the corresponding grouping var, time var and subject var.
-#' 
+#'
 #' @param cov_content (`call`)\cr covariance term
-#' 
+#'
 #' @return Named list with elements:
 #' - `visit_var`: `character` with the visit variable name.
 #' - `subject_var`: `string` with the subject variable name.
@@ -369,7 +369,7 @@ h_mmrm_tmb_data <- function(formula_parts,
     ),
     class = "mmrm_tmb_data"
   )
-  
+
 }
 
 #' Start Parameters for `TMB` Fit
@@ -545,7 +545,7 @@ h_mmrm_tmb_fit <- function(tmb_object,
   assert_data_frame(data)
   assert_class(formula_parts, "mmrm_tmb_formula_parts")
   assert_class(tmb_data, "mmrm_tmb_data")
-  
+
   tmb_report <- tmb_object$report(par = tmb_opt$par)
   x_matrix_cols <- colnames(tmb_data$x_matrix)
   cov <- h_mmrm_tmb_extract_cov(tmb_report, tmb_data, formula_parts$visit_var, formula_parts$is_spatial)
@@ -594,8 +594,8 @@ h_mmrm_tmb_fit <- function(tmb_object,
 #'   in `formula`.
 #' @param weights (`vector`)\cr input vector containing the weights.
 #' @inheritParams h_mmrm_tmb_data
-#' @param control (`mmrm_tmb_control`)\cr list of control options produced
-#'   by [h_mmrm_tmb_control()].
+#' @param control (`mmrm_control`)\cr list of control options produced
+#'   by [mmrm_control()].
 #'
 #' @return List of class `mmrm_tmb`, see [h_mmrm_tmb_fit()] for details.
 #'
@@ -615,9 +615,9 @@ h_mmrm_tmb <- function(formula,
                        data,
                        weights,
                        reml = TRUE,
-                       control = h_mmrm_tmb_control()) {
+                       control = mmrm_control()) {
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
-  assert_class(control, "mmrm_tmb_control")
+  assert_class(control, "mmrm_control")
   assert_numeric(weights, any.missing = FALSE)
   assert_true(all(weights > 0))
   tmb_data <- h_mmrm_tmb_data(formula_parts, data, weights, reml, accept_singular = control$accept_singular)
