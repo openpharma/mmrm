@@ -20,24 +20,26 @@ covariance type
 }
 \details{
 abbreviation for covariance structures
-\subsection{Common Covariance Structures}{
-\itemize{
-\item us: "unstructured"
-\item toep: "Toeplitz"
-\item toeph: "heterogeneous Toeplitz"
-\item ar1: "auto-regressive order one"
-\item ar1h: "heterogeneous auto-regressive order one"
-\item ad: "ante-dependence"
-\item adh: "heterogeneous ante-dependence"
-\item cs: "compound symmetry"
-\item csh: "heterogeneous compound symmetry"
-}
+\subsection{Common Covariance Structures}{\tabular{llll}{
+   \strong{Structure} \tab \strong{Description} \tab \strong{Parms} \tab \strong{\eqn{(i, j)} element} \cr
+   ad \tab Ante-dependence \tab \eqn{m} \tab \eqn{\sigma^{2}\prod_{k=i}^{j-1}\rho_{k}} \cr
+   adh \tab Heterogeneous ante-dependence \tab \eqn{2m-1} \tab \eqn{\sigma_{i}\sigma_{j}\prod_{k=i}^{j-1}\rho_{k}} \cr
+   ar1 \tab First-order auto-regressive \tab \eqn{2} \tab \eqn{\sigma^{2}\rho^{\lvert i-j \rvert}} \cr
+   ar1h \tab Heterogeneous first-order auto-regressive \tab \eqn{m+1} \tab \eqn{\sigma_{i}\sigma_{j}\rho^{\lvert i-j \rvert}} \cr
+   cs \tab Compound symmetry \tab \eqn{2} \tab \eqn{\sigma^{2}\left[ \rho I(i \neq j)+I(i=j) \right]} \cr
+   csh \tab Heterogeneous compound symmetry \tab \eqn{m+1} \tab \eqn{\sigma_{i}\sigma_{j}\left[ \rho I(i \neq j)+I(i=j) \right]} \cr
+   toep \tab Toeplitz \tab \eqn{m} \tab \eqn{\sigma_{\lvert i-j \rvert +1}} \cr
+   toeph \tab Heterogeneous Toeplitz \tab \eqn{2m-1} \tab \eqn{\sigma_{i}\sigma_{j}\rho_{\lvert i-j \rvert}} \cr
+   us \tab Unstructured \tab \eqn{m(m+1)/2} \tab \eqn{\sigma_{ij}} \cr
 }
 
-\subsection{Spatial Covariance structures}{
-\itemize{
-\item sp_exp: "spatial exponential"
 }
+
+\subsection{Spatial Covariance structures}{\tabular{llll}{
+   \strong{Structure} \tab \strong{Description} \tab \strong{Parms} \tab \strong{\eqn{(i, j)} element} \cr
+   sp_exp \tab spatial exponential \tab \eqn{2} \tab \eqn{\sigma^{2}\exp{(-d_{ij}/\theta)}} \cr
+}
+
 }
 }
 \section{Functions}{

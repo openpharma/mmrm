@@ -90,23 +90,30 @@ h_free_cores <- function() {
 }
 
 #' covariance type
-#' 
+#'
 #' @format vector of supported covariance structures. `cov_type` for common time points covariance structures,
 #' `cov_type_spatial` for spatial covariance structures.
 #' @details
 #' abbreviation for covariance structures
 #' ## Common Covariance Structures
-#' * us: "unstructured"
-#' * toep: "Toeplitz"
-#' * toeph: "heterogeneous Toeplitz"
-#' * ar1: "auto-regressive order one"
-#' * ar1h: "heterogeneous auto-regressive order one"
-#' * ad: "ante-dependence"
-#' * adh: "heterogeneous ante-dependence"
-#' * cs: "compound symmetry"
-#' * csh: "heterogeneous compound symmetry"
+#'
+#' | **Structure**     | **Description**                       | **Parms**      | **\eqn{(i, j)} element**         |
+#' | ------------- |-------------------------------------------|:---------------|----------------------------------|
+#' | ad            | Ante-dependence                           | \eqn{m}        | \eqn{\sigma^{2}\prod_{k=i}^{j-1}\rho_{k}} |
+#' | adh           | Heterogeneous ante-dependence             | \eqn{2m-1}     | \eqn{\sigma_{i}\sigma_{j}\prod_{k=i}^{j-1}\rho_{k}} |
+#' | ar1           | First-order auto-regressive               | \eqn{2}        | \eqn{\sigma^{2}\rho^{\lvert i-j \rvert}} |
+#' | ar1h          | Heterogeneous first-order auto-regressive | \eqn{m+1}      | \eqn{\sigma_{i}\sigma_{j}\rho^{\lvert i-j \rvert}} |
+#' | cs            | Compound symmetry                         | \eqn{2}        | \eqn{\sigma^{2}\left[ \rho I(i \neq j)+I(i=j) \right]} |
+#' | csh           | Heterogeneous compound symmetry           | \eqn{m+1}      | \eqn{\sigma_{i}\sigma_{j}\left[ \rho I(i \neq j)+I(i=j) \right]} |
+#' | toep          | Toeplitz                                  | \eqn{m}        | \eqn{\sigma_{\lvert i-j \rvert +1}} |
+#' | toeph         | Heterogeneous Toeplitz                    | \eqn{2m-1}     | \eqn{\sigma_{i}\sigma_{j}\rho_{\lvert i-j \rvert}} |
+#' | us            | Unstructured                              | \eqn{m(m+1)/2} | \eqn{\sigma_{ij}} |
 #' ## Spatial Covariance structures
-#' * sp_exp: "spatial exponential"
+#'
+#' | **Structure**     | **Description**                       | **Parms**      | **\eqn{(i, j)} element**         |
+#' | ------------- |-------------------------------------------|:---------------|----------------------------------|
+#' | sp_exp        | spatial exponential                       | \eqn{2}        | \eqn{\sigma^{2}\exp{(-d_{ij}/\theta)}} |
+#' @md
 #' @name covariance_types
 NULL
 #' @describeIn covariance_types non-spatial covariance structure
