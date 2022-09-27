@@ -109,7 +109,7 @@ h_free_cores <- function() {
 #' | toeph         | Heterogeneous Toeplitz                    | \eqn{2m-1}     | \eqn{\sigma_{i}\sigma_{j}\rho_{\lvert i-j \rvert}} |
 #' | us            | Unstructured                              | \eqn{m(m+1)/2} | \eqn{\sigma_{ij}} |
 #'
-#' Note the **ante-dependence** covariance structure in this package refers to homogeneous ante-dependence, while the **ante-dependence** covariance structure from SAS `PROC MIXED` refers to heterogeneous ante-dependence and the homogeneous version is not available in SAS.
+#' Note the **ante-dependence** covariance structure in this package refers to homogeneous ante-dependence, while the ante-dependence covariance structure from SAS `PROC MIXED` refers to heterogeneous ante-dependence and the homogeneous version is not available in SAS.
 #'
 #' ## Spatial Covariance structures
 #'
