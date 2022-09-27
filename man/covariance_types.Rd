@@ -21,7 +21,7 @@ covariance type
 \details{
 abbreviation for covariance structures
 \subsection{Common Covariance Structures}{\tabular{llll}{
-   \strong{Structure} \tab \strong{Description} \tab \strong{Parms} \tab \strong{\eqn{(i, j)} element} \cr
+   \strong{Structure} \tab \strong{Description} \tab \strong{Parameters} \tab \strong{\eqn{(i, j)} element} \cr
    ad \tab Ante-dependence \tab \eqn{m} \tab \eqn{\sigma^{2}\prod_{k=i}^{j-1}\rho_{k}} \cr
    adh \tab Heterogeneous ante-dependence \tab \eqn{2m-1} \tab \eqn{\sigma_{i}\sigma_{j}\prod_{k=i}^{j-1}\rho_{k}} \cr
    ar1 \tab First-order auto-regressive \tab \eqn{2} \tab \eqn{\sigma^{2}\rho^{\lvert i-j \rvert}} \cr
@@ -34,7 +34,7 @@ abbreviation for covariance structures
 }
 
 
-Note the \strong{ante-dependence} covariance structure in this package refers to homogeneous ante-dependence, while the \strong{ante-dependence} covariance structure from SAS \verb{PROC MIXED} refers to heterogeneous ante-dependence and the homogeneous version is not available in SAS.
+Note the \strong{ante-dependence} covariance structure in this package refers to homogeneous ante-dependence, while the ante-dependence covariance structure from SAS \verb{PROC MIXED} refers to heterogeneous ante-dependence and the homogeneous version is not available in SAS.
 }
 
 \subsection{Spatial Covariance structures}{\tabular{llll}{
