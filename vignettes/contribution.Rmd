@@ -126,8 +126,8 @@ This file includes S3 methods for `mmrm_tmb` objects, see [mmrm_tmb_methods](../
 
 ### tmb.R
 
-This file includes low-level functions for fitting `mmrm` models, including [h_mmrm_tmb`()](../reference/h_mmrm_tmb.html),
-and [h_mmrm_tmb_control`()](../reference/h_mmrm_tmb_control.html), and other supporting functions.
+This file includes low-level functions for fitting `mmrm` models, including [`h_mmrm_tmb()`](../reference/h_mmrm_tmb.html),
+and [`h_mmrm_tmb_control()`](../reference/h_mmrm_tmb_control.html), and other supporting functions.
 
 The documentation for usage of low-level functions can be found at [low-level mmrm](introduction.html#low-level-mmrm).
 
@@ -230,17 +230,29 @@ Before contributing to this package, there is some conventions to follow
 When using github to collaborate, the following conversions are needed
 
 1. Github issues is for issues, feature requests, bugs. Before creating a issue, please make sure this issue has not been reported yet.
-  * If you are going to work on this issue, please assign yourself.
+    * If you are going to work on this issue, please assign yourself.
 2. Please create a branch in the `mmrm` repository, instead of creating forks, unless you are not yet a team member.
-  * The name of a branch should be like `<issue_id>_<short_discription>`. Use underscore to separate the description.
-3. Please create a Pull Request when you think you are ready:
-  * they are well documented
-  * they have corresponding unit tests.
-  * Pass all the github action checks
+    * The name of a branch should be like `<issue_id>_<short_discription>`. Use underscore to separate the description.
+3. Please create a Pull Request when you think your code changes are ready:
+    * they are well documented
+    * they have corresponding unit tests.
+    * they pass all the github action checks
 4. Address all the comments you receive.
-  * at least one approval is needed to merge.
+    * at least one approval is needed to merge.
 
 # How to contribute?
+
+## How to set up development environment?
+
+The development of `mmrm` package is based on latest R and C++ compilers.
+The package dependencies are most recent versions from CRAN.
+We recommend that your working environment is set up in the same way.
+But there are some tools we recommend you to install:
+
+1. `docker`. This tool will create separated environment which allows you to separate the host system and development system.
+2. `gitkraken`. This tool is a super useful in visualizing the git commit graphs, file history, etc.
+3. `lintr`. This R package will allow you to do the static code analysis. See [.lintr](#.lintr)
+4. `pre-commit`. This is a python module that allow you to identify issues before you commit. See [.pre-commit-config.yaml](.pre-commit-config.yaml)
 
 ## How to pick issues?
 
@@ -251,6 +263,7 @@ The issues are categorized with several labels:
 3. good first issue. Issues with this label are good choices for new team members.
 
 Other labels are straightforward.
+Please choose issue based on your interest, issue complexity and priority.
 
 ## How to add a new test case?
 
@@ -290,17 +303,17 @@ Here we only list the most important things that you need to go through before y
 
 1. Semicolons. C++ use semicolons to terminate a statement. In R, we can use semicolons or line breaks to do so, but in C++, we need both semicolons and line breaks.
 2. Types. C++ is a strong type programming language and all objects need to be declared with type. Sometimes you can combine the declaration and definition.
-  1. int i = 1; # this works; declare `i` as `int` and define it to be 1.
-  2. i = 1; # this fails; `i` is not declared yet.
-  3. int i; i = 1; # this works; `i` is declared and then defined.
-  4. int i = 1, j = 2; # this works, `i` and `j` are both `int`.
+    1. int i = 1; # this works; declare `i` as `int` and define it to be 1.
+    2. i = 1; # this fails; `i` is not declared yet.
+    3. int i; i = 1; # this works; `i` is declared and then defined.
+    4. int i = 1, j = 2; # this works, `i` and `j` are both `int`.
 3. Object scope. In R, objects declared inside control flows will go out of that enclosing brackets while in C++ objects will be terminated
-  1. in R, `if (TRUE) { a = '123' }; print(a)` is legal.
-  2. in C++, `if (1) {string a = '123'};  std::stdout << a << std::endl;` is illegal, because object `a` is terminated already.
-  3. in C++, `string a; if (1) {a = '123'}; std::stdout << a << std::endl;` is legal, `a` is declared prior to if statement.
+    1. in R, `if (TRUE) { a = '123' }; print(a)` is legal.
+    2. in C++, `if (1) {string a = '123'};  std::stdout << a << std::endl;` is illegal, because object `a` is terminated already.
+    3. in C++, `string a; if (1) {a = '123'}; std::stdout << a << std::endl;` is legal, `a` is declared prior to if statement.
 4. Polymorphism. Unlike R, when you define functions, the argument can be of any type. However, in C++, the type of these arguments are prespecified.
-  1. Template is a special function that works with generics. Since the argument type need to be defined, when we don't really care about the types(the implementations are identical),
-  we can use template so that we don't need to replicate the whole code for each type.
+    1. Template is a special function that works with generics. Since the argument type need to be defined, when we don't really care about the types(the implementations are identical),
+    we can use template so that we don't need to replicate the whole code for each type.
 
 
 With these points in mind, you are about ready to go
@@ -315,16 +328,16 @@ This is important because we mainly use this part to conduct our calculations.
 See [matrix_arrays.cpp](https://kaskr.github.io/adcomp/matrix_arrays_8cpp-example.html) for examples.
 
 
-## How to add a new covariance structure
+## How to add a new covariance structure?
 
 To add a new covariance structure, you need to do the following
 
-1. Understand the covariance structure and add appropriate documentation in `covariance.Rmd`(you can create a draft pull request to allow other team member discussion).
+1. Understand the covariance structure and add appropriate documentation in [covariance structure](covariance.html) and you can create a draft pull request to allow other team member discussion.
 2. Implement the covariance structure in C++ side and the corresponding R interface.
 3. Add unit tests to make sure the new covariance structure is working as expected.
 4. Add integration tests under `design/SAS` folder to make sure SAS and R produce similar results(within tolerance).
 
-## How to add additional data
+## How to add additional data?
 
 To add additional data to `mmrm`, please follow the next steps:
 
@@ -338,19 +351,21 @@ There are several communication channels, and please use appropriate ones.
 
 ## github
 
-github issues/pull requests is where implementations are discussed and reviewed.
+Github issues/pull requests is where implementations are discussed and reviewed.
+Feature requests, bugs, enhancements, technical implementations can be discussed here.
 When you have ideas that needs to be documented, it is better to have them in github.
 
 ## slack
 
 Slack is a messaging tools and we have a `mmrm` channel under `rinpharma` space.
-You can put anything in the slack channel, e.g. you have completed a issue and waiting for review, or you have some questions and don't want to wait until stand-up meetings.
+You can put anything in the slack channel, e.g. you have completed a issue and waiting for review,
+or you have some questions and don't want to wait until stand-up meetings.
 
 To join the slack channel, please make sure you have a slack account, and send the email address to any team member.
 
 ## stand-up meetings
 
 We have stand-up meetings three times a week.
-The purpose of stand-up meetings is for team members to discuss the current work progress and raise any issue/questions for discussion if needed.
+The purpose of stand-up meetings is for team members to discuss the current work progress and raise any issue/questions for team discussion if needed.
 
 You don't need to join all three meetings.
