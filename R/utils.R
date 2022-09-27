@@ -97,7 +97,7 @@ h_free_cores <- function() {
 #' abbreviation for covariance structures
 #' ## Common Covariance Structures
 #'
-#' | **Structure**     | **Description**                       | **Parms**      | **\eqn{(i, j)} element**         |
+#' | **Structure**     | **Description**                       | **Parameters**      | **\eqn{(i, j)} element**         |
 #' | ------------- |-------------------------------------------|:---------------|----------------------------------|
 #' | ad            | Ante-dependence                           | \eqn{m}        | \eqn{\sigma^{2}\prod_{k=i}^{j-1}\rho_{k}} |
 #' | adh           | Heterogeneous ante-dependence             | \eqn{2m-1}     | \eqn{\sigma_{i}\sigma_{j}\prod_{k=i}^{j-1}\rho_{k}} |
