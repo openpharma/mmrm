@@ -217,7 +217,7 @@ For more, visit [staged.dependencies documentation](https://openpharma.github.io
 
 # Package conventions
 
-Before contributing to this package, there is some conventions to follow
+Before contributing to this package, there are some conventions to follow.
 
 ## Programming conventions
 
