@@ -109,13 +109,17 @@ h_free_cores <- function() {
 #' | toeph         | Heterogeneous Toeplitz                    | \eqn{2m-1}     | \eqn{\sigma_{i}\sigma_{j}\rho_{\lvert i-j \rvert}} |
 #' | us            | Unstructured                              | \eqn{m(m+1)/2} | \eqn{\sigma_{ij}} |
 #'
+#' where \eqn{i} and \eqn{j} denote \eqn{i}-th and \eqn{j}-th time points, respectively, out of total \eqn{m} time points, \eqn{1 \leq i, j \leq m}.
+#'
 #' Note the **ante-dependence** covariance structure in this package refers to homogeneous ante-dependence, while the ante-dependence covariance structure from SAS `PROC MIXED` refers to heterogeneous ante-dependence and the homogeneous version is not available in SAS.
 #'
 #' ## Spatial Covariance structures
 #'
-#' | **Structure**     | **Description**                       | **Parms**      | **\eqn{(i, j)} element**         |
+#' | **Structure**     | **Description**                       | **Parameters**      | **\eqn{(i, j)} element**         |
 #' | ------------- |-------------------------------------------|:---------------|----------------------------------|
 #' | sp_exp        | spatial exponential                       | \eqn{2}        | \eqn{\sigma^{2}\rho^{-d_{ij}}} |
+#'
+#' where \eqn{d_{ij}} denotes the Euclidean distance between time points \eqn{i} and \eqn{j}.
 #' @md
 #' @name covariance_types
 NULL

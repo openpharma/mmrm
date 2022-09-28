@@ -34,14 +34,18 @@ abbreviation for covariance structures
 }
 
 
+where \eqn{i} and \eqn{j} denote \eqn{i}-th and \eqn{j}-th time points, respectively, out of total \eqn{m} time points, \eqn{1 \leq i, j \leq m}.
+
 Note the \strong{ante-dependence} covariance structure in this package refers to homogeneous ante-dependence, while the ante-dependence covariance structure from SAS \verb{PROC MIXED} refers to heterogeneous ante-dependence and the homogeneous version is not available in SAS.
 }
 
 \subsection{Spatial Covariance structures}{\tabular{llll}{
-   \strong{Structure} \tab \strong{Description} \tab \strong{Parms} \tab \strong{\eqn{(i, j)} element} \cr
+   \strong{Structure} \tab \strong{Description} \tab \strong{Parameters} \tab \strong{\eqn{(i, j)} element} \cr
    sp_exp \tab spatial exponential \tab \eqn{2} \tab \eqn{\sigma^{2}\rho^{-d_{ij}}} \cr
 }
 
+
+where \eqn{d_{ij}} denotes the Euclidean distance between time points \eqn{i} and \eqn{j}.
 }
 }
 \section{Functions}{
