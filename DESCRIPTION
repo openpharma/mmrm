@@ -46,7 +46,8 @@ LinkingTo:
 VignetteBuilder:
     knitr
 RdMacros:
-    Rdpack
+    Rdpack,
+    amsmath
 biocViews:
 Config/testthat/edition: 3
 Encoding: UTF-8
