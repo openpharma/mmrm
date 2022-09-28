@@ -24,7 +24,7 @@ abbreviation for covariance structures
    \strong{Structure} \tab \strong{Description} \tab \strong{Parameters} \tab \strong{\eqn{(i, j)} element} \cr
    ad \tab Ante-dependence \tab \eqn{m} \tab \eqn{\sigma^{2}\prod_{k=i}^{j-1}\rho_{k}} \cr
    adh \tab Heterogeneous ante-dependence \tab \eqn{2m-1} \tab \eqn{\sigma_{i}\sigma_{j}\prod_{k=i}^{j-1}\rho_{k}} \cr
-   ar1 \tab First-order auto-regressive \tab \eqn{2} \tab \eqn{\sigma^{2}\rho^{\lvert i-j \rvert}} \cr
+   ar1 \tab First-order auto-regressive \tab \eqn{2} \tab \eqn{\sigma^{2}\rho^{\abs{i-j}}} \cr
    ar1h \tab Heterogeneous first-order auto-regressive \tab \eqn{m+1} \tab \eqn{\sigma_{i}\sigma_{j}\rho^{\lvert i-j \rvert}} \cr
    cs \tab Compound symmetry \tab \eqn{2} \tab \eqn{\sigma^{2}\left[ \rho I(i \neq j)+I(i=j) \right]} \cr
    csh \tab Heterogeneous compound symmetry \tab \eqn{m+1} \tab \eqn{\sigma_{i}\sigma_{j}\left[ \rho I(i \neq j)+I(i=j) \right]} \cr

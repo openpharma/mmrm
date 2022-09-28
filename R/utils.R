@@ -89,6 +89,8 @@ h_free_cores <- function() {
   as.integer(max(1, all_cores - busy_cores - 1))
 }
 
+# covariance types ----
+
 #' covariance type
 #'
 #' @format vector of supported covariance structures. `cov_type` for common time points covariance structures,
@@ -101,7 +103,7 @@ h_free_cores <- function() {
 #' | ------------- |-------------------------------------------|:---------------|----------------------------------|
 #' | ad            | Ante-dependence                           | \eqn{m}        | \eqn{\sigma^{2}\prod_{k=i}^{j-1}\rho_{k}} |
 #' | adh           | Heterogeneous ante-dependence             | \eqn{2m-1}     | \eqn{\sigma_{i}\sigma_{j}\prod_{k=i}^{j-1}\rho_{k}} |
-#' | ar1           | First-order auto-regressive               | \eqn{2}        | \eqn{\sigma^{2}\rho^{\lvert i-j \rvert}} |
+#' | ar1           | First-order auto-regressive               | \eqn{2}        | \eqn{\sigma^{2}\rho^{\abs{i-j}}} |
 #' | ar1h          | Heterogeneous first-order auto-regressive | \eqn{m+1}      | \eqn{\sigma_{i}\sigma_{j}\rho^{\lvert i-j \rvert}} |
 #' | cs            | Compound symmetry                         | \eqn{2}        | \eqn{\sigma^{2}\left[ \rho I(i \neq j)+I(i=j) \right]} |
 #' | csh           | Heterogeneous compound symmetry           | \eqn{m+1}      | \eqn{\sigma_{i}\sigma_{j}\left[ \rho I(i \neq j)+I(i=j) \right]} |
