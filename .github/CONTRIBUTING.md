@@ -30,9 +30,9 @@ When using github to collaborate, the following conventions are needed:
 5. Address all the comments you receive.
    - at least one approval is needed to merge.
 
-# Contribution tips
+## Contribution tips
 
-## Development environment Set-up
+### Development environment Set-up
 
 The development this `mmrm` package is based on the latest R and C++ compilers.
 The package dependencies are the most recent versions from CRAN.
@@ -44,7 +44,7 @@ Additionally, there are some tools we recommend you to install:
 3. `lintr`. This R package will allow you to perform static code analysis. See [.lintr](lintr).
 4. `pre-commit`. This is a python module that allow you to identify issues before you commit. See [.pre-commit-config.yaml](pre-commit).
 
-## Issue labels
+### Issue labels
 
 The issues are categorized with several labels:
 
@@ -66,7 +66,7 @@ The issues are categorized with several labels:
 
 Please choose an issue based on your interest, issue complexity, and priority.
 
-## Add new test cases
+### Add new test cases
 
 To add a new test case, you need to first identify the test scope.
 Does the test fit in the scope of existing tests?
@@ -87,7 +87,7 @@ The purpose of the test should be clearly stated first.
 In the test body part, conduct the tests, e.g. use `expect_identical` to check consistency, `expect_error` to catch error messages, etc.
 The test body should not follow the same implementation logic as the package did, otherwise we may miss mistakes in implementation.
 
-## Add integration tests
+### Add integration tests
 
 Integration tests compare the results of SAS and R and assures the quality of our code.
 To add an integration test, you need to do the following:
@@ -97,7 +97,7 @@ To add an integration test, you need to do the following:
 3. Decide the key outputs that are needed for comparison.
 4. Add a unit test verifying that the R implementation of the same model has the same results (conversion may be needed).
 
-## Get started with C++
+### Get started with C++
 
 If you have no experience with C++, it is totally fine: `TMB` has provided us with many high-level functionalities that is very similar to `R`.
 Here we only list the most important things that you need to go through before you begin C++ programming.
@@ -118,7 +118,7 @@ Here we only list the most important things that you need to go through before y
 
 With these points in mind, you are about ready to go.
 
-## Get started with TMB
+### Get started with TMB
 
 In `mmrm` we are not including any latent variables and so the Laplace approximation aspect of `TMB` is not used.
 We only use the automatic differentiation part of `TMB`.
@@ -127,7 +127,7 @@ One important thing is that `TMB` implements R style matrix/array calculations.
 This is important because we mainly use this part to conduct our calculations.
 See [matrix_arrays.cpp](https://kaskr.github.io/adcomp/matrix_arrays_8cpp-example.html) for examples.
 
-## Add a new covariance structure
+### Add a new covariance structure
 
 To add a new covariance structure, you need to do the following:
 
@@ -136,7 +136,7 @@ To add a new covariance structure, you need to do the following:
 3. Add unit tests to make sure the new covariance structure is working as expected.
 4. Add integration tests under `design/SAS/` folder to make sure SAS and R produce similar results (within tolerance).
 
-## Add additional data
+### Add additional data
 
 To add additional data to `mmrm`, please follow the next steps:
 
@@ -144,17 +144,17 @@ To add additional data to `mmrm`, please follow the next steps:
 2. Document the data in [R/data.R].
 3. use `save` to create an `rda` data **only** containing this dataset.
 
-# Communications within team
+## Communications within team
 
 There are several communication channels, please use appropriate ones.
 
-## github
+### github
 
 Github issues/pull requests is where implementations are discussed and reviewed.
 Feature requests, bugs, enhancements, technical implementations can be discussed here.
 When you have ideas that needs to be documented, it is better to have them in github.
 
-## slack
+### slack
 
 Slack is a messaging tools and we have a `mmrm` channel under `rinpharma` space.
 You can put anything in the slack channel, e.g., you have completed a issue and are waiting for review,
@@ -162,7 +162,7 @@ or you have some questions and don't want to wait until the next stand-up meetin
 
 To join the slack channel, please make sure you have a slack account, and send the email address to any team member.
 
-## stand-up meetings
+### stand-up meetings
 
 We have stand-up meetings three times a week.
 The purpose of stand-up meetings is for team members to discuss the current work progress and raise any issue/questions for team discussion if needed.
