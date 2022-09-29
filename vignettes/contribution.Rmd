@@ -313,7 +313,7 @@ Here we only list the most important things that you need to go through before y
     3. in C++, `string a; if (1) {a = '123'}; std::stdout << a << std::endl;` is legal, `a` is declared prior to if statement.
 4. Polymorphism. Unlike in R, where function arguments have no explicitly defined types, in C++ the type of each argument of a function must be pre-specified.
     1. `Template` is a special function that works with generic argument type. We could imagine a single function that could work on arguments of arbitrary type, and `template` functions make this possible through separation of function logic from the argument declaration.  In this way 
-    we can use template so that we don't need to replicate the whole code for each type.
+    we can use `template` functions and avoid the need to replicate the whole code for each type.
 
 
 With these points in mind, you are about ready to go
