@@ -103,12 +103,12 @@ h_free_cores <- function() {
 #' | ------------- |-------------------------------------------|:---------------|----------------------------------|
 #' | ad            | Ante-dependence                           | \eqn{m}        | \eqn{\sigma^{2}\prod_{k=i}^{j-1}\rho_{k}} |
 #' | adh           | Heterogeneous ante-dependence             | \eqn{2m-1}     | \eqn{\sigma_{i}\sigma_{j}\prod_{k=i}^{j-1}\rho_{k}} |
-#' | ar1           | First-order auto-regressive               | \eqn{2}        | \eqn{\sigma^{2}\rho^{\lvert i-j \rvert}} |
-#' | ar1h          | Heterogeneous first-order auto-regressive | \eqn{m+1}      | \eqn{\sigma_{i}\sigma_{j}\rho^{\lvert i-j \rvert}} |
+#' | ar1           | First-order auto-regressive               | \eqn{2}        | \eqn{\sigma^{2}\rho^{\left \vert {i-j} \right \vert}} |
+#' | ar1h          | Heterogeneous first-order auto-regressive | \eqn{m+1}      | \eqn{\sigma_{i}\sigma_{j}\rho^{\left \vert {i-j} \right \vert}} |
 #' | cs            | Compound symmetry                         | \eqn{2}        | \eqn{\sigma^{2}\left[ \rho I(i \neq j)+I(i=j) \right]} |
 #' | csh           | Heterogeneous compound symmetry           | \eqn{m+1}      | \eqn{\sigma_{i}\sigma_{j}\left[ \rho I(i \neq j)+I(i=j) \right]} |
-#' | toep          | Toeplitz                                  | \eqn{m}        | \eqn{\sigma_{\lvert i-j \rvert +1}} |
-#' | toeph         | Heterogeneous Toeplitz                    | \eqn{2m-1}     | \eqn{\sigma_{i}\sigma_{j}\rho_{\lvert i-j \rvert}} |
+#' | toep          | Toeplitz                                  | \eqn{m}        | \eqn{\sigma_{\left \vert {i-j} \right \vert +1}} |
+#' | toeph         | Heterogeneous Toeplitz                    | \eqn{2m-1}     | \eqn{\sigma_{i}\sigma_{j}\rho_{\left \vert {i-j} \right \vert}} |
 #' | us            | Unstructured                              | \eqn{m(m+1)/2} | \eqn{\sigma_{ij}} |
 #'
 #' where \eqn{i} and \eqn{j} denote \eqn{i}-th and \eqn{j}-th time points, respectively, out of total \eqn{m} time points, \eqn{1 \leq i, j \leq m}.
