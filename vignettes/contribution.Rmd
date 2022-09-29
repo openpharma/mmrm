@@ -251,7 +251,7 @@ Additionally, there are some tools we recommend you to install:
 
 1. `docker`. This tool will create a distinct environment which allows you to separate the host system and development system.
 2. `gitkraken`. This tool is a super useful in visualizing git commit graphs, file history, etc.
-3. `lintr`. This R package will allow you to do the static code analysis. See [.lintr](#.lintr)
+3. `lintr`. This R package will allow you to perform static code analysis. See [.lintr](#.lintr)
 4. `pre-commit`. This is a python module that allow you to identify issues before you commit. See [.pre-commit-config.yaml](#.pre-commit-config.yaml)
 
 ## How to pick issues?
