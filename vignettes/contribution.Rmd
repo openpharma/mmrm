@@ -28,7 +28,7 @@ To make it easier for new developers to join, this documentation is created.
 
 ## data
 
-data folder is where `mmrm` internal data is stored.
+The `data/` folder is where `mmrm` internal data is stored.
 Currently, we only have `fev_data.rda` under this folder.
 `fev_data.rda` only contains `fev_data`.
 
