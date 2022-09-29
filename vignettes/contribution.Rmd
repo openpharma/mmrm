@@ -203,7 +203,7 @@ For more, visit [pre-commit documentation](https://pre-commit.com/).
 
 ### _pkgdown.yml
 
-This file is the configuration file for `pkgdown`.
+This file is the configuration file for our `pkgdown`-based website.
 `pkgdown` is used to build the package website easily.
 
 For more, visit [pkgdown documentation](https://pkgdown.r-lib.org/).
