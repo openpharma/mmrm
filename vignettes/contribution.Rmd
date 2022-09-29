@@ -312,7 +312,7 @@ Here we only list the most important things that you need to go through before y
     2. in C++, `if (1) {string a = '123'};  std::stdout << a << std::endl;` is illegal, because object `a` is terminated already.
     3. in C++, `string a; if (1) {a = '123'}; std::stdout << a << std::endl;` is legal, `a` is declared prior to if statement.
 4. Polymorphism. Unlike in R, where function arguments have no explicitly defined types, in C++ the type of each argument of a function must be pre-specified.
-    1. Template is a special function that works with generics. Since the argument type need to be defined, when we don't really care about the types(the implementations are identical),
+    1. `Template` is a special function that works with generic argument type. We could imagine a single function that could work on arguments of arbitrary type, and `template` functions make this possible through separation of function logic from the argument declaration.  In this way 
     we can use template so that we don't need to replicate the whole code for each type.
 
 
