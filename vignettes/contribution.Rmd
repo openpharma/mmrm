@@ -293,7 +293,7 @@ To add an integration test, you need to do the following:
 
 1. Use SAS to run an appropriate mmrm models with `proc mixed`, using `fev_data`.
 2. Save the results in `txt` format in the `design/SAS/` folder.
-3. Decide the key outputs that is needed for comparison.
+3. Decide the key outputs that are needed for comparison.
 4. Add a unit test that the R implementation of the same model has the same results(conversion can be needed).
 
 ## How to get started with C++?
