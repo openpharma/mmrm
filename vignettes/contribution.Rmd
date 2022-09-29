@@ -32,7 +32,7 @@ The `data/` folder is where `mmrm` internal data is stored.
 Currently, we only have `fev_data.rda` under this folder.
 In turn, `fev_data.rda` only contains the `fev_data` dataset.
 
-`fev_data` is a data frame of the following structure
+`fev_data` is a data frame of the following structure:
 
 ```{r}
 head(fev_data)
