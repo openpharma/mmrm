@@ -320,7 +320,7 @@ With these points in mind, you are about ready to go.
 
 ## How to get started with TMB?
 
-In `mmrm` we are not including any latent variables so the Laplace approximation part is not used.
+In `mmrm` we are not including any latent variables and so the Laplace approximation aspect of `TMB` is not used.
 We only use the automatic differentiation part of `TMB`.
 For detailed documentation of `TMB`, visit [TMB referece](https://kaskr.github.io/adcomp/Introduction.html).
 One important thing is that `TMB` implements R style matrix/array calculations.
