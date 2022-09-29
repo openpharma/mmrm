@@ -35,6 +35,7 @@ In turn, `fev_data.rda` only contains the `fev_data` dataset.
 `fev_data` is a data frame of the following structure:
 
 ```{r}
+library(mmrm)
 head(fev_data)
 ```
 
