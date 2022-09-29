@@ -232,7 +232,7 @@ When using github to collaborate, the following conversions are needed:
 1. Github issues is for issues, feature requests, bugs. Before creating a issue, please make sure this issue has not been reported yet.
     * If you are going to work on this issue, please assign yourself.
 2. Please create a branch in the `mmrm` repository, instead of creating forks, unless you are not yet a team member.
-    * The name of a branch should be like `<issue_id>_<short_discription>`. Use underscore to separate the description.
+    * The name of a branch should be like `<issue_id>_<short_discription>`. Use an underscore to separate the description.
 3. Please create a Pull Request when you think your code changes are ready:
     * they are well documented
     * they have corresponding unit tests.
