@@ -284,7 +284,7 @@ test_that("<function_name> do something as explained", {
 The purpose of the test should be clearly stated first.
 
 In the test body part, conduct the tests, e.g. use `expect_identical` to check consistency, `expect_error` to catch error messages, etc.
-The test body should not follow the same implementation logic as the package did, otherwise we may fall into the same issue.
+The test body should not follow the same implementation logic as the package did, otherwise we may miss mistakes in implementation.
 
 ## How to add a new integration test?
 
