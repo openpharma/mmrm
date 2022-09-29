@@ -176,7 +176,7 @@ The `tests/` folder includes all the unit tests for the R functions, using the `
 
 ## vignettes
 
-This folder includes vignettes that helps user understand more about the usage, detail, etc.
+The `vignettes/` folder includes `Rmarkdown`-based documentation to helps the user understand more about the usage, detail, etc. These vignettes are rendered into `.html` files which are deployed on the package website. 
 
 ## other files
 
