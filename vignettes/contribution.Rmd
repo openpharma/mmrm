@@ -48,7 +48,7 @@ See [introduction](introduction.html#common-usage).
 ## design
 
 The `design/` folder is where the prototypes and SAS implementations stored.
-When we have a new idea of the a specific implementations, we can add our prototypes under this folder.
+When we have a new idea for a specific implementations, we can add our prototypes in a Rmarkdown file to this folder.
 We can then push these prototypes to github and collect feedback on the proposed ideas.
 Currently we only have SAS and TMB folders.
 
