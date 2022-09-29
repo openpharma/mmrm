@@ -260,7 +260,7 @@ The issues are categorized with several labels:
 
 1. `SP[1-9]`. `SP` (story points) indicate complexity, and the larger the subsequent number, the more time consuming the issue is expected to be.
 2. `priority`. Issues with this label should be completed with higher priority.
-3. good first issue. Issues with this label are good choices for new team members.
+3. `good first issue`. Issues with this label are good choices for new team members.
 
 Other labels are straightforward.
 Please choose an issue based on your interest, issue complexity, and priority.
