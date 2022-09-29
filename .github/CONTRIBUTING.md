@@ -41,8 +41,8 @@ Additionally, there are some tools we recommend you to install:
 
 1. `docker`. This tool will create a distinct environment which allows you to separate the host system and development system.
 2. `gitkraken`. This tool is a super useful in visualizing git commit graphs, file history, etc.
-3. `lintr`. This R package will allow you to perform static code analysis. See [.lintr](lintr).
-4. `pre-commit`. This is a python module that allow you to identify issues before you commit. See [.pre-commit-config.yaml](pre-commit).
+3. `lintr`. This R package will allow you to perform static code analysis. See [.lintr][lintr].
+4. `pre-commit`. This is a python module that allow you to identify issues before you commit. See [.pre-commit-config.yaml][pre-commit].
 
 ### Issue labels
 
@@ -131,7 +131,7 @@ See [matrix_arrays.cpp](https://kaskr.github.io/adcomp/matrix_arrays_8cpp-exampl
 
 To add a new covariance structure, you need to do the following:
 
-1. Understand the covariance structure and add appropriate documentation in [covariance structure](covariance) and you can create a draft pull request to invite discussion from other team members.
+1. Understand the covariance structure and add appropriate documentation in [covariance structure][covariance] and you can create a draft pull request to invite discussion from other team members.
 2. Implement the covariance structure on the C++ side and the corresponding R interface.
 3. Add unit tests to make sure the new covariance structure is working as expected.
 4. Add integration tests under `design/SAS/` folder to make sure SAS and R produce similar results (within tolerance).
