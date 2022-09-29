@@ -227,7 +227,7 @@ Before contributing to this package, there are some conventions to follow.
 
 ## Github conventions
 
-When using github to collaborate, the following conversions are needed
+When using github to collaborate, the following conversions are needed:
 
 1. Github issues is for issues, feature requests, bugs. Before creating a issue, please make sure this issue has not been reported yet.
     * If you are going to work on this issue, please assign yourself.
