@@ -245,7 +245,7 @@ When using github to collaborate, the following conversions are needed:
 ## How to set up development environment?
 
 The development of `mmrm` package is based on latest R and C++ compilers.
-The package dependencies are most recent versions from CRAN.
+The package dependencies are the most recent versions from CRAN.
 We recommend that your working environment is set up in the same way.
 But there are some tools we recommend you to install:
 
