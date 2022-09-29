@@ -24,7 +24,7 @@ To make it easier for new developers to join, this documentation is created.
 
 # Package Structures
 
-`mmrm` is an R package, and the following sections are all files/folders that is available in this package.
+`mmrm` is an R package, and the following sections describe all files/folders that are contained in this package.
 
 ## data
 
