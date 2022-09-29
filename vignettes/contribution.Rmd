@@ -172,7 +172,7 @@ All files starting with `test-` are unit tests for the C++ codes.
 
 ## tests
 
-This folder includes all the unit tests that is done in R side, using `testthat`.
+The `tests/` folder includes all the unit tests for the R functions, using the `testthat` package.
 
 ## vignettes
 
