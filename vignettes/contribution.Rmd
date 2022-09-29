@@ -291,7 +291,7 @@ The test body should not follow the same implementation logic as the package did
 Integration tests compare the results of SAS and R and assures the quality of our code.
 To add an integration test, you need to do the following:
 
-1. Use SAS to run appropriate mmrm models with `proc mixed`, using fev_data.
+1. Use SAS to run an appropriate mmrm models with `proc mixed`, using `fev_data`.
 2. Save the results in `txt` format under `design/SAS` folder.
 3. Decide the key outputs that is needed for comparison.
 4. Add a unit test that the R implementation of the same model has the same results(conversion can be needed).
