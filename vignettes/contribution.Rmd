@@ -347,7 +347,7 @@ To add additional data to `mmrm`, please follow the next steps:
 
 # Communications within team?
 
-There are several communication channels, and please use appropriate ones.
+There are several communication channels, please use appropriate ones.
 
 ## github
 
