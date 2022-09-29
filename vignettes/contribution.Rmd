@@ -263,7 +263,7 @@ The issues are categorized with several labels:
 3. good first issue. Issues with this label are good choices for new team members.
 
 Other labels are straightforward.
-Please choose issue based on your interest, issue complexity and priority.
+Please choose an issue based on your interest, issue complexity, and priority.
 
 ## How to add a new test case?
 
