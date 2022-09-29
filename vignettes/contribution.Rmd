@@ -358,7 +358,7 @@ When you have ideas that needs to be documented, it is better to have them in gi
 ## slack
 
 Slack is a messaging tools and we have a `mmrm` channel under `rinpharma` space.
-You can put anything in the slack channel, e.g. you have completed a issue and waiting for review,
+You can put anything in the slack channel, e.g., you have completed a issue and are waiting for review,
 or you have some questions and don't want to wait until the next stand-up meeting.
 
 To join the slack channel, please make sure you have a slack account, and send the email address to any team member.
