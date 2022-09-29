@@ -335,7 +335,7 @@ To add a new covariance structure, you need to do the following
 1. Understand the covariance structure and add appropriate documentation in [covariance structure](covariance.html) and you can create a draft pull request to allow other team member discussion.
 2. Implement the covariance structure in C++ side and the corresponding R interface.
 3. Add unit tests to make sure the new covariance structure is working as expected.
-4. Add integration tests under `design/SAS` folder to make sure SAS and R produce similar results(within tolerance).
+4. Add integration tests under `design/SAS/` folder to make sure SAS and R produce similar results (within tolerance).
 
 ## How to add additional data?
 
