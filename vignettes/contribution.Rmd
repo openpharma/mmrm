@@ -67,7 +67,7 @@ You can add your ideas/prototypes here.
 
 Files in the `inst/` folder will be kept after installation.
 Currently we only have `REFERENCES.bib` and `WORDLIST` under this folder.
-`REFERENCES.bib` is used to keep a list of all literatures that are referenced.
+`REFERENCES.bib` keeps a list of all referenced literature.
 `WORDLIST` is used to include some special words so that spelling check will not fail.
 
 ## man
