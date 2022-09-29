@@ -81,7 +81,7 @@ This folder contains all the source code written in R, just like every other R p
 
 ### catch-routine-registration.R
 
-This file is generated automatically to ensure C++ tests can be conducted with testthat and Catch.
+This file is generated automatically to ensure C++ tests can be conducted with `testthat` and `Catch`.
 For more details, visit [use catch in testthat](https://testthat.r-lib.org/reference/use_catch.html) page.
 
 ### component.R
