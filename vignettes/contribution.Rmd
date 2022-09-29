@@ -221,9 +221,9 @@ Before contributing to this package, there are some conventions to follow.
 
 ## Programming conventions
 
-1. function names should be explicit and clear, separated by underscore.
-2. functions starting with `h_` are supporting functions and most of them should not be exported.
-3. functions should be well documented using roxygen2 even if it is not exported.
+1. Function names should be explicit and clear, separated by underscore (`snake_case`).
+2. Functions starting with `h_` are supporting functions and they should not be exported.
+3. Functions should be well documented using `roxygen2` even when they are not exported.
 
 ## Github conventions
 
