@@ -211,7 +211,7 @@ For more, visit [pkgdown documentation](https://pkgdown.r-lib.org/).
 ### staged_dependencies.yaml
 
 This file is the configuration file for `staged.dependencies`.
-`staged.dependencies` is used to ensure the dependencies is correct when you have multiple repositories developing in the same time.
+`staged.dependencies` is used to ensure that dependencies are consistent across multiple repositories which are being developing at the same time.
 
 For more, visit [staged.dependencies documentation](https://openpharma.github.io/staged.dependencies/).
 
