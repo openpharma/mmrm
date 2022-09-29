@@ -307,7 +307,7 @@ Here we only list the most important things that you need to go through before y
     2. i = 1; # this fails; `i` is not declared yet.
     3. int i; i = 1; # this works; `i` is declared and then defined.
     4. int i = 1, j = 2; # this works, `i` and `j` are both `int`.
-3. Object scope. In R, objects declared inside control flows will go out of that enclosing brackets while in C++ objects will be terminated
+3. Object scope. In R, objects declared inside control flows will exist outside of that enclosing brackets of the flow, while in C++, objects created within control flows will be terminated.
     1. in R, `if (TRUE) { a = '123' }; print(a)` is legal.
     2. in C++, `if (1) {string a = '123'};  std::stdout << a << std::endl;` is illegal, because object `a` is terminated already.
     3. in C++, `string a; if (1) {a = '123'}; std::stdout << a << std::endl;` is legal, `a` is declared prior to if statement.
