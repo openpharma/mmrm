@@ -54,7 +54,7 @@ Currently we only have SAS and TMB folders.
 
 ### SAS
 
-SAS folder contains the programs to run MMRM models and corresponding SAS outputs.
+The `design/SAS/` folder contains the programs to run MMRM models and corresponding SAS outputs.
 The results will be used for integration tests.
 See [integration tests](#how-to-add-a-new-integration-test?).
 
