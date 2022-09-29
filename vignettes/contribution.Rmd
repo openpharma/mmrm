@@ -316,7 +316,7 @@ Here we only list the most important things that you need to go through before y
     we can use `template` functions and avoid the need to replicate the whole code for each type.
 
 
-With these points in mind, you are about ready to go
+With these points in mind, you are about ready to go.
 
 ## How to get started with TMB?
 
