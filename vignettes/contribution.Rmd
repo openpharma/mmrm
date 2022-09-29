@@ -270,7 +270,7 @@ Please choose an issue based on your interest, issue complexity, and priority.
 To add a new test case, you need to first identify the test scope.
 Does the test fit in the scope of existing tests?
 If so, please modify the existing test files under `tests/testthat/` folder or `src/` folder, depending on whether the code to be tested is R or C++.
-Otherwise please create a new test file, with its name prefix as `test-`.
+Otherwise please create a new test file, with a name prefix of "test-".
 
 In each test case, use the following structure.
 
