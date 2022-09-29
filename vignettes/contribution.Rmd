@@ -190,7 +190,7 @@ This file will specify untracked files/file patterns that git should ignore.
 
 This file serves as configuration for `lintr` to do the static code analysis.
 Please install `lintr` package in your developing system to enable the analysis.
-It will provide you information about error, style issues, etc.
+It will provide you information about errors, style issues, etc.
 
 For more, visit [lintr documentation](https://lintr.r-lib.org/).
 
