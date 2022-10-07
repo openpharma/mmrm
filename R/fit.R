@@ -172,6 +172,50 @@ refit_multiple_optimizers <- function(fit,
 }
 
 
+#' Control Parameters for Fitting an MMRM
+#'
+#' @description `r lifecycle::badge("experimental")`
+#'
+#' @param optimizer (`function`)\cr optimization function.
+#' @param optimizer_args (`list`)\cr additional arguments to be passed to optimizer.
+#' @param optimizer_control (`list`)\cr specific `control` argument for optimizer.
+#' @param start (`numeric` or `NULL`)\cr optional start values for variance
+#'   parameters.
+#' @param accept_singular (`flag`)\cr whether singular design matrices are reduced
+#'   to full rank automatically and additional coefficient estimates will be missing.
+#'
+#' @return List of class `mmrm_control` with the control parameters.
+#' @export
+#'
+#' @examples
+#' mmrm_control(
+#'   optimizer = stats::optim,
+#'   optimizer_args = list(method = "L-BFGS-B")
+#' )
+mmrm_control <- function(optimizer = stats::nlminb,
+                         optimizer_args = list(),
+                         optimizer_control = list(),
+                         start = NULL,
+                         accept_singular = TRUE) {
+  assert_function(optimizer)
+  assert_list(optimizer_args)
+  assert_list(optimizer_control)
+  assert_numeric(start, null.ok = TRUE)
+  assert_flag(accept_singular)
+
+  structure(
+    list(
+      optimizer = optimizer,
+      optimizer_args = optimizer_args,
+      optimizer_control = optimizer_control,
+      start = start,
+      accept_singular = accept_singular
+    ),
+    class = "mmrm_control"
+  )
+}
+
+
 #' Fit an MMRM
 #'
 #' @description `r lifecycle::badge("experimental")`
