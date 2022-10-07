@@ -28,7 +28,6 @@ Authors:
   \item Craig Gower-Page \email{craig.gower-page@roche.com}
   \item Alessandro Noci \email{alessandro.noci@roche.com}
   \item Liming Li \email{liming.li@roche.com}
-  \item Kunzmann Kevin \email{kevin.kunzmann@boehringer-ingelheim.com}
 }
 
 }
