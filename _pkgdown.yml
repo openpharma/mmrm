@@ -18,25 +18,27 @@ reference:
       - mmrm-package
   - title: Helper Functions
     contents:
-      - h_free_cores
-      - h_mmrm_tmb_control
       - h_mmrm_tmb
   - title: Functions
     contents:
-      - component
+      - mmrm
+      - mmrm_control
+      - fit_single_optimizer
+      - refit_multiple_optimizers
       - df_1d
       - df_md
-      - fit_single_optimizer
-      - mmrm
-      - refit_multiple_optimizers
+      - component
+      - free_cores
   - title: Methods
     contents:
-      - emmeans_support
       - mmrm_methods
       - mmrm_tmb_methods
   - title: Covariance Structures
     contents:
       - covariance_types
+  - title: Estimate Marginal Means
+    contents:
+      - emmeans_support
   - title: Datasets
     contents:
       - fev_data

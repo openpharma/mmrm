@@ -6,7 +6,7 @@
 #' while capturing messages and warnings.
 #'
 #' @inheritParams mmrm
-#' @inheritParams h_mmrm_tmb_control
+#' @inheritParams mmrm_control
 #'
 #' @return The `mmrm_fit` object, with additional attributes containing warnings,
 #'   messages, optimizer used and convergence status in addition to the
@@ -32,7 +32,7 @@ fit_single_optimizer <- function(formula,
   assert_data_frame(data)
   assert_vector(weights)
   optimizer <- match.arg(optimizer)
-  control <- h_mmrm_tmb_control(
+  control <- mmrm_control(
     optimizer = if (optimizer == "nlminb") stats::nlminb else stats::optim,
     optimizer_control = if (optimizer == "nlminb") list(iter.max = 300, eval.max = 400) else list(),
     optimizer_args = if (optimizer == "nlminb") list() else list(method = optimizer),
@@ -102,7 +102,7 @@ h_summarize_all_fits <- function(all_fits) {
 #' @param fit (`mmrm_fit`)\cr original model fit from [fit_single_optimizer()].
 #' @inheritParams mmrm
 #' @param optimizers (`character`)\cr all possible optimizers to be used for fitting.
-#' @inheritParams h_mmrm_tmb_control
+#' @inheritParams mmrm_control
 #'
 #' @return The best (in terms of log likelihood) fit which converged.
 #'
@@ -172,6 +172,50 @@ refit_multiple_optimizers <- function(fit,
 }
 
 
+#' Control Parameters for Fitting an MMRM
+#'
+#' @description `r lifecycle::badge("experimental")`
+#'
+#' @param optimizer (`function`)\cr optimization function.
+#' @param optimizer_args (`list`)\cr additional arguments to be passed to optimizer.
+#' @param optimizer_control (`list`)\cr specific `control` argument for optimizer.
+#' @param start (`numeric` or `NULL`)\cr optional start values for variance
+#'   parameters.
+#' @param accept_singular (`flag`)\cr whether singular design matrices are reduced
+#'   to full rank automatically and additional coefficient estimates will be missing.
+#'
+#' @return List of class `mmrm_control` with the control parameters.
+#' @export
+#'
+#' @examples
+#' mmrm_control(
+#'   optimizer = stats::optim,
+#'   optimizer_args = list(method = "L-BFGS-B")
+#' )
+mmrm_control <- function(optimizer = stats::nlminb,
+                         optimizer_args = list(),
+                         optimizer_control = list(),
+                         start = NULL,
+                         accept_singular = TRUE) {
+  assert_function(optimizer)
+  assert_list(optimizer_args)
+  assert_list(optimizer_control)
+  assert_numeric(start, null.ok = TRUE)
+  assert_flag(accept_singular)
+
+  structure(
+    list(
+      optimizer = optimizer,
+      optimizer_args = optimizer_args,
+      optimizer_control = optimizer_control,
+      start = start,
+      accept_singular = accept_singular
+    ),
+    class = "mmrm_control"
+  )
+}
+
+
 #' Fit an MMRM
 #'
 #' @description `r lifecycle::badge("experimental")`
@@ -187,7 +231,7 @@ refit_multiple_optimizers <- function(fit,
 #' @param optimizer (`string`)\cr optimizer to be used to generate the model.
 #' @param n_cores (`count`)\cr number of cores which could in principle be used for
 #'   parallel computations on Linux or Mac machines.
-#' @inheritParams h_mmrm_tmb_control
+#' @inheritParams mmrm_control
 #'
 #' @details
 #' The `formula` typically looks like:
@@ -197,7 +241,7 @@ refit_multiple_optimizers <- function(fit,
 #' subject variables.
 #'
 #' The covariance structures in the formula can be found in [`covariance_types`].
-#' 
+#'
 #' When setting `optimizer = "automatic"`, first the default optimizer
 #' (`L-BFGS-B`) is used to fit the model. If that converges, this is returned.
 #' If not, the other available optimizers from [refit_multiple_optimizers()] are
@@ -224,7 +268,7 @@ mmrm <- function(formula,
                  weights = NULL,
                  reml = TRUE,
                  optimizer = "automatic",
-                 n_cores = h_free_cores(),
+                 n_cores = free_cores(),
                  accept_singular = TRUE) {
   assert_string(optimizer)
   use_automatic <- identical(optimizer, "automatic")
