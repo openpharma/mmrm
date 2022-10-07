@@ -1,12 +1,12 @@
 .tmb_formula <- FEV1 ~ RACE + us(AVISIT | USUBJID)
-.mmrm_tmb_example <- h_mmrm_tmb(.tmb_formula, fev_data, weights = rep(1, nrow(fev_data)))
+.mmrm_tmb_example <- fit_mmrm(.tmb_formula, fev_data, weights = rep(1, nrow(fev_data)))
 get_mmrm_tmb <- function() {
   .mmrm_tmb_example
 }
 
 .tmb_formula_rank_deficient <- FEV1 ~ SEX + SEX2 + us(AVISIT | USUBJID)
 .mmrm_tmb_dat_rank_deficient <- cbind(fev_data, SEX2 = fev_data$SEX) # nolint
-.mmrm_tmb_example_rk_deficient <- h_mmrm_tmb(
+.mmrm_tmb_example_rk_deficient <- fit_mmrm(
   .tmb_formula_rank_deficient,
   .mmrm_tmb_dat_rank_deficient,
   weights = rep(1, nrow(fev_data))

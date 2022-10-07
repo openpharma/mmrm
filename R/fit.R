@@ -40,7 +40,7 @@ fit_single_optimizer <- function(formula,
     accept_singular = accept_singular
   )
   quiet_fit <- h_record_all_output(
-    h_mmrm_tmb(
+    fit_mmrm(
       formula = formula,
       data = data,
       weights = weights,
