@@ -39,7 +39,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9006</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9007</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,12 +62,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -392,13 +386,13 @@ table.</p>
 <span><span class="co">#&gt; ARMCDTRT:AVISITVIS3           -0.66753189  1.1865359 158.2106 -0.56258887</span></span>
 <span><span class="co">#&gt; ARMCDTRT:AVISITVIS4            0.63094392  1.8507884 129.6377  0.34090549</span></span>
 <span><span class="co">#&gt;                                   Pr(&gt;|t|)</span></span>
-<span><span class="co">#&gt; (Intercept)                   7.122405e-89</span></span>
+<span><span class="co">#&gt; (Intercept)                   7.122406e-89</span></span>
 <span><span class="co">#&gt; RACEBlack or African American 1.638725e-02</span></span>
 <span><span class="co">#&gt; RACEWhite                     1.605553e-14</span></span>
 <span><span class="co">#&gt; ARMCDTRT                      6.001485e-04</span></span>
 <span><span class="co">#&gt; AVISITVIS2                    1.366921e-08</span></span>
 <span><span class="co">#&gt; AVISITVIS3                    1.927523e-25</span></span>
-<span><span class="co">#&gt; AVISITVIS4                    8.242710e-22</span></span>
+<span><span class="co">#&gt; AVISITVIS4                    8.242709e-22</span></span>
 <span><span class="co">#&gt; ARMCDTRT:AVISITVIS2           9.877459e-01</span></span>
 <span><span class="co">#&gt; ARMCDTRT:AVISITVIS3           5.745112e-01</span></span>
 <span><span class="co">#&gt; ARMCDTRT:AVISITVIS4           7.337266e-01</span></span></code></pre></div>
@@ -483,7 +477,7 @@ optimization which may be needed by some users.</p>
 <span>  data <span class="op">=</span> <span class="va">fev_data</span>,</span>
 <span>  weights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">fev_data</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  reml <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  control <span class="op">=</span> <span class="fu"><a href="../reference/h_mmrm_tmb_control.html">h_mmrm_tmb_control</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  control <span class="op">=</span> <span class="fu"><a href="../reference/mmrm_control.html">mmrm_control</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; mmrm fit</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -508,7 +502,7 @@ optimization which may be needed by some users.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Model Inference Optimization:</span></span>
 <span><span class="co">#&gt; Converged with code 0 and message: relative convergence (4)</span></span></code></pre></div>
-<p>For fine control of optimization routine, <a href="https://openpharma.github.io/mmrm/main/reference/h_mmrm_tmb_control.html"><code>h_mmrm_tmb_control()</code></a>
+<p>For fine control of optimization routine, <a href="https://openpharma.github.io/mmrm/main/reference/mmrm_control.html"><code>mmrm_control()</code></a>
 is provided. This function allows the user to specify optimization
 routine with <code>optimizer</code>, pass arguments to that optimizer
 with <code>optimizer_args</code>, provide a list of control parameters
@@ -517,7 +511,7 @@ parameter values with <code>start</code>, and decide the action to be
 taken when the defined design matrix is singular with
 <code>accept_singular</code>.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/h_mmrm_tmb_control.html">h_mmrm_tmb_control</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/mmrm_control.html">mmrm_control</a></span><span class="op">(</span></span>
 <span>  optimizer <span class="op">=</span> <span class="fu">stats</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/stats/nlminb.html" class="external-link">nlminb</a></span>,</span>
 <span>  optimizer_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>upper <span class="op">=</span> <span class="cn">Inf</span>, lower <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,</span>
 <span>  optimizer_control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>

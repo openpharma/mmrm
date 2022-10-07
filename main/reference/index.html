@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9006</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9007</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,12 +38,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -92,16 +86,6 @@
 
       <dl><dt>
           
-          <code><a href="h_free_cores.html">h_free_cores()</a></code> 
-        </dt>
-        <dd>Get an approximate number of free cores.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="h_mmrm_tmb_control.html">h_mmrm_tmb_control()</a></code> 
-        </dt>
-        <dd>Control Parameters for <code>TMB</code> Fit</dd>
-      </dl><dl><dt>
-          
           <code><a href="h_mmrm_tmb.html">h_mmrm_tmb()</a></code> 
         </dt>
         <dd>Fitting an MMRM with <code>TMB</code></dd>
@@ -118,9 +102,24 @@
 
       <dl><dt>
           
-          <code><a href="component.html">component()</a></code> 
+          <code><a href="mmrm.html">mmrm()</a></code> 
         </dt>
-        <dd>Component Access for <code>mmrm_tmb</code> Objects</dd>
+        <dd>Fit an MMRM</dd>
+      </dl><dl><dt>
+          
+          <code><a href="mmrm_control.html">mmrm_control()</a></code> 
+        </dt>
+        <dd>Control Parameters for Fitting an MMRM</dd>
+      </dl><dl><dt>
+          
+          <code><a href="fit_single_optimizer.html">fit_single_optimizer()</a></code> 
+        </dt>
+        <dd>Fitting an MMRM with Single Optimizer</dd>
+      </dl><dl><dt>
+          
+          <code><a href="refit_multiple_optimizers.html">refit_multiple_optimizers()</a></code> 
+        </dt>
+        <dd>Refitting MMRM with Multiple Optimizers</dd>
       </dl><dl><dt>
           
           <code><a href="df_1d.html">df_1d()</a></code> 
@@ -133,19 +132,14 @@
         <dd>Calculation of Satterthwaite Degrees of Freedom for Multi-Dimensional Contrast</dd>
       </dl><dl><dt>
           
-          <code><a href="fit_single_optimizer.html">fit_single_optimizer()</a></code> 
+          <code><a href="component.html">component()</a></code> 
         </dt>
-        <dd>Fitting an MMRM with Single Optimizer</dd>
+        <dd>Component Access for <code>mmrm_tmb</code> Objects</dd>
       </dl><dl><dt>
           
-          <code><a href="mmrm.html">mmrm()</a></code> 
+          <code><a href="free_cores.html">free_cores()</a></code> 
         </dt>
-        <dd>Fit an MMRM</dd>
-      </dl><dl><dt>
-          
-          <code><a href="refit_multiple_optimizers.html">refit_multiple_optimizers()</a></code> 
-        </dt>
-        <dd>Refitting MMRM with Multiple Optimizers</dd>
+        <dd>Get an approximate number of free cores.</dd>
       </dl></div><div class="section level2">
       <h2 id="methods">Methods<a class="anchor" aria-label="anchor" href="#methods"></a></h2>
       
@@ -158,11 +152,6 @@
       
 
       <dl><dt>
-          
-          <code><a href="emmeans_support.html">emmeans_support</a></code> 
-        </dt>
-        <dd>Support for <code>emmeans</code></dd>
-      </dl><dl><dt>
           
           <code><a href="mmrm_methods.html">summary(<i>&lt;mmrm&gt;</i>)</a></code> <code><a href="mmrm_methods.html">print(<i>&lt;summary.mmrm&gt;</i>)</a></code> 
         </dt>
@@ -188,6 +177,22 @@
           <code><a href="covariance_types.html">cov_type</a></code> <code><a href="covariance_types.html">cov_type_spatial</a></code> 
         </dt>
         <dd>covariance type</dd>
+      </dl></div><div class="section level2">
+      <h2 id="estimate-marginal-means">Estimate Marginal Means<a class="anchor" aria-label="anchor" href="#estimate-marginal-means"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="emmeans_support.html">emmeans_support</a></code> 
+        </dt>
+        <dd>Support for <code>emmeans</code></dd>
       </dl></div><div class="section level2">
       <h2 id="datasets">Datasets<a class="anchor" aria-label="anchor" href="#datasets"></a></h2>
       

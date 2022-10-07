@@ -55,6 +55,9 @@
     <loc>https://openpharma.github.io/mmrm/main/reference/fit_single_optimizer.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/free_cores.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/h_coef_table.html</loc>
   </url>
   <url>
@@ -68,9 +71,6 @@
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/h_df_md_list.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/main/reference/h_free_cores.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/h_gradient.html</loc>
@@ -92,9 +92,6 @@
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/h_mmrm_tmb_assert_start.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/main/reference/h_mmrm_tmb_control.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/h_mmrm_tmb_data.html</loc>
@@ -143,6 +140,9 @@
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/mmrm.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/mmrm_control.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/mmrm_methods.html</loc>
