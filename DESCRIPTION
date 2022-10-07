@@ -10,7 +10,8 @@ Authors@R: c(
     person("Ya", "Wang", , "ya.wang10@gilead.com", role = "aut"),
     person("Craig", "Gower-Page", , "craig.gower-page@roche.com", role = "aut"),
     person("Alessandro", "Noci", , "alessandro.noci@roche.com", role = "aut"),
-    person("Liming", "Li", , "liming.li@roche.com", role = "aut")
+    person("Liming", "Li", , "liming.li@roche.com", role = "aut"),
+    person("Kunzmann", "Kevin", , "kevin.kunzmann@boehringer-ingelheim.com", role = "aut")
   )
 Description: Mixed models for repeated measures (MMRM) are a popular
     choice for individually randomized trials with longitudinal continuous
