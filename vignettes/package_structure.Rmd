@@ -10,7 +10,7 @@ output:
           toc: true
           toc_float: true
 vignette: |
-  %\VignetteIndexEntry{Contributing Guide for Developers}
+  %\VignetteIndexEntry{Package Structure}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options:
