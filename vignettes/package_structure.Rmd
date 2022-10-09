@@ -29,22 +29,7 @@ To make it easier for new developers to join, this documentation is created.
 ## data
 
 The `data/` folder is where `mmrm` internal data is stored.
-Currently, we only have `fev_data.rda` in this folder.
-In turn, `fev_data.rda` only contains the `fev_data` dataset.
-
-`fev_data` is a data frame of the following structure:
-
-```{r}
-library(mmrm)
-head(fev_data)
-```
-
-`USUBJID` is the unique subject id(total 200 subjects), `AVISIT` is the analysis visit(from VIS1 to VIS4), `TRT` is the treatment assignment,
-`RACE` is the race of subject, `SEX` is the gender of subject, `FEV1` is the forced expiratory volume, `FEV1_BL` is the baseline forces expiratory volume.
-`WEIGHT` is the weight for each observation, `VISITN` is the numeric value of `AVISIT` (taking the prefix "VIS" off from AVISIT), `VISITN2` is a numeric value.
-
-In `mmrm` analysis, we usually use `FEV1` as the response, `AVISIT` as the time variable, and `USUBJID` as subject variable.
-See [introduction](introduction.html#common-usage).
+See [documentation](../reference/fev_data.html) and [introduction](introduction.html#common-usage) for details.
 
 ## design
 
@@ -67,8 +52,9 @@ You can add your ideas/prototypes here.
 ## inst
 
 Files in the `inst/` folder will be kept after installation.
-`REFERENCES.bib` keeps a list of all referenced literature.
-`WORDLIST` is kept up-to-date for all non-English words, allowing the package to pass a spell-checker.
+
+- `REFERENCES.bib` keeps a list of all referenced literature.
+- `WORDLIST` is kept up-to-date for all non-English words, allowing the package to pass a spell-checker.
 
 ## man
 
