@@ -15,6 +15,7 @@
 devel/*
 doc
 docs
+pkgdown
 inst/outputs/*
 logs
 Meta

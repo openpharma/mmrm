@@ -133,6 +133,8 @@ and we have in total $2m - 1$ variance parameters. Assuming a
 constant variance yields a homogeneous ante-dependence covariance structure
 with total $m$ variance parameters.
 
+Note our naming convention for the homogeneous and heterogeneous covariance structures that a suffix `h` is used to denote the heterogeneous version, e.g, `ad` for homogeneous and `adh` for heterogeneous ante-dependence. This is different from the name used in SAS for ante-dependence covariance structure, where `ANTE(1)` refers to heterogeneous ante-dependence covariance structure and a homogeneous version is not provided in SAS.  
+
 ## Homogeneous (`toep`) and Heterogeneous Toeplitz (`toeph`)
 
 Toeplitz matrices (@Toeplitz1911) are diagonal-constant matrices. Here

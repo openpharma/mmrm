@@ -1,7 +1,7 @@
-# h_mmrm_tmb_control ----
+# mmrm_control ----
 
-test_that("h_mmrm_tmb_control works as expected", {
-  result <- h_mmrm_tmb_control(
+test_that("mmrm_control works as expected", {
+  result <- mmrm_control(
     optimizer = stats::optim,
     optimizer_args = list(method = "L-BFGS-B")
   )
@@ -13,7 +13,7 @@ test_that("h_mmrm_tmb_control works as expected", {
       start = NULL,
       accept_singular = TRUE
     ),
-    class = "mmrm_tmb_control"
+    class = "mmrm_control"
   )
   expect_identical(result, expected)
 })
