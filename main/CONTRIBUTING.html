@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9008</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9009</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,17 +33,12 @@
     <a class="dropdown-item" href="articles/algorithm.html">Details of the Model Fitting in `mmrm`</a>
     <a class="dropdown-item" href="articles/covariance.html">Covariance Structures in `mmrm`</a>
     <a class="dropdown-item" href="articles/introduction.html">Introduction to `mmrm`</a>
+    <a class="dropdown-item" href="articles/package_structure.html">Package Structure</a>
   </div>
 </li>
 <li class="nav-item">
   <a class="nav-link" href="news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -66,15 +61,165 @@
 
 <div id="contributing" class="section level1">
 
-<p>Thank you for your interest in contributing to this repo!</p>
-<p>Here are a few things you can do that will increase the likelihood of your pull request being accepted:</p>
-<ul><li>Ensure that the pull request is associated with an existing Github issue. If not, create a new issue that is associated with this change.</li>
-<li>Keep your change as focused as possible. If there are multiple changes you would like to make that are not dependent upon each other, consider submitting them as separate pull requests.</li>
-<li>Complete the checklist and description while creating the pull request.</li>
-<li>Write good commit messages.</li>
-</ul></div>
+<p>Thank you for your interest in contributing to this repo! Your contribution is highly valued, and please go through this document to help you contribute.</p>
+<div class="section level2">
+<h2 id="programming-conventions">Programming conventions<a class="anchor" aria-label="anchor" href="#programming-conventions"></a></h2>
+<p>Please follow the programming conventions to ensure a consistent program style across the package.</p>
+<ol style="list-style-type: decimal"><li>Function names should be explicit and clear, separated by underscore (<code>snake_case</code>).</li>
+<li>Functions starting with <code>h_</code> are helper functions and they should not be exported.</li>
+<li>Functions should be well documented using <code>roxygen2</code> even when they are not exported.</li>
+</ol></div>
+<div class="section level2">
+<h2 id="github-conventions">Github conventions<a class="anchor" aria-label="anchor" href="#github-conventions"></a></h2>
+<p>When using github to collaborate, the following conventions are needed:</p>
+<ol style="list-style-type: decimal"><li>Github issues is for issues, feature requests, bugs. Before creating a issue, please make sure this issue has not been reported yet.
+<ul><li>If you are going to work on this issue, please assign yourself.</li>
+</ul></li>
+<li>Please create a branch in the <code>mmrm</code> repository, instead of creating forks, unless you are not yet a team member.
+<ul><li>The name of a branch should be like <code>&lt;issue_id&gt;_&lt;short_discription&gt;</code>. Use an underscore to separate the description.</li>
+</ul></li>
+<li>Add changes to the branch and push it to github.
+<ul><li>Please use clear commit messages.</li>
+<li>Please keep your changes focused on the issue. If there are independent changes, please separate it into another PR linking to another issue.</li>
+</ul></li>
+<li>Please create a Pull Request when you think your code changes are ready:
+<ul><li>Functions are well documented.</li>
+<li>Functions have corresponding unit tests.</li>
+<li>Changes pass all the github action checks.</li>
+<li>The checklist in the corresponding issue is completed.</li>
+</ul></li>
+<li>Address all the comments you receive.
+<ul><li>at least one approval is needed to merge.</li>
+</ul></li>
+</ol></div>
+<div class="section level2">
+<h2 id="contribution-tips">Contribution tips<a class="anchor" aria-label="anchor" href="#contribution-tips"></a></h2>
+<div class="section level3">
+<h3 id="development-environment-set-up">Development environment Set-up<a class="anchor" aria-label="anchor" href="#development-environment-set-up"></a></h3>
+<p>The development this <code>mmrm</code> package is based on the latest R and C++ compilers. The package dependencies are the most recent versions from CRAN. We recommend that your working environment is set up in the same way. Additionally, there are some tools we recommend you to install:</p>
+<ol style="list-style-type: decimal"><li>
+<code>docker</code>. This tool will create a distinct environment which allows you to separate the host system and development system.</li>
+<li>
+<code>gitkraken</code>. This tool is a super useful in visualizing git commit graphs, file history, etc.</li>
+<li>
+<code>lintr</code>. This R package will allow you to perform static code analysis. See <a href="https://openpharma.github.io/mmrm/main/articles/package_structure.html#.lintr">.lintr</a>.</li>
+<li>
+<code>pre-commit</code>. This is a python module that allow you to identify issues before you commit. See <a href="https://openpharma.github.io/mmrm/main/articles/package_structure.html#.pre-commit-config.yaml">.pre-commit-config.yaml</a>.</li>
+</ol></div>
+<div class="section level3">
+<h3 id="issue-labels">Issue labels<a class="anchor" aria-label="anchor" href="#issue-labels"></a></h3>
+<p>The issues are categorized with several labels:</p>
+<table class="table"><colgroup><col width="12%"><col width="87%"></colgroup><thead><tr class="header"><th>Label name</th>
+<th>Description</th>
+</tr></thead><tbody><tr class="odd"><td><code>SPx</code></td>
+<td>
+<code>SP</code> (story points) indicate complexity, and the larger the subsequent number, the more time consuming the issue is expected to be</td>
+</tr><tr class="even"><td><code>priority</code></td>
+<td>Issues with this label should be completed with higher priority</td>
+</tr><tr class="odd"><td><code>good first issue</code></td>
+<td>Good choices for new team members</td>
+</tr><tr class="even"><td><code>blocked</code></td>
+<td>Blocked by other issues</td>
+</tr><tr class="odd"><td><code>bug</code></td>
+<td>Something isn’t working</td>
+</tr><tr class="even"><td><code>devops</code></td>
+<td>Development and Operation</td>
+</tr><tr class="odd"><td><code>discussion</code></td>
+<td>Disccusion needed</td>
+</tr><tr class="even"><td><code>documentation</code></td>
+<td>Improvement of documentation is needed</td>
+</tr><tr class="odd"><td><code>duplicate</code></td>
+<td>The issue already exists</td>
+</tr><tr class="even"><td><code>enhancement</code></td>
+<td>New feature or request</td>
+</tr><tr class="odd"><td><code>help wanted</code></td>
+<td>Extra attention is needed</td>
+</tr><tr class="even"><td><code>invalid</code></td>
+<td>This doesn’t seem right</td>
+</tr><tr class="odd"><td><code>question</code></td>
+<td>Further information needed</td>
+</tr></tbody></table><p>Please choose an issue based on your interest, issue complexity, and priority.</p>
+</div>
+<div class="section level3">
+<h3 id="add-new-test-cases">Add new test cases<a class="anchor" aria-label="anchor" href="#add-new-test-cases"></a></h3>
+<p>To add a new test case, you need to first identify the test scope. Does the test fit in the scope of existing tests? If so, please modify the existing test files under <code>tests/testthat/</code> folder or <code>src/</code> folder, depending on whether the code to be tested is R or C++. Otherwise please create a new test file, with a name prefix of “test-”.</p>
+<p>In each test case, use the following structure:</p>
+<p><code>{r eval=FALSE} test_that("&lt;function_name&gt; do something as explained", {   # test body   expect_identical(1, 1) })</code></p>
+<p>The purpose of the test should be clearly stated first.</p>
+<p>In the test body part, conduct the tests, e.g. use <code>expect_identical</code> to check consistency, <code>expect_error</code> to catch error messages, etc. The test body should not follow the same implementation logic as the package did, otherwise we may miss mistakes in implementation.</p>
+</div>
+<div class="section level3">
+<h3 id="add-integration-tests">Add integration tests<a class="anchor" aria-label="anchor" href="#add-integration-tests"></a></h3>
+<p>Integration tests compare the results of SAS and R and assures the quality of our code. To add an integration test, you need to do the following:</p>
+<ol style="list-style-type: decimal"><li>Use SAS to run an appropriate mmrm models with <code>proc mixed</code>, using <code>fev_data</code>.</li>
+<li>Save the results in <code>txt</code> format in the <code>design/SAS/</code> folder.</li>
+<li>Decide the key outputs that are needed for comparison.</li>
+<li>Add a unit test verifying that the R implementation of the same model has the same results (conversion may be needed).</li>
+</ol></div>
+<div class="section level3">
+<h3 id="get-started-with-c">Get started with C++<a class="anchor" aria-label="anchor" href="#get-started-with-c"></a></h3>
+<p>If you have no experience with C++, it is totally fine: <code>TMB</code> has provided us with many high-level functionalities that is very similar to <code>R</code>. Here we only list the most important things that you need to go through before you begin C++ programming.</p>
+<ol style="list-style-type: decimal"><li>Semicolons. C++ use semicolons to terminate a statement. In R, we can use semicolons or line breaks to do so, but in C++, we need both semicolons and line breaks.</li>
+<li>Types. C++ is a strong type programming language and all objects need to be declared with type. Sometimes you can combine the declaration and definition.
+<ol style="list-style-type: decimal"><li>int i = 1; # this works; declare <code>i</code> as <code>int</code> and define it to be 1.</li>
+<li>i = 1; # this fails; <code>i</code> is not declared yet.</li>
+<li>int i; i = 1; # this works; <code>i</code> is declared and then defined.</li>
+<li>int i = 1, j = 2; # this works, <code>i</code> and <code>j</code> are both <code>int</code>.</li>
+</ol></li>
+<li>Object scope. In R, objects declared inside control flows will exist outside of that enclosing brackets of the flow, while in C++, objects created within control flows will be terminated.
+<ol style="list-style-type: decimal"><li>in R, <code>if (TRUE) { a = '123' }; print(a)</code> is legal.</li>
+<li>in C++, <code>if (1) {string a = '123'}; std::stdout &lt;&lt; a &lt;&lt; std::endl;</code> is illegal, because object <code>a</code> is terminated already.</li>
+<li>in C++, <code>string a; if (1) {a = '123'}; std::stdout &lt;&lt; a &lt;&lt; std::endl;</code> is legal, <code>a</code> is declared prior to if statement.</li>
+</ol></li>
+<li>Polymorphism. Unlike in R, where function arguments have no explicitly defined types, in C++ the type of each argument of a function must be pre-specified.
+<ol style="list-style-type: decimal"><li>
+<code>Template</code> is a special function that works with generic argument type. We could imagine a single function that could work on arguments of arbitrary type, and <code>template</code> functions make this possible through separation of function logic from the argument declaration. In this way we can use <code>template</code> functions and avoid the need to replicate the whole code for each type.</li>
+</ol></li>
+</ol><p>With these points in mind, you are about ready to go.</p>
+</div>
+<div class="section level3">
+<h3 id="get-started-with-tmb">Get started with TMB<a class="anchor" aria-label="anchor" href="#get-started-with-tmb"></a></h3>
+<p>In <code>mmrm</code> we are not including any latent variables and so the Laplace approximation aspect of <code>TMB</code> is not used. We only use the automatic differentiation part of <code>TMB</code>. For detailed documentation of <code>TMB</code>, visit <a href="https://kaskr.github.io/adcomp/Introduction.html" class="external-link">TMB referece</a>. One important thing is that <code>TMB</code> implements R style matrix/array calculations. This is important because we mainly use this part to conduct our calculations. See <a href="https://kaskr.github.io/adcomp/matrix_arrays_8cpp-example.html" class="external-link">matrix_arrays.cpp</a> for examples.</p>
+</div>
+<div class="section level3">
+<h3 id="add-a-new-covariance-structure">Add a new covariance structure<a class="anchor" aria-label="anchor" href="#add-a-new-covariance-structure"></a></h3>
+<p>To add a new covariance structure, you need to do the following:</p>
+<ol style="list-style-type: decimal"><li>Understand the covariance structure and add appropriate documentation in <a href="https://openpharma.github.io/mmrm/main/articles/covariance.html">covariance structure</a> and you can create a draft pull request to invite discussion from other team members.</li>
+<li>Implement the covariance structure on the C++ side and the corresponding R interface.</li>
+<li>Add unit tests to make sure the new covariance structure is working as expected.</li>
+<li>Add integration tests under <code>design/SAS/</code> folder to make sure SAS and R produce similar results (within tolerance).</li>
+</ol></div>
+<div class="section level3">
+<h3 id="add-additional-data">Add additional data<a class="anchor" aria-label="anchor" href="#add-additional-data"></a></h3>
+<p>To add additional data to <code>mmrm</code>, please follow the next steps:</p>
+<ol style="list-style-type: decimal"><li>Make sure the data is needed.</li>
+<li>Document the data in [R/data.R].</li>
+<li>use <code>save</code> to create an <code>rda</code> data <strong>only</strong> containing this dataset.</li>
+</ol></div>
+</div>
+<div class="section level2">
+<h2 id="communications-within-team">Communications within team<a class="anchor" aria-label="anchor" href="#communications-within-team"></a></h2>
+<p>There are several communication channels, please use appropriate ones.</p>
+<div class="section level3">
+<h3 id="github">github<a class="anchor" aria-label="anchor" href="#github"></a></h3>
+<p>Github issues/pull requests is where implementations are discussed and reviewed. Feature requests, bugs, enhancements, technical implementations can be discussed here. When you have ideas that needs to be documented, it is better to have them in github.</p>
+</div>
+<div class="section level3">
+<h3 id="slack">slack<a class="anchor" aria-label="anchor" href="#slack"></a></h3>
+<p>Slack is a messaging tools and we have a <code>mmrm</code> channel under <code>rinpharma</code> space. You can put anything in the slack channel, e.g., you have completed a issue and are waiting for review, or you have some questions and don’t want to wait until the next stand-up meeting.</p>
+<p>To join the slack channel, please make sure you have a slack account, and send the email address to any team member.</p>
+</div>
+<div class="section level3">
+<h3 id="stand-up-meetings">stand-up meetings<a class="anchor" aria-label="anchor" href="#stand-up-meetings"></a></h3>
+<p>We have stand-up meetings three times a week. The purpose of stand-up meetings is for team members to discuss the current work progress and raise any issue/questions for team discussion if needed.</p>
+<p>You don’t need to join all three meetings.</p>
+<!-- urls -->
+</div>
+</div>
+</div>
 
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">
