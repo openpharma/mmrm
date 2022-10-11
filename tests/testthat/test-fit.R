@@ -93,8 +93,8 @@ test_that("fit_single_optimizer is stable to extreme scaling with defaults", {
   id <- factor(rep(1:50, each = 2))
   visit <- factor(rep(c(1, 2), 50))
   x1 <- rep(rnorm(50, sd = sqrt(theta)), each = 2) # large scale
-  x2 <- rep(rnorm(50, sd = 1/sqrt(theta)), each = 2) # small scale
-  y <- x1/sqrt(theta) + sqrt(theta)*x2 + + rnorm(100, sd = .5) # add some noise
+  x2 <- rep(rnorm(50, sd = 1 / sqrt(theta)), each = 2) # small scale
+  y <- x1 / sqrt(theta) + sqrt(theta) * x2 + + rnorm(100, sd = .5) # add some noise
   # combine in data frame
   dat <- data.frame(id = id, x1 = x1, x2 = x2, visit = visit, y = y)
   # fit mmrm with default
@@ -104,8 +104,8 @@ test_that("fit_single_optimizer is stable to extreme scaling with defaults", {
     weights = rep(1, nrow(dat))
   )
   # compute relative error on both coefficients
-  rel_err <- c(result$beta_est[2:3] - c(1/sqrt(theta), sqrt(theta))) /
-    c(1/sqrt(theta), sqrt(theta))
+  rel_err <- c(result$beta_est[2:3] - c(1 / sqrt(theta), sqrt(theta))) /
+    c(1 / sqrt(theta), sqrt(theta))
   expect_true(attr(result, "converged"))
   # allow a 5% relative error of the point estimates
   expect_true(all(abs(rel_err) <= 0.05))
