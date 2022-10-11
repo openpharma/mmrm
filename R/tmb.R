@@ -432,7 +432,8 @@ h_mmrm_tmb_assert_opt <- function(tmb_object,
 #' @param tmb_data (`mmrm_tmb_data`)\cr produced by [h_mmrm_tmb_data()].
 #' @param visit_var `character`\cr character vector of the visit variable
 #' @param is_spatial `logical`\cr logical value indicating the covariance structure is spatial.
-#' @return Return a simple covariance matrix if there is no grouping, or a named list of estimated grouped covariance matrices,
+#' @return Return a simple covariance matrix if there is no grouping, or a named
+#' list of estimated grouped covariance matrices,
 #' with its name equal to the group levels.
 #'
 #' @keywords internal
@@ -537,7 +538,7 @@ h_mmrm_tmb_fit <- function(tmb_object,
   )
 }
 
-#' Fitting an MMRM with `TMB`
+#' Low-Level Fitting Function for MMRM
 #'
 #' @description `r lifecycle::badge("experimental")`
 #'
@@ -567,8 +568,8 @@ h_mmrm_tmb_fit <- function(tmb_object,
 #' @examples
 #' formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
 #' data <- fev_data
-#' system.time(result <- h_mmrm_tmb(formula, data, rep(1, nrow(fev_data))))
-h_mmrm_tmb <- function(formula,
+#' system.time(result <- fit_mmrm(formula, data, rep(1, nrow(fev_data))))
+fit_mmrm <- function(formula,
                        data,
                        weights,
                        reml = TRUE,

@@ -99,7 +99,7 @@ penalty parameter \code{k}.
 }}
 \examples{
 formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
-object <- h_mmrm_tmb(formula, fev_data, weights = rep(1, nrow(fev_data)))
+object <- fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)))
 # Estimated coefficients:
 coef(object)
 # Fitted values:
