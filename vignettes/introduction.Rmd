@@ -81,6 +81,9 @@ Users can specify which optimizer should be used, changing from the default of
 other choices if optimization fails to converge. Other choices are `BFGS`, `CG`, and
 `nlminb`.
 
+`L-BFGS-B`, `BFGS` and `CG` are all implemented with `stats::optim` and the Hessian is not used,
+while `nlminb` is using both the gradient and the Hessian.
+
 ```{r common-changes-optim}
 fit_opt <- mmrm(
   formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
