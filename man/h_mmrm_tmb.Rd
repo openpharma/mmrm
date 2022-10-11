@@ -4,7 +4,7 @@
 \alias{h_mmrm_tmb}
 \title{Fitting an MMRM with \code{TMB}}
 \usage{
-h_mmrm_tmb(formula, data, weights, reml = TRUE, control = h_mmrm_tmb_control())
+h_mmrm_tmb(formula, data, weights, reml = TRUE, control = mmrm_control())
 }
 \arguments{
 \item{formula}{(\code{formula})\cr model formula with exactly one special term
@@ -18,8 +18,8 @@ in \code{formula}.}
 \item{reml}{(\code{flag})\cr whether restricted maximum likelihood (REML) estimation is used,
 otherwise maximum likelihood (ML) is used.}
 
-\item{control}{(\code{mmrm_tmb_control})\cr list of control options produced
-by \code{\link[=h_mmrm_tmb_control]{h_mmrm_tmb_control()}}.}
+\item{control}{(\code{mmrm_control})\cr list of control options produced
+by \code{\link[=mmrm_control]{mmrm_control()}}.}
 }
 \value{
 List of class \code{mmrm_tmb}, see \code{\link[=h_mmrm_tmb_fit]{h_mmrm_tmb_fit()}} for details.

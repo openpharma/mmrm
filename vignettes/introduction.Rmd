@@ -217,11 +217,11 @@ h_mmrm_tmb(
   data = fev_data,
   weights = rep(1, nrow(fev_data)),
   reml = TRUE,
-  control = h_mmrm_tmb_control()
+  control = mmrm_control()
 )
 ```
 
-For fine control of optimization routine, [`h_mmrm_tmb_control()`](https://openpharma.github.io/mmrm/main/reference/h_mmrm_tmb_control.html)
+For fine control of optimization routine, [`mmrm_control()`](https://openpharma.github.io/mmrm/main/reference/mmrm_control.html)
 is provided. This function allows the user to specify optimization routine with
 `optimizer`, pass arguments to that optimizer with `optimizer_args`, provide a
 list of control parameters with `optimizer_control`, provide a list of starting
@@ -229,7 +229,7 @@ parameter values with `start`, and decide the action to be taken when the
 defined design matrix is singular with `accept_singular`.
 
 ```{r low-level-control, eval=FALSE}
-h_mmrm_tmb_control(
+mmrm_control(
   optimizer = stats::nlminb,
   optimizer_args = list(upper = Inf, lower = 0),
   optimizer_control = list(),
