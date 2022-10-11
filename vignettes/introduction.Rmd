@@ -82,7 +82,7 @@ other choices if optimization fails to converge. Other choices are `BFGS`, `CG`,
 `nlminb`.
 
 `L-BFGS-B`, `BFGS` and `CG` are all implemented with `stats::optim` and the Hessian is not used,
-while `nlminb` is using both the gradient and the Hessian.
+while `nlminb` is using `stats::nlminb`, both the gradient and the Hessian.
 
 ```{r common-changes-optim}
 fit_opt <- mmrm(
