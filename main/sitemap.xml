@@ -55,6 +55,9 @@
     <loc>https://openpharma.github.io/mmrm/main/reference/fev_data.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/fit_mmrm.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/fit_single_optimizer.html</loc>
   </url>
   <url>
@@ -86,9 +89,6 @@
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/h_md_denom_df.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/main/reference/h_mmrm_tmb.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/h_mmrm_tmb_assert_opt.html</loc>

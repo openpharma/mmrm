@@ -39,7 +39,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9009</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9010</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,12 +63,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -393,13 +387,13 @@ table.</p>
 <span><span class="co">#&gt; ARMCDTRT:AVISITVIS3           -0.66753189  1.1865359 158.2106 -0.56258887</span></span>
 <span><span class="co">#&gt; ARMCDTRT:AVISITVIS4            0.63094392  1.8507884 129.6377  0.34090549</span></span>
 <span><span class="co">#&gt;                                   Pr(&gt;|t|)</span></span>
-<span><span class="co">#&gt; (Intercept)                   7.122405e-89</span></span>
+<span><span class="co">#&gt; (Intercept)                   7.122406e-89</span></span>
 <span><span class="co">#&gt; RACEBlack or African American 1.638725e-02</span></span>
 <span><span class="co">#&gt; RACEWhite                     1.605553e-14</span></span>
 <span><span class="co">#&gt; ARMCDTRT                      6.001485e-04</span></span>
 <span><span class="co">#&gt; AVISITVIS2                    1.366921e-08</span></span>
 <span><span class="co">#&gt; AVISITVIS3                    1.927523e-25</span></span>
-<span><span class="co">#&gt; AVISITVIS4                    8.242710e-22</span></span>
+<span><span class="co">#&gt; AVISITVIS4                    8.242709e-22</span></span>
 <span><span class="co">#&gt; ARMCDTRT:AVISITVIS2           9.877459e-01</span></span>
 <span><span class="co">#&gt; ARMCDTRT:AVISITVIS3           5.745112e-01</span></span>
 <span><span class="co">#&gt; ARMCDTRT:AVISITVIS4           7.337266e-01</span></span></code></pre></div>
@@ -433,7 +427,7 @@ is as follows:</p>
 <span><span class="co">#&gt;   ..$ BIC     : num 3440</span></span>
 <span><span class="co">#&gt;   ..$ logLik  : num -1694</span></span>
 <span><span class="co">#&gt;   ..$ deviance: num 3387</span></span>
-<span><span class="co">#&gt;  $ call            : language h_mmrm_tmb(formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),      data = "fev_data", weights = weigh| __truncated__</span></span>
+<span><span class="co">#&gt;  $ call            : language fit_mmrm(formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),      data = "fev_data", weights = weights| __truncated__</span></span>
 <span><span class="co">#&gt;  - attr(*, "class")= chr "summary.mmrm"</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -457,7 +451,7 @@ function. The default will output all supported components.</p>
 <p>or the original low-level call:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/component.html">component</a></span><span class="op">(</span><span class="va">fit</span>, name <span class="op">=</span> <span class="st">"call"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; h_mmrm_tmb(formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | </span></span>
+<span><span class="co">#&gt; fit_mmrm(formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | </span></span>
 <span><span class="co">#&gt;     USUBJID), data = "fev_data", weights = weights, reml = reml, </span></span>
 <span><span class="co">#&gt;     control = control)</span></span></code></pre></div>
 <p>the user could also ask for all provided components by not specifying
@@ -473,13 +467,13 @@ the <code>name</code> argument.</p>
 <h3 id="low-level-mmrm">Low-level mmrm<a class="anchor" aria-label="anchor" href="#low-level-mmrm"></a>
 </h3>
 <p>The lower level function which is called by <a href="https://openpharma.github.io/mmrm/main/reference/mmrm.html"><code>mmrm()</code></a>
-is <a href="https://openpharma.github.io/mmrm/main/reference/h_mmrm_tmb.html"><code>h_mmrm_tmb()</code></a>.
+is <a href="https://openpharma.github.io/mmrm/main/reference/h_mmrm_tmb.html"><code>fit_mmrm()</code></a>.
 This function is exported and can be used directly. It is similar to <a href="https://openpharma.github.io/mmrm/main/reference/mmrm.html"><code>mmrm()</code></a>
 but lacks some post-processing and support for Satterthwaite d.f.
 calculations. However, it exposes an argument for fine control over
 optimization which may be needed by some users.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/h_mmrm_tmb.html">h_mmrm_tmb</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/fit_mmrm.html">fit_mmrm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">fev_data</span>,</span>
 <span>  weights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">fev_data</span><span class="op">)</span><span class="op">)</span>,</span>
