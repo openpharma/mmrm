@@ -16,7 +16,7 @@ in R.
 -   Responses are assumed normally distributed.
 -   Covariances:
     -   Structures: unstructured, Toeplitz, AR1, compound symmetry, and
-        ante-dependence.
+        ante-dependence, for a complete list see [here](https://openpharma.github.io/mmrm/main/reference/covariance_types.html).
     -   Groups: shared covariance structure for all subjects, or group
         specific covariance structures.
     -   Variances: homogeneous or heterogeneous across time points.
