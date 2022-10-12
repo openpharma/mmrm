@@ -39,7 +39,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9010</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9011</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,12 +63,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -209,6 +203,10 @@ default of <code>automatic</code> selection, which starts with
 <code>L-BFGS-B</code> and proceeds through the other choices if
 optimization fails to converge. Other choices are <code>BFGS</code>,
 <code>CG</code>, and <code>nlminb</code>.</p>
+<p><code>L-BFGS-B</code>, <code>BFGS</code> and <code>CG</code> are all
+implemented with <code><a href="https://rdrr.io/r/stats/optim.html" class="external-link">stats::optim()</a></code> and the Hessian is not
+used, while <code>nlminb</code> is using `stats::nlminb() which in turn
+uses both the gradient and the Hessian for the optimization.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit_opt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
@@ -393,13 +391,13 @@ table.</p>
 <span><span class="co">#&gt; ARMCDTRT:AVISITVIS3           -0.66753189  1.1865359 158.2106 -0.56258887</span></span>
 <span><span class="co">#&gt; ARMCDTRT:AVISITVIS4            0.63094392  1.8507884 129.6377  0.34090549</span></span>
 <span><span class="co">#&gt;                                   Pr(&gt;|t|)</span></span>
-<span><span class="co">#&gt; (Intercept)                   7.122406e-89</span></span>
+<span><span class="co">#&gt; (Intercept)                   7.122405e-89</span></span>
 <span><span class="co">#&gt; RACEBlack or African American 1.638725e-02</span></span>
 <span><span class="co">#&gt; RACEWhite                     1.605553e-14</span></span>
 <span><span class="co">#&gt; ARMCDTRT                      6.001485e-04</span></span>
 <span><span class="co">#&gt; AVISITVIS2                    1.366921e-08</span></span>
 <span><span class="co">#&gt; AVISITVIS3                    1.927523e-25</span></span>
-<span><span class="co">#&gt; AVISITVIS4                    8.242709e-22</span></span>
+<span><span class="co">#&gt; AVISITVIS4                    8.242710e-22</span></span>
 <span><span class="co">#&gt; ARMCDTRT:AVISITVIS2           9.877459e-01</span></span>
 <span><span class="co">#&gt; ARMCDTRT:AVISITVIS3           5.745112e-01</span></span>
 <span><span class="co">#&gt; ARMCDTRT:AVISITVIS4           7.337266e-01</span></span></code></pre></div>
@@ -497,18 +495,18 @@ optimization which may be needed by some users.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients: </span></span>
 <span><span class="co">#&gt;                   (Intercept) RACEBlack or African American </span></span>
-<span><span class="co">#&gt;                   30.96769258                    1.50467253 </span></span>
+<span><span class="co">#&gt;                    30.9676900                     1.5046759 </span></span>
 <span><span class="co">#&gt;                     RACEWhite                      ARMCDTRT </span></span>
-<span><span class="co">#&gt;                    5.61310190                    3.77554701 </span></span>
+<span><span class="co">#&gt;                     5.6131061                     3.7755433 </span></span>
 <span><span class="co">#&gt;                    AVISITVIS2                    AVISITVIS3 </span></span>
-<span><span class="co">#&gt;                    4.82858415                   10.33317590 </span></span>
+<span><span class="co">#&gt;                     4.8285847                    10.3331756 </span></span>
 <span><span class="co">#&gt;                    AVISITVIS4           ARMCDTRT:AVISITVIS2 </span></span>
-<span><span class="co">#&gt;                   15.05257609                   -0.01735576 </span></span>
+<span><span class="co">#&gt;                    15.0525742                    -0.0173543 </span></span>
 <span><span class="co">#&gt;           ARMCDTRT:AVISITVIS3           ARMCDTRT:AVISITVIS4 </span></span>
-<span><span class="co">#&gt;                   -0.66752773                    0.63093842 </span></span>
+<span><span class="co">#&gt;                    -0.6675215                     0.6309537 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Model Inference Optimization:</span></span>
-<span><span class="co">#&gt; Converged with code 0 and message: relative convergence (4)</span></span></code></pre></div>
+<span><span class="co">#&gt; Converged with code 0 and message: both x-convergence and relative convergence (5)</span></span></code></pre></div>
 <p>For fine control of optimization routine, <a href="https://openpharma.github.io/mmrm/main/reference/mmrm_control.html"><code>mmrm_control()</code></a>
 is provided. This function allows the user to specify optimization
 routine with <code>optimizer</code>, pass arguments to that optimizer

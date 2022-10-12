@@ -39,7 +39,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9010</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9011</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,12 +63,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -274,9 +268,10 @@ f(\theta; \hat{\beta}) = - \log L(\hat{\beta}; Y) = \frac{N}{2}
   \frac{1}{2} (Y - X\hat{\beta})^\top \Omega^{-1} (Y - X\hat{\beta})
 \]</span> The objective function <span class="math inline">\(f(\theta;
 \hat{\beta})\)</span> is then minimized with numerical optimizers
-utilizing Newton-Raphson algorithms based on the gradient and Hessian.
-Here the use of the Template Model Builder package <code>TMB</code> is
-helpful because</p>
+utilizing quasi-Newton-Raphson algorithms based on the gradient (or
+additionally with Hessian, see <a href="../introduction.html#Optimizer">optimizer</a>). Here the use of
+the Template Model Builder package <code>TMB</code> is helpful
+because</p>
 <ol style="list-style-type: decimal">
 <li>
 <code>TMB</code> allows to perform the calculations in C++, which
