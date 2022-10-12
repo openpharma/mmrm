@@ -94,7 +94,7 @@ test_that("fit_single_optimizer is stable to extreme scaling with defaults", {
   visit <- factor(rep(c(1, 2), 50))
   x1 <- rep(rnorm(50, sd = sqrt(theta)), each = 2) # large scale
   x2 <- rep(rnorm(50, sd = 1 / sqrt(theta)), each = 2) # small scale
-  y <- x1 / sqrt(theta) + sqrt(theta) * x2 + + rnorm(100, sd = .5) # add some noise
+  y <- x1 / sqrt(theta) + sqrt(theta) * x2 + rnorm(100, sd = .5) # add some noise
   # combine in data frame
   dat <- data.frame(id = id, x1 = x1, x2 = x2, visit = visit, y = y)
   # fit mmrm with default
