@@ -326,7 +326,6 @@ h_mmrm_tmb_data <- function(formula_parts,
     ),
     class = "mmrm_tmb_data"
   )
-
 }
 
 #' Start Parameters for `TMB` Fit
@@ -349,23 +348,23 @@ h_mmrm_tmb_parameters <- function(formula_parts,
   assert_class(tmb_data, "mmrm_tmb_data")
 
   m <- tmb_data$n_visits
-  theta_dim <- as.integer(switch(formula_parts$cov_type,
-    us = m * (m + 1) / 2,
-    toep = m,
-    toeph = 2 * m - 1,
-    ar1 = 2,
-    ar1h = m + 1,
-    ad = m,
-    adh = 2 * m - 1,
-    cs = 2,
-    csh = m + 1,
-    sp_exp = 2
-  ))
-  theta_dim <- theta_dim * n_groups
+  start_value <- switch(formula_parts$cov_type,
+    us = rep(0, m * (m + 1) / 2),
+    toep = rep(0, m),
+    toeph = rep(0, 2 * m - 1),
+    ar1 = c(0, 0.5),
+    ar1h = c(rep(0, m), 0.5),
+    ad = rep(0, m),
+    adh = rep(0, 2 * m - 1),
+    cs = rep(0, 2),
+    csh = rep(0, m + 1),
+    sp_exp = rep(0, 2)
+  )
+  theta_dim <- length(start_value) * n_groups
   if (!is.null(start)) {
     assert_numeric(start, len = theta_dim, any.missing = FALSE, finite = TRUE)
   } else {
-    start <- rep(0, theta_dim)
+    start <- rep(start_value, n_groups)
   }
   list(theta = start)
 }
@@ -570,10 +569,10 @@ h_mmrm_tmb_fit <- function(tmb_object,
 #' data <- fev_data
 #' system.time(result <- fit_mmrm(formula, data, rep(1, nrow(fev_data))))
 fit_mmrm <- function(formula,
-                       data,
-                       weights,
-                       reml = TRUE,
-                       control = mmrm_control()) {
+                     data,
+                     weights,
+                     reml = TRUE,
+                     control = mmrm_control()) {
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   assert_class(control, "mmrm_control")
   assert_numeric(weights, any.missing = FALSE)
@@ -589,15 +588,19 @@ fit_mmrm <- function(formula,
     silent = TRUE
   )
   h_mmrm_tmb_assert_start(tmb_object)
-  tmb_opt <- with(
+  args <- with(
     tmb_object,
-    do.call(
-      what = control$optimizer,
-      args = c(
-        list(par, fn, gr, control = control$optimizer_control),
-        control$optimizer_args
-      )
+    c(
+      list(par, fn, gr, control = control$optimizer_control),
+      control$optimizer_args
     )
+  )
+  if (identical(control$optimizer, stats::nlminb)) {
+    args$hessian <- tmb_object$he
+  }
+  tmb_opt <- do.call(
+    what = control$optimizer,
+    args = args
   )
   # Ensure negative log likelihood is stored in `objective` element of list.
   if ("value" %in% names(tmb_opt)) {
