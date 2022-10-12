@@ -84,6 +84,33 @@ test_that("fit_single_optimizer gives error messages", {
   )
 })
 
+test_that("fit_single_optimizer is stable to extreme scaling with defaults", {
+  # we generate an example data set with two variables on very different scales
+  # after rescaling to sd = 1 both would have unit effect on the outcome
+  theta <- 1e6 # the scaling factor between the two variables
+  # generate some data for 50 individuals with 2 time points each
+  set.seed(42L)
+  id <- factor(rep(1:50, each = 2))
+  visit <- factor(rep(c(1, 2), 50))
+  x1 <- rep(rnorm(50, sd = sqrt(theta)), each = 2) # large scale
+  x2 <- rep(rnorm(50, sd = 1 / sqrt(theta)), each = 2) # small scale
+  y <- x1 / sqrt(theta) + sqrt(theta) * x2 + rnorm(100, sd = .5) # add some noise
+  # combine in data frame
+  dat <- data.frame(id = id, x1 = x1, x2 = x2, visit = visit, y = y)
+  # fit mmrm with default
+  result <- fit_single_optimizer(
+    formula = y ~ x1 + x2 + us(visit | id),
+    data = dat,
+    weights = rep(1, nrow(dat))
+  )
+  # compute relative error on both coefficients
+  rel_err <- c(result$beta_est[2:3] - c(1 / sqrt(theta), sqrt(theta))) /
+    c(1 / sqrt(theta), sqrt(theta))
+  expect_true(attr(result, "converged"))
+  # allow a 5% relative error of the point estimates
+  expect_true(all(abs(rel_err) <= 0.05))
+})
+
 
 
 # h_summarize_all_fits ----
