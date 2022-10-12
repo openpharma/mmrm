@@ -569,10 +569,10 @@ h_mmrm_tmb_fit <- function(tmb_object,
 #' data <- fev_data
 #' system.time(result <- fit_mmrm(formula, data, rep(1, nrow(fev_data))))
 fit_mmrm <- function(formula,
-                       data,
-                       weights,
-                       reml = TRUE,
-                       control = mmrm_control()) {
+                     data,
+                     weights,
+                     reml = TRUE,
+                     control = mmrm_control()) {
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   assert_class(control, "mmrm_control")
   assert_numeric(weights, any.missing = FALSE)
@@ -591,12 +591,12 @@ fit_mmrm <- function(formula,
   args <- with(
     tmb_object,
     c(
-      list(par, fn, gr, hessian = he, control = control$optimizer_control),
+      list(par, fn, gr, control = control$optimizer_control),
       control$optimizer_args
     )
   )
-  if (!identical(control$optimizer, stats::nlminb)) {
-    args$hessian <- NULL
+  if (identical(control$optimizer, stats::nlminb)) {
+    args$hessian <- tmb_object$he
   }
   tmb_opt <- do.call(
     what = control$optimizer,
