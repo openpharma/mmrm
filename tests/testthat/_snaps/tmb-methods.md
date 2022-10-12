@@ -11,9 +11,9 @@
     
     Coefficients: 
                       (Intercept) RACEBlack or African American 
-                        41.227284                      0.800180 
+                       41.2272670                     0.8001834 
                         RACEWhite 
-                         5.879103 
+                        5.8790987 
     
     Model Inference Optimization:
     Converged with code 0 and message: relative convergence (4)
@@ -59,7 +59,7 @@
     
     Coefficients: (1 not defined because of singularities)
     (Intercept)   SEXFemale  SEX2Female 
-     42.8057710   0.0451592          NA 
+    42.80566820  0.04516613          NA 
     
     Model Inference Optimization:
     Converged with code 0 and message: relative convergence (4)

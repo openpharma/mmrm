@@ -421,7 +421,7 @@ test_that("h_mmrm_tmb_parameters works as expected with autoregressive", {
     weights = rep(1, nrow(fev_data)), reml = TRUE, accept_singular = FALSE
   )
   result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
-  expected <- list(theta = rep(0, 2))
+  expected <- list(theta = c(0, 0.5))
   expect_identical(result, expected)
 })
 
@@ -433,7 +433,7 @@ test_that("h_mmrm_tmb_parameters works as expected with heterogeneous autoregres
     weights = rep(1, nrow(fev_data)), reml = TRUE, accept_singular = FALSE
   )
   result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
-  expected <- list(theta = rep(0, 5)) # 4 + 1 parameters.
+  expected <- list(theta = c(rep(0, 4), 0.5)) # 4 + 1 parameters.
   expect_identical(result, expected)
 })
 
@@ -609,7 +609,7 @@ test_that("h_mmrm_tmb_extract_cov works as expected", {
     tmb_object,
     do.call(
       what = stats::nlminb,
-      args = list(par, fn, gr)
+      args = list(par, fn, gr, hessian = he)
     )
   )
   tmb_report <- tmb_object$report(par = tmb_opt$par)
@@ -643,7 +643,7 @@ test_that("h_mmrm_tmb_extract_cov works as expected for group covariance", {
     tmb_object,
     do.call(
       what = stats::nlminb,
-      args = list(par, fn, gr)
+      args = list(par, fn, gr, hessian = he)
     )
   )
   tmb_report <- tmb_object$report(par = tmb_opt$par)
@@ -687,7 +687,7 @@ test_that("h_mmrm_tmb_fit works as expected", {
     tmb_object,
     do.call(
       what = stats::nlminb,
-      args = list(par, fn, gr)
+      args = list(par, fn, gr, hessian = he)
     )
   )
   result <- expect_silent(h_mmrm_tmb_fit(
@@ -739,7 +739,7 @@ test_that("h_mmrm_tmb_fit works as expected for grouped covariance", {
     tmb_object,
     do.call(
       what = stats::nlminb,
-      args = list(par, fn, gr)
+      args = list(par, fn, gr, hessian = he)
     )
   )
   result <- expect_silent(h_mmrm_tmb_fit(
