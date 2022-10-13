@@ -1,7 +1,7 @@
 #ifndef COV_INCLUDED_
 #define COV_INCLUDED_
 
-#include "tmb_includes.h"
+#include "init.h"
 #include "utils.h"
 
 // Unstructured covariance:
@@ -198,7 +198,7 @@ matrix<T> get_cov_lower_chol_grouped(const vector<T>& theta, int dim_cov_mat, st
       result << result.block(0, 0, dim_cov_mat * i, dim_cov_mat), lower_chol;
     }
   }
-  
+
   return result;
 }
 

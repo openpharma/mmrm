@@ -1,7 +1,7 @@
 #ifndef UTILS_INCLUDED_
 #define UTILS_INCLUDED_
 
-#include "tmb_includes.h"
+#include "init.h"
 
 // Producing a sparse selection matrix to select rows and columns from
 // covariance matrix.
@@ -90,7 +90,7 @@ matrix<T> euclidean(const matrix<T>& coordinates) {
   for (int i = 0; i < coordinates.rows(); i++) {
     result(i, i) = 0;
     for (int j = 0; j < i; j ++) {
-      vector<T> diff = coordinates.row(i) - coordinates.row(j); 
+      vector<T> diff = coordinates.row(i) - coordinates.row(j);
       T d = sqrt((diff * diff).sum());
       result(i, j) = d;
       result(j, i) = d;
