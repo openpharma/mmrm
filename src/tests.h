@@ -1,3 +1,6 @@
+#ifndef TESTS_INCLUDED_
+#define TESTS_INCLUDED_
+
 #include "testthat-helpers.h"
 #include "covariance.h"
 #include "utils.h"
@@ -296,3 +299,5 @@ context("euclidean distance") {
     expect_equal_matrix(euclidean(coord), expected);
   }
 }
+
+#endif
