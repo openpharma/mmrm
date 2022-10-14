@@ -74,9 +74,9 @@ test_that("emmeans works as expected", {
   fit <- get_mmrm()
   result <- expect_silent(emmeans::emmeans(fit, ~ ARMCD | AVISIT))
   expect_class(result, "emmGrid")
-  result_emmeans_rounded <- round(as.data.frame(result)$emmean, 1)
-  expected_emmeans_rounded <- c(33.3, 37.1, 38.2, 41.9, 43.7, 46.8, 48.4, 52.8)
-  expect_equal(result_emmeans_rounded, expected_emmeans_rounded, tolerance = 1e-4)
+  result_emmeans <- as.data.frame(result)$emmean
+  expected_emmeans <- c(33.3, 37.1, 38.2, 41.9, 43.7, 46.8, 48.4, 52.8)
+  expect_equal(result_emmeans, expected_emmeans, tolerance = 1e-3)
 })
 
 test_that("emmeans gives values close to what is expected", {
@@ -109,9 +109,9 @@ test_that("emmeans works as expected also for rank deficient fit when singular c
     "A nesting structure was detected in the fitted model"
   )
   expect_class(result, "emmGrid")
-  result_emmeans_rounded <- round(as.data.frame(result)$emmean, 1)
-  expected_emmeans_rounded <- c(33.3, 37.1, 38.2, 41.9, 43.7, 46.8, 48.4, 52.8)
-  expect_equal(result_emmeans_rounded, expected_emmeans_rounded, tolerance = 1e-4)
+  result_emmeans <- as.data.frame(result)$emmean
+  expected_emmeans <- c(33.3, 37.1, 38.2, 41.9, 43.7, 46.8, 48.4, 52.8)
+  expect_equal(result_emmeans, expected_emmeans, tolerance = 1e-3)
 })
 
 test_that("emmeans works as expected also for rank deficient fit when singular coefficients are involved", {
@@ -124,8 +124,27 @@ test_that("emmeans works as expected also for rank deficient fit when singular c
     "A nesting structure was detected in the fitted model"
   )
   expect_class(result, "emmGrid")
-  result_emmeans_rounded <- round(as.data.frame(result)$emmean, 1)
+  result_emmeans <- as.data.frame(result)$emmean
   expect_message(expected <- emmeans::emmeans(fit, ~SEX))
-  expected_emmeans_rounded <- round(as.data.frame(expected)$emmean, 1)
-  expect_identical(result_emmeans_rounded, expected_emmeans_rounded)
+  expected_emmeans <- as.data.frame(expected)$emmean
+  expect_identical(result_emmeans, expected_emmeans)
+})
+
+test_that("emmeans works as expected also for weighted model", {
+  skip_if_not_installed("emmeans", minimum_version = "1.6")
+
+  formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
+  fit <- mmrm(formula, fev_data, weights = fev_data$WEIGHT)
+  result <- expect_silent(emmeans::emmeans(fit, ~ ARMCD | AVISIT))
+  expect_class(result, "emmGrid")
+  result_emmeans_df <- as.data.frame(result)[, c("ARMCD", "AVISIT", "emmean", "SE")]
+
+  # See design/SAS/sas_weighted.txt for the source of numbers.
+  expected_emmeans_df <- data.frame(
+    ARMCD = factor(c("PBO", "TRT", "PBO", "TRT", "PBO", "TRT", "PBO", "TRT")),
+    AVISIT = factor(c("VIS1", "VIS1", "VIS2", "VIS2", "VIS3", "VIS3", "VIS4", "VIS4")),
+    emmean = c(33.37, 36.77, 38.24, 41.66, 43.42, 46.82, 48.17, 52.43),
+    SE = c(0.772, 0.776, 0.617, 0.585, 0.468, 0.543, 1.163, 1.226)
+  )
+  expect_equal(result_emmeans_df, expected_emmeans_df, tolerance = 1e-3)
 })
