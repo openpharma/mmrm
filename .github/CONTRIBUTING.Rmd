@@ -37,7 +37,7 @@ When using github to collaborate, the following conventions are needed:
 1. Github issues is for issues, feature requests, bugs. Before creating a issue, please make sure this issue has not been reported yet.
    - If you are going to work on this issue, please assign yourself.
 2. Please create a branch in the `mmrm` repository, instead of creating forks, unless you are not yet a team member.
-   - Branches should be associated with a GitHub issue and linked to an issue id. 
+   - Branches should be associated with a GitHub issue and linked to an issue id.
    - The name of a branch should be of the form: `<issue_id>_<short_discription>`.
 3. Add changes to the branch and push it to github.
    - Please use clear commit messages.
@@ -96,9 +96,9 @@ Otherwise please create a new test file, with a name prefix of "test-".
 In each test case, use the following structure:
 
 ```{r eval=FALSE}
-test_that("<function_name> do something as explained", {
-  result <- <function_name>(input)
-  expected <- <hardcoded result>
+test_that("function_name does something as expected", {
+  result <- function_name(input)
+  expected <- hardcoded_result
   expect_identical(result, expected)
 })
 ```
