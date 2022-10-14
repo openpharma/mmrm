@@ -70,7 +70,6 @@ repos:
       - id: parsable-R
       - id: no-browser-statement
       - id: deps-in-desc
-        args: [--allow_private_imports]
         exclude: >
           (?x)^(
           design/.*

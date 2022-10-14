@@ -68,8 +68,9 @@ h_record_all_output <- function(expr, remove = list()) {
 #'
 #' @export
 free_cores <- function() {
-  if (requireNamespace(testthat, quietly = TRUE)) {
-    if (testthat::is_testing() && testthat:::on_cran()) {
+  if (requireNamespace("testthat", quietly = TRUE)) {
+    on_cran <- !identical(Sys.getenv("NOT_CRAN"), "true")
+    if (testthat::is_testing() && on_cran) {
       return(1L)
     }
   }
