@@ -284,3 +284,20 @@ test_that("mmrm works for rank deficient original design matrix by default", {
   result <- expect_silent(mmrm(formula, dat))
   expect_true(attr(result, "converged"))
 })
+
+test_that("mmrm works for specific small data example", {
+  small_dat <- data.frame(
+    FEV1 = c(1, 2, 3, 4, 5, 6),
+    AVISIT = factor(c("V1", "V1", "V2", "V3", "V3", "V4")),
+    USUBJID = c("A", "B", "A", "C", "D", "A")
+  )
+  vars <- list(
+    response = "FEV1",
+    id = "USUBJID",
+    visit = "AVISIT"
+  )
+  fit <- mmrm::mmrm(
+    formula = FEV1 ~ AVISIT + ar1(AVISIT | USUBJID),
+    data = small_dat
+  )
+})
