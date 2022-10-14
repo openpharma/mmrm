@@ -208,7 +208,7 @@ component(fit)
 
 ## Low-level mmrm
 
-The lower level function which is called by [`mmrm()`](https://openpharma.github.io/mmrm/main/reference/mmrm.html) is [`fit_mmrm()`](https://openpharma.github.io/mmrm/main/reference/h_mmrm_tmb.html). This
+The lower level function which is called by [`mmrm()`](https://openpharma.github.io/mmrm/main/reference/mmrm.html) is [`fit_mmrm()`](https://openpharma.github.io/mmrm/main/reference/fit_mmrm.html). This
 function is exported and can be used directly. It is similar to [`mmrm()`](https://openpharma.github.io/mmrm/main/reference/mmrm.html) but lacks
 some post-processing and support for Satterthwaite d.f. calculations. However, it exposes
 an argument for fine control over optimization which may be needed by some
