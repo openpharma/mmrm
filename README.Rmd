@@ -2,7 +2,7 @@
 output: github_document
 ---
 <!-- markdownlint-disable-file -->
-<!-- README.md is generated from README.Rmd. Please edit that file -->
+<!-- README.md needs to be generated from README.Rmd. Please edit that file -->
 
 # mmrm  <img src="man/figures/logo.svg" align="right" width="175" />
 
@@ -22,7 +22,7 @@ The `mmrm` package implements mixed models for repeated measures (MMRM) in R.
 ## Main Features
 
 * Responses are assumed normally distributed.
-* Covariances: 
+* Covariances:
   * Structures: unstructured, Toeplitz, AR1, compound symmetry, and ante-dependence.
   * Groups: shared covariance structure for all subjects, or group specific covariance structures.
   * Variances: homogeneous or heterogeneous across time points.
@@ -32,7 +32,7 @@ least square means.
   * Degrees of freedom adjustment: Satterthwaite-adjusted one- and multi-dimensional contrasts.
 * Model inference:
   * Supports REML and ML.
-  * Supports weights. 
+  * Supports weights.
   * Automatic changing of optimizer in the case of non-convergence.
   * Manual control of optimization routine.
 
