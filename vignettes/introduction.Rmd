@@ -139,7 +139,7 @@ fit_cs <- mmrm(
   reml = FALSE
 )
 
-print(fit_cs$cov)
+print(VarCorr(fit_cs))
 ```
 
 We can see that the estimated covariance matrices are different in different `ARMCD` groups.
