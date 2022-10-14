@@ -3,7 +3,7 @@
 
 #include <stdlib.h> // for NULL
 #include <R_ext/Rdynload.h>
-#include <TMB.hpp> // for TMB_CALLDEFS
+#include "tmb_includes.h" // for TMB_CALLDEFS
 
 extern "C" {
 

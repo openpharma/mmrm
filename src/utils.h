@@ -1,7 +1,7 @@
 #ifndef UTILS_INCLUDED_
 #define UTILS_INCLUDED_
 
-#include "init.h"
+#include "tmb_includes.h"
 
 // Producing a sparse selection matrix to select rows and columns from
 // covariance matrix.

@@ -1,7 +1,7 @@
 #ifndef COV_INCLUDED_
 #define COV_INCLUDED_
 
-#include "init.h"
+#include "tmb_includes.h"
 #include "utils.h"
 
 // Unstructured covariance:
