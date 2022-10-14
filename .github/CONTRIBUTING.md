@@ -4,8 +4,8 @@
 # Contributing
 
 Thank you for your interest in contributing to this repo! Your
-contribution is highly valued, and please go through this document to
-help you contribute.
+contribution is highly valued. Please go through this document for
+guidance on how to contribute.
 
 ## Programming conventions
 
