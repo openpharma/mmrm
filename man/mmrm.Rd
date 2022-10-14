@@ -10,7 +10,7 @@ mmrm(
   weights = NULL,
   reml = TRUE,
   optimizer = "automatic",
-  n_cores = free_cores(),
+  n_cores = 1L,
   accept_singular = TRUE
 )
 }
@@ -53,7 +53,7 @@ The covariance structures in the formula can be found in \code{\link{covariance_
 When setting \code{optimizer = "automatic"}, first the default optimizer
 (\code{L-BFGS-B}) is used to fit the model. If that converges, this is returned.
 If not, the other available optimizers from \code{\link[=refit_multiple_optimizers]{refit_multiple_optimizers()}} are
-tried (in parallel if \code{n_cores} is set and not on Windows).
+tried (in parallel if \code{n_cores} is set and not on Windows, use e.g. \code{\link[=free_cores]{free_cores()}}).
 If none of the optimizers converge, then the function fails. Otherwise
 the best fit is returned.
 }
