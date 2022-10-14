@@ -23,6 +23,7 @@ Authors:
 \itemize{
   \item Julia Dedic \email{julia.dedic@roche.com}
   \item Doug Kelkhoff \email{kelkhoff.douglas@gene.com}
+  \item Kevin Kunzmann \email{kevin.kunzmann@boehringer-ingelheim.com}
   \item Brian Matthew Lang \email{brian.lang@msd.com}
   \item Liming Li \email{liming.li@roche.com}
   \item Ya Wang \email{ya.wang10@gilead.com}
