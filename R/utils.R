@@ -101,6 +101,8 @@ free_cores <- function() {
 
 # covariance types ----
 
+# nolint start
+
 #' covariance type
 #'
 #' @format vector of supported covariance structures. `cov_type` for common time points covariance structures,
@@ -135,6 +137,9 @@ free_cores <- function() {
 #' @md
 #' @name covariance_types
 NULL
+
+# nolint end
+
 #' @describeIn covariance_types non-spatial covariance structure
 #' @format NULL
 cov_type <- c("us", "toep", "toeph", "ar1", "ar1h", "ad", "adh", "cs", "csh")
