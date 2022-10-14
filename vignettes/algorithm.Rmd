@@ -1,8 +1,6 @@
 ---
 title: "Details of the Model Fitting in `mmrm`"
 package: mmrm
-author:
-  - name: Daniel Sabanés Bové
 output:
   rmarkdown::html_document:
           theme: "spacelab"
