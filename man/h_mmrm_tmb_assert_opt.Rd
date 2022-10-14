@@ -2,7 +2,7 @@
 % Please edit documentation in R/tmb.R
 \name{h_mmrm_tmb_assert_opt}
 \alias{h_mmrm_tmb_assert_opt}
-\title{Asserting and Checking \code{TMB} Optimization Result}
+\title{Asserting the \code{TMB} Optimization Result}
 \usage{
 h_mmrm_tmb_assert_opt(tmb_object, tmb_opt)
 }
@@ -12,9 +12,10 @@ h_mmrm_tmb_assert_opt(tmb_object, tmb_opt)
 \item{tmb_opt}{(\code{list})\cr optimization result.}
 }
 \value{
-Nothing, only used to generate messages, warnings or errors.
+Nothing, only used to generate errors in case that the model
+did not converge.
 }
 \description{
-Asserting and Checking \code{TMB} Optimization Result
+Asserting the \code{TMB} Optimization Result
 }
 \keyword{internal}

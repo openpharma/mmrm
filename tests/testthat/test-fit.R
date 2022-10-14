@@ -85,33 +85,52 @@ test_that("fit_single_optimizer gives error messages", {
 })
 
 test_that("fit_single_optimizer is stable to extreme scaling with defaults", {
-  # we generate an example data set with two variables on very different scales
-  # after rescaling to sd = 1 both would have unit effect on the outcome
-  theta <- 1e6 # the scaling factor between the two variables
-  # generate some data for 50 individuals with 2 time points each
+  # We generate an example data set with two variables on very different scales.
+  # After rescaling to sd = 1 both would have unit effect on the outcome.
+  scaling_factor <- 1e6
+
   set.seed(42L)
   id <- factor(rep(1:50, each = 2))
   visit <- factor(rep(c(1, 2), 50))
-  x1 <- rep(rnorm(50, sd = sqrt(theta)), each = 2) # large scale
-  x2 <- rep(rnorm(50, sd = 1 / sqrt(theta)), each = 2) # small scale
-  y <- x1 / sqrt(theta) + sqrt(theta) * x2 + rnorm(100, sd = .5) # add some noise
-  # combine in data frame
-  dat <- data.frame(id = id, x1 = x1, x2 = x2, visit = visit, y = y)
-  # fit mmrm with default
+  x_large <- rep(rnorm(50, sd = sqrt(scaling_factor)), each = 2)
+  x_small <- rep(rnorm(50, sd = 1 / sqrt(scaling_factor)), each = 2)
+  y <- x_large / sqrt(scaling_factor) + sqrt(scaling_factor) * x_small + rnorm(100, sd = .5) # add some noise
+  dat <- data.frame(id = id, x_large = x_large, x_small = x_small, visit = visit, y = y)
+
   result <- fit_single_optimizer(
-    formula = y ~ x1 + x2 + us(visit | id),
+    formula = y ~ x_large + x_small + us(visit | id),
     data = dat,
     weights = rep(1, nrow(dat))
   )
-  # compute relative error on both coefficients
-  rel_err <- c(result$beta_est[2:3] - c(1 / sqrt(theta), sqrt(theta))) /
-    c(1 / sqrt(theta), sqrt(theta))
+
+  # Compute relative error on both coefficients and check that it is small.
+  beta_est <- coef(result)[c("x_large", "x_small")]
+  rel_err <- c(beta_est - c(1 / sqrt(scaling_factor), sqrt(scaling_factor))) /
+    c(1 / sqrt(scaling_factor), sqrt(scaling_factor))
   expect_true(attr(result, "converged"))
-  # allow a 5% relative error of the point estimates
   expect_true(all(abs(rel_err) <= 0.05))
 })
 
-
+test_that("fit_single_optimizer catches convergence error as expected", {
+  dat <- data.frame(
+    FEV1 = c(1, 2, 3, 4, 5),
+    AVISIT = factor(c("V1", "V1", "V2", "V3", "V4")),
+    USUBJID = c("A", "B", "A", "C", "A")
+  )
+  vars <- list(
+    response = "FEV1",
+    id = "USUBJID",
+    visit = "AVISIT"
+  )
+  result <- expect_silent(fit_single_optimizer(
+    formula = FEV1 ~ AVISIT + us(AVISIT | USUBJID),
+    data = dat,
+    weights = rep(1, nrow(dat)),
+    optimizer = "L-BFGS-B"
+  ))
+  expect_match(attr(result, "errors"), regexp = "Model convergence problem")
+  expect_false(attr(result, "converged"))
+})
 
 # h_summarize_all_fits ----
 
@@ -131,6 +150,7 @@ test_that("h_summarize_all_fits works as expected", {
   all_fits <- list(mod_fit, mod_fit2)
   result <- expect_silent(h_summarize_all_fits(all_fits))
   expected <- list(
+    errors = list(NULL, NULL),
     warnings = list(NULL, NULL),
     messages = list(NULL, NULL),
     log_liks = c(-1693.22493558573, -1693.22493812251),
@@ -156,7 +176,8 @@ test_that("h_summarize_all_fits works when some list elements are try-error obje
   all_fits <- list(mod_fit, mod_fit2, mod_fit3)
   result <- expect_silent(h_summarize_all_fits(all_fits))
   expected <- list(
-    warnings = list(NULL, "Error in try(stop(\"bla\"), silent = TRUE) : bla\n", NULL),
+    errors = list(NULL, "Error in try(stop(\"bla\"), silent = TRUE) : bla\n", NULL),
+    warnings = list(NULL, NULL, NULL),
     messages = list(NULL, NULL, NULL),
     log_liks = c(-1693.22493558573, NA, -1693.22493812251),
     converged = c(TRUE, FALSE, TRUE)

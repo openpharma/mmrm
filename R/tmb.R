@@ -388,12 +388,13 @@ h_mmrm_tmb_assert_start <- function(tmb_object) {
   }
 }
 
-#' Asserting and Checking `TMB` Optimization Result
+#' Asserting the `TMB` Optimization Result
 #'
 #' @param tmb_object (`list`)\cr created with [TMB::MakeADFun()].
 #' @param tmb_opt (`list`)\cr optimization result.
 #'
-#' @return Nothing, only used to generate messages, warnings or errors.
+#' @return Nothing, only used to generate errors in case that the model
+#' did not converge.
 #'
 #' @keywords internal
 h_mmrm_tmb_assert_opt <- function(tmb_object,
@@ -404,20 +405,12 @@ h_mmrm_tmb_assert_opt <- function(tmb_object,
   assert_subset(c("par", "objective", "convergence", "message"), names(tmb_opt))
 
   if (!is.null(tmb_opt$convergence) && tmb_opt$convergence != 0) {
-    warning("Model convergence problem: ", tmb_opt$message, ".")
+    stop("Model convergence problem: ", tmb_opt$message, ".")
   } else {
     tmb_hessian <- tmb_object$he(tmb_opt$par)
-    eigen_vals <- try(
-      eigen(tmb_hessian, symmetric = TRUE)$values,
-      silent = TRUE
-    )
-    if (is(eigen_vals, "try-error")) {
-      stop("Model convergence problem: Cannot calculate hessian eigenvalues")
-    } else if (min(eigen_vals) < .Machine$double.eps) {
-      warning(
-        "Model convergence problem: ",
-        "hessian has negative or very small eigenvalues"
-      )
+    tmb_hessian_inv <- try(solve(tmb_hessian), silent = TRUE)
+    if (is(tmb_hessian_inv, "try-error")) {
+      stop("Model convergence problem: hessian is singular")
     }
   }
 }

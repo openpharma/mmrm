@@ -531,7 +531,7 @@ test_that("h_mmrm_tmb_assert_opt passes as expected for sane optimization result
   expect_null(result, expected)
 })
 
-test_that("h_mmrm_tmb_assert_opt raises eigenvalue error as expected", {
+test_that("h_mmrm_tmb_assert_opt raises singular hessian error as expected", {
   tmb_object <- list(
     fn = function(par) sum(par),
     gr = function(par) par * 2,
@@ -546,11 +546,11 @@ test_that("h_mmrm_tmb_assert_opt raises eigenvalue error as expected", {
   )
   expect_error(
     h_mmrm_tmb_assert_opt(tmb_object, tmb_opt),
-    "Model convergence problem: Cannot calculate hessian eigenvalues"
+    "Model convergence problem: hessian is singular"
   )
 })
 
-test_that("h_mmrm_tmb_assert_opt warns for negative eigenvalues as expected", {
+test_that("h_mmrm_tmb_assert_opt fails for negative eigenvalues as expected", {
   tmb_object <- list(
     fn = function(par) sum(par),
     gr = function(par) par * 2,
@@ -565,11 +565,11 @@ test_that("h_mmrm_tmb_assert_opt warns for negative eigenvalues as expected", {
   )
   expect_warning(
     h_mmrm_tmb_assert_opt(tmb_object, tmb_opt),
-    "Model convergence problem: hessian has negative or very small eigenvalues"
+    "Model convergence problem: hessian is singular"
   )
 })
 
-test_that("h_mmrm_tmb_assert_opt warns if convergence code signals non-convergence", {
+test_that("h_mmrm_tmb_assert_opt fails if convergence code signals non-convergence", {
   tmb_object <- list(
     fn = function(par) sum(par),
     gr = function(par) par * 2,
@@ -582,7 +582,7 @@ test_that("h_mmrm_tmb_assert_opt warns if convergence code signals non-convergen
     convergence = 1,
     message = "something ugly"
   )
-  expect_warning(
+  expect_error(
     h_mmrm_tmb_assert_opt(tmb_object, tmb_opt),
     "Model convergence problem: something ugly."
   )
