@@ -68,10 +68,6 @@ h_record_all_output <- function(expr, remove = list()) {
 #'
 #' @export
 free_cores <- function() {
-  on_cran <- !identical(Sys.getenv("NOT_CRAN"), "true")
-  if (on_cran) {
-    return(1L)
-  }
   all_cores <- parallel::detectCores(all.tests = TRUE)
   busy_cores <-
     if (.Platform$OS.type == "windows") {
