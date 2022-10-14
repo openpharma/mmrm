@@ -14,9 +14,15 @@ the total cores.
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
 \details{
-This uses the maximum load average at 1, 5 and 15 minutes on Linux and Mac
+\itemize{
+\item This uses the maximum load average at 1, 5 and 15 minutes on Linux and Mac
 machines to approximate the number of busy cores. For Windows, the load percentage is
 multiplied with the total number of cores.
-We then subtract this from the number of all detected cores. One additional core
+\item We then subtract this from the number of all detected cores. One additional core
 is not used for extra safety.
+}
+}
+\note{
+If executed during a unit test and on CRAN then always returns 1 to avoid any
+parallelization.
 }

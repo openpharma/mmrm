@@ -1,8 +1,6 @@
 ---
 title: "Package Structure"
 package: mmrm
-author:
-  - name: Liming Li
 output:
   rmarkdown::html_document:
           theme: "spacelab"

@@ -1,11 +1,6 @@
 ---
 title: "Introduction to `mmrm`"
 package: mmrm
-author:
-  - Daniel Sabanés Bové
-  - Brian M. Lang
-  - Liming Li
-  - Ya Wang
 output:
   rmarkdown::html_document:
           theme: "spacelab"

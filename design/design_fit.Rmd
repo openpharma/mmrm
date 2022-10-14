@@ -293,7 +293,7 @@ attributes but that seems useful.
 ## `h_record_all_output()`
 
 This is direct copy, and then slightly modified, from `rbmi`.
-Therefore we need to include its authors (Craig and Alessandro) as authors in `mmrm`.
+Therefore we need to include its author (Craig) as contributors in `mmrm`.
 
 ```{r}
 #' Capture all Output
