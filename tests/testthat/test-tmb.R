@@ -512,78 +512,53 @@ test_that("h_mmrm_tmb_assert_start fails as expected for NaN gradient function a
   )
 })
 
-# h_mmrm_tmb_assert_opt ----
+# h_mmrm_tmb_check_conv ----
 
-test_that("h_mmrm_tmb_assert_opt passes as expected for sane optimization result", {
-  tmb_object <- list(
-    fn = function(par) sum(par),
-    gr = function(par) par * 2,
-    he = function(par) tcrossprod(par) + diag(1, 5, 5),
-    par = 5:1
-  )
+test_that("h_mmrm_tmb_check_conv passes as expected for sane optimization result", {
   tmb_opt <- list(
     par = 1:5,
     objective = 10,
     convergence = 0,
     message = NULL
   )
-  result <- expect_silent(h_mmrm_tmb_assert_opt(tmb_object, tmb_opt))
-  expect_null(result, expected)
+  mmrm_tmb <- structure(
+    list(theta_vcov = diag(1)),
+    class = "mmrm_tmb"
+  )
+  result <- expect_silent(h_mmrm_tmb_check_conv(tmb_opt, mmrm_tmb))
+  expect_null(result)
 })
 
-test_that("h_mmrm_tmb_assert_opt raises eigenvalue error as expected", {
-  tmb_object <- list(
-    fn = function(par) sum(par),
-    gr = function(par) par * 2,
-    he = function(par) "bla",
-    par = 5:1
-  )
+test_that("h_mmrm_tmb_check_conv raises singular hessian warning as expected", {
   tmb_opt <- list(
     par = 1:5,
     objective = 10,
     convergence = 0,
     message = NULL
   )
-  expect_error(
-    h_mmrm_tmb_assert_opt(tmb_object, tmb_opt),
-    "Model convergence problem: Cannot calculate hessian eigenvalues"
-  )
-})
-
-test_that("h_mmrm_tmb_assert_opt warns for negative eigenvalues as expected", {
-  tmb_object <- list(
-    fn = function(par) sum(par),
-    gr = function(par) par * 2,
-    he = function(par) -tcrossprod(par),
-    par = 5:1
-  )
-  tmb_opt <- list(
-    par = 1:5,
-    objective = 10,
-    convergence = 0,
-    message = NULL
+  mmrm_tmb <- structure(
+    list(theta_vcov = try(solve(matrix(0, 1, 1)), silent = TRUE)),
+    class = "mmrm_tmb"
   )
   expect_warning(
-    h_mmrm_tmb_assert_opt(tmb_object, tmb_opt),
-    "Model convergence problem: hessian has negative or very small eigenvalues"
+    h_mmrm_tmb_check_conv(tmb_opt, mmrm_tmb),
+    "Model convergence problem: hessian is singular, theta_vcov not available"
   )
 })
 
-test_that("h_mmrm_tmb_assert_opt warns if convergence code signals non-convergence", {
-  tmb_object <- list(
-    fn = function(par) sum(par),
-    gr = function(par) par * 2,
-    he = function(par) tcrossprod(par) + diag(1, 5, 5),
-    par = 5:1
-  )
+test_that("h_mmrm_tmb_check_conv warns if convergence code signals non-convergence", {
   tmb_opt <- list(
     par = 1:5,
     objective = 10,
     convergence = 1,
     message = "something ugly"
   )
+  mmrm_tmb <- structure(
+    list(theta_vcov = diag(1)),
+    class = "mmrm_tmb"
+  )
   expect_warning(
-    h_mmrm_tmb_assert_opt(tmb_object, tmb_opt),
+    h_mmrm_tmb_check_conv(tmb_opt, mmrm_tmb),
     "Model convergence problem: something ugly."
   )
 })

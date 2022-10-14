@@ -59,7 +59,6 @@ fit_single_optimizer <- function(formula,
     (quiet_fit$result$opt_details$convergence == 0)
   structure(
     quiet_fit$result,
-    errors = quiet_fit$errors,
     warnings = quiet_fit$warnings,
     messages = quiet_fit$messages,
     optimizer = optimizer,
