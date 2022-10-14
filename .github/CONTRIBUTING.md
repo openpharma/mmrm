@@ -9,17 +9,17 @@ help you contribute.
 
 ## Programming conventions
 
-Please follow the programming conventions to ensure a consistent program
-style across the package.
+Please follow the programming conventions to ensure a consistent
+programming style across the package.
 
 Generally we follow the [tidyverse style
 guide](https://style.tidyverse.org/). Some specific conventions that
-deviate from this are explained here.
+deviate from this are explained below.
 
 ### Functions
 
-1.  Function names should be explicit and clear, separated by underscore
-    (`snake_case`).
+1.  Function names should be explicit and clear. Words should be
+    separated by underscore (`snake_case`).
 2.  Functions starting with `h_` are helper functions and they should
     not be exported.
 3.  Functions should be well documented using `roxygen2` (even when they
@@ -42,9 +42,10 @@ When using github to collaborate, the following conventions are needed:
     - If you are going to work on this issue, please assign yourself.
 2.  Please create a branch in the `mmrm` repository, instead of creating
     forks, unless you are not yet a team member.
-    - The name of a branch should be like
-      `<issue_id>_<short_discription>`. Use an underscore to separate
-      the description.
+    - Branches should be associated with a GitHub issue and linked to
+      an issue id.
+    - The name of a branch should be of the form:
+      `<issue_id>_<short_discription>`.
 3.  Add changes to the branch and push it to github.
     - Please use clear commit messages.
     - Please keep your changes focused on the issue. If there are
@@ -79,7 +80,7 @@ install:
 3.  [`lintr`](https://openpharma.github.io/mmrm/main/articles/package_structure.html#lintr)
     will allow you to perform static code analysis.
 4.  [`pre-commit`](https://openpharma.github.io/mmrm/main/articles/package_structure.html#pre-commit-config.yaml)
-    is a Python module that allow you to identify issues before you
+    is a Python module that allows you to identify issues before you
     commit locally.
 
 ### Issue labels
@@ -94,7 +95,7 @@ The issues are categorized with several labels:
 | `blocked`          | Blocked by other issues                                                                                                            |
 | `bug`              | Something isn’t working                                                                                                            |
 | `devops`           | Development and Operation                                                                                                          |
-| `discussion`       | Disccusion needed                                                                                                                  |
+| `discussion`       | Discussion needed                                                                                                                  |
 | `documentation`    | Improvement of documentation is needed                                                                                             |
 | `duplicate`        | The issue already exists                                                                                                           |
 | `enhancement`      | New feature or request                                                                                                             |
@@ -117,8 +118,9 @@ In each test case, use the following structure:
 
 ```r
 test_that("<function_name> do something as explained", {
-  # test body
-  expect_identical(1, 1)
+  result <- <function_name>(input)
+  expected <- <hardcoded result>
+  expect_identical(result, expected)
 })
 ```
 
@@ -135,9 +137,9 @@ Integration tests compare the results of SAS and R and assures the
 quality of our code. To add an integration test, you need to do the
 following:
 
-1.  Use SAS to run an appropriate mmrm models with `proc mixed`, using
+1.  Use SAS to run an appropriate mmrm model with `proc mixed`, using
     `fev_data`.
-2.  Save the results in `txt` format in the `design/SAS/` folder.
+2.  Save the results in `.txt` format in the `design/SAS/` folder.
 3.  Decide the key outputs that are needed for comparison.
 4.  Add a unit test verifying that the R implementation of the same
     model has the same results (conversion may be needed).
@@ -205,9 +207,9 @@ To add a new covariance structure, you need to do the following:
 
 1.  Understand the covariance structure and add appropriate
     documentation in [covariance
-    structure](https://openpharma.github.io/mmrm/main/articles/covariance.html)
-    and you can create a draft pull request to invite discussion from
-    other team members.
+    structure](https://openpharma.github.io/mmrm/main/articles/covariance.html).
+    Create a draft pull request to invite discussion from other team
+    members.
 2.  Implement the covariance structure on the C++ side and the
     corresponding R interface.
 3.  Add unit tests to make sure the new covariance structure is working
