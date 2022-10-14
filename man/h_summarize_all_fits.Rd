@@ -10,7 +10,7 @@ h_summarize_all_fits(all_fits)
 \item{all_fits}{(\code{list} of \code{mmrm_fit} or \code{try-error})\cr list of fits.}
 }
 \value{
-List with \code{errors}, \code{warnings}, \code{messages}, \code{log_liks} and \code{converged} results.
+List with \code{warnings}, \code{messages}, \code{log_liks} and \code{converged} results.
 }
 \description{
 Summarizing List of Fits

@@ -111,7 +111,7 @@ test_that("fit_single_optimizer is stable to extreme scaling with defaults", {
   expect_true(all(abs(rel_err) <= 0.05))
 })
 
-test_that("fit_single_optimizer catches convergence error as expected", {
+test_that("fit_single_optimizer catches convergence warning as expected", {
   dat <- data.frame(
     FEV1 = c(1, 2, 3, 4, 5),
     AVISIT = factor(c("V1", "V1", "V2", "V3", "V4")),
@@ -128,8 +128,9 @@ test_that("fit_single_optimizer catches convergence error as expected", {
     weights = rep(1, nrow(dat)),
     optimizer = "L-BFGS-B"
   ))
-  expect_match(attr(result, "errors"), regexp = "Model convergence problem")
+  expect_match(attr(result, "warnings"), regexp = "Model convergence problem")
   expect_false(attr(result, "converged"))
+  expect_class(component(result, "theta_vcov"), "try-error")
 })
 
 # h_summarize_all_fits ----
@@ -150,7 +151,6 @@ test_that("h_summarize_all_fits works as expected", {
   all_fits <- list(mod_fit, mod_fit2)
   result <- expect_silent(h_summarize_all_fits(all_fits))
   expected <- list(
-    errors = list(NULL, NULL),
     warnings = list(NULL, NULL),
     messages = list(NULL, NULL),
     log_liks = c(-1693.22493558573, -1693.22493812251),
@@ -176,8 +176,7 @@ test_that("h_summarize_all_fits works when some list elements are try-error obje
   all_fits <- list(mod_fit, mod_fit2, mod_fit3)
   result <- expect_silent(h_summarize_all_fits(all_fits))
   expected <- list(
-    errors = list(NULL, "Error in try(stop(\"bla\"), silent = TRUE) : bla\n", NULL),
-    warnings = list(NULL, NULL, NULL),
+    warnings = list(NULL, "Error in try(stop(\"bla\"), silent = TRUE) : bla\n", NULL),
     messages = list(NULL, NULL, NULL),
     log_liks = c(-1693.22493558573, NA, -1693.22493812251),
     converged = c(TRUE, FALSE, TRUE)
@@ -317,8 +316,9 @@ test_that("mmrm works for specific small data example", {
     id = "USUBJID",
     visit = "AVISIT"
   )
-  fit <- mmrm::mmrm(
+  fit <- expect_silent(mmrm::mmrm(
     formula = FEV1 ~ AVISIT + ar1(AVISIT | USUBJID),
     data = small_dat
-  )
+  ))
+  expect_true(attr(fit, "converged"))
 })

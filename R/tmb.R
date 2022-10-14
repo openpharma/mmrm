@@ -388,29 +388,27 @@ h_mmrm_tmb_assert_start <- function(tmb_object) {
   }
 }
 
-#' Asserting the `TMB` Optimization Result
+#' Checking the `TMB` Optimization Result
 #'
-#' @param tmb_object (`list`)\cr created with [TMB::MakeADFun()].
 #' @param tmb_opt (`list`)\cr optimization result.
+#' @param mmrm_tmb (`mmrm_tmb`)\cr result from [h_mmrm_tmb_fit()].
 #'
-#' @return Nothing, only used to generate errors in case that the model
+#' @return Nothing, only used to generate warnings in case that the model
 #' did not converge.
 #'
 #' @keywords internal
-h_mmrm_tmb_assert_opt <- function(tmb_object,
-                                  tmb_opt) {
-  assert_list(tmb_object)
-  assert_subset(c("fn", "gr", "par", "he"), names(tmb_object))
+h_mmrm_tmb_check_conv <- function(tmb_opt,
+                                  mmrm_tmb) {
   assert_list(tmb_opt)
   assert_subset(c("par", "objective", "convergence", "message"), names(tmb_opt))
+  assert_class(mmrm_tmb, "mmrm_tmb")
 
   if (!is.null(tmb_opt$convergence) && tmb_opt$convergence != 0) {
-    stop("Model convergence problem: ", tmb_opt$message, ".")
+    warning("Model convergence problem: ", tmb_opt$message, ".")
   } else {
-    tmb_hessian <- tmb_object$he(tmb_opt$par)
-    tmb_hessian_inv <- try(solve(tmb_hessian), silent = TRUE)
-    if (is(tmb_hessian_inv, "try-error")) {
-      stop("Model convergence problem: hessian is singular")
+    theta_vcov <- mmrm_tmb$theta_vcov
+    if (is(theta_vcov, "try-error")) {
+      warning("Model convergence problem: hessian is singular, theta_vcov not available")
     }
   }
 }
@@ -505,7 +503,7 @@ h_mmrm_tmb_fit <- function(tmb_object,
   dimnames(beta_vcov) <- list(x_matrix_cols, x_matrix_cols)
   theta_est <- tmb_opt$par
   names(theta_est) <- NULL
-  theta_vcov <- solve(tmb_object$he(tmb_opt$par))
+  theta_vcov <- try(solve(tmb_object$he(tmb_opt$par)), silent = TRUE)
   opt_details_names <- setdiff(
     names(tmb_opt),
     c("par", "objective")
@@ -600,8 +598,8 @@ fit_mmrm <- function(formula,
     tmb_opt$objective <- tmb_opt$value
     tmb_opt$value <- NULL
   }
-  h_mmrm_tmb_assert_opt(tmb_object, tmb_opt)
   fit <- h_mmrm_tmb_fit(tmb_object, tmb_opt, data, weights, formula_parts, tmb_data)
+  h_mmrm_tmb_check_conv(tmb_opt, fit)
 
   fun_call <- match.call()
   fun_call$formula <- eval(formula_parts$formula)

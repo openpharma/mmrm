@@ -51,21 +51,14 @@ fit_single_optimizer <- function(formula,
       warning = c("NA/NaN function evaluation") # Transient visit to invalid parameters.
     )
   )
-  is_convergence_error <- grepl(
-    pattern = "Model convergence problem",
-    x = quiet_fit$errors
-  )
-  non_convergence_errors <- quiet_fit$errors[!is_convergence_error]
-  if (length(non_convergence_errors)) {
-    stop(non_convergence_errors)
+  if (length(quiet_fit$errors)) {
+    stop(quiet_fit$errors)
   }
   converged <- (length(quiet_fit$warnings) == 0L) &&
     (length(quiet_fit$messages) == 0L) &&
-    (quiet_fit$result$opt_details$convergence == 0) &&
-    (sum(is_convergence_error) == 0L)
+    (quiet_fit$result$opt_details$convergence == 0)
   structure(
     quiet_fit$result,
-    errors = quiet_fit$errors,
     warnings = quiet_fit$warnings,
     messages = quiet_fit$messages,
     optimizer = optimizer,
@@ -78,15 +71,14 @@ fit_single_optimizer <- function(formula,
 #'
 #' @param all_fits (`list` of `mmrm_fit` or `try-error`)\cr list of fits.
 #'
-#' @return List with `errors`, `warnings`, `messages`, `log_liks` and `converged` results.
+#' @return List with `warnings`, `messages`, `log_liks` and `converged` results.
 #' @keywords internal
 h_summarize_all_fits <- function(all_fits) {
   assert_list(all_fits, types = c("mmrm_fit", "try-error"))
   is_error <- vapply(all_fits, is, logical(1), class2 = "try-error")
 
-  errors <- warnings <- messages <- vector(mode = "list", length = length(all_fits))
-  errors[is_error] <- lapply(all_fits[is_error], as.character)
-  errors[!is_error] <- lapply(all_fits[!is_error], attr, which = "errors")
+  warnings <- messages <- vector(mode = "list", length = length(all_fits))
+  warnings[is_error] <- lapply(all_fits[is_error], as.character)
   warnings[!is_error] <- lapply(all_fits[!is_error], attr, which = "warnings")
   messages[!is_error] <- lapply(all_fits[!is_error], attr, which = "messages")
   log_liks <- as.numeric(rep(NA, length = length(all_fits)))
@@ -95,7 +87,6 @@ h_summarize_all_fits <- function(all_fits) {
   converged[!is_error] <- vapply(all_fits[!is_error], attr, logical(1), which = "converged")
 
   list(
-    errors = errors,
     warnings = warnings,
     messages = messages,
     log_liks = log_liks,
