@@ -45,7 +45,7 @@
     
     <a class="navbar-brand me-2" href="index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9013</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9014</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,12 +69,6 @@
 <li class="nav-item">
   <a class="nav-link" href="news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -108,7 +102,7 @@
 <li>Responses are assumed normally distributed.</li>
 <li>Covariances:
 <ul>
-<li>Structures: unstructured, Toeplitz, AR1, compound symmetry, and ante-dependence, for a complete list see <a href="https://openpharma.github.io/mmrm/main/reference/covariance_types.html">here</a>.</li>
+<li>Structures: unstructured, Toeplitz, AR1, compound symmetry, and ante-dependence.</li>
 <li>Groups: shared covariance structure for all subjects, or group specific covariance structures.</li>
 <li>Variances: homogeneous or heterogeneous across time points.</li>
 </ul>
@@ -158,46 +152,46 @@
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit</span></span>
 <span><span class="co">#&gt; mmrm fit</span></span>
-<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; Formula:     FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)</span></span>
-<span><span class="co">#&gt; Data:        fev_data (used 537 observations from 197 subjects with maximum 4 </span></span>
+<span><span class="co">#&gt; Data:        fev_data (used 537 observations from 197 subjects with maximum 4</span></span>
 <span><span class="co">#&gt; timepoints)</span></span>
 <span><span class="co">#&gt; Covariance:  unstructured (10 variance parameters)</span></span>
 <span><span class="co">#&gt; Method:      REML</span></span>
 <span><span class="co">#&gt; Deviance:    3386.45</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Coefficients: </span></span>
-<span><span class="co">#&gt;                   (Intercept) RACEBlack or African American </span></span>
-<span><span class="co">#&gt;                   30.77747548                    1.53049977 </span></span>
-<span><span class="co">#&gt;                     RACEWhite                     SEXFemale </span></span>
-<span><span class="co">#&gt;                    5.64356535                    0.32606192 </span></span>
-<span><span class="co">#&gt;                      ARMCDTRT                    AVISITVIS2 </span></span>
-<span><span class="co">#&gt;                    3.77423004                    4.83958845 </span></span>
-<span><span class="co">#&gt;                    AVISITVIS3                    AVISITVIS4 </span></span>
-<span><span class="co">#&gt;                   10.34211288                   15.05389826 </span></span>
-<span><span class="co">#&gt;           ARMCDTRT:AVISITVIS2           ARMCDTRT:AVISITVIS3 </span></span>
-<span><span class="co">#&gt;                   -0.04192625                   -0.69368537 </span></span>
-<span><span class="co">#&gt;           ARMCDTRT:AVISITVIS4 </span></span>
-<span><span class="co">#&gt;                    0.62422703 </span></span>
-<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;</span></span>
+<span><span class="co">#&gt; Coefficients:</span></span>
+<span><span class="co">#&gt;                   (Intercept) RACEBlack or African American</span></span>
+<span><span class="co">#&gt;                   30.77747548                    1.53049977</span></span>
+<span><span class="co">#&gt;                     RACEWhite                     SEXFemale</span></span>
+<span><span class="co">#&gt;                    5.64356535                    0.32606192</span></span>
+<span><span class="co">#&gt;                      ARMCDTRT                    AVISITVIS2</span></span>
+<span><span class="co">#&gt;                    3.77423004                    4.83958845</span></span>
+<span><span class="co">#&gt;                    AVISITVIS3                    AVISITVIS4</span></span>
+<span><span class="co">#&gt;                   10.34211288                   15.05389826</span></span>
+<span><span class="co">#&gt;           ARMCDTRT:AVISITVIS2           ARMCDTRT:AVISITVIS3</span></span>
+<span><span class="co">#&gt;                   -0.04192625                   -0.69368537</span></span>
+<span><span class="co">#&gt;           ARMCDTRT:AVISITVIS4</span></span>
+<span><span class="co">#&gt;                    0.62422703</span></span>
+<span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; Model Inference Optimization:</span></span>
 <span><span class="co">#&gt; Converged with code 0 and message: convergence: rel_reduction_of_f &lt;= factr*epsmch</span></span></code></pre></div>
 <p>The <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> method then provides the coefficients table with Satterthwaite degrees of freedom as well as the covariance matrix estimate:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
 <span><span class="co">#&gt; mmrm fit</span></span>
-<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; Formula:     FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)</span></span>
-<span><span class="co">#&gt; Data:        fev_data (used 537 observations from 197 subjects with maximum 4 </span></span>
+<span><span class="co">#&gt; Data:        fev_data (used 537 observations from 197 subjects with maximum 4</span></span>
 <span><span class="co">#&gt; timepoints)</span></span>
 <span><span class="co">#&gt; Covariance:  unstructured (10 variance parameters)</span></span>
 <span><span class="co">#&gt; Method:      REML</span></span>
-<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; Model selection criteria:</span></span>
-<span><span class="co">#&gt;      AIC      BIC   logLik deviance </span></span>
-<span><span class="co">#&gt;   3406.4   3439.3  -1693.2   3386.4 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Coefficients: </span></span>
+<span><span class="co">#&gt;      AIC      BIC   logLik deviance</span></span>
+<span><span class="co">#&gt;   3406.4   3439.3  -1693.2   3386.4</span></span>
+<span><span class="co">#&gt;</span></span>
+<span><span class="co">#&gt; Coefficients:</span></span>
 <span><span class="co">#&gt;                                Estimate Std. Error        df t value Pr(&gt;|t|)</span></span>
 <span><span class="co">#&gt; (Intercept)                    30.77748    0.88656 218.80000  34.715  &lt; 2e-16</span></span>
 <span><span class="co">#&gt; RACEBlack or African American   1.53050    0.62448 168.67000   2.451 0.015272</span></span>
@@ -210,21 +204,21 @@
 <span><span class="co">#&gt; ARMCDTRT:AVISITVIS2            -0.04193    1.12932 138.56000  -0.037 0.970439</span></span>
 <span><span class="co">#&gt; ARMCDTRT:AVISITVIS3            -0.69369    1.18765 158.17000  -0.584 0.559996</span></span>
 <span><span class="co">#&gt; ARMCDTRT:AVISITVIS4             0.62423    1.85085 129.72000   0.337 0.736463</span></span>
-<span><span class="co">#&gt;                                  </span></span>
+<span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; (Intercept)                   ***</span></span>
-<span><span class="co">#&gt; RACEBlack or African American *  </span></span>
+<span><span class="co">#&gt; RACEBlack or African American *</span></span>
 <span><span class="co">#&gt; RACEWhite                     ***</span></span>
-<span><span class="co">#&gt; SEXFemale                        </span></span>
+<span><span class="co">#&gt; SEXFemale</span></span>
 <span><span class="co">#&gt; ARMCDTRT                      ***</span></span>
 <span><span class="co">#&gt; AVISITVIS2                    ***</span></span>
 <span><span class="co">#&gt; AVISITVIS3                    ***</span></span>
 <span><span class="co">#&gt; AVISITVIS4                    ***</span></span>
-<span><span class="co">#&gt; ARMCDTRT:AVISITVIS2              </span></span>
-<span><span class="co">#&gt; ARMCDTRT:AVISITVIS3              </span></span>
-<span><span class="co">#&gt; ARMCDTRT:AVISITVIS4              </span></span>
+<span><span class="co">#&gt; ARMCDTRT:AVISITVIS2</span></span>
+<span><span class="co">#&gt; ARMCDTRT:AVISITVIS3</span></span>
+<span><span class="co">#&gt; ARMCDTRT:AVISITVIS4</span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
-<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; Covariance estimate:</span></span>
 <span><span class="co">#&gt;         VIS1    VIS2    VIS3    VIS4</span></span>
 <span><span class="co">#&gt; VIS1 40.5537 14.3960  4.9747 13.3867</span></span>
