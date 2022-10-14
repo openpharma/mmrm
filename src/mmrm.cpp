@@ -1,6 +1,5 @@
 #include "init.h"
 #include "covariance.h"
-#include "tests.h"
 
 // Definition:
 //
