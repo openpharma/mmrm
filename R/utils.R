@@ -68,11 +68,9 @@ h_record_all_output <- function(expr, remove = list()) {
 #'
 #' @export
 free_cores <- function() {
-  if (requireNamespace("testthat", quietly = TRUE)) {
-    on_cran <- !identical(Sys.getenv("NOT_CRAN"), "true")
-    if (testthat::is_testing() && on_cran) {
-      return(1L)
-    }
+  on_cran <- !identical(Sys.getenv("NOT_CRAN"), "true")
+  if (on_cran) {
+    return(1L)
   }
   all_cores <- parallel::detectCores(all.tests = TRUE)
   busy_cores <-
@@ -81,8 +79,11 @@ free_cores <- function() {
       # This gives e.g.: c("LoadPercentage", "10", "")
       # So we just take the number here.
       load_percent <- as.integer(min(load_percent_string[2L], 100))
-      assert_int(load_percent, lower = 0, upper = 100)
-      ceiling(all_cores * load_percent / 100)
+      if (test_int(load_percent, lower = 0, upper = 100)) {
+        ceiling(all_cores * load_percent / 100)
+      } else {
+        all_cores
+      }
     } else if (.Platform$OS.type == "unix") {
       uptime_string <- system("uptime", intern = TRUE)
       # This gives e.g.:
