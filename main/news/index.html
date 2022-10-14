@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,12 +39,6 @@
 <li class="active nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -66,16 +60,16 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.1.1.9000" id="mmrm-0119000">mmrm 0.1.1.9000<a class="anchor" aria-label="anchor" href="#mmrm-0119000"></a></h2>
-<ul><li>First version of the package for fitting mixed models for repeated measures (MMRM) based on Template Model Builder (TMB).</li>
+<h2 class="pkg-version" data-toc-text="0.1.2" id="mmrm-012">mmrm 0.1.2<a class="anchor" aria-label="anchor" href="#mmrm-012"></a></h2>
+<ul><li>First CRAN version of the package for fitting mixed models for repeated measures (MMRM) based on Template Model Builder (TMB).</li>
 <li>The motivation for this package is to have a fast, reliable (in terms of convergence behavior) and feature complete implementation of MMRM in R.</li>
 </ul><div class="section level4">
-<h4 id="new-features-0-1-1-9000">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-1-1-9000"></a></h4>
-<ul><li>Currently 9 covariance structures are supported (unstructured, as well as homogeneous and heterogeneous versions of Toeplitz, auto-regressive order one, ante-dependence, compound symmetry).</li>
+<h4 id="new-features-0-1-2">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-1-2"></a></h4>
+<ul><li>Currently 10 covariance structures are supported (unstructured; as well as homogeneous and heterogeneous versions of Toeplitz, auto-regressive order one, ante-dependence, compound symmetry; and spatial exponential).</li>
 <li>Fast C++ implementation of Maximum Likelihood (ML) and Restricted Maximum Likelihood (REML) estimation.</li>
-<li>Satterthwaite adjusted degrees of freedom calculation.</li>
+<li>Currently Satterthwaite adjusted degrees of freedom calculation is supported.</li>
 <li>Interface to the <code>emmeans</code> package for computing estimated marginal means (also called least-square means) for the coefficients.</li>
-<li>Multiple optimizers are run to allow for as much convergence chance as possible.</li>
+<li>Multiple optimizers are run to reach convergence in as many cases as possible.</li>
 <li>Flexible formula based model specification and support for standard S3 methods such as <code>summary</code>, <code>logLik</code>, etc.</li>
 </ul></div>
 </div>
@@ -84,7 +78,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by Daniel Sabanes Bove, Julia Dedic, Brian Matthew Lang, Doug Kelkhoff, Ya Wang, Craig Gower-Page, Alessandro Noci, Liming Li.</p>
+  <p></p><p>Developed by Daniel Sabanes Bove, Julia Dedic, Doug Kelkhoff, Kevin Kunzmann, Brian Matthew Lang, Liming Li, Ya Wang.</p>
 </div>
 
 <div class="pkgdown-footer-right">
