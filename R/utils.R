@@ -56,14 +56,23 @@ h_record_all_output <- function(expr, remove = list()) {
 #' @return The approximate number of free cores, which is an integer between 1 and one less than
 #' the total cores.
 #'
-#' @details This uses the maximum load average at 1, 5 and 15 minutes on Linux and Mac
+#' @details
+#' - This uses the maximum load average at 1, 5 and 15 minutes on Linux and Mac
 #' machines to approximate the number of busy cores. For Windows, the load percentage is
 #' multiplied with the total number of cores.
-#' We then subtract this from the number of all detected cores. One additional core
+#' - We then subtract this from the number of all detected cores. One additional core
 #' is not used for extra safety.
+#'
+#' @note If executed during a unit test and on CRAN then always returns 1 to avoid any
+#' parallelization.
 #'
 #' @export
 free_cores <- function() {
+  if (requireNamespace(testthat, quietly = TRUE)) {
+    if (testthat::is_testing() && testthat:::on_cran()) {
+      return(1L)
+    }
+  }
   all_cores <- parallel::detectCores(all.tests = TRUE)
   busy_cores <-
     if (.Platform$OS.type == "windows") {
