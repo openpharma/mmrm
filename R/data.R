@@ -16,6 +16,7 @@
 #'   - `SEX`: sex.
 #'   - `FEV1_BL`: FEV1 at baseline (%).
 #'   - `FEV1`: FEV1 at study visits.
+#'   - `WEIGHT`: weighting variable.
 #'
 #' @source This is an artificial dataset.
 "fev_data"
