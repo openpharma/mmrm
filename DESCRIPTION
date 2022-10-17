@@ -10,7 +10,11 @@ Authors@R: c(
     person("Brian Matthew", "Lang", , "brian.lang@msd.com", role = "aut"),
     person("Liming", "Li", , "liming.li@roche.com", role = "aut"),
     person("Ya", "Wang", , "ya.wang10@gilead.com", role = "aut"),
-    person("Craig", "Gower-Page", , "craig.gower-page@roche.com", role = "ctb")
+    person("Craig", "Gower-Page", , "craig.gower-page@roche.com", role = "ctb"),
+    person("Boehringer Ingelheim Ltd.", role = c("cph", "fnd")),
+    person("Gilead Sciences, Inc.", role = c("cph", "fnd")),
+    person("F. Hoffmann-La Roche AG", role = c("cph", "fnd")),
+    person("Merck Sharp & Dohme, Inc.", role = c("cph", "fnd"))
   )
 Description: Mixed models for repeated measures (MMRM) are a popular
     choice for analyzing longitudinal continuous outcomes in randomized clinical
@@ -23,7 +27,7 @@ Description: Mixed models for repeated measures (MMRM) are a popular
     weight observations, fit models with restricted or standard maximum likelihood
     inference, perform hypothesis testing with Satterthwaite adjusted degrees of
     freedom, and extract least square means estimates by using 'emmeans'.
-License: Apache License 2.0 | file LICENSE
+License: Apache License 2.0
 URL: https://github.com/openpharma/mmrm/
 BugReports: https://github.com/openpharma/mmrm/issues
 Depends:
