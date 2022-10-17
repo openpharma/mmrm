@@ -1,7 +1,8 @@
-# mmrm 0.1.2.9001
+# mmrm 0.1.3
 
-- First CRAN version of the package for fitting mixed models for repeated measures
-  (MMRM) based on Template Model Builder (TMB).
+- First CRAN version of the package.
+- The package fits mixed models for repeated measures
+  (MMRM) based on the marginal linear model without random effects.
 - The motivation for this package is to have a fast, reliable (in terms of
   convergence behavior) and feature complete implementation of MMRM in R.
 
