@@ -4,6 +4,7 @@
 #'
 #' @param object (`mmrm`)\cr the fitted MMRM including Jacobian and call etc.
 #' @param ... not used.
+#' @return Depends on the method, see Details and Functions.
 #'
 #' @details
 #' While printing the summary of (`mmrm`)\cr object, the following will be displayed:
@@ -18,7 +19,7 @@
 #'       in data will be displayed.
 #'    2. If the covariance structure is spatial, the covariance matrix of two time points with unit distance
 #'       will be displayed.
-#' 
+#'
 #' @name mmrm_methods
 #'
 #' @examples
@@ -186,7 +187,7 @@ h_print_aic_list <- function(aic_list,
 #' @keywords internal
 print.summary.mmrm <- function(x,
                                digits = max(3, getOption("digits") - 3),
-                               signif.stars = getOption("show.signif.stars"),
+                               signif.stars = getOption("show.signif.stars"), # nolint
                                ...) {
   cat("mmrm fit\n\n")
   h_print_call(x$call, x$n_obs, x$n_subjects, x$n_timepoints)

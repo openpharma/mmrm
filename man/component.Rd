@@ -18,6 +18,9 @@ component(
 
 \item{name}{(\code{character})\cr the component(s) to be retrieved.}
 }
+\value{
+The corresponding component of the object, see details.
+}
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }

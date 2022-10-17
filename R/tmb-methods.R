@@ -8,6 +8,7 @@
 #' @param complete (`flag`)\cr whether to include potential non-estimable
 #'   coefficients.
 #' @param ... not used.
+#' @return Depends on the method, see Functions.
 #'
 #' @name mmrm_tmb_methods
 #'

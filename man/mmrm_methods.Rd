@@ -20,6 +20,9 @@
 
 \item{...}{not used.}
 }
+\value{
+Depends on the method, see Details and Functions.
+}
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
