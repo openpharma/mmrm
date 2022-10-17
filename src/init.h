@@ -8,10 +8,10 @@
 extern "C" {
 
 /* .Call calls */
-extern SEXP run_testthat_tests();
+extern SEXP run_testthat_tests(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
-  {"run_testthat_tests", (DL_FUNC) &run_testthat_tests,  0},
+  {"run_testthat_tests", (DL_FUNC) &run_testthat_tests,  1},
   TMB_CALLDEFS,
   {NULL, NULL, 0}
 };
