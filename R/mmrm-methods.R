@@ -4,6 +4,7 @@
 #'
 #' @param object (`mmrm`)\cr the fitted MMRM including Jacobian and call etc.
 #' @param ... not used.
+#' @return Depends on the method, see Details and Functions.
 #'
 #' @details
 #' While printing the summary of (`mmrm`)\cr object, the following will be displayed:
@@ -18,7 +19,7 @@
 #'       in data will be displayed.
 #'    2. If the covariance structure is spatial, the covariance matrix of two time points with unit distance
 #'       will be displayed.
-#' 
+#'
 #' @name mmrm_methods
 #'
 #' @examples

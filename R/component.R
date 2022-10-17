@@ -4,6 +4,7 @@
 #'
 #' @param object (`mmrm_tmb`)\cr the fitted MMRM.
 #' @param name (`character`)\cr the component(s) to be retrieved.
+#' @return The corresponding component of the object, see details.
 #'
 #' @details Available `component()` names are as follows:
 #' - `call`: low-level function call which generated the model.

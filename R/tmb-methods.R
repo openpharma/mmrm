@@ -8,6 +8,7 @@
 #' @param complete (`flag`)\cr whether to include potential non-estimable
 #'   coefficients.
 #' @param ... not used.
+#' @return Depends on the method, see Functions.
 #'
 #' @name mmrm_tmb_methods
 #'
@@ -102,7 +103,8 @@ vcov.mmrm_tmb <- function(object, complete = TRUE, ...) {
 #' @examples
 #' # Variance-covariance matrix estimate for residuals:
 #' VarCorr(object)
-VarCorr.mmrm_tmb <- function(x, sigma = NA, ...) { # nolint
+VarCorr.mmrm_tmb <- function(x, sigma = NA, ...) {
+  # nolint
   assert_scalar_na(sigma)
 
   component(x, name = "varcor")
