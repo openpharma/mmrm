@@ -103,7 +103,7 @@ vcov.mmrm_tmb <- function(object, complete = TRUE, ...) {
 #' @examples
 #' # Variance-covariance matrix estimate for residuals:
 #' VarCorr(object)
-VarCorr.mmrm_tmb <- function(x, sigma = NA, ...) {
+VarCorr.mmrm_tmb <- function(x, sigma = NA, ...) { # nolint
   # nolint
   assert_scalar_na(sigma)
 
