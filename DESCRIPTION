@@ -1,7 +1,7 @@
 Type: Package
 Package: mmrm
 Title: Mixed Models for Repeated Measures
-Version: 0.1.4
+Version: 0.1.5
 Authors@R: c(
     person("Daniel", "Sabanes Bove", , "daniel.sabanes_bove@roche.com", role = c("aut", "cre")),
     person("Julia", "Dedic", , "julia.dedic@roche.com", role = "aut"),
@@ -30,7 +30,7 @@ Description: Mixed models for repeated measures (MMRM) are a popular
     adjusted degrees of freedom, and extract least square means estimates
     by using 'emmeans'.
 License: Apache License 2.0
-URL: https://openpharma.github.io/mmrm
+URL: https://openpharma.github.io/mmrm/
 BugReports: https://github.com/openpharma/mmrm/issues
 Depends:
     R (>= 4.0)
