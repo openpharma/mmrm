@@ -12,7 +12,8 @@ repos:
           (?x)^(
           design/.*|
           tests/testthat/_snaps/.*|
-          design/.*\.txt
+          design/.*\.txt|
+          README.md
           )$
       - id: roxygenize
         additional_dependencies:
@@ -82,7 +83,8 @@ repos:
           (?x)^(
           design/.*|
           tests/testthat/_snaps/.*|
-          design/.*\.txt
+          design/.*\.txt|
+          README.md
           )$
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.3.0
@@ -99,7 +101,8 @@ repos:
         exclude: >
           (?x)^(
           .*\.Rd|
-          tests/testthat/_snaps/.*
+          tests/testthat/_snaps/.*|
+          README.md
           )$
       - id: check-yaml
       - id: no-commit-to-branch
