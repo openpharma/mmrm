@@ -1,4 +1,4 @@
-# mmrm 0.1.4
+# mmrm 0.1.5
 
 - First CRAN version of the package.
 - The package fits mixed models for repeated measures
