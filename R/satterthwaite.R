@@ -296,7 +296,7 @@ h_df_md_from_1d <- function(object, contrast) {
 #'   elements for singular coefficient estimates, i.e. only refer to the
 #'   actually estimated coefficients.
 #'
-#' @return List with `est`, `se`, `df`, `t_stat` and `p_val`.
+#' @return List with `num_df`, `denom_df`, `f_stat` and `p_val` (2-sided p-value).
 #' @export
 #'
 #' @examples

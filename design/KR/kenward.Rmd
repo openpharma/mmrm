@@ -1,0 +1,64 @@
+---
+title: how to implement Kenward Roger degree of freedom?
+author: "Liming Li"
+output: html_document
+editor_options:
+  chunk_output_type: console
+---
+
+# Objective
+
+The objective is to design how we can implement Kenward-Roger degree of freedom.
+
+# Current design of mmrm package
+
+In current mmrm package, we provided Satterthwaite degree of freedom, through `df_1d` and `df_md`.
+
+# Design of Kenward-Roger degree of freedom
+
+## update to current functions
+
+* `df_1d` and `df_md` renamed to `df_1d_sat` and `df_md_sat`, do not export them
+* add a new function `df_1d` and `df_md` to include degree of freedom selection
+* implement `df_1d_kr(2)` and `df_md_kr(2)` (suffix 2 means that it is improved Kenward-Roger degree of freedom)
+* consider renaming the `df_1d` and `df_md` to something like `beta_test_1d` and `beta_test_md`?
+
+## psedo code
+
+```{r, eval=FALSE}
+# df_1d
+formula <- FEV1 ~ ARMCD + ad(AVISIT | USUBJID)
+result <- mmrm(formula, fev_data, reml = FALSE)
+df_1d(result, contrast = c(0, 1), df = "SAT") # test the armcd using SAT
+# df_1d_sat is called
+df_1d(result, contrast = c(0, 1), df = "KR") # KR defaults to KR2 (improved version)
+# df_1d_kr2 is called
+# give errors because KR works only for REML!
+
+formula <- FEV1 ~ ARMCD + ad(AVISIT | USUBJID)
+result <- mmrm(formula, fev_data, reml = TRUE)
+
+df_1d(result, contrast = c(0, 1), df = "KR1")
+# provide what we have in current `df_1d` results
+```
+
+## Rationals
+
+Why we implement the Kenward-Roger df in `mmrm` instead of using the `pbkrtest` package directly?
+
+* Current `mmrm` implementation is kind of complete, with the tests already implemented. If we are going to rely on `pbkrtest`
+package to implement Kenward-Roger degree of freedom, we are not able to include this method in `mmrm` otherwise we can introduce
+cyclic imports
+* `pbkrtest` is not well tested and we need effort to reliablely use that package
+* `pbkrtest` implements the original Kenward-Roger degree of freedom instead of the improved one(recommended)
+* SAS software provides both Kenward-Roger degree of freedom
+* `lmerTestR` suggests that "The culprit is the calculation of the scaling of the $F$-value for which **pbkrtest** does not appear to export a low-level (direct) method."
+which leads to slow speed which we can improve
+
+# Reference
+
+1. Kenward, Michael G., and James H. Roger. "Small sample inference for fixed effects from restricted maximum likelihood." Biometrics (1997): 983-997.
+2. Kenward, Michael G., and James H. Roger. "An improved approximation to the precision of fixed effects from restricted maximum likelihood." Computational Statistics & Data Analysis 53.7 (2009): 2583-2595.
+3. [SAS User Guide](https://documentation.sas.com/doc/en/pgmsascdc/9.4_3.3/statug/statug_mixed_references.htm#statug_mixedkenw_m09)
+4. [lmerTestR implementation](https://github.com/runehaubo/lmerTestR/blob/master/pkg_notes/implementation.Rmd)
+5. [PBKRTEST webpage](https://people.math.aau.dk/~sorenh/software/pbkrtest/)
