@@ -23,7 +23,7 @@ In current mmrm package, we provided Satterthwaite degree of freedom, through `d
 * implement `df_1d_kr(2)` and `df_md_kr(2)` (suffix 2 means that it is improved Kenward-Roger degree of freedom)
 * consider renaming the `df_1d` and `df_md` to something like `beta_test_1d` and `beta_test_md`?
 
-## psedo code
+## pseudo code
 
 ```{r, eval=FALSE}
 # df_1d
