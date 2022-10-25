@@ -194,7 +194,40 @@ to be added.
 
 ## implementations
 
-to be added.
+### degree of freedom derivation
+
+```{r}
+tr <- function(x) {
+  sum(diag(x))
+}
+h_kr_df <- function(v0, va, l, w, p) { # p list of matrix, w matrix
+  theta <- l %*% solve(t(l) %*% v0 %*% l) %*% t(l)
+  nl <- ncol(l)
+  thetav0 <- theta %*% v0
+  thetav0pv0 <- lapply(p, function(x) {thetav0 %*% x %*% v0})
+  a1 <- 0
+  a2 <- 0
+  for (i in seq_len(length(p))) {
+    for (j in seq_len(length(p))) {
+      a1 <- a1 + w[i, j] * tr(thetav0pv0[[i]]) * tr(thetav0pv0[[j]])
+      a2 <- a2 + w[i, j] * tr(thetav0pv0[[i]] %*% thetav0pv0[[j]])
+    }
+  }
+  b <- 1 / (2 * nl) * (a1 + 6 * a2)
+  e <- 1 + a2 / nl
+  e_star <- 1 / (1 - a2 / nl)
+  g <- ((nl + 1) * a1 - (nl + 4) * a2) / ((nl + 2) * a2)
+  denom <- (3 * nl + 2 - 2 * g)
+  c1 <- g / denom
+  c2 <- (nl - g) / denom
+  c3 <- (nl + 2 - g) / denom
+  v_star <- 2 / nl * (1 + c1 * b) / (1 - c2 * b)^2 / (1 - c3 * b)
+  rho <- v_star / e_star^2
+  m <- 4 + (nl + 2)  / (nl * rho - 1)
+  lambda <- m / (e * (m - 2))
+  return(list(m = m, lambda = lambda))
+}
+```
 
 # Reference
 
