@@ -20,8 +20,11 @@ In current mmrm package, we provided Satterthwaite degree of freedom, through `d
 
 * `df_1d` and `df_md` renamed to `df_1d_sat` and `df_md_sat`, do not export them
 * add a new function `df_1d` and `df_md` to include degree of freedom selection
-* implement `df_1d_kr(2)` and `df_md_kr(2)` (suffix 2 means that it is improved Kenward-Roger degree of freedom)
-* consider renaming the `df_1d` and `df_md` to something like `beta_test_1d` and `beta_test_md`?
+* implement `df_1d_kr` and `df_md_kr` (take extra arguments to conduct improved Kenward-Roger degree of freedom)
+
+## Further updates to the naming
+* consider renaming the `df_1d` and `df_md` to something like `beta_test_1d` and `beta_test_md`?(the names need to be discussed)
+* add deprecation notes on `df_1d` and `df_md`
 
 ## pseudo code
 
@@ -55,10 +58,149 @@ cyclic imports
 * `lmerTestR` suggests that "The culprit is the calculation of the scaling of the $F$-value for which **pbkrtest** does not appear to export a low-level (direct) method."
 which leads to slow speed which we can improve
 
+# Prototypes
+
+## mathmatical details for KR1
+
+### adjusted variance-covariance matrix
+
+Following the vignettes' notations, we have
+\[
+  Y \sim N(X\beta, \Sigma)
+\]
+where $\Sigma$ is a block diagonal matrix.
+Let
+\[
+  \Phi(\sigma) = {\left\{X^\top \Sigma(\sigma)^\top X\right\}}^{-1}
+\]
+\[
+  \hat\beta = \Phi(\hat\sigma) X^\top \Sigma(\hat\sigma)^{-1} Y
+\]
+
+$\Phi$ is the variance-covariance matrix for $\hat\beta$, and we usually use
+$\hat\Phi = \Phi(\hat\sigma)$ to measure the precision of $\hat\beta$.
+
+However, Kackar and Harville shows that the variability can be further partitioned into
+\[
+  V(\hat\beta) = \Phi + \Lambda
+\]
+where $\Lambda$ represents the asymptotic variance-covariance matrix underestimates $V(\hat\beta)$,
+and $\Lambda$ can be approximated by
+\[
+  \Lambda \simeq \Phi \left\{\sum_{i=1}^r{\sum_{j=1}^r{W_{ij}(Q_{ij} - P_i \Phi P_j)} }\right\} \Phi
+\]
+where
+\[
+  P_i = X^\top \frac{\partial{\Sigma^{-1}}}{\partial \sigma_i} X
+\]
+\[
+  Q_{ij} = X^\top \frac{\partial{\Sigma^{-1}}}{\partial \sigma_i} \Sigma \frac{\partial{\Sigma^{-1}}}{\partial \sigma_j} X
+\]
+and $W_{ij}$ is the $(i, j)$ element of $V(\hat\sigma)$.
+
+Further consider the bias of $\hat\Phi$ as an estimator of $\Phi$ using Taylor expansion
+
+\[
+  \hat\Phi \simeq \Phi + \sum_{i=1}^r{(\hat\sigma_i - \sigma_i)\frac{\partial{\Phi}}{\partial{\sigma_i}}} + \frac{1}{2} \sum_{i=1}^r{\sum_{j=1}^r{(\hat\sigma_i - \sigma_i)(\hat\sigma_j - \sigma_j)\frac{\partial^2{\Phi}}{\partial{\sigma_i}\partial{\sigma_j}}}}
+\]
+
+Ignoring the bias and the expectation is
+\[
+  E(\hat\Phi) = \Phi + \frac{1}{2} \sum_{i=1}^r{\sum_{j=1}^r{W_{ij}\frac{\partial^2{\Phi}}{\partial{\sigma_i}\partial{\sigma_j}}}}
+\]
+
+Using previous notations,
+
+\[
+  \frac{\partial^2{\Phi}}{\partial{\sigma_i}\partial{\sigma_j}} = \Phi (P_i \Phi P_j + P_j \Phi P_i - Q_{ij} - Q_{ji} + R_{ij}) \Phi
+\]
+where
+\[
+  R_{ij} = X^\top\Sigma^{-1}\frac{\partial^2\Sigma}{\partial{\sigma_i}\partial{\sigma_j}} \Sigma^{-1} X
+\]
+
+(Note: in some implementations of KR, $R_{ij}$ is ignored and leads to a variant.)
+
+So the adjusted estimator is
+
+\[
+  \hat\Phi_A = \hat\Phi + 2\hat\Phi \left\{\sum_{i=1}^r{\sum_{j=1}^r{W_{ij}(Q_{ij} - P_i \hat\Phi P_j - \frac{1}{4}R_{ij})} }\right\} \hat\Phi
+\]
+
+$W$ can be estimated using the inverse of information matrix by substituting the observed values
+
+\[
+  2W_{ij} = tr(\frac{\partial{\Sigma^{-1}}}{\partial \sigma_i} \Sigma \frac{\partial{\Sigma^{-1}}}{\partial \sigma_j} \Sigma) - tr(2\Phi Q_{ij} - \Phi P_i\Phi P_j)
+\]
+
+### Inference and degree of freedom
+
+Suppose we are testing the $l$ linear combination of $\beta$, $L\beta$, we can use the following Wald-type statistic
+
+\[
+  F = \frac{1}{l} (\hat\beta - \beta)^\top  L (L^\top \hat\Phi_A L)^{-1} L^\top (\hat\beta - \beta)
+\]
+and 
+\[
+  F^* = \lambda F
+\]
+follows exact $F_{l,m}$ distribution.
+
+$m$ can be calculated through
+
+\[
+  \Theta = L (L^\top \Phi L)^{-1} L^\top
+\]
+
+\[
+  A_1 = \sum_{i=1}^r{\sum_{j=1}^r{W_{ij} tr(\Theta \Phi P_i \Phi) tr(\Theta \Phi P_j \Phi)}}
+\]
+
+\[
+  A_2 = \sum_{i=1}^r{\sum_{j=1}^r{W_{ij} tr(\Theta \Phi P_i \Phi \Theta \Phi P_j \Phi)}}
+\]
+
+\[
+  B = \frac{1}{2l}(A_1 + 6A_2)
+\]
+
+\[
+  g = \frac{(l+1)A_1 - (l+4)A_2}{(l+2)A_2}
+\]
+
+\[
+  c_1 = \frac{g}{3l+2(1-g)}
+\]
+
+\[
+  c_2 = \frac{l-g}{3l+2(1-g)}
+\]
+
+\[
+  c_3 = \frac{l+2-g}{3l+2(1-g)}
+\]
+\[E^*={\left\{1-\frac{A_2}{l}\right\}}^{-1}\]
+\[V^*=\frac{2}{l}{\left\{\frac{1+c_1 B}{(1-c_2 B)^2(1-c_3 B)}\right\}}\]
+
+\[\rho = \frac{V^{*}}{2(E^*)^2}\]
+
+\[m = 4 + \frac{l+2}{l\rho - 1}\]
+\[\lambda = \frac{m}{E^*(m-2)}\]
+
+
+## mathmatical details for KR2
+
+to be added.
+
+## implementations
+
+to be added.
+
 # Reference
 
 1. Kenward, Michael G., and James H. Roger. "Small sample inference for fixed effects from restricted maximum likelihood." Biometrics (1997): 983-997.
-2. Kenward, Michael G., and James H. Roger. "An improved approximation to the precision of fixed effects from restricted maximum likelihood." Computational Statistics & Data Analysis 53.7 (2009): 2583-2595.
-3. [SAS User Guide](https://documentation.sas.com/doc/en/pgmsascdc/9.4_3.3/statug/statug_mixed_references.htm#statug_mixedkenw_m09)
-4. [lmerTestR implementation](https://github.com/runehaubo/lmerTestR/blob/master/pkg_notes/implementation.Rmd)
-5. [PBKRTEST webpage](https://people.math.aau.dk/~sorenh/software/pbkrtest/)
+1. Kenward, Michael G., and James H. Roger. "An improved approximation to the precision of fixed effects from restricted maximum likelihood." Computational Statistics & Data Analysis 53.7 (2009): 2583-2595.
+1. [SAS User Guide](https://documentation.sas.com/doc/en/pgmsascdc/9.4_3.3/statug/statug_mixed_references.htm#statug_mixedkenw_m09)
+1. [lmerTestR implementation](https://github.com/runehaubo/lmerTestR/blob/master/pkg_notes/implementation.Rmd)
+1. [PBKRTEST webpage](https://people.math.aau.dk/~sorenh/software/pbkrtest/)
+1. Kackar, Raghu N., and David A. Harville. "Approximations for standard errors of estimators of fixed and random effects in mixed linear models." Journal of the American Statistical Association 79.388 (1984): 853-862.
