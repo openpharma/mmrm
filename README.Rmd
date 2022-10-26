@@ -101,9 +101,6 @@ at:
 vignette("algorithm")
 ```
 
-For information on how to cite `mmrm`, see
-[here](https://openpharma.github.io/mmrm/main/authors.html#citation).
-A bibtex entry can be created using:
-```{r citation, warning=FALSE}
-citation("mmrm")
-```
+## Citing 
+
+To cite `mmrm` please see [here](https://openpharma.github.io/mmrm/main/authors.html#citation).
