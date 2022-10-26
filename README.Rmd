@@ -2,7 +2,7 @@
 output: github_document
 ---
 <!-- markdownlint-disable-file -->
-<!-- README.md is generated from README.Rmd. Please edit that file -->
+<!-- README.md needs to be generated from README.Rmd. Please edit that file -->
 
 # mmrm  <img src="man/figures/logo.svg" align="right" width="175" />
 
@@ -14,15 +14,28 @@ knitr::opts_chunk$set(
 )
 ```
 
-[![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 \
 
-The `mmrm` package implements mixed models for repeated measures (MMRM) in R.
+Mixed models for repeated measures (MMRM) are a popular
+choice for analyzing longitudinal continuous outcomes in randomized
+clinical trials and beyond; see
+[Cnaan, Laird and Slasor (1997)](https://doi.org/10.1002/(SICI)1097-0258(19971030)16:20<2349::AID-SIM667>3.0.CO;2-E)
+for a tutorial and
+[Mallinckrodt, Lane and Schnell (2008)](https://doi.org/10.1177/009286150804200402)
+for a review. This package implements
+MMRM based on the marginal linear model without random effects using
+Template Model Builder (`TMB`) which enables fast and robust model
+fitting. Users can specify a variety of covariance matrices, weight
+observations, fit models with restricted or standard maximum
+likelihood inference, perform hypothesis testing with Satterthwaite
+adjusted degrees of freedom, and extract least square means estimates
+by using `emmeans`.
 
 ## Main Features
 
 * Responses are assumed normally distributed.
-* Covariances: 
+* Covariances:
   * Structures: unstructured, Toeplitz, AR1, compound symmetry, and ante-dependence.
   * Groups: shared covariance structure for all subjects, or group specific covariance structures.
   * Variances: homogeneous or heterogeneous across time points.
@@ -32,11 +45,19 @@ least square means.
   * Degrees of freedom adjustment: Satterthwaite-adjusted one- and multi-dimensional contrasts.
 * Model inference:
   * Supports REML and ML.
-  * Supports weights. 
+  * Supports weights.
   * Automatic changing of optimizer in the case of non-convergence.
   * Manual control of optimization routine.
 
 ## Installation
+
+### CRAN
+
+You can install the current stable version from CRAN with:
+
+```{r cran-installation, eval = FALSE}
+install.packages("mmrm")
+```
 
 ### GitHub
 

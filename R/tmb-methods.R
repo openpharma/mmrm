@@ -8,12 +8,13 @@
 #' @param complete (`flag`)\cr whether to include potential non-estimable
 #'   coefficients.
 #' @param ... not used.
+#' @return Depends on the method, see Functions.
 #'
 #' @name mmrm_tmb_methods
 #'
 #' @examples
 #' formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
-#' object <- h_mmrm_tmb(formula, fev_data, weights = rep(1, nrow(fev_data)))
+#' object <- fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)))
 NULL
 
 #' @describeIn mmrm_tmb_methods obtains the estimated coefficients.
@@ -102,8 +103,7 @@ vcov.mmrm_tmb <- function(object, complete = TRUE, ...) {
 #' @examples
 #' # Variance-covariance matrix estimate for residuals:
 #' VarCorr(object)
-VarCorr.mmrm_tmb <- function(x, sigma = NA, ...) {
-  # nolint
+VarCorr.mmrm_tmb <- function(x, sigma = NA, ...) { # nolint
   assert_scalar_na(sigma)
 
   component(x, name = "varcor")

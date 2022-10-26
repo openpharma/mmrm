@@ -1,23 +1,36 @@
 Type: Package
 Package: mmrm
 Title: Mixed Models for Repeated Measures
-Version: 0.1.0.9008
+Version: 0.1.5
 Authors@R: c(
     person("Daniel", "Sabanes Bove", , "daniel.sabanes_bove@roche.com", role = c("aut", "cre")),
     person("Julia", "Dedic", , "julia.dedic@roche.com", role = "aut"),
-    person("Brian Matthew", "Lang", , "brian.lang@msd.com", role = "aut"),
     person("Doug", "Kelkhoff", , "kelkhoff.douglas@gene.com", role = "aut"),
+    person("Kevin", "Kunzmann", , "kevin.kunzmann@boehringer-ingelheim.com", role = "aut"),
+    person("Brian Matthew", "Lang", , "brian.lang@msd.com", role = "aut"),
+    person("Liming", "Li", , "liming.li@roche.com", role = "aut"),
     person("Ya", "Wang", , "ya.wang10@gilead.com", role = "aut"),
-    person("Craig", "Gower-Page", , "craig.gower-page@roche.com", role = "aut"),
-    person("Alessandro", "Noci", , "alessandro.noci@roche.com", role = "aut"),
-    person("Liming", "Li", , "liming.li@roche.com", role = "aut")
+    person("Craig", "Gower-Page", , "craig.gower-page@roche.com", role = "ctb"),
+    person("Boehringer Ingelheim Ltd.", role = c("cph", "fnd")),
+    person("Gilead Sciences, Inc.", role = c("cph", "fnd")),
+    person("F. Hoffmann-La Roche AG", role = c("cph", "fnd")),
+    person("Merck Sharp & Dohme, Inc.", role = c("cph", "fnd"))
   )
 Description: Mixed models for repeated measures (MMRM) are a popular
-    choice for individually randomized trials with longitudinal continuous
-    outcomes. This package implements MMRM based on Template Model Builder
-    (`TMB`).
-License: Apache License 2.0 | file LICENSE
-URL: https://github.com/openpharma/mmrm/
+    choice for analyzing longitudinal continuous outcomes in randomized
+    clinical trials and beyond; see Cnaan, Laird and Slasor (1997)
+    <doi:10.1002/(SICI)1097-0258(19971030)16:20%3C2349::AID-SIM667%3E3.0.CO;2-E>
+    for a tutorial and Mallinckrodt, Lane and Schnell (2008)
+    <doi:10.1177/009286150804200402> for a review. This package implements
+    MMRM based on the marginal linear model without random effects using
+    Template Model Builder ('TMB') which enables fast and robust model
+    fitting. Users can specify a variety of covariance matrices, weight
+    observations, fit models with restricted or standard maximum
+    likelihood inference, perform hypothesis testing with Satterthwaite
+    adjusted degrees of freedom, and extract least square means estimates
+    by using 'emmeans'.
+License: Apache License 2.0
+URL: https://openpharma.github.io/mmrm/
 BugReports: https://github.com/openpharma/mmrm/issues
 Depends:
     R (>= 4.0)
@@ -31,7 +44,7 @@ Imports:
     Rdpack,
     stats,
     stringr,
-    TMB (>= 1.9.0)
+    TMB (>= 1.9.1)
 Suggests:
     emmeans (>= 1.6),
     estimability,

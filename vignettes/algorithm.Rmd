@@ -1,8 +1,6 @@
 ---
 title: "Details of the Model Fitting in `mmrm`"
 package: mmrm
-author:
-  - name: Daniel Sabanés Bové
 output:
   rmarkdown::html_document:
           theme: "spacelab"
@@ -198,7 +196,8 @@ f(\theta; \hat{\beta}) = - \log L(\hat{\beta}; Y) = \frac{N}{2} \log(2\pi) +
   \frac{1}{2} (Y - X\hat{\beta})^\top \Omega^{-1} (Y - X\hat{\beta})
 \]
 The objective function $f(\theta; \hat{\beta})$ is then minimized with numerical optimizers
-utilizing Newton-Raphson algorithms based on the gradient and Hessian.
+utilizing quasi-Newton-Raphson algorithms based on the gradient (or additionally with Hessian, see
+[optimizer](../introduction.html#Optimizer)).
 Here the use of the Template Model Builder package `TMB` is helpful because
 
 1. `TMB` allows to perform the calculations in C++, which maximizes the speed.

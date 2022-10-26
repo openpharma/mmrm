@@ -11,7 +11,7 @@
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/openpharma/mmrm/}
+  \item \url{https://openpharma.github.io/mmrm/}
   \item Report bugs at \url{https://github.com/openpharma/mmrm/issues}
 }
 
@@ -22,12 +22,20 @@ Useful links:
 Authors:
 \itemize{
   \item Julia Dedic \email{julia.dedic@roche.com}
-  \item Brian Matthew Lang \email{brian.lang@msd.com}
   \item Doug Kelkhoff \email{kelkhoff.douglas@gene.com}
-  \item Ya Wang \email{ya.wang10@gilead.com}
-  \item Craig Gower-Page \email{craig.gower-page@roche.com}
-  \item Alessandro Noci \email{alessandro.noci@roche.com}
+  \item Kevin Kunzmann \email{kevin.kunzmann@boehringer-ingelheim.com}
+  \item Brian Matthew Lang \email{brian.lang@msd.com}
   \item Liming Li \email{liming.li@roche.com}
+  \item Ya Wang \email{ya.wang10@gilead.com}
+}
+
+Other contributors:
+\itemize{
+  \item Craig Gower-Page \email{craig.gower-page@roche.com} [contributor]
+  \item Boehringer Ingelheim Ltd. [copyright holder, funder]
+  \item Gilead Sciences, Inc. [copyright holder, funder]
+  \item F. Hoffmann-La Roche AG [copyright holder, funder]
+  \item Merck Sharp & Dohme, Inc. [copyright holder, funder]
 }
 
 }

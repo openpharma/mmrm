@@ -90,7 +90,7 @@ matrix<T> euclidean(const matrix<T>& coordinates) {
   for (int i = 0; i < coordinates.rows(); i++) {
     result(i, i) = 0;
     for (int j = 0; j < i; j ++) {
-      vector<T> diff = coordinates.row(i) - coordinates.row(j); 
+      vector<T> diff = coordinates.row(i) - coordinates.row(j);
       T d = sqrt((diff * diff).sum());
       result(i, j) = d;
       result(j, i) = d;

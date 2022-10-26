@@ -16,7 +16,8 @@ h_mmrm_tmb_extract_cov(tmb_report, tmb_data, visit_var, is_spatial)
 \item{is_spatial}{\code{logical}\cr logical value indicating the covariance structure is spatial.}
 }
 \value{
-Return a simple covariance matrix if there is no grouping, or a named list of estimated grouped covariance matrices,
+Return a simple covariance matrix if there is no grouping, or a named
+list of estimated grouped covariance matrices,
 with its name equal to the group levels.
 }
 \description{

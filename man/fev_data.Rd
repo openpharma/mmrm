@@ -14,6 +14,7 @@ A \code{tibble} with 800 rows and 7 variables:
 \item \code{SEX}: sex.
 \item \code{FEV1_BL}: FEV1 at baseline (\%).
 \item \code{FEV1}: FEV1 at study visits.
+\item \code{WEIGHT}: weighting variable.
 }
 }
 \source{

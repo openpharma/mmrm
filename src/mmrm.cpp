@@ -96,7 +96,7 @@ Type objective_function<Type>::operator() ()
       vector<Type> theta_i = theta.segment(subject_groups(i) * theta_one_group_size, theta_one_group_size);
       Li = get_spatial_covariance_lower_chol(theta_i, distance_i, cov_type);
     }
-    
+
 
     // Calculate weighted Cholesky factor for this subject.
     Eigen::DiagonalMatrix<Type,Eigen::Dynamic,Eigen::Dynamic> Gi_inv_sqrt = weights_vector.segment(start_i, n_visits_i).cwiseInverse().sqrt().matrix().asDiagonal();

@@ -16,12 +16,10 @@ reference:
   - title: Package
     contents:
       - mmrm-package
-  - title: Helper Functions
-    contents:
-      - h_mmrm_tmb
   - title: Functions
     contents:
       - mmrm
+      - fit_mmrm
       - mmrm_control
       - fit_single_optimizer
       - refit_multiple_optimizers

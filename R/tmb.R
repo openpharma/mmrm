@@ -326,7 +326,6 @@ h_mmrm_tmb_data <- function(formula_parts,
     ),
     class = "mmrm_tmb_data"
   )
-
 }
 
 #' Start Parameters for `TMB` Fit
@@ -349,23 +348,23 @@ h_mmrm_tmb_parameters <- function(formula_parts,
   assert_class(tmb_data, "mmrm_tmb_data")
 
   m <- tmb_data$n_visits
-  theta_dim <- as.integer(switch(formula_parts$cov_type,
-    us = m * (m + 1) / 2,
-    toep = m,
-    toeph = 2 * m - 1,
-    ar1 = 2,
-    ar1h = m + 1,
-    ad = m,
-    adh = 2 * m - 1,
-    cs = 2,
-    csh = m + 1,
-    sp_exp = 2
-  ))
-  theta_dim <- theta_dim * n_groups
+  start_value <- switch(formula_parts$cov_type,
+    us = rep(0, m * (m + 1) / 2),
+    toep = rep(0, m),
+    toeph = rep(0, 2 * m - 1),
+    ar1 = c(0, 0.5),
+    ar1h = c(rep(0, m), 0.5),
+    ad = rep(0, m),
+    adh = rep(0, 2 * m - 1),
+    cs = rep(0, 2),
+    csh = rep(0, m + 1),
+    sp_exp = rep(0, 2)
+  )
+  theta_dim <- length(start_value) * n_groups
   if (!is.null(start)) {
     assert_numeric(start, len = theta_dim, any.missing = FALSE, finite = TRUE)
   } else {
-    start <- rep(0, theta_dim)
+    start <- rep(start_value, n_groups)
   }
   list(theta = start)
 }
@@ -389,36 +388,27 @@ h_mmrm_tmb_assert_start <- function(tmb_object) {
   }
 }
 
-#' Asserting and Checking `TMB` Optimization Result
+#' Checking the `TMB` Optimization Result
 #'
-#' @param tmb_object (`list`)\cr created with [TMB::MakeADFun()].
 #' @param tmb_opt (`list`)\cr optimization result.
+#' @param mmrm_tmb (`mmrm_tmb`)\cr result from [h_mmrm_tmb_fit()].
 #'
-#' @return Nothing, only used to generate messages, warnings or errors.
+#' @return Nothing, only used to generate warnings in case that the model
+#' did not converge.
 #'
 #' @keywords internal
-h_mmrm_tmb_assert_opt <- function(tmb_object,
-                                  tmb_opt) {
-  assert_list(tmb_object)
-  assert_subset(c("fn", "gr", "par", "he"), names(tmb_object))
+h_mmrm_tmb_check_conv <- function(tmb_opt,
+                                  mmrm_tmb) {
   assert_list(tmb_opt)
   assert_subset(c("par", "objective", "convergence", "message"), names(tmb_opt))
+  assert_class(mmrm_tmb, "mmrm_tmb")
 
   if (!is.null(tmb_opt$convergence) && tmb_opt$convergence != 0) {
     warning("Model convergence problem: ", tmb_opt$message, ".")
   } else {
-    tmb_hessian <- tmb_object$he(tmb_opt$par)
-    eigen_vals <- try(
-      eigen(tmb_hessian, symmetric = TRUE)$values,
-      silent = TRUE
-    )
-    if (is(eigen_vals, "try-error")) {
-      stop("Model convergence problem: Cannot calculate hessian eigenvalues")
-    } else if (min(eigen_vals) < .Machine$double.eps) {
-      warning(
-        "Model convergence problem: ",
-        "hessian has negative or very small eigenvalues"
-      )
+    theta_vcov <- mmrm_tmb$theta_vcov
+    if (is(theta_vcov, "try-error")) {
+      warning("Model convergence problem: hessian is singular, theta_vcov not available")
     }
   }
 }
@@ -432,7 +422,8 @@ h_mmrm_tmb_assert_opt <- function(tmb_object,
 #' @param tmb_data (`mmrm_tmb_data`)\cr produced by [h_mmrm_tmb_data()].
 #' @param visit_var `character`\cr character vector of the visit variable
 #' @param is_spatial `logical`\cr logical value indicating the covariance structure is spatial.
-#' @return Return a simple covariance matrix if there is no grouping, or a named list of estimated grouped covariance matrices,
+#' @return Return a simple covariance matrix if there is no grouping, or a named
+#' list of estimated grouped covariance matrices,
 #' with its name equal to the group levels.
 #'
 #' @keywords internal
@@ -512,7 +503,7 @@ h_mmrm_tmb_fit <- function(tmb_object,
   dimnames(beta_vcov) <- list(x_matrix_cols, x_matrix_cols)
   theta_est <- tmb_opt$par
   names(theta_est) <- NULL
-  theta_vcov <- solve(tmb_object$he(tmb_opt$par))
+  theta_vcov <- try(solve(tmb_object$he(tmb_opt$par)), silent = TRUE)
   opt_details_names <- setdiff(
     names(tmb_opt),
     c("par", "objective")
@@ -537,7 +528,7 @@ h_mmrm_tmb_fit <- function(tmb_object,
   )
 }
 
-#' Fitting an MMRM with `TMB`
+#' Low-Level Fitting Function for MMRM
 #'
 #' @description `r lifecycle::badge("experimental")`
 #'
@@ -567,12 +558,12 @@ h_mmrm_tmb_fit <- function(tmb_object,
 #' @examples
 #' formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
 #' data <- fev_data
-#' system.time(result <- h_mmrm_tmb(formula, data, rep(1, nrow(fev_data))))
-h_mmrm_tmb <- function(formula,
-                       data,
-                       weights,
-                       reml = TRUE,
-                       control = mmrm_control()) {
+#' system.time(result <- fit_mmrm(formula, data, rep(1, nrow(fev_data))))
+fit_mmrm <- function(formula,
+                     data,
+                     weights,
+                     reml = TRUE,
+                     control = mmrm_control()) {
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   assert_class(control, "mmrm_control")
   assert_numeric(weights, any.missing = FALSE)
@@ -588,23 +579,27 @@ h_mmrm_tmb <- function(formula,
     silent = TRUE
   )
   h_mmrm_tmb_assert_start(tmb_object)
-  tmb_opt <- with(
+  args <- with(
     tmb_object,
-    do.call(
-      what = control$optimizer,
-      args = c(
-        list(par, fn, gr, control = control$optimizer_control),
-        control$optimizer_args
-      )
+    c(
+      list(par, fn, gr, control = control$optimizer_control),
+      control$optimizer_args
     )
+  )
+  if (identical(control$optimizer, stats::nlminb)) {
+    args$hessian <- tmb_object$he
+  }
+  tmb_opt <- do.call(
+    what = control$optimizer,
+    args = args
   )
   # Ensure negative log likelihood is stored in `objective` element of list.
   if ("value" %in% names(tmb_opt)) {
     tmb_opt$objective <- tmb_opt$value
     tmb_opt$value <- NULL
   }
-  h_mmrm_tmb_assert_opt(tmb_object, tmb_opt)
   fit <- h_mmrm_tmb_fit(tmb_object, tmb_opt, data, weights, formula_parts, tmb_data)
+  h_mmrm_tmb_check_conv(tmb_opt, fit)
 
   fun_call <- match.call()
   fun_call$formula <- eval(formula_parts$formula)

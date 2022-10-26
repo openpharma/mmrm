@@ -59,6 +59,9 @@ coefficients.}
 \item{k}{(\code{number})\cr the penalty per parameter to be used; default \code{k = 2}
 is the classical AIC.}
 }
+\value{
+Depends on the method, see Functions.
+}
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
@@ -99,7 +102,7 @@ penalty parameter \code{k}.
 }}
 \examples{
 formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
-object <- h_mmrm_tmb(formula, fev_data, weights = rep(1, nrow(fev_data)))
+object <- fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)))
 # Estimated coefficients:
 coef(object)
 # Fitted values:

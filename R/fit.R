@@ -40,7 +40,7 @@ fit_single_optimizer <- function(formula,
     accept_singular = accept_singular
   )
   quiet_fit <- h_record_all_output(
-    h_mmrm_tmb(
+    fit_mmrm(
       formula = formula,
       data = data,
       weights = weights,
@@ -59,7 +59,6 @@ fit_single_optimizer <- function(formula,
     (quiet_fit$result$opt_details$convergence == 0)
   structure(
     quiet_fit$result,
-    errors = quiet_fit$errors,
     warnings = quiet_fit$warnings,
     messages = quiet_fit$messages,
     optimizer = optimizer,
@@ -245,7 +244,7 @@ mmrm_control <- function(optimizer = stats::nlminb,
 #' When setting `optimizer = "automatic"`, first the default optimizer
 #' (`L-BFGS-B`) is used to fit the model. If that converges, this is returned.
 #' If not, the other available optimizers from [refit_multiple_optimizers()] are
-#' tried (in parallel if `n_cores` is set and not on Windows).
+#' tried (in parallel if `n_cores` is set and not on Windows, use e.g. [free_cores()]).
 #' If none of the optimizers converge, then the function fails. Otherwise
 #' the best fit is returned.
 #'
@@ -268,7 +267,7 @@ mmrm <- function(formula,
                  weights = NULL,
                  reml = TRUE,
                  optimizer = "automatic",
-                 n_cores = free_cores(),
+                 n_cores = 1L,
                  accept_singular = TRUE) {
   assert_string(optimizer)
   use_automatic <- identical(optimizer, "automatic")
