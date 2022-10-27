@@ -155,7 +155,6 @@ test_that("emmeans gives d.f. close to what is expected for weighted model", {
   formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
   fev_data <- within(fev_data, AVISIT <- relevel(AVISIT, ref = "VIS4"))
   fit <- mmrm(formula, fev_data, weights = fev_data$WEIGHT)
-  result <- expect_silent(emmeans::emmeans(fit, ~ ARMCD | AVISIT))
   result <- expect_silent(emmeans::emmeans(fit, pairwise ~ ARMCD*AVISIT))
   expect_class(result, "emm_list")
   result_emmeans_df <- as.data.frame(result$emmeans)[, c("ARMCD", "AVISIT", "df")]
