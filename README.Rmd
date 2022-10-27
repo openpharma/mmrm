@@ -121,3 +121,7 @@ at:
 ```{r algo-vignette, eval = FALSE}
 vignette("algorithm")
 ```
+
+## Citing 
+
+To cite `mmrm` please see [here](https://openpharma.github.io/mmrm/main/authors.html#citation).
