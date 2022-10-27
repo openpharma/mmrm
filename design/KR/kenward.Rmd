@@ -229,6 +229,70 @@ h_kr_df <- function(v0, va, l, w, p) { # p list of matrix, w matrix
 }
 ```
 
+### adjusted covariance and w, p, q, etc
+```{r}
+v_a <- function(v, w, p, q) {
+  ret <- v
+  for (i in seq_len(r)) {
+    for (j in seq_len(r)) {
+      ret <- ret + 2 * w[i, j] * v %*% (q[[i]][[j]] - p[[i]] %*% v %*% p[[j]] - 1 / 4 * r[[i]][[j]]) %*% v
+    }
+  }
+}
+
+derivative <- function(sigma, r, order = 1) {
+  # r: number of parameters
+  # sigma: covariance matrix
+  # order: order of derivative
+  # provided the covariance structure, derive the first order derivatives
+  # return a list of matrix
+  return()
+}
+
+# if subject do not have all visits.
+# L is added to sigma: sigmai = L %*% sigma %*% L
+# the inverse derivative can be calculated samely.
+# L is p * q, sigma is q * q (full visits)
+# if L is identity, everything is fine
+inverse_derivative <- function(sigma, r, L) {
+  sigma_inv <- solve(L %*% sigma %*% t(L))
+  d <- derivative(sigma, r)
+  ret <- lapply(d, function(x) {
+    -sigma_inv %*% L %*% x %*% t(L) %*% sigma_inv
+  })
+  return(ret)
+}
+
+r <- function(x, sigma_inv, sigma_deri_order2) {
+  lapply(sigma_deri_order2, function(s) {
+    lapply(s, function(t) {
+      t(x) %*% sigma_inv %*% t %*% sigma_inv %*% x
+    })
+  })
+}
+p <- function(x, inv_sig_deri) {
+  lapply(inv_sig_deri, function(s) { t(x) %*% s %*% x})
+}
+
+q <- function(x, sigma, inv_sig_deri) {
+  lapply(inv_sig_deri, function(s) {
+    lapply(inv_sig_deri, function(t) {
+      t(x) %*% s %*% sigma %*% t %*% x
+    })
+  })
+}
+
+w <- function(inv_sig_deri, sigma, p, q, v) {
+  ret <- matrix(0, ncol = r, nrow = r)
+  for (i in seq_len(r)) {
+    for (j in seq_len(r)) {
+      ret[i, j] <- tr(inv_sig_deri[[i]] %*% sigma %*% inv_sig_deri[[j]] %*% sigma) - tr(2 * v %*% q[[i]][[j]] - v %*% p[[i]] %*% v %*% p[[j]])
+    }
+  }
+  return(solve(ret))
+}
+
+```
 # Reference
 
 1. Kenward, Michael G., and James H. Roger. "Small sample inference for fixed effects from restricted maximum likelihood." Biometrics (1997): 983-997.
