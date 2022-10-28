@@ -163,14 +163,25 @@ test_that("emmeans gives d.f. close to what is expected for weighted model", {
   # See design/SAS/R_weighted_nlme.txt for the source of numbers.
   expected_emmeans_df <- data.frame(
     ARMCD = factor(c("PBO", "TRT", "PBO", "TRT", "PBO", "TRT", "PBO", "TRT")),
-    AVISIT <- factor(c("VIS4", "VIS4", "VIS1", "VIS1", "VIS2", "VIS2", "VIS3", "VIS3"), levels = c("VIS4", "VIS1", "VIS2", "VIS3")),
+    AVISIT <- factor(c("VIS4", "VIS4", "VIS1", "VIS1", "VIS2", "VIS2", "VIS3", "VIS3"),
+                     levels = c("VIS4", "VIS1", "VIS2", "VIS3")),
     df = c(134, 132, 147, 142, 144, 143, 128, 128)
   )
   expect_equal(result_emmeans_df, expected_emmeans_df, tolerance = 1e-2)
 
   expected_contrasts_df <- data.frame(
-    contrast <- c("PBO VIS4 - TRT VIS4", "PBO VIS4 - PBO VIS1", "PBO VIS4 - TRT VIS1", "PBO VIS4 - PBO VIS2", "PBO VIS4 - TRT VIS2", "PBO VIS4 - PBO VIS3", "PBO VIS4 - TRT VIS3", "TRT VIS4 - PBO VIS1", "TRT VIS4 - TRT VIS1", "TRT VIS4 - PBO VIS2", "TRT VIS4 - TRT VIS2", "TRT VIS4 - PBO VIS3", "TRT VIS4 - TRT VIS3", "PBO VIS1 - TRT VIS1", "PBO VIS1 - PBO VIS2", "PBO VIS1 - TRT VIS2", "PBO VIS1 - PBO VIS3", "PBO VIS1 - TRT VIS3", "TRT VIS1 - PBO VIS2", "TRT VIS1 - TRT VIS2", "TRT VIS1 - PBO VIS3", "TRT VIS1 - TRT VIS3", "PBO VIS2 - TRT VIS2", "PBO VIS2 - PBO VIS3", "PBO VIS2 - TRT VIS3", "TRT VIS2 - PBO VIS3", "TRT VIS2 - TRT VIS3", "PBO VIS3 - TRT VIS3"),
-    df = c(133, 148, 231, 158, 198, 157, 190, 223, 122, 196, 147, 170, 161, 142, 151, 257, 157, 251, 258, 135, 225, 168, 144, 160, 270, 264, 159, 129)
+    contrast <- c("PBO VIS4 - TRT VIS4", "PBO VIS4 - PBO VIS1", "PBO VIS4 - TRT VIS1",
+                  "PBO VIS4 - PBO VIS2", "PBO VIS4 - TRT VIS2", "PBO VIS4 - PBO VIS3",
+                  "PBO VIS4 - TRT VIS3", "TRT VIS4 - PBO VIS1", "TRT VIS4 - TRT VIS1",
+                  "TRT VIS4 - PBO VIS2", "TRT VIS4 - TRT VIS2", "TRT VIS4 - PBO VIS3",
+                  "TRT VIS4 - TRT VIS3", "PBO VIS1 - TRT VIS1", "PBO VIS1 - PBO VIS2",
+                  "PBO VIS1 - TRT VIS2", "PBO VIS1 - PBO VIS3", "PBO VIS1 - TRT VIS3",
+                  "TRT VIS1 - PBO VIS2", "TRT VIS1 - TRT VIS2", "TRT VIS1 - PBO VIS3",
+                  "TRT VIS1 - TRT VIS3", "PBO VIS2 - TRT VIS2", "PBO VIS2 - PBO VIS3",
+                  "PBO VIS2 - TRT VIS3", "TRT VIS2 - PBO VIS3", "TRT VIS2 - TRT VIS3",
+                  "PBO VIS3 - TRT VIS3"),
+    df = c(133, 148, 231, 158, 198, 157, 190, 223, 122, 196, 147, 170, 161, 142,
+           151, 257, 157, 251, 258, 135, 225, 168, 144, 160, 270, 264, 159, 129)
   )
   expect_equal(result_contrasts_df, expected_contrasts_df, tolerance = 1e-2)
 })
