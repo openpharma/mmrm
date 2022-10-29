@@ -83,7 +83,7 @@ remotes::install_github("openpharma/mmrm")
 
 ## Getting Started
 
-See also the [intoductory vignette](https://openpharma.github.io/mmrm/main/articles/introduction.html)
+See also the [introductory vignette](https://openpharma.github.io/mmrm/main/articles/introduction.html)
 or get started by trying out the example:
 
 ```{r getting-started}
