@@ -244,7 +244,7 @@ mmrm_control <- function(optimizer = stats::nlminb,
 #' When setting `optimizer = "automatic"`, first the default optimizer
 #' (`L-BFGS-B`) is used to fit the model. If that converges, this is returned.
 #' If not, the other available optimizers from [refit_multiple_optimizers()] are
-#' tried (in parallel if `n_cores` is set and not on Windows, use e.g. [free_cores()]).
+#' tried (in parallel if `n_cores` is set and not on Windows).
 #' If none of the optimizers converge, then the function fails. Otherwise
 #' the best fit is returned.
 #'

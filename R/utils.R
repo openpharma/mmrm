@@ -51,7 +51,8 @@ h_record_all_output <- function(expr, remove = list()) {
 
 #' Get an approximate number of free cores.
 #'
-#' @description `r lifecycle::badge("experimental")`
+#' @description `r lifecycle::badge("deprecated")` use
+#' `parallelly::availableCores(omit = 1)` instead
 #'
 #' @return The approximate number of free cores, which is an integer between 1 and one less than
 #' the total cores.
@@ -68,6 +69,7 @@ h_record_all_output <- function(expr, remove = list()) {
 #'
 #' @export
 free_cores <- function() {
+  .Deprecated("parallelly::availableCores(omit = 1)")
   all_cores <- parallel::detectCores(all.tests = TRUE)
   busy_cores <-
     if (.Platform$OS.type == "windows") {
