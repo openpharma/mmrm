@@ -9,8 +9,8 @@
 [![Project Status: Active – The project has reached a stable, usable
 state and is being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[\[CRAN
-status\](https://www.r-pkg.org/badges/version-last-release/mmrm](https://www.r-pkg.org/badges/version-last-release/mmrm)
+[![CRAN
+status](https://www.r-pkg.org/badges/version-last-release/mmrm)](https://www.r-pkg.org/badges/version-last-release/mmrm)
 [![CRAN monthly
 downloads](https://cranlogs.r-pkg.org/badges/mmrm)](https://cranlogs.r-pkg.org/badges/mmrm)
 [![CRAN total
