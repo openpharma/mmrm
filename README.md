@@ -9,8 +9,6 @@
 [![Project Status: Active – The project has reached a stable, usable
 state and is being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [\[CRAN
 status\](https://www.r-pkg.org/badges/version-last-release/mmrm](https://www.r-pkg.org/badges/version-last-release/mmrm)
 [![CRAN monthly
@@ -88,7 +86,9 @@ remotes::install_github("openpharma/mmrm")
 
 ## Getting Started
 
-You can get started by trying out the example:
+See also the [introductory
+vignette](https://openpharma.github.io/mmrm/main/articles/introduction.html)
+or get started by trying out the example:
 
 ``` r
 library(mmrm)
@@ -97,9 +97,6 @@ fit <- mmrm(
   data = fev_data
 )
 ```
-
-See also the [intoductory
-vignette](https://openpharma.github.io/mmrm/main/articles/introduction.html).
 
 The code specifies an MMRM with the given covariates and an unstructured
 covariance matrix for the timepoints (also called visits in the clinical
