@@ -26,7 +26,6 @@ jobs:
     with:
       additional-r-cmd-check-params: --as-cran
   coverage:
-    if: github.event_name == 'pull_request'
     name: Coverage 📔
     uses: insightsengineering/r.pkg.template/.github/workflows/test-coverage.yaml@main
     secrets:
