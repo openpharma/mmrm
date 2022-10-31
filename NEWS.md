@@ -1,4 +1,4 @@
-# mmrm 0.1.5.9000
+# mmrm 0.1.5.9001
 
 - Deprecated `free_cores()` in favor of `parallelly::availableCores(omit = 1)`.
 
