@@ -26,7 +26,6 @@ reference:
       - df_1d
       - df_md
       - component
-      - free_cores
   - title: Methods
     contents:
       - mmrm_methods
@@ -40,3 +39,6 @@ reference:
   - title: Datasets
     contents:
       - fev_data
+  - title: Deprecated
+    contents:
+      - free_cores
