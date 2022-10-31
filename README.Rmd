@@ -48,7 +48,8 @@ effects are supported
 
 * Flexible covariance specification:
   * [Structures](https://openpharma.github.io/mmrm/main/articles/covariance.html): unstructured, Toeplitz, AR1, compound symmetry, spatial exponential, and ante-dependence.
-  * Groups: shared covariance structure for all subjects, or group specific covariance structures.
+  * Groups: shared covariance structure for all subjects and, or group-specific
+  covariance estimates.
   * Variances: homogeneous or heterogeneous across time points.
 * Hypothesis testing:
   * [Least square means](https://openpharma.github.io/mmrm/main/reference/emmeans_support.html): `emmeans` package can be used with model outputs to obtain
