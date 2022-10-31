@@ -67,9 +67,10 @@ h_record_all_output <- function(expr, remove = list()) {
 #' @note If executed during a unit test and on CRAN then always returns 1 to avoid any
 #' parallelization.
 #'
+#' @importFrom lifecycle deprecate_warn
 #' @export
 free_cores <- function() {
-  .Deprecated("parallelly::availableCores(omit = 1)")
+  lifecycle::deprecate_warn("0.1.6", "free_cores()", "parallelly::availableCores(omit = 'number of cores to reserve, e.g. 1')")
   all_cores <- parallel::detectCores(all.tests = TRUE)
   busy_cores <-
     if (.Platform$OS.type == "windows") {
