@@ -41,7 +41,7 @@ by using `emmeans`.
 **Scope:**
 
 * Continuous responses with normal (but potentially heteroscedastic) residuals.
-* Individual-level random effects are not supported, the focus lies on marginal linear models.
+* Marginal linear models (no individual-level random effects).
 
 **Main Features:**
 

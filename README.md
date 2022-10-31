@@ -15,6 +15,8 @@ status](https://www.r-pkg.org/badges/version-last-release/mmrm)](https://www.r-p
 downloads](https://cranlogs.r-pkg.org/badges/mmrm)](https://cranlogs.r-pkg.org/badges/mmrm)
 [![CRAN total
 downloads](https://cranlogs.r-pkg.org/badges/grand-total/mmrm)](https://cranlogs.r-pkg.org/badges/grand-total/mmrm)
+[![Code
+Coverage](https://raw.githubusercontent.com/openpharma/mmrm/_xml_coverage_reports/data/main/coverage.xml)](https://raw.githubusercontent.com/openpharma/mmrm/_xml_coverage_reports/data/main/badge.svg)
 <!-- badges: end -->  
 
 Mixed models for repeated measures (MMRM) are a popular choice for
@@ -35,17 +37,16 @@ means estimates by using `emmeans`.
 
 -   Continuous responses with normal (but potentially heteroscedastic)
     residuals.
--   Only marginal linear models without individual-level random effects
-    are supported
+-   Marginal linear models (no individual-level random effects).
 
 **Main Features:**
 
 -   Flexible covariance specification:
     -   [Structures](https://openpharma.github.io/mmrm/main/articles/covariance.html):
-        unstructured, Toeplitz, AR1, compound symmetry, and
-        ante-dependence.
-    -   Groups: shared covariance structure for all subjects, or group
-        specific covariance structures.
+        unstructured, Toeplitz, AR1, compound symmetry, spatial
+        exponential, and ante-dependence.
+    -   Groups: shared covariance structure for all subjects and, or
+        group-specific covariance estimates.
     -   Variances: homogeneous or heterogeneous across time points.
 -   Hypothesis testing:
     -   [Least square
@@ -57,9 +58,8 @@ means estimates by using `emmeans`.
 -   Model inference:
     -   Supports REML and ML.
     -   Supports weights.
--   Powerful and fast implementation using C++ and automatic
-    differentiation to obtain precise gradient information for model
-    fitting. See
+-   Fast implementation using C++ and automatic differentiation to
+    obtain precise gradient information for model fitting. See
     [here](https://openpharma.github.io/mmrm/main/articles/algorithm.html)
     for details of the model fitting algorithm used in `mmrm`.
 
