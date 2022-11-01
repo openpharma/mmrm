@@ -34,7 +34,7 @@ Why do we use mmrm rather than other models.
 data types, covariance structures, existing implementations in R and SAS proc mixed
 misnomer of "mixed model", since we are actually marginalizing out the random effects
 
-```{r, child=c('mmrm_review_abstract_introduction.Rmd')}
+```{r, child=c('mmrm_review_introduction.Rmd')}
 ```
 
 # Methods
@@ -46,12 +46,12 @@ should at least illustrate that SAS/R are producing similar results on the FEV
 data set. 
 illustrate convergence and speed over other non-purpose built models. 
 
-```{r, child=c('mmrm_review_abstract_methods.Rmd')}
+```{r, child=c('mmrm_review_methods.Rmd')}
 ```
 
 # Results
 
-```{r, child=c('mmrm_review_abstract_results.Rmd')}
+```{r, child=c('mmrm_review_results.Rmd')}
 ```
 
 # References
