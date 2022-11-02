@@ -290,7 +290,7 @@ w <- function(inv_sig_deri, sigma, p, q, v) {
       ret[i, j] <- tr(inv_sig_deri[[i]] %*% sigma %*% inv_sig_deri[[j]] %*% sigma) - tr(2 * v %*% q[[i]][[j]] - v %*% p[[i]] %*% v %*% p[[j]])
     }
   }
-  return(solve(ret / 2))
+  return(ret)
 }
 
 ```
@@ -302,7 +302,10 @@ library(mmrm)
 library(Matrix)
 fit <- mmrm(FEV1 ~ ARMCD + ar1(AVISIT|USUBJID), data = fev_data)
 
-derivative_ar1 <- function(visits, sig, rho, order = 1) {
+derivative_ar1 <- function(visits, theta1, theta2, order = 1) {
+  sig <- exp(2 * theta1)
+  rho <- theta2 / sqrt(1 + theta2 ^ 2)
+  rr <- (1 + theta2 ^ 2)
   # r: number of parameters
   # visits: number of total visits
   # sig: sigma^2
@@ -312,29 +315,22 @@ derivative_ar1 <- function(visits, sig, rho, order = 1) {
   # return a list of matrix
   dis <- abs(outer(seq_len(visits), seq_len(visits), "-"))
   if (order == 1) {
-    psig <- rho ^ dis
-    prho <- rho ^ (dis - 1) * dis * sig
+    psig <- rho ^ dis * sig * 2
+    prho <- rho ^ (dis - 1) * dis * sig * rr ^ -1.5
     return(list(sig = psig, rho = prho))
   }
   if (order == 2) {
-    sigsig <- matrix(0, ncol = visits, nrow = visits)
-    sigrho <- rho ^ (dis - 1) * dis
-    rhosig <- rho ^ (dis - 1) * dis
-    rhorho <- rho ^ (dis - 2) * dis * (dis - 1) * sig
+    sigsig <- rho ^ dis * sig * 4
+    sigrho <- rho ^ (dis - 1) * dis * sig * rr ^ -1.5 * 2
+    rhosig <- rho ^ (dis - 1) * dis * sig * rr ^ -1.5 * 2
+    rhorho <- rho ^ (dis - 2) * dis * (dis - 1) * sig * rr ^ -3 + rho ^ (dis - 1) * dis * sig * -3 * theta2 * rr ^ -2.5
     return(list(sig = list(sig = sigsig, rho = sigrho), rho = list(sig = rhosig, rho = rhorho)))
   }
 }
 
-theta1 <- function(x) {
-  exp(2 * x)
-}
-theta2 <- function(x) {
-  x / sqrt(1 + x^2)
-}
-
 # derivatives for 4 visits
-d1 <- derivative_ar1(component(fit, "n_timepoints"), theta1(fit$theta_est[1]), theta2(fit$theta_est[2]), order = 1)
-d2 <- derivative_ar1(component(fit, "n_timepoints"), theta1(fit$theta_est[1]), theta2(fit$theta_est[2]), order = 2)
+d1 <- derivative_ar1(component(fit, "n_timepoints"), (fit$theta_est[1]), (fit$theta_est[2]), order = 1)
+d2 <- derivative_ar1(component(fit, "n_timepoints"), (fit$theta_est[1]), (fit$theta_est[2]), order = 2)
 # all subjects x
 x <- component(fit, 'x')
 
@@ -375,9 +371,12 @@ sigma_d2_sparse <- lapply(pars, function(x) {
 r_sparse <- r(x, sigma_inv_sparse, sigma_d2_sparse)
 p_sparse <- p(x, sigma_inv_d1)
 q_sparse <- q(x, sigma_sparse, sigma_inv_d1)
-w_sparse <- w(sigma_inv_d1, sigma_sparse, p_sparse, q_sparse, fit$beta_vcov)
+# w(sigma_inv_d1, sigma_sparse, p_sparse, q_sparse, fit$beta_vcov)/ 2
+# should give identical results but here not
+w_sparse <- solve(fit$tmb_object$he(fit$theta_est))
 v_adjust <- v_a(fit$beta_vcov, w_sparse, p_sparse, q_sparse, r_sparse)
 contrast <- matrix(c(0, 1), ncol = 1)
+# degree of freedom should be very close now
 df_adjust <- h_kr_df(fit$beta_vcov, v_adjust, contrast, w_sparse, p_sparse)
 
 attr(v_adjust, "P") <- p_sparse
