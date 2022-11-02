@@ -1,5 +1,9 @@
 # mmrm 0.1.5.9004
 
+- Deprecated `free_cores()` in favor of `parallelly::availableCores(omit = 1)`.
+
+# mmrm 0.1.5
+
 - First CRAN version of the package.
 - The package fits mixed models for repeated measures
   (MMRM) based on the marginal linear model without random effects.

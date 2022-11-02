@@ -51,7 +51,8 @@ Suggests:
     knitr,
     rmarkdown,
     testthat (>= 3.0.0),
-    xml2
+    xml2,
+    parallelly (>= 1.32.0)
 LinkingTo:
     RcppEigen,
     testthat,
