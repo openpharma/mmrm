@@ -4,9 +4,20 @@
 
 # mmrm <img src="man/figures/logo.svg" align="right" width="175" />
 
+<!-- badges: start -->
+
 [![Project Status: Active – The project has reached a stable, usable
 state and is being actively
-developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)  
+developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![CRAN
+status](https://www.r-pkg.org/badges/version-last-release/mmrm)](https://www.r-pkg.org/badges/version-last-release/mmrm)
+[![CRAN monthly
+downloads](https://cranlogs.r-pkg.org/badges/mmrm)](https://cranlogs.r-pkg.org/badges/mmrm)
+[![CRAN total
+downloads](https://cranlogs.r-pkg.org/badges/grand-total/mmrm)](https://cranlogs.r-pkg.org/badges/grand-total/mmrm)
+[![Code
+Coverage](https://raw.githubusercontent.com/openpharma/mmrm/_xml_coverage_reports/data/main/coverage.xml)](https://raw.githubusercontent.com/openpharma/mmrm/_xml_coverage_reports/data/main/badge.svg)
+<!-- badges: end -->  
 
 Mixed models for repeated measures (MMRM) are a popular choice for
 analyzing longitudinal continuous outcomes in randomized clinical trials
@@ -22,29 +33,39 @@ maximum likelihood inference, perform hypothesis testing with
 Satterthwaite adjusted degrees of freedom, and extract least square
 means estimates by using `emmeans`.
 
-## Main Features
+**Scope:**
 
-- Responses are assumed normally distributed.
-- Covariances:
-  - Structures: unstructured, Toeplitz, AR1, compound symmetry, and
-    ante-dependence.
-  - Groups: shared covariance structure for all subjects, or group
-    specific covariance structures.
-  - Variances: homogeneous or heterogeneous across time points.
-- Hypothesis testing:
-  - Least square means: `emmeans` package can be used with model outputs
-    to obtain least square means.
-  - Degrees of freedom adjustment: Satterthwaite-adjusted one- and
-    multi-dimensional contrasts.
-- Model inference:
-  - Supports REML and ML.
-  - Supports weights.
-  - Automatic changing of optimizer in the case of non-convergence.
-  - Manual control of optimization routine.
+-   Continuous responses with normal (but potentially heteroscedastic)
+    residuals.
+-   Marginal linear models (no individual-level random effects).
+
+**Main Features:**
+
+-   Flexible covariance specification:
+    -   [Structures](https://openpharma.github.io/mmrm/main/articles/covariance.html):
+        unstructured, Toeplitz, AR1, compound symmetry, spatial
+        exponential, and ante-dependence.
+    -   Groups: shared covariance structure for all subjects and, or
+        group-specific covariance estimates.
+    -   Variances: homogeneous or heterogeneous across time points.
+-   Hypothesis testing:
+    -   [Least square
+        means](https://openpharma.github.io/mmrm/main/reference/emmeans_support.html):
+        `emmeans` package can be used with model outputs to obtain least
+        square means and test linear contrasts of model parameters.
+    -   Degrees of freedom adjustment: Satterthwaite-adjusted one- and
+        multi-dimensional contrasts.
+-   Model inference:
+    -   Supports REML and ML.
+    -   Supports weights.
+-   Fast implementation using C++ and automatic differentiation to
+    obtain precise gradient information for model fitting. See
+    [here](https://openpharma.github.io/mmrm/main/articles/algorithm.html)
+    for details of the model fitting algorithm used in `mmrm`.
 
 ## Installation
 
-### CRAN
+**CRAN**
 
 You can install the current stable version from CRAN with:
 
@@ -52,7 +73,7 @@ You can install the current stable version from CRAN with:
 install.packages("mmrm")
 ```
 
-### GitHub
+**GitHub**
 
 You can install the current development version from GitHub with:
 
@@ -65,7 +86,9 @@ remotes::install_github("openpharma/mmrm")
 
 ## Getting Started
 
-You can get started by trying out the example:
+See also the [introductory
+vignette](https://openpharma.github.io/mmrm/main/articles/introduction.html)
+or get started by trying out the example:
 
 ``` r
 library(mmrm)
@@ -75,7 +98,7 @@ fit <- mmrm(
 )
 ```
 
-This specifies an MMRM with the given covariates and an unstructured
+The code specifies an MMRM with the given covariates and an unstructured
 covariance matrix for the timepoints (also called visits in the clinical
 trial context, here given by `AVISIT`) within the subjects (here
 `USUBJID`). While by default this uses restricted maximum likelihood
@@ -166,25 +189,7 @@ summary(fit)
 #> VIS4 13.3867  7.4745  0.9082 95.5568
 ```
 
-## Details
+## Citing `mmrm`
 
-For a more detailed introduction to all of the features of this package,
-look at the introduction vignette:
-
-``` r
-vignette("introduction")
-```
-
-For the available covariance structures, look at the covariance
-vignette:
-
-``` r
-vignette("covariance")
-```
-
-In order to understand how `mmrm` is fitting the models, you can read
-the details at:
-
-``` r
-vignette("algorithm")
-```
+To cite `mmrm` please see
+[here](https://openpharma.github.io/mmrm/main/authors.html#citation).
