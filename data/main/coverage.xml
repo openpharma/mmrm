@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage line-rate="0.965149359886202" branch-rate="0" lines-covered="1357" lines-valid="1406" branches-covered="0" branches-valid="0" complexity="0" version="3.6.1" timestamp="2022-11-02 12:31:36">
+<coverage line-rate="0.963778409090909" branch-rate="0" lines-covered="1357" lines-valid="1408" branches-covered="0" branches-valid="0" complexity="0" version="3.6.1" timestamp="2022-11-02 13:25:34">
   <sources/>
   <packages>
-    <package name="mmrm" line-rate="0.965149359886202" branch-rate="0" complexity="0">
+    <package name="mmrm" line-rate="0.963778409090909" branch-rate="0" complexity="0">
       <classes>
         <class name="component.R" filename="R/component.R" line-rate="1" branch-rate="0" complexity="0">
           <methods>
@@ -1568,9 +1568,9 @@
                 <line number="403" hits="87" branch="false"/>
                 <line number="404" hits="87" branch="false"/>
                 <line number="406" hits="87" branch="false"/>
-                <line number="407" hits="5" branch="false"/>
-                <line number="409" hits="82" branch="false"/>
-                <line number="410" hits="82" branch="false"/>
+                <line number="407" hits="6" branch="false"/>
+                <line number="409" hits="81" branch="false"/>
+                <line number="410" hits="81" branch="false"/>
                 <line number="411" hits="2" branch="false"/>
               </lines>
             </method>
@@ -1917,9 +1917,9 @@
             <line number="403" hits="87" branch="false"/>
             <line number="404" hits="87" branch="false"/>
             <line number="406" hits="87" branch="false"/>
-            <line number="407" hits="5" branch="false"/>
-            <line number="409" hits="82" branch="false"/>
-            <line number="410" hits="82" branch="false"/>
+            <line number="407" hits="6" branch="false"/>
+            <line number="409" hits="81" branch="false"/>
+            <line number="410" hits="81" branch="false"/>
             <line number="411" hits="2" branch="false"/>
             <line number="431" hits="88" branch="false"/>
             <line number="432" hits="88" branch="false"/>
@@ -2024,7 +2024,7 @@
             <line number="616" hits="84" branch="false"/>
           </lines>
         </class>
-        <class name="utils.R" filename="R/utils.R" line-rate="0.574468085106383" branch-rate="0" complexity="0">
+        <class name="utils.R" filename="R/utils.R" line-rate="0.551020408163265" branch-rate="0" complexity="0">
           <methods>
             <method name="h_record_all_output" signature="" line-rate="1" branch-rate="0">
               <lines>
@@ -2041,8 +2041,8 @@
                 <line number="33" hits="4" branch="false"/>
                 <line number="34" hits="38" branch="false"/>
                 <line number="35" hits="38" branch="false"/>
-                <line number="36" hits="7" branch="false"/>
-                <line number="37" hits="7" branch="false"/>
+                <line number="36" hits="8" branch="false"/>
+                <line number="37" hits="8" branch="false"/>
                 <line number="38" hits="38" branch="false"/>
                 <line number="39" hits="38" branch="false"/>
                 <line number="40" hits="1" branch="false"/>
@@ -2059,26 +2059,28 @@
             </method>
             <method name="free_cores" signature="" line-rate="0" branch-rate="0">
               <lines>
-                <line number="71" hits="0" branch="false"/>
                 <line number="72" hits="0" branch="false"/>
                 <line number="73" hits="0" branch="false"/>
                 <line number="74" hits="0" branch="false"/>
+                <line number="75" hits="0" branch="false"/>
+                <line number="76" hits="0" branch="false"/>
                 <line number="77" hits="0" branch="false"/>
-                <line number="78" hits="0" branch="false"/>
-                <line number="79" hits="0" branch="false"/>
                 <line number="80" hits="0" branch="false"/>
                 <line number="81" hits="0" branch="false"/>
                 <line number="82" hits="0" branch="false"/>
                 <line number="83" hits="0" branch="false"/>
                 <line number="84" hits="0" branch="false"/>
-                <line number="88" hits="0" branch="false"/>
-                <line number="89" hits="0" branch="false"/>
-                <line number="90" hits="0" branch="false"/>
+                <line number="85" hits="0" branch="false"/>
+                <line number="86" hits="0" branch="false"/>
+                <line number="87" hits="0" branch="false"/>
                 <line number="91" hits="0" branch="false"/>
                 <line number="92" hits="0" branch="false"/>
                 <line number="93" hits="0" branch="false"/>
                 <line number="94" hits="0" branch="false"/>
+                <line number="95" hits="0" branch="false"/>
                 <line number="96" hits="0" branch="false"/>
+                <line number="97" hits="0" branch="false"/>
+                <line number="99" hits="0" branch="false"/>
               </lines>
             </method>
           </methods>
@@ -2096,8 +2098,8 @@
             <line number="33" hits="4" branch="false"/>
             <line number="34" hits="38" branch="false"/>
             <line number="35" hits="38" branch="false"/>
-            <line number="36" hits="7" branch="false"/>
-            <line number="37" hits="7" branch="false"/>
+            <line number="36" hits="8" branch="false"/>
+            <line number="37" hits="8" branch="false"/>
             <line number="38" hits="38" branch="false"/>
             <line number="39" hits="38" branch="false"/>
             <line number="40" hits="1" branch="false"/>
@@ -2110,26 +2112,28 @@
             <line number="47" hits="38" branch="false"/>
             <line number="48" hits="38" branch="false"/>
             <line number="49" hits="38" branch="false"/>
-            <line number="71" hits="0" branch="false"/>
             <line number="72" hits="0" branch="false"/>
             <line number="73" hits="0" branch="false"/>
             <line number="74" hits="0" branch="false"/>
+            <line number="75" hits="0" branch="false"/>
+            <line number="76" hits="0" branch="false"/>
             <line number="77" hits="0" branch="false"/>
-            <line number="78" hits="0" branch="false"/>
-            <line number="79" hits="0" branch="false"/>
             <line number="80" hits="0" branch="false"/>
             <line number="81" hits="0" branch="false"/>
             <line number="82" hits="0" branch="false"/>
             <line number="83" hits="0" branch="false"/>
             <line number="84" hits="0" branch="false"/>
-            <line number="88" hits="0" branch="false"/>
-            <line number="89" hits="0" branch="false"/>
-            <line number="90" hits="0" branch="false"/>
+            <line number="85" hits="0" branch="false"/>
+            <line number="86" hits="0" branch="false"/>
+            <line number="87" hits="0" branch="false"/>
             <line number="91" hits="0" branch="false"/>
             <line number="92" hits="0" branch="false"/>
             <line number="93" hits="0" branch="false"/>
             <line number="94" hits="0" branch="false"/>
+            <line number="95" hits="0" branch="false"/>
             <line number="96" hits="0" branch="false"/>
+            <line number="97" hits="0" branch="false"/>
+            <line number="99" hits="0" branch="false"/>
           </lines>
         </class>
         <class name="covariance.h" filename="src/covariance.h" line-rate="0.990384615384615" branch-rate="0" complexity="0">
