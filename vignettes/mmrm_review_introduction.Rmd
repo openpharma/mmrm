@@ -1,3 +1,8 @@
+---
+output:
+  rmarkdown::html_document: default
+  html_document: default
+---
 
 <!--
 Ideas: 
@@ -9,4 +14,8 @@ Why do we use mmrm rather than other models.
 data types, covariance structures, existing implementations in R and SAS proc mixed
 misnomer of "mixed model", since we are actually marginalizing out the random effects
 -->
+
+TO DO...
+
+The association between repeated measurements on the same patients can be modeled as a function of random effects, residual effects, or both.
 

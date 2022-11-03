@@ -1,7 +1,8 @@
 ---
-title: "Working title for `mmrm` review and comparison"
+title: "Demystifying MMRMs: introductory review and contrast to other models for longitudinal data (working title, only temporary)"
 package: mmrm
-bibliography: '`r system.file("REFERENCES.bib", package = "mmrm")`'
+#bibliography: '`r system.file("REFERENCES.bib", package = "mmrm")`'
+bibliography: mmrm_review_refs.bib # temporary bibliography
 output:
   rmarkdown::html_document:
           theme: "spacelab"
@@ -55,7 +56,7 @@ illustrate convergence and speed over other non-purpose built models.
 
 # Results
 
-```{r, child=c('mmrm_review_results.Rmd')}
-```
+...
+
 
 # References
