@@ -19,3 +19,4 @@ TO DO...
 
 The association between repeated measurements on the same patients can be modeled as a function of random effects, residual effects, or both.
 
+@Mallinckrodt2017
