@@ -25,6 +25,7 @@ editor_options:
 
 # Introduction
 
+<!-- 
 Ideas: 
 A general, textbook-like, introduction which outlines MMRM and how it works with a 
 focus on key references. 
@@ -33,9 +34,12 @@ random slope intercept / glm / ... model.
 Why do we use mmrm rather than other models. 
 data types, covariance structures, existing implementations in R and SAS proc mixed
 misnomer of "mixed model", since we are actually marginalizing out the random effects
+-->
 
 ```{r, child=c('mmrm_review_introduction.Rmd')}
 ```
+
+
 
 # Methods
 
