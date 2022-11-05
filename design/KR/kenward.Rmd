@@ -1,7 +1,7 @@
 ---
 title: how to implement Kenward Roger degree of freedom?
 author: "Liming Li"
-output: html_document
+output: bookdown::html_document2
 editor_options:
   chunk_output_type: console
 ---
@@ -81,14 +81,14 @@ $\Phi$ is the variance-covariance matrix for $\hat\beta$, and we usually use
 $\hat\Phi = \Phi(\hat\sigma)$ to measure the precision of $\hat\beta$.
 
 However, Kackar and Harville shows that the variability can be further partitioned into
-\[
-  V(\hat\beta) = \Phi + \Lambda
-\]
+\begin{equation}
+  V(\hat\beta) = \Phi + \Lambda (\#eq:vbeta)
+\end{equation}
 where $\Lambda$ represents the asymptotic variance-covariance matrix underestimates $V(\hat\beta)$,
 and $\Lambda$ can be approximated by
-\[
-  \Lambda \simeq \Phi \left\{\sum_{i=1}^r{\sum_{j=1}^r{W_{ij}(Q_{ij} - P_i \Phi P_j)} }\right\} \Phi
-\]
+\begin{equation}
+  \Lambda \simeq \Phi \left\{\sum_{i=1}^r{\sum_{j=1}^r{W_{ij}(Q_{ij} - P_i \Phi P_j)} }\right\} \Phi (\#eq:lambda)
+\end{equation}
 where
 \[
   P_i = X^\top \frac{\partial{\Sigma^{-1}}}{\partial \sigma_i} X
@@ -105,9 +105,9 @@ Further consider the bias of $\hat\Phi$ as an estimator of $\Phi$ using Taylor e
 \]
 
 Ignoring the bias and the expectation is
-\[
-  E(\hat\Phi) = \Phi + \frac{1}{2} \sum_{i=1}^r{\sum_{j=1}^r{W_{ij}\frac{\partial^2{\Phi}}{\partial{\sigma_i}\partial{\sigma_j}}}}
-\]
+\begin{equation}
+  E(\hat\Phi) \simeq \Phi + \frac{1}{2} \sum_{i=1}^r{\sum_{j=1}^r{W_{ij}\frac{\partial^2{\Phi}}{\partial{\sigma_i}\partial{\sigma_j}}}} (\#eq:phi)
+\end{equation}
 
 Using previous notations,
 
@@ -119,19 +119,21 @@ where
   R_{ij} = X^\top\Sigma^{-1}\frac{\partial^2\Sigma}{\partial{\sigma_i}\partial{\sigma_j}} \Sigma^{-1} X
 \]
 
+
+Using \@ref(eq:lambda) and \@ref(eq:phi) to substitute \@ref(eq:vbeta) we have
+\[
+  V(\beta) = \hat\Phi_A = \hat\Phi + 2\hat\Phi \left\{\sum_{i=1}^r{\sum_{j=1}^r{W_{ij}(Q_{ij} - P_i \hat\Phi P_j - \frac{1}{4}R_{ij})} }\right\} \hat\Phi
+\]
+
 (Note: in some implementations of KR, $R_{ij}$ is ignored and leads to a variant.)
 
-So the adjusted estimator is
+$W$ is the can be estimated using the inverse of information matrix by substituting the observed values
 
 \[
-  \hat\Phi_A = \hat\Phi + 2\hat\Phi \left\{\sum_{i=1}^r{\sum_{j=1}^r{W_{ij}(Q_{ij} - P_i \hat\Phi P_j - \frac{1}{4}R_{ij})} }\right\} \hat\Phi
+  2I_{ij} = tr(\frac{\partial{\Sigma^{-1}}}{\partial \sigma_i} \Sigma \frac{\partial{\Sigma^{-1}}}{\partial \sigma_j} \Sigma) - tr(2\Phi Q_{ij} - \Phi P_i\Phi P_j)
 \]
 
-$W$ can be estimated using the inverse of information matrix by substituting the observed values
-
-\[
-  2W_{ij} = tr(\frac{\partial{\Sigma^{-1}}}{\partial \sigma_i} \Sigma \frac{\partial{\Sigma^{-1}}}{\partial \sigma_j} \Sigma) - tr(2\Phi Q_{ij} - \Phi P_i\Phi P_j)
-\]
+or, we can use the observed hessian matrix while fitting the model here. 
 
 ### Inference and degree of freedom
 
@@ -276,29 +278,40 @@ p <- function(x, inv_sig_deri) {
 
 q <- function(x, sigma, inv_sig_deri) {
   lapply(inv_sig_deri, function(s) {
-    lapply(inv_sig_deri, function(t) {
-      t(x) %*% s %*% sigma %*% t %*% x
+    lapply(inv_sig_deri, function(k) {
+      t(x) %*% s %*% sigma %*% k %*% x
     })
   })
 }
 
 w <- function(inv_sig_deri, sigma, p, q, v) {
-  r <- ncol(v)
+  r <- length(p)
   ret <- matrix(0, ncol = r, nrow = r)
   for (i in seq_len(r)) {
     for (j in seq_len(r)) {
-      ret[i, j] <- tr(inv_sig_deri[[i]] %*% sigma %*% inv_sig_deri[[j]] %*% sigma) - tr(2 * v %*% q[[i]][[j]] - v %*% p[[i]] %*% v %*% p[[j]])
+      ret[i, j] <- tr(inv_sig_deri[[i]] %*% sigma %*% inv_sig_deri[[j]] %*% sigma) - tr(2 * v %*% q[[i]][[j]]) + tr(v %*% p[[i]] %*% v %*% p[[j]])
     }
   }
   return(ret)
 }
 
 ```
+## Special considerations for mmrm
+
+For mmrm models, the covariance matrix $\Sigma$ is block diagonal: the residual of different timepoints for the same
+subject is correlated, and for different subjects the residual are not correlated.
+
+For mmrm models, the covariance matrix can be parameterized to reflect specific covariance structure, see [covariance structure](#covariance.html).
+
+Since the covariance matrix is block diagonal, its derivatives and second order derivatives, are all block diagonal.
+
+Hence, the implementations can be simplified to the sum of all subjects
+
+
 
 ## an actual case
 
 ```{r}
-library(mmrm)
 library(Matrix)
 fit <- mmrm(FEV1 ~ ARMCD + ar1(AVISIT|USUBJID), data = fev_data)
 
@@ -314,6 +327,9 @@ derivative_ar1 <- function(visits, theta1, theta2, order = 1) {
   # provided the covariance structure, derive the first order derivatives
   # return a list of matrix
   dis <- abs(outer(seq_len(visits), seq_len(visits), "-"))
+  if (order == 0) {
+    return(list(rho^dis * sig))
+  }
   if (order == 1) {
     psig <- rho ^ dis * sig * 2
     prho <- rho ^ (dis - 1) * dis * sig * rr ^ -1.5
@@ -390,6 +406,44 @@ f_star <- f* df_adjust$lambda
 df(f_star, df1 = 1, df2 = df_adjust$m)
 ```
 
+## using autodiff in C++ side
+
+```{c++}
+auto f(int visits, int i, int j) {
+  struct func {
+    template <class T>
+    T operator()(vector<T> x){  // Evaluate function
+      matrix<T> li = get_lower_chol(visits, x);
+      return (li * transpose(li))(i, j);
+    }
+  };
+  return func;
+}
+
+template<class Type>
+Type objective_function<Type>::operator() ()
+{
+  // changes here
+  matrix<Type> sigma_inv = matrix<Type>::Zero(x_matrix.rows(), x_matrix.rows()) // n * n
+  matrix<Type> sigma_derivative1 = matrix<Type>::Zero(x_matrix.rows(), x_matrix.rows() * theta.size()) // n * n * theta_size to hold all derivatives
+  matrix<Type> sigma_derivative2 = matrix<Type>::Zero(x_matrix.rows(), x_matrix.rows() * theta.size() * theta.size()) // n * n * theta_size^2 to hold second order derivatives
+    // for each subject, add the derivatives 
+    matrix<Type> sigma = Li * Li.transpose();
+    for (ii = 0; ii < theta.size(); ii++) {
+      for (jj = 0; jj < theta.size(); jj++) {
+        struct f = f(n_visits, ii, jj); // get the i,j element of sigma
+        matrix<Type> d1 = autodiff::jacobian(f, theta);
+        matrix<Type> d2 = autodiff::hessian(f, theta);
+        matrix<Type> inv = sigma.inverse();
+        // I fear that conducting this inverse every time will also be time consuming
+        // assign d1, d2 back to sigma_derivative1 and sigma_derivative2
+      }
+    }
+  return neg_log_lik;
+}
+
+
+```
 
 # Reference
 
