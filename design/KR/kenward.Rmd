@@ -409,16 +409,27 @@ df(f_star, df1 = 1, df2 = df_adjust$m)
 ## using autodiff in C++ side
 
 ```{c++}
-auto f(int visits, int i, int j) {
-  struct func {
-    template <class T>
-    T operator()(vector<T> x){  // Evaluate function
-      matrix<T> li = get_lower_chol(visits, x);
-      return (li * transpose(li))(i, j);
-    }
-  };
-  return func;
-}
+template <class T>
+struct sigma_at_ij {
+  int i;
+  int j;
+  sigma_at_ij(int i, int j): i(i), j(j) {};
+  const T operator() (const vector<T> &theta) {
+    matrix<T> li = get_cov_lower_chol_grouped(theta, );
+    return (li*li.transpose())(this->i, this->j); //i and j must be specified because hessian require scaler
+  }
+};
+
+template <class T>
+struct sigma_at_i {
+  int i;
+  sigma_at_ij(int i): i(i) {};
+  const T operator() (const vector<T> &theta) {
+    matrix<T> li = get_cov_lower_chol_grouped();
+    return (li*li.transpose()).row(this->i); //i and j must be specified
+  }
+};
+
 
 template<class Type>
 Type objective_function<Type>::operator() ()
@@ -427,16 +438,18 @@ Type objective_function<Type>::operator() ()
   matrix<Type> sigma_inv = matrix<Type>::Zero(x_matrix.rows(), x_matrix.rows()) // n * n
   matrix<Type> sigma_derivative1 = matrix<Type>::Zero(x_matrix.rows(), x_matrix.rows() * theta.size()) // n * n * theta_size to hold all derivatives
   matrix<Type> sigma_derivative2 = matrix<Type>::Zero(x_matrix.rows(), x_matrix.rows() * theta.size() * theta.size()) // n * n * theta_size^2 to hold second order derivatives
-    // for each subject, add the derivatives 
-    matrix<Type> sigma = Li * Li.transpose();
+    // for each subject, add the derivatives, inverse
+    matrix<Type> inv = sigma.inverse();
+    sigma_inv.block() = inv;
     for (ii = 0; ii < theta.size(); ii++) {
+      matrix<Type> d1 = autodiff::jacobian(sigma_at_ij(ii), theta);
+      sigma_derivative1.block() = d1;
       for (jj = 0; jj < theta.size(); jj++) {
-        struct f = f(n_visits, ii, jj); // get the i,j element of sigma
-        matrix<Type> d1 = autodiff::jacobian(f, theta);
-        matrix<Type> d2 = autodiff::hessian(f, theta);
-        matrix<Type> inv = sigma.inverse();
-        // I fear that conducting this inverse every time will also be time consuming
-        // assign d1, d2 back to sigma_derivative1 and sigma_derivative2
+        struct f = f(n_visits, ii, jj); // get the i,j element of sigma      
+        matrix<Type> d2 = autodiff::hessian(sigma_at_ij(ii, jj), theta);
+        sigma_derivative2.block() = d2; 
+        // I fear that conducting this will also be time consuming because there are too many calculations!
+        // for each element we need to calculate the simga and find its derivatives
       }
     }
   return neg_log_lik;
