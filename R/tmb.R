@@ -284,6 +284,7 @@ h_mmrm_tmb_data <- function(formula_parts,
   subject_zero_inds <- which(!duplicated(full_frame[[formula_parts$subject_var]])) - 1L
   subject_n_visits <- c(utils::tail(subject_zero_inds, -1L), nrow(full_frame)) - subject_zero_inds
   assert_true(identical(subject_n_visits, as.integer(table(full_frame[[formula_parts$subject_var]]))))
+  assert_true(all(subject_n_visits > 0))
   if (!is.null(formula_parts$group_var)) {
     assert_factor(data[[formula_parts$group_var]])
     subject_groups <- full_frame[[formula_parts$group_var]][subject_zero_inds + 1L]
@@ -304,6 +305,7 @@ h_mmrm_tmb_data <- function(formula_parts,
     visits_zero_inds <- as.integer(coordinates[[1L]]) - 1L
     coordinates_matrix <- as.matrix(visits_zero_inds, ncol = 1)
     n_visits <- nlevels(coordinates[[1L]])
+    assert_true(all(subject_n_visits <= n_visits))
   }
   structure(
     list(
