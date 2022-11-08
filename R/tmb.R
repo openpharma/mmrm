@@ -255,7 +255,7 @@ h_mmrm_tmb_data <- function(formula_parts,
     if (any(is_duplicated)) {
       stop(
         "time points have to be unique for each subject, detected following duplicates in data:\n",
-        paste(capture.output(print(subject_visit_data[is_duplicated, ])), collapse = "\n")
+        paste(utils::capture.output(print(subject_visit_data[is_duplicated, ])), collapse = "\n")
       )
     }
     order(data[[formula_parts$subject_var]], data[[formula_parts$visit_var]])
