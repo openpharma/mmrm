@@ -45,10 +45,15 @@ This is the main function fitting the MMRM.
 The \code{formula} typically looks like:
 \code{FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)}
 so specifies response and covariates as usual, and exactly one special term
-defines which covariance structure is used and what are the visit and
-subject variables.
+defines which covariance structure is used and what are the time point and
+subject variables. The covariance structures in the formula can be
+found in \code{\link{covariance_types}}.
 
-The covariance structures in the formula can be found in \code{\link{covariance_types}}.
+The time points have to be unique for each subject. That is,
+there cannot be time points with multiple observations for any subject.
+The rationale is that these observations would need to be correlated, but it
+is not possible within the currently implemented covariance structure framework
+to do that correctly.
 
 When setting \code{optimizer = "automatic"}, first the default optimizer
 (\code{L-BFGS-B}) is used to fit the model. If that converges, this is returned.

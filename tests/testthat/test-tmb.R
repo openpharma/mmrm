@@ -338,6 +338,44 @@ test_that("h_mmrm_tmb_data gives error for rank deficient design matrix when not
   )
 })
 
+test_that("h_mmrm_tmb_data catches case with multiple time points per subject early", {
+  formula_parts <- structure(
+    list(
+      formula = y ~ cd + ad(visit | id),
+      model_formula = y ~ cd,
+      full_formula = y ~ cd + id + visit,
+      cov_type = "ad",
+      is_spatial = FALSE,
+      visit_var = "visit",
+      subject_var = "id",
+      group_var = NULL
+    ),
+    class = "mmrm_tmb_formula_parts"
+  )
+
+  set.seed(123)
+  dat <- data.frame(
+    id = as.factor(c(1, 1, 1, 2, 2, 2)),
+    visit = as.factor(c(1, 2, 3, 2, 2, 3)),
+    cd = c(1, 2, 3, 4, 5, 6),
+    y = rnorm(6)
+  )
+
+  expect_error(
+    h_mmrm_tmb_data(
+      formula_parts,
+      data = dat,
+      weights = rep_len(1, nrow(dat)),
+      reml = TRUE,
+      accept_singular = TRUE
+    ),
+    paste0(
+      "time points have to be unique for each subject, detected following duplicates in data:",
+      "\\s+id visit\\s+5\\s+2\\s+2" # Make sure we get the nice duplicates printed there.
+    )
+  )
+})
+
 # h_mmrm_tmb_parameters ----
 
 test_that("h_mmrm_tmb_parameters works as expected without start values", {
