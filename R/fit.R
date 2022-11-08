@@ -240,13 +240,11 @@ mmrm_control <- function(optimizer = stats::nlminb,
 #' subject variables. The covariance structures in the formula can be
 #' found in [`covariance_types`].
 #'
-#' Please note that the time points have to be unique for each subject. That is,
+#' The time points have to be unique for each subject. That is,
 #' there cannot be time points with multiple observations for any subject.
 #' The rationale is that these observations would need to be correlated, but it
-#' is not clear from the model definition what this correlation would be.
-#' If you e.g. have multiple assessments for one visit, then please create a
-#' unique time point variable from assessments and visits first, and use this
-#' time point variable subsequently in the covariance structure.
+#' is not possible within the currently implemented covariance structure framework
+#' to do that correctly.
 #'
 #' When setting `optimizer = "automatic"`, first the default optimizer
 #' (`L-BFGS-B`) is used to fit the model. If that converges, this is returned.
