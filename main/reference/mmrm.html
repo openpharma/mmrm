@@ -18,7 +18,7 @@ This is the main function fitting the MMRM."><meta property="og:image" content="
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5.9004</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5.9005</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,12 +41,6 @@ This is the main function fitting the MMRM."><meta property="og:image" content="
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -131,9 +125,14 @@ to full rank automatically and additional coefficient estimates will be missing.
     <p>The <code>formula</code> typically looks like:
 <code>FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)</code>
 so specifies response and covariates as usual, and exactly one special term
-defines which covariance structure is used and what are the visit and
-subject variables.</p>
-<p>The covariance structures in the formula can be found in <code><a href="covariance_types.html">covariance_types</a></code>.</p>
+defines which covariance structure is used and what are the time point and
+subject variables. The covariance structures in the formula can be
+found in <code><a href="covariance_types.html">covariance_types</a></code>.</p>
+<p>The time points have to be unique for each subject. That is,
+there cannot be time points with multiple observations for any subject.
+The rationale is that these observations would need to be correlated, but it
+is not possible within the currently implemented covariance structure framework
+to do that correctly.</p>
 <p>When setting <code>optimizer = "automatic"</code>, first the default optimizer
 (<code>L-BFGS-B</code>) is used to fit the model. If that converges, this is returned.
 If not, the other available optimizers from <code><a href="refit_multiple_optimizers.html">refit_multiple_optimizers()</a></code> are
