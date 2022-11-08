@@ -105,6 +105,19 @@ fit_cs <- mmrm(
 print(fit_cs)
 ```
 
+Please note that the time points have to be unique for each subject. That is,
+there cannot be time points with multiple observations for any subject.
+The rationale is that these observations would need to be correlated, but it
+is not clear from the model definition what this correlation would be.
+If you e.g. have multiple assessments for one visit, then please create a
+unique time point variable from assessments and visits first, and use this
+time point variable subsequently in the covariance structure.
+For example, you can use `interaction()` for this purpose:
+
+```{r, eval = FALSE}
+data$time <- interaction(data$visit, data$assessment)
+```
+
 ## Weighting
 
 Users can perform weighted MMRM by specifying a numeric vector `weights` with positive values.
