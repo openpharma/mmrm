@@ -1,0 +1,79 @@
+---
+title: "What are MMRMs? A brief introduction"
+package: mmrm
+#bibliography: '`r system.file("REFERENCES.bib", package = "mmrm")`'
+bibliography: methodological_refs.bib # temporary bibliography
+csl: jrss_style.csl
+output:
+  rmarkdown::html_document:
+          theme: "spacelab"
+          highlight: "kate"
+          toc: true
+          toc_float: true
+vignette: |
+  %\VignetteIndexEntry{What are MMRMs? A brief introduction}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown} 
+editor_options:
+  chunk_output_type: console
+  markdown:
+    wrap: 72
+---
+
+# Abstract
+
+Mixed models for repeated measures (MMRMs) are frequently used in the analysis of data from clinical trials. 
+They are suited to model continuous variables which were repeatedly measured at discrete time points.
+In a clinical trial, these time points are typically visits according to a pre-defined schedule.
+The distinguishing feature of MMRMs, compared to other implementations of mixed models, is that subject-specific random random effects that are not of direct interest are considered as residual effects, i.e. are part of the error correlation matrix.
+This vignette provides a brief introduction to MMRMs from a methodological perspective. 
+It contrasts MMRMs to other statistical models for longitudinal data, such as linear mixed effects models (with random intercept and/or slopes) and models based on generalized estimating equations (GEEs). 
+The aim is to provide a basic orientation and guide for applied statisticians regarding model choice and possible ways of software implementation. 
+
+
+
+# Mixed model for repeated measures
+
+<!-- 
+Ideas: 
+A general, textbook-like, introduction which outlines MMRM and how it works with a 
+focus on key references. 
+It will provide s plainly written description, and frame mmrm in contrast to 
+random slope intercept / glm / ... model. 
+Why do we use mmrm rather than other models. 
+data types, covariance structures, existing implementations in R and SAS proc mixed
+misnomer of "mixed model", since we are actually marginalizing out the random effects
+-->
+<!-- 
+
+The association between repeated measurements on the same patients can be modeled as a function of random effects, residual effects, or both.
+
+-->
+
+The descripton of MMRMs in this vignettes is based on @Mallinckrodt2017.
+
+
+## Residual covariance structures
+
+TO DO
+
+
+# Contrasting MMRMs with other types of models for longitudinal data
+
+TO DO
+
+## Linear mixed effects models (with random intercept and/or slopes)
+
+TO DO
+
+## Models based on estimating equations
+
+TO DO
+
+
+# References
+
+
+
+
+
