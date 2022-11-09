@@ -3,6 +3,7 @@
 .project
 .RData
 .Rhistory
+.Rproj
 .Rproj.user
 .Ruserdata
 .settings/**
