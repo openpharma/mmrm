@@ -408,6 +408,15 @@ df(f_star, df1 = 1, df2 = df_adjust$m)
 
 ## using autodiff in C++ side
 
+\[
+  \frac{\partial{\Sigma}}{\partial{\theta}} = \frac{\partial{LL^\top}}{\partial{\theta}} = 2\frac{\partial{L}}{\partial{\theta}}L^\top
+\]
+
+\[
+  \frac{\partial^2{\Sigma}}{\partial{\theta}^2} = 2\frac{\partial^2{L}}{\partial{\theta}^2}L^\top + 2\frac{\partial{L}}{\partial{\theta}}\frac{\partial{L^T}}{\partial{\theta}}
+\]
+
+
 ```{c++}
 template <class T>
 struct sigma_at_ij {

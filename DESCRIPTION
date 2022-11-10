@@ -41,6 +41,7 @@ Imports:
     nlme,
     numDeriv,
     parallel,
+    Rcpp,
     Rdpack,
     stats,
     stringr,
@@ -53,6 +54,7 @@ Suggests:
     testthat (>= 3.0.0),
     xml2
 LinkingTo:
+    Rcpp,
     RcppEigen,
     testthat,
     TMB
