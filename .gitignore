@@ -32,6 +32,8 @@ design/TMB/*.o
 design/TMB/*.so
 src/*.o
 src/*.so
+design/*/*.o
+design/*/*.so
 .vscode
 src/*.dll
 testthat-problems.rds

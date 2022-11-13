@@ -339,10 +339,22 @@ Type objective_function<Type>::operator() ()
   func1 f;
   matrix<Type> l = c1(theta).matrix();
   l.resize(n_visits, n_visits);
+  //std::map<std::vector<int>,matrix<Type>> aa;
+  auto aa = std::vector<int>(n_visits);
+
+  auto zz = vector<int>(aa.size());
+  for (int jj = 0; jj < aa.size(); jj++) {
+    zz(jj) = aa[jj];
+  }
+  //a1.push_back(1);
+  //a1.push_back(2);
+  matrix<Type> ddd = matrix<Type>::Zero(n_visits, n_visits);
+  //aa[a1] = ddd;
   matrix<Type> sigma = tcrossprod(l, true);
   matrix<Type> sigmainv = sigma.inverse();
   matrix<Type> g = autodiff::jacobian(c1, theta); // g is (dim * dim, l_theta)
   matrix<Type> h = autodiff::jacobian(c2, theta); // h is (dim * dim * l_theta, l_theta)
+  g.block(0, 0, n_visits, theta.size()) = matrix<Type>::Zero(n_visits, theta.size());
   // report only works for matrix, vector, scaler or int; so even if we have that derivative we need to
   // extract it outside c++;
   // or we can use Rcpp to do that? Rcpp supports seems that it can be complicated with multiple denepdencies
@@ -364,6 +376,8 @@ Type objective_function<Type>::operator() ()
       //sigma_d2.segment(i * n_visits * n_visits + j * n_visits, n_visits * n_visits) = 2 * (d2 * l.transpose() + tcrossprod(d1, true));
     }
   }
+  //auto zzz = aa[a1];
+  REPORT(zz);
   REPORT(g);
   REPORT(ld1);
   REPORT(h);

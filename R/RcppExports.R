@@ -4,9 +4,3 @@
 test <- function(n_visits, cov_type, theta) {
     .Call(`_mmrm_test`, n_visits, cov_type, theta)
 }
-
-#' @export
-ends <- function(x, n = 6L) {
-    .Call(`_mmrm_ends`, x, n)
-}
-

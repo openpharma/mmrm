@@ -14,7 +14,7 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // test
-double test(int n_visits, std::string cov_type, NumericVector theta);
+List test(int n_visits, std::string cov_type, NumericVector theta);
 RcppExport SEXP _mmrm_test(SEXP n_visitsSEXP, SEXP cov_typeSEXP, SEXP thetaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -26,24 +26,11 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// ends
-SEXP ends(SEXP x, int n);
-RcppExport SEXP _mmrm_ends(SEXP xSEXP, SEXP nSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type x(xSEXP);
-    Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    rcpp_result_gen = Rcpp::wrap(ends(x, n));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 RcppExport SEXP run_testthat_tests(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
     {"_mmrm_test", (DL_FUNC) &_mmrm_test, 3},
-    {"_mmrm_ends", (DL_FUNC) &_mmrm_ends, 2},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     TMB_CALLDEFS,
     {NULL, NULL, 0}
