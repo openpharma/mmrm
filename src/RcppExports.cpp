@@ -13,16 +13,22 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// test
-List test(int n_visits, std::string cov_type, NumericVector theta);
-RcppExport SEXP _mmrm_test(SEXP n_visitsSEXP, SEXP cov_typeSEXP, SEXP thetaSEXP) {
+// test2
+List test2(NumericMatrix x, IntegerVector subject_zero_inds, IntegerVector visits_zero_inds, int n_subjects, IntegerVector subject_n_visits, int n_visits, String cov_type, bool is_spatial, NumericVector theta);
+RcppExport SEXP _mmrm_test2(SEXP xSEXP, SEXP subject_zero_indsSEXP, SEXP visits_zero_indsSEXP, SEXP n_subjectsSEXP, SEXP subject_n_visitsSEXP, SEXP n_visitsSEXP, SEXP cov_typeSEXP, SEXP is_spatialSEXP, SEXP thetaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type x(xSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type subject_zero_inds(subject_zero_indsSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type visits_zero_inds(visits_zero_indsSEXP);
+    Rcpp::traits::input_parameter< int >::type n_subjects(n_subjectsSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type subject_n_visits(subject_n_visitsSEXP);
     Rcpp::traits::input_parameter< int >::type n_visits(n_visitsSEXP);
-    Rcpp::traits::input_parameter< std::string >::type cov_type(cov_typeSEXP);
+    Rcpp::traits::input_parameter< String >::type cov_type(cov_typeSEXP);
+    Rcpp::traits::input_parameter< bool >::type is_spatial(is_spatialSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type theta(thetaSEXP);
-    rcpp_result_gen = Rcpp::wrap(test(n_visits, cov_type, theta));
+    rcpp_result_gen = Rcpp::wrap(test2(x, subject_zero_inds, visits_zero_inds, n_subjects, subject_n_visits, n_visits, cov_type, is_spatial, theta));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -30,7 +36,7 @@ END_RCPP
 RcppExport SEXP run_testthat_tests(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_mmrm_test", (DL_FUNC) &_mmrm_test, 3},
+    {"_mmrm_test2", (DL_FUNC) &_mmrm_test2, 9},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     TMB_CALLDEFS,
     {NULL, NULL, 0}

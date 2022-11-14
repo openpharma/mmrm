@@ -107,82 +107,92 @@ struct chols {
   int n_visits;
   int n_theta; // theta.size()
   vector<Type> theta;
+  matrix<Type> chol_full;
   chols(bool spatial, vector<Type> theta, int n_visits, std::string cov_type): n_visits(n_visits), cov_type(cov_type) {
     this->theta = theta;
+    this->full_visit = vector<int>(n_visits);
     for (int i = 0; i < n_theta; i++) {
-      this->full_visit(i) = i;
+      this->full_visit[i] = i;
     }
     this->n_theta = theta.size();
-    auto allret = derivatives(n_visits, cov_type, theta);
-    auto l1 = allret["derivative1"];
-    auto l2 = allret["derivative2"];
-    auto l = allret["chol"];
-    auto l1_lt = l1 * l.transpose();
-    auto l2_lt = l2 * l.transpose();
-    this->sigmad1_cache[this->full_visit] = l + l.transpose();
-    this->sigmad1_cache[this->full_visit] = l1_lt + l1_lt.transpose();
-    this->sigmad2_cache[this->full_visit] = l2_lt + l2_lt.transpose() + l1 * l1.transpose();
+    std::map<std::string, tmbutils::matrix<Type>> allret = derivatives<Type>(n_visits, cov_type, theta);
+    matrix<Type> l1 = allret["derivative1"];
+    matrix<Type> l2 = allret["derivative2"];
+    matrix<Type> l = allret["chol"];
+    this->chol_full = l;
+    matrix<Type> sigma_d1(l1.rows(), l1.cols());
+    matrix<Type> sigma_d2(l2.rows(), l1.cols());
+    for (int i = 0; i < n_theta; i ++) {
+      matrix<Type> l1_lt = matrix<Type>(l1.rows(), l1.cols());
+      l1_lt.block(i * n_visits, 0, n_visits, n_visits) = l1.block(i * n_visits, 0, n_visits, n_visits)* l.transpose();
+      sigma_d1.block(i * n_visits, 0, n_visits, n_visits) = l1_lt.block(i * n_visits, 0, n_visits, n_visits) + l1_lt.block(i * n_visits, 0, n_visits, n_visits).transpose();
+      for (int j = 0; j < n_theta; j++) {
+        matrix<Type> lt1_lt2 = l1.block(i * n_visits, 0, n_visits, n_visits)* l1.block(j * n_visits, 0, n_visits, n_visits).transpose();
+        matrix<Type> l2_lt = l2.block((i * n_visits + j)*n_visits, 0, n_visits, n_visits) * l.transpose();
+        sigma_d1.block((i * n_visits + j)*n_visits, 0, n_visits, n_visits) = lt1_lt2 + lt1_lt2.transpose() + l2_lt + l2_lt.transpose();
+      }
+    }
+    this->sigmad1_cache[this->full_visit] = sigma_d1;
+    this->sigmad2_cache[this->full_visit] = sigma_d2;
     this->inverse_cache[this->full_visit] = allret["chol"];
   }
   matrix<Type> get_sigma_derivative1(std::vector<int> visits) {
-     if (this->sigmad1_cache.contains(visits)) {
+     if (this->sigmad1_cache.count(visits) > 0) {
       return this->sigmad1_cache[visits];
     } else {
       Eigen::SparseMatrix<Type> sel_mat = get_select_matrix<Type>(visits, this -> n_visits);
       int n_visists_i = visits.size();
       matrix<Type> ret = matrix<Type>(this->n_theta * n_visists_i, n_visists_i);
       for (int i = 0; i < this->n_theta; i++) {
-        ret.block(i  * n_visists_i, 0, n_visists_i, n_visists_i) = sel_mat * this->sigmad1_cache[visits].block(i  * this->n_visits, 0, n_visits, n_visits) * sel_mat.transpose();
+        ret.block(i  * n_visists_i, 0, n_visists_i, n_visists_i) = sel_mat * this->sigmad1_cache[this->full_visit].block(i  * this->n_visits, 0, this->n_visits, this->n_visits) * sel_mat.transpose();
       }
       this->sigmad1_cache[visits] = ret;
       return ret;
     }
   }
   matrix<Type> get_sigma_derivative2(std::vector<int> visits) {
-     if (this->sigmad2_cache.contains(visits)) {
+     if (this->sigmad2_cache.count(visits) > 0) {
       return this->sigmad2_cache[visits];
     } else {
       Eigen::SparseMatrix<Type> sel_mat = get_select_matrix<Type>(visits, this -> n_visits);
       int n_visists_i = visits.size();
       matrix<Type> ret = matrix<Type>(this->n_theta * n_visists_i, n_visists_i);
       for (int i = 0; i < this->n_theta; i++) {
-        ret.block(i  * n_visists_i, 0, n_visists_i, n_visists_i) = sel_mat * this->sigmad2_cache[visits].block(i  * this->n_visits, 0, n_visits, n_visits) * sel_mat.transpose();
+        ret.block(i  * n_visists_i, 0, n_visists_i, n_visists_i) = sel_mat * this->sigmad2_cache[this->full_visit].block(i  * this->n_visits, 0, this->n_visits, this->n_visits) * sel_mat.transpose();
       }
       this->sigmad2_cache[visits] = ret;
       return ret;
     }
   }
   matrix<Type> get_sigma(std::vector<int> visits) {
-     if (this->sigma_cache.contains(visits)) {
+     if (this->sigma_cache.count(visits) > 0) {
       return this->sigma_cache[visits];
     } else {
       Eigen::SparseMatrix<Type> sel_mat = get_select_matrix<Type>(visits, this -> n_visits);
       int n_visists_i = visits.size();
-      matrix<Type> ret = sel_mat * this->sigma_cache[visits] * sel_mat.transpose();
+      matrix<Type> ret = sel_mat * this->sigma_cache[this->full_visit] * sel_mat.transpose();
       this->sigma_cache[visits] = ret;
       return ret;
     }
   }
   matrix<Type> get_inverse(std::vector<int> visits) {
-    if (this->inverse_cache.contains(visits)) {
+    if (this->inverse_cache.count(visits) > 0) {
       return this->inverse_cache[visits];
     } else {
       Eigen::SparseMatrix<Type> sel_mat = get_select_matrix<Type>(visits, this -> n_visits);
-      matrix<Type> Ltildei = sel_mat * this->chol_cache[this->full_visit];
+      matrix<Type> Ltildei = sel_mat * this->chol_full;
       matrix<Type> cov_i = tcrossprod(Ltildei);
-      Eigen::LLT<Eigen::Matrix<Type,Eigen::Dynamic,Eigen::Dynamic> > cov_i_chol(cov_i);
-      auto ret = cov_i_chol.matrixL();
-      auto cholinv = ret.solve();
-      auto sigmainv = tcrossprod(cholinv, true);
+      auto sigmainv = cov_i.inverse();
       this->inverse_cache[visits] = sigmainv;
       return sigmainv;
     }
   }
 };
-
-List test2(NumericMatrix x, IntegerVector subject_zero_inds, IntegerVector visits_zero_inds, int n_subjects, IntegerVector subject_n_visits, int n_visits, string cov_type, bool is_spatial, NumericVector theta) {
+//[[Rcpp::export]]
+List test2(NumericMatrix x, IntegerVector subject_zero_inds, IntegerVector visits_zero_inds, int n_subjects, IntegerVector subject_n_visits, int n_visits, String cov_type, bool is_spatial, NumericVector theta) {
   auto theta_v = as_vector(theta);
-  auto mychol = chols(is_spatial, theta_v, n_visits, cov_type);
+  std::string covtype_str = string(cov_type);
+  auto mychol = chols<double>(is_spatial, theta_v, n_visits, cov_type);
   int p = x.cols();
   int n_theta = theta.size();
   matrix<double> P(p * n_theta, p);
@@ -192,16 +202,15 @@ List test2(NumericMatrix x, IntegerVector subject_zero_inds, IntegerVector visit
   for (int i = 0; i < n_subjects; i++) {
     int start_i = subject_zero_inds[i];
     int n_visits_i = subject_n_visits[i];
-    int start_i = subject_zero_inds[i];
-    int n_visits_i = subject_n_visits[i];
-
-    auto visiti = as_vector(visits_zero_inds).segment(start_i, n_visits_i);
-    std::vector<int> visit_i = std::vector<int>(vector<int>(visiti));
+    std::vector<int> visit_i(n_visits_i);
+    for (int i = 0; i < n_visits_i; i++) {
+      visit_i[i] = visits_zero_inds[i + start_i];
+    }
     auto x_matrix = as_matrix(x);
     matrix<double> Xi = x_matrix.block(start_i, 0, n_visits_i, x_matrix.cols());
     auto sigma_inv = mychol.get_inverse(visit_i);
     auto sigma_d1 = mychol.get_sigma_derivative1(visit_i);
-    auto sigma_d2 = mychol.get_sigma_derivative1(visit_i);
+    auto sigma_d2 = mychol.get_sigma_derivative2(visit_i);
     auto sigma = mychol.get_sigma(visit_i);
     matrix<double> sigma_inv_d1(sigma_d1.rows(), sigma_d1.cols());
     for (int r = 0; r < theta.size(); r++) {

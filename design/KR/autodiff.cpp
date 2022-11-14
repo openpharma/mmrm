@@ -339,17 +339,23 @@ Type objective_function<Type>::operator() ()
   func1 f;
   matrix<Type> l = c1(theta).matrix();
   l.resize(n_visits, n_visits);
-  //std::map<std::vector<int>,matrix<Type>> aa;
-  auto aa = std::vector<int>(n_visits);
-
-  auto zz = vector<int>(aa.size());
-  for (int jj = 0; jj < aa.size(); jj++) {
-    zz(jj) = aa[jj];
-  }
-  //a1.push_back(1);
-  //a1.push_back(2);
+  std::map<std::vector<int>,matrix<Type>> aa;
+  auto a1 = std::vector<int>(2);
+  a1 = {1, 2};
   matrix<Type> ddd = matrix<Type>::Zero(n_visits, n_visits);
-  //aa[a1] = ddd;
+  aa[a1] = ddd;
+  if (aa.count(a1) > 0) {
+    std::cout << "found a1" << ' ';
+  }
+  
+  auto a3 = std::vector<int>(2);
+  a3[0] = 1;
+  a3[1] = 2;
+  if (aa.count(a3) > 0) {
+    std::cout << "found a3" << ' ';
+  }
+  auto zxd = a1 == a3;
+  REPORT(zxd);
   matrix<Type> sigma = tcrossprod(l, true);
   matrix<Type> sigmainv = sigma.inverse();
   matrix<Type> g = autodiff::jacobian(c1, theta); // g is (dim * dim, l_theta)
@@ -377,7 +383,8 @@ Type objective_function<Type>::operator() ()
     }
   }
   //auto zzz = aa[a1];
-  REPORT(zz);
+  auto zzz = aa[a3];
+  REPORT(zzz);
   REPORT(g);
   REPORT(ld1);
   REPORT(h);
