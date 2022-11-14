@@ -1,6 +1,0 @@
-Mixed models for repeated measures (MMRMs) are frequently used in clinical trials for the analysis of continuous data measured repeatedly in discrete steps (usually visits according to a pre-defined schedule) over time. 
-<!-- simpler: Mixed models for repeated measures (MMRMs) are frequently used for the analysis of longitudinal clinical trial data when the endpoint of interest is continuous.-->
-This vignette provides a brief introduction to MMRMs from a methodological perspective. 
-It contrasts MMRMs to other statistical models for longitudinal data, such as linear mixed effects models (with random intercept and/or slopes) and models based on generalized estimating equations (GEEs). 
-The different types of models are compared by exemplary applications to the FEV data, implemented both in R and SAS. 
-The aim is to provide a basic orientation and guide for applied statisticians regarding model choice and possible ways of software implementation. 

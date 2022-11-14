@@ -1,4 +1,28 @@
-## Data Sets
+---
+title: "Implementations of MMRM: a comparison of what's available"
+package: mmrm
+bibliography: mmrm_review_refs.bib
+output:
+  rmarkdown::html_document:
+          theme: "spacelab"
+          highlight: "kate"
+          toc: true
+          toc_float: true
+vignette: |
+  %\VignetteIndexEntry{Implementations of MMRM: a comparison of what's available}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options:
+  chunk_output_type: console
+  markdown:
+    wrap: 72
+---
+
+# Introduction
+
+In this vignette we will show comparisons between `mmrm`, `SAS PROC MIXED`, `nlme::gls`, `lme4`, and `glmmTMB` implementations and capabilities. The primary differences lie in what is supported in terms of covariance structures.
+
+# Data Sets
 
 The FEV data set is contains measurements of FEV1 (forced expired volume in one second), a measure of how quickly the lungs can be emptied. Low levels of FEV1 may indicate chronic obstructive pulmonary disease (COPD). This data set is used to illustrate model fitting with the `mmrm`, `lme4`, `nlme`, `glmmtmb` R packages as well as `SAS`.
 
@@ -8,23 +32,23 @@ The FEV data set
 tableone::tableone(fev_data) # something like this to illustrate fev_data
 ```
 
-## Models
+# Models
 
-### Unstructured Covariance
+## Unstructured Covariance
 
-#### SAS
+### SAS
 ```{sas, eval=FALSE}
 PROC MIXED DATA = fev_data cl method=reml;
 CLASS RACE(ref = 'Asian') AVISIT(ref = 'VIS1') SEX(ref = 'Male') ARMCD(ref = 'PBO') USUBJID;
 MODEL FEV1 = ARMCD AVISIT ARMCD*AVISIT RACE SEX / ddfm=satterthwaite solution chisq;
 REPEATED AVISIT / subject=USUBJID type=un r rcorr;
 ```
-#### mmrm
+### mmrm
 ```{r, eval=FALSE}
 mmrm::mmrm(formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data)
 ```
-#### nlme
+### nlme
 ```{r, eval = FALSE}
 nlme::gls(formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT,
           data = fev_data,
@@ -32,13 +56,15 @@ nlme::gls(formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT,
           weights = nlme::varIdent(form = ~1|AVISIT),
           na.action = na.omit)
 ```
-#### lme4
 
-#### glmmtmb
+### lme4
 
-### Unstructured Covariance with Weights
 
-#### SAS
+### glmmtmb
+
+## Unstructured Covariance with Weights
+
+### SAS
 ```{sas, eval=FALSE}
 PROC MIXED DATA = fev_data cl method=reml;
 CLASS RACE(ref = 'Asian') AVISIT(ref = 'VIS4') SEX(ref = 'Male') ARMCD(ref = 'PBO') USUBJID;
@@ -46,16 +72,16 @@ MODEL FEV1 = RACE SEX ARMCD AVISIT ARMCD*AVISIT / ddfm=satterthwaite solution ch
 REPEATED AVISIT / subject=USUBJID type=un r rcorr;
 WEIGHT WEIGHT;
 ```
-#### mmrm
+### mmrm
 ```{r, eval=FALSE} 
 mmrm::mmrm(formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data,
   weights = WEIGHT)
 ```
 
-### Toeplitz (heterogeneous)
+## Toeplitz (heterogeneous)
 
-#### SAS
+### SAS
 ```{sas, eval=FALSE}
 PROC MIXED DATA = fev_data cl method=ml;
 CLASS AVISIT(ref = 'VIS4') USUBJID;
@@ -63,30 +89,28 @@ MODEL FEV1 = / ddfm=satterthwaite solution chisq;
 REPEATED AVISIT / subject=USUBJID type=TOEPH r=1, 2, 3, 4, 5, 6, 7, 8, 9, 10 rcorr;
 ```
 
-#### mmrm
+### mmrm
 ```{r, eval=FALSE}
 mmrm::mmrm(formula = FEV1 ~ toeph(AVISIT | USUBJID),
   data = fev_data,
   reml = FALSE)
 ```
 
-### Toeplitz (grouped heterogeneous)
-#### SAS
-```{sas, eval=FALSE}
-PROC MIXED DATA = ana.dat cl method=ml;
+## Toeplitz (grouped heterogeneous)
+### SAS
+<pre><code>PROC MIXED DATA = ana.dat cl method=ml;
 CLASS AVISIT(ref = 'VIS4') USUBJID ARMCD;
 MODEL FEV1 = / ddfm=satterthwaite solution chisq;
-REPEATED AVISIT / subject=USUBJID type=TOEPH r=1, 2, 3, 4, 5, 6, 7, 8, 9, 10 rcorr group=ARMCD;
-```
+REPEATED AVISIT / subject=USUBJID <b>type=TOEPH</b> r=1, 2, 3, 4, 5, 6, 7, 8, 9, 10 rcorr <b>group=ARMCD</b>;
+</code></pre>
 
-#### mmrm
-```{r, eval=FALSE}
-mmrm::mmrm(formula = FEV1 ~ toeph(AVISIT | ARMCD / USUBJID),
-  data = fev_data, reml = FALSE)
-```
+### mmrm
+<pre><code>mmrm::mmrm(formula = FEV1 ~ <b>toeph</b>(AVISIT | <b>ARMCD /</b> USUBJID),
+        data = fev_data, reml = FALSE)
+</code></pre>
 
-### Toeplitz (homogeneous)
-#### SAS
+## Toeplitz (homogeneous)
+### SAS
 ```{sas, eval=FALSE}
 PROC MIXED DATA = fev_data cl method=ml;
 CLASS AVISIT(ref = 'VIS4') USUBJID;
@@ -94,7 +118,7 @@ MODEL FEV1 = / ddfm=satterthwaite solution chisq;
 REPEATED AVISIT / subject=USUBJID type=TOEP r=1, 2, 3, 4, 5, 6, 7, 8, 9, 10 rcorr;
 ```
 
-#### mmrm
+### mmrm
 ```{r, eval=FALSE}
 mmrm::mmrm(formula = FEV1 ~ toep(AVISIT | USUBJID), 
   data = fev_data, 
