@@ -28,15 +28,6 @@ struct chol_jacobian {
     }
 };
 
-template<class Type>
-struct return_result {
-  Type value;
-  return_result(Type value): value(value) {};
-  Type operator() () {
-    return this->value;
-  }
-};
-
 vector<double> as_vector(NumericVector input) {
   vector<double> ret(as<std::vector<double>>(input));
   return ret;
@@ -61,33 +52,42 @@ NumericMatrix as_mv(matrix<double> input) {
 }
 matrix<double> as_matrix(NumericMatrix input) {
   matrix<double> ret(input.rows(), input.cols());
+  for (int i = 0; i < input.rows(); i++) {
+    for (int j = 0; j < input.cols(); j++) {
+      ret(i,j) = input[i,j];
+    }
+  }
   return ret;
 }
 
 template <class Type>
 std::map<std::string, matrix<Type>> derivatives(int n_visits, std::string cov_type, vector<Type> theta) {
   std::map<std::string, matrix<Type>> ret;
-  chol c1(n_visits, cov_type);
-  chol_jacobian c2(n_visits, cov_type);
-  matrix<Type> l = c1(theta).matrix();
+  chol chol_obj(n_visits, cov_type);
+  chol_jacobian chol_jac_obj(n_visits, cov_type);
+  matrix<Type> l = chol_obj(theta).matrix();
   l.resize(n_visits, n_visits);
   //matrix<Type> sigmainv = tcrossprod<Type>(l.inverse(), true);
   ret["chol"] = l;
-  vector<Type> g = autodiff::jacobian(c1, theta).vec(); // g is (dim * dim * l_theta)
-  vector<Type> h = autodiff::jacobian(c2, theta).vec(); // h is (dim * dim * l_theta * l_theta)
+  vector<Type> chol_d1_vec = autodiff::jacobian(chol_obj, theta).vec(); // chol_d1_vec is (dim * dim * l_theta)
+  vector<Type> chol_d2_vec = autodiff::jacobian(chol_jac_obj, theta).vec(); // chol_d2_vec is (dim * dim * l_theta * l_theta)
   matrix<Type> ret_d1 = matrix<Type>(n_visits * theta.size(), n_visits);
   matrix<Type> ret_d2 = matrix<Type>(n_visits * theta.size() * theta.size(), n_visits);
+  int n_visits_sq = n_visits * n_visits;
   for (int i = 0; i < theta.size(); i++) {
-    matrix<Type> d1 = g.segment(i * n_visits, n_visits * n_visits).matrix();
-    d1.resize(n_visits, n_visits);
-    matrix<Type> pllt = d1 * l.transpose();
-    auto sigma_d1_i = pllt + pllt.transpose();
+    matrix<Type> ld1 = chol_d1_vec.segment(i * n_visits_sq, n_visits_sq).matrix();
+    ld1.resize(n_visits, n_visits);
+    matrix<Type> ld1_lt = ld1 * l.transpose();
+    auto sigma_d1_i = ld1_lt + ld1_lt.transpose();
     ret_d1.block(i * n_visits, 0, n_visits, n_visits) = sigma_d1_i;
     for (int j = 0; j < theta.size(); j++) {
-      matrix<Type> d2 = h.segment( (j * theta.size() + i) * n_visits * n_visits, n_visits * n_visits).matrix();
-      d2.resize(n_visits, n_visits);
-      auto p2llt = d2 * l.transpose();
-      auto sigma_d2_ij = p2llt + p2llt.transpose() + 2 * pllt;
+      matrix<Type> ld2 = chol_d2_vec.segment( (j * theta.size() + i) * n_visits_sq, n_visits_sq).matrix();
+      matrix<Type> ld1_j = chol_d1_vec.segment(j * n_visits_sq, n_visits_sq).matrix();
+      ld2.resize(n_visits, n_visits);
+      ld1_j.resize(n_visits, n_visits);
+      auto ld2_lt = ld2 * l.transpose();
+      auto ld1_ld1j = ld1 * ld1_j.transpose();
+      auto sigma_d2_ij = ld2_lt + ld2_lt.transpose() + ld1_ld1j + ld1_ld1j.transpose();
       ret_d2.block((i * theta.size() + j) * n_visits, 0, n_visits, n_visits) = sigma_d2_ij;
     }
   }
@@ -116,22 +116,10 @@ struct chols {
     }
     this->n_theta = theta.size();
     std::map<std::string, tmbutils::matrix<Type>> allret = derivatives<Type>(n_visits, cov_type, theta);
-    matrix<Type> l1 = allret["derivative1"];
-    matrix<Type> l2 = allret["derivative2"];
+    matrix<Type> sigma_d1 = allret["derivative1"];
+    matrix<Type> sigma_d2 = allret["derivative2"];
     matrix<Type> l = allret["chol"];
     this->chol_full = l;
-    matrix<Type> sigma_d1(l1.rows(), l1.cols());
-    matrix<Type> sigma_d2(l2.rows(), l1.cols());
-    for (int i = 0; i < n_theta; i ++) {
-      matrix<Type> l1_lt = matrix<Type>(l1.rows(), l1.cols());
-      l1_lt.block(i * n_visits, 0, n_visits, n_visits) = l1.block(i * n_visits, 0, n_visits, n_visits)* l.transpose();
-      sigma_d1.block(i * n_visits, 0, n_visits, n_visits) = l1_lt.block(i * n_visits, 0, n_visits, n_visits) + l1_lt.block(i * n_visits, 0, n_visits, n_visits).transpose();
-      for (int j = 0; j < n_theta; j++) {
-        matrix<Type> lt1_lt2 = l1.block(i * n_visits, 0, n_visits, n_visits)* l1.block(j * n_visits, 0, n_visits, n_visits).transpose();
-        matrix<Type> l2_lt = l2.block((i * n_visits + j)*n_visits, 0, n_visits, n_visits) * l.transpose();
-        sigma_d1.block((i * n_visits + j)*n_visits, 0, n_visits, n_visits) = lt1_lt2 + lt1_lt2.transpose() + l2_lt + l2_lt.transpose();
-      }
-    }
     this->sigmad1_cache[this->full_visit] = sigma_d1;
     this->sigmad2_cache[this->full_visit] = sigma_d2;
     this->sigma_cache[this->full_visit] = allret["chol"] * allret["chol"].transpose();
@@ -182,7 +170,7 @@ struct chols {
     } else {
       Eigen::SparseMatrix<Type> sel_mat = get_select_matrix<Type>(visits, this -> n_visits);
       matrix<Type> Ltildei = sel_mat * this->chol_full;
-      matrix<Type> cov_i = tcrossprod(Ltildei);
+      matrix<Type> cov_i = tcrossprod(Ltildei, true);
       auto sigmainv = cov_i.inverse();
       this->inverse_cache[visits] = sigmainv;
       return sigmainv;
@@ -196,9 +184,9 @@ List test2(NumericMatrix x, IntegerVector subject_zero_inds, IntegerVector visit
   auto mychol = chols<double>(is_spatial, theta_v, n_visits, cov_type);
   int p = x.cols();
   int n_theta = theta.size();
-  matrix<double> P(p * n_theta, p);
-  matrix<double> Q(p * n_theta * n_theta, p);
-  matrix<double> R(p * n_theta * n_theta, p);
+  matrix<double> P = matrix<double>::Zero(p * n_theta, p);
+  matrix<double> Q = matrix<double>::Zero(p * n_theta * n_theta, p);
+  matrix<double> R = matrix<double>::Zero(p * n_theta * n_theta, p);
   
   for (int i = 0; i < n_subjects; i++) {
     int start_i = subject_zero_inds[i];
@@ -214,17 +202,18 @@ List test2(NumericMatrix x, IntegerVector subject_zero_inds, IntegerVector visit
     auto sigma_d2 = mychol.get_sigma_derivative2(visit_i);
     auto sigma = mychol.get_sigma(visit_i);
     matrix<double> sigma_inv_d1(sigma_d1.rows(), sigma_d1.cols());
-    for (int r = 0; r < theta.size(); r++) {
-      sigma_inv_d1.block(r * n_visits_i, 0, n_visits_i, n_visits_i) = sigma_inv * sigma_d1.block(r * n_visits_i, 0, n_visits_i, n_visits_i) *sigma_inv;
+    for (int r = 0; r < n_theta; r++) {
+      sigma_inv_d1.block(r * n_visits_i, 0, n_visits_i, n_visits_i) = - sigma_inv * sigma_d1.block(r * n_visits_i, 0, n_visits_i, n_visits_i) *sigma_inv;
     }
-    for (int r = 0; r < theta.size(); r ++) {
+    for (int r = 0; r < n_theta; r ++) {
       auto Pi = Xi.transpose() * sigma_inv_d1.block(r * n_visits_i, 0, n_visits_i, n_visits_i) * Xi;
       P.block(r * p, 0, p, p) += Pi;
-      for (int j = 0; j < theta.size(); j++) {
+      for (int j = 0; j < n_theta; j++) {
         auto Qij = Xi.transpose() * sigma_inv_d1.block(r * n_visits_i, 0, n_visits_i, n_visits_i) * sigma * sigma_inv_d1.block(j * n_visits_i, 0, n_visits_i, n_visits_i) * Xi;
-        Q.block((r * p + j) * p, 0, p, p) += Qij;
-        auto Rij = Xi.transpose() * sigma_inv * sigma_d2.block((r * n_visits_i + j) * n_visits_i, 0, n_visits_i, n_visits_i) * sigma_inv * Xi;
-        R.block((r * p + j) * p, 0, p, p) += Rij;
+        // switch the order so that in the matrix partial(i) and partial(j) increase j firsts
+        Q.block((r * n_theta + j) * p, 0, p, p) += Qij;
+        auto Rij = Xi.transpose() * sigma_inv * sigma_d2.block((j * n_theta + r) * n_visits_i, 0, n_visits_i, n_visits_i) * sigma_inv * Xi;
+        R.block((r * n_theta + j) * p, 0, p, p) += Rij;
       }
     }
   }

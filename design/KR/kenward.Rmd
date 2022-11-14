@@ -313,8 +313,10 @@ Hence, the implementations can be simplified to the sum of all subjects
 
 ```{r}
 library(Matrix)
-fit <- mmrm(FEV1 ~ ARMCD + ar1(AVISIT|USUBJID), data = fev_data)
-
+fit <- mmrm(
+  formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+  data = fev_data
+)
 derivative_ar1 <- function(visits, theta1, theta2, order = 1) {
   sig <- exp(2 * theta1)
   rho <- theta2 / sqrt(1 + theta2 ^ 2)
