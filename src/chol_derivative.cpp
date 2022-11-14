@@ -108,10 +108,10 @@ struct chols {
   int n_theta; // theta.size()
   vector<Type> theta;
   matrix<Type> chol_full;
-  chols(bool spatial, vector<Type> theta, int n_visits, std::string cov_type): n_visits(n_visits), cov_type(cov_type) {
+  chols(bool spatial, vector<Type> theta, int n_visits, std::string cov_type): n_visits(n_visits), cov_type(cov_type), full_visit(std::vector<int>(n_visits)) {
     this->theta = theta;
-    this->full_visit = vector<int>(n_visits);
-    for (int i = 0; i < n_theta; i++) {
+    //this->full_visit = vector<int>(n_visits);
+    for (int i = 0; i < n_visits; i++) {
       this->full_visit[i] = i;
     }
     this->n_theta = theta.size();
@@ -134,7 +134,8 @@ struct chols {
     }
     this->sigmad1_cache[this->full_visit] = sigma_d1;
     this->sigmad2_cache[this->full_visit] = sigma_d2;
-    this->inverse_cache[this->full_visit] = allret["chol"];
+    this->sigma_cache[this->full_visit] = allret["chol"] * allret["chol"].transpose();
+    this->inverse_cache[this->full_visit] = (this->sigma_cache[this->full_visit]).inverse();
   }
   matrix<Type> get_sigma_derivative1(std::vector<int> visits) {
      if (this->sigmad1_cache.count(visits) > 0) {
@@ -227,7 +228,15 @@ List test2(NumericMatrix x, IntegerVector subject_zero_inds, IntegerVector visit
       }
     }
   }
+  auto sigma_inv_full = mychol.get_inverse(mychol.full_visit);
+  auto sigma_d1_full = mychol.get_sigma_derivative1(mychol.full_visit);
+  auto sigma_d2_full = mychol.get_sigma_derivative2(mychol.full_visit);
+  auto sigma_full = mychol.get_sigma(mychol.full_visit);
   return List::create(
+    as_mv(sigma_inv_full),
+    as_mv(sigma_d1_full),
+    as_mv(sigma_d2_full),
+    as_mv(sigma_full),
     as_mv(P),
     as_mv(Q),
     as_mv(R)
