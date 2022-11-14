@@ -84,7 +84,7 @@ std::map<std::string, matrix<Type>> derivatives(int n_visits, std::string cov_ty
     auto sigma_d1_i = pllt + pllt.transpose();
     ret_d1.block(i * n_visits, 0, n_visits, n_visits) = sigma_d1_i;
     for (int j = 0; j < theta.size(); j++) {
-      matrix<Type> d2 = h.segment( (i * theta.size() + j) * n_visits * n_visits, n_visits * n_visits).matrix();
+      matrix<Type> d2 = h.segment( (j * theta.size() + i) * n_visits * n_visits, n_visits * n_visits).matrix();
       d2.resize(n_visits, n_visits);
       auto p2llt = d2 * l.transpose();
       auto sigma_d2_ij = p2llt + p2llt.transpose() + 2 * pllt;

@@ -360,7 +360,6 @@ Type objective_function<Type>::operator() ()
   matrix<Type> sigmainv = sigma.inverse();
   matrix<Type> g = autodiff::jacobian(c1, theta); // g is (dim * dim, l_theta)
   matrix<Type> h = autodiff::jacobian(c2, theta); // h is (dim * dim * l_theta, l_theta)
-  g.block(0, 0, n_visits, theta.size()) = matrix<Type>::Zero(n_visits, theta.size());
   // report only works for matrix, vector, scaler or int; so even if we have that derivative we need to
   // extract it outside c++;
   // or we can use Rcpp to do that? Rcpp supports seems that it can be complicated with multiple denepdencies
