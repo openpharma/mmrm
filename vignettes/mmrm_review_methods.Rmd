@@ -21,7 +21,7 @@ editor_options:
 
 # Introduction
 
-In this vignette we will show comparisons between `mmrm`, `SAS PROC MIXED`, `nlme::gls`, `lme4::lmer`, and `glmmTMB` implementations and capabilities. A primary difference lies in what is supported in terms of covariance structures. In particular, `SAS PROC MIXED` and `mmrm` are the only implementations which provide support for many of the presented covariance structures. While `lme4::lmer` and `glmmTMB::glmmtmb` only have direct capabilities for unstructured covariance structures, `nlme::gls` provides a path through for unstructured, homogeneous compound symmetry, and homogeneous auto-regressive (ar1) structures. 
+In this vignette we will show comparisons between `mmrm`, `SAS PROC MIXED`, `nlme::gls`, `lme4::lmer`, and `glmmTMB` implementations and capabilities. A primary difference lies in what is supported in terms of covariance structures. In particular, `SAS PROC MIXED` and `mmrm` are the only implementations which provide support for many of the presented covariance structures. While `lme4::lmer` and `glmmTMB::glmmtmb` only have direct capabilities for unstructured covariance structures, `nlme::gls` provides a path through for unstructured, heterogeneous compound symmetry, and heterogeneous auto-regressive (ar1) structures. 
 
 # Data Sets
 
@@ -171,6 +171,14 @@ MODEL FEV1 = / ddfm=satterthwaite solution chisq;
   data = fev_data, reml = FALSE)
 </code></pre>
 
+### nlme::gls
+<pre><code>nlme::gls(formula = FEV1 ~  SEX + ARMCD * AVISIT,
+  data = fev_data,
+  correlation = <b>nlme::corCompSymm(form = ~AVISIT | USUBJID)</b>,
+  weights = nlme::varIdent(form = ~1|AVISIT),
+  na.action = na.omit)
+</code></pre>
+
 ## Compound Symmetry (homogeneous)
 
 ### SAS
@@ -183,14 +191,6 @@ MODEL FEV1 = / ddfm=satterthwaite solution chisq;
 ### mmrm
 <pre><code>mmrm::mmrm(formula = FEV1 ~ <b>cs(VISITN | USUBJID)</b>, 
   data = fev_data, reml = FALSE)
-</code></pre>
-
-### nlme::gls
-<pre><code>nlme::gls(formula = FEV1 ~  SEX + ARMCD * AVISIT,
-  data = fev_data,
-  correlation = <b>nlme::corCompSymm(form = ~AVISIT | USUBJID)</b>,
-  weights = nlme::varIdent(form = ~1|AVISIT),
-  na.action = na.omit)
 </code></pre>
 
 ## Auto-Regressive (heterogeneous)
@@ -207,6 +207,14 @@ MODEL FEV1 = / ddfm=satterthwaite solution chisq;
   data = fev_data, reml = FALSE)
 </code></pre>
 
+### nlme::gls
+<pre><code>nlme::gls(formula = FEV1 ~  SEX + ARMCD * AVISIT,
+  data = fev_data,
+  correlation = <b>nlme::corCAR1(form = ~AVISIT | USUBJID)</b>,
+  weights = nlme::varIdent(form = ~1|AVISIT),
+  na.action = na.omit)
+</code></pre>
+
 ## Auto-Regressive (homogeneous)
 
 ### SAS
@@ -219,14 +227,6 @@ MODEL FEV1 = / ddfm=satterthwaite solution chisq;
 ### mmrm
 <pre><code>mmrm::mmrm(formula = FEV1 ~ <b>ar1(VISITN | USUBJID)</b>, 
   data = fev_data, reml = FALSE)
-</code></pre>
-
-### nlme::gls
-<pre><code>nlme::gls(formula = FEV1 ~  SEX + ARMCD * AVISIT,
-  data = fev_data,
-  correlation = <b>nlme::corCAR1(form = ~AVISIT | USUBJID)</b>,
-  weights = nlme::varIdent(form = ~1|AVISIT),
-  na.action = na.omit)
 </code></pre>
 
 ## Ante-dependence (heterogeneous)
