@@ -53,9 +53,9 @@ The FEV data set is summarized below.
   VISITN2 (mean (SD))          -0.02 (1.03)   0.01 (1.07)  -0.04 (0.98)  
 ```
 
-# Models {.tabset}
+# Model implementations {.tabset}
 
-## Unstructured Covariance
+## Unstructured
 
 ### SAS
 <pre><code>PROC MIXED DATA = fev_data cl method=reml;
@@ -88,7 +88,7 @@ MODEL FEV1 = ARMCD AVISIT ARMCD*AVISIT SEX / ddfm=satterthwaite solution chisq;
   data = fev_data, <b>dispformula = ~ 0</b>, REML = TRUE)
 </code></pre>
 
-## Unstructured Covariance with Weights
+## Unstructured with weights
 
 ### SAS
 <pre><code>PROC MIXED DATA = fev_data cl method=reml;
@@ -143,7 +143,7 @@ MODEL FEV1 = / ddfm=satterthwaite solution chisq;
   data = fev_data, reml = FALSE)
 </code></pre>
 
-## Spatial Exponential
+## Spatial exponential
 
 ### SAS 
 <pre><code>PROC MIXED DATA = fev_data cl method=ml;
@@ -157,7 +157,7 @@ MODEL FEV1 = / ddfm=satterthwaite solution chisq;
   data = fev_data, reml = FALSE)
 </code></pre>
 
-## Compound Symmetry (heterogeneous)
+## Compound symmetry (heterogeneous)
 
 ### SAS
 <pre><code>PROC MIXED DATA = fev_data cl method=ml;
@@ -179,7 +179,7 @@ MODEL FEV1 = / ddfm=satterthwaite solution chisq;
   na.action = na.omit)
 </code></pre>
 
-## Compound Symmetry (homogeneous)
+## Compound symmetry (homogeneous)
 
 ### SAS
 <pre><code>PROC MIXED DATA = fev_data cl method=ml;
@@ -193,7 +193,7 @@ MODEL FEV1 = / ddfm=satterthwaite solution chisq;
   data = fev_data, reml = FALSE)
 </code></pre>
 
-## Auto-Regressive (heterogeneous)
+## Auto-regressive (heterogeneous)
 
 ### SAS
 <pre><code>PROC MIXED DATA = fev_data cl method=ml;
@@ -215,7 +215,7 @@ MODEL FEV1 = / ddfm=satterthwaite solution chisq;
   na.action = na.omit)
 </code></pre>
 
-## Auto-Regressive (homogeneous)
+## Auto-regressive (homogeneous)
 
 ### SAS
 <pre><code>PROC MIXED DATA = fev_data cl method=ml;
@@ -246,8 +246,32 @@ MODEL FEV1 = / ddfm=satterthwaite solution chisq;
 ## Ante-dependence (homogeneous)
 
 ### mmrm
-<pre><code>mmrm::mmrm(formula = FEV1 ~ <b>ah(VISITN | USUBJID)</b>, 
+<pre><code>mmrm::mmrm(formula = FEV1 ~ <b>ad(VISITN | USUBJID)</b>, 
   data = fev_data, reml = FALSE)
 </code></pre>
 
-## {-}
+# Benchmarking
+```{r, cache=TRUE, warning=FALSE, message=FALSE}
+library(mmrm)
+library(lme4)
+library(glmmTMB)
+
+mb <- microbenchmark::microbenchmark(times = 10,
+  fit_gls = nlme::gls(FEV1 ~ RACE + ARMCD * AVISIT, data = fev_data, 
+    na.action = na.omit,
+    correlation = nlme::corSymm(form = ~ VISITN | USUBJID),
+    weights = nlme::varIdent(form = ~ 1|VISITN)),
+  fit_mmrm = mmrm::mmrm(
+    formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
+    data = fev_data
+  ),
+  fit_lmer = lme4::lmer(
+    FEV1 ~ RACE + ARMCD * AVISIT + (0 + AVISIT | USUBJID),
+    data = fev_data, control = lmerControl(check.nobs.vs.nRE = "ignore"),
+    na.action = na.omit),
+  fit_glmmtmb = glmmTMB::glmmTMB(
+    FEV1 ~ RACE + ARMCD * AVISIT + us(0 + AVISIT | USUBJID),
+    data = fev_data, dispformula = ~ 0, REML = TRUE)
+ )
+mb
+```
