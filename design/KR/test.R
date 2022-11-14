@@ -1,9 +1,8 @@
 devtools::load_all()
 
-data <- subset(fev_data, USUBJID %in% c("PT1"))
 fit <- mmrm(
-  formula = FEV1 ~ ar1(AVISIT | USUBJID),
-  data = data
+  formula = FEV1 ~ ARMCD + cs(AVISIT | USUBJID),
+  data = fev_data
 )
 # run the rmarkdown part of kenward.Rmd
 res1 = test2(fit$tmb_data$x_matrix, fit$tmb_data$subject_zero_inds, fit$tmb_data$visits_zero_inds,

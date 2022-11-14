@@ -217,15 +217,7 @@ List test2(NumericMatrix x, IntegerVector subject_zero_inds, IntegerVector visit
       }
     }
   }
-  auto sigma_inv_full = mychol.get_inverse(mychol.full_visit);
-  auto sigma_d1_full = mychol.get_sigma_derivative1(mychol.full_visit);
-  auto sigma_d2_full = mychol.get_sigma_derivative2(mychol.full_visit);
-  auto sigma_full = mychol.get_sigma(mychol.full_visit);
   return List::create(
-    as_mv(sigma_inv_full),
-    as_mv(sigma_d1_full),
-    as_mv(sigma_d2_full),
-    as_mv(sigma_full),
     as_mv(P),
     as_mv(Q),
     as_mv(R)
