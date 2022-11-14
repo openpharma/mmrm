@@ -1,3 +1,17 @@
+# mmrm 0.1.5.9006
+
+### Bug Fixes
+
+- Previously duplicate time points could be present for a single subject,
+  and this could lead to segmentation faults if more than the total number of
+  unique time points were available for any subject. Now it is checked that there are
+  no duplicate time points per subject, and this is explained also in the
+  function documentation and the introduction vignette.
+
+### Miscellaneous
+
+- Deprecated `free_cores()` in favor of `parallelly::availableCores(omit = 1)`.
+
 # mmrm 0.1.5
 
 - First CRAN version of the package.

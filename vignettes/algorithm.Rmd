@@ -157,7 +157,7 @@ For example, for an unstructured covariance matrix, $\theta$ has $k = G * m(m+1)
 
 #### Spatial covariance matrix
 
-Under spatial covariance structure, the covariance matrix is different for all subjects, if they have different visit timepoints.
+A spatial covariance structure can model individual-specific visit times. An individual's covariance matrix is then a function of both the population-level covariance parameters (specific to the chosen structure) and the individual's visit times.
 Following the notations in the previous section, for subject $i$ with total number of $m_i$ visits, we have
 
 \[

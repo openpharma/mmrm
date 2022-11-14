@@ -1,0 +1,85 @@
+mmrm fit
+
+Formula:     FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
+Data:        fev_data (used 537 observations from 197 subjects with maximum 4 timepoints)
+Weights:     fev_data$WEIGHT
+Covariance:  unstructured (10 variance parameters)
+Method:      REML
+
+Model selection criteria:
+     AIC      BIC   logLik deviance 
+  3495.8   3528.6  -1737.9   3475.8 
+
+Coefficients: 
+                              Estimate Std. Error       df t value Pr(>|t|)    
+(Intercept)                    45.8591     1.2491 170.1900  36.714  < 2e-16 ***
+RACEBlack or African American   1.2031     0.6292 186.6200   1.912 0.057378 .  
+RACEWhite                       5.3808     0.6707 177.7400   8.022 1.35e-13 ***
+SEXFemale                       0.2326     0.5325 186.6000   0.437 0.662796    
+ARMCDTRT                        4.2616     1.6902 133.2600   2.521 0.012868 *  
+AVISITVIS1                    -14.7955     1.3187 149.1200 -11.220  < 2e-16 ***
+AVISITVIS2                     -9.9288     1.2645 158.7100  -7.852 5.75e-13 ***
+AVISITVIS3                     -4.7480     1.2491 151.2900  -3.801 0.000208 ***
+ARMCDTRT:AVISITVIS1            -0.8654     1.8916 134.8100  -0.457 0.648058    
+ARMCDTRT:AVISITVIS2            -0.8435     1.8169 153.3100  -0.464 0.643141    
+ARMCDTRT:AVISITVIS3            -0.8687     1.8317 152.4900  -0.474 0.635990    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Covariance estimate:
+        VIS4    VIS1    VIS2   VIS3
+VIS4 49.7552  6.5406  3.7312 0.0859
+VIS1  6.5406 22.3772  6.6763 2.6997
+VIS2  3.7312  6.6763 13.3126 1.3678
+VIS3  0.0859  2.6997  1.3678 8.3600
+
+
+ 
+$emmeans
+ ARMCD AVISIT emmean    SE  df lower.CL upper.CL
+ PBO   VIS4     48.2 1.163 134     45.9     50.5
+ TRT   VIS4     52.4 1.226 133     50.0     54.9
+ PBO   VIS1     33.4 0.772 147     31.8     34.9
+ TRT   VIS1     36.8 0.776 142     35.2     38.3
+ PBO   VIS2     38.2 0.617 144     37.0     39.5
+ TRT   VIS2     41.7 0.585 143     40.5     42.8
+ PBO   VIS3     43.4 0.468 128     42.5     44.3
+ TRT   VIS3     46.8 0.543 128     45.7     47.9
+
+Results are averaged over the levels of: RACE, SEX 
+Confidence level used: 0.95 
+
+$contrasts
+ contrast            estimate    SE  df t.ratio p.value
+ PBO VIS4 - TRT VIS4    -4.26 1.690 133  -2.521  0.1957
+ PBO VIS4 - PBO VIS1    14.80 1.319 149  11.220  <.0001
+ PBO VIS4 - TRT VIS1    11.40 1.397 232   8.160  <.0001
+ PBO VIS4 - PBO VIS2     9.93 1.264 159   7.852  <.0001
+ PBO VIS4 - TRT VIS2     6.51 1.302 198   5.002  <.0001
+ PBO VIS4 - PBO VIS3     4.75 1.249 151   3.801  0.0050
+ PBO VIS4 - TRT VIS3     1.36 1.285 190   1.055  0.9651
+ TRT VIS4 - PBO VIS1    19.06 1.449 224  13.150  <.0001
+ TRT VIS4 - TRT VIS1    15.66 1.357 123  11.543  <.0001
+ TRT VIS4 - PBO VIS2    14.19 1.373 196  10.338  <.0001
+ TRT VIS4 - TRT VIS2    10.77 1.304 148   8.263  <.0001
+ TRT VIS4 - PBO VIS3     9.01 1.312 170   6.865  <.0001
+ TRT VIS4 - TRT VIS3     5.62 1.340 153   4.193  0.0012
+ PBO VIS1 - TRT VIS1    -3.40 1.093 143  -3.108  0.0457
+ PBO VIS1 - PBO VIS2    -4.87 0.855 151  -5.691  <.0001
+ PBO VIS1 - TRT VIS2    -8.28 0.967 257  -8.565  <.0001
+ PBO VIS1 - PBO VIS3   -10.05 0.846 157 -11.878  <.0001
+ PBO VIS1 - TRT VIS3   -13.44 0.946 251 -14.211  <.0001
+ TRT VIS1 - PBO VIS2    -1.47 0.991 258  -1.485  0.8152
+ TRT VIS1 - TRT VIS2    -4.89 0.826 135  -5.918  <.0001
+ TRT VIS1 - PBO VIS3    -6.65 0.905 226  -7.348  <.0001
+ TRT VIS1 - TRT VIS3   -10.04 0.893 168 -11.253  <.0001
+ PBO VIS2 - TRT VIS2    -3.42 0.851 144  -4.017  0.0024
+ PBO VIS2 - PBO VIS3    -5.18 0.738 163  -7.017  <.0001
+ PBO VIS2 - TRT VIS3    -8.57 0.824 270 -10.407  <.0001
+ TRT VIS2 - PBO VIS3    -1.76 0.750 263  -2.350  0.2708
+ TRT VIS2 - TRT VIS3    -5.16 0.762 161  -6.766  <.0001
+ PBO VIS3 - TRT VIS3    -3.39 0.719 129  -4.718  0.0002
+
+Results are averaged over the levels of: RACE, SEX 
+P value adjustment: tukey method for comparing a family of 8 estimates 
+
