@@ -82,4 +82,4 @@ Collate:
     'satterthwaite.R'
     'tmb-methods.R'
     'tmb.R'
-    "RcppExports.R"
+    'exports.R'
