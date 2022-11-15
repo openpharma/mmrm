@@ -178,7 +178,7 @@ struct chols {
     }
   }
 };
-//[[Rcpp::export]]
+
 List test2(NumericMatrix x, IntegerVector subject_zero_inds, IntegerVector visits_zero_inds, int n_subjects, IntegerVector subject_n_visits, int n_visits, String cov_type, bool is_spatial, NumericVector theta) {
   auto theta_v = as_vector(theta);
   std::string covtype_str = string(cov_type);
@@ -188,7 +188,7 @@ List test2(NumericMatrix x, IntegerVector subject_zero_inds, IntegerVector visit
   matrix<double> P = matrix<double>::Zero(p * n_theta, p);
   matrix<double> Q = matrix<double>::Zero(p * n_theta * n_theta, p);
   matrix<double> R = matrix<double>::Zero(p * n_theta * n_theta, p);
-  
+
   for (int i = 0; i < n_subjects; i++) {
     int start_i = subject_zero_inds[i];
     int n_visits_i = subject_n_visits[i];
