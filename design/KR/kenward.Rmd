@@ -133,7 +133,7 @@ $W$ is the can be estimated using the inverse of information matrix by substitut
   2I_{ij} = tr(\frac{\partial{\Sigma^{-1}}}{\partial \sigma_i} \Sigma \frac{\partial{\Sigma^{-1}}}{\partial \sigma_j} \Sigma) - tr(2\Phi Q_{ij} - \Phi P_i\Phi P_j)
 \]
 
-or, we can use the observed hessian matrix while fitting the model here. 
+or, we can use the observed hessian matrix while fitting the model here.
 
 ### Inference and degree of freedom
 
@@ -142,7 +142,7 @@ Suppose we are testing the $l$ linear combination of $\beta$, $L\beta$, we can u
 \[
   F = \frac{1}{l} (\hat\beta - \beta)^\top  L (L^\top \hat\Phi_A L)^{-1} L^\top (\hat\beta - \beta)
 \]
-and 
+and
 \[
   F^* = \lambda F
 \]
@@ -390,7 +390,7 @@ r_sparse <- r(x, sigma_inv_sparse, sigma_d2_sparse)
 p_sparse <- p(x, sigma_inv_d1)
 q_sparse <- q(x, sigma_sparse, sigma_inv_d1)
 
-res1 <- test2(fit$tmb_data$x_matrix, fit$tmb_data$subject_zero_inds, fit$tmb_data$visits_zero_inds,
+res1 <- mmrm:::test2(fit$tmb_data$x_matrix, fit$tmb_data$subject_zero_inds, fit$tmb_data$visits_zero_inds,
 fit$tmb_data$n_subjects, fit$tmb_data$subject_n_visits, fit$tmb_data$n_visits, fit$tmb_data$cov_type, fit$tmb_data$is_spatial_int, fit$theta_est)
 
 do.call(rbind,p_sparse)  - res1$P
@@ -465,9 +465,9 @@ Type objective_function<Type>::operator() ()
       matrix<Type> d1 = autodiff::jacobian(sigma_at_ij(ii), theta);
       sigma_derivative1.block() = d1;
       for (jj = 0; jj < theta.size(); jj++) {
-        struct f = f(n_visits, ii, jj); // get the i,j element of sigma      
+        struct f = f(n_visits, ii, jj); // get the i,j element of sigma
         matrix<Type> d2 = autodiff::hessian(sigma_at_ij(ii, jj), theta);
-        sigma_derivative2.block() = d2; 
+        sigma_derivative2.block() = d2;
         // I fear that conducting this will also be time consuming because there are too many calculations!
         // for each element we need to calculate the simga and find its derivatives
       }
