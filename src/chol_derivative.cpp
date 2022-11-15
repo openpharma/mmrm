@@ -54,7 +54,7 @@ matrix<double> as_matrix(NumericMatrix input) {
   matrix<double> ret(input.rows(), input.cols());
   for (int i = 0; i < input.rows(); i++) {
     for (int j = 0; j < input.cols(); j++) {
-      ret(i,j) = input[i,j];
+      ret(i,j) = input(i,j);
     }
   }
   return ret;
@@ -145,8 +145,9 @@ struct chols {
     } else {
       Eigen::SparseMatrix<Type> sel_mat = get_select_matrix<Type>(visits, this -> n_visits);
       int n_visists_i = visits.size();
-      matrix<Type> ret = matrix<Type>(this->n_theta * n_visists_i, n_visists_i);
-      for (int i = 0; i < this->n_theta; i++) {
+      int theta_sq = this->n_theta * this->n_theta;
+      matrix<Type> ret = matrix<Type>(theta_sq * n_visists_i, n_visists_i);
+      for (int i = 0; i < theta_sq; i++) {
         ret.block(i  * n_visists_i, 0, n_visists_i, n_visists_i) = sel_mat * this->sigmad2_cache[this->full_visit].block(i  * this->n_visits, 0, this->n_visits, this->n_visits) * sel_mat.transpose();
       }
       this->sigmad2_cache[visits] = ret;
@@ -218,8 +219,8 @@ List test2(NumericMatrix x, IntegerVector subject_zero_inds, IntegerVector visit
     }
   }
   return List::create(
-    as_mv(P),
-    as_mv(Q),
-    as_mv(R)
+    Named("P") = as_mv(P),
+    Named("Q") = as_mv(Q),
+    Named("R") = as_mv(R)
   );
 }
