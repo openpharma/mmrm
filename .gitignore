@@ -37,3 +37,4 @@ design/*/*.so
 .vscode
 src/*.dll
 testthat-problems.rds
+README.md

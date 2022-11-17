@@ -4,7 +4,6 @@ url: https://openpharma.github.io/mmrm
 template:
   bootstrap: 5
   params:
-    bootswatch: cerulean
     ganalytics: UA-125641273-1
 
 navbar:
@@ -26,7 +25,6 @@ reference:
       - df_1d
       - df_md
       - component
-      - free_cores
   - title: Methods
     contents:
       - mmrm_methods
@@ -40,3 +38,6 @@ reference:
   - title: Datasets
     contents:
       - fev_data
+  - title: Deprecated
+    contents:
+      - free_cores
