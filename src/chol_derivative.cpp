@@ -179,7 +179,7 @@ struct chols {
   }
 };
 
-List test2(NumericMatrix x, IntegerVector subject_zero_inds, IntegerVector visits_zero_inds, int n_subjects, IntegerVector subject_n_visits, int n_visits, String cov_type, bool is_spatial, NumericVector theta) {
+List get_pqr(NumericMatrix x, IntegerVector subject_zero_inds, IntegerVector visits_zero_inds, int n_subjects, IntegerVector subject_n_visits, int n_visits, String cov_type, bool is_spatial, NumericVector theta) {
   auto theta_v = as_vector(theta);
   std::string covtype_str = string(cov_type);
   auto mychol = chols<double>(is_spatial, theta_v, n_visits, cov_type);
