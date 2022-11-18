@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage line-rate="0.964084507042254" branch-rate="0" lines-covered="1369" lines-valid="1420" branches-covered="0" branches-valid="0" complexity="0" version="3.6.1" timestamp="2022-11-18 08:05:34">
+<coverage line-rate="0.964285714285714" branch-rate="0" lines-covered="1377" lines-valid="1428" branches-covered="0" branches-valid="0" complexity="0" version="3.6.1" timestamp="2022-11-18 12:37:45">
   <sources/>
   <packages>
-    <package name="mmrm" line-rate="0.964084507042254" branch-rate="0" complexity="0">
+    <package name="mmrm" line-rate="0.964285714285714" branch-rate="0" complexity="0">
       <classes>
         <class name="component.R" filename="R/component.R" line-rate="1" branch-rate="0" complexity="0">
           <methods>
@@ -991,11 +991,19 @@
                 <line number="346" hits="3" branch="false"/>
                 <line number="347" hits="3" branch="false"/>
                 <line number="348" hits="3" branch="false"/>
+                <line number="349" hits="3" branch="false"/>
                 <line number="350" hits="3" branch="false"/>
                 <line number="351" hits="3" branch="false"/>
                 <line number="352" hits="3" branch="false"/>
                 <line number="353" hits="3" branch="false"/>
                 <line number="354" hits="3" branch="false"/>
+                <line number="355" hits="3" branch="false"/>
+                <line number="356" hits="3" branch="false"/>
+                <line number="358" hits="3" branch="false"/>
+                <line number="359" hits="3" branch="false"/>
+                <line number="360" hits="3" branch="false"/>
+                <line number="361" hits="3" branch="false"/>
+                <line number="362" hits="3" branch="false"/>
               </lines>
             </method>
           </methods>
@@ -1137,11 +1145,19 @@
             <line number="346" hits="3" branch="false"/>
             <line number="347" hits="3" branch="false"/>
             <line number="348" hits="3" branch="false"/>
+            <line number="349" hits="3" branch="false"/>
             <line number="350" hits="3" branch="false"/>
             <line number="351" hits="3" branch="false"/>
             <line number="352" hits="3" branch="false"/>
             <line number="353" hits="3" branch="false"/>
             <line number="354" hits="3" branch="false"/>
+            <line number="355" hits="3" branch="false"/>
+            <line number="356" hits="3" branch="false"/>
+            <line number="358" hits="3" branch="false"/>
+            <line number="359" hits="3" branch="false"/>
+            <line number="360" hits="3" branch="false"/>
+            <line number="361" hits="3" branch="false"/>
+            <line number="362" hits="3" branch="false"/>
           </lines>
         </class>
         <class name="tmb-methods.R" filename="R/tmb-methods.R" line-rate="1" branch-rate="0" complexity="0">
