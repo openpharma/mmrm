@@ -90,7 +90,7 @@ where $\Omega \in \mathbb{R}^{N \times N}$ is block-diagonal containing the
 subject specific $\Sigma_i$ covariance matrices on the diagonal and 0 in the
 remaining entries.
 
-## Mathmatical Details of Kenward-Roger method
+## Mathematical Details of Kenward-Roger method
 
 The mathmatical derivation of the Kenward-Roger method is based on the Taylor expansion of the obtained covariance matrix
 of $\hat\beta$ to get a more accurate estimate. All these derivation are based on the restricted maximum likelihood.
