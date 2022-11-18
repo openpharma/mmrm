@@ -262,8 +262,7 @@ h_mmrm_tmb_data <- function(formula_parts,
   }
   data <- data[data_order, ]
   weights <- weights[data_order]
-
-  assign("weights", weights, envir = environment(formula_parts$full_formula))
+  data$weights <- weights
   full_frame <- droplevels(stats::model.frame(formula_parts$full_formula, data = data, weights = weights))
 
   x_matrix <- stats::model.matrix(formula_parts$model_formula, data = full_frame)
