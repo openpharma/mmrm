@@ -262,8 +262,12 @@ h_mmrm_tmb_data <- function(formula_parts,
   }
   data <- data[data_order, ]
   weights <- weights[data_order]
-  data$weights <- weights
-  full_frame <- droplevels(stats::model.frame(formula_parts$full_formula, data = data, weights = weights))
+  data <- data.frame(data, weights)
+  # weights is always the last column
+  weights_name <- colnames(data)[ncol(data)]
+  full_frame <- droplevels(eval(
+    bquote(stats::model.frame(formula_parts$full_formula, data = data, weights = .(as.symbol(weights_name))))
+  ))
 
   x_matrix <- stats::model.matrix(formula_parts$model_formula, data = full_frame)
   x_cols_aliased <- stats::setNames(rep(FALSE, ncol(x_matrix)), nm = colnames(x_matrix))
