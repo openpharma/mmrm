@@ -1,4 +1,4 @@
-#' obtain P, Q, R matix for the mmrm fit
+#' obtain P, Q, R matrix for the mmrm fit
 get_pqr <- function(x,
                     subject_zero_inds,
                     visits_zero_inds,
