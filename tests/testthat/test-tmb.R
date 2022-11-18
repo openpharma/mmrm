@@ -378,7 +378,7 @@ test_that("h_mmrm_tmb_data catches case with multiple time points per subject ea
 
 
 test_that("h_mmrm_tmb_data has no side effect of overwrite the weights in global env", {
-  weights <- c("this is global weights")
+  weights <- "this is global weights"
   formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   res <- h_mmrm_tmb_data(
