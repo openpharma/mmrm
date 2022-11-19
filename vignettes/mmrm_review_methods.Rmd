@@ -55,6 +55,37 @@ The FEV data set is summarized below.
 
 # Model implementations {.tabset}
 
+```{r, echo = FALSE, include = FALSE}
+tibble::tribble(
+  ~`Covariance structures`,  ~`mmrm::mmrm`, ~SAS, ~`nlme::gls`, ~`lme4::lmer`, ~`glmmTMB::glmmtmb`,
+  "Unstructured",                      "X",  "X",          "X",           "X",                 "X",
+  "Weighted Unstructured",             "X",  "X",          " ",           " ",                 " ",
+  "Toeplitz (heterogeneous)",          "X",  "X",          " ",           " ",                 " ",
+  "Toeplitz (homogeneous)",            "X",  "X",          " ",           " ",                 " ",
+  "Spatial exponential",               "X",  "X",          " ",           " ",                 " ",
+  "Compound symmetry (heterogeneous)", "X",  "X",          "X",           " ",                 " ",
+  "Compound summetry (homogeneous)",   "X",  "X",          " ",           " ",                 " ",
+  "Auto-regressive (heterogeneous)",   "X",  "X",          "X",           " ",                 " ",
+  "Auto-regressive (homogeneous)",     "X",  "X",          " ",           " ",                 " ",
+  "Ante-dependence (heterogeneous)",   "X",  "X",          " ",           " ",                 " ",
+  "Ante-dependence (homogeneous)",     "X",  " ",          " ",           " ",                 " ",
+) |> knitr::kable(align = "c")
+```
+
+|       Covariance structures       | mmrm::mmrm | SAS | nlme::gls | lme4::lmer | glmmTMB::glmmtmb |
+|:---------------------------------:|:----------:|:---:|:---------:|:----------:|:----------------:|
+|           Unstructured            |     X      |  X  |     X     |     X      |        X         |
+|       Weighted Unstructured       |     X      |  X  |           |            |                  |
+|     Toeplitz (heterogeneous)      |     X      |  X  |           |            |                  |
+|      Toeplitz (homogeneous)       |     X      |  X  |           |            |                  |
+|        Spatial exponential        |     X      |  X  |           |            |                  |
+| Compound symmetry (heterogeneous) |     X      |  X  |     X     |            |                  |
+|  Compound symmetry (homogeneous)  |     X      |  X  |           |            |                  |
+|  Auto-regressive (heterogeneous)  |     X      |  X  |     X     |            |                  |
+|   Auto-regressive (homogeneous)   |     X      |  X  |           |            |                  |
+|  Ante-dependence (heterogeneous)  |     X      |  X  |           |            |                  |
+|   Ante-dependence (homogeneous)   |     X      |     |           |            |                  |
+
 ## Unstructured
 
 ### SAS
