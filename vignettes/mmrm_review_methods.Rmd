@@ -251,7 +251,7 @@ MODEL FEV1 = / ddfm=satterthwaite solution chisq;
 </code></pre>
 
 # Benchmarking
-```{r, cache=TRUE, warning=FALSE, message=FALSE}
+```{r, warning=FALSE, message=FALSE}
 library(mmrm)
 library(lme4)
 library(glmmTMB)
