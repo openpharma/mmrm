@@ -55,23 +55,6 @@ The FEV data set is summarized below.
 
 # Model implementations {.tabset}
 
-```{r, echo = FALSE, include = FALSE}
-tibble::tribble(
-  ~`Covariance structures`,  ~`mmrm::mmrm`, ~SAS, ~`nlme::gls`, ~`lme4::lmer`, ~`glmmTMB::glmmtmb`,
-  "Unstructured",                      "X",  "X",          "X",           "X",                 "X",
-  "Weighted Unstructured",             "X",  "X",          " ",           " ",                 " ",
-  "Toeplitz (heterogeneous)",          "X",  "X",          " ",           " ",                 " ",
-  "Toeplitz (homogeneous)",            "X",  "X",          " ",           " ",                 " ",
-  "Spatial exponential",               "X",  "X",          " ",           " ",                 " ",
-  "Compound symmetry (heterogeneous)", "X",  "X",          "X",           " ",                 " ",
-  "Compound summetry (homogeneous)",   "X",  "X",          " ",           " ",                 " ",
-  "Auto-regressive (heterogeneous)",   "X",  "X",          "X",           " ",                 " ",
-  "Auto-regressive (homogeneous)",     "X",  "X",          " ",           " ",                 " ",
-  "Ante-dependence (heterogeneous)",   "X",  "X",          " ",           " ",                 " ",
-  "Ante-dependence (homogeneous)",     "X",  " ",          " ",           " ",                 " ",
-) |> knitr::kable(align = "c")
-```
-
 |       Covariance structures       | mmrm::mmrm | SAS | nlme::gls | lme4::lmer | glmmTMB::glmmtmb |
 |:---------------------------------:|:----------:|:---:|:---------:|:----------:|:----------------:|
 |           Unstructured            |     X      |  X  |     X     |     X      |        X         |
@@ -282,27 +265,41 @@ MODEL FEV1 = / ddfm=satterthwaite solution chisq;
 </code></pre>
 
 # Benchmarking
-```{r, warning=FALSE, message=FALSE}
+```{r, warning=FALSE, message=FALSE, include=FALSE, echo=FALSE, eval=FALSE}
 library(mmrm)
 library(lme4)
+library(nlme)
 library(glmmTMB)
 
 mb <- microbenchmark::microbenchmark(times = 10,
-  fit_gls = nlme::gls(FEV1 ~ RACE + ARMCD * AVISIT, data = fev_data, 
+  gls = nlme::gls(FEV1 ~ RACE + ARMCD * AVISIT, data = fev_data, 
     na.action = na.omit,
     correlation = nlme::corSymm(form = ~ VISITN | USUBJID),
     weights = nlme::varIdent(form = ~ 1|VISITN)),
-  fit_mmrm = mmrm::mmrm(
+  mmrm = mmrm::mmrm(
     formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
     data = fev_data
   ),
-  fit_lmer = lme4::lmer(
+  lmer = lme4::lmer(
     FEV1 ~ RACE + ARMCD * AVISIT + (0 + AVISIT | USUBJID),
     data = fev_data, control = lmerControl(check.nobs.vs.nRE = "ignore"),
     na.action = na.omit),
-  fit_glmmtmb = glmmTMB::glmmTMB(
+  glmmtmb = glmmTMB::glmmTMB(
     FEV1 ~ RACE + ARMCD * AVISIT + us(0 + AVISIT | USUBJID),
     data = fev_data, dispformula = ~ 0, REML = TRUE)
  )
-mb
+mb %>% summary() %>% dplyr::arrange(median) %>% 
+  dplyr::select(expression = expr, median, 
+    lower = lq, upper = uq, evaluations = neval) %>%
+  knitr::kable(caption = "Comparison of convergence times: milliseconds", digits = 2)
 ```
+
+Table: Comparison of convergence times: milliseconds
+
+|expression | median|  lower|  upper| evaluations|
+|:----------|------:|------:|------:|-----------:|
+|mmrm       |  34.05|  33.39|  34.22|          10|
+|lmer       |  70.33|  68.13|  70.81|          10|
+|gls        | 226.98| 211.81| 232.41|          10|
+|glmmtmb    | 321.83| 300.88| 343.68|          10|
+
