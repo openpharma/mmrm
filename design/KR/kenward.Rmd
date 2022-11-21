@@ -217,20 +217,31 @@ $\theta$ will not affect other parts, we will have block-diagonal $P$, $Q$ and $
 
 \[
 P_j = \begin{pmatrix}
-P_{j, 1} & 0 & \dots & \dots & 0 \\
-0 & P_{j, 2} & 0 & \dots & 0\\
+P_{j, 1} & \dots & P_{j, B} \\
+\end{pmatrix}
+\]
+
+\[
+Q_j = \begin{pmatrix}
+Q_{j, 1} & 0 & \dots & \dots & 0 \\
+0 & Q_{j, 2} & 0 & \dots & 0\\
 \vdots & & \ddots & & \vdots \\
 \vdots & & & \ddots & \vdots \\
-0 & \dots & \dots & 0 & P_{j, B}
+0 & \dots & \dots & 0 & Q_{j, B}
 \end{pmatrix}
 \]
 
 Use $P_{j, b}$ to denote the block diagonal part for group $b$, we have
 \[
-  P_{j,b} = \sum_{g(i) = b}{P_{ij}} = \sum_{i=1}^{N}{X_i^\top \frac{\partial{\Sigma_i^{-1}}}{\partial \theta_j} X_i}
+  P_{j,b} = \sum_{g(i) = b}{P_{ij}} = \sum_{g(i) = b}{X_i^\top \frac{\partial{\Sigma_i^{-1}}}{\partial \theta_j} X_i}
 \]
 
-Similarly for $Q$ and $R$.
+\[
+  Q_{j,b} = \sum_{g(i) = b}{Q_{ijk}} = \sum_{g(i) = b}{X_i^\top \frac{\partial{\Sigma_i^{-1}}}{\partial \theta_j} \Sigma_i \frac{\partial{\Sigma_i^{-1}}}{\partial \theta_k} X_i}
+\]
+
+
+Similarly for $R$.
 
 ### Scenario under weighted mmrm
 
