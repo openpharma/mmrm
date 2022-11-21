@@ -7,7 +7,9 @@
   unique time points were available for any subject. Now it is checked that there are
   no duplicate time points per subject, and this is explained also in the
   function documentation and the introduction vignette.
-
+- Previously in `mmrm` calls, the `weights` object in the environment where formula is
+  defined will be replaced by the `weights` used internally. Now this behavior is removed and your variable
+  `weights` e.g. in the global environment will not be replaced.
 ### Miscellaneous
 
 - Deprecated `free_cores()` in favor of `parallelly::availableCores(omit = 1)`.
