@@ -195,7 +195,7 @@ using the above.
 
 ### Scenario under group specific covariance estimates
 
-When conducting grouped `mmrm` models, the covariance matrix for subject i of group $g(i)$, can be written as $\Sigma_{g(i)}$.
+When fitting grouped `mmrm` models, the covariance matrix for subject i of group $g(i)$, can be written as $\Sigma_{g(i)}$.
 Assume there are $B$ groups, the number of parameters is increased by $B$ times. With the fact that for each group, the corresponding
 $\theta$ will not affect other parts, we will have block-diagonal $P$, $Q$ and $R$ matrix.
 
