@@ -160,7 +160,7 @@ The derivative of the overall covariance matrix $\Sigma$ with respect to the var
   \frac{\partial^2{\Sigma}}{\partial{\theta_j}\partial{\theta_k}} = \frac{\partial^2{L}}{\partial{\theta_j}\partial{\theta_k}}L^\top + L\frac{\partial^2{L^\top}}{\partial{\theta_j}\partial{\theta_k}} + \frac{\partial{L}}{\partial{\theta_j}}\frac{\partial{L^T}}{\partial{\theta_k}} + \frac{\partial{L}}{\partial{\theta_k}}\frac{\partial{L^\top}}{\partial{\theta_j}}
 \]
 
-### Derivative of the sigma inverse
+### Derivative of the $\Sigma^{-1}$
 
 The derivative of sigma inverse can be calculated through
 
