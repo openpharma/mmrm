@@ -237,7 +237,7 @@ Under weights mmrm model, the covariance matrix for subject $i$, can be represen
 
 Where $G_i$ is a diagonal matrix of the weights. Then, when deriving $P$, $Q$ and $R$,
 there are no mathematical differences as they are constant, and having $G_i$ in addition to $S_i$
-does not change the algorithms and we can simply do it.
+does not change the algorithms and we can simply multiply the formulas with $G_i^{-1/2}$, similarly as above for the subsetting matrix.
 
 ## Inference
 
