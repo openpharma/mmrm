@@ -150,7 +150,7 @@ In mmrm models, $\Omega$ is a block-diagonal matrix, hence we can calculate  $P$
 
 ### Derivative of the overall covariance matrix $\Sigma$
 
-The derivative of the sigma can be calculated through the derivatives of Cholesky factor(obtained through automatic differentiation)
+The derivative of the overall covariance matrix $\Sigma$ with respect to the variance parameters can be calculated through the derivatives of the Cholesky factor, and hence obtained through automatic differentiation:
 
 \[
   \frac{\partial{\Sigma}}{\partial{\theta_j}} = \frac{\partial{LL^\top}}{\partial{\theta_j}} = \frac{\partial{L}}{\partial{\theta_j}}L^\top + L\frac{\partial{L^\top}}{\partial{\theta_j}}
