@@ -252,7 +252,7 @@ and
 \]
 follows exact $F_{c,m}$ distribution.
 
-$m$ can be calculated through
+$\lambda$ and $m$ can be calculated through
 
 \[
   M = C (C^\top \Phi C)^{-1} C^\top
