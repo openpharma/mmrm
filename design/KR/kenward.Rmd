@@ -193,7 +193,7 @@ and the derivatives can be obtained through
 The derivative of the $\Sigma_i^{-1}$, $\frac{\partial\Sigma_i^{-1}}{\partial{\theta}}$ can be calculated through $\Sigma_i^{-1}$ and $\frac{\partial{\Sigma_i}}{\partial{\theta}}$
 using section [Derivative of the sigma inverse](#derivative-of-the-sigma-inverse).
 
-### Scenario under grouped sigma
+### Scenario under group specific covariance estimates
 
 When conducting grouped `mmrm` models, the covariance matrix for subject i of group $g(i)$, can be written as $\Sigma_{g(i)}$.
 Assume there are $B$ groups, the number of parameters is increased by $B$ times. With the fact that for each group, the corresponding
