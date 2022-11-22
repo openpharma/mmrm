@@ -191,7 +191,7 @@ and the derivatives can be obtained through
 \]
 
 The derivative of the $\Sigma_i^{-1}$, $\frac{\partial\Sigma_i^{-1}}{\partial{\theta}}$ can be calculated through $\Sigma_i^{-1}$ and $\frac{\partial{\Sigma_i}}{\partial{\theta}}$
-using section [Derivative of the sigma inverse](#derivative-of-the-sigma-inverse).
+using the above.
 
 ### Scenario under group specific covariance estimates
 
