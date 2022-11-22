@@ -14,6 +14,17 @@ Eigen::SparseMatrix<Type> get_select_matrix(const vector<int>& visits_i, const i
   return result;
 }
 
+// Producing a sparse selection matrix from visits to select rows and columns from
+// covariance matrix.
+template <class Type>
+Eigen::SparseMatrix<Type> get_select_matrix(const std::vector<int>& visits_i, const int& n_visits) {
+  Eigen::SparseMatrix<Type> result(visits_i.size(), n_visits);
+  for (int i = 0; i < visits_i.size(); i++) {
+    result.insert(i, visits_i[i]) = (Type) 1.0;
+  }
+  return result;
+}
+
 // Calculate tcrossprod(lower_chol) = lower_chol * t(lower_chol).
 // If complete, then adds the upper triangular part to the result as well.
 // By default only the lower triangular part is populated, as this should be

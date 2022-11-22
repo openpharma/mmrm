@@ -41,6 +41,7 @@ Imports:
     nlme,
     numDeriv,
     parallel,
+    Rcpp,
     Rdpack,
     stats,
     stringr,
@@ -54,6 +55,7 @@ Suggests:
     testthat (>= 3.0.0),
     xml2
 LinkingTo:
+    Rcpp,
     RcppEigen,
     testthat,
     TMB
@@ -75,6 +77,7 @@ Collate:
     'data.R'
     'emmeans.R'
     'fit.R'
+    'get_kr_comp.R'
     'mmrm-methods.R'
     'mmrm-package.R'
     'utils.R'

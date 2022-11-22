@@ -1,0 +1,69 @@
+get_kr_comp <- function(fit, theta) {
+  .Call(`_mmrm_get_pqr`, PACKAGE = "mmrm", fit, theta)
+}
+
+
+fit <- mmrm(FEV1 ~ ARMCD + ar1(AVISIT | USUBJID), data = fev_data)
+
+kr <- function(fit, contrast) {
+  if (fit$tmb_data$reml != 1) {
+    stop("Kenward-Roger is only for REML!")
+  }
+  kr_comp <- get_kr_comp(fit$tmb_data, fit$theta_est)
+  w <- solve(fit$tmb_obj$he(fit$theta_est))
+  v_adj <- v_a(fit$beta_vcov, w, kr_comp$P, kr_comp$Q, kr_comp$R)
+  df <- h_kr_df(fit$beta_vcov, v_adj, contrast, w, kr_comp$P)
+  return(list(df = df, v_adj = v_adj))
+}
+
+contrast <- matrix(c(0,1), ncol = 1)
+kr(fit, contrast)
+tr <- function(x) {
+  sum(diag(x))
+}
+h_kr_df <- function(v0, va, l, w, p) { # p list of matrix, w matrix
+  theta <- l %*% solve(t(l) %*% v0 %*% l) %*% t(l)
+  nl <- ncol(l)
+  thetav0 <- theta %*% v0
+  pl <- lapply(seq_len(ncol(p)), function(x) {
+    ii <- (x - 1) * ncol(p) + 1
+    jj <- x * ncol(p)
+    p[ii:jj,]
+  })
+  thetav0pv0 <- lapply(pl, function(x) {thetav0 %*% x %*% v0})
+  a1 <- 0
+  a2 <- 0
+  for (i in seq_len(length(pl))) {
+    for (j in seq_len(length(pl))) {
+      a1 <- a1 + w[i, j] * tr(thetav0pv0[[i]]) * tr(thetav0pv0[[j]])
+      a2 <- a2 + w[i, j] * tr(thetav0pv0[[i]] %*% thetav0pv0[[j]])
+    }
+  }
+  b <- 1 / (2 * nl) * (a1 + 6 * a2)
+  e <- 1 + a2 / nl
+  e_star <- 1 / (1 - a2 / nl)
+  g <- ((nl + 1) * a1 - (nl + 4) * a2) / ((nl + 2) * a2)
+  denom <- (3 * nl + 2 - 2 * g)
+  c1 <- g / denom
+  c2 <- (nl - g) / denom
+  c3 <- (nl + 2 - g) / denom
+  v_star <- 2 / nl * (1 + c1 * b) / (1 - c2 * b)^2 / (1 - c3 * b)
+  rho <- v_star / (2 * e_star^2)
+  m <- 4 + (nl + 2)  / (nl * rho - 1)
+  lambda <- m / (e * (m - 2))
+  return(list(m = m, lambda = lambda))
+}
+
+v_a <- function(v, w, p, q, r) {
+  dr <- ncol(v)
+  ret <- v
+  for (i in seq_len(dr)) {
+    for (j in seq_len(dr)) {
+      iid <- (i - 1) * dr + 1
+      jid <- (j - 1) * dr + 1
+      ijid <- ((i - 1) * dr + j - 1) * dr + 1
+      ret <- ret + 2 * w[i, j] * v %*% (q[ijid:(ijid + dr - 1),] - p[iid:(iid + dr - 1), ] %*% v %*% p[jid:(jid + dr - 1), ] - 1 / 4 * r[ijid:(ijid + dr - 1), ]) %*% v
+    }
+  }
+  return(ret)
+}
