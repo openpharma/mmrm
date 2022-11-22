@@ -81,7 +81,7 @@ of $\hat\beta$ to get a more accurate estimate for it. All these derivations are
 Following the same [notation](algorithms.html#covariance-matrix-model), the covariance matrix, $\Omega$ can be represented as
 a function of covariance matrix parameters $\theta = (\theta_1, \dotsc, \theta_k)^\top$, i.e. $\Omega(\theta)$.
 Here after model fitting with `mmrm`, we obtain the estimate $\hat\beta = \Phi(\hat\theta)X^\top\Omega(\hat\theta)^{-1}Y$,
-where $\Phi(\theta) = \left\{X^\top \Omega(\theta)^{-1} X\right\} ^{-1}$.
+where $\Phi(\theta) = \left\{X^\top \Omega(\theta)^{-1} X\right\} ^{-1}$ is the asymptotic covariance matrix of $\hat\beta$.
 However, Kackar and Harville(@kackar1984) suggests that although the $\hat\beta$ is unbiased for $\beta$, the covariance matrix,
 $V[\hat\beta] = \left\{X^\top \hat\Omega X\right\}^{-1}$ can be biased. They showed that the variability of $\hat\beta$ can be partitioned into
 two components,
