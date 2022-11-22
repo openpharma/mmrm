@@ -3,8 +3,14 @@ get_kr_comp <- function(fit, theta) {
 }
 
 
-fit <- mmrm(FEV1 ~ ARMCD + ar1(AVISIT | USUBJID), data = fev_data)
-
+#' obtain Kenward-Roger degree of freedom
+#' @export
+#' @param fit `mmrm` fit
+#' @param contrast contrast vector (ncol = 1)
+#' @examples
+#' fit <- mmrm(FEV1 ~ ARMCD + ar1(AVISIT | USUBJID), data = fev_data)
+#' contrast <- matrix(c(0,1), ncol = 1)
+#' kr(fit, contrast)
 kr <- function(fit, contrast) {
   if (fit$tmb_data$reml != 1) {
     stop("Kenward-Roger is only for REML!")
@@ -16,8 +22,7 @@ kr <- function(fit, contrast) {
   return(list(df = df, v_adj = v_adj))
 }
 
-contrast <- matrix(c(0,1), ncol = 1)
-kr(fit, contrast)
+
 tr <- function(x) {
   sum(diag(x))
 }
