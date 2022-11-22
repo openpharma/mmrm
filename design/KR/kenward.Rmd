@@ -148,7 +148,7 @@ In mmrm models, $\Omega$ is a block-diagonal matrix, hence we can calculate  $P$
 \]
 
 
-### Derivative of the sigma
+### Derivative of the overall covariance matrix $\Sigma$
 
 The derivative of the sigma can be calculated through the derivatives of Cholesky factor(obtained through automatic differentiation)
 
