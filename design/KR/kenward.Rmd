@@ -162,7 +162,7 @@ The derivative of the overall covariance matrix $\Sigma$ with respect to the var
 
 ### Derivative of the $\Sigma^{-1}$
 
-The derivative of sigma inverse can be calculated through
+The derivatives of $\Sigma^{-1}$ can be calculated through
 
 \[
   \frac{\partial{\Sigma\Sigma^{-1}}}{\partial{\theta}}\\
