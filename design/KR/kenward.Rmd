@@ -52,19 +52,7 @@ appropriately by
 \]
 where the subsetting matrix $S_i \in \{0, 1\}^{m \times m_i}$ contains
 in each of its $m_i$ columns contains a single 1 indicating which overall time point
-is matching $t_{ij}$. Each row contains at most a single 1 but can also contain
-only 0 if this time point was not observed.
-For example, assume a subject was observed on time points
-$1, 3, 4$ out of total $5$ then the subsetting matrix is
-\[
-S_i = \begin{pmatrix}
-1 & 0 & 0 \\
-0 & 0 & 0 \\
-0 & 1 & 0 \\
-0 & 0 & 1 \\
-0 & 0 & 0
-\end{pmatrix}.
-\]
+is matching $t_{ij}$. 
 $G_i \in \mathbb{R}_{\gt 0}^{m_i \times m_i}$ is the diagonal weight matrix, which is the identity matrix if no weights are specified.
 Note that this follows from the well known property of the multivariate normal
 distribution that linear combinations of the random vector again have a
