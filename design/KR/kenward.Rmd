@@ -91,7 +91,7 @@ two components,
 \]
 
 where $\Phi$ is the variance-covariance matrix of the asymptotic distribution of $\hat\beta$ as $n\rightarrow \infty$, $\Lambda$ represents the amount
-to which the asymptotic variance-covariance matrix underestimates $V[\hat\beta]$
+to which the asymptotic variance-covariance matrix underestimates $V[\hat\beta]$.
 
 Based on a Talor series expansion around $\theta$, $\Lambda$ can be approximated by
 
