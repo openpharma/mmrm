@@ -244,7 +244,7 @@ does not change the algorithms and we can simply do it.
 Suppose we are testing the $c$ linear combination of $\beta$, $C\beta$, we can use the following Wald-type statistic
 
 \[
-  F = \frac{1}{l} (\hat\beta - \beta)^\top  C (C^\top \hat\Phi_A C)^{-1} C^\top (\hat\beta - \beta)
+  F = \frac{1}{c} (\hat\beta - \beta)^\top  C (C^\top \hat\Phi_A C)^{-1} C^\top (\hat\beta - \beta)
 \]
 and
 \[
