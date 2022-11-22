@@ -52,7 +52,7 @@ appropriately by
 \]
 where the subsetting matrix $S_i \in \{0, 1\}^{m \times m_i}$ contains
 in each of its $m_i$ columns contains a single 1 indicating which overall time point
-is matching $t_{ij}$. 
+is matching $t_{ig}$. 
 $G_i \in \mathbb{R}_{\gt 0}^{m_i \times m_i}$ is the diagonal weight matrix.
 
 Conditional on the design matrices $X_i$, the coefficient vector $\beta$ and the
@@ -83,81 +83,83 @@ a function of covariance matrix parameters $\theta = (\theta_1, \dotsc, \theta_k
 Here after model fitting with `mmrm`, we obtain the estimate $\hat\beta = \Phi(\hat\theta)X^\top\Omega(\hat\theta)^{-1}Y$,
 where $\Phi(\theta) = \left\{X^\top \Omega(\theta)^{-1} X\right\} ^{-1}$ is the asymptotic covariance matrix of $\hat\beta$.
 However, Kackar and Harville(@kackar1984) suggests that although the $\hat\beta$ is unbiased for $\beta$, the covariance matrix,
-$V[\hat\beta] = \left\{X^\top \hat\Omega X\right\}^{-1}$ can be biased. They showed that the variability of $\hat\beta$ can be partitioned into
+$\hat\Phi = \left\{X^\top \hat\Omega X\right\}^{-1}$ can be biased. They showed that the variability of $\hat\beta$ can be partitioned into
 two components,
 
 \[
-  V[\hat\beta] = \Phi + \Lambda
+  \Phi_A = \Phi + \Lambda
 \]
 
 where $\Phi$ is the variance-covariance matrix of the asymptotic distribution of $\hat\beta$ as $n\rightarrow \infty$, $\Lambda$ represents the amount
-to which the asymptotic variance-covariance matrix underestimates $V[\hat\beta]$.
+to which the asymptotic variance-covariance matrix underestimates $\Phi_A$.
 
 Based on a Taylor series expansion around $\theta$, $\Lambda$ can be approximated by
 
 \[
-  \Lambda \simeq \Phi \left\{\sum_{j=1}^r{\sum_{k=1}^r{W_{jk}(Q_{jk} - P_j \Phi P_k)} }\right\} \Phi
+  \Lambda \simeq \Phi \left\{\sum_{g=1}^k{\sum_{h=1}^k{W_{gh}(Q_{gh} - P_g \Phi P_h)} }\right\} \Phi
 \]
 where
 \[
-  P_j = X^\top \frac{\partial{\Omega^{-1}}}{\partial \theta_j} X
+  P_g = X^\top \frac{\partial{\Omega^{-1}}}{\partial \theta_g} X
 \]
 \[
-  Q_{jk} = X^\top \frac{\partial{\Omega^{-1}}}{\partial \theta_j} \Omega \frac{\partial{\Omega^{-1}}}{\partial \theta_k} X
+  Q_{gh} = X^\top \frac{\partial{\Omega^{-1}}}{\partial \theta_g} \Omega \frac{\partial{\Omega^{-1}}}{\partial \theta_h} X
 \]
+
+$W$ is the inverse of the Hessian matrix of the objective function in fitting the mmrm model.
 
 Again, based on a Taylor series expansion about $\theta$, Kenward and Roger(@kenward1997) show that
 \[
-  \hat\Phi \simeq \Phi + \sum_{j=1}^r{(\hat\theta_j - \theta_j)\frac{\partial{\Phi}}{\partial{\theta_j}}} + \frac{1}{2} \sum_{j=1}^r{\sum_{k=1}^r{(\hat\theta_j - \theta_j)(\hat\theta_k - \theta_k)\frac{\partial^2{\Phi}}{\partial{\theta_j}\partial{\theta_k}}}}
+  \hat\Phi \simeq \Phi + \sum_{g=1}^k{(\hat\theta_g - \theta_g)\frac{\partial{\Phi}}{\partial{\theta_g}}} + \frac{1}{2} \sum_{g=1}^k{\sum_{h=1}^k{(\hat\theta_g - \theta_g)(\hat\theta_h - \theta_h)\frac{\partial^2{\Phi}}{\partial{\theta_g}\partial{\theta_h}}}}
 \]
 Ignoring the possible bias in $\hat\theta$,
 \[
-  E(\hat\Phi) \simeq \Phi + \frac{1}{2} \sum_{j=1}^r{\sum_{k=1}^r{W_{jk}\frac{\partial^2{\Phi}}{\partial{\theta_j}\partial{\theta_k}}}}
+  E(\hat\Phi) \simeq \Phi + \frac{1}{2} \sum_{g=1}^k{\sum_{h=1}^k{W_{gh}\frac{\partial^2{\Phi}}{\partial{\theta_g}\partial{\theta_h}}}}
 \]
 Using previously defined notations, this can be further written as
 \[
-  \frac{\partial^2{\Phi}}{\partial{\theta_j}\partial{\theta_k}} = \Phi (P_j \Phi P_k + P_k \Phi P_j - Q_{jk} - Q_{kj} + R_{jk}) \Phi
+  \frac{\partial^2{\Phi}}{\partial{\theta_g}\partial{\theta_h}} = \Phi (P_g \Phi P_h + P_h \Phi P_g - Q_{gh} - Q_{hg} + R_{gh}) \Phi
 \]
 where
 \[
-  R_{jk} = X^\top\Omega^{-1}\frac{\partial^2\Omega}{\partial{\theta_j}\partial{\theta_k}} \Omega^{-1} X
+  R_{gh} = X^\top\Omega^{-1}\frac{\partial^2\Omega}{\partial{\theta_g}\partial{\theta_h}} \Omega^{-1} X
 \]
 
-substituting $\Phi$ and $\Lambda$ back to the $V[\hat\beta]$, we have
+substituting $\Phi$ and $\Lambda$ back to the $\hat\Phi_A$, we have
 
 \[
-  V(\hat\beta) = \hat\Phi + 2\hat\Phi \left\{\sum_{j=1}^r{\sum_{k=1}^r{W_{jk}(Q_{jk} - P_j \hat\Phi P_k - \frac{1}{4}R_{jk})} }\right\} \hat\Phi
+  \hat\Phi_A = \hat\Phi + 2\hat\Phi \left\{\sum_{g=1}^k{\sum_{h=1}^k{W_{gh}(Q_{gh} - P_g \hat\Phi P_h - \frac{1}{4}R_{gh})} }\right\} \hat\Phi
 \]
 
-where $\Omega(\hat\theta)$ replaces $\Omega(\theta)$ in the righthand side, and $W$ is the inverse of the Hessian matrix of the objective function.
+where $\Omega(\hat\theta)$ replaces $\Omega(\theta)$ in the righthand side.
 
 ### Special Considerations for mmrm models
 
 In mmrm models, $\Omega$ is a block-diagonal matrix, hence we can calculate  $P$, $Q$ and $R$ for each subject and add them up.
 
 \[
-  P_j = \sum_{i=1}^{N}{P_{ij}} = \sum_{i=1}^{N}{X_i^\top \frac{\partial{\Sigma_i^{-1}}}{\partial \theta_j} X_i}
+  P_g = \sum_{i=1}^{N}{P_{ig}} = \sum_{i=1}^{N}{X_i^\top \frac{\partial{\Sigma_i^{-1}}}{\partial \theta_g} X_i}
 \]
 
 \[
-  Q_{jk} = \sum_{i=1}^{N}{Q_{ijk}} = \sum_{i=1}^{N}{X_i^\top \frac{\partial{\Sigma_i^{-1}}}{\partial \theta_j} \Sigma_i \frac{\partial{\Sigma_i^{-1}}}{\partial \theta_k} X_i}
+  Q_{gh} = \sum_{i=1}^{N}{Q_{igh}} = \sum_{i=1}^{N}{X_i^\top \frac{\partial{\Sigma_i^{-1}}}{\partial \theta_g} \Sigma_i \frac{\partial{\Sigma_i^{-1}}}{\partial \theta_h} X_i}
 \]
 
 \[
-  R_{jk} = \sum_{i=1}^{N}{R_{ijk}} = \sum_{i=1}^{N}{X_i^\top\Sigma_i^{-1}\frac{\partial^2\Sigma_i}{\partial{\theta_j}\partial{\theta_k}} \Sigma_i^{-1} X_i}
+  R_{gh} = \sum_{i=1}^{N}{R_{igh}} = \sum_{i=1}^{N}{X_i^\top\Sigma_i^{-1}\frac{\partial^2\Sigma_i}{\partial{\theta_g}\partial{\theta_h}} \Sigma_i^{-1} X_i}
 \]
 
 
 ### Derivative of the overall covariance matrix $\Sigma$
 
-The derivative of the overall covariance matrix $\Sigma$ with respect to the variance parameters can be calculated through the derivatives of the Cholesky factor, and hence obtained through automatic differentiation:
-
+The derivative of the overall covariance matrix $\Sigma$ with respect to the variance parameters can be calculated through the derivatives of the Cholesky factor, and hence obtained through automatic differentiation,
+following [matrix identities calculations](https://en.wikipedia.org/wiki/Matrix_calculus#Identities_in_differential_form).
 \[
-  \frac{\partial{\Sigma}}{\partial{\theta_j}} = \frac{\partial{LL^\top}}{\partial{\theta_j}} = \frac{\partial{L}}{\partial{\theta_j}}L^\top + L\frac{\partial{L^\top}}{\partial{\theta_j}}
+  \frac{\partial{\Sigma}}{\partial{\theta_g}} = \frac{\partial{LL^\top}}{\partial{\theta_g}} = \frac{\partial{L}}{\partial{\theta_g}}L^\top + L\frac{\partial{L^\top}}{\partial{\theta_g}}
 \]
 
 \[
-  \frac{\partial^2{\Sigma}}{\partial{\theta_j}\partial{\theta_k}} = \frac{\partial^2{L}}{\partial{\theta_j}\partial{\theta_k}}L^\top + L\frac{\partial^2{L^\top}}{\partial{\theta_j}\partial{\theta_k}} + \frac{\partial{L}}{\partial{\theta_j}}\frac{\partial{L^T}}{\partial{\theta_k}} + \frac{\partial{L}}{\partial{\theta_k}}\frac{\partial{L^\top}}{\partial{\theta_j}}
+  \frac{\partial^2{\Sigma}}{\partial{\theta_g}\partial{\theta_h}} = \frac{\partial^2{L}}{\partial{\theta_g}\partial{\theta_h}}L^\top + L\frac{\partial^2{L^\top}}{\partial{\theta_g}\partial{\theta_h}} + \frac{\partial{L}}{\partial{\theta_g}}\frac{\partial{L^T}}{\partial{\theta_h}} + \frac{\partial{L}}{\partial{\theta_h}}\frac{\partial{L^\top}}{\partial{\theta_g}}
 \]
 
 ### Derivative of the $\Sigma^{-1}$
@@ -187,7 +189,7 @@ and the derivatives can be obtained through
 \]
 
 \[
-  \frac{\partial^2{\Sigma_i}}{\partial{\theta_j}\partial{\theta_k}} = S_i^\top \frac{\partial^2{\Sigma}}{\partial{\theta_j}\partial{\theta_k}} S_i
+  \frac{\partial^2{\Sigma_i}}{\partial{\theta_g}\partial{\theta_h}} = S_i^\top \frac{\partial^2{\Sigma}}{\partial{\theta_g}\partial{\theta_h}} S_i
 \]
 
 The derivative of the $\Sigma_i^{-1}$, $\frac{\partial\Sigma_i^{-1}}{\partial{\theta}}$ can be calculated through $\Sigma_i^{-1}$ and $\frac{\partial{\Sigma_i}}{\partial{\theta}}$
@@ -200,13 +202,13 @@ Assume there are $B$ groups, the number of parameters is increased by $B$ times.
 $\theta$ will not affect other parts, we will have block-diagonal $P$, $Q$ and $R$ matrix.
 
 \[
-P_j = \begin{pmatrix}
+P_g = \begin{pmatrix}
 P_{j, 1} & \dots & P_{j, B} \\
 \end{pmatrix}
 \]
 
 \[
-Q_j = \begin{pmatrix}
+Q_g = \begin{pmatrix}
 Q_{j, 1} & 0 & \dots & \dots & 0 \\
 0 & Q_{j, 2} & 0 & \dots & 0\\
 \vdots & & \ddots & & \vdots \\
@@ -215,15 +217,28 @@ Q_{j, 1} & 0 & \dots & \dots & 0 \\
 \end{pmatrix}
 \]
 
+\[
+R_g = \begin{pmatrix}
+R_{j, 1} & 0 & \dots & \dots & 0 \\
+0 & R_{j, 2} & 0 & \dots & 0\\
+\vdots & & \ddots & & \vdots \\
+\vdots & & & \ddots & \vdots \\
+0 & \dots & \dots & 0 & R_{j, B}
+\end{pmatrix}
+\]
+
 Use $P_{j, b}$ to denote the block diagonal part for group $b$, we have
 \[
-  P_{j,b} = \sum_{g(i) = b}{P_{ij}} = \sum_{g(i) = b}{X_i^\top \frac{\partial{\Sigma_i^{-1}}}{\partial \theta_j} X_i}
+  P_{g,b} = \sum_{g(i) = b}{P_{ig}} = \sum_{g(i) = b}{X_i^\top \frac{\partial{\Sigma_i^{-1}}}{\partial \theta_g} X_i}
 \]
 
 \[
-  Q_{j,b} = \sum_{g(i) = b}{Q_{ijk}} = \sum_{g(i) = b}{X_i^\top \frac{\partial{\Sigma_i^{-1}}}{\partial \theta_j} \Sigma_i \frac{\partial{\Sigma_i^{-1}}}{\partial \theta_k} X_i}
+  Q_{gh,b} = \sum_{g(i) = b}{Q_{igh}} = \sum_{g(i) = b}{X_i^\top \frac{\partial{\Sigma_i^{-1}}}{\partial \theta_g} \Sigma_i \frac{\partial{\Sigma_i^{-1}}}{\partial \theta_h} X_i}
 \]
 
+\[
+  R_{gh,b} = \sum_{g(i) = b}{R_{igh}} = \sum_{g(i) = b}{X_i^\top\Sigma_i^{-1}\frac{\partial^2\Sigma_i}{\partial{\theta_g}\partial{\theta_h}} \Sigma_i^{-1} X_i}
+\]
 
 Similarly for $R$.
 
@@ -259,11 +274,11 @@ $\lambda$ and $m$ can be calculated through
 \]
 
 \[
-  A_1 = \sum_{j=1}^r{\sum_{k=1}^r{W_{jk} tr(M \Phi P_j \Phi) tr(M \Phi P_k \Phi)}}
+  A_1 = \sum_{j=1}^k{\sum_{k=1}^k{W_{gh} tr(M \Phi P_g \Phi) tr(M \Phi P_h \Phi)}}
 \]
 
 \[
-  A_2 = \sum_{j=1}^r{\sum_{k=1}^r{W_{jk} tr(M \Phi P_j \Phi M \Phi P_k \Phi)}}
+  A_2 = \sum_{j=1}^k{\sum_{k=1}^k{W_{gh} tr(M \Phi P_g \Phi M \Phi P_h \Phi)}}
 \]
 
 \[
