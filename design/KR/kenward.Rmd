@@ -106,7 +106,7 @@ where
   Q_{jk} = X^\top \frac{\partial{\Omega^{-1}}}{\partial \theta_j} \Omega \frac{\partial{\Omega^{-1}}}{\partial \theta_k} X
 \]
 
-Again, based on a Talor series expansion about $\theta$, Kenward and Roger(@kenward1997) shows that
+Again, based on a Taylor series expansion about $\theta$, Kenward and Roger(@kenward1997) show that
 \[
   \hat\Phi \simeq \Phi + \sum_{j=1}^r{(\hat\theta_j - \theta_j)\frac{\partial{\Phi}}{\partial{\theta_j}}} + \frac{1}{2} \sum_{j=1}^r{\sum_{k=1}^r{(\hat\theta_j - \theta_j)(\hat\theta_k - \theta_k)\frac{\partial^2{\Phi}}{\partial{\theta_j}\partial{\theta_k}}}}
 \]
