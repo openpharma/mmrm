@@ -77,7 +77,7 @@ remaining entries.
 ## Mathematical Details of Kenward-Roger method
 
 The mathematical derivation of the Kenward-Roger method is based on the Taylor expansion of the obtained covariance matrix
-of $\hat\beta$ to get a more accurate estimate. All these derivation are based on the restricted maximum likelihood.
+of $\hat\beta$ to get a more accurate estimate for it. All these derivations are based on the restricted maximum likelihood.
 Following the same [notation](algorithms.html#covariance-matrix-model), the covariance matrix, $\Omega$ can be represented as
 a function of covariance matrix parameters $\theta = (\theta_1, \dotsc, \theta_k)^\top$, i.e. $\Omega(\theta)$.
 Here after model fitting with `mmrm`, we obtain the estimate $\hat\beta = \Phi(\hat\theta)X^\top\Omega(\hat\theta)^{-1}Y$,
