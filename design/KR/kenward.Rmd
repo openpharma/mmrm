@@ -197,7 +197,10 @@ using the above.
 
 ### Scenario under group specific covariance estimates
 
-When fitting grouped `mmrm` models, the covariance matrix for subject i of group $g(i)$, can be written as $\Sigma_{g(i)}$.
+When fitting grouped `mmrm` models, the covariance matrix for subject i of group $g(i)$, can be written as
+\[
+  \Sigma_i = S_i^\top \Sigma_{g(i)} S_i$.
+\]
 Assume there are $B$ groups, the number of parameters is increased by $B$ times. With the fact that for each group, the corresponding
 $\theta$ will not affect other parts, we will have block-diagonal $P$, $Q$ and $R$ matrices, where the blocks are given by:
 
@@ -208,22 +211,22 @@ P_{h, 1} & \dots & P_{h, B} \\
 \]
 
 \[
-Q_h = \begin{pmatrix}
-Q_{h, 1} & 0 & \dots & \dots & 0 \\
-0 & Q_{h, 2} & 0 & \dots & 0\\
+Q_{hj} = \begin{pmatrix}
+Q_{hj, 1} & 0 & \dots & \dots & 0 \\
+0 & Q_{hj, 2} & 0 & \dots & 0\\
 \vdots & & \ddots & & \vdots \\
 \vdots & & & \ddots & \vdots \\
-0 & \dots & \dots & 0 & Q_{h, B}
+0 & \dots & \dots & 0 & Q_{hj, B}
 \end{pmatrix}
 \]
 
 \[
-R_h = \begin{pmatrix}
-R_{h, 1} & 0 & \dots & \dots & 0 \\
-0 & R_{h, 2} & 0 & \dots & 0\\
+R_{hj} = \begin{pmatrix}
+R_{hj, 1} & 0 & \dots & \dots & 0 \\
+0 & R_{hj, 2} & 0 & \dots & 0\\
 \vdots & & \ddots & & \vdots \\
 \vdots & & & \ddots & \vdots \\
-0 & \dots & \dots & 0 & R_{h, B}
+0 & \dots & \dots & 0 & R_{hj, B}
 \end{pmatrix}
 \]
 
