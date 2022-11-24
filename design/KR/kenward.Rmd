@@ -268,7 +268,7 @@ and
 follows exact $F_{c,m}$ distribution.
 
 When we have only one coefficient to test, then $C$ is a column vector containing a single $1$ inside.
-The hypothesis testing is still the same and falls back to Satterthwaite method.
+The hypothesis testing is still the same and is similar to the Satterthwaite method. We can still follow the same calculations as for the multi-dimensional case.
 
 $\lambda$ and $m$ can be calculated through
 
