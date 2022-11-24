@@ -376,6 +376,37 @@ test_that("h_mmrm_tmb_data catches case with multiple time points per subject ea
   )
 })
 
+
+test_that("h_mmrm_tmb_data has no side effect of overwrite the weights in global env", {
+  weights <- "this is global weights"
+  formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula)
+  res <- h_mmrm_tmb_data(
+    formula_parts,
+    data = fev_data,
+    weights = rep_len(1, nrow(fev_data)),
+    reml = TRUE,
+    accept_singular = TRUE
+  )
+  expect_identical(weights, "this is global weights")
+})
+
+test_that("h_mmrm_tmb_data will not be affecte by `weights` in data", {
+  weights <- fev_data$WEIGHT
+  fev_data$weights <- weights
+  formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula)
+  res <- h_mmrm_tmb_data(
+    formula_parts,
+    data = fev_data,
+    weights = rep_len(1, nrow(fev_data)),
+    reml = TRUE,
+    accept_singular = TRUE
+  )
+  expect_identical(res$weights_vector, rep_len(1, nrow(res$x_matrix)))
+  expect_identical(fev_data$weights, weights)
+})
+
 # h_mmrm_tmb_parameters ----
 
 test_that("h_mmrm_tmb_parameters works as expected without start values", {
