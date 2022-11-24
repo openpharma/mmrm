@@ -106,7 +106,7 @@ where
   Q_{hj} = X^\top \frac{\partial{\Omega^{-1}}}{\partial \theta_h} \Omega \frac{\partial{\Omega^{-1}}}{\partial \theta_j} X
 \]
 
-$W$ is the inverse of the Hessian matrix of the objective function in fitting the mmrm model.
+$W$ is the inverse of the Hessian matrix of the log-likelihood function of $\theta$ evaluated at the estimate $\hat\theta$, i.e. the observed Fisher Information matrix as a consistent estimator of the variance-covariance matrix of $\hat\theta$.
 
 Again, based on a Taylor series expansion about $\theta$, Kenward and Roger(@kenward1997) show that
 \[
