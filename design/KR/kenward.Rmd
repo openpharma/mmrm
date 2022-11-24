@@ -167,12 +167,12 @@ following [matrix identities calculations](https://en.wikipedia.org/wiki/Matrix_
 The derivatives of $\Sigma^{-1}$ can be calculated through
 
 \[
-  \frac{\partial{\Sigma\Sigma^{-1}}}{\partial{\theta_g}}\\
-  = \frac{\partial{\Sigma}}{\partial{\theta_g}}\Sigma^{-1} + \Sigma\frac{\partial{\Sigma^{-1}}}{\partial{\theta_g}} \\
+  \frac{\partial{\Sigma\Sigma^{-1}}}{\partial{\theta_h}}\\
+  = \frac{\partial{\Sigma}}{\partial{\theta_h}}\Sigma^{-1} + \Sigma\frac{\partial{\Sigma^{-1}}}{\partial{\theta_h}} \\
   = 0
 \]
 \[
-  \frac{\partial{\Sigma^{-1}}}{\partial{\theta_g}} = - \Sigma^{-1} \frac{\partial{\Sigma}}{\partial{\theta_g}}\Sigma^{-1}
+  \frac{\partial{\Sigma^{-1}}}{\partial{\theta_h}} = - \Sigma^{-1} \frac{\partial{\Sigma}}{\partial{\theta_h}}\Sigma^{-1}
 \]
 
 ### Subjects with missed visits
@@ -185,14 +185,14 @@ If a subject do not have all visits, the corresponding covariance matrix can be 
 and the derivatives can be obtained through
 
 \[
-  \frac{\partial{\Sigma_i}}{\partial{\theta_g}} = S_i^\top \frac{\partial{\Sigma}}{\partial{\theta_g}} S_i
+  \frac{\partial{\Sigma_i}}{\partial{\theta_h}} = S_i^\top \frac{\partial{\Sigma}}{\partial{\theta_h}} S_i
 \]
 
 \[
   \frac{\partial^2{\Sigma_i}}{\partial{\theta_h}\partial{\theta_j}} = S_i^\top \frac{\partial^2{\Sigma}}{\partial{\theta_h}\partial{\theta_j}} S_i
 \]
 
-The derivative of the $\Sigma_i^{-1}$, $\frac{\partial\Sigma_i^{-1}}{\partial{\theta_g}}$ can be calculated through $\Sigma_i^{-1}$ and $\frac{\partial{\Sigma_i}}{\partial{\theta_g}}$
+The derivative of the $\Sigma_i^{-1}$, $\frac{\partial\Sigma_i^{-1}}{\partial{\theta_h}}$ can be calculated through $\Sigma_i^{-1}$ and $\frac{\partial{\Sigma_i}}{\partial{\theta_h}}$
 using the above.
 
 ### Scenario under group specific covariance estimates
@@ -203,27 +203,27 @@ $\theta$ will not affect other parts, we will have block-diagonal $P$, $Q$ and $
 
 \[
 P_h = \begin{pmatrix}
-P_{j, 1} & \dots & P_{j, B} \\
+P_{h, 1} & \dots & P_{h, B} \\
 \end{pmatrix}
 \]
 
 \[
 Q_h = \begin{pmatrix}
-Q_{j, 1} & 0 & \dots & \dots & 0 \\
-0 & Q_{j, 2} & 0 & \dots & 0\\
+Q_{h, 1} & 0 & \dots & \dots & 0 \\
+0 & Q_{h, 2} & 0 & \dots & 0\\
 \vdots & & \ddots & & \vdots \\
 \vdots & & & \ddots & \vdots \\
-0 & \dots & \dots & 0 & Q_{j, B}
+0 & \dots & \dots & 0 & Q_{h, B}
 \end{pmatrix}
 \]
 
 \[
 R_h = \begin{pmatrix}
-R_{j, 1} & 0 & \dots & \dots & 0 \\
-0 & R_{j, 2} & 0 & \dots & 0\\
+R_{h, 1} & 0 & \dots & \dots & 0 \\
+0 & R_{h, 2} & 0 & \dots & 0\\
 \vdots & & \ddots & & \vdots \\
 \vdots & & & \ddots & \vdots \\
-0 & \dots & \dots & 0 & R_{j, B}
+0 & \dots & \dots & 0 & R_{h, B}
 \end{pmatrix}
 \]
 
