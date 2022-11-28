@@ -75,14 +75,14 @@ List get_pqr(List mmrm_fit, NumericVector theta) {
     for (int i = 0; i < n_visits_i; i++) {
       visit_i[i] = visits_zero_inds[i + start_i];
     }
-    int subject_group_i = subject_groups[i];
+    int subject_group_i = subject_groups[i] - 1;
     auto x_matrix = as_matrix(x);
     matrix<double> Xi = x_matrix.block(start_i, 0, n_visits_i, x_matrix.cols());
-    auto sigma_inv = mychol_by_group[i].get_inverse(visit_i);
-    auto sigma_d1 = mychol_by_group[i].get_sigma_derivative1(visit_i);
-    auto sigma_d2 = mychol_by_group[i].get_sigma_derivative2(visit_i);
-    auto sigma = mychol_by_group[i].get_sigma(visit_i);
-    auto sigma_inv_d1 = mychol_by_group[i].get_inverse_derivative(visit_i);
+    auto sigma_inv = mychol_by_group[subject_group_i].get_inverse(visit_i);
+    auto sigma_d1 = mychol_by_group[subject_group_i].get_sigma_derivative1(visit_i);
+    auto sigma_d2 = mychol_by_group[subject_group_i].get_sigma_derivative2(visit_i);
+    auto sigma = mychol_by_group[subject_group_i].get_sigma(visit_i);
+    auto sigma_inv_d1 = mychol_by_group[subject_group_i].get_inverse_derivative(visit_i);
     auto gi_sqrt_root = G_sqrt.segment(start_i, n_visits_i).matrix().asDiagonal();
     for (int r = 0; r < theta_size_per_group; r ++) {
       auto Pi = Xi.transpose() * gi_sqrt_root * sigma_inv_d1.block(r * n_visits_i, 0, n_visits_i, n_visits_i) * gi_sqrt_root * Xi;

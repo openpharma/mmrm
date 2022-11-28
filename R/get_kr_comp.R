@@ -1,6 +1,14 @@
 #' obtain kr component
 #' @param tmb_data (`mmrm_tmb_data`)\cr produced by [h_mmrm_tmb_data()].
 #' @param theta numeric vector of the theta estimate.
+#' @details the function retuns a named list, $P$, $Q$ and $R$, which corresponds to the
+#' paper in 1997. The matrices are stacked in columns so that $P$, $Q$ and $R$ has the same
+#' column number(number of beta parameters). The number of rows, is dependent on
+#' the total number of theta and number of groups, if the fit is a grouped mmrm.
+#' For $P$ matrix, it is stacked sequentially. For $Q$ and $R$ matrix, it is stacked so
+#' that the $Q_{ij}$ and $R_{ij}$ is stacked from $j$ then to $i$, i.e. $R_{i1}$, $R_{i2}$, etc.
+#' $Q$ and $R$ only contains within group results and intra-group results should be all zero matrices
+#' so they are not stacked in the result.
 #' @keywords internal
 h_get_kr_comp <- function(tmb_data, theta) {
   .Call(`_mmrm_get_pqr`, PACKAGE = "mmrm", tmb_data, theta)
@@ -75,17 +83,27 @@ h_kr_df <- function(v0, va, l, w, p) {
 #' @keywords internal
 v_a <- function(v, w, p, q, r) {
   dr <- ncol(v)
+  n_theta <- ncol(w)
+  n_groups <- n_theta / dr
   ret <- v
-  for (i in seq_len(dr)) {
-    for (j in seq_len(dr)) {
-      iid <- (i - 1) * dr + 1
-      jid <- (j - 1) * dr + 1
-      ijid <- ((i - 1) * dr + j - 1) * dr + 1
-      ret <- ret + 2 * w[i, j] * v %*% (
-          q[ijid:(ijid + dr - 1),] -
-          p[iid:(iid + dr - 1), ] %*% v %*% p[jid:(jid + dr - 1), ] -
-          1 / 4 * r[ijid:(ijid + dr - 1), ]
-        ) %*% v
+  for (gi in seq_len(n_groups)) {
+    for (gj in seq_len(n_groups)) {
+      for (i in seq_len(dr)) {
+        for (j in seq_len(dr)) {
+          iid <- (i - 1) * dr + (gi - 1) * dr ^ 2 + 1
+          jid <- (j - 1) * dr + (gj - 1) * dr ^ 2 + 1
+          ijid <- ((i - 1) * dr + j - 1) * dr + (gi - 1) * dr ^ 3 + 1
+          if (gi != gj) {
+            ret <- ret + 2 * w[i, j] * v %*% (-p[iid:(iid + dr - 1), ] %*% v %*% p[jid:(jid + dr - 1), ]) %*% v
+          } else {
+            ret <- ret + 2 * w[i, j] * v %*% (
+              q[ijid:(ijid + dr - 1),] -
+              p[iid:(iid + dr - 1), ] %*% v %*% p[jid:(jid + dr - 1), ] -
+              1 / 4 * r[ijid:(ijid + dr - 1), ]
+            ) %*% v
+          }
+        }
+      }
     }
   }
   return(ret)
