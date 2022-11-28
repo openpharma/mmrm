@@ -45,7 +45,7 @@ h_kr_df <- function(v0, va, l, w, p) {
   theta <- l %*% solve(t(l) %*% v0 %*% l) %*% t(l)
   nl <- ncol(l)
   thetav0 <- theta %*% v0
-  pl <- lapply(seq_len(ncol(p)), function(x) {
+  pl <- lapply(seq_len(nrow(p) / ncol(p)), function(x) {
     ii <- (x - 1) * ncol(p) + 1
     jj <- x * ncol(p)
     p[ii:jj, ]
