@@ -94,8 +94,6 @@ fit <- mmrm(
   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data
 )
-
-get_kr_comp(fit$tmb_data, fit$theta_est)
 ```
 
 The code specifies an MMRM with the given covariates and an unstructured covariance

@@ -146,3 +146,15 @@ cov_type <- c("us", "toep", "toeph", "ar1", "ar1h", "ad", "adh", "cs", "csh")
 #' @describeIn covariance_types spatial covariance structure
 #' @format NULL
 cov_type_spatial <- c("sp_exp")
+
+
+#' trace of a matrix
+#' @param x square matrix input
+#' @return the trace of the square matrix
+#' @export
+tr <- function(x) {
+  if (nrow(x) != ncol(x)) {
+    stop("x must be square matrix!")
+  }
+  return(sum(diag(x)))
+}

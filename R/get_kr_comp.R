@@ -1,5 +1,9 @@
-get_kr_comp <- function(fit, theta) {
-  .Call(`_mmrm_get_pqr`, PACKAGE = "mmrm", fit, theta)
+#' obtain kr component
+#' @param tmb_data (`mmrm_tmb_data`)\cr produced by [h_mmrm_tmb_data()].
+#' @param theta numeric vector of the theta estimate.
+#' @keywords internal
+h_get_kr_comp <- function(tmb_data, theta) {
+  .Call(`_mmrm_get_pqr`, PACKAGE = "mmrm", tmb_data, theta)
 }
 
 
@@ -15,25 +19,28 @@ kr <- function(fit, contrast) {
   if (fit$tmb_data$reml != 1) {
     stop("Kenward-Roger is only for REML!")
   }
-  kr_comp <- get_kr_comp(fit$tmb_data, fit$theta_est)
+  kr_comp <- h_get_kr_comp(fit$tmb_data, fit$theta_est)
   w <- solve(fit$tmb_obj$he(fit$theta_est))
   v_adj <- v_a(fit$beta_vcov, w, kr_comp$P, kr_comp$Q, kr_comp$R)
   df <- h_kr_df(fit$beta_vcov, v_adj, contrast, w, kr_comp$P)
   return(list(df = df, v_adj = v_adj))
 }
 
-
-tr <- function(x) {
-  sum(diag(x))
-}
-h_kr_df <- function(v0, va, l, w, p) { # p list of matrix, w matrix
+#' obtain the adjusted Kenward-Roger degree of freedom
+#' @param v0 unadjusted covariance matrix
+#' @param va adjusted covariance matrix
+#' @param l linear combination matrix
+#' @param w hessian matrix
+#' @param p P matrix from `h_get_kr_comp`
+#' @keywords internal
+h_kr_df <- function(v0, va, l, w, p) {
   theta <- l %*% solve(t(l) %*% v0 %*% l) %*% t(l)
   nl <- ncol(l)
   thetav0 <- theta %*% v0
   pl <- lapply(seq_len(ncol(p)), function(x) {
     ii <- (x - 1) * ncol(p) + 1
     jj <- x * ncol(p)
-    p[ii:jj,]
+    p[ii:jj, ]
   })
   thetav0pv0 <- lapply(pl, function(x) {thetav0 %*% x %*% v0})
   a1 <- 0
@@ -59,6 +66,13 @@ h_kr_df <- function(v0, va, l, w, p) { # p list of matrix, w matrix
   return(list(m = m, lambda = lambda))
 }
 
+#' obtain the adjusted covariance matrix
+#' @param v unadjusted covariance matrix
+#' @param w hessian matrix
+#' @param p P matrix from `h_get_kr_comp`
+#' @param q Q matrix from `h_get_kr_comp`
+#' @param r R matrix from `h_get_kr_comp`
+#' @keywords internal
 v_a <- function(v, w, p, q, r) {
   dr <- ncol(v)
   ret <- v
@@ -67,7 +81,11 @@ v_a <- function(v, w, p, q, r) {
       iid <- (i - 1) * dr + 1
       jid <- (j - 1) * dr + 1
       ijid <- ((i - 1) * dr + j - 1) * dr + 1
-      ret <- ret + 2 * w[i, j] * v %*% (q[ijid:(ijid + dr - 1),] - p[iid:(iid + dr - 1), ] %*% v %*% p[jid:(jid + dr - 1), ] - 1 / 4 * r[ijid:(ijid + dr - 1), ]) %*% v
+      ret <- ret + 2 * w[i, j] * v %*% (
+          q[ijid:(ijid + dr - 1),] -
+          p[iid:(iid + dr - 1), ] %*% v %*% p[jid:(jid + dr - 1), ] -
+          1 / 4 * r[ijid:(ijid + dr - 1), ]
+        ) %*% v
     }
   }
   return(ret)
