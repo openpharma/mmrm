@@ -11,3 +11,4 @@ coverage.*
 ^\.pre-commit-config\.yaml$
 ^codemeta\.json$
 design
+simulations
