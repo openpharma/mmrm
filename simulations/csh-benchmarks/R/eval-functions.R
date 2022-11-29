@@ -85,7 +85,7 @@ spectral_loss_fun <- function(fit_results, true_covar_mat_ls) {
 
   fit_results %>%
     dplyr::mutate(
-      frobenius_loss = purrr::map2_dbl(
+      spectral_loss = purrr::map2_dbl(
         fit, .dgp_name,
         function(f, dgp_name) {
           est_covar_mat <- get_covar_mat(f)
