@@ -12,8 +12,9 @@
 #' @param eval_results A list of tibbles containing the results of the evaluator
 #'   functions.
 #'
-#' @return A tibble reporting the estimated Frobenius and spectral risks for
-#'   every combination of data-generating process, sample size, and estimator.
+#' @return A rtable object reporting the estimated Frobenius and spectral risks
+#'   for every combination of data-generating process, sample size, and
+#'   estimator.
 risk_tbl_fun <- function(eval_results) {
 
   ## strata variables
@@ -25,17 +26,35 @@ risk_tbl_fun <- function(eval_results) {
     dplyr::left_join(
       eval_results$spectral_loss,
       by = join_vars
+    ) %>%
+    tidyr::pivot_longer(
+      cols = c(frobenius_loss, spectral_loss),
+      values_to = "Value", names_to = "type"
+    ) %>%
+    dplyr::mutate(
+      .dgp_name = ifelse(
+        .dgp_name == "het_rct", "Heteroscedastic RCT", "Homoscedastic RCT"
+      ),
+      .dgp_name = factor(.dgp_name,
+        levels = c("Homoscedastic RCT", "Heteroscedastic RCT")
+      ),
+      type = ifelse(
+        type == "frobenius_loss", "Frobenius Risk", "Spectral Risk"
+      ),
+      type = factor(type, levels = c("Frobenius Risk", "Spectral Risk")),
+      num_part = paste0("n = ", num_part),
+      num_part = factor(num_part)
     )
 
-  ## compute the risks under each loss function
-  loss_tbl %>%
-    group_by(dplyr::across({{strata_vars}})) %>%
-    summarize(
-      frobenius_risk = mean(frobenius_loss),
-      spectral_risk = mean(spectral_loss),
-      .groups = "drop"
-    ) %>%
-    dplyr::arrange(.dgp_name, num_part, .method_name)
+  ## compute the risks under each loss function and generate a table
+  tbl_recipe <- rtables::basic_table() %>%
+    rtables::split_cols_by(".dgp_name") %>%
+    rtables::split_cols_by("type") %>%
+    rtables::split_rows_by("num_part") %>%
+    rtables::analyze("Value", mean, format = "xx.xxx")
+
+  return(rtables::build_table(tbl_recipe, loss_tbl))
+
 }
 
 #' Plot loss distributions

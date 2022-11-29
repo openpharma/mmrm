@@ -59,6 +59,12 @@ rct_dgp_fun <- function(
   outcome_cor = 0.5
 ) {
 
+  compute_true_covar_mat <- function(vars, corr) {
+    csh_mat <- tcrossprod(sqrt(vars), sqrt(vars)) * corr
+    diag(csh_mat) <- vars
+    return(csh_mat)
+  }
+
   if (is.null(outcome_vars)) {
     outcome_vars <- rep(1, num_rep_meas)
   }
@@ -73,7 +79,7 @@ rct_dgp_fun <- function(
     time = seq_len(num_rep_meas),
     participant = seq_len(num_part)
   )
-  df <- cov_df %>% left_join(time_point_df, by = "participant")
+  df <- cov_df %>% dplyr::left_join(time_point_df, by = "participant")
 
   ## produce the model matrix for the fixed effects
   fixed_model_mat <- model.matrix(
