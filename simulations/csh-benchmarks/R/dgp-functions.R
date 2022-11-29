@@ -2,6 +2,26 @@
 ## Data-Generating Processes
 ################################################################################
 
+
+#' Assemble the true heterogeneous compound symmetry matrix
+#'
+#' @description Computes the true heterogeneous compound symmetry covariance
+#'   matrix based on the specified outcome variances and the correlation
+#'   parameter.
+#'
+#' @param vars A numeric vector corresponding to the repeated measures
+#'   variances.
+#' @param corr A numeric corresponding to the correlation parameter of the
+#'   heterogeneous compound symmetry covariance structure.
+#'
+#' @return The true heterogeneous compound symmetry covariance matrix used to
+#'   generate the data.
+compute_true_covar_mat <- function(vars, corr) {
+  csh_mat <- tcrossprod(sqrt(vars), sqrt(vars)) * corr
+  diag(csh_mat) <- vars
+  return(csh_mat)
+}
+
 #' A Simple RCT Data-Generating Function
 #'
 #' @description This function simulates a randomized control trial with
@@ -35,9 +55,13 @@ rct_dgp_fun <- function(
   fixed_time = 1,
   fixed_time_trt = 1,
   fixed_base_cov = 1,
-  outcome_vars = rep(1, num_rep_meas),
+  outcome_vars = NULL,
   outcome_cor = 0.5
 ) {
+
+  if (is.null(outcome_vars)) {
+    outcome_vars <- rep(1, num_rep_meas)
+  }
 
   ## form a balanced data.frame
   cov_df <- data.frame(
@@ -62,8 +86,7 @@ rct_dgp_fun <- function(
 
   ## define the repeated measures correlation structure, assuming
   ## heterogeneous compound symmetry
-  csh_mat <- tcrossprod(sqrt(outcome_vars), sqrt(outcome_vars)) * outcome_cor
-  diag(csh_mat) <- outcome_vars
+  csh_mat <- compute_true_covar_mat(outcome_vars, outcome_cor)
 
   ## generate the outcomes
   beta <- c(

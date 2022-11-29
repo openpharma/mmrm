@@ -35,7 +35,7 @@ mmrm_wrapper_fun <- function(
     formula = y ~ base_cov + trt*time + csh(time | participant), data = df
   )
 
-  return(fit)
+  return(list(fit = fit))
 }
 
 #' glmmTMB wrapper function
@@ -71,6 +71,8 @@ glmmTMB_wrapper_fun <- function(
     formula = y ~ base_cov + trt*time + cs(time + 0 | participant), data = df,
     dispformula = ~ 0
   )
+
+  return(list(fit = fit))
 
 }
 
@@ -109,6 +111,6 @@ nlme_wrapper_fun <- function(
     weights = nlme::varIdent(form = ~ 1 | time), data = df
   )
 
-  return(fit)
+  return(list(fit = fit))
 
 }
