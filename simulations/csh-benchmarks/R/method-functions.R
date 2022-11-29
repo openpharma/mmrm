@@ -2,6 +2,18 @@
 ## Method Wrapper Functions
 ################################################################################
 
+#' mmrm wrapper function
+#'
+#' @description This function takes as input the ouput of a data-generating
+#'   process function, and fits a mmrm model. A mmrm model fit is returned.
+#'
+#' @param participant A factor vector of participant IDs.
+#' @param time A factor vector of time points.
+#' @param y A numeric vector of outcomes.
+#' @param trt A binary vector of treatment group indicators.
+#' @param base_cov A numeric vector of baseline covariate values.
+#'
+#' @return A fitted mmrm model object.
 mmrm_wrapper_fun <- function(
   participant,
   time,
@@ -26,6 +38,18 @@ mmrm_wrapper_fun <- function(
   return(fit)
 }
 
+#' glmmTMB wrapper function
+#'
+#' @description This function takes as input the ouput of a data-generating
+#'   process function, and fits a glmmTMB model. A glmmTMB model fit is returned.
+#'
+#' @param participant A factor vector of participant IDs.
+#' @param time A factor vector of time points.
+#' @param y A numeric vector of outcomes.
+#' @param trt A binary vector of treatment group indicators.
+#' @param base_cov A numeric vector of baseline covariate values.
+#'
+#' @return A fitted glmmTMB model object.
 glmmTMB_wrapper_fun <- function(
   participant,
   time,
@@ -49,6 +73,18 @@ glmmTMB_wrapper_fun <- function(
 
 }
 
+#' nlme wrapper function
+#'
+#' @description This function takes as input the ouput of a data-generating
+#'   process function, and fits a gls model. A gls model fit is returned.
+#'
+#' @param participant A factor vector of participant IDs.
+#' @param time A factor vector of time points.
+#' @param y A numeric vector of outcomes.
+#' @param trt A binary vector of treatment group indicators.
+#' @param base_cov A numeric vector of baseline covariate values.
+#'
+#' @return A fitted gls model object.
 nlme_wrapper_fun <- function(
   participant,
   time,
