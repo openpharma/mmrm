@@ -315,7 +315,10 @@ mmrm <- function(formula,
 
   covbeta_fun <- h_covbeta_fun(fit)
   fit$jac_list <- h_jac_list(covbeta_fun, fit$theta_est)
-
+  if (fit$tmb_data$is_spatial_int == 0 && fit$reml) {
+    kr_comp <- h_get_kr_comp(fit$tmb_data, fit$theta_est)
+    fit$kr_comp <- kr_comp
+  }
   class(fit) <- c("mmrm", class(fit))
   fit
 }

@@ -27,7 +27,7 @@ kr <- function(fit, contrast) {
   if (fit$tmb_data$reml != 1) {
     stop("Kenward-Roger is only for REML!")
   }
-  kr_comp <- h_get_kr_comp(fit$tmb_data, fit$theta_est)
+  kr_comp <- fit$kr_comp
   w <- solve(fit$tmb_obj$he(fit$theta_est))
   v_adj <- v_a(fit$beta_vcov, w, kr_comp$P, kr_comp$Q, kr_comp$R)
   df <- h_kr_df(fit$beta_vcov, v_adj, contrast, w, kr_comp$P)

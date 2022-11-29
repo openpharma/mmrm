@@ -1,6 +1,6 @@
 
 
-                                                           The SAS System                 Tuesday, November 29, 2022 07:00:00 AM  14
+                                                           The SAS System                 Tuesday, November 29, 2022 07:00:00 AM  16
 
                                                         The Mixed Procedure
 
@@ -8,8 +8,7 @@
 
                                        Data Set                     WORK.FEV                 
                                        Dependent Variable           FEV1                     
-                                       Covariance Structure         Heterogeneous Compound   
-                                                                    Symmetry                 
+                                       Covariance Structure         Ante-dependence          
                                        Subject Effect               USUBJID                  
                                        Estimation Method            REML                     
                                        Residual Variance Method     None                     
@@ -67,7 +66,7 @@
 
                                                             Dimensions
 
-                                                Covariance Parameters             5
+                                                Covariance Parameters             7
                                                 Columns in X                      3
                                                 Columns in Z                      0
                                                 Subjects                        200
@@ -86,9 +85,9 @@
                                     Iteration    Evaluations    -2 Res Log Like       Criterion
 
                                             0              1      3891.08088197                
-                                            1              2      3754.63600088      0.00029245
-                                            2              1      3754.19529795      0.00000734
-                                            3              1      3754.18491472      0.00000001
+                                            1              4      3683.39215829      0.00067799
+                                            2              1      3682.46343651      0.00001299
+                                            3              1      3682.44560955      0.00000001
 
 
                                                      Convergence criteria met.                    
@@ -99,8 +98,8 @@
  
                                                      Row        Col1        Col2
 
-                                                       1     35.2903      7.3150
-                                                       2      7.3150      168.89
+                                                       1     41.1742     -0.3985
+                                                       2     -0.3985      151.80
 
 
                                                        Estimated R Correlation
@@ -108,8 +107,8 @@
  
                                                      Row        Col1        Col2
 
-                                                       1      1.0000     0.09475
-                                                       2     0.09475      1.0000
+                                                       1      1.0000    -0.00504
+                                                       2    -0.00504      1.0000
 
 
                                                    Covariance Parameter Estimates
@@ -117,26 +116,28 @@
                                   Cov
                                   Parm       Subject    Estimate     Alpha       Lower       Upper
 
-                                  Var(1)     USUBJID      100.98      0.05     77.7923      136.40
-                                  Var(2)     USUBJID     35.2903      0.05     27.3982     47.1809
-                                  Var(3)     USUBJID     28.6359      0.05     21.3057     40.5472
-                                  Var(4)     USUBJID      168.89      0.05      132.31      223.15
-                                  CSH        USUBJID     0.09475      0.05    -0.00029      0.1898
+                                  Var(1)     USUBJID      110.47      0.05     86.0786      147.00
+                                  Var(2)     USUBJID     41.1742      0.05     31.6654     55.7406
+                                  Var(3)     USUBJID     24.0872      0.05     18.3787     32.9551
+                                  Var(4)     USUBJID      151.80      0.05      119.06      200.26
+                                  Rho(1)     USUBJID      0.6996      0.05      0.5914      0.8079
+                                  Rho(2)     USUBJID    -0.01585      0.05     -0.2241      0.1924
+                                  Rho(3)     USUBJID      0.3180      0.05      0.1049      0.5310
 
 
                                                           Fit Statistics
 
-                                               -2 Res Log Likelihood          3754.2
-                                               AIC (Smaller is Better)        3764.2
-                                               AICC (Smaller is Better)       3764.3
-                                               BIC (Smaller is Better)        3780.7
+                                               -2 Res Log Likelihood          3682.4
+                                               AIC (Smaller is Better)        3696.4
+                                               AICC (Smaller is Better)       3696.7
+                                               BIC (Smaller is Better)        3719.5
 
 
                                                   Null Model Likelihood Ratio Test
  
                                                     DF    Chi-Square      Pr > ChiSq
 
-                                                     4        136.90          <.0001
+                                                     6        208.64          <.0001
 
 
                                                     Solution for Fixed Effects
@@ -144,8 +145,8 @@
                                                                Standard
                              Effect       ARMCD    Estimate       Error      DF    t Value    Pr > |t|
 
-                             Intercept              40.2471      0.4656     191      86.44      <.0001
-                             ARMCD        TRT        3.7709      0.6741     191       5.59      <.0001
+                             Intercept              41.1661      0.4543     164      90.61      <.0001
+                             ARMCD        TRT        3.7234      0.6617     162       5.63      <.0001
                              ARMCD        PBO             0           .       .        .         .    
 
 
@@ -154,7 +155,7 @@
                                           Num     Den
                             Effect         DF      DF    Chi-Square    F Value      Pr > ChiSq    Pr > F
 
-                            ARMCD           1     191         31.29      31.29          <.0001    <.0001
+                            ARMCD           1     162         31.66      31.66          <.0001    <.0001
 
 
                                                         Least Squares Means
@@ -162,8 +163,8 @@
                                              Standard
               Effect    ARMCD    Estimate       Error      DF    t Value    Pr > |t|     Alpha       Lower       Upper
 
-              ARMCD     TRT       44.0180      0.4875     189      90.28      <.0001      0.05     43.0563     44.9798
-              ARMCD     PBO       40.2471      0.4656     191      86.44      <.0001      0.05     39.3288     41.1655
+              ARMCD     TRT       44.8895      0.4811     160      93.31      <.0001      0.05     43.9393     45.8397
+              ARMCD     PBO       41.1661      0.4543     164      90.61      <.0001      0.05     40.2690     42.0631
 
 
                                                  Differences of Least Squares Means
@@ -171,4 +172,4 @@
                                                   Standard
          Effect    ARMCD    _ARMCD    Estimate       Error      DF    t Value    Pr > |t|     Alpha       Lower       Upper
 
-         ARMCD     TRT      PBO         3.7709      0.6741     191       5.59      <.0001      0.05      2.4412      5.1007
+         ARMCD     TRT      PBO         3.7234      0.6617     162       5.63      <.0001      0.05      2.4168      5.0301
