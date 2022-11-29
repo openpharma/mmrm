@@ -29,7 +29,7 @@
 
 rct_dgp_fun <- function(
   num_part = 100,
-  num_rep_meas = 5,
+  num_rep_meas = 10,
   fixed_int = 1,
   fixed_trt = 1,
   fixed_time = 1,
