@@ -68,7 +68,8 @@ glmmTMB_wrapper_fun <- function(
   )
 
   fit <- glmmTMB::glmmTMB(
-    formula = y ~ base_cov + trt*time + cs(time + 0 | participant), data = df
+    formula = y ~ base_cov + trt*time + cs(time + 0 | participant), data = df,
+    dispformula = ~ 0
   )
 
 }
