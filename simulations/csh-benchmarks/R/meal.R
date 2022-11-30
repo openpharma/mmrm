@@ -1,0 +1,80 @@
+################################################################################
+## Simulation Script
+################################################################################
+
+## load required libraries
+library(here)
+library(simChef)
+library(future)
+library(MASS)
+library(lme4)
+library(mmrm)
+library(dplyr)
+library(tidyr)
+library(tibble)
+library(rtables)
+library(ggplot2)
+
+## set up parallelization, if using
+plan(multisession, workers = 20)
+
+## specify the data-generating processes
+source(here("simulations/csh-benchmarks/R/dgp-functions.R"))
+hom_rct_dgp <- create_dgp(
+  .dgp_fun = rct_dgp_fun,
+  outcome_vars = rep(1, 10),
+  outcome_cor = 0.5
+)
+het_rct_dgp <- create_dgp(,
+  .dgp_fun = rct_dgp_fun,
+  outcome_vars = seq(from = 0.5, by = 0.25, length.out = 10),
+  outcome_cor = 0.2
+)
+
+## define the true covariance matrix of the DGPs
+true_covar_ls <- list(
+  "hom_rct" = compute_true_covar_mat(rep(1, 10), 0.5),
+  "het_rct" = compute_true_covar_mat(
+    seq(from = 0.5, by = 0.25, length.out = 10), 0.2
+  )
+)
+
+## specify the methods
+source(here("simulations/csh-benchmarks/R/method-functions.R"))
+mrmm_method <- create_method(.method_fun = mmrm_wrapper_fun)
+glmmTMB_method <- create_method(.method_fun = glmmTMB_wrapper_fun)
+nlme_method <- create_method(.method_fun = nlme_wrapper_fun)
+
+## specify the evaluation metrics
+source(here("simulations/csh-benchmarks/R/eval-functions.R"))
+frobenius_loss_eval <- create_evaluator(
+  .eval_fun = frobenius_loss_fun,
+  true_covar_mat_ls = true_covar_ls
+)
+spectral_loss_eval <- create_evaluator(
+  .eval_fun = spectral_loss_fun,
+  true_covar_mat_ls = true_covar_ls
+)
+
+## specify the result summarizers
+source(here("simulations/csh-benchmarks/R/visualizer-functions.R"))
+risk_tbl_viz <- create_visualizer(.viz_fun = risk_tbl_fun)
+loss_dist_viz <- create_visualizer(.viz_fun = loss_dist_fun)
+
+## define the experiment object
+experiment <- create_experiment(name = "covar-matrix-estimation-comparison") %>%
+  add_dgp(hom_rct_dgp, name = "hom_rct") %>%
+  add_dgp(het_rct_dgp, name = "het_rct") %>%
+  add_vary_across(.dgp = "hom_rct", num_part = c(125, 250, 500, 1000)) %>%
+  add_vary_across(.dgp = "het_rct", num_part = c(125, 250, 500, 1000)) %>%
+  add_method(mrmm_method, name = "mmrm") %>%
+  add_method(glmmTMB_method, name = "glmmTMB") %>%
+  add_method(nlme_method, name = "nlme") %>%
+  add_evaluator(frobenius_loss_eval, name = "frobenius_loss") %>%
+  add_evaluator(spectral_loss_eval, name = "spectral_loss") %>%
+  add_visualizer(risk_tbl_viz, name = "risk_tibble") %>%
+  add_visualizer(loss_dist_viz, name = "loss_dist_plot")
+
+## run the experiment
+set.seed(1412)
+results <- experiment$run(n_reps = 1000, save = TRUE, checkpoint_n_reps = 100)
