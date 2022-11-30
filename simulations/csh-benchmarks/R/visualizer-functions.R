@@ -29,7 +29,7 @@ risk_tbl_fun <- function(eval_results) {
     ) %>%
     tidyr::pivot_longer(
       cols = c(frobenius_loss, spectral_loss),
-      values_to = "Value", names_to = "type"
+      values_to = "value", names_to = "type"
     ) %>%
     dplyr::mutate(
       .dgp_name = ifelse(
@@ -42,16 +42,20 @@ risk_tbl_fun <- function(eval_results) {
         type == "frobenius_loss", "Frobenius Risk", "Spectral Risk"
       ),
       type = factor(type, levels = c("Frobenius Risk", "Spectral Risk")),
-      num_part = paste0("n = ", num_part),
-      num_part = factor(num_part)
+      n = paste0("n = ", num_part),
+      n = factor(n, levels = paste0("n = ", unique(.data$num_part)))
     )
 
   ## compute the risks under each loss function and generate a table
+  risk_fun <- function(df, labelstr) {
+    rtables::rcell(mean(df$value), label = labelstr, format = "xx.xxxx")
+  }
   tbl_recipe <- rtables::basic_table() %>%
     rtables::split_cols_by(".dgp_name") %>%
     rtables::split_cols_by("type") %>%
-    rtables::split_rows_by("num_part") %>%
-    rtables::analyze("Value", mean, format = "xx.xxx")
+    rtables::split_rows_by("n") %>%
+    rtables::split_rows_by(".method_name") %>%
+    rtables::summarize_row_groups(cfun = risk_fun)
 
   return(rtables::build_table(tbl_recipe, loss_tbl))
 
