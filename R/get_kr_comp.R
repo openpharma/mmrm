@@ -23,27 +23,28 @@ h_get_kr_comp <- function(tmb_data, theta) {
 #' fit <- mmrm(FEV1 ~ ARMCD + ar1(AVISIT | USUBJID), data = fev_data)
 #' contrast <- matrix(c(0,1), ncol = 1)
 #' kr(fit, contrast)
-kr <- function(fit, contrast) {
+kr <- function(fit, contrast, order = 2L) {
   if (fit$tmb_data$reml != 1) {
     stop("Kenward-Roger is only for REML!")
   }
   kr_comp <- fit$kr_comp
   w <- solve(fit$tmb_obj$he(fit$theta_est))
-  v_adj <- v_a(fit$beta_vcov, w, kr_comp$P, kr_comp$Q, kr_comp$R)
-  df <- h_kr_df(fit$beta_vcov, v_adj, contrast, w, kr_comp$P)
-  return(list(df = df, v_adj = v_adj))
+  v_adj <- v_a(fit$beta_vcov, w, kr_comp$P, kr_comp$Q, kr_comp$R, order = order)
+  df <- h_kr_df(fit$beta_vcov, contrast, w, kr_comp$P)
+  f_statistic <- 1 / nrow(contrast) * fit$beta_est %*% t(contrast) %*% solve(contrast %*% v_adj %*% t(contrast)) %*% contrast %*% fit$beta_est
+  f_star <- f_statistic * df$m / (df$m - 1 + nrow(contrast))
+  return(list(df = df, v_adj = v_adj, f_star = f_star))
 }
 
 #' obtain the adjusted Kenward-Roger degree of freedom
 #' @param v0 unadjusted covariance matrix
-#' @param va adjusted covariance matrix
 #' @param l linear combination matrix
 #' @param w hessian matrix
 #' @param p P matrix from `h_get_kr_comp`
 #' @keywords internal
-h_kr_df <- function(v0, va, l, w, p) {
-  theta <- l %*% solve(t(l) %*% v0 %*% l) %*% t(l)
-  nl <- ncol(l)
+h_kr_df <- function(v0, l, w, p) {
+  theta <- t(l) %*% solve(l %*% v0 %*% t(l)) %*% l
+  nl <- nrow(l)
   thetav0 <- theta %*% v0
   pl <- lapply(seq_len(nrow(p) / ncol(p)), function(x) {
     ii <- (x - 1) * ncol(p) + 1
@@ -70,7 +71,7 @@ h_kr_df <- function(v0, va, l, w, p) {
   v_star <- 2 / nl * (1 + c1 * b) / (1 - c2 * b)^2 / (1 - c3 * b)
   rho <- v_star / (2 * e_star^2)
   m <- 4 + (nl + 2)  / (nl * rho - 1)
-  lambda <- m / (e * (m - 2))
+  lambda <- m / (e_star * (m - 2))
   return(list(m = m, lambda = lambda))
 }
 
@@ -80,8 +81,12 @@ h_kr_df <- function(v0, va, l, w, p) {
 #' @param p P matrix from `h_get_kr_comp`
 #' @param q Q matrix from `h_get_kr_comp`
 #' @param r R matrix from `h_get_kr_comp`
+#' @param order the order of the Kenward-Roger approximation. Only 1L or 2L supported.
 #' @keywords internal
-v_a <- function(v, w, p, q, r) {
+v_a <- function(v, w, p, q, r, order = 2L) {
+  if (identical(order, 1L)) {
+    r[] <- 0
+  }
   dr <- ncol(v)
   n_theta <- ncol(w)
   n_groups <- n_theta / dr

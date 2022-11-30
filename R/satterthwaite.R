@@ -173,29 +173,14 @@ h_df_1d_list <- function(est,
 
 #' Calculation of Satterthwaite Degrees of Freedom for One-Dimensional Contrast
 #'
-#' @description `r lifecycle::badge("experimental")`
-#'
 #' @param object (`mmrm`)\cr the MMRM fit.
 #' @param contrast (`numeric`)\cr contrast vector. Note that this should not include
 #'   elements for singular coefficient estimates, i.e. only refer to the
 #'   actually estimated coefficients.
 #'
 #' @return List with `est`, `se`, `df`, `t_stat` and `p_val`.
-#' @export
-#'
-#' @examples
-#' object <- mmrm(
-#'   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
-#'   data = fev_data
-#' )
-#' contrast <- numeric(length(object$beta_est))
-#' contrast[3] <- 1
-#' df_1d(object, contrast)
-df_1d <- function(object, contrast) {
-  assert_class(object, "mmrm")
-  assert_numeric(contrast, any.missing = FALSE)
-
-  contrast <- as.vector(contrast)
+#' @keywords internal
+df_1d_sat <- function(object, contrast) {
   assert_numeric(contrast, len = length(component(object, "beta_est")))
   est <- sum(contrast * component(object, "beta_est"))
   var <- h_quad_form_vec(contrast, component(object, "beta_vcov"))
@@ -288,8 +273,6 @@ h_df_md_from_1d <- function(object, contrast) {
 
 #' Calculation of Satterthwaite Degrees of Freedom for Multi-Dimensional Contrast
 #'
-#' @description `r lifecycle::badge("experimental")`
-#'
 #' @param object (`mmrm`)\cr the MMRM fit.
 #' @param contrast (`matrix`)\cr numeric contrast matrix, if given a `numeric`
 #'   then this is coerced to a row vector. Note that this should not include
@@ -297,24 +280,8 @@ h_df_md_from_1d <- function(object, contrast) {
 #'   actually estimated coefficients.
 #'
 #' @return List with `est`, `se`, `df`, `t_stat` and `p_val`.
-#' @export
-#'
-#' @examples
-#' object <- mmrm(
-#'   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
-#'   data = fev_data
-#' )
-#' contrast <- matrix(data = 0, nrow = 2, ncol = length(object$beta_est))
-#' contrast[1, 2] <- contrast[2, 3] <- 1
-#' df_md(object, contrast)
-df_md <- function(object, contrast) {
-  assert_class(object, "mmrm")
-  assert_numeric(contrast, any.missing = FALSE)
-  if (!is.matrix(contrast)) {
-    contrast <- matrix(contrast, ncol = length(contrast))
-  }
-  assert_matrix(contrast, ncols = length(component(object, "beta_est")))
-
+#' @keywords internal
+df_md_sat <- function(object, contrast) {
   # Early return if we are in the one-dimensional case.
   if (identical(nrow(contrast), 1L)) {
     return(h_df_md_from_1d(object, contrast))

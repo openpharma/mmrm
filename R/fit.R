@@ -230,6 +230,7 @@ mmrm_control <- function(optimizer = stats::nlminb,
 #' @param optimizer (`string`)\cr optimizer to be used to generate the model.
 #' @param n_cores (`count`)\cr number of cores which could in principle be used for
 #'   parallel computations on Linux or Mac machines.
+#' @param ddfm (`string`)\cr denominator of degree of freedom method.
 #' @inheritParams mmrm_control
 #'
 #' @details
@@ -273,10 +274,14 @@ mmrm <- function(formula,
                  reml = TRUE,
                  optimizer = "automatic",
                  n_cores = 1L,
-                 accept_singular = TRUE) {
+                 accept_singular = TRUE,
+                 ddfm = c("Satterthwaite", "Kenward-Roger")) {
   assert_string(optimizer)
   use_automatic <- identical(optimizer, "automatic")
-
+  ddfm <- match.arg(ddfm)
+  if (ddfm == "Kenward-Roger" && reml != TRUE) {
+    stop("Kenward-Roger only works for REML!")
+  }
   attr(data, which = "dataname") <- toString(match.call()$data)
 
   if (is.null(weights)) {
@@ -312,10 +317,11 @@ mmrm <- function(formula,
       ))
     }
   }
-
-  covbeta_fun <- h_covbeta_fun(fit)
-  fit$jac_list <- h_jac_list(covbeta_fun, fit$theta_est)
-  if (fit$tmb_data$is_spatial_int == 0 && fit$reml) {
+  fit$ddfm <- ddfm
+  if (ddfm == "Satterthwaite") {
+    covbeta_fun <- h_covbeta_fun(fit)
+    fit$jac_list <- h_jac_list(covbeta_fun, fit$theta_est)
+  } else {
     kr_comp <- h_get_kr_comp(fit$tmb_data, fit$theta_est)
     fit$kr_comp <- kr_comp
   }

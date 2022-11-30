@@ -34,8 +34,9 @@ test_that("kr give similar results as SAS", {
   expect_equal(res$df$m, expected[2], tolerance = 1e-3)
   expect_equal(sqrt(res$v_adj[2, 2]), expected[1], tolerance = 1e-1)
 
-  fit <- mmrm(FEV1 ~ ARMCD + ad(AVISIT | USUBJID), data = fev_data)
+  fit <- mmrm(FEV1 ~ ARMCD + adh(AVISIT | USUBJID), data = fev_data)
   res <- kr(fit, contrast = matrix(c(0, 1), ncol = 1))
   expected <- c(0.66172017349971, 162.39338528175)
-  # ante has large difference
+  expect_equal(res$df$m, expected[2], tolerance = 1e-3)
+  expect_equal(sqrt(res$v_adj[2, 2]), expected[1], tolerance = 1e-1)
 })
