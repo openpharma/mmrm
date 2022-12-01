@@ -2,18 +2,21 @@
 % Please edit documentation in R/kenwardroger.R
 \name{df_md_kr}
 \alias{df_md_kr}
-\title{obtain Kenward-Roger degree of freedom}
+\title{Calculation of Kenward-Roger Degrees of Freedom for Multi-Dimensional Contrast}
 \usage{
-df_md_kr(fit, contrast, order = 2L)
+df_md_kr(object, contrast, linear = FALSE)
 }
 \arguments{
-\item{fit}{\code{mmrm} fit}
+\item{object}{\code{mmrm} object}
 
-\item{contrast}{contrast vector (ncol = 1)}
+\item{contrast}{\code{matrix} contrast matrix}
 
-\item{order}{Kenward-Roger approximation order}
+\item{linear}{\code{logical}\cr whether to use linear Kenward-Roger approximation}
+}
+\value{
+List with \code{num_df}, \code{denom_df}, \code{f_stat} and \code{p_val} (2-sided p-value).
 }
 \description{
-obtain Kenward-Roger degree of freedom
+Calculation of Kenward-Roger Degrees of Freedom for Multi-Dimensional Contrast
 }
 \keyword{internal}

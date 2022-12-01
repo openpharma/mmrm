@@ -1,6 +1,6 @@
 #include "utils.h"
 using namespace Rcpp;
-
+// conversion between Rcpp data and eigen vector/matrix.
 vector<double> as_vector(NumericVector input) {
   vector<double> ret(as<std::vector<double>>(input));
   return ret;

@@ -1,143 +1,32 @@
 library(sasr)
 library(mmrm)
-
 df2sd(fev_data, "fev")
 
-sas_result <- run_sas("
-ods output diffs = diff;
-PROC MIXED DATA = fev cl method=reml;
+sas_code <- function(ddfm, covtype) {
+  sprintf("ods output diffs = diff;
+    PROC MIXED DATA = fev cl method=reml;
       CLASS RACE(ref = 'Asian') AVISIT(ref = 'VIS4') SEX(ref = 'Male') ARMCD(ref = 'PBO') USUBJID;
-      MODEL FEV1 = ARMCD / ddfm=kr solution chisq;
-      REPEATED AVISIT / subject=USUBJID type=ar(1) r rcorr;
+      MODEL FEV1 = ARMCD / ddfm=%s solution chisq;
+      REPEATED AVISIT / subject=USUBJID type=%s r rcorr;
       LSMEANS ARMCD / pdiff=all cl alpha=0.05 slice=AVISIT;
-    RUN;
-")
-
-result <- sd2df("diff")
-cat(sas_result$LST, file = "design/KR/kr_ar1.txt")
-write.csv(result, file = "design/KR/kr_ar1.csv")
-
-fit <- mmrm(FEV1 ~ ARMCD + ar1(AVISIT|USUBJID), data = fev_data, ddfm = "Kenward-Roger")
-kr(fit, contrast = matrix(c(0, 1), ncol = 1))
+    RUN;", ddfm, covtype)
+}
 
 
-sas_result <- run_sas("
-ods output diffs = diff;
-PROC MIXED DATA = fev cl method=reml;
-      CLASS RACE(ref = 'Asian') AVISIT(ref = 'VIS4') SEX(ref = 'Male') ARMCD(ref = 'PBO') USUBJID;
-      MODEL FEV1 = ARMCD / ddfm=kr(linear) solution chisq;
-      REPEATED AVISIT / subject=USUBJID type=ar(1) r rcorr;
-      LSMEANS ARMCD / pdiff=all cl alpha=0.05 slice=AVISIT;
-    RUN;
-")
+sas_wrapper <- function(ddfm, covtype, result_name) {
+  sas_result <- run_sas(sas_code(ddfm, covtype))
+  result <- sd2df("diff")
+  cat(sas_result$LST, file = sprintf("design/KR/%s.txt", result_name))
+  write.csv(result, file = sprintf("design/KR/%s.csv", result_name))
+}
 
-result <- sd2df("diff")
-cat(sas_result$LST, file = "design/KR/kr_linear_ar1.txt")
-write.csv(result, file = "design/KR/kr_linear_ar1.csv")
-
-fit <- mmrm(FEV1 ~ ARMCD + ar1(AVISIT|USUBJID), data = fev_data, ddfm = "Kenward-Roger")
-df_1d(fit, contrast = matrix(c(0, 1), nrow = 1), order = 1L)
-
-sas_result <- run_sas("
-ods output diffs = diff;
-PROC MIXED DATA = fev cl method=reml;
-      CLASS RACE(ref = 'Asian') AVISIT(ref = 'VIS4') SEX(ref = 'Male') ARMCD(ref = 'PBO') USUBJID;
-      MODEL FEV1 = ARMCD / ddfm=kr solution chisq;
-      REPEATED AVISIT / subject=USUBJID type=arh(1) r rcorr;
-      LSMEANS ARMCD / pdiff=all cl alpha=0.05 slice=AVISIT;
-    RUN;
-")
-
-result <- sd2df("diff")
-cat(sas_result$LST, file = "design/KR/kr_arh1.txt")
-write.csv(result, file = "design/KR/kr_arh1.csv")
-
-fit <- mmrm(FEV1 ~ ARMCD + ar1h(AVISIT|USUBJID), data = fev_data, ddfm = "Kenward-Roger")
-kr(fit, contrast = matrix(c(0, 1), ncol = 1))
-
-
-sas_result <- run_sas("
-ods output diffs = diff;
-PROC MIXED DATA = fev cl method=reml;
-      CLASS RACE(ref = 'Asian') AVISIT(ref = 'VIS4') SEX(ref = 'Male') ARMCD(ref = 'PBO') USUBJID;
-      MODEL FEV1 = ARMCD / ddfm=kr solution chisq;
-      REPEATED AVISIT / subject=USUBJID type=csh r rcorr;
-      LSMEANS ARMCD / pdiff=all cl alpha=0.05 slice=AVISIT;
-    RUN;
-")
-
-result <- sd2df("diff")
-cat(sas_result$LST, file = "design/KR/kr_csh.txt")
-write.csv(result, file = "design/KR/kr_csh.csv")
-
-fit <- mmrm(FEV1 ~ ARMCD + csh(AVISIT|USUBJID), data = fev_data, ddfm = "Kenward-Roger")
-kr(fit, contrast = matrix(c(0, 1), ncol = 1))
-
-sas_result <- run_sas("
-ods output diffs = diff;
-PROC MIXED DATA = fev cl method=reml;
-      CLASS RACE(ref = 'Asian') AVISIT(ref = 'VIS4') SEX(ref = 'Male') ARMCD(ref = 'PBO') USUBJID;
-      MODEL FEV1 = ARMCD / ddfm=kr solution chisq;
-      REPEATED AVISIT / subject=USUBJID type=cs r rcorr;
-      LSMEANS ARMCD / pdiff=all cl alpha=0.05 slice=AVISIT;
-    RUN;
-")
-
-result <- sd2df("diff")
-cat(sas_result$LST, file = "design/KR/kr_cs.txt")
-write.csv(result, file = "design/KR/kr_cs.csv")
-
-fit <- mmrm(FEV1 ~ ARMCD + cs(AVISIT|USUBJID), data = fev_data, ddfm = "Kenward-Roger")
-kr(fit, contrast = matrix(c(0, 1), ncol = 1))
-
-
-sas_result <- run_sas("
-ods output diffs = diff;
-PROC MIXED DATA = fev cl method=reml;
-      CLASS RACE(ref = 'Asian') AVISIT(ref = 'VIS4') SEX(ref = 'Male') ARMCD(ref = 'PBO') USUBJID;
-      MODEL FEV1 = ARMCD / ddfm=kr solution chisq;
-      REPEATED AVISIT / subject=USUBJID type=ante(1) r rcorr;
-      LSMEANS ARMCD / pdiff=all cl alpha=0.05 slice=AVISIT;
-    RUN;
-")
-
-result <- sd2df("diff")
-cat(sas_result$LST, file = "design/KR/kr_ante.txt")
-write.csv(result, file = "design/KR/kr_ante.csv")
-
-fit <- mmrm(FEV1 ~ ARMCD + adh(AVISIT|USUBJID), data = fev_data, ddfm = "Kenward-Roger")
-res <- df_1d(fit, contrast = matrix(c(0, 1), nrow = 1))
-
-sas_result <- run_sas("
-ods output diffs = diff;
-PROC MIXED DATA = fev cl method=reml;
-      CLASS RACE(ref = 'Asian') AVISIT(ref = 'VIS4') SEX(ref = 'Male') ARMCD(ref = 'PBO') USUBJID;
-      MODEL FEV1 = ARMCD / ddfm=kr<linear> solution chisq;
-      REPEATED AVISIT / subject=USUBJID type=ante(1) r rcorr;
-      LSMEANS ARMCD / pdiff=all cl alpha=0.05 slice=AVISIT;
-    RUN;
-")
-
-result <- sd2df("diff")
-cat(sas_result$LST, file = "design/KR/kr_linear_ante.txt")
-write.csv(result, file = "design/KR/kr_linear_ante.csv")
-
-fit <- mmrm(FEV1 ~ ARMCD + adh(AVISIT|USUBJID), data = fev_data, ddfm = "Kenward-Roger")
-kr(fit, contrast = matrix(c(0, 1), nrow = 1), order = 1L)
-
-sas_result <- run_sas("
-ods output diffs = diff;
-PROC MIXED DATA = fev cl method=reml;
-      CLASS RACE(ref = 'Asian') AVISIT(ref = 'VIS4') SEX(ref = 'Male') ARMCD(ref = 'PBO') USUBJID;
-      MODEL FEV1 = ARMCD / ddfm=kr2 solution chisq;
-      REPEATED AVISIT / subject=USUBJID type=ante(1) r rcorr;
-      LSMEANS ARMCD / pdiff=all cl alpha=0.05 slice=AVISIT;
-    RUN;
-")
-
-result <- sd2df("diff")
-cat(sas_result$LST, file = "design/KR/kr2_ante.txt")
-write.csv(result, file = "design/KR/kr2_ante.csv")
-
-fit <- mmrm(FEV1 ~ ARMCD + adh(AVISIT|USUBJID), data = fev_data, ddfm = "Kenward-Roger")
-df_1d(fit, contrast = matrix(c(0, 1), ncol = 1))
+sas_wrapper("kr", "ar(1)", "kr_ar1")
+sas_wrapper("kr(linear)", "ar(1)", "kr1_ar1")
+sas_wrapper("kr", "arh(1)", "kr_arh1")
+sas_wrapper("kr(linear)", "arh(1)", "kr1_arh1")
+sas_wrapper("kr", "cs", "kr_cs")
+sas_wrapper("kr(linear)", "cs", "kr1_cs")
+sas_wrapper("kr", "csh", "kr_csh")
+sas_wrapper("kr(linear)", "csh", "kr1_csh")
+sas_wrapper("kr", "ante(1)", "kr_adh")
+sas_wrapper("kr(linear)", "ante(1)", "kr1_adh")

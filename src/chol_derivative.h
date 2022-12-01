@@ -2,7 +2,9 @@
 
 using namespace Rcpp;
 using std::string;
-
+// struct chol to obtain the cholesky factor given theta.
+// The reason to have it is that we need a functor that need only theta to
+// obtain the derivatives from autodiff.
 struct chol {
   int dim_cov_mat;
   string cov_type;
@@ -12,7 +14,8 @@ struct chol {
       return get_cov_lower_chol_grouped(theta, this->dim_cov_mat, this->cov_type, 1, false).vec();
     }
 };
-
+// struct chol_jacobian that has jacobian of the cholesky factor given theta.
+// The reason to have it is that we need hessian so we use jacobian twice.
 struct chol_jacobian {
   int dim_cov_mat;
   string cov_type;
@@ -24,7 +27,9 @@ struct chol_jacobian {
     }
 };
 
-
+// template function to obtain derivatives from visits, cov_type and theta.
+// Basically this is calculating the derivatives for the sigma
+// from the derivatives for the cholesky factor.
 template <class Type>
 std::map<std::string, matrix<Type>> derivatives(int n_visits, std::string cov_type, vector<Type> theta) {
   std::map<std::string, matrix<Type>> ret;
@@ -59,7 +64,10 @@ std::map<std::string, matrix<Type>> derivatives(int n_visits, std::string cov_ty
   ret["derivative2"] = ret_d2;
   return ret;
 }
-
+// struct chols is created to get the derivatives with cache.
+// The main reason to have it is that we nearly always have duplicated visits
+// and the inverse of a matrix is calculation expensive. In addition, we can save
+// the resource needed for select matrix calculations.
 template <class Type>
 struct chols {
   std::map<std::vector<int>, matrix<Type>> inverse_cache;
@@ -75,7 +83,7 @@ struct chols {
   vector<Type> theta;
   matrix<Type> chol_full;
   chols() {
-    
+    // this default constructor is needed because the use of `[]`.
   }
   chols(vector<Type> theta, int n_visits, std::string cov_type): n_visits(n_visits), cov_type(cov_type), full_visit(std::vector<int>(n_visits)) {
     this->theta = theta;

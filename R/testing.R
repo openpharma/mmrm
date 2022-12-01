@@ -1,4 +1,4 @@
-#' Calculation of Satterthwaite Degrees of Freedom for One-Dimensional Contrast
+#' Calculation of Degrees of Freedom for One-Dimensional Contrast
 #'
 #' @description `r lifecycle::badge("experimental")`
 #'
@@ -6,7 +6,7 @@
 #' @param contrast (`numeric`)\cr contrast vector. Note that this should not include
 #'   elements for singular coefficient estimates, i.e. only refer to the
 #'   actually estimated coefficients.
-#'
+#' @param ... additional arguments (depending on method)
 #' @return List with `est`, `se`, `df`, `t_stat` and `p_val`.
 #' @export
 #' 
@@ -20,17 +20,17 @@
 #' df_1d(object, contrast)
 df_1d <- function(object, contrast, ...) {
   assert_class(object, "mmrm")
-  assert_numeric(contrast, any.missing = FALSE)
+  assert_numeric(contrast, len = length(component(object, "beta_est")), any.missing = FALSE)
   contrast <- as.vector(contrast)
-  if (object$ddfm == "Satterthwaite") {
-    return(df_1d_sat(object, contrast, ...))
-  } else if (object$ddfm == "Kenward-Roger") {
-    return(df_md_kr(object, matrix(contrast, nrow = 1), ...))
+  if (object$method == "Satterthwaite") {
+    df_1d_sat(object, contrast, ...)
+  } else if (object$method == "Kenward-Roger") {
+    df_1d_kr(object, contrast, ...)
   }
 }
 
 
-#' Calculation of Satterthwaite Degrees of Freedom for Multi-Dimensional Contrast
+#' Calculation of Degrees of Freedom for Multi-Dimensional Contrast
 #'
 #' @description `r lifecycle::badge("experimental")`
 #'
@@ -39,7 +39,8 @@ df_1d <- function(object, contrast, ...) {
 #'   then this is coerced to a row vector. Note that this should not include
 #'   elements for singular coefficient estimates, i.e. only refer to the
 #'   actually estimated coefficients.
-#'
+#' @param ... additional arguments (depending on method)
+#' 
 #' @return List with `num_df`, `denom_df`, `f_stat` and `p_val` (2-sided p-value).
 #' @export
 #'
@@ -58,9 +59,9 @@ df_md <- function(object, contrast, ...) {
     contrast <- matrix(contrast, ncol = length(contrast))
   }
   assert_matrix(contrast, ncols = length(component(object, "beta_est")))
-  if (object$ddfm == "Satterthwaite") {
-    return(df_md_sat(object, contrast))
-  } else if (object$ddfm == "Kenward-Roger") {
-    return(df_md_kr(object, matrix(contrast, nrow = 1), ...))
+  if (object$method == "Satterthwaite") {
+    df_md_sat(object, contrast)
+  } else if (object$method == "Kenward-Roger") {
+    df_md_kr(object, matrix(contrast, nrow = 1), ...)
   }
 }

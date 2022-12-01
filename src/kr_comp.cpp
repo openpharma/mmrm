@@ -2,7 +2,7 @@
 
 using namespace Rcpp;
 using std::string;
-
+// Obtain P,Q,R element from a mmrm fit, given theta.
 List get_pqr(List mmrm_fit, NumericVector theta) {
   NumericMatrix x = mmrm_fit["x_matrix"];
   IntegerVector subject_zero_inds = mmrm_fit["subject_zero_inds"];

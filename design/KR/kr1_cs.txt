@@ -1,6 +1,6 @@
 
 
-                                                           The SAS System                Thursday, December  1, 2022 07:31:00 AM  15
+                                                           The SAS System                Thursday, December  1, 2022 07:31:00 AM  16
 
                                                         The Mixed Procedure
 
@@ -12,7 +12,8 @@
                                        Subject Effect               USUBJID                  
                                        Estimation Method            REML                     
                                        Residual Variance Method     Profile                  
-                                       Fixed Effects SE Method      Kenward-Roger            
+                                       Fixed Effects SE Method      Prasad-Rao-Jeske-        
+                                                                    Kackar-Harville          
                                        Degrees of Freedom Method    Kenward-Roger            
 
 

@@ -1,6 +1,6 @@
 
 
-                                                           The SAS System               Wednesday, November 30, 2022 03:38:00 AM   4
+                                                           The SAS System                Thursday, December  1, 2022 07:31:00 AM  19
 
                                                         The Mixed Procedure
 
@@ -12,8 +12,8 @@
                                        Subject Effect               USUBJID                  
                                        Estimation Method            REML                     
                                        Residual Variance Method     None                     
-                                       Fixed Effects SE Method      Kenward-Roger2           
-                                       Degrees of Freedom Method    Kenward-Roger2           
+                                       Fixed Effects SE Method      Kenward-Roger            
+                                       Degrees of Freedom Method    Kenward-Roger            
 
 
                                                       Class Level Information
@@ -145,8 +145,8 @@
                                                                Standard
                              Effect       ARMCD    Estimate       Error      DF    t Value    Pr > |t|
 
-                             Intercept              41.1661      0.5042     164      81.64      <.0001
-                             ARMCD        TRT        3.7234      0.7271     162       5.12      <.0001
+                             Intercept              41.1661      0.4543     164      90.61      <.0001
+                             ARMCD        TRT        3.7234      0.6617     162       5.63      <.0001
                              ARMCD        PBO             0           .       .        .         .    
 
 
@@ -155,7 +155,7 @@
                                           Num     Den
                             Effect         DF      DF    Chi-Square    F Value      Pr > ChiSq    Pr > F
 
-                            ARMCD           1     162         26.22      26.22          <.0001    <.0001
+                            ARMCD           1     162         31.66      31.66          <.0001    <.0001
 
 
                                                         Least Squares Means
@@ -163,8 +163,8 @@
                                              Standard
               Effect    ARMCD    Estimate       Error      DF    t Value    Pr > |t|     Alpha       Lower       Upper
 
-              ARMCD     TRT       44.8895      0.5239     160      85.68      <.0001      0.05     43.8548     45.9242
-              ARMCD     PBO       41.1661      0.5042     164      81.64      <.0001      0.05     40.1705     42.1616
+              ARMCD     TRT       44.8895      0.4811     160      93.31      <.0001      0.05     43.9393     45.8397
+              ARMCD     PBO       41.1661      0.4543     164      90.61      <.0001      0.05     40.2690     42.0631
 
 
                                                  Differences of Least Squares Means
@@ -172,4 +172,4 @@
                                                   Standard
          Effect    ARMCD    _ARMCD    Estimate       Error      DF    t Value    Pr > |t|     Alpha       Lower       Upper
 
-         ARMCD     TRT      PBO         3.7234      0.7271     162       5.12      <.0001      0.05      2.2876      5.1593
+         ARMCD     TRT      PBO         3.7234      0.6617     162       5.63      <.0001      0.05      2.4168      5.0301

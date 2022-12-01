@@ -2,9 +2,9 @@
 % Please edit documentation in R/testing.R
 \name{df_md}
 \alias{df_md}
-\title{Calculation of Satterthwaite Degrees of Freedom for Multi-Dimensional Contrast}
+\title{Calculation of Degrees of Freedom for Multi-Dimensional Contrast}
 \usage{
-df_md(object, contrast)
+df_md(object, contrast, ...)
 }
 \arguments{
 \item{object}{(\code{mmrm})\cr the MMRM fit.}
@@ -13,9 +13,11 @@ df_md(object, contrast)
 then this is coerced to a row vector. Note that this should not include
 elements for singular coefficient estimates, i.e. only refer to the
 actually estimated coefficients.}
+
+\item{...}{additional arguments (depending on method)}
 }
 \value{
-List with \code{est}, \code{se}, \code{df}, \code{t_stat} and \code{p_val}.
+List with \code{num_df}, \code{denom_df}, \code{f_stat} and \code{p_val} (2-sided p-value).
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}

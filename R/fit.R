@@ -230,7 +230,7 @@ mmrm_control <- function(optimizer = stats::nlminb,
 #' @param optimizer (`string`)\cr optimizer to be used to generate the model.
 #' @param n_cores (`count`)\cr number of cores which could in principle be used for
 #'   parallel computations on Linux or Mac machines.
-#' @param ddfm (`string`)\cr denominator of degree of freedom method.
+#' @param method (`string`)\cr method used for adjusting degrees of freedom and covariance estimates.
 #' @inheritParams mmrm_control
 #'
 #' @details
@@ -275,11 +275,11 @@ mmrm <- function(formula,
                  optimizer = "automatic",
                  n_cores = 1L,
                  accept_singular = TRUE,
-                 ddfm = c("Satterthwaite", "Kenward-Roger")) {
+                 method = c("Satterthwaite", "Kenward-Roger")) {
   assert_string(optimizer)
   use_automatic <- identical(optimizer, "automatic")
-  ddfm <- match.arg(ddfm)
-  if (ddfm == "Kenward-Roger" && reml != TRUE) {
+  method <- match.arg(method)
+  if (method == "Kenward-Roger" && !reml) {
     stop("Kenward-Roger only works for REML!")
   }
   attr(data, which = "dataname") <- toString(match.call()$data)
@@ -317,8 +317,8 @@ mmrm <- function(formula,
       ))
     }
   }
-  fit$ddfm <- ddfm
-  if (ddfm == "Satterthwaite") {
+  fit$method <- method
+  if (method == "Satterthwaite") {
     covbeta_fun <- h_covbeta_fun(fit)
     fit$jac_list <- h_jac_list(covbeta_fun, fit$theta_est)
   } else {

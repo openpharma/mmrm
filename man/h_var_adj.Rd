@@ -4,7 +4,7 @@
 \alias{h_var_adj}
 \title{obtain the adjusted covariance matrix}
 \usage{
-h_var_adj(v, w, p, q, r, order = 2L)
+h_var_adj(v, w, p, q, r, linear = FALSE)
 }
 \arguments{
 \item{v}{unadjusted covariance matrix}
@@ -17,7 +17,10 @@ h_var_adj(v, w, p, q, r, order = 2L)
 
 \item{r}{R matrix from \code{h_get_kr_comp}}
 
-\item{order}{the order of the Kenward-Roger approximation. Only 1L or 2L supported.}
+\item{linear}{\code{logical}\cr whether to use linear Kenward-Roger approximation}
+}
+\value{
+matrix of adjusted covariance matrix
 }
 \description{
 obtain the adjusted covariance matrix

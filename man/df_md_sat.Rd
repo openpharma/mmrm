@@ -15,7 +15,7 @@ elements for singular coefficient estimates, i.e. only refer to the
 actually estimated coefficients.}
 }
 \value{
-List with \code{est}, \code{se}, \code{df}, \code{t_stat} and \code{p_val}.
+List with \code{num_df}, \code{denom_df}, \code{f_stat} and \code{p_val} (2-sided p-value).
 }
 \description{
 Calculation of Satterthwaite Degrees of Freedom for Multi-Dimensional Contrast

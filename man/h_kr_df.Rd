@@ -15,6 +15,9 @@ h_kr_df(v0, l, w, p)
 
 \item{p}{P matrix from \code{h_get_kr_comp}}
 }
+\value{
+List with \code{m} and \code{lambda}
+}
 \description{
 obtain the adjusted Kenward-Roger degree of freedom
 }
