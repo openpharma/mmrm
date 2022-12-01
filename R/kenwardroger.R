@@ -63,7 +63,7 @@ df_1d_kr <- function(object, contrast, linear = FALSE) {
   v_adj <- h_var_adj(object$beta_vcov, w, kr_comp$P, kr_comp$Q, kr_comp$R, linear = linear)
   df <- h_kr_df(object$beta_vcov, matrix(contrast, nrow = 1), w, kr_comp$P)
   se <- sqrt(contrast %*% v_adj %*% contrast)[1, 1]
-  
+
   ret <- list(
     est = est,
     se = se,
@@ -130,25 +130,26 @@ h_var_adj <- function(v, w, p, q, r, linear = FALSE) {
   }
   dr <- ncol(v)
   n_theta <- ncol(w)
-  n_groups <- n_theta / dr
+  theta_per_group <- nrow(q) / nrow(p)
+  n_groups <- n_theta / theta_per_group
   ret <- v
-  for (gi in seq_len(n_groups)) {
-    for (gj in seq_len(n_groups)) {
-      for (i in seq_len(dr)) {
-        for (j in seq_len(dr)) {
-          iid <- (i - 1) * dr + (gi - 1) * dr ^ 2 + 1
-          jid <- (j - 1) * dr + (gj - 1) * dr ^ 2 + 1
-          ijid <- ((i - 1) * dr + j - 1) * dr + (gi - 1) * dr ^ 3 + 1
-          if (gi != gj) {
-            ret <- ret + 2 * w[i, j] * v %*% (-p[iid:(iid + dr - 1), ] %*% v %*% p[jid:(jid + dr - 1), ]) %*% v
-          } else {
-            ret <- ret + 2 * w[i, j] * v %*% (
-              q[ijid:(ijid + dr - 1),] -
-              p[iid:(iid + dr - 1), ] %*% v %*% p[jid:(jid + dr - 1), ] -
-              1 / 4 * r[ijid:(ijid + dr - 1), ]
-            ) %*% v
-          }
-        }
+  for (i in seq_len(n_theta)) {
+    for (j in seq_len(n_theta)) {
+      gi <- ceiling(i / theta_per_group)
+      gj <- ceiling(j / theta_per_group)
+      iid <- (i - 1) * dr + 1
+      jid <- (j - 1) * dr + 1
+      ii <- i - (gi - 1) * theta_per_group
+      jj <- j - (gi - 1) * theta_per_group
+      ijid <- ((ii - 1) * theta_per_group + jj - 1) * dr + (gi - 1) * dr * theta_per_group ^ 2 + 1
+      if (gi != gj) {
+        ret <- ret + 2 * w[i, j] * v %*% (-p[iid:(iid + dr - 1), ] %*% v %*% p[jid:(jid + dr - 1), ]) %*% v
+      } else {
+        ret <- ret + 2 * w[i, j] * v %*% (
+          q[ijid:(ijid + dr - 1),] -
+          p[iid:(iid + dr - 1), ] %*% v %*% p[jid:(jid + dr - 1), ] -
+          1 / 4 * r[ijid:(ijid + dr - 1), ]
+        ) %*% v
       }
     }
   }

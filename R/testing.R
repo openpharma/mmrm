@@ -6,7 +6,6 @@
 #' @param contrast (`numeric`)\cr contrast vector. Note that this should not include
 #'   elements for singular coefficient estimates, i.e. only refer to the
 #'   actually estimated coefficients.
-#' @param ... additional arguments (depending on method)
 #' @return List with `est`, `se`, `df`, `t_stat` and `p_val`.
 #' @export
 #' 
@@ -42,7 +41,6 @@ df_1d <- function(object, contrast) {
 #'   then this is coerced to a row vector. Note that this should not include
 #'   elements for singular coefficient estimates, i.e. only refer to the
 #'   actually estimated coefficients.
-#' @param ... additional arguments (depending on method)
 #' 
 #' @return List with `num_df`, `denom_df`, `f_stat` and `p_val` (2-sided p-value).
 #' @export
@@ -55,16 +53,19 @@ df_1d <- function(object, contrast) {
 #' contrast <- matrix(data = 0, nrow = 2, ncol = length(object$beta_est))
 #' contrast[1, 2] <- contrast[2, 3] <- 1
 #' df_md(object, contrast)
-df_md <- function(object, contrast, ...) {
+df_md <- function(object, contrast) {
   assert_class(object, "mmrm")
   assert_numeric(contrast, any.missing = FALSE)
   if (!is.matrix(contrast)) {
     contrast <- matrix(contrast, ncol = length(contrast))
   }
   assert_matrix(contrast, ncols = length(component(object, "beta_est")))
-  if (object$method == "Satterthwaite") {
+  method <- h_get_method(object$method)
+  if (method == "Satterthwaite") {
     df_md_sat(object, contrast)
-  } else if (object$method == "Kenward-Roger") {
-    df_md_kr(object, matrix(contrast, nrow = 1), ...)
+  } else if (method == "Kenward-Roger") {
+    df_md_kr(object, contrast)
+  } else if (method == "Kenward-Roger-Linear") {
+    df_md_kr(object, contrast, linear = TRUE)
   }
 }

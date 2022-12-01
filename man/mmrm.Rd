@@ -12,7 +12,8 @@ mmrm(
   optimizer = "automatic",
   n_cores = 1L,
   accept_singular = TRUE,
-  method = c("Satterthwaite", "Kenward-Roger")
+  method = c("Satterthwaite", "Kenward-Roger", "Kenward-Roger-Linear", "ST", "KR",
+    "KRLin")
 )
 }
 \arguments{

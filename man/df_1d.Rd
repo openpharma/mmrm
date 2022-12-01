@@ -4,7 +4,7 @@
 \alias{df_1d}
 \title{Calculation of Degrees of Freedom for One-Dimensional Contrast}
 \usage{
-df_1d(object, contrast, ...)
+df_1d(object, contrast)
 }
 \arguments{
 \item{object}{(\code{mmrm})\cr the MMRM fit.}
@@ -12,8 +12,6 @@ df_1d(object, contrast, ...)
 \item{contrast}{(\code{numeric})\cr contrast vector. Note that this should not include
 elements for singular coefficient estimates, i.e. only refer to the
 actually estimated coefficients.}
-
-\item{...}{additional arguments (depending on method)}
 }
 \value{
 List with \code{est}, \code{se}, \code{df}, \code{t_stat} and \code{p_val}.
