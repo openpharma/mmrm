@@ -18,14 +18,14 @@
 #' contrast <- numeric(length(object$beta_est))
 #' contrast[3] <- 1
 #' df_1d(object, contrast)
-df_1d <- function(object, contrast) {
+df_1d <- function(object, contrast, ...) {
   assert_class(object, "mmrm")
   assert_numeric(contrast, any.missing = FALSE)
   contrast <- as.vector(contrast)
   if (object$ddfm == "Satterthwaite") {
-    return(df_1d_sat(object, contrast))
+    return(df_1d_sat(object, contrast, ...))
   } else if (object$ddfm == "Kenward-Roger") {
-    return(kr(object, matrix(contrast, nrow = 1)))
+    return(df_md_kr(object, matrix(contrast, nrow = 1), ...))
   }
 }
 
@@ -40,7 +40,7 @@ df_1d <- function(object, contrast) {
 #'   elements for singular coefficient estimates, i.e. only refer to the
 #'   actually estimated coefficients.
 #'
-#' @return List with `est`, `se`, `df`, `t_stat` and `p_val`.
+#' @return List with `num_df`, `denom_df`, `f_stat` and `p_val` (2-sided p-value).
 #' @export
 #'
 #' @examples
@@ -51,7 +51,7 @@ df_1d <- function(object, contrast) {
 #' contrast <- matrix(data = 0, nrow = 2, ncol = length(object$beta_est))
 #' contrast[1, 2] <- contrast[2, 3] <- 1
 #' df_md(object, contrast)
-df_md <- function(object, contrast) {
+df_md <- function(object, contrast, ...) {
   assert_class(object, "mmrm")
   assert_numeric(contrast, any.missing = FALSE)
   if (!is.matrix(contrast)) {
@@ -61,6 +61,6 @@ df_md <- function(object, contrast) {
   if (object$ddfm == "Satterthwaite") {
     return(df_md_sat(object, contrast))
   } else if (object$ddfm == "Kenward-Roger") {
-    return(kr(object, matrix(contrast, nrow = 1)))
+    return(df_md_kr(object, matrix(contrast, nrow = 1), ...))
   }
 }

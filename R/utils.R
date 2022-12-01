@@ -151,8 +151,7 @@ cov_type_spatial <- c("sp_exp")
 #' trace of a matrix
 #' @param x square matrix input
 #' @return the trace of the square matrix
-#' @export
-tr <- function(x) {
+h_tr <- function(x) {
   if (nrow(x) != ncol(x)) {
     stop("x must be square matrix!")
   }

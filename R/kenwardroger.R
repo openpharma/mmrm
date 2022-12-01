@@ -16,24 +16,23 @@ h_get_kr_comp <- function(tmb_data, theta) {
 
 
 #' obtain Kenward-Roger degree of freedom
-#' @export
 #' @param fit `mmrm` fit
 #' @param contrast contrast vector (ncol = 1)
-#' @examples
-#' fit <- mmrm(FEV1 ~ ARMCD + ar1(AVISIT | USUBJID), data = fev_data)
-#' contrast <- matrix(c(0,1), ncol = 1)
-#' kr(fit, contrast)
-kr <- function(fit, contrast, order = 2L) {
+#' @param linear `logical`\cr whether to use linear Kenward-Roger approximation
+#' @keywords internal
+df_md_kr <- function(fit, contrast, linear = FALSE) {
   if (fit$tmb_data$reml != 1) {
     stop("Kenward-Roger is only for REML!")
   }
   kr_comp <- fit$kr_comp
   w <- solve(fit$tmb_obj$he(fit$theta_est))
-  v_adj <- v_a(fit$beta_vcov, w, kr_comp$P, kr_comp$Q, kr_comp$R, order = order)
+  v_adj <- h_var_adj(fit$beta_vcov, w, kr_comp$P, kr_comp$Q, kr_comp$R, linear = linear)
   df <- h_kr_df(fit$beta_vcov, contrast, w, kr_comp$P)
   f_statistic <- 1 / nrow(contrast) * fit$beta_est %*% t(contrast) %*% solve(contrast %*% v_adj %*% t(contrast)) %*% contrast %*% fit$beta_est
   f_star <- f_statistic * df$m / (df$m - 1 + nrow(contrast))
-  return(list(df = df, v_adj = v_adj, f_star = f_star))
+  ret <- list(num_df = nrow(contrast), num_df = nrow(contrast), denom_df = df$m, f_stat = f_star[1, 1], p_val = pf(f_star[1, 1], nrow(contrast), df$m, lower.tail = FALSE))
+  ret$sqrt <- sqrt(contrast %*% v_adj %*% t(contrast))
+  return(ret)
 }
 
 #' obtain the adjusted Kenward-Roger degree of freedom
@@ -81,10 +80,10 @@ h_kr_df <- function(v0, l, w, p) {
 #' @param p P matrix from `h_get_kr_comp`
 #' @param q Q matrix from `h_get_kr_comp`
 #' @param r R matrix from `h_get_kr_comp`
-#' @param order the order of the Kenward-Roger approximation. Only 1L or 2L supported.
+#' @param linear `logical`\cr whether to use linear Kenward-Roger approximation
 #' @keywords internal
-v_a <- function(v, w, p, q, r, order = 2L) {
-  if (identical(order, 1L)) {
+h_var_adj <- function(v, w, p, q, r, linear = FALSE) {
+  if (linear) {
     r[] <- 0
   }
   dr <- ncol(v)

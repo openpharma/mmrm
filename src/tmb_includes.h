@@ -49,7 +49,7 @@
 #ifdef R_D_nonint_check
 #undef R_D_nonint_check
 #endif
-#endif // ifdef WITH_RCPP
+#endif // ifdef INCLUDE_RCPP
 
 /* TMB */
 #define WITH_LIBTMB

@@ -1,8 +1,5 @@
-#include <Rcpp.h>
-#define INCLUDE_RCPP
 #include "utils.h"
 #include "covariance.h"
-#include "tmb_includes.h"
 
 using namespace Rcpp;
 using std::string;
@@ -28,11 +25,6 @@ struct chol_jacobian {
     }
 };
 
-vector<double> as_vector(NumericVector input);
-vector<int> as_vector(IntegerVector input);
-NumericVector as_nv(vector<double> input);
-NumericMatrix as_mv(matrix<double> input);
-matrix<double> as_matrix(NumericMatrix input);
 
 template <class Type>
 std::map<std::string, matrix<Type>> derivatives(int n_visits, std::string cov_type, vector<Type> theta) {
@@ -88,7 +80,6 @@ struct chols {
   }
   chols(vector<Type> theta, int n_visits, std::string cov_type): n_visits(n_visits), cov_type(cov_type), full_visit(std::vector<int>(n_visits)) {
     this->theta = theta;
-    //this->full_visit = vector<int>(n_visits);
     for (int i = 0; i < n_visits; i++) {
       this->full_visit[i] = i;
     }

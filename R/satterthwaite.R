@@ -279,7 +279,7 @@ h_df_md_from_1d <- function(object, contrast) {
 #'   elements for singular coefficient estimates, i.e. only refer to the
 #'   actually estimated coefficients.
 #'
-#' @return List with `est`, `se`, `df`, `t_stat` and `p_val`.
+#' @return List with `num_df`, `denom_df`, `f_stat` and `p_val` (2-sided p-value).
 #' @keywords internal
 df_md_sat <- function(object, contrast) {
   # Early return if we are in the one-dimensional case.

@@ -1,7 +1,5 @@
 #include <RcppEigen.h>
-#include <Rcpp.h>
-#define INCLUDE_RCPP
-#include "tmb_includes.h" // for TMB_CALLDEFS
+#include "utils.h"
 
 using namespace Rcpp;
 
