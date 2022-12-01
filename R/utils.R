@@ -157,3 +157,18 @@ h_tr <- function(x) {
   }
   return(sum(diag(x)))
 }
+
+#' get the method of degree of freedom and covariance
+#' @param method (`string`)\cr method for degree of freedom and covariance
+#' @return the method chosen.
+h_get_method <- function(method) {
+  if (method %in% c("Satterthwaite", "ST")) {
+    "Satterthwaite"
+  } else if (method %in% c("Kenward-Roger", "KR")) {
+    "Kenward-Roger"
+  } else if (method %in% c("Kenward-Roger-Linear", "KRLin")) {
+    "Kenward-Roger-Linear"
+  } else {
+    stop("Unknown method!")
+  }
+}

@@ -275,11 +275,12 @@ mmrm <- function(formula,
                  optimizer = "automatic",
                  n_cores = 1L,
                  accept_singular = TRUE,
-                 method = c("Satterthwaite", "Kenward-Roger")) {
+                 method = c("Satterthwaite", "Kenward-Roger", "Kenward-Roger-Linear", "ST", "KR", "KRLin")) {
   assert_string(optimizer)
   use_automatic <- identical(optimizer, "automatic")
   method <- match.arg(method)
-  if (method == "Kenward-Roger" && !reml) {
+  method <- h_get_method(method)
+  if (method %in% c("Kenward-Roger", "Kenward-Roger-Linear") && !reml) {
     stop("Kenward-Roger only works for REML!")
   }
   attr(data, which = "dataname") <- toString(match.call()$data)
@@ -324,6 +325,14 @@ mmrm <- function(formula,
   } else {
     kr_comp <- h_get_kr_comp(fit$tmb_data, fit$theta_est)
     fit$kr_comp <- kr_comp
+    if (method == "Kenward-Roger-Linear") {
+      linear <- TRUE
+    } else {
+      linear <- FALSE
+    }
+    w <- solve(fit$tmb_obj$he(fit$theta_est))
+    v_adj <- h_var_adj(fit$beta_vcov, w, kr_comp$P, kr_comp$Q, kr_comp$R, linear = linear)
+    fit$beta_vcov_adj <- v_adj
   }
   class(fit) <- c("mmrm", class(fit))
   fit

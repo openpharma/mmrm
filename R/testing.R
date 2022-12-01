@@ -18,14 +18,17 @@
 #' contrast <- numeric(length(object$beta_est))
 #' contrast[3] <- 1
 #' df_1d(object, contrast)
-df_1d <- function(object, contrast, ...) {
+df_1d <- function(object, contrast) {
   assert_class(object, "mmrm")
   assert_numeric(contrast, len = length(component(object, "beta_est")), any.missing = FALSE)
   contrast <- as.vector(contrast)
-  if (object$method == "Satterthwaite") {
-    df_1d_sat(object, contrast, ...)
-  } else if (object$method == "Kenward-Roger") {
-    df_1d_kr(object, contrast, ...)
+  method <- h_get_method(object$method)
+  if (method == "Satterthwaite") {
+    df_1d_sat(object, contrast)
+  } else if (method == "Kenward-Roger") {
+    df_1d_kr(object, contrast, linear = FALSE)
+  } else if (method == "Kenward-Roger-Linear") {
+    df_1d_kr(object, contrast, linear = TRUE)
   }
 }
 

@@ -31,7 +31,7 @@ df_md_kr <- function(object, contrast, linear = FALSE) {
   }
   kr_comp <- object$kr_comp
   w <- solve(object$tmb_obj$he(object$theta_est))
-  v_adj <- h_var_adj(object$beta_vcov, w, kr_comp$P, kr_comp$Q, kr_comp$R, linear = linear)
+  v_adj <- object$beta_vcov_adj
   df <- h_kr_df(object$beta_vcov, contrast, w, kr_comp$P)
   f_statistic <- 1 / nrow(contrast) * object$beta_est %*% t(contrast) %*% solve(contrast %*% v_adj %*% t(contrast)) %*% contrast %*% object$beta_est
   f_star <- f_statistic * df$lambda
@@ -69,9 +69,9 @@ df_1d_kr <- function(object, contrast, linear = FALSE) {
     se = se,
     df = df$m
   )
-  t_stat = est ^ 2 / se
+  t_stat <- abs(est) / se
   ret$t_stat <- t_stat
-  ret$pval <- pt(t_stat, df$m, lower.tail = FALSE)
+  ret$p_val <- pt(t_stat, df$m, lower.tail = FALSE)
   ret
 }
 
@@ -126,7 +126,7 @@ h_kr_df <- function(v0, l, w, p) {
 #' @keywords internal
 h_var_adj <- function(v, w, p, q, r, linear = FALSE) {
   if (linear) {
-    r[] <- 0
+    r <- matrix(0, nrow = nrow(r), ncol = ncol(r))
   }
   dr <- ncol(v)
   n_theta <- ncol(w)
