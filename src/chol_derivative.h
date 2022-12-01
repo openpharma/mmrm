@@ -1,4 +1,3 @@
-#include "utils.h"
 #include "covariance.h"
 
 using namespace Rcpp;
