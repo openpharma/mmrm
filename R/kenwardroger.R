@@ -71,7 +71,7 @@ df_1d_kr <- function(object, contrast, linear = FALSE) {
   )
   t_stat <- abs(est) / se
   ret$t_stat <- t_stat
-  ret$p_val <- pt(t_stat, df$m, lower.tail = FALSE)
+  ret$p_val <- pt(t_stat, df$m, lower.tail = FALSE) / 2
   ret
 }
 
