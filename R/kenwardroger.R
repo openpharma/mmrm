@@ -60,7 +60,7 @@ df_1d_kr <- function(object, contrast, linear = FALSE) {
   est <- sum(contrast * component(object, "beta_est"))
   kr_comp <- object$kr_comp
   w <- solve(object$tmb_obj$he(object$theta_est))
-  v_adj <- h_var_adj(object$beta_vcov, w, kr_comp$P, kr_comp$Q, kr_comp$R, linear = linear)
+  v_adj <- object$beta_vcov_adj
   df <- h_kr_df(object$beta_vcov, matrix(contrast, nrow = 1), w, kr_comp$P)
   se <- sqrt(contrast %*% v_adj %*% contrast)[1, 1]
 

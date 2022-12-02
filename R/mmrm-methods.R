@@ -88,7 +88,9 @@ summary.mmrm <- function(object, ...) {
     "n_subjects", "n_timepoints", "n_obs",
     "beta_vcov", "varcor"
   ))
-
+  if (!is.null(object$method)) {
+    components$method <- object$method
+  }
   structure(
     c(
       components,
@@ -192,6 +194,7 @@ print.summary.mmrm <- function(x,
   cat("mmrm fit\n\n")
   h_print_call(x$call, x$n_obs, x$n_subjects, x$n_timepoints)
   h_print_cov(x$cov_type, x$n_theta, x$n_groups)
+  cat("Adjust:      ", x$method, "\n", sep = "")
   cat("Method:      ")
   cat(ifelse(x$reml, "REML", "ML"))
   cat("\n\n")

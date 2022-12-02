@@ -32,6 +32,7 @@
     Data:        fev_data (used 537 observations from 197 subjects with maximum 4 
     timepoints)
     Covariance:  unstructured (10 variance parameters)
+    Adjust:      Satterthwaite
     Method:      REML
     
     Model selection criteria:
@@ -71,6 +72,7 @@
     timepoints)
     Weights:     .mmrm_weights
     Covariance:  unstructured (10 variance parameters)
+    Adjust:      Satterthwaite
     Method:      REML
     
     Model selection criteria:
@@ -109,6 +111,7 @@
     Data:        .mmrm_dat_rank_deficient (used 537 observations from 197 
     subjects with maximum 4 timepoints)
     Covariance:  unstructured (10 variance parameters)
+    Adjust:      Satterthwaite
     Method:      REML
     
     Model selection criteria:
@@ -148,6 +151,7 @@
     Data:        fev_data (used 537 observations from 197 subjects with maximum 4 
     timepoints)
     Covariance:  unstructured (20 variance parameters of 2 groups)
+    Adjust:      Satterthwaite
     Method:      REML
     
     Model selection criteria:
@@ -184,6 +188,7 @@
     Data:        fev_data (used 537 observations from 197 subjects with maximum 4 
     timepoints)
     Covariance:  spatial exponential (2 variance parameters)
+    Adjust:      Satterthwaite
     Method:      REML
     
     Model selection criteria:

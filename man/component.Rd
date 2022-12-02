@@ -41,7 +41,9 @@ Available \code{component()} names are as follows:
 \item \code{conv_message}: message accompanying the convergence code.
 \item \code{evaluations}: number of function evaluations for optimization.
 \item \code{beta_vcov}: estimated variance-covariance matrix of coefficients
-(excluding aliased coefficients).
+(excluding aliased coefficients). For Kenward-Roger and Kenward-Roger-Linear
+methods, the adjusted covariance matrix is returned. To obtain the unadjusted
+covariance matrix, use \code{object$beta_vcov} instead.
 \item \code{beta_vcov_complete}: estimated variance-covariance matrix including
 aliased coefficients with entries set to \code{NA}.
 \item \code{varcor}: estimated covariance matrix for residuals. If there are multiple

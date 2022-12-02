@@ -87,7 +87,7 @@ emm_basis.mmrm <- function(object, # nolint
     X = model_mat,
     bhat = beta_hat,
     nbasis = nbasis,
-    V = object$beta_vcov,
+    V = component(object, "beta_vcov"),
     dffun = dffun,
     dfargs = dfargs
   )

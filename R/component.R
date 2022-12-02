@@ -21,7 +21,9 @@
 #' - `conv_message`: message accompanying the convergence code.
 #' - `evaluations`: number of function evaluations for optimization.
 #' - `beta_vcov`: estimated variance-covariance matrix of coefficients
-#'      (excluding aliased coefficients).
+#'      (excluding aliased coefficients). For Kenward-Roger and Kenward-Roger-Linear
+#'      methods, the adjusted covariance matrix is returned. To obtain the unadjusted
+#'      covariance matrix, use `object$beta_vcov` instead.
 #' - `beta_vcov_complete`: estimated variance-covariance matrix including
 #'      aliased coefficients with entries set to `NA`.
 #' - `varcor`: estimated covariance matrix for residuals. If there are multiple
@@ -104,12 +106,17 @@ component <- function(object,
     "y_vector" = object$tmb_data$y_vector,
     "jac_list" = object$jac_list,
     # Matrices.
-    "beta_vcov" = object$beta_vcov,
+    "beta_vcov" =
+      if (!is.null(object$method) && object$method %in% c("Kenward-Roger", "Kenward-Roger-Linear")) {
+        object$beta_vcov_adjust
+      } else {
+        object$beta_vcov
+      },
     "beta_vcov_complete" =
       if (any(object$tmb_data$x_cols_aliased)) {
         stats::.vcov.aliased(
           aliased = object$tmb_data$x_cols_aliased,
-          vc = object$beta_vcov,
+          vc = component(object, "beta_vcov"),
           complete = TRUE
         )
       } else {
