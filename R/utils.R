@@ -151,6 +151,7 @@ cov_type_spatial <- c("sp_exp")
 #' trace of a matrix
 #' @param x square matrix input
 #' @return the trace of the square matrix
+#' @keywords internal
 h_tr <- function(x) {
   if (nrow(x) != ncol(x)) {
     stop("x must be square matrix!")
@@ -161,6 +162,7 @@ h_tr <- function(x) {
 #' get the method of degree of freedom and covariance
 #' @param method (`string`)\cr method for degree of freedom and covariance
 #' @return the method chosen.
+#' @keywords internal
 h_get_method <- function(method) {
   if (method %in% c("Satterthwaite", "ST")) {
     "Satterthwaite"
