@@ -15,3 +15,4 @@ the method chosen.
 \description{
 get the method of degree of freedom and covariance
 }
+\keyword{internal}

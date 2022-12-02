@@ -15,3 +15,4 @@ the trace of the square matrix
 \description{
 trace of a matrix
 }
+\keyword{internal}
