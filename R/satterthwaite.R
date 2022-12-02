@@ -220,7 +220,7 @@ h_md_denom_df <- function(t_stat_df) {
     2
   } else {
     e <- sum(t_stat_df / (t_stat_df - 2))
-    2 * e / (expect_double() - (length(t_stat_df)))
+    2 * e / (e - (length(t_stat_df)))
   }
 }
 
