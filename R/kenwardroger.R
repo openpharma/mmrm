@@ -1,4 +1,4 @@
-#' obtain kr component
+#' obtain Kenward-Roger adjustment component
 #' @param tmb_data (`mmrm_tmb_data`)\cr produced by [h_mmrm_tmb_data()].
 #' @param theta (`numeric`)\cr numeric vector of the theta estimate.
 #' @details the function returns a named list, \eqn{P}, \eqn{Q} and \eqn{R}, which corresponds to the
@@ -7,7 +7,7 @@
 #' the total number of theta and number of groups, if the fit is a grouped mmrm.
 #' For \eqn{P} matrix, it is stacked sequentially. For \eqn{Q} and \eqn{R} matrix, it is stacked so
 #' that the \eqn{Q_{ij}} and \eqn{R_{ij}} is stacked from \eqn{j} then to \eqn{i}, i.e. \eqn{R_{i1}}, \eqn{R_{i2}}, etc.
-#' \eqn{Q} and \eqn{R} only contains within group results and intra-group results should be all zero matrices
+#' \eqn{Q} and \eqn{R} only contains intra-group results and inter-group results should be all zero matrices
 #' so they are not stacked in the result.
 #' @return Named list with elements:
 #' - `P`: `matrix` of P component.

@@ -2,7 +2,7 @@
 % Please edit documentation in R/kenwardroger.R
 \name{h_get_kr_comp}
 \alias{h_get_kr_comp}
-\title{obtain kr component}
+\title{obtain Kenward-Roger adjustment component}
 \usage{
 h_get_kr_comp(tmb_data, theta)
 }
@@ -20,7 +20,7 @@ Named list with elements:
 }
 }
 \description{
-obtain kr component
+obtain Kenward-Roger adjustment component
 }
 \details{
 the function returns a named list, \eqn{P}, \eqn{Q} and \eqn{R}, which corresponds to the
@@ -29,7 +29,7 @@ column number(number of beta parameters). The number of rows, is dependent on
 the total number of theta and number of groups, if the fit is a grouped mmrm.
 For \eqn{P} matrix, it is stacked sequentially. For \eqn{Q} and \eqn{R} matrix, it is stacked so
 that the \eqn{Q_{ij}} and \eqn{R_{ij}} is stacked from \eqn{j} then to \eqn{i}, i.e. \eqn{R_{i1}}, \eqn{R_{i2}}, etc.
-\eqn{Q} and \eqn{R} only contains within group results and intra-group results should be all zero matrices
+\eqn{Q} and \eqn{R} only contains intra-group results and inter-group results should be all zero matrices
 so they are not stacked in the result.
 }
 \keyword{internal}
