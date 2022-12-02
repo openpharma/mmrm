@@ -131,7 +131,7 @@ substituting $\Phi$ and $\Lambda$ back to the $\hat\Phi_A$, we have
   \hat\Phi_A = \hat\Phi + 2\hat\Phi \left\{\sum_{h=1}^k{\sum_{j=1}^k{W_{hj}(Q_{hj} - P_h \hat\Phi P_j - \frac{1}{4}R_{hj})} }\right\} \hat\Phi
 \]
 
-where $\Omega(\hat\theta)$ replaces $\Omega(\theta)$ in the righthand side.
+where $\Omega(\hat\theta)$ replaces $\Omega(\theta)$ in the right-hand side.
 
 ### Special Considerations for mmrm models
 
