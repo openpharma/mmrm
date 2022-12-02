@@ -208,6 +208,10 @@ test_that("refit_multiple_optimizers works as expected with default arguments", 
 
 test_that("refit_multiple_optimizers works with parallel computations and selected optimizers", {
   skip_on_cran()
+  skip_if(!isTRUE(parallel::detectCores() > 1), "unable to detect more than one core")
+
+  has_parallelly <- length(find.package("parallelly", quiet = TRUE)) > 0
+  n_cores <- if (has_parallelly) parallelly::availableCores(omit = 1) else 2
 
   fit <- fit_single_optimizer(
     formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
@@ -222,7 +226,7 @@ test_that("refit_multiple_optimizers works with parallel computations and select
 
   result <- expect_silent(refit_multiple_optimizers(
     fit = fit,
-    n_cores = parallelly::availableCores(omit = 1),
+    n_cores = n_cores,
     optimizers = c("BFGS", "CG")
   ))
   expect_class(result, "mmrm_fit")
