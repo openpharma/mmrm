@@ -8,7 +8,7 @@
 #'   actually estimated coefficients.
 #' @return List with `est`, `se`, `df`, `t_stat` and `p_val`.
 #' @export
-#' 
+#'
 #' @examples
 #' object <- mmrm(
 #'   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
@@ -41,7 +41,7 @@ df_1d <- function(object, contrast) {
 #'   then this is coerced to a row vector. Note that this should not include
 #'   elements for singular coefficient estimates, i.e. only refer to the
 #'   actually estimated coefficients.
-#' 
+#'
 #' @return List with `num_df`, `denom_df`, `f_stat` and `p_val` (2-sided p-value).
 #' @export
 #'

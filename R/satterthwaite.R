@@ -219,8 +219,8 @@ h_md_denom_df <- function(t_stat_df) {
   } else if (any(t_stat_df <= 2)) {
     2
   } else {
-    E <- sum(t_stat_df / (t_stat_df - 2))
-    2 * E / (E - (length(t_stat_df)))
+    e <- sum(t_stat_df / (t_stat_df - 2))
+    2 * e / (expect_double() - (length(t_stat_df)))
   }
 }
 
@@ -308,9 +308,17 @@ df_md_sat <- function(object, contrast) {
   t_squared_denoms <- eigen_cont_cov_vals[rank_seq]
   t_squared <- t_squared_nums / t_squared_denoms
   f_stat <- sum(t_squared) / rank_cont_cov
-  grads_vctrs_cont_prod <- lapply(rank_seq, function(m) h_gradient(component(object, "jac_list"), contrast = vctrs_cont_prod[m, ]))
+  grads_vctrs_cont_prod <- lapply(
+    rank_seq,
+    function(m) h_gradient(component(object, "jac_list"), contrast = vctrs_cont_prod[m, ])
+  )
   t_stat_df_nums <- 2 * eigen_cont_cov_vals^2
-  t_stat_df_denoms <- vapply(grads_vctrs_cont_prod, h_quad_form_vec, center = component(object, "theta_vcov"), numeric(1))
+  t_stat_df_denoms <- vapply(
+    grads_vctrs_cont_prod,
+    h_quad_form_vec,
+    center = component(object, "theta_vcov"),
+    numeric(1)
+  )
   t_stat_df <- t_stat_df_nums / t_stat_df_denoms
   denom_df <- h_md_denom_df(t_stat_df)
 

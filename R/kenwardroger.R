@@ -1,7 +1,7 @@
 #' obtain kr component
 #' @param tmb_data (`mmrm_tmb_data`)\cr produced by [h_mmrm_tmb_data()].
 #' @param theta (`numeric`)\cr numeric vector of the theta estimate.
-#' @details the function retuns a named list, \eqn{P}, \eqn{Q} and \eqn{R}, which corresponds to the
+#' @details the function returns a named list, \eqn{P}, \eqn{Q} and \eqn{R}, which corresponds to the
 #' paper in 1997. The matrices are stacked in columns so that \eqn{P}, \eqn{Q} and \eqn{R} has the same
 #' column number(number of beta parameters). The number of rows, is dependent on
 #' the total number of theta and number of groups, if the fit is a grouped mmrm.
@@ -33,7 +33,8 @@ df_md_kr <- function(object, contrast, linear = FALSE) {
   w <- solve(object$tmb_obj$he(object$theta_est))
   v_adj <- object$beta_vcov_adj
   df <- h_kr_df(object$beta_vcov, contrast, w, kr_comp$P)
-  f_statistic <- 1 / nrow(contrast) * object$beta_est %*% t(contrast) %*% solve(contrast %*% v_adj %*% t(contrast)) %*% contrast %*% object$beta_est
+  vsolve <- solve(contrast %*% v_adj %*% t(contrast))
+  f_statistic <- 1 / nrow(contrast) * object$beta_est %*% t(contrast) %*% vsolve %*% contrast %*% object$beta_est
   f_star <- f_statistic * df$lambda
   ret <- list(
     num_df = nrow(contrast),
@@ -91,7 +92,9 @@ h_kr_df <- function(v0, l, w, p) {
     jj <- x * ncol(p)
     p[ii:jj, ]
   })
-  thetav0pv0 <- lapply(pl, function(x) {thetav0 %*% x %*% v0})
+  thetav0pv0 <- lapply(pl, function(x) {
+    thetav0 %*% x %*% v0
+  })
   a1 <- 0
   a2 <- 0
   for (i in seq_len(length(pl))) {
@@ -146,7 +149,7 @@ h_var_adj <- function(v, w, p, q, r, linear = FALSE) {
         ret <- ret + 2 * w[i, j] * v %*% (-p[iid:(iid + dr - 1), ] %*% v %*% p[jid:(jid + dr - 1), ]) %*% v
       } else {
         ret <- ret + 2 * w[i, j] * v %*% (
-          q[ijid:(ijid + dr - 1),] -
+          q[ijid:(ijid + dr - 1), ] -
           p[iid:(iid + dr - 1), ] %*% v %*% p[jid:(jid + dr - 1), ] -
           1 / 4 * r[ijid:(ijid + dr - 1), ]
         ) %*% v

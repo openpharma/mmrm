@@ -23,7 +23,7 @@ Named list with elements:
 obtain kr component
 }
 \details{
-the function retuns a named list, \eqn{P}, \eqn{Q} and \eqn{R}, which corresponds to the
+the function returns a named list, \eqn{P}, \eqn{Q} and \eqn{R}, which corresponds to the
 paper in 1997. The matrices are stacked in columns so that \eqn{P}, \eqn{Q} and \eqn{R} has the same
 column number(number of beta parameters). The number of rows, is dependent on
 the total number of theta and number of groups, if the fit is a grouped mmrm.
