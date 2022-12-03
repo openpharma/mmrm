@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5.9009</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5.9010</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,12 +39,6 @@
 <li class="active nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -66,9 +60,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.1.5.9009" id="mmrm-0159009">mmrm 0.1.5.9009<a class="anchor" aria-label="anchor" href="#mmrm-0159009"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.1.5.9010" id="mmrm-0159010">mmrm 0.1.5.9010<a class="anchor" aria-label="anchor" href="#mmrm-0159010"></a></h2>
 <div class="section level4">
-<h4 id="bug-fixes-0-1-5-9009">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-1-5-9009"></a></h4>
+<h4 id="bug-fixes-0-1-5-9010">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-1-5-9010"></a></h4>
 <ul><li><p>Previously duplicate time points could be present for a single subject, and this could lead to segmentation faults if more than the total number of unique time points were available for any subject. Now it is checked that there are no duplicate time points per subject, and this is explained also in the function documentation and the introduction vignette.</p></li>
 <li><p>Previously in <code>mmrm</code> calls, the <code>weights</code> object in the environment where formula is defined will be replaced by the <code>weights</code> used internally. Now this behavior is removed and your variable <code>weights</code> e.g. in the global environment will not be replaced. ### Miscellaneous</p></li>
 <li><p>Deprecated <code><a href="../reference/free_cores.html">free_cores()</a></code> in favor of <code>parallelly::availableCores(omit = 1)</code>.</p></li>
