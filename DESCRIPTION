@@ -56,7 +56,7 @@ Suggests:
 LinkingTo:
     RcppEigen,
     testthat,
-    TMB
+    TMB (>= 1.9.1)
 VignetteBuilder:
     knitr
 RdMacros:
