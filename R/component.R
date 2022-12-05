@@ -108,7 +108,7 @@ component <- function(object,
     # Matrices.
     "beta_vcov" =
       if (!is.null(object$method) && object$method %in% c("Kenward-Roger", "Kenward-Roger-Linear")) {
-        object$beta_vcov_adjust
+        object$beta_vcov_adj
       } else {
         object$beta_vcov
       },

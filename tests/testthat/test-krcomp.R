@@ -71,3 +71,50 @@ test_that("kr give similar results as SAS", {
   expect_equal(res$df, expected[2], tolerance = 1e-3)
   expect_equal(res$se, expected[1], tolerance = 1e-3)
 })
+
+# h_df_1d_kr
+test_that("h_df_1d_kr works as expected in the standard case", {
+  object_mmrm_kr <- get_mmrm_kr()
+  expect_snapshot(h_df_1d_kr(object_mmrm_kr, c(0, 1), TRUE))
+  expect_snapshot(h_df_1d_kr(object_mmrm_kr, c(1, 1), FALSE))
+})
+
+# h_df_md_kr
+
+test_that("h_df_md_kr works as expected in the standard case", {
+  object_mmrm_kr <- get_mmrm_kr()
+  expect_snapshot(h_df_md_kr(object_mmrm_kr, matrix(c(0, 1, 1, 0), nrow = 2), TRUE))
+  expect_snapshot(h_df_md_kr(object_mmrm_kr, matrix(c(0, -1, 1, 0), nrow = 2), FALSE))
+})
+
+# h_kr_df
+
+test_that("h_kr_df works as expected in the standard case", {
+  object_mmrm_kr <- get_mmrm_kr()
+  kr_comp <- object_mmrm_kr$kr_comp
+  w <- component(object_mmrm_kr, "theta_vcov")
+  v_adj <- object_mmrm_kr$beta_vcov_adj
+  expect_snapshot(h_kr_df(v0 = object_mmrm_kr$beta_vcov, l = matrix(c(0, 1), nrow = 1), w = w, p = kr_comp$P))
+})
+
+# h_var_adj
+
+test_that("h_var_adj works as expected in the standard case", {
+  object_mmrm_kr <- get_mmrm_kr()
+  expect_snapshot(h_var_adj(
+    v = object_mmrm_kr$beta_vcov,
+    w = component(object_mmrm_kr, "theta_vcov"),
+    p = object_mmrm_kr$kr_comp$P,
+    q = object_mmrm_kr$kr_comp$Q,
+    r = object_mmrm_kr$kr_comp$R,
+    linear = TRUE
+  ))
+  expect_snapshot(h_var_adj(
+    v = object_mmrm_kr$beta_vcov,
+    w = component(object_mmrm_kr, "theta_vcov"),
+    p = object_mmrm_kr$kr_comp$P,
+    q = object_mmrm_kr$kr_comp$Q,
+    r = object_mmrm_kr$kr_comp$R,
+    linear = FALSE
+  ))
+})

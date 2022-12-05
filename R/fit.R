@@ -325,10 +325,9 @@ mmrm <- function(formula,
   } else {
     fit$kr_comp <- h_get_kr_comp(fit$tmb_data, fit$theta_est)
     linear <- (method == "Kenward-Roger-Linear")
-    w <- component(fit, "theta_vcov")
     fit$beta_vcov_adj <- h_var_adj(
       v = fit$beta_vcov,
-      w = w,
+      w = component(fit, "theta_vcov"),
       p = fit$kr_comp$P,
       q = fit$kr_comp$Q,
       r = fit$kr_comp$R,

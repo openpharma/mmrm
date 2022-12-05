@@ -2,7 +2,7 @@
 % Please edit documentation in R/kenwardroger.R
 \name{h_get_kr_comp}
 \alias{h_get_kr_comp}
-\title{Obtain Kenward-Roger Adjustment Component}
+\title{Obtain Kenward-Roger Adjustment Components}
 \usage{
 h_get_kr_comp(tmb_data, theta)
 }
@@ -20,7 +20,7 @@ Named list with elements:
 }
 }
 \description{
-Obtain Kenward-Roger Adjustment Component
+Obtain Kenward-Roger Adjustment Components
 }
 \details{
 the function returns a named list, \eqn{P}, \eqn{Q} and \eqn{R}, which corresponds to the

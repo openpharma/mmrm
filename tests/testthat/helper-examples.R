@@ -50,6 +50,14 @@ get_mmrm_spatial <- function() {
   .mmrm_spatial
 }
 
+.mmrm_kr_formula <- FEV1 ~ ARMCD + ar1(AVISIT | USUBJID)
+.mmrm_kr <- mmrm(.mmrm_kr_formula, data = fev_data, method = "Kenward-Roger")
+get_mmrm_kr <- function() {
+  .mmrm_kr
+}
+
+
+
 square_matrix <- function(values_by_row) {
   n <- length(values_by_row)
   size <- sqrt(n)

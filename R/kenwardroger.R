@@ -1,4 +1,4 @@
-#' Obtain Kenward-Roger Adjustment Component
+#' Obtain Kenward-Roger Adjustment Components
 #'
 #' @param tmb_data (`mmrm_tmb_data`)\cr produced by [h_mmrm_tmb_data()].
 #' @param theta (`numeric`)\cr theta estimate.
@@ -25,9 +25,9 @@ h_get_kr_comp <- function(tmb_data, theta) {
 
 #' Calculation of Kenward-Roger Degrees of Freedom for Multi-Dimensional Contrast
 #'
-#' @param object `mmrm` object
-#' @param contrast `matrix` contrast matrix
-#' @param linear `logical`\cr whether to use linear Kenward-Roger approximation
+#' @param object (`mmrm`)\cr object
+#' @param contrast (`matrix`)\cr contrast matrix
+#' @param linear (`logical`)\cr whether to use linear Kenward-Roger approximation
 #'
 #' @return List with `num_df`, `denom_df`, `f_stat` and `p_val` (2-sided p-value).
 #'
@@ -40,9 +40,9 @@ h_df_md_kr <- function(object, contrast, linear = FALSE) {
   w <- component(object, "theta_vcov")
   v_adj <- object$beta_vcov_adj
   df <- h_kr_df(v0 = object$beta_vcov, l = contrast, w = w, p = kr_comp$P)
-  vsolve <- solve(h_quad_form_mat(contrast, v_adj))
-  beta_contrast <- component(object, "beta_est") %*% t(contrast)
-  f_statistic <- 1 / nrow(contrast) * h_quad_form_mat(beta_contrast, vsolve)
+  prec_contrast <- solve(h_quad_form_mat(contrast, v_adj))
+  contrast_est <- component(object, "beta_est") %*% t(contrast)
+  f_statistic <- 1 / nrow(contrast) * h_quad_form_mat(contrast_est, prec_contrast)
   f_star <- f_statistic * df$lambda
   list(
     num_df = nrow(contrast),
@@ -55,9 +55,9 @@ h_df_md_kr <- function(object, contrast, linear = FALSE) {
 
 #' Calculation of Kenward-Roger Degrees of Freedom for One-Dimensional Contrast
 #'
-#' @param object `mmrm` object
-#' @param contrast contrast vector
-#' @param linear `logical`\cr whether to use linear Kenward-Roger approximation
+#' @param object (`mmrm`)\cr object
+#' @param contrast (`numeric`)\cr contrast vector
+#' @param linear (`logical`)\cr whether to use linear Kenward-Roger approximation
 #'
 #' @return List with `est`, `se`, `df`, `t_stat` and `p_val`.
 #'
@@ -68,10 +68,13 @@ h_df_1d_kr <- function(object, contrast, linear = FALSE) {
   }
   assert_numeric(contrast, len = length(component(object, "beta_est")))
   est <- sum(contrast * component(object, "beta_est"))
-  w <- component(object, "theta_vcov")
-  v_adj <- object$beta_vcov_adj
-  df <- h_kr_df(v0 = object$beta_vcov, l = matrix(contrast, nrow = 1), w = w, p = object$kr_comp$P)
-  se <- sqrt(h_quad_form_vec(contrast, v_adj))
+  df <- h_kr_df(
+    v0 = object$beta_vcov,
+    l = matrix(contrast, nrow = 1),
+    w = component(object, "theta_vcov"),
+    p = object$kr_comp$P
+  )
+  se <- sqrt(h_quad_form_vec(contrast, object$beta_vcov_adj))
 
   t_stat <- abs(est) / se
   p_val <- pt(t_stat, df$m, lower.tail = FALSE) * 2
@@ -87,12 +90,14 @@ h_df_1d_kr <- function(object, contrast, linear = FALSE) {
 
 #' Obtain the Adjusted Kenward-Roger Degree of Freedom
 #'
-#' @param v0 unadjusted covariance matrix
-#' @param l linear combination matrix
-#' @param w hessian matrix
-#' @param p P matrix from `h_get_kr_comp`
+#' @param v0 (`matrix`)\cr unadjusted covariance matrix
+#' @param l (`matrix`)\cr linear combination matrix
+#' @param w (`matrix`)\cr hessian matrix
+#' @param p (`matrix`)\cr P matrix from `h_get_kr_comp`
 #'
-#' @return List with `m` and `lambda`
+#' @return Named list with elements:
+#' - `m`: `numeric` degree of freedom.
+#' - `lambda`: `numeric` f statistic scaler.
 #'
 #' @keywords internal
 h_kr_df <- function(v0, l, w, p) {
@@ -142,14 +147,14 @@ h_kr_df <- function(v0, l, w, p) {
 
 #' Obtain the Adjusted Covariance Matrix
 #'
-#' @param v unadjusted covariance matrix
-#' @param w hessian matrix
-#' @param p P matrix from `h_get_kr_comp`
-#' @param q Q matrix from `h_get_kr_comp`
-#' @param r R matrix from `h_get_kr_comp`
-#' @param linear `logical`\cr whether to use linear Kenward-Roger approximation
+#' @param v (`matrix`)\cr unadjusted covariance matrix
+#' @param w (`matrix`)\cr hessian matrix
+#' @param p (`matrix`)\cr P matrix from `h_get_kr_comp`
+#' @param q (`matrix`)\cr Q matrix from `h_get_kr_comp`
+#' @param r (`matrix`)\cr R matrix from `h_get_kr_comp`
+#' @param linear (`logical`)\cr whether to use linear Kenward-Roger approximation
 #'
-#' @return matrix of adjusted covariance matrix
+#' @return The matrix of adjusted covariance matrix.
 #'
 #' @keywords internal
 h_var_adj <- function(v, w, p, q, r, linear = FALSE) {

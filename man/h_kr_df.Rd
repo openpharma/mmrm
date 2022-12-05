@@ -7,16 +7,20 @@
 h_kr_df(v0, l, w, p)
 }
 \arguments{
-\item{v0}{unadjusted covariance matrix}
+\item{v0}{(\code{matrix})\cr unadjusted covariance matrix}
 
-\item{l}{linear combination matrix}
+\item{l}{(\code{matrix})\cr linear combination matrix}
 
-\item{w}{hessian matrix}
+\item{w}{(\code{matrix})\cr hessian matrix}
 
-\item{p}{P matrix from \code{h_get_kr_comp}}
+\item{p}{(\code{matrix})\cr P matrix from \code{h_get_kr_comp}}
 }
 \value{
-List with \code{m} and \code{lambda}
+Named list with elements:
+\itemize{
+\item \code{m}: \code{numeric} degree of freedom.
+\item \code{lambda}: \code{numeric} f statistic scaler.
+}
 }
 \description{
 Obtain the Adjusted Kenward-Roger Degree of Freedom

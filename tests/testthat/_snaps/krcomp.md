@@ -88,3 +88,122 @@
       [16,] 0.06159161 0.06159161
       
 
+# h_df_1d_kr works as expected in the standard case
+
+    Code
+      h_df_1d_kr(object_mmrm_kr, c(0, 1), TRUE)
+    Output
+      $est
+      [1] 4.225743
+      
+      $se
+      [1] 0.9585828
+      
+      $df
+      [1] 188.4695
+      
+      $t_stat
+      [1] 4.408323
+      
+      $p_val
+      [1] 1.747171e-05
+      
+
+---
+
+    Code
+      h_df_1d_kr(object_mmrm_kr, c(1, 1), FALSE)
+    Output
+      $est
+      [1] 44.51385
+      
+      $se
+      [1] 0.6903402
+      
+      $df
+      [1] 183.1095
+      
+      $t_stat
+      [1] 64.48104
+      
+      $p_val
+      [1] 8.004282e-128
+      
+
+# h_df_md_kr works as expected in the standard case
+
+    Code
+      h_df_md_kr(object_mmrm_kr, matrix(c(0, 1, 1, 0), nrow = 2), TRUE)
+    Output
+      $num_df
+      [1] 2
+      
+      $num_df
+      [1] 2
+      
+      $denom_df
+      [1] 188.6484
+      
+      $f_stat
+      [1] 3913.724
+      
+      $p_val
+      [1] 2.576037e-154
+      
+
+---
+
+    Code
+      h_df_md_kr(object_mmrm_kr, matrix(c(0, -1, 1, 0), nrow = 2), FALSE)
+    Output
+      $num_df
+      [1] 2
+      
+      $num_df
+      [1] 2
+      
+      $denom_df
+      [1] 188.6484
+      
+      $f_stat
+      [1] 3913.724
+      
+      $p_val
+      [1] 2.576037e-154
+      
+
+# h_kr_df works as expected in the standard case
+
+    Code
+      h_kr_df(v0 = object_mmrm_kr$beta_vcov, l = matrix(c(0, 1), nrow = 1), w = w, p = kr_comp$
+        P)
+    Output
+      $m
+      [1] 188.4695
+      
+      $lambda
+      [1] 1
+      
+
+# h_var_adj works as expected in the standard case
+
+    Code
+      h_var_adj(v = object_mmrm_kr$beta_vcov, w = component(object_mmrm_kr,
+        "theta_vcov"), p = object_mmrm_kr$kr_comp$P, q = object_mmrm_kr$kr_comp$Q, r = object_mmrm_kr$
+        kr_comp$R, linear = TRUE)
+    Output
+                  (Intercept)   ARMCDTRT
+      (Intercept)   0.4441196 -0.4441196
+      ARMCDTRT     -0.4441196  0.9227150
+
+---
+
+    Code
+      h_var_adj(v = object_mmrm_kr$beta_vcov, w = component(object_mmrm_kr,
+        "theta_vcov"), p = object_mmrm_kr$kr_comp$P, q = object_mmrm_kr$kr_comp$Q, r = object_mmrm_kr$
+        kr_comp$R, linear = FALSE)
+    Output
+                  (Intercept)   ARMCDTRT
+      (Intercept)   0.4423115 -0.4423115
+      ARMCDTRT     -0.4423115  0.9188811
+

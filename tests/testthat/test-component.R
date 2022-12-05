@@ -29,6 +29,11 @@ test_that("component works as expected", {
   expect_named(test_list, c("n_theta", "x_matrix", "varcor"))
 
   expect_identical(component(object_mmrm_tmb, "varcor"), component(object_mmrm_tmb)$varcor)
+
+  expect_identical(component(object_mmrm_tmb, "beta_vcov"), object_mmrm_tmb$beta_vcov)
+
+  object_mmrm_kr <- get_mmrm_kr()
+  expect_identical(component(object_mmrm_kr, "beta_vcov"), object_mmrm_kr$beta_vcov_adj)
 })
 
 ## best_est_complete ----

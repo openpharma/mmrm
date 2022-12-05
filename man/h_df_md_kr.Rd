@@ -7,11 +7,11 @@
 h_df_md_kr(object, contrast, linear = FALSE)
 }
 \arguments{
-\item{object}{\code{mmrm} object}
+\item{object}{(\code{mmrm})\cr object}
 
-\item{contrast}{\code{matrix} contrast matrix}
+\item{contrast}{(\code{matrix})\cr contrast matrix}
 
-\item{linear}{\code{logical}\cr whether to use linear Kenward-Roger approximation}
+\item{linear}{(\code{logical})\cr whether to use linear Kenward-Roger approximation}
 }
 \value{
 List with \code{num_df}, \code{denom_df}, \code{f_stat} and \code{p_val} (2-sided p-value).

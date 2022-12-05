@@ -150,14 +150,14 @@ cov_type_spatial <- c("sp_exp")
 
 #' Trace of a Matrix
 #'
-#' @param x square matrix input
+#' @param x (`matrix`)\cr square matrix input
 #'
-#' @return the trace of the square matrix
+#' @return The trace of the square matrix.
 #'
 #' @keywords internal
 h_tr <- function(x) {
   if (nrow(x) != ncol(x)) {
-    stop("x must be square matrix!")
+    stop("x must be square matrix")
   }
-  return(sum(diag(x)))
+  sum(diag(x))
 }

@@ -7,10 +7,10 @@
 h_tr(x)
 }
 \arguments{
-\item{x}{square matrix input}
+\item{x}{(\code{matrix})\cr square matrix input}
 }
 \value{
-the trace of the square matrix
+The trace of the square matrix.
 }
 \description{
 Trace of a Matrix
