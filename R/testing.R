@@ -21,13 +21,12 @@ df_1d <- function(object, contrast) {
   assert_class(object, "mmrm")
   assert_numeric(contrast, len = length(component(object, "beta_est")), any.missing = FALSE)
   contrast <- as.vector(contrast)
-  method <- h_get_method(object$method)
-  if (method == "Satterthwaite") {
-    df_1d_sat(object, contrast)
-  } else if (method == "Kenward-Roger") {
-    df_1d_kr(object, contrast, linear = FALSE)
-  } else if (method == "Kenward-Roger-Linear") {
-    df_1d_kr(object, contrast, linear = TRUE)
+  if (object$method == "Satterthwaite") {
+    h_df_1d_sat(object, contrast)
+  } else if (object$method == "Kenward-Roger") {
+    h_df_1d_kr(object, contrast, linear = FALSE)
+  } else if (object$method == "Kenward-Roger-Linear") {
+    h_df_1d_kr(object, contrast, linear = TRUE)
   }
 }
 
@@ -60,12 +59,11 @@ df_md <- function(object, contrast) {
     contrast <- matrix(contrast, ncol = length(contrast))
   }
   assert_matrix(contrast, ncols = length(component(object, "beta_est")))
-  method <- h_get_method(object$method)
-  if (method == "Satterthwaite") {
-    df_md_sat(object, contrast)
-  } else if (method == "Kenward-Roger") {
-    df_md_kr(object, contrast)
-  } else if (method == "Kenward-Roger-Linear") {
-    df_md_kr(object, contrast, linear = TRUE)
+  if (object$method == "Satterthwaite") {
+    h_df_md_sat(object, contrast)
+  } else if (object$method == "Kenward-Roger") {
+    h_df_md_kr(object, contrast)
+  } else if (object$method == "Kenward-Roger-Linear") {
+    h_df_md_kr(object, contrast, linear = TRUE)
   }
 }

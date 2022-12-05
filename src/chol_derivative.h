@@ -85,6 +85,7 @@ struct chols {
   chols() {
     // this default constructor is needed because the use of `[]`.
   }
+  // constructor from theta, n_visits and cov_type, and cache full_visits values
   chols(vector<Type> theta, int n_visits, std::string cov_type): n_visits(n_visits), cov_type(cov_type), full_visit(std::vector<int>(n_visits)) {
     this->theta = theta;
     for (int i = 0; i < n_visits; i++) {
@@ -102,6 +103,7 @@ struct chols {
     this->inverse_cache[this->full_visit] = (this->sigma_cache[this->full_visit]).inverse();
     this->sel_mat_cache[this->full_visit] = get_select_matrix<Type>(full_visit, this->n_visits);
   }
+  // cache and return the select matrix
   Eigen::SparseMatrix<Type> get_sel_mat(std::vector<int> visits) {
     if (this->sel_mat_cache.count(visits) > 0) {
       return this->sel_mat_cache[visits];
@@ -110,6 +112,7 @@ struct chols {
       return this->sel_mat_cache[visits];
     }
   }
+  // cache and return the first order derivatives using select matrix
   matrix<Type> get_sigma_derivative1(std::vector<int> visits) {
      if (this->sigmad1_cache.count(visits) > 0) {
       return this->sigmad1_cache[visits];
@@ -124,6 +127,7 @@ struct chols {
       return ret;
     }
   }
+  // cache and return the second order derivatives using select matrix
   matrix<Type> get_sigma_derivative2(std::vector<int> visits) {
      if (this->sigmad2_cache.count(visits) > 0) {
       return this->sigmad2_cache[visits];
@@ -139,6 +143,7 @@ struct chols {
       return ret;
     }
   }
+  // cache and return the sigma using select matrix
   matrix<Type> get_sigma(std::vector<int> visits) {
      if (this->sigma_cache.count(visits) > 0) {
       return this->sigma_cache[visits];
@@ -150,6 +155,7 @@ struct chols {
       return ret;
     }
   }
+  // cache and return the inverse of sigma using select matrix
   matrix<Type> get_inverse(std::vector<int> visits) {
     if (this->inverse_cache.count(visits) > 0) {
       return this->inverse_cache[visits];
@@ -162,6 +168,7 @@ struct chols {
       return sigmainv;
     }
   }
+  // cache and return the first order derivatives of inverse of sigma using select matrix
   matrix<Type> get_inverse_derivative(std::vector<int> visits) {
     if (this->sigma_inverse_d1_cache.count(visits) > 0) {
       return this->sigma_inverse_d1_cache[visits];

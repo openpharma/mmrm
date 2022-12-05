@@ -2,7 +2,7 @@
 % Please edit documentation in R/kenwardroger.R
 \name{h_kr_df}
 \alias{h_kr_df}
-\title{obtain the adjusted Kenward-Roger degree of freedom}
+\title{Obtain the Adjusted Kenward-Roger Degree of Freedom}
 \usage{
 h_kr_df(v0, l, w, p)
 }
@@ -19,6 +19,6 @@ h_kr_df(v0, l, w, p)
 List with \code{m} and \code{lambda}
 }
 \description{
-obtain the adjusted Kenward-Roger degree of freedom
+Obtain the Adjusted Kenward-Roger Degree of Freedom
 }
 \keyword{internal}

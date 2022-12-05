@@ -2,7 +2,7 @@
 % Please edit documentation in R/kenwardroger.R
 \name{h_var_adj}
 \alias{h_var_adj}
-\title{obtain the adjusted covariance matrix}
+\title{Obtain the Adjusted Covariance Matrix}
 \usage{
 h_var_adj(v, w, p, q, r, linear = FALSE)
 }
@@ -23,6 +23,6 @@ h_var_adj(v, w, p, q, r, linear = FALSE)
 matrix of adjusted covariance matrix
 }
 \description{
-obtain the adjusted covariance matrix
+Obtain the Adjusted Covariance Matrix
 }
 \keyword{internal}

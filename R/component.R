@@ -21,7 +21,7 @@
 #' - `conv_message`: message accompanying the convergence code.
 #' - `evaluations`: number of function evaluations for optimization.
 #' - `beta_vcov`: estimated variance-covariance matrix of coefficients
-#'      (excluding aliased coefficients). For Kenward-Roger and Kenward-Roger-Linear
+#'      (excluding aliased coefficients). For Kenward-Roger
 #'      methods, the adjusted covariance matrix is returned. To obtain the unadjusted
 #'      covariance matrix, use `object$beta_vcov` instead.
 #' - `beta_vcov_complete`: estimated variance-covariance matrix including

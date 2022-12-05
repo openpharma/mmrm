@@ -230,7 +230,8 @@ mmrm_control <- function(optimizer = stats::nlminb,
 #' @param optimizer (`string`)\cr optimizer to be used to generate the model.
 #' @param n_cores (`count`)\cr number of cores which could in principle be used for
 #'   parallel computations on Linux or Mac machines.
-#' @param method (`string`)\cr method used for adjusting degrees of freedom and covariance estimates.
+#' @param method (`string`)\cr method used for adjusting the degrees of freedom and
+#'   potentially the coefficients variance-covariance matrix.
 #' @inheritParams mmrm_control
 #'
 #' @details
@@ -275,13 +276,12 @@ mmrm <- function(formula,
                  optimizer = "automatic",
                  n_cores = 1L,
                  accept_singular = TRUE,
-                 method = c("Satterthwaite", "Kenward-Roger", "Kenward-Roger-Linear", "ST", "KR", "KRLin")) {
+                 method = c("Satterthwaite", "Kenward-Roger", "Kenward-Roger-Linear")) {
   assert_string(optimizer)
   use_automatic <- identical(optimizer, "automatic")
   method <- match.arg(method)
-  method <- h_get_method(method)
   if (method %in% c("Kenward-Roger", "Kenward-Roger-Linear") && !reml) {
-    stop("Kenward-Roger only works for REML!")
+    stop("Kenward-Roger only works for REML")
   }
   attr(data, which = "dataname") <- toString(match.call()$data)
 
@@ -323,16 +323,17 @@ mmrm <- function(formula,
     covbeta_fun <- h_covbeta_fun(fit)
     fit$jac_list <- h_jac_list(covbeta_fun, fit$theta_est)
   } else {
-    kr_comp <- h_get_kr_comp(fit$tmb_data, fit$theta_est)
-    fit$kr_comp <- kr_comp
-    if (method == "Kenward-Roger-Linear") {
-      linear <- TRUE
-    } else {
-      linear <- FALSE
-    }
-    w <- solve(fit$tmb_obj$he(fit$theta_est))
-    v_adj <- h_var_adj(fit$beta_vcov, w, kr_comp$P, kr_comp$Q, kr_comp$R, linear = linear)
-    fit$beta_vcov_adj <- v_adj
+    fit$kr_comp <- h_get_kr_comp(fit$tmb_data, fit$theta_est)
+    linear <- (method == "Kenward-Roger-Linear")
+    w <- component(fit, "theta_vcov")
+    fit$beta_vcov_adj <- h_var_adj(
+      v = fit$beta_vcov,
+      w = w,
+      p = fit$kr_comp$P,
+      q = fit$kr_comp$Q,
+      r = fit$kr_comp$R,
+      linear = linear
+    )
   }
   class(fit) <- c("mmrm", class(fit))
   fit

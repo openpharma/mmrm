@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{h_tr}
 \alias{h_tr}
-\title{trace of a matrix}
+\title{Trace of a Matrix}
 \usage{
 h_tr(x)
 }
@@ -13,6 +13,6 @@ h_tr(x)
 the trace of the square matrix
 }
 \description{
-trace of a matrix
+Trace of a Matrix
 }
 \keyword{internal}

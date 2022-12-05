@@ -2,25 +2,25 @@
 % Please edit documentation in R/kenwardroger.R
 \name{h_get_kr_comp}
 \alias{h_get_kr_comp}
-\title{obtain Kenward-Roger adjustment component}
+\title{Obtain Kenward-Roger Adjustment Component}
 \usage{
 h_get_kr_comp(tmb_data, theta)
 }
 \arguments{
 \item{tmb_data}{(\code{mmrm_tmb_data})\cr produced by \code{\link[=h_mmrm_tmb_data]{h_mmrm_tmb_data()}}.}
 
-\item{theta}{(\code{numeric})\cr numeric vector of the theta estimate.}
+\item{theta}{(\code{numeric})\cr theta estimate.}
 }
 \value{
 Named list with elements:
 \itemize{
-\item \code{P}: \code{matrix} of P component.
-\item \code{Q}: \code{matrix} of Q component.
-\item \code{R}: \code{matrix} of R component.
+\item \code{P}: \code{matrix} of \eqn{P} component.
+\item \code{Q}: \code{matrix} of \eqn{Q} component.
+\item \code{R}: \code{matrix} of \eqn{R} component.
 }
 }
 \description{
-obtain Kenward-Roger adjustment component
+Obtain Kenward-Roger Adjustment Component
 }
 \details{
 the function returns a named list, \eqn{P}, \eqn{Q} and \eqn{R}, which corresponds to the

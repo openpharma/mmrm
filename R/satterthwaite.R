@@ -180,7 +180,7 @@ h_df_1d_list <- function(est,
 #'
 #' @return List with `est`, `se`, `df`, `t_stat` and `p_val`.
 #' @keywords internal
-df_1d_sat <- function(object, contrast) {
+h_df_1d_sat <- function(object, contrast) {
   assert_numeric(contrast, len = length(component(object, "beta_est")))
   est <- sum(contrast * component(object, "beta_est"))
   var <- h_quad_form_vec(contrast, component(object, "beta_vcov"))
@@ -281,7 +281,7 @@ h_df_md_from_1d <- function(object, contrast) {
 #'
 #' @return List with `num_df`, `denom_df`, `f_stat` and `p_val` (2-sided p-value).
 #' @keywords internal
-df_md_sat <- function(object, contrast) {
+h_df_md_sat <- function(object, contrast) {
   # Early return if we are in the one-dimensional case.
   if (identical(nrow(contrast), 1L)) {
     return(h_df_md_from_1d(object, contrast))

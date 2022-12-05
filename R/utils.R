@@ -148,29 +148,16 @@ cov_type <- c("us", "toep", "toeph", "ar1", "ar1h", "ad", "adh", "cs", "csh")
 cov_type_spatial <- c("sp_exp")
 
 
-#' trace of a matrix
+#' Trace of a Matrix
+#'
 #' @param x square matrix input
+#'
 #' @return the trace of the square matrix
+#'
 #' @keywords internal
 h_tr <- function(x) {
   if (nrow(x) != ncol(x)) {
     stop("x must be square matrix!")
   }
   return(sum(diag(x)))
-}
-
-#' get the method of degree of freedom and covariance
-#' @param method (`string`)\cr method for degree of freedom and covariance
-#' @return the method chosen.
-#' @keywords internal
-h_get_method <- function(method) {
-  if (method %in% c("Satterthwaite", "ST")) {
-    "Satterthwaite"
-  } else if (method %in% c("Kenward-Roger", "KR")) {
-    "Kenward-Roger"
-  } else if (method %in% c("Kenward-Roger-Linear", "KRLin")) {
-    "Kenward-Roger-Linear"
-  } else {
-    stop("Unknown method!")
-  }
 }
