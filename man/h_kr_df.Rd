@@ -19,7 +19,7 @@ h_kr_df(v0, l, w, p)
 Named list with elements:
 \itemize{
 \item \code{m}: \code{numeric} degree of freedom.
-\item \code{lambda}: \code{numeric} f statistic scaler.
+\item \code{lambda}: \code{numeric} f statistic scale parameter.
 }
 }
 \description{

@@ -97,7 +97,7 @@ h_df_1d_kr <- function(object, contrast, linear = FALSE) {
 #'
 #' @return Named list with elements:
 #' - `m`: `numeric` degree of freedom.
-#' - `lambda`: `numeric` f statistic scaler.
+#' - `lambda`: `numeric` f statistic scale parameter.
 #'
 #' @keywords internal
 h_kr_df <- function(v0, l, w, p) {
