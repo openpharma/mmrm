@@ -140,7 +140,7 @@ h_print_call <- function(call, n_obs, n_subjects, n_timepoints) {
 #'
 #' @param cov_type (`string`)\cr covariance structure abbreviation.
 #' @param n_theta (`int`)\cr number of variance parameters.
-#' @param n_groups (`int`)\cr number of groups
+#' @param n_groups (`int`)\cr number of groups.
 #' @keywords internal
 h_print_cov <- function(cov_type, n_theta, n_groups) {
   assert_string(cov_type)

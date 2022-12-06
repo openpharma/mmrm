@@ -7,13 +7,13 @@
 h_kr_df(v0, l, w, p)
 }
 \arguments{
-\item{v0}{(\code{matrix})\cr unadjusted covariance matrix}
+\item{v0}{(\code{matrix})\cr unadjusted covariance matrix.}
 
-\item{l}{(\code{matrix})\cr linear combination matrix}
+\item{l}{(\code{matrix})\cr linear combination matrix.}
 
-\item{w}{(\code{matrix})\cr hessian matrix}
+\item{w}{(\code{matrix})\cr hessian matrix.}
 
-\item{p}{(\code{matrix})\cr P matrix from \code{h_get_kr_comp}}
+\item{p}{(\code{matrix})\cr P matrix from \code{h_get_kr_comp}.}
 }
 \value{
 Named list with elements:

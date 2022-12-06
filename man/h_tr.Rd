@@ -7,7 +7,7 @@
 h_tr(x)
 }
 \arguments{
-\item{x}{(\code{matrix})\cr square matrix input}
+\item{x}{(\code{matrix})\cr square matrix input.}
 }
 \value{
 The trace of the square matrix.

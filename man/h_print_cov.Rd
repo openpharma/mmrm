@@ -11,7 +11,7 @@ h_print_cov(cov_type, n_theta, n_groups)
 
 \item{n_theta}{(\code{int})\cr number of variance parameters.}
 
-\item{n_groups}{(\code{int})\cr number of groups}
+\item{n_groups}{(\code{int})\cr number of groups.}
 }
 \description{
 This is used in \code{\link[=print.summary.mmrm]{print.summary.mmrm()}}.

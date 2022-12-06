@@ -6,7 +6,7 @@
 #' This function, take the call of `time | group / subject`, last element of the covariance term,
 #' extract the corresponding grouping var, time var and subject var.
 #'
-#' @param cov_content (`call`)\cr covariance term
+#' @param cov_content (`call`)\cr covariance term.
 #'
 #' @return Named list with elements:
 #' - `visit_var`: `character` with the visit variable name.

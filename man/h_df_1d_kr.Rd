@@ -7,11 +7,11 @@
 h_df_1d_kr(object, contrast, linear = FALSE)
 }
 \arguments{
-\item{object}{(\code{mmrm})\cr object}
+\item{object}{(\code{mmrm})\cr object.}
 
-\item{contrast}{(\code{numeric})\cr contrast vector}
+\item{contrast}{(\code{numeric})\cr contrast vector.}
 
-\item{linear}{(\code{logical})\cr whether to use linear Kenward-Roger approximation}
+\item{linear}{(\code{logical})\cr whether to use linear Kenward-Roger approximation.}
 }
 \value{
 List with \code{est}, \code{se}, \code{df}, \code{t_stat} and \code{p_val}.

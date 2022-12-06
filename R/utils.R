@@ -150,7 +150,7 @@ cov_type_spatial <- c("sp_exp")
 
 #' Trace of a Matrix
 #'
-#' @param x (`matrix`)\cr square matrix input
+#' @param x (`matrix`)\cr square matrix input.
 #'
 #' @return The trace of the square matrix.
 #'
