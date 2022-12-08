@@ -69,7 +69,7 @@ h_df_md_kr <- function(object, contrast, linear = FALSE) {
 #' t statistic and p-value for one-dimensional contrast. Used in [df_1d()] if method is
 #' "Kenward-Roger" or "Kenward-Roger-Linear".
 #'
-#' @param object (`mmrm`)\cr object created by [mmrm()] with Kenwar-Roger(-Linear) methed.
+#' @param object (`mmrm`)\cr object created by [mmrm()] with Kenward-Roger(-Linear) method.
 #' @param contrast (`numeric`)\cr contrast vector.
 #' @param linear (`logical`)\cr whether to use linear Kenward-Roger approximation.
 #'
@@ -104,7 +104,7 @@ h_df_1d_kr <- function(object, contrast, linear = FALSE) {
 
 #' Obtain the Adjusted Kenward-Roger Degree of Freedom
 #'
-#' @description Obtains the adjusted Kenward-Roger degree of freedom and F statistic scaler.
+#' @description Obtains the adjusted Kenward-Roger degree of freedom and F statistic scale parameter.
 #' Used in [h_df_md_kr()] or [h_df_1d_kr].
 #'
 #' @param v0 (`matrix`)\cr unadjusted covariance matrix.

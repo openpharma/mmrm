@@ -20,7 +20,7 @@ h_covbeta_fun <- function(model) {
 
 #' Formatting a Column from Jacobian Matrix as Matrix
 #'
-#' @description Convert a clumn of Jacobian matrix into square matrix.
+#' @description Convert a column of Jacobian matrix into square matrix.
 #'
 #' @param jac_matrix (`matrix`)\cr full Jacobian matrix.
 #' @param col (`int`)\cr column index.

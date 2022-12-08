@@ -7,7 +7,7 @@
 h_df_1d_kr(object, contrast, linear = FALSE)
 }
 \arguments{
-\item{object}{(\code{mmrm})\cr object created by \code{\link[=mmrm]{mmrm()}} with Kenwar-Roger(-Linear) methed.}
+\item{object}{(\code{mmrm})\cr object created by \code{\link[=mmrm]{mmrm()}} with Kenward-Roger(-Linear) method.}
 
 \item{contrast}{(\code{numeric})\cr contrast vector.}
 

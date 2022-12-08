@@ -23,7 +23,7 @@ Named list with elements:
 }
 }
 \description{
-Obtains the adjusted Kenward-Roger degree of freedom and F statistic scaler.
+Obtains the adjusted Kenward-Roger degree of freedom and F statistic scale parameter.
 Used in \code{\link[=h_df_md_kr]{h_df_md_kr()}} or \link{h_df_1d_kr}.
 }
 \keyword{internal}
