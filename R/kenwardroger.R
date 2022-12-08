@@ -42,7 +42,7 @@ h_get_kr_comp <- function(tmb_data, theta) {
 #' @keywords internal
 h_df_md_kr <- function(object, contrast, linear = FALSE) {
   assert_class(object, "mmrm")
-  assert_numeric(contrast, any.missing = FALSE)
+  assert_matrix(contrast, mode = "numeric", any.missing = FALSE, ncols = length(component(object, "beta_est")))
   if (component(object, "reml") != 1) {
     stop("Kenward-Roger is only for REML")
   }
@@ -77,10 +77,11 @@ h_df_md_kr <- function(object, contrast, linear = FALSE) {
 #'
 #' @keywords internal
 h_df_1d_kr <- function(object, contrast, linear = FALSE) {
+  assert_class(object, "mmrm")
+  assert_numeric(contrast, len = length(component(object, "beta_est")))
   if (component(object, "reml") != 1) {
     stop("Kenward-Roger is only for REML!")
   }
-  assert_numeric(contrast, len = length(component(object, "beta_est")))
   est <- sum(contrast * component(object, "beta_est"))
   df <- h_kr_df(
     v0 = object$beta_vcov,
