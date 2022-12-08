@@ -13,6 +13,10 @@ test_that("h_get_kr_comp works as expected on grouped mmrm", {
 
 # df_1d ----
 
+## auto-regressive ----
+
+### kr ----
+
 test_that("kr give similar results as SAS for ar1", {
   fit <- mmrm(FEV1 ~ ARMCD + ar1(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger")
   res <- df_1d(fit, contrast = c(0, 1))
@@ -20,6 +24,8 @@ test_that("kr give similar results as SAS for ar1", {
   expect_equal(res$df, expected[2], tolerance = 1e-4)
   expect_equal(res$se, expected[1], tolerance = 1e-4)
 })
+
+## kr linear ----
 
 test_that("kr linear give similar results as SAS for ar1", {
   fit <- mmrm(FEV1 ~ ARMCD + ar1(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger-Linear")
@@ -29,6 +35,10 @@ test_that("kr linear give similar results as SAS for ar1", {
   expect_equal(res$se, expected[1], tolerance = 1e-4)
 })
 
+## Heterogeneous auto-regressive ----
+
+### kr ----
+
 test_that("kr give similar results as SAS for ar1h", {
   fit <- mmrm(FEV1 ~ ARMCD + ar1h(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger")
   res <- df_1d(fit, contrast = c(0, 1))
@@ -36,6 +46,8 @@ test_that("kr give similar results as SAS for ar1h", {
   expect_equal(res$df, expected[2], tolerance = 1e-4)
   expect_equal(res$se, expected[1], tolerance = 1e-2)
 })
+
+### kr linear ----
 
 test_that("kr linear give similar results as SAS for ar1h", {
   fit <- mmrm(FEV1 ~ ARMCD + ar1h(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger-Linear")
@@ -45,6 +57,10 @@ test_that("kr linear give similar results as SAS for ar1h", {
   expect_equal(res$se, expected[1], tolerance = 1e-3)
 })
 
+## compound symmetry ----
+
+### kr ----
+
 test_that("kr give similar results as SAS for cs", {
   fit <- mmrm(FEV1 ~ ARMCD + cs(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger")
   res <- df_1d(fit, contrast = c(0, 1))
@@ -52,6 +68,8 @@ test_that("kr give similar results as SAS for cs", {
   expect_equal(res$df, expected[2], tolerance = 1e-4)
   expect_equal(res$se, expected[1], tolerance = 1e-3)
 })
+
+### kr linear ----
 
 test_that("kr linear give similar results as SAS for cs", {
   fit <- mmrm(FEV1 ~ ARMCD + cs(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger-Linear")
@@ -61,6 +79,10 @@ test_that("kr linear give similar results as SAS for cs", {
   expect_equal(res$se, expected[1], tolerance = 1e-4)
 })
 
+## Heterogeneous compound symmetry ----
+
+### kr ----
+
 test_that("kr give similar results as SAS for csh", {
   fit <- mmrm(FEV1 ~ ARMCD + csh(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger")
   res <- df_1d(fit, contrast = c(0, 1))
@@ -68,6 +90,8 @@ test_that("kr give similar results as SAS for csh", {
   expect_equal(res$df, expected[2], tolerance = 1e-3)
   expect_equal(res$se, expected[1], tolerance = 1e-2)
 })
+
+### kr linear ----
 
 test_that("kr linear give similar results as SAS for csh", {
   fit <- mmrm(FEV1 ~ ARMCD + csh(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger-Linear")
@@ -77,6 +101,10 @@ test_that("kr linear give similar results as SAS for csh", {
   expect_equal(res$se, expected[1], tolerance = 1e-2)
 })
 
+## Heterogeneous ante-dependence ----
+
+### kr ----
+
 test_that("kr give similar results as SAS for adh", {
   fit <- mmrm(FEV1 ~ ARMCD + adh(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger")
   res <- df_1d(fit, contrast = c(0, 1))
@@ -85,6 +113,8 @@ test_that("kr give similar results as SAS for adh", {
   expect_equal(res$se, expected[1], tolerance = 1e-2)
 })
 
+### kr linear ----
+
 test_that("kr linear give similar results as SAS for adh", {
   fit <- mmrm(FEV1 ~ ARMCD + adh(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger-Linear")
   res <- df_1d(fit, contrast = c(0, 1))
@@ -92,6 +122,73 @@ test_that("kr linear give similar results as SAS for adh", {
   expect_equal(res$df, expected[2], tolerance = 1e-3)
   expect_equal(res$se, expected[1], tolerance = 1e-3)
 })
+
+## Toeplitz ----
+
+### kr ----
+
+test_that("kr give similar results as SAS for toep", {
+  fit <- mmrm(FEV1 ~ ARMCD + toep(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger")
+  res <- df_1d(fit, contrast = c(0, 1))
+  expected <- c(0.87839805519623, 160.027408337368)
+  expect_equal(res$df, expected[2], tolerance = 1e-3)
+  expect_equal(res$se, expected[1], tolerance = 1e-2)
+})
+
+### kr linear
+
+test_that("kr linear give similar results as SAS for toep", {
+  fit <- mmrm(FEV1 ~ ARMCD + toep(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger-Linear")
+  res <- df_1d(fit, contrast = c(0, 1))
+  expected <- c(0.87839805519623, 160.027408337368)
+  expect_equal(res$df, expected[2], tolerance = 1e-3)
+  expect_equal(res$se, expected[1], tolerance = 1e-3)
+})
+
+## Heterogeneous Toeplitz ----
+
+### kr ----
+
+test_that("kr give similar results as SAS for toeph", {
+  fit <- mmrm(FEV1 ~ ARMCD + toeph(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger")
+  res <- df_1d(fit, contrast = c(0, 1))
+  expected <- c(0.72543828853831, 180.062730071701)
+  expect_equal(res$df, expected[2], tolerance = 1e-3)
+  expect_equal(res$se, expected[1], tolerance = 1e-2)
+})
+
+### kr linear
+
+test_that("kr linear give similar results as SAS for toeph", {
+  fit <- mmrm(FEV1 ~ ARMCD + toeph(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger-Linear")
+  res <- df_1d(fit, contrast = c(0, 1))
+  expected <- c(0.72537324518435, 180.062730071701)
+  expect_equal(res$df, expected[2], tolerance = 1e-3)
+  expect_equal(res$se, expected[1], tolerance = 1e-3)
+})
+
+## Unstructured ----
+
+### kr ----
+
+test_that("kr give similar results as SAS for unstructured", {
+  fit <- mmrm(FEV1 ~ ARMCD + us(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger")
+  res <- df_1d(fit, contrast = c(0, 1))
+  expected <- c(0.66124382270307, 160.733266403768)
+  expect_equal(res$df, expected[2], tolerance = 1e-3)
+  expect_equal(res$se, expected[1], tolerance = 1e-1)
+})
+
+### kr linear
+
+test_that("kr linear give similar results as SAS for unstructured", {
+  fit <- mmrm(FEV1 ~ ARMCD + us(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger-Linear")
+  res <- df_1d(fit, contrast = c(0, 1))
+  expected <- c(0.66124382270307, 160.73326640376)
+  expect_equal(res$df, expected[2], tolerance = 1e-3)
+  expect_equal(res$se, expected[1], tolerance = 1e-3)
+})
+
 
 # h_df_1d_kr ----
 
