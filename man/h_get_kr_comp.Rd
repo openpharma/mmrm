@@ -20,7 +20,8 @@ Named list with elements:
 }
 }
 \description{
-Obtain Kenward-Roger Adjustment Components
+Obtains the components needed downstream for the computation of Kenward-Roger degrees of freedom.
+Used in \code{\link[=mmrm]{mmrm()}} fitting if method is "Kenward-Roger" or "Kenward-Roger-Linear".
 }
 \details{
 the function returns a named list, \eqn{P}, \eqn{Q} and \eqn{R}, which corresponds to the

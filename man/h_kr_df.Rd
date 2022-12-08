@@ -13,16 +13,17 @@ h_kr_df(v0, l, w, p)
 
 \item{w}{(\code{matrix})\cr hessian matrix.}
 
-\item{p}{(\code{matrix})\cr P matrix from \code{h_get_kr_comp}.}
+\item{p}{(\code{matrix})\cr P matrix from \code{\link[=h_get_kr_comp]{h_get_kr_comp()}}.}
 }
 \value{
 Named list with elements:
 \itemize{
 \item \code{m}: \code{numeric} degree of freedom.
-\item \code{lambda}: \code{numeric} f statistic scale parameter.
+\item \code{lambda}: \code{numeric} F statistic scale parameter.
 }
 }
 \description{
-Obtain the Adjusted Kenward-Roger Degree of Freedom
+Obtains the adjusted Kenward-Roger degree of freedom and F statistic scaler.
+Used in \code{\link[=h_df_md_kr]{h_df_md_kr()}} or \link{h_df_1d_kr}.
 }
 \keyword{internal}

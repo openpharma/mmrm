@@ -11,11 +11,11 @@ h_var_adj(v, w, p, q, r, linear = FALSE)
 
 \item{w}{(\code{matrix})\cr hessian matrix.}
 
-\item{p}{(\code{matrix})\cr P matrix from \code{h_get_kr_comp}.}
+\item{p}{(\code{matrix})\cr P matrix from \code{\link[=h_get_kr_comp]{h_get_kr_comp()}}.}
 
-\item{q}{(\code{matrix})\cr Q matrix from \code{h_get_kr_comp}.}
+\item{q}{(\code{matrix})\cr Q matrix from \code{\link[=h_get_kr_comp]{h_get_kr_comp()}}.}
 
-\item{r}{(\code{matrix})\cr R matrix from \code{h_get_kr_comp}.}
+\item{r}{(\code{matrix})\cr R matrix from \code{\link[=h_get_kr_comp]{h_get_kr_comp()}}.}
 
 \item{linear}{(\code{logical})\cr whether to use linear Kenward-Roger approximation.}
 }
@@ -23,6 +23,7 @@ h_var_adj(v, w, p, q, r, linear = FALSE)
 The matrix of adjusted covariance matrix.
 }
 \description{
-Obtain the Adjusted Covariance Matrix
+Obtains the Kenward-Roger adjusted covariance matrix.
+Used in \code{\link[=mmrm]{mmrm()}} fitting if method is "Kenward-Roger" or "Kenward-Roger-Linear".
 }
 \keyword{internal}

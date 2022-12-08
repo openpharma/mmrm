@@ -3,10 +3,10 @@
 ### New Features
 
 - Add support for Kenward-Roger adjusted covariance and degree of freedom
-  in `mmrm` function call with argument `method`. It now accept "Kenward-Roger",
-  "Kenward-Roger-Linear" or "Satterthwaite". Subsequent `summary`, `print` or `component` will
-  also be based on this `method` argument, e.g. `component(fit, "beta_vcov")` will return
-  adjusted covariance matrix for Kenward-Roger or Kenward-Roger-Linear.
+  in `mmrm` function call with argument `method`. It now accepts "Kenward-Roger",
+  "Kenward-Roger-Linear" or "Satterthwaite" (which is still the default). Subsequent `summary`, `print` or `component` calls will
+  also be based on this `method` argument, e.g. `component(fit, "beta_vcov")` will return the
+   adjusted covariance matrix if a Kenward-Roger method has been used.
 ### Bug Fixes
 
 - Previously duplicate time points could be present for a single subject,

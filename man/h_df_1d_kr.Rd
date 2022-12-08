@@ -7,7 +7,7 @@
 h_df_1d_kr(object, contrast, linear = FALSE)
 }
 \arguments{
-\item{object}{(\code{mmrm})\cr object.}
+\item{object}{(\code{mmrm})\cr object created by \code{\link[=mmrm]{mmrm()}} with Kenwar-Roger(-Linear) methed.}
 
 \item{contrast}{(\code{numeric})\cr contrast vector.}
 
@@ -17,6 +17,8 @@ h_df_1d_kr(object, contrast, linear = FALSE)
 List with \code{est}, \code{se}, \code{df}, \code{t_stat} and \code{p_val}.
 }
 \description{
-Calculation of Kenward-Roger Degrees of Freedom for One-Dimensional Contrast
+Calculates the estimate, adjusted standard error, Kenward-Roger degree of freedom,
+t statistic and p-value for one-dimensional contrast. Used in \code{\link[=df_1d]{df_1d()}} if method is
+"Kenward-Roger" or "Kenward-Roger-Linear".
 }
 \keyword{internal}

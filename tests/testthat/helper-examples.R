@@ -73,3 +73,7 @@ map_to_cor <- function(theta) {
 map_to_theta <- function(rho) {
   sign(rho) * sqrt(rho^2 / (1 - rho^2))
 }
+
+expect_snapshot_tolerance <- function(x, style = "deparse", tolerance = 1e-4, ...) {
+  testthat::expect_snapshot_value(x, style = style, tolerance = tolerance, ...)
+}

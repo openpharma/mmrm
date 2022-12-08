@@ -17,6 +17,7 @@ h_df_md_kr(object, contrast, linear = FALSE)
 List with \code{num_df}, \code{denom_df}, \code{f_stat} and \code{p_val} (2-sided p-value).
 }
 \description{
-Calculation of Kenward-Roger Degrees of Freedom for Multi-Dimensional Contrast
+Calculates the Kenward-Roger degree of freedom, F statistic and p value for multi-dimensional contrast.
+Used in \code{\link[=df_md]{df_md()}} if method is "Kenward-Roger" or "Kenward-Roger-Linear".
 }
 \keyword{internal}

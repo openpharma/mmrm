@@ -1,5 +1,8 @@
 #' Covariance Matrix for Coefficients Given Variance Parameters
 #'
+#' @description Obtain the covariance matrix function which accepts variance parameters as input.
+#' Used in [h_jac_list()] to to calculate the Jacobian matrix using numerical differentiation.
+#'
 #' @param model (`mmrm_tmb`)\cr initial model fit.
 #'
 #' @return Function with argument `theta` that calculates the covariance matrix
@@ -16,6 +19,8 @@ h_covbeta_fun <- function(model) {
 }
 
 #' Formatting a Column from Jacobian Matrix as Matrix
+#'
+#' @description Convert a clumn of Jacobian matrix into square matrix.
 #'
 #' @param jac_matrix (`matrix`)\cr full Jacobian matrix.
 #' @param col (`int`)\cr column index.
@@ -36,6 +41,8 @@ h_jac_col_as_matrix <- function(jac_matrix, col) {
 }
 
 #' Obtain List of Jacobian Matrix Entries for Covariance Matrix
+#'
+#' @description Obtain the Jacobian matrices given the covariance function and variance parameters.
 #'
 #' @param covbeta_fun (`function`)\cr function calculating the covariance
 #'   matrix of coefficients given variance parameters (`theta`), see
@@ -65,7 +72,8 @@ h_jac_list <- function(covbeta_fun,
 }
 
 #' Quadratic Form Calculations
-#' These helpers are mainly for easier readability and slightly better efficiency
+#'
+#' @description These helpers are mainly for easier readability and slightly better efficiency
 #' of the quadratic forms used in the Satterthwaite calculations.
 #'
 #' @param center (`matrix`)\cr square numeric matrix with the same dimensions as
@@ -117,6 +125,9 @@ h_quad_form_mat <- function(mat, center) {
 
 #' Computation of a Gradient Given Jacobian and Contrast Vector
 #'
+#' @description Computes the gradient of a linear combination of `beta` given the Jacobian matrix and
+#' variance parameters.
+#'
 #' @param jac_list (`list`)\cr Jacobian list produced e.g. by [h_jac_list()].
 #' @param contrast (`numeric`)\cr contrast vector, which needs to have the
 #'   same number of elements as there are rows and columns in each element of
@@ -139,6 +150,9 @@ h_gradient <- function(jac_list, contrast) {
 }
 
 #' Creating Results List for One-Dimensional Contrast
+#'
+#' @description Creates a list of results for one-dimensional contrasts using the estimated
+#' values from quadratic form.
 #'
 #' @param est (`number`)\cr estimate.
 #' @param var (`number`)\cr variance of estimate.
@@ -173,6 +187,10 @@ h_df_1d_list <- function(est,
 
 #' Calculation of Satterthwaite Degrees of Freedom for One-Dimensional Contrast
 #'
+#' @description Calculates the estimate, standard error, degree of freedom,
+#' t statistic and p-value for one-dimensional contrast. Used in [df_1d()] if method is
+#' "Satterthwaite".
+#'
 #' @param object (`mmrm`)\cr the MMRM fit.
 #' @param contrast (`numeric`)\cr contrast vector. Note that this should not include
 #'   elements for singular coefficient estimates, i.e. only refer to the
@@ -198,6 +216,8 @@ h_df_1d_sat <- function(object, contrast) {
 }
 
 #' Calculating Denominator Degrees of Freedom for the Multi-Dimensional Case
+#'
+#' @description Calculates the degree of freedom for multi-dimensional contrast.
 #'
 #' @param t_stat_df (`numeric`)\cr `n` t-statistic derived degrees of freedom.
 #'
@@ -225,6 +245,9 @@ h_md_denom_df <- function(t_stat_df) {
 }
 
 #' Creating Results List for Multi-Dimensional Contrast
+#'
+#' @description Calculate the p-value using the F statistic and the numerator/denominator
+#' degree of freedom and return a list.
 #'
 #' @param f_stat (`number`)\cr F-statistic.
 #' @param num_df (`number`)\cr numerator degrees of freedom.
@@ -255,6 +278,8 @@ h_df_md_list <- function(f_stat, num_df, denom_df) {
 
 #' Creating F-Statistic Results from One-Dimensional Contrast
 #'
+#' @description Creates multi-dimensional result from one-dimensional contrast from [df_1d()].
+#'
 #' @param object (`mmrm`)\cr model fit.
 #' @param contrast (`numeric`)\cr one-dimensional contrast.
 #'
@@ -272,6 +297,9 @@ h_df_md_from_1d <- function(object, contrast) {
 }
 
 #' Calculation of Satterthwaite Degrees of Freedom for Multi-Dimensional Contrast
+#'
+#' @description Calculates the degree of freedom, F statistic and p value for multi-dimensional contrast.
+#' Used in [df_md()] if method is "Satterthwaite".
 #'
 #' @param object (`mmrm`)\cr the MMRM fit.
 #' @param contrast (`matrix`)\cr numeric contrast matrix, if given a `numeric`

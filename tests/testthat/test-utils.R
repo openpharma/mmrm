@@ -1,4 +1,4 @@
-# h_record_all_outputs ---
+# h_record_all_outputs ----
 
 test_that("h_record_all_outputs correctly removes specified messages", {
   result <- h_record_all_output({
@@ -28,7 +28,7 @@ test_that("h_record_all_outputs works as expected with no removal list given for
 })
 
 
-# trace of matrix ---
+# h_tr ----
 
 test_that("trace of a matrix works as expected", {
   mx <- matrix(0, nrow = 3, ncol = 4)
@@ -37,7 +37,7 @@ test_that("trace of a matrix works as expected", {
   expect_equal(h_tr(diag(v)), 6)
 })
 
-# free_cors ---
+# free_cors ----
 
 test_that("free_cores throws deprecation warning", {
   skip_on_cran()

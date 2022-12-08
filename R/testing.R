@@ -1,6 +1,8 @@
 #' Calculation of Degrees of Freedom for One-Dimensional Contrast
 #'
 #' @description `r lifecycle::badge("experimental")`
+#' Calculates the degree of freedom, F statistic and p value for multi-dimensional contrast, depending on
+#' the method used in [mmrm()].
 #'
 #' @param object (`mmrm`)\cr the MMRM fit.
 #' @param contrast (`numeric`)\cr contrast vector. Note that this should not include
@@ -34,6 +36,9 @@ df_1d <- function(object, contrast) {
 #' Calculation of Degrees of Freedom for Multi-Dimensional Contrast
 #'
 #' @description `r lifecycle::badge("experimental")`
+#' Calculates the estimate, standard error, degree of freedom,
+#' t statistic and p-value for one-dimensional contrast, depending on the method
+#' used in [mmrm()].
 #'
 #' @param object (`mmrm`)\cr the MMRM fit.
 #' @param contrast (`matrix`)\cr numeric contrast matrix, if given a `numeric`

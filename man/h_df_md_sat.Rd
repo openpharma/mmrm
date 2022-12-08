@@ -18,6 +18,7 @@ actually estimated coefficients.}
 List with \code{num_df}, \code{denom_df}, \code{f_stat} and \code{p_val} (2-sided p-value).
 }
 \description{
-Calculation of Satterthwaite Degrees of Freedom for Multi-Dimensional Contrast
+Calculates the degree of freedom, F statistic and p value for multi-dimensional contrast.
+Used in \code{\link[=df_md]{df_md()}} if method is "Satterthwaite".
 }
 \keyword{internal}

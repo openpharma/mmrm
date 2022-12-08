@@ -13,6 +13,6 @@ h_tr(x)
 The trace of the square matrix.
 }
 \description{
-Trace of a Matrix
+Obtain the trace of a matrix if the matrix is diagonal, otherwise raise an error.
 }
 \keyword{internal}
