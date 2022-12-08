@@ -172,6 +172,10 @@ test_that("kr linear give similar results as SAS for toeph", {
 ### kr ----
 
 test_that("kr give similar results as SAS for unstructured", {
+  # Please note that in SAS, for unstructure covariance, Kenward-Roger and Kenward-Roger-Linear
+  # are identical because in their parameterization the second order derivatives are zero matrices.
+  # In `mmrm`, we are using different parameterization so the second order derivatives are non-zero.
+  # This will lead to differences in Kenward-Roger and Kenward-Roger-Linear.
   fit <- mmrm(FEV1 ~ ARMCD + us(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger")
   res <- df_1d(fit, contrast = c(0, 1))
   expected <- c(0.66124382270307, 160.733266403768)
