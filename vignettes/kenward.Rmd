@@ -131,7 +131,10 @@ substituting $\Phi$ and $\Lambda$ back to the $\hat\Phi_A$, we have
   \hat\Phi_A = \hat\Phi + 2\hat\Phi \left\{\sum_{h=1}^k{\sum_{j=1}^k{W_{hj}(Q_{hj} - P_h \hat\Phi P_j - \frac{1}{4}R_{hj})} }\right\} \hat\Phi
 \]
 
-where $\Omega(\hat\theta)$ replaces $\Omega(\theta)$ in the righthand side.
+where $\Omega(\hat\theta)$ replaces $\Omega(\theta)$ in the right-hand side.
+
+Please note that, if we ignore $R_{hj}$, the second-order derivatives, we will get a different estimate of adjusted covariance matrix,
+and we call it "Kenward-Roger-Linear".
 
 ### Special Considerations for mmrm models
 
@@ -313,3 +316,11 @@ $\lambda$ and $m$ can be calculated through
 
 \[m = 4 + \frac{c+2}{c\rho - 1}\]
 \[\lambda = \frac{m}{E^*(m-2)}\]
+
+## Parameterization methods and Kenward-Roger
+
+While the Kenward-Roger adjusted covariance matrix is adopting Taylor series to approximate the true value, the choices
+of parameterization can change the result. In a simple example of unstructured covariance structure, in our current approach,
+where the parameters are elements of the Cholesky factor of $\Sigma$ (see [parameterization](covariance.html)), the second-order derivatives
+of $\Sigma$ over our parameters, are non-zero matrices. However, if we use the elements of $\Sigma$ as our parameters, then the second-order
+derivatives are zero matrices. However, the differences can be small and will not affect the inference.

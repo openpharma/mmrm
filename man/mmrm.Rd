@@ -11,7 +11,8 @@ mmrm(
   reml = TRUE,
   optimizer = "automatic",
   n_cores = 1L,
-  accept_singular = TRUE
+  accept_singular = TRUE,
+  method = c("Satterthwaite", "Kenward-Roger", "Kenward-Roger-Linear")
 )
 }
 \arguments{
@@ -32,6 +33,9 @@ parallel computations on Linux or Mac machines.}
 
 \item{accept_singular}{(\code{flag})\cr whether singular design matrices are reduced
 to full rank automatically and additional coefficient estimates will be missing.}
+
+\item{method}{(\code{string})\cr method used for adjusting the degrees of freedom and
+potentially the coefficients variance-covariance matrix.}
 }
 \value{
 An \code{mmrm} object.

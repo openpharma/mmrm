@@ -35,7 +35,7 @@ test_that("summary works as expected", {
     result,
     c(
       "cov_type", "reml", "n_groups", "n_theta", "n_subjects", "n_timepoints", "n_obs",
-      "beta_vcov", "varcor", "coefficients", "n_singular_coefs", "aic_list", "call"
+      "beta_vcov", "varcor", "method", "coefficients", "n_singular_coefs", "aic_list", "call"
     )
   )
 })

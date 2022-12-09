@@ -230,6 +230,8 @@ mmrm_control <- function(optimizer = stats::nlminb,
 #' @param optimizer (`string`)\cr optimizer to be used to generate the model.
 #' @param n_cores (`count`)\cr number of cores which could in principle be used for
 #'   parallel computations on Linux or Mac machines.
+#' @param method (`string`)\cr method used for adjusting the degrees of freedom and
+#'   potentially the coefficients variance-covariance matrix.
 #' @inheritParams mmrm_control
 #'
 #' @details
@@ -273,10 +275,14 @@ mmrm <- function(formula,
                  reml = TRUE,
                  optimizer = "automatic",
                  n_cores = 1L,
-                 accept_singular = TRUE) {
+                 accept_singular = TRUE,
+                 method = c("Satterthwaite", "Kenward-Roger", "Kenward-Roger-Linear")) {
   assert_string(optimizer)
   use_automatic <- identical(optimizer, "automatic")
-
+  method <- match.arg(method)
+  if (method %in% c("Kenward-Roger", "Kenward-Roger-Linear") && !reml) {
+    stop("Kenward-Roger only works for REML")
+  }
   attr(data, which = "dataname") <- toString(match.call()$data)
 
   if (is.null(weights)) {
@@ -312,10 +318,22 @@ mmrm <- function(formula,
       ))
     }
   }
-
-  covbeta_fun <- h_covbeta_fun(fit)
-  fit$jac_list <- h_jac_list(covbeta_fun, fit$theta_est)
-
+  fit$method <- method
+  if (method == "Satterthwaite") {
+    covbeta_fun <- h_covbeta_fun(fit)
+    fit$jac_list <- h_jac_list(covbeta_fun, fit$theta_est)
+  } else {
+    fit$kr_comp <- h_get_kr_comp(fit$tmb_data, fit$theta_est)
+    linear <- (method == "Kenward-Roger-Linear")
+    fit$beta_vcov_adj <- h_var_adj(
+      v = fit$beta_vcov,
+      w = component(fit, "theta_vcov"),
+      p = fit$kr_comp$P,
+      q = fit$kr_comp$Q,
+      r = fit$kr_comp$R,
+      linear = linear
+    )
+  }
   class(fit) <- c("mmrm", class(fit))
   fit
 }

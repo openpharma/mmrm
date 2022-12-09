@@ -50,6 +50,14 @@ get_mmrm_spatial <- function() {
   .mmrm_spatial
 }
 
+.mmrm_kr_formula <- FEV1 ~ ARMCD + ar1(AVISIT | USUBJID)
+.mmrm_kr <- mmrm(.mmrm_kr_formula, data = fev_data, method = "Kenward-Roger")
+get_mmrm_kr <- function() {
+  .mmrm_kr
+}
+
+
+
 square_matrix <- function(values_by_row) {
   n <- length(values_by_row)
   size <- sqrt(n)
@@ -64,4 +72,8 @@ map_to_cor <- function(theta) {
 
 map_to_theta <- function(rho) {
   sign(rho) * sqrt(rho^2 / (1 - rho^2))
+}
+
+expect_snapshot_tolerance <- function(x, style = "deparse", tolerance = 1e-4, ...) {
+  testthat::expect_snapshot_value(x, style = style, tolerance = tolerance, ...)
 }
