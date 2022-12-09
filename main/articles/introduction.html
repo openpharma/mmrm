@@ -39,7 +39,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5.9010</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5.9011</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,18 +57,13 @@
     <a class="dropdown-item" href="../articles/algorithm.html">Details of the Model Fitting in `mmrm`</a>
     <a class="dropdown-item" href="../articles/covariance.html">Covariance Structures in `mmrm`</a>
     <a class="dropdown-item" href="../articles/introduction.html">Introduction to `mmrm`</a>
+    <a class="dropdown-item" href="../articles/kenward.html">Details of the Kenward-Roger degree of freedom</a>
     <a class="dropdown-item" href="../articles/package_structure.html">Package Structure</a>
   </div>
 </li>
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -410,7 +405,7 @@ table.</p>
 is as follows:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">fit_summary</span><span class="op">)</span></span>
-<span><span class="co">#&gt; List of 13</span></span>
+<span><span class="co">#&gt; List of 14</span></span>
 <span><span class="co">#&gt;  $ cov_type        : chr "us"</span></span>
 <span><span class="co">#&gt;  $ reml            : logi TRUE</span></span>
 <span><span class="co">#&gt;  $ n_groups        : int 1</span></span>
@@ -426,6 +421,7 @@ is as follows:</p>
 <span><span class="co">#&gt;   ..- attr(*, "dimnames")=List of 2</span></span>
 <span><span class="co">#&gt;   .. ..$ : chr [1:4] "VIS1" "VIS2" "VIS3" "VIS4"</span></span>
 <span><span class="co">#&gt;   .. ..$ : chr [1:4] "VIS1" "VIS2" "VIS3" "VIS4"</span></span>
+<span><span class="co">#&gt;  $ method          : chr "Satterthwaite"</span></span>
 <span><span class="co">#&gt;  $ coefficients    : num [1:10, 1:5] 30.97 1.5 5.61 3.78 4.83 ...</span></span>
 <span><span class="co">#&gt;   ..- attr(*, "dimnames")=List of 2</span></span>
 <span><span class="co">#&gt;   .. ..$ : chr [1:10] "(Intercept)" "RACEBlack or African American" "RACEWhite" "ARMCDTRT" ...</span></span>

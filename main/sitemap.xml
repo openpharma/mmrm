@@ -22,6 +22,9 @@
     <loc>https://openpharma.github.io/mmrm/main/articles/introduction.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/mmrm/main/articles/kenward.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/mmrm/main/articles/package_structure.html</loc>
   </url>
   <url>
@@ -67,13 +70,28 @@
     <loc>https://openpharma.github.io/mmrm/main/reference/h_covbeta_fun.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/h_df_1d_kr.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/h_df_1d_list.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/h_df_1d_sat.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/h_df_md_from_1d.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/h_df_md_kr.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/h_df_md_list.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/h_df_md_sat.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/h_get_kr_comp.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/h_gradient.html</loc>
@@ -83,6 +101,9 @@
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/h_jac_list.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/h_kr_df.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/h_md_denom_df.html</loc>
@@ -131,6 +152,12 @@
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/h_summarize_all_fits.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/h_tr.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/h_var_adj.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/index.html</loc>
