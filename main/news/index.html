@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5.9011</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5.9012</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,12 +40,6 @@
 <li class="active nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -67,9 +61,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.1.5.9011" id="mmrm-0159011">mmrm 0.1.5.9011<a class="anchor" aria-label="anchor" href="#mmrm-0159011"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.1.5.9012" id="mmrm-0159012">mmrm 0.1.5.9012<a class="anchor" aria-label="anchor" href="#mmrm-0159012"></a></h2>
 <div class="section level4">
-<h4 id="new-features-0-1-5-9011">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-1-5-9011"></a></h4>
+<h4 id="new-features-0-1-5-9012">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-1-5-9012"></a></h4>
 <ul><li><p>Add support for Kenward-Roger adjusted covariance and degree of freedom in <code>mmrm</code> function call with argument <code>method</code>. It now accepts “Kenward-Roger”, “Kenward-Roger-Linear” or “Satterthwaite” (which is still the default). Subsequent <code>summary</code>, <code>print</code> or <code>component</code> calls will also be based on this <code>method</code> argument, e.g. <code>component(fit, "beta_vcov")</code> will return the adjusted covariance matrix if a Kenward-Roger method has been used. ### Bug Fixes</p></li>
 <li><p>Previously duplicate time points could be present for a single subject, and this could lead to segmentation faults if more than the total number of unique time points were available for any subject. Now it is checked that there are no duplicate time points per subject, and this is explained also in the function documentation and the introduction vignette.</p></li>
 <li><p>Previously in <code>mmrm</code> calls, the <code>weights</code> object in the environment where formula is defined will be replaced by the <code>weights</code> used internally. Now this behavior is removed and your variable <code>weights</code> e.g. in the global environment will not be replaced. ### Miscellaneous</p></li>
