@@ -3,12 +3,12 @@
 #SBATCH --job-name=csh-sim
 #
 # Quality of Service:
-#SBATCH --qos=medium
+#SBATCH --qos=long
 #
 # Processors (1 node = 28 cores):
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=20
+#SBATCH --cpus-per-task=1
 #
 # Mail type:
 #SBATCH --mail-type=all
@@ -23,7 +23,7 @@
 ## Command(s) to run:
 ## Initialize work environment like
 cd ~/mrmm/simulations/csh-benchmarks
-module load R/prd
+module load R/tst
 #
 ## Run the script
 R CMD BATCH --no-save --no-restore \

@@ -7,16 +7,21 @@ library(here)
 library(simChef)
 library(future)
 library(MASS)
-library(lme4)
+library(tibble)
 library(mmrm)
+library(nlme)
+library(glmmTMB)
+library(sasr)
 library(dplyr)
 library(tidyr)
-library(tibble)
 library(rtables)
 library(ggplot2)
 
 ## set up parallelization, if using
-plan(multisession, workers = 20)
+## plan(multicore, workers = availableCores() - 1)
+## NOTE: sasr doens't seem to play well with future... run simulations
+## sequentially for now
+plan(sequential)
 
 ## specify the data-generating processes
 source(here("simulations/csh-benchmarks/R/dgp-functions.R"))
@@ -44,6 +49,7 @@ source(here("simulations/csh-benchmarks/R/method-functions.R"))
 mrmm_method <- create_method(.method_fun = mmrm_wrapper_fun)
 glmmTMB_method <- create_method(.method_fun = glmmTMB_wrapper_fun)
 nlme_method <- create_method(.method_fun = nlme_wrapper_fun)
+proc_mixed_method <- create_method(.method_fun = proc_mixed_fun)
 
 ## specify the evaluation metrics
 source(here("simulations/csh-benchmarks/R/eval-functions.R"))
@@ -70,6 +76,7 @@ experiment <- create_experiment(name = "covar-matrix-estimation-comparison") %>%
   add_method(mrmm_method, name = "mmrm") %>%
   add_method(glmmTMB_method, name = "glmmTMB") %>%
   add_method(nlme_method, name = "nlme") %>%
+  add_method(proc_mixed_method, name = "proc_mixed") %>%
   add_evaluator(frobenius_loss_eval, name = "frobenius_loss") %>%
   add_evaluator(spectral_loss_eval, name = "spectral_loss") %>%
   add_visualizer(risk_tbl_viz, name = "risk_tibble") %>%
@@ -77,4 +84,4 @@ experiment <- create_experiment(name = "covar-matrix-estimation-comparison") %>%
 
 ## run the experiment
 set.seed(1412)
-results <- experiment$run(n_reps = 1000, save = TRUE, checkpoint_n_reps = 100)
+results <- experiment$run(n_reps = 500, save = FALSE)

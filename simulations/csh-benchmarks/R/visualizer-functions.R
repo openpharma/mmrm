@@ -109,7 +109,7 @@ loss_dist_fun <- function(eval_results) {
       cols = vars(.dgp_name), rows = vars(type), scales = "free_y"
     ) +
     ggplot2::xlab("Sample Size") +
-    ggplot2::ylab("Empirical Distribution (1000 Replicates)") +
+    ggplot2::ylab("Empirical Distribution (500 Replicates)") +
     ggplot2::scale_fill_discrete(name = "Method") +
     ggplot2::theme_bw()
 

@@ -86,10 +86,6 @@ rct_dgp_fun <- function(
     ~ base_cov + trt*time, data = df
   )
 
-  ## define the full model formula
-  full_formula <-
-    "y ~ base_cov + trt*time + (time | participant)"
-
   ## define the repeated measures correlation structure, assuming
   ## heterogeneous compound symmetry
   csh_mat <- compute_true_covar_mat(outcome_vars, outcome_cor)

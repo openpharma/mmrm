@@ -137,7 +137,8 @@ proc_mixed_fun <- function(
 ) {
 
   ## assemble the vectors into a data.frame
-  df <- data.frame(
+  ## NOTE: Use tibble instead of data.frame to avoid sasr warning about rownames
+  df <- tibble::tibble(
     "participant" = participant,
     "time" = time,
     "y" = y,
@@ -146,9 +147,7 @@ proc_mixed_fun <- function(
   )
 
   ## create SAS dataset
-  suppressWarnings(
-    sasr::df2sd(df, "sas_df")
-  )
+  sasr::df2sd(df, "sas_df")
 
   ## specify the SAS code: only return covariance matrix estimates for
   ## repeated measures
