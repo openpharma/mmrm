@@ -227,7 +227,7 @@ test_that("refit_multiple_optimizers works with parallel computations and select
   result <- expect_silent(refit_multiple_optimizers(
     fit = fit,
     n_cores = n_cores,
-    optimizers = c("BFGS", "CG")
+    optimizer = c("BFGS", "CG")
   ))
   expect_class(result, "mmrm_fit")
 

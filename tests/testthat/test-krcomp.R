@@ -238,6 +238,7 @@ test_that("h_var_adj works as expected in the standard case for Kenward-Roger", 
 })
 
 test_that("h_var_adj works as expected in the standard case for Kenward-Roger-Linear", {
+  object_mmrm_kr <- get_mmrm_kr()
   expect_snapshot_tolerance(h_var_adj(
     v = object_mmrm_kr$beta_vcov,
     w = component(object_mmrm_kr, "theta_vcov"),

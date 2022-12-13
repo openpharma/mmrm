@@ -565,6 +565,7 @@ h_mmrm_tmb_fit <- function(tmb_object,
 #' so specifies response and covariates as usual, and exactly one special term
 #' defines which covariance structure is used and what are the visit and
 #' subject variables.
+#' Always use the first optimizer if multiple optimizers provided.
 #'
 #' @export
 #'
@@ -595,15 +596,15 @@ fit_mmrm <- function(formula,
   args <- with(
     tmb_object,
     c(
-      list(par, fn, gr, control = control$optimizer_control),
-      control$optimizer_args
+      list(par, fn, gr),
+      attr(control$optimizers[[1]], "args")
     )
   )
-  if (identical(control$optimizer, stats::nlminb)) {
+  if (identical(attr(control$optimizer[[1]], "use_hessian"), TRUE)) {
     args$hessian <- tmb_object$he
   }
   tmb_opt <- do.call(
-    what = control$optimizer,
+    what = control$optimizers[[1]],
     args = args
   )
   # Ensure negative log likelihood is stored in `objective` element of list.

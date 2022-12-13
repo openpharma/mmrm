@@ -37,6 +37,7 @@ The \code{formula} typically looks like:
 so specifies response and covariates as usual, and exactly one special term
 defines which covariance structure is used and what are the visit and
 subject variables.
+Always use the first optimizer if multiple optimizers provided.
 }
 \examples{
 formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
