@@ -23,6 +23,12 @@ get_covar_mat <- function(fit) {
     covar_mat <- corr_mat * out_stddev_mat
   } else if (class(fit)[1] == "mmrm") {
     covar_mat <- fit$cov
+  } else if (class(fit)[1] == "data.frame") { # SAS PROC MIXED
+    cor_est_mat <- matrix(fit$Estimate[11], nrow = 10, ncol = 10)
+    diag(cor_est_mat) <- 1
+    std_errs <- sqrt(fit$Estimate[1:10])
+    unweighted_covar_mat <- outer(std_errs, std_errs)
+    covar_mat <- cor_est_mat * unweighted_covar_mat
   }
 
   ## standardize row and column names
