@@ -32,7 +32,7 @@ If there are other named arguments in front of these, make sure they are correct
 please add attribute \code{use_hessian = TRUE} to the function, using \verb{attr(fun, "use_hessian) <- TRUE}
 If \code{optimizer_fun} is not provided, it will be created using the \code{optimizer} character. Other arguments should
 go into \code{optimizer_args}.
-Allowed are "L-BFGS-B", "BFGS", "CG"(using \code{stats::optim} with corresponding method) and
-"nlminb"(using \code{stats::nlminb}).
+Allowed are "L-BFGS-B", "BFGS", "CG"(using \code{\link[stats:optim]{stats::optim()}} with corresponding method) and
+"nlminb"(using \code{\link[stats:nlminb]{stats::nlminb()}}).
 }
 \keyword{internal}

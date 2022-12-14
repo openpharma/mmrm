@@ -10,7 +10,7 @@ h_optimizer_fun(optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb"))
 \item{optimizer}{(\code{character})\cr vector of optimizers.}
 }
 \value{
-A (\code{list})\cr of optimizer functions generated from \link{h_partial_fun_args}.
+A (\code{list})\cr of optimizer functions generated from \code{\link[=h_partial_fun_args]{h_partial_fun_args()}}.
 }
 \description{
 Obtain the optimizer function through the character provided.
