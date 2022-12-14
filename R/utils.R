@@ -167,7 +167,7 @@ h_tr <- function(x) {
 }
 
 #' Split Control List
-#' @description Split the [mmrm_control] object according to its optimizers and use additional arguments
+#' @description Split the [mmrm_control()] object according to its optimizers and use additional arguments
 #' to replace the elements in the original object.
 #'
 #' @param control (`mmrm_control`)\cr object.
@@ -201,8 +201,8 @@ h_split_control <- function(control, ...) {
 #' please add attribute `use_hessian = TRUE` to the function, using `attr(fun, "use_hessian) <- TRUE`
 #' If `optimizer_fun` is not provided, it will be created using the `optimizer` character. Other arguments should
 #' go into `optimizer_args`.
-#' Allowed are "L-BFGS-B", "BFGS", "CG"(using `stats::optim` with corresponding method) and
-#' "nlminb"(using `stats::nlminb`).
+#' Allowed are "L-BFGS-B", "BFGS", "CG"(using [stats::optim()] with corresponding method) and
+#' "nlminb"(using [stats::nlminb()]).
 #'
 #' @keywords internal
 h_get_optimizers <- function(optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb"),
@@ -225,7 +225,7 @@ h_get_optimizers <- function(optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb"),
 #' @description Obtain the optimizer function through the character provided.
 #' @param optimizer (`character`)\cr vector of optimizers.
 #'
-#' @return A (`list`)\cr of optimizer functions generated from [h_partial_fun_args].
+#' @return A (`list`)\cr of optimizer functions generated from [h_partial_fun_args()].
 #' @keywords internal
 h_optimizer_fun <- function(optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb")) {
   optimizer <- match.arg(optimizer, several.ok = TRUE)
@@ -251,7 +251,7 @@ h_optimizer_fun <- function(optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb")) {
 #' `args` is the argument for the function, and elements in `...` will override the existing
 #' arguments in attribute `args`. `additional_attr` will override the existing attributes.
 #'
-#' @return S3 class "partial", a (`function`)\cr with `args` and `fun_label` attribtues.
+#' @return S3 class "partial", a (`function`)\cr with `args` and `fun_label` attributes.
 #' @keywords internal
 h_partial_fun_args <- function(fun, ..., additional_attr = list()) {
   assert_function(fun)
