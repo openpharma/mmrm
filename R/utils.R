@@ -167,12 +167,14 @@ h_tr <- function(x) {
 }
 
 #' Split Control List
+#'
 #' @description Split the [mmrm_control()] object according to its optimizers and use additional arguments
 #' to replace the elements in the original object.
 #'
 #' @param control (`mmrm_control`)\cr object.
 #' @param ... additional parameters to update the `control` object.
 #'
+#' @return A (`list`)\cr of `mmrm_control`\cr.
 #' @keywords internal
 h_split_control <- function(control, ...) {
   assert_class(control, "mmrm_control")
@@ -204,14 +206,22 @@ h_split_control <- function(control, ...) {
 #' Allowed are "L-BFGS-B", "BFGS", "CG"(using [stats::optim()] with corresponding method) and
 #' "nlminb"(using [stats::nlminb()]).
 #'
+#' @return named (`list`)\cr of optimizers created by [h_optimizer_fun()].
+#'
 #' @keywords internal
 h_get_optimizers <- function(optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb"),
                              optimizer_fun = h_optimizer_fun(optimizer),
                              optimizer_args = list(),
                              optimizer_control = list()) {
+  if ("automatic" %in% optimizer) {
+    lifecycle::deprecate_warn(
+      when = "0.2.0",
+      what = I("\"automatic\" optimizer"))
+    optimizer_fun <- h_optimizer_fun()
+  }
   assert(
     test_function(optimizer_fun),
-    test_list(optimizer_fun, types = "function")
+    test_list(optimizer_fun, types = "function", names = "unique")
   )
   if (is.function(optimizer_fun)) {
     optimizer_fun <- list(custom_optimizer = optimizer_fun)
@@ -229,12 +239,12 @@ h_get_optimizers <- function(optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb"),
 #' @keywords internal
 h_optimizer_fun <- function(optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb")) {
   optimizer <- match.arg(optimizer, several.ok = TRUE)
-  lapply(setNames(optimizer, optimizer), function(x) {
+  lapply(stats::setNames(optimizer, optimizer), function(x) {
     switch(x,
-      "L-BFGS-B" = h_partial_fun_args(fun = optim, method = x),
-      "BFGS" = h_partial_fun_args(fun = optim, method = x),
-      "CG" = h_partial_fun_args(fun = optim, method = x),
-      "nlminb" = h_partial_fun_args(fun = nlminb, additional_attr = list(use_hessian = TRUE))
+      "L-BFGS-B" = h_partial_fun_args(fun = stats::optim, method = x),
+      "BFGS" = h_partial_fun_args(fun = stats::optim, method = x),
+      "CG" = h_partial_fun_args(fun = stats::optim, method = x),
+      "nlminb" = h_partial_fun_args(fun = stats::nlminb, additional_attr = list(use_hessian = TRUE))
     )
   })
 }
@@ -251,7 +261,7 @@ h_optimizer_fun <- function(optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb")) {
 #' `args` is the argument for the function, and elements in `...` will override the existing
 #' arguments in attribute `args`. `additional_attr` will override the existing attributes.
 #'
-#' @return S3 class "partial", a (`function`)\cr with `args` and `fun_label` attributes.
+#' @return S3 class "partial", a `function` with `args` and `fun_label` attributes.
 #' @keywords internal
 h_partial_fun_args <- function(fun, ..., additional_attr = list()) {
   assert_function(fun)

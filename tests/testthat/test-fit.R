@@ -362,3 +362,12 @@ test_that("mmrm works for constructed control", {
   )
   expect_snapshot(print(fit))
 })
+
+test_that("mmrm has deprecated \"automatic\" optimizer", {
+  expect_no_condition(mmrm(
+    FEV1 ~ ARMCD + ar1(AVISIT | SEX / USUBJID),
+    data = fev_data,
+    reml = TRUE,
+    optimizer = "automatic"
+  ), class = "lifecycle_warning_deprecation")
+})

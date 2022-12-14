@@ -11,7 +11,7 @@
 #' @importFrom lifecycle deprecated
 #' @importFrom methods is
 #' @importFrom numDeriv genD
-#' @importFrom stats acf nlminb optim pf pt setNames
+#' @importFrom stats acf
 #' @importFrom stringr boundary
 #' @importFrom parallel clusterApply
 #' @importFrom Rdpack reprompt

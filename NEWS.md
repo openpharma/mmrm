@@ -10,7 +10,7 @@
 - Update the `mmrm` arguments to allow users to input the control arguments directly in `mmrm` function, e.g.
   `mmrm(..., start = start, optimizer = c("BFGS", "nlminb"))`. These arguments will go into `mmrm_control`.
   In addition, `optimizer = "automatic"` is deprecated and no longer supported. It is a default behavior now to
-  try all optimizers(if multiple optimizer provided) if the first optimizer fails.
+  try all optimizers (if multiple optimizer provided) if the first optimizer fails.
 ### Bug Fixes
 
 - Previously duplicate time points could be present for a single subject,

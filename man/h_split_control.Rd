@@ -11,6 +11,9 @@ h_split_control(control, ...)
 
 \item{...}{additional parameters to update the \code{control} object.}
 }
+\value{
+A (\code{list})\cr of \code{mmrm_control}\cr.
+}
 \description{
 Split the \code{\link[=mmrm_control]{mmrm_control()}} object according to its optimizers and use additional arguments
 to replace the elements in the original object.

@@ -14,7 +14,7 @@ h_partial_fun_args(fun, ..., additional_attr = list())
 \item{additional_attr}{(\code{list})\cr of additional attributes to apply to the result.}
 }
 \value{
-S3 class "partial", a (\code{function})\cr with \code{args} and \code{fun_label} attributes.
+S3 class "partial", a \code{function} with \code{args} and \code{fun_label} attributes.
 }
 \description{
 Creates partial functions with arguments.

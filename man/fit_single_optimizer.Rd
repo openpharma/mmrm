@@ -39,6 +39,11 @@ messages, optimizer used and convergence status in addition to the
 This function helps to fit an MMRM using \code{TMB} with a single optimizer,
 while capturing messages and warnings.
 }
+\details{
+\code{fit_single_optimizer} will fit the \code{mmrm} model using the \code{control} provided.
+If there are mutliple optimizers provided in \code{control}, only the first optimizer
+will be used.
+}
 \examples{
 mod_fit <- fit_single_optimizer(
   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
