@@ -580,6 +580,7 @@ fit_mmrm <- function(formula,
                      control = mmrm_control()) {
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   assert_class(control, "mmrm_control")
+  assert_list(control$optimizers, min.len = 1)
   assert_numeric(weights, any.missing = FALSE)
   assert_true(all(weights > 0))
   tmb_data <- h_mmrm_tmb_data(formula_parts, data, weights, reml, accept_singular = control$accept_singular)

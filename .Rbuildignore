@@ -11,3 +11,5 @@ coverage.*
 ^\.pre-commit-config\.yaml$
 ^codemeta\.json$
 design
+sascfg_personal\.py
+^\.vscode$

@@ -89,7 +89,7 @@ test_that("h_df_1d_list works as expected", {
     se = 2,
     df = 1 / 2,
     t_stat = 5 / 2,
-    p_val = 2 * pt(q = 5 / 2, df = 1 / 2, lower.tail = FALSE)
+    p_val = 2 * stats::pt(q = 5 / 2, df = 1 / 2, lower.tail = FALSE)
   )
   expect_equal(result, expected)
 })

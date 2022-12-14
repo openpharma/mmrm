@@ -27,8 +27,6 @@ to full rank automatically and additional coefficient estimates will be missing.
 \item{...}{Additional arguments passed to \code{\link[=h_get_optimizers]{h_get_optimizers()}}.}
 
 \item{optimizers}{(\code{list})\cr of optimizers created from \code{\link[=h_get_optimizers]{h_get_optimizers()}}.}
-
-\item{optimizer_control}{(\code{list})\cr specific \code{control} argument for optimizer.}
 }
 \value{
 List of class \code{mmrm_control} with the control parameters.
@@ -38,7 +36,7 @@ List of class \code{mmrm_control} with the control parameters.
 }
 \examples{
 mmrm_control(
-  optimizer = stats::optim,
+  optimizer_fun = stats::optim,
   optimizer_args = list(method = "L-BFGS-B")
 )
 }

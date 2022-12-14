@@ -24,6 +24,8 @@ Should be NULL or a numeric vector.}
 \item{reml}{(\code{flag})\cr whether restricted maximum likelihood (REML) estimation is used,
 otherwise maximum likelihood (ML) is used.}
 
+\item{control}{(\code{mmrm_control})\cr object of mmrm fitting control.}
+
 \item{...}{additional arguments for \code{\link[=mmrm_control]{mmrm_control()}}}
 }
 \value{

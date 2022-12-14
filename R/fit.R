@@ -169,7 +169,6 @@ refit_multiple_optimizers <- function(fit,
 #'
 #' @param n_cores (`int`)\cr number of cores to be used.
 #' @param method (`character`)\cr vector of covariance/degree of freedom method.
-#' @param optimizer_control (`list`)\cr specific `control` argument for optimizer.
 #' @param start (`numeric` or `NULL`)\cr optional start values for variance
 #'   parameters.
 #' @param accept_singular (`flag`)\cr whether singular design matrices are reduced
@@ -182,7 +181,7 @@ refit_multiple_optimizers <- function(fit,
 #'
 #' @examples
 #' mmrm_control(
-#'   optimizer = stats::optim,
+#'   optimizer_fun = stats::optim,
 #'   optimizer_args = list(method = "L-BFGS-B")
 #' )
 mmrm_control <- function(n_cores = 1L,
@@ -222,8 +221,8 @@ mmrm_control <- function(n_cores = 1L,
 #'   Should be NULL or a numeric vector.
 #' @param reml (`flag`)\cr whether restricted maximum likelihood (REML) estimation is used,
 #'   otherwise maximum likelihood (ML) is used.
+#' @param control (`mmrm_control`)\cr object of mmrm fitting control.
 #' @param ... additional arguments for [mmrm_control()]
-#' @inheritParams mmrm_control
 #'
 #' @details
 #' The `formula` typically looks like:
@@ -267,6 +266,7 @@ mmrm <- function(formula,
                  control = mmrm_control(...),
                  ...) {
   assert_class(control, "mmrm_control")
+  assert_list(control$optimizers, min.len = 1)
   use_automatic <- length(control$optimizers) > 1L
   if (control$method %in% c("Kenward-Roger", "Kenward-Roger-Linear") && !reml) {
     stop("Kenward-Roger only works for REML")

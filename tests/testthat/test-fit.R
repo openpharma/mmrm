@@ -326,3 +326,27 @@ test_that("mmrm works for specific small data example", {
   ))
   expect_true(attr(fit, "converged"))
 })
+
+test_that("mmrm works for custom optimizer", {
+  fit <- mmrm(
+    FEV1 ~ ARMCD + ar1(AVISIT | SEX / USUBJID),
+    data = fev_data,
+    reml = TRUE,
+    optimizer_fun = silly_optimizer,
+    optimizer_args = list(value_add = 2, message = "this is wrong"),
+    start = c(1, 2, 3, 4),
+    method = "Kenward-Roger"
+  )
+  expect_snapshot(print(fit))
+  expect_identical(fit$theta_est, c(3, 4, 5, 6))
+})
+
+test_that("mmrm works for constructed control", {
+  fit <- mmrm(
+    FEV1 ~ ARMCD + ar1(AVISIT | SEX / USUBJID),
+    data = fev_data,
+    reml = TRUE,
+    control = mmrm_control(optimizer = c("BFGS", "CG"))
+  )
+  expect_snapshot(print(fit))
+})

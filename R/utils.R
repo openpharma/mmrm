@@ -175,6 +175,7 @@ h_tr <- function(x) {
 #'
 #' @keywords internal
 h_split_control <- function(control, ...) {
+  assert_class(control, "mmrm_control")
   l <- length(control$optimizers)
   lapply(seq_len(l), function(i) {
     ret <- modifyList(control, list(...))
@@ -233,8 +234,7 @@ h_optimizer_fun <- function(optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb")) {
       "L-BFGS-B" = h_partial_fun_args(fun = optim, method = x),
       "BFGS" = h_partial_fun_args(fun = optim, method = x),
       "CG" = h_partial_fun_args(fun = optim, method = x),
-      "nlminb" = h_partial_fun_args(fun = nlminb, additional_attr = list(use_hessian = TRUE)),
-      "..foo.." = stop("Unknown optimizer ", x)
+      "nlminb" = h_partial_fun_args(fun = nlminb, additional_attr = list(use_hessian = TRUE))
     )
   })
 }
@@ -254,6 +254,10 @@ h_optimizer_fun <- function(optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb")) {
 #' @return S3 class "partial", a (`function`)\cr with `args` and `fun_label` attribtues.
 #' @keywords internal
 h_partial_fun_args <- function(fun, ..., additional_attr = list()) {
+  assert_function(fun)
+  assert_list(additional_attr, names = "unique")
+  a_args <- list(...)
+  assert_list(a_args, names = "unique")
   args <- attr(fun, "args")
   if (is.null(args)) {
     args <- list()
@@ -261,7 +265,7 @@ h_partial_fun_args <- function(fun, ..., additional_attr = list()) {
   do.call(
     structure,
     args = modifyList(list(
-      .Data = fun, args = modifyList(args, list(...)),
+      .Data = fun, args = modifyList(args, a_args),
       class = c("partial", "function")
     ), additional_attr)
   )
