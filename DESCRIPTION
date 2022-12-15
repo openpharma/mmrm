@@ -45,7 +45,8 @@ Imports:
     Rdpack,
     stats,
     stringr,
-    TMB (>= 1.9.1)
+    TMB (>= 1.9.1),
+    utils
 Suggests:
     emmeans (>= 1.6),
     estimability,
