@@ -201,7 +201,7 @@ mmrm_control <- function(n_cores = 1L,
   assert_character(method)
   assert_numeric(start, null.ok = TRUE)
   assert_flag(accept_singular)
-  assert_list(control$optimizers, names = "unique", types = c("function", "partial"))
+  assert_list(optimizers, names = "unique", types = c("function", "partial"))
   method <- match.arg(method)
   structure(
     list(
