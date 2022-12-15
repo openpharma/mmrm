@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5.9012</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5.9013</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,12 +40,6 @@
 <li class="nav-item">
   <a class="nav-link" href="news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -79,6 +73,24 @@
 <li>Functions starting with <code>h_</code> are helper functions and they should not be exported.</li>
 <li>Functions should be well documented using <code>roxygen2</code> (even when they are not exported).</li>
 <li>Functions must be unit tested (even when they are not exported).</li>
+</ol></div>
+<div class="section level3">
+<h3 id="imports">Imports<a class="anchor" aria-label="anchor" href="#imports"></a></h3>
+<p>In package <code>mmrm</code>, we follow the following convention in package imports.</p>
+<ol style="list-style-type: decimal"><li>When only a few functions from another package are needed:
+<ol style="list-style-type: decimal"><li>In <code>DESCRIPTION</code>, add that package into <code>Imports</code>.</li>
+<li>In <code>mmrm-package.R</code>, we add a <code>importFrom</code> with a single function from the package.
+<ol style="list-style-type: decimal"><li>The function imported can be any random function within the package.</li>
+</ol></li>
+<li>Always use <code>package::function</code> style wherever you need to use the function.</li>
+<li>Example: <code>stats</code>.</li>
+</ol></li>
+<li>When many functions from another package are needed:
+<ol style="list-style-type: decimal"><li>In <code>DESCRIPTION</code>, add that package into <code>Imports</code>.</li>
+<li>In <code>mmrm-package.R</code>, we use a <code>import</code> to import every function.</li>
+<li>Use the functions directly without prefix.</li>
+<li>Example: <code>checkmate</code>.</li>
+</ol></li>
 </ol></div>
 <div class="section level3">
 <h3 id="comments">Comments<a class="anchor" aria-label="anchor" href="#comments"></a></h3>
