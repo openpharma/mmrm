@@ -26,6 +26,22 @@ deviate from this are explained below.
     are not exported).
 4.  Functions must be unit tested (even when they are not exported).
 
+### Imports
+
+In package `mmrm`, we follow the following convention in package imports.
+
+1. When only a few function from another package is needed:
+    1. In `DESCRIPTION`, add that package into `Imports`.
+    1. In `mmrm-package.R`, we add a `importFrom` with a single function from the package.
+        1. The function imported can be any random function within the package.
+    1. Always use `package::function` style wherever you need to use the function.
+    1. Example: `stats`.
+1. When many functions from another package are needed:
+    1. In `DESCRIPTION`, add that package into `Imports`.
+    1. In `mmrm-package.R`, we use a `import` with to import every function.
+    1. Use the functions directly without prefix.
+    1. Example: `checkmate`.
+
 ### Comments
 
 - Comments should always follow sentence style.
