@@ -20,7 +20,7 @@ while capturing messages and warnings."><meta property="og:image" content="https
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5.9013</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5.9014</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,12 +44,6 @@ while capturing messages and warnings."><meta property="og:image" content="https
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -84,9 +78,8 @@ while capturing messages and warnings.</p>
 <span>  <span class="va">data</span>,</span>
 <span>  <span class="va">weights</span>,</span>
 <span>  reml <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  start <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  optimizer <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"L-BFGS-B"</span>, <span class="st">"BFGS"</span>, <span class="st">"CG"</span>, <span class="st">"nlminb"</span><span class="op">)</span>,</span>
-<span>  accept_singular <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  <span class="va">...</span>,</span>
+<span>  control <span class="op">=</span> <span class="fu"><a href="mmrm_control.html">mmrm_control</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -110,18 +103,12 @@ Should be NULL or a numeric vector.</p></dd>
 otherwise maximum likelihood (ML) is used.</p></dd>
 
 
-<dt>start</dt>
-<dd><p>(<code>numeric</code> or <code>NULL</code>)<br> optional start values for variance
-parameters.</p></dd>
+<dt>...</dt>
+<dd><p>Additional arguments to pass to <code><a href="mmrm_control.html">mmrm_control()</a></code>.</p></dd>
 
 
-<dt>optimizer</dt>
-<dd><p>(<code>string</code>)<br> optimizer to be used to generate the model.</p></dd>
-
-
-<dt>accept_singular</dt>
-<dd><p>(<code>flag</code>)<br> whether singular design matrices are reduced
-to full rank automatically and additional coefficient estimates will be missing.</p></dd>
+<dt>control</dt>
+<dd><p>(<code>mmrm_control</code>)<br> object.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -131,6 +118,12 @@ to full rank automatically and additional coefficient estimates will be missing.
 <p>The <code>mmrm_fit</code> object, with additional attributes containing warnings,
 messages, optimizer used and convergence status in addition to the
 <code>mmrm_tmb</code> contents.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p><code>fit_single_optimizer</code> will fit the <code>mmrm</code> model using the <code>control</code> provided.
+If there are multiple optimizers provided in <code>control</code>, only the first optimizer
+will be used.</p>
     </div>
 
     <div class="section level2">

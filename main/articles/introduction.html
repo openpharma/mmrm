@@ -39,7 +39,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5.9013</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5.9014</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,12 +64,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -112,7 +106,7 @@ class <code>mmrm</code>, <code>mmrm_fit</code>, and
 <code>mmrm_tmb</code>. Here we fit a mmrm model with <code>us</code>
 (unstructured) covariance structure specified, as well as the defaults
 of <code>reml = TRUE</code> and
-<code>optimizer = 'automatic'</code>.</p>
+<code>control = mmrm_control()</code>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
@@ -200,14 +194,15 @@ used in optimization.</p>
 <h3 id="optimizer">Optimizer<a class="anchor" aria-label="anchor" href="#optimizer"></a>
 </h3>
 <p>Users can specify which optimizer should be used, changing from the
-default of <code>automatic</code> selection, which starts with
-<code>L-BFGS-B</code> and proceeds through the other choices if
-optimization fails to converge. Other choices are <code>BFGS</code>,
-<code>CG</code>, and <code>nlminb</code>.</p>
+default of four optimizers, which starts with <code>L-BFGS-B</code> and
+proceeds through the other choices if optimization fails to converge.
+Other choices are <code>BFGS</code>, <code>CG</code>, and
+<code>nlminb</code>.</p>
 <p><code>L-BFGS-B</code>, <code>BFGS</code> and <code>CG</code> are all
 implemented with <code><a href="https://rdrr.io/r/stats/optim.html" class="external-link">stats::optim()</a></code> and the Hessian is not
 used, while <code>nlminb</code> is using `stats::nlminb() which in turn
-uses both the gradient and the Hessian for the optimization.</p>
+uses both the gradient and the Hessian(by default; can be switch off)
+for the optimization.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit_opt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
@@ -502,18 +497,18 @@ optimization which may be needed by some users.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients: </span></span>
 <span><span class="co">#&gt;                   (Intercept) RACEBlack or African American </span></span>
-<span><span class="co">#&gt;                    30.9676900                     1.5046759 </span></span>
+<span><span class="co">#&gt;                   30.96769899                    1.50464863 </span></span>
 <span><span class="co">#&gt;                     RACEWhite                      ARMCDTRT </span></span>
-<span><span class="co">#&gt;                     5.6131061                     3.7755433 </span></span>
+<span><span class="co">#&gt;                    5.61309565                    3.77555734 </span></span>
 <span><span class="co">#&gt;                    AVISITVIS2                    AVISITVIS3 </span></span>
-<span><span class="co">#&gt;                     4.8285847                    10.3331756 </span></span>
+<span><span class="co">#&gt;                    4.82858803                   10.33317002 </span></span>
 <span><span class="co">#&gt;                    AVISITVIS4           ARMCDTRT:AVISITVIS2 </span></span>
-<span><span class="co">#&gt;                    15.0525742                    -0.0173543 </span></span>
+<span><span class="co">#&gt;                   15.05255715                   -0.01737409 </span></span>
 <span><span class="co">#&gt;           ARMCDTRT:AVISITVIS3           ARMCDTRT:AVISITVIS4 </span></span>
-<span><span class="co">#&gt;                    -0.6675215                     0.6309537 </span></span>
+<span><span class="co">#&gt;                   -0.66753189                    0.63094392 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Model Inference Optimization:</span></span>
-<span><span class="co">#&gt; Converged with code 0 and message: both x-convergence and relative convergence (5)</span></span></code></pre></div>
+<span><span class="co">#&gt; Converged with code 0 and message: convergence: rel_reduction_of_f &lt;= factr*epsmch</span></span></code></pre></div>
 <p>For fine control of optimization routine, <a href="https://openpharma.github.io/mmrm/main/reference/mmrm_control.html"><code>mmrm_control()</code></a>
 is provided. This function allows the user to specify optimization
 routine with <code>optimizer</code>, pass arguments to that optimizer
@@ -524,7 +519,7 @@ taken when the defined design matrix is singular with
 <code>accept_singular</code>.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/mmrm_control.html">mmrm_control</a></span><span class="op">(</span></span>
-<span>  optimizer <span class="op">=</span> <span class="fu">stats</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/stats/nlminb.html" class="external-link">nlminb</a></span>,</span>
+<span>  optimizer_fun <span class="op">=</span> <span class="fu">stats</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/stats/nlminb.html" class="external-link">nlminb</a></span>,</span>
 <span>  optimizer_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>upper <span class="op">=</span> <span class="cn">Inf</span>, lower <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,</span>
 <span>  optimizer_control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,</span>
