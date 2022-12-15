@@ -2,16 +2,16 @@
 
 test_that("mmrm_control works as expected", {
   result <- mmrm_control(
-    optimizer = stats::optim,
+    optimizer_fun = stats::optim,
     optimizer_args = list(method = "L-BFGS-B")
   )
   expected <- structure(
     list(
-      optimizer = stats::optim,
-      optimizer_args = list(method = "L-BFGS-B"),
-      optimizer_control = list(),
+      optimizers = result$optimizers,
       start = NULL,
-      accept_singular = TRUE
+      accept_singular = TRUE,
+      method = "Satterthwaite",
+      n_cores = 1L
     ),
     class = "mmrm_control"
   )
@@ -1104,7 +1104,7 @@ test_that("h_mmrm_tmb works with grouped toeph covariance structure and ML", {
   # PBO covariance matrix.
   expected_pbo_var <- c(104.38, 40.7267, 24.9011, 127.01)
   result_pbo_var <- as.numeric(diag(cor_mat$PBO))
-  expect_equal(result_pbo_var, expected_pbo_var, tolerance = 1e-4)
+  expect_equal(result_pbo_var, expected_pbo_var, tolerance = 1e-3)
   expected_pbo_rho <- c(0.3296, -0.1196, -0.3575)
   result_pbo_rho <- map_to_cor(result$theta_est[5:7])
   expect_equal(result_pbo_rho, expected_pbo_rho, tolerance = 1e-2)
@@ -1131,14 +1131,14 @@ test_that("h_mmrm_tmb works with grouped toeph covariance structure and REML", {
   # PBO covariance matrix.
   expected_pbo_var <- c(104.43, 40.8152, 25.0541, 127.27)
   result_pbo_var <- as.numeric(diag(cor_mat$PBO))
-  expect_equal(result_pbo_var, expected_pbo_var, tolerance = 1e-4)
+  expect_equal(result_pbo_var, expected_pbo_var, tolerance = 1e-3)
   expected_pbo_rho <- c(0.3315, -0.1172, -0.3567)
   result_pbo_rho <- map_to_cor(result$theta_est[5:7])
   expect_equal(result_pbo_rho, expected_pbo_rho, tolerance = 1e-2)
   # TRT covariance matrix.
   expected_trt_var <- c(74.6153, 34.2766, 49.8505, 220.20)
   result_trt_var <- as.numeric(diag(cor_mat$TRT))
-  expect_equal(result_trt_var, expected_trt_var, tolerance = 1e-4)
+  expect_equal(result_trt_var, expected_trt_var, tolerance = 1e-3)
   expected_trt_rho <- c(0.4677, 0.1540, -0.2741)
   result_trt_rho <- map_to_cor(result$theta_est[12:14])
   expect_equal(result_trt_rho, expected_trt_rho, tolerance = 1e-2)

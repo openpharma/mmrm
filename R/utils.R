@@ -69,8 +69,10 @@ h_record_all_output <- function(expr, remove = list()) {
 #'
 #' @export
 free_cores <- function() {
-  lifecycle::deprecate_warn("0.1.6", "free_cores()",
-    "parallelly::availableCores(omit = 'number of cores to reserve, e.g. 1')")
+  lifecycle::deprecate_warn(
+    "0.1.6", "free_cores()",
+    "parallelly::availableCores(omit = 'number of cores to reserve, e.g. 1')"
+  )
   all_cores <- parallel::detectCores(all.tests = TRUE)
   busy_cores <-
     if (.Platform$OS.type == "windows") {
@@ -162,4 +164,120 @@ h_tr <- function(x) {
     stop("x must be square matrix")
   }
   sum(diag(x))
+}
+
+#' Split Control List
+#'
+#' @description Split the [mmrm_control()] object according to its optimizers and use additional arguments
+#' to replace the elements in the original object.
+#'
+#' @param control (`mmrm_control`)\cr object.
+#' @param ... additional parameters to update the `control` object.
+#'
+#' @return A `list` of `mmrm_control` entries.
+#' @keywords internal
+h_split_control <- function(control, ...) {
+  assert_class(control, "mmrm_control")
+  l <- length(control$optimizers)
+  lapply(seq_len(l), function(i) {
+    ret <- modifyList(control, list(...))
+    ret$optimizers <- control$optimizers[i]
+    ret
+  })
+}
+
+#' Obtain Optimizer according to Optimizer String Value
+#' @description This function creates optimizer functions with arguments.
+#'
+#' @param optimizer (`character`)\cr optimizer character. Only "L-BFGS-B", "BFGS", "CG" and "nlminb" supported.
+#' @param optimizer_fun (`function`)\cr or (`list`)\cr of (`function`)x\cr.
+#' @param optimizer_args (`list`)\cr of additional arguments for `optimizer_fun`.
+#' @param optimizer_control (`list`)\cr of control argument. Will serve as `control` in `optimizer_fun`.
+#'
+#' @details
+#' In this function, the final object to use is `optimizer_fun`, and `optimizer` is a shortcut to create
+#' multiple `optimizer_fun`. If you want to use your own optimizer function, make sure that there are three arguments,
+#' parameter(start value), objective function and gradient function are sequentially in the function arguments.
+#' If there are other named arguments in front of these, make sure they are correctly specified through
+#' `optimizer_args`. If hessian function can be applied, please make sure its argument name is `hessian` and
+#' please add attribute `use_hessian = TRUE` to the function, using `attr(fun, "use_hessian) <- TRUE`
+#' If `optimizer_fun` is not provided, it will be created using the `optimizer` character. Other arguments should
+#' go into `optimizer_args`.
+#' Allowed are "L-BFGS-B", "BFGS", "CG"(using [stats::optim()] with corresponding method) and
+#' "nlminb"(using [stats::nlminb()]).
+#'
+#' @return Named `list` of optimizers created by [h_optimizer_fun()].
+#'
+#' @keywords internal
+h_get_optimizers <- function(optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb"),
+                             optimizer_fun = h_optimizer_fun(optimizer),
+                             optimizer_args = list(),
+                             optimizer_control = list()) {
+  if ("automatic" %in% optimizer) {
+    lifecycle::deprecate_warn(
+      when = "0.2.0",
+      what = I("\"automatic\" optimizer"))
+    optimizer_fun <- h_optimizer_fun()
+  }
+  assert(
+    test_function(optimizer_fun),
+    test_list(optimizer_fun, types = "function", names = "unique")
+  )
+  if (is.function(optimizer_fun)) {
+    optimizer_fun <- list(custom_optimizer = optimizer_fun)
+  }
+  lapply(optimizer_fun, function(x) {
+    do.call(h_partial_fun_args, c(list(fun = x, control = optimizer_control), optimizer_args))
+  })
+}
+
+#' Obtain Optimizer Function with Character
+#' @description Obtain the optimizer function through the character provided.
+#' @param optimizer (`character`)\cr vector of optimizers.
+#'
+#' @return A (`list`)\cr of optimizer functions generated from [h_partial_fun_args()].
+#' @keywords internal
+h_optimizer_fun <- function(optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb")) {
+  optimizer <- match.arg(optimizer, several.ok = TRUE)
+  lapply(stats::setNames(optimizer, optimizer), function(x) {
+    switch(x,
+      "L-BFGS-B" = h_partial_fun_args(fun = stats::optim, method = x),
+      "BFGS" = h_partial_fun_args(fun = stats::optim, method = x),
+      "CG" = h_partial_fun_args(fun = stats::optim, method = x),
+      "nlminb" = h_partial_fun_args(fun = stats::nlminb, additional_attr = list(use_hessian = TRUE))
+    )
+  })
+}
+
+#' Create Partial Functions
+#' @description Creates partial functions with arguments.
+#'
+#' @param fun (`function`)\cr to be wrapped.
+#' @param ... Additional arguments for `fun`.
+#' @param additional_attr (`list`)\cr of additional attributes to apply to the result.
+#'
+#' @details This function add `args` attribute to the original function,
+#' and add an extra class `partial` to the function.
+#' `args` is the argument for the function, and elements in `...` will override the existing
+#' arguments in attribute `args`. `additional_attr` will override the existing attributes.
+#'
+#' @return Object with S3 class `"partial"`, a `function` with `args` attribute (and possibly more
+#' attributes from `additional_attr`).
+#' @keywords internal
+h_partial_fun_args <- function(fun, ..., additional_attr = list()) {
+  assert_function(fun)
+  assert_list(additional_attr, names = "unique")
+  a_args <- list(...)
+  assert_list(a_args, names = "unique")
+  args <- attr(fun, "args")
+  if (is.null(args)) {
+    args <- list()
+  }
+  do.call(
+    structure,
+    args = modifyList(list(
+      .Data = fun, args = modifyList(args, a_args),
+      class = c("partial", "function")
+    ), additional_attr)
+  )
 }

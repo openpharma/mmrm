@@ -11,12 +11,12 @@
     
     Coefficients: 
                       (Intercept) RACEBlack or African American 
-                       41.2272670                     0.8001834 
+                       41.2272022                     0.8001225 
                         RACEWhite 
-                        5.8790987 
+                        5.8791646 
     
     Model Inference Optimization:
-    Converged with code 0 and message: relative convergence (4)
+    Converged with code 0 and message: convergence: rel_reduction_of_f <= factr*epsmch
 
 ---
 
@@ -59,8 +59,8 @@
     
     Coefficients: (1 not defined because of singularities)
     (Intercept)   SEXFemale  SEX2Female 
-    42.80566820  0.04516613          NA 
+    42.80540973  0.04513432          NA 
     
     Model Inference Optimization:
-    Converged with code 0 and message: relative convergence (4)
+    Converged with code 0 and message: convergence: rel_reduction_of_f <= factr*epsmch
 

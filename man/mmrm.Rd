@@ -9,10 +9,8 @@ mmrm(
   data,
   weights = NULL,
   reml = TRUE,
-  optimizer = "automatic",
-  n_cores = 1L,
-  accept_singular = TRUE,
-  method = c("Satterthwaite", "Kenward-Roger", "Kenward-Roger-Linear")
+  control = mmrm_control(...),
+  ...
 )
 }
 \arguments{
@@ -26,16 +24,9 @@ Should be NULL or a numeric vector.}
 \item{reml}{(\code{flag})\cr whether restricted maximum likelihood (REML) estimation is used,
 otherwise maximum likelihood (ML) is used.}
 
-\item{optimizer}{(\code{string})\cr optimizer to be used to generate the model.}
+\item{control}{(\code{mmrm_control})\cr object of mmrm fitting control.}
 
-\item{n_cores}{(\code{count})\cr number of cores which could in principle be used for
-parallel computations on Linux or Mac machines.}
-
-\item{accept_singular}{(\code{flag})\cr whether singular design matrices are reduced
-to full rank automatically and additional coefficient estimates will be missing.}
-
-\item{method}{(\code{string})\cr method used for adjusting the degrees of freedom and
-potentially the coefficients variance-covariance matrix.}
+\item{...}{additional arguments for \code{\link[=mmrm_control]{mmrm_control()}}}
 }
 \value{
 An \code{mmrm} object.
@@ -59,9 +50,10 @@ The rationale is that these observations would need to be correlated, but it
 is not possible within the currently implemented covariance structure framework
 to do that correctly.
 
-When setting \code{optimizer = "automatic"}, first the default optimizer
+When optimizer is not set, first the default optimizer
 (\code{L-BFGS-B}) is used to fit the model. If that converges, this is returned.
-If not, the other available optimizers from \code{\link[=refit_multiple_optimizers]{refit_multiple_optimizers()}} are
+If not, the other available optimizers from \code{\link[=h_get_optimizers]{h_get_optimizers()}},
+including \code{BFGS}, \code{CG} and \code{nlminb} are
 tried (in parallel if \code{n_cores} is set and not on Windows).
 If none of the optimizers converge, then the function fails. Otherwise
 the best fit is returned.

@@ -29,7 +29,7 @@ A minimal call of [`mmrm()`](https://openpharma.github.io/mmrm/main/reference/mm
 consisting of only formula and data arguments will produce an object of class
 `mmrm`, `mmrm_fit`, and `mmrm_tmb`. Here we fit a mmrm
 model with `us` (unstructured) covariance structure specified, as well as the defaults
-of `reml = TRUE` and `optimizer = 'automatic'`.
+of `reml = TRUE` and `control = mmrm_control()`.
 
 ```{r common-usage-modelcall}
 fit <- mmrm(
@@ -72,12 +72,13 @@ print(fit_ml)
 ## Optimizer
 
 Users can specify which optimizer should be used, changing from the default of
-`automatic` selection, which starts with `L-BFGS-B` and proceeds through the
+four optimizers, which starts with `L-BFGS-B` and proceeds through the
 other choices if optimization fails to converge. Other choices are `BFGS`, `CG`, and
 `nlminb`.
 
 `L-BFGS-B`, `BFGS` and `CG` are all implemented with `stats::optim()` and the Hessian is not used,
-while `nlminb` is using `stats::nlminb() which in turn uses both the gradient and the Hessian for the optimization.
+while `nlminb` is using `stats::nlminb() which in turn uses both the gradient and the Hessian(by default; can be switch off)
+for the optimization.
 
 ```{r common-changes-optim}
 fit_opt <- mmrm(
@@ -234,7 +235,7 @@ defined design matrix is singular with `accept_singular`.
 
 ```{r low-level-control, eval=FALSE}
 mmrm_control(
-  optimizer = stats::nlminb,
+  optimizer_fun = stats::nlminb,
   optimizer_args = list(upper = Inf, lower = 0),
   optimizer_control = list(),
   start = c(0, 1, 1, 0, 1, 0),
