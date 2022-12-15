@@ -56,15 +56,15 @@ are then defined as:
 \[
 \hat\nu(\hat\theta) = \frac{2f(\hat\theta)^2}{f{'}(\hat\theta)^\top W(\hat\theta) f{'}(\hat\theta)}
 \]
-where $f(\theta) = C \Phi(\theta) C^\top$ is the scalar in the
+where $f(\hat\theta) = C \Phi(\hat\theta) C^\top$ is the scalar in the
 numerator and we can identify it as the variance estimate for the
-estimated scalar contrast $C\beta$. The computational challenge is
+estimated scalar contrast $C\hat\beta$. The computational challenge is
 essentially to evaluate the denominator in the expression for
 $\hat\nu(\hat\theta)$, which amounts to computing the $k$-dimensional
 gradient $f{'}(\hat\theta)$ of $f(\theta)$ (for the given contrast
-matrix $C$). We already have the variance-covariance matrix
-$W(\hat\theta)$ of the variance parameter vector $\theta$ from the model
-fitting.
+matrix $C$) at the estimate $\hat\theta$. We already have the
+variance-covariance matrix $W(\hat\theta)$ of the variance parameter
+vector $\theta$ from the model fitting.
 
 ### Jacobian approach
 
@@ -77,12 +77,13 @@ regards to $\theta$, $\mathcal{J}(\theta) = \nabla_\theta \Phi(\theta)$.
 Imagine $\mathcal{J}(\theta)$ as the the 3-dimensional array with $k$
 faces of size $p\times p$. Left and right multiplying each face by $C$
 and $C^\top$ respectively leads to the $k$-dimensional gradient
-$f'(\hat\tau) = C \mathcal{J}(\hat\theta) C^\top$. Therefore for each
+$f'(\theta) = C \mathcal{J}(\theta) C^\top$. Therefore for each
 new contrast $C$ we just need to perform simple matrix multiplications,
 which is fast (see `h_gradient()` where this is implemented). Thus,
-having computed the Jacobian $\mathcal{J}(\hat\theta)$, it is only a
-matter of putting the different quantities together to compute the
-estimate of the denominator degrees of freedom.
+having computed the estimated Jacobian $\mathcal{J}(\hat\theta)$,
+it is only a matter of putting the different quantities together to
+compute the estimate of the denominator degrees of freedom,
+$\hat\nu(\hat\theta)$.
 
 ### Jacobian calculation
 
@@ -101,7 +102,7 @@ When $c > 1$ we are testing multiple contrasts at once. Here an F-statistic
 \[
 F = \frac{1}{c} (C\hat\beta)^\top  (C \Phi(\hat\theta) C^\top)^{-1} C^\top (C\hat\beta)
 \]
-is calculated we are interested in estimating an appropriate denominator degrees of freedom for $F$,
+is calculated, and we are interested in estimating an appropriate denominator degrees of freedom for $F$,
 while assuming $c$ numerator degrees of freedom. Note that only in special cases,
 such as orthogonal or balanced designs, the F distribution will be exact under the
 null hypothesis. In general, it is an approximation.
