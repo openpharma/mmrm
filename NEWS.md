@@ -7,6 +7,10 @@
   "Kenward-Roger-Linear" or "Satterthwaite" (which is still the default). Subsequent `summary`, `print` or `component` calls will
   also be based on this `method` argument, e.g. `component(fit, "beta_vcov")` will return the
    adjusted covariance matrix if a Kenward-Roger method has been used.
+- Update the `mmrm` arguments to allow users to input the control arguments directly in `mmrm` function, e.g.
+  `mmrm(..., start = start, optimizer = c("BFGS", "nlminb"))`. These arguments will go into `mmrm_control`.
+  In addition, `optimizer = "automatic"` is deprecated and will give you warning. It is a default behavior now to
+  try all optimizers (if multiple optimizer provided) if the first optimizer fails.
 ### Bug Fixes
 
 - Previously duplicate time points could be present for a single subject,

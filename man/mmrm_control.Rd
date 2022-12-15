@@ -5,25 +5,28 @@
 \title{Control Parameters for Fitting an MMRM}
 \usage{
 mmrm_control(
-  optimizer = stats::nlminb,
-  optimizer_args = list(),
-  optimizer_control = list(),
+  n_cores = 1L,
+  method = c("Satterthwaite", "Kenward-Roger", "Kenward-Roger-Linear"),
   start = NULL,
-  accept_singular = TRUE
+  accept_singular = TRUE,
+  ...,
+  optimizers = h_get_optimizers(...)
 )
 }
 \arguments{
-\item{optimizer}{(\code{function})\cr optimization function.}
+\item{n_cores}{(\code{int})\cr number of cores to be used.}
 
-\item{optimizer_args}{(\code{list})\cr additional arguments to be passed to optimizer.}
-
-\item{optimizer_control}{(\code{list})\cr specific \code{control} argument for optimizer.}
+\item{method}{(\code{character})\cr vector of covariance/degree of freedom method.}
 
 \item{start}{(\code{numeric} or \code{NULL})\cr optional start values for variance
 parameters.}
 
 \item{accept_singular}{(\code{flag})\cr whether singular design matrices are reduced
 to full rank automatically and additional coefficient estimates will be missing.}
+
+\item{...}{Additional arguments passed to \code{\link[=h_get_optimizers]{h_get_optimizers()}}.}
+
+\item{optimizers}{(\code{list})\cr of optimizers created from \code{\link[=h_get_optimizers]{h_get_optimizers()}}.}
 }
 \value{
 List of class \code{mmrm_control} with the control parameters.
@@ -33,7 +36,7 @@ List of class \code{mmrm_control} with the control parameters.
 }
 \examples{
 mmrm_control(
-  optimizer = stats::optim,
+  optimizer_fun = stats::optim,
   optimizer_args = list(method = "L-BFGS-B")
 )
 }

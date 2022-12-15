@@ -239,7 +239,7 @@ test_that("refit_multiple_optimizers works with parallel computations and select
   result <- expect_silent(refit_multiple_optimizers(
     fit = fit,
     n_cores = n_cores,
-    optimizers = c("BFGS", "CG")
+    optimizer = c("BFGS", "CG")
   ))
   expect_class(result, "mmrm_fit")
 
@@ -337,4 +337,35 @@ test_that("mmrm works for specific small data example", {
     data = small_dat
   ))
   expect_true(attr(fit, "converged"))
+})
+
+test_that("mmrm works for custom optimizer", {
+  fit <- mmrm(
+    FEV1 ~ ARMCD + ar1(AVISIT | SEX / USUBJID),
+    data = fev_data,
+    reml = TRUE,
+    optimizer_fun = silly_optimizer,
+    optimizer_args = list(value_add = 2, message = "this is wrong"),
+    start = c(1, 2, 3, 4),
+    method = "Kenward-Roger"
+  )
+  expect_identical(fit$theta_est, c(3, 4, 5, 6))
+})
+
+test_that("mmrm works for constructed control", {
+  expect_silent(mmrm(
+    FEV1 ~ ARMCD + ar1(AVISIT | SEX / USUBJID),
+    data = fev_data,
+    reml = TRUE,
+    control = mmrm_control(optimizer = c("BFGS", "CG"))
+  ))
+})
+
+test_that("mmrm still works for deprecated \"automatic\" optimizer", {
+  expect_silent(mmrm(
+    FEV1 ~ ARMCD + ar1(AVISIT | SEX / USUBJID),
+    data = fev_data,
+    reml = TRUE,
+    optimizer = "automatic"
+  ))
 })

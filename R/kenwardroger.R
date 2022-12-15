@@ -42,6 +42,7 @@ h_get_kr_comp <- function(tmb_data, theta) {
 #' @keywords internal
 h_df_md_kr <- function(object, contrast, linear = FALSE) {
   assert_class(object, "mmrm")
+  assert_flag(linear)
   assert_matrix(contrast, mode = "numeric", any.missing = FALSE, ncols = length(component(object, "beta_est")))
   if (component(object, "reml") != 1) {
     stop("Kenward-Roger is only for REML")
@@ -59,7 +60,7 @@ h_df_md_kr <- function(object, contrast, linear = FALSE) {
     num_df = nrow(contrast),
     denom_df = df$m,
     f_stat = f_star[1, 1],
-    p_val = pf(f_star[1, 1], nrow(contrast), df$m, lower.tail = FALSE)
+    p_val = stats::pf(f_star[1, 1], nrow(contrast), df$m, lower.tail = FALSE)
   )
 }
 
@@ -78,6 +79,7 @@ h_df_md_kr <- function(object, contrast, linear = FALSE) {
 #' @keywords internal
 h_df_1d_kr <- function(object, contrast, linear = FALSE) {
   assert_class(object, "mmrm")
+  assert_flag(linear)
   assert_numeric(contrast, len = length(component(object, "beta_est")))
   if (component(object, "reml") != 1) {
     stop("Kenward-Roger is only for REML!")
@@ -92,7 +94,7 @@ h_df_1d_kr <- function(object, contrast, linear = FALSE) {
   se <- sqrt(h_quad_form_vec(contrast, object$beta_vcov_adj))
 
   t_stat <- abs(est) / se
-  p_val <- pt(t_stat, df$m, lower.tail = FALSE) * 2
+  p_val <- stats::pt(t_stat, df$m, lower.tail = FALSE) * 2
 
   list(
     est = est,
@@ -179,6 +181,7 @@ h_kr_df <- function(v0, l, w, p) {
 #'
 #' @keywords internal
 h_var_adj <- function(v, w, p, q, r, linear = FALSE) {
+  assert_flag(linear)
   n_beta <- ncol(v)
   assert_matrix(v, nrows = n_beta)
   n_theta <- ncol(w)

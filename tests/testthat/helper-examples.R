@@ -56,6 +56,10 @@ get_mmrm_kr <- function() {
   .mmrm_kr
 }
 
+.mmrm_krl <- mmrm(.mmrm_kr_formula, data = fev_data, method = "Kenward-Roger-Linear")
+get_mmrm_krl <- function() {
+  .mmrm_krl
+}
 
 
 square_matrix <- function(values_by_row) {
@@ -76,4 +80,14 @@ map_to_theta <- function(rho) {
 
 expect_snapshot_tolerance <- function(x, style = "deparse", tolerance = 1e-4, ...) {
   testthat::expect_snapshot_value(x, style = style, tolerance = tolerance, ...)
+}
+
+silly_optimizer <- function(par, objective, gr, value_add, message, control, ...) {
+  result <- par + value_add
+  list(
+    par = result,
+    objective = objective(result),
+    convergence = 0,
+    message = message
+  )
 }

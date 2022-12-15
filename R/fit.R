@@ -6,7 +6,13 @@
 #' while capturing messages and warnings.
 #'
 #' @inheritParams mmrm
-#' @inheritParams mmrm_control
+#' @param control (`mmrm_control`)\cr object.
+#' @param ... Additional arguments to pass to [mmrm_control()].
+#'
+#' @details
+#' `fit_single_optimizer` will fit the `mmrm` model using the `control` provided.
+#' If there are multiple optimizers provided in `control`, only the first optimizer
+#' will be used.
 #'
 #' @return The `mmrm_fit` object, with additional attributes containing warnings,
 #'   messages, optimizer used and convergence status in addition to the
@@ -25,20 +31,14 @@ fit_single_optimizer <- function(formula,
                                  data,
                                  weights,
                                  reml = TRUE,
-                                 start = NULL,
-                                 optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb"),
-                                 accept_singular = TRUE) {
+                                 ...,
+                                 control = mmrm_control(...)) {
   assert_formula(formula)
   assert_data_frame(data)
   assert_vector(weights)
-  optimizer <- match.arg(optimizer)
-  control <- mmrm_control(
-    optimizer = if (optimizer == "nlminb") stats::nlminb else stats::optim,
-    optimizer_control = if (optimizer == "nlminb") list(iter.max = 300, eval.max = 400) else list(),
-    optimizer_args = if (optimizer == "nlminb") list() else list(method = optimizer),
-    start = start,
-    accept_singular = accept_singular
-  )
+  assert_flag(reml)
+  assert_class(control, "mmrm_control")
+  assert_list(control$optimizers, names = "unique", types = c("function", "partial"))
   quiet_fit <- h_record_all_output(
     fit_mmrm(
       formula = formula,
@@ -61,7 +61,7 @@ fit_single_optimizer <- function(formula,
     quiet_fit$result,
     warnings = quiet_fit$warnings,
     messages = quiet_fit$messages,
-    optimizer = optimizer,
+    optimizer = names(control$optimizers)[1],
     converged = converged,
     class = c("mmrm_fit", class(quiet_fit$result))
   )
@@ -99,9 +99,8 @@ h_summarize_all_fits <- function(all_fits) {
 #' @description `r lifecycle::badge("experimental")`
 #'
 #' @param fit (`mmrm_fit`)\cr original model fit from [fit_single_optimizer()].
-#' @inheritParams mmrm
-#' @param optimizers (`character`)\cr all possible optimizers to be used for fitting.
-#' @inheritParams mmrm_control
+#' @param ... Additional arguments passed to [mmrm_control()].
+#' @param control (`mmrm_control`)\cr object.
 #'
 #' @return The best (in terms of log likelihood) fit which converged.
 #'
@@ -117,45 +116,45 @@ h_summarize_all_fits <- function(all_fits) {
 #' )
 #' best_fit <- refit_multiple_optimizers(fit)
 refit_multiple_optimizers <- function(fit,
-                                      n_cores = 1L,
-                                      optimizers = c("L-BFGS-B", "BFGS", "CG", "nlminb"),
-                                      accept_singular = TRUE) {
+                                      ...,
+                                      control = mmrm_control(...)) {
   assert_class(fit, "mmrm_fit")
-  assert_int(n_cores, lower = 1L)
-  optimizers <- match.arg(optimizers, several.ok = TRUE)
-
+  assert_class(control, "mmrm_control")
   # Extract the components of the original fit.
   old_formula <- formula(fit)
   old_data <- fit$data
   old_weights <- fit$weights
-  old_optimizer <- attr(fit, "optimizer")
 
-  # Settings for the new fits.
-  optimizers <- setdiff(optimizers, old_optimizer)
+
   n_cores_used <- ifelse(
     .Platform$OS.type == "windows",
     1L,
     min(
-      length(optimizers),
-      n_cores
+      length(control$optimizers),
+      control$n_cores
     )
+  )
+  # split controls
+  controls <- h_split_control(
+    control,
+    start = fit$theta_est
   )
 
   # Take the results from old fit as starting values for new fits.
-  all_fits <- suppressWarnings(parallel::mclapply(
-    X = optimizers,
+  all_fits <- suppressWarnings(parallel::mcmapply(
     FUN = fit_single_optimizer,
-    formula = old_formula,
-    data = old_data,
-    weights = old_weights,
-    reml = fit$reml,
-    start = fit$theta_est,
-    accept_singular = accept_singular,
+    control = controls,
+    MoreArgs = list(
+      formula = old_formula,
+      data = old_data,
+      weights = old_weights,
+      reml = fit$reml
+    ),
     mc.cores = n_cores_used,
-    mc.silent = TRUE
+    mc.silent = TRUE,
+    SIMPLIFY = FALSE
   ))
   all_fits <- c(all_fits, list(old_result = fit))
-  names(all_fits) <- c(optimizers, old_optimizer)
 
   # Find the results that are ok and return best in terms of log-likelihood.
   all_fits_summary <- h_summarize_all_fits(all_fits)
@@ -175,40 +174,42 @@ refit_multiple_optimizers <- function(fit,
 #'
 #' @description `r lifecycle::badge("experimental")`
 #'
-#' @param optimizer (`function`)\cr optimization function.
-#' @param optimizer_args (`list`)\cr additional arguments to be passed to optimizer.
-#' @param optimizer_control (`list`)\cr specific `control` argument for optimizer.
+#' @param n_cores (`int`)\cr number of cores to be used.
+#' @param method (`character`)\cr vector of covariance/degree of freedom method.
 #' @param start (`numeric` or `NULL`)\cr optional start values for variance
 #'   parameters.
 #' @param accept_singular (`flag`)\cr whether singular design matrices are reduced
 #'   to full rank automatically and additional coefficient estimates will be missing.
+#' @param optimizers (`list`)\cr of optimizers created from [h_get_optimizers()].
+#' @param ... Additional arguments passed to [h_get_optimizers()].
 #'
 #' @return List of class `mmrm_control` with the control parameters.
 #' @export
 #'
 #' @examples
 #' mmrm_control(
-#'   optimizer = stats::optim,
+#'   optimizer_fun = stats::optim,
 #'   optimizer_args = list(method = "L-BFGS-B")
 #' )
-mmrm_control <- function(optimizer = stats::nlminb,
-                         optimizer_args = list(),
-                         optimizer_control = list(),
+mmrm_control <- function(n_cores = 1L,
+                         method = c("Satterthwaite", "Kenward-Roger", "Kenward-Roger-Linear"),
                          start = NULL,
-                         accept_singular = TRUE) {
-  assert_function(optimizer)
-  assert_list(optimizer_args)
-  assert_list(optimizer_control)
+                         accept_singular = TRUE,
+                         ...,
+                         optimizers = h_get_optimizers(...)) {
+  assert_int(n_cores, lower = 1L)
+  assert_character(method)
   assert_numeric(start, null.ok = TRUE)
   assert_flag(accept_singular)
-
+  assert_list(optimizers, names = "unique", types = c("function", "partial"))
+  method <- match.arg(method)
   structure(
     list(
-      optimizer = optimizer,
-      optimizer_args = optimizer_args,
-      optimizer_control = optimizer_control,
+      optimizers = optimizers,
       start = start,
-      accept_singular = accept_singular
+      accept_singular = accept_singular,
+      method = method,
+      n_cores = as.integer(n_cores)
     ),
     class = "mmrm_control"
   )
@@ -227,12 +228,8 @@ mmrm_control <- function(optimizer = stats::nlminb,
 #'   Should be NULL or a numeric vector.
 #' @param reml (`flag`)\cr whether restricted maximum likelihood (REML) estimation is used,
 #'   otherwise maximum likelihood (ML) is used.
-#' @param optimizer (`string`)\cr optimizer to be used to generate the model.
-#' @param n_cores (`count`)\cr number of cores which could in principle be used for
-#'   parallel computations on Linux or Mac machines.
-#' @param method (`string`)\cr method used for adjusting the degrees of freedom and
-#'   potentially the coefficients variance-covariance matrix.
-#' @inheritParams mmrm_control
+#' @param control (`mmrm_control`)\cr object of mmrm fitting control.
+#' @param ... additional arguments for [mmrm_control()]
 #'
 #' @details
 #' The `formula` typically looks like:
@@ -248,9 +245,10 @@ mmrm_control <- function(optimizer = stats::nlminb,
 #' is not possible within the currently implemented covariance structure framework
 #' to do that correctly.
 #'
-#' When setting `optimizer = "automatic"`, first the default optimizer
+#' When optimizer is not set, first the default optimizer
 #' (`L-BFGS-B`) is used to fit the model. If that converges, this is returned.
-#' If not, the other available optimizers from [refit_multiple_optimizers()] are
+#' If not, the other available optimizers from [h_get_optimizers()],
+#' including `BFGS`, `CG` and `nlminb` are
 #' tried (in parallel if `n_cores` is set and not on Windows).
 #' If none of the optimizers converge, then the function fails. Otherwise
 #' the best fit is returned.
@@ -273,14 +271,12 @@ mmrm <- function(formula,
                  data,
                  weights = NULL,
                  reml = TRUE,
-                 optimizer = "automatic",
-                 n_cores = 1L,
-                 accept_singular = TRUE,
-                 method = c("Satterthwaite", "Kenward-Roger", "Kenward-Roger-Linear")) {
-  assert_string(optimizer)
-  use_automatic <- identical(optimizer, "automatic")
-  method <- match.arg(method)
-  if (method %in% c("Kenward-Roger", "Kenward-Roger-Linear") && !reml) {
+                 control = mmrm_control(...),
+                 ...) {
+  assert_class(control, "mmrm_control")
+  assert_list(control$optimizers, min.len = 1)
+  use_automatic <- length(control$optimizers) > 1L
+  if (control$method %in% c("Kenward-Roger", "Kenward-Roger-Linear") && !reml) {
     stop("Kenward-Roger only works for REML")
   }
   attr(data, which = "dataname") <- toString(match.call()$data)
@@ -296,15 +292,15 @@ mmrm <- function(formula,
     data = data,
     weights = weights,
     reml = reml,
-    optimizer = ifelse(use_automatic, "L-BFGS-B", optimizer),
-    accept_singular = accept_singular
+    control = control
   )
   if (!attr(fit, "converged")) {
     if (use_automatic) {
+      control_remain <- control
+      control_remain$optimizers <- control$optimizers[-1]
       fit <- refit_multiple_optimizers(
-        fit,
-        n_cores = n_cores,
-        accept_singular = accept_singular
+        fit = fit,
+        control = control_remain
       )
     } else {
       all_problems <- unlist(
@@ -312,19 +308,19 @@ mmrm <- function(formula,
         use.names = FALSE
       )
       stop(paste0(
-        "Chosen optimizer '", optimizer, "' led to problems during model fit:\n",
+        "Chosen optimizer '", toString(names(control$optimizer)), "' led to problems during model fit:\n",
         paste(paste0(seq_along(all_problems), ") ", all_problems), collapse = ";\n"), "\n",
-        "Consider using the 'automatic' optimizer."
+        "Consider using the default option to use multiple optimizers."
       ))
     }
   }
-  fit$method <- method
-  if (method == "Satterthwaite") {
+  fit$method <- control$method
+  if (control$method == "Satterthwaite") {
     covbeta_fun <- h_covbeta_fun(fit)
     fit$jac_list <- h_jac_list(covbeta_fun, fit$theta_est)
   } else {
     fit$kr_comp <- h_get_kr_comp(fit$tmb_data, fit$theta_est)
-    linear <- (method == "Kenward-Roger-Linear")
+    linear <- (control$method == "Kenward-Roger-Linear")
     fit$beta_vcov_adj <- h_var_adj(
       v = fit$beta_vcov,
       w = component(fit, "theta_vcov"),
