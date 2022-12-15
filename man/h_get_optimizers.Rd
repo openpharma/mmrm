@@ -21,7 +21,7 @@ h_get_optimizers(
 \item{optimizer_control}{(\code{list})\cr of control argument. Will serve as \code{control} in \code{optimizer_fun}.}
 }
 \value{
-named (\code{list})\cr of optimizers created by \code{\link[=h_optimizer_fun]{h_optimizer_fun()}}.
+Named \code{list} of optimizers created by \code{\link[=h_optimizer_fun]{h_optimizer_fun()}}.
 }
 \description{
 This function creates optimizer functions with arguments.

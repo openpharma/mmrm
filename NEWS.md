@@ -9,7 +9,7 @@
    adjusted covariance matrix if a Kenward-Roger method has been used.
 - Update the `mmrm` arguments to allow users to input the control arguments directly in `mmrm` function, e.g.
   `mmrm(..., start = start, optimizer = c("BFGS", "nlminb"))`. These arguments will go into `mmrm_control`.
-  In addition, `optimizer = "automatic"` is deprecated and no longer supported. It is a default behavior now to
+  In addition, `optimizer = "automatic"` is deprecated and will give you warning. It is a default behavior now to
   try all optimizers (if multiple optimizer provided) if the first optimizer fails.
 ### Bug Fixes
 

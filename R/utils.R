@@ -174,7 +174,7 @@ h_tr <- function(x) {
 #' @param control (`mmrm_control`)\cr object.
 #' @param ... additional parameters to update the `control` object.
 #'
-#' @return A (`list`)\cr of `mmrm_control`\cr.
+#' @return A `list` of `mmrm_control` entries.
 #' @keywords internal
 h_split_control <- function(control, ...) {
   assert_class(control, "mmrm_control")
@@ -206,7 +206,7 @@ h_split_control <- function(control, ...) {
 #' Allowed are "L-BFGS-B", "BFGS", "CG"(using [stats::optim()] with corresponding method) and
 #' "nlminb"(using [stats::nlminb()]).
 #'
-#' @return named (`list`)\cr of optimizers created by [h_optimizer_fun()].
+#' @return Named `list` of optimizers created by [h_optimizer_fun()].
 #'
 #' @keywords internal
 h_get_optimizers <- function(optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb"),
@@ -261,7 +261,8 @@ h_optimizer_fun <- function(optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb")) {
 #' `args` is the argument for the function, and elements in `...` will override the existing
 #' arguments in attribute `args`. `additional_attr` will override the existing attributes.
 #'
-#' @return S3 class "partial", a `function` with `args` and `fun_label` attributes.
+#' @return Object with S3 class `"partial"`, a `function` with `args` attribute(and possible more
+#' attributes from `additional_attr`).
 #' @keywords internal
 h_partial_fun_args <- function(fun, ..., additional_attr = list()) {
   assert_function(fun)

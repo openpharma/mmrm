@@ -52,7 +52,8 @@ to do that correctly.
 
 When optimizer is not set, first the default optimizer
 (\code{L-BFGS-B}) is used to fit the model. If that converges, this is returned.
-If not, the other available optimizers, including \code{BFGS}, \code{CG} and \code{nlminb} are
+If not, the other available optimizers from \code{\link[=h_get_optimizers]{h_get_optimizers()}},
+including \code{BFGS}, \code{CG} and \code{nlminb} are
 tried (in parallel if \code{n_cores} is set and not on Windows).
 If none of the optimizers converge, then the function fails. Otherwise
 the best fit is returned.

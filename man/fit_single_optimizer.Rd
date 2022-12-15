@@ -41,7 +41,7 @@ while capturing messages and warnings.
 }
 \details{
 \code{fit_single_optimizer} will fit the \code{mmrm} model using the \code{control} provided.
-If there are mutliple optimizers provided in \code{control}, only the first optimizer
+If there are multiple optimizers provided in \code{control}, only the first optimizer
 will be used.
 }
 \examples{

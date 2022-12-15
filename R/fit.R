@@ -11,7 +11,7 @@
 #'
 #' @details
 #' `fit_single_optimizer` will fit the `mmrm` model using the `control` provided.
-#' If there are mutliple optimizers provided in `control`, only the first optimizer
+#' If there are multiple optimizers provided in `control`, only the first optimizer
 #' will be used.
 #'
 #' @return The `mmrm_fit` object, with additional attributes containing warnings,
@@ -36,9 +36,9 @@ fit_single_optimizer <- function(formula,
   assert_formula(formula)
   assert_data_frame(data)
   assert_vector(weights)
-  assert_logical(reml)
+  assert_flag(reml)
   assert_class(control, "mmrm_control")
-  assert_list(control$optimizers, names = "unique")
+  assert_list(control$optimizers, names = "unique", types = c("function", "partial"))
   quiet_fit <- h_record_all_output(
     fit_mmrm(
       formula = formula,
@@ -201,7 +201,7 @@ mmrm_control <- function(n_cores = 1L,
   assert_character(method)
   assert_numeric(start, null.ok = TRUE)
   assert_flag(accept_singular)
-  assert_list(optimizers, names = "unique")
+  assert_list(control$optimizers, names = "unique", types = c("function", "partial"))
   method <- match.arg(method)
   structure(
     list(
@@ -247,7 +247,8 @@ mmrm_control <- function(n_cores = 1L,
 #'
 #' When optimizer is not set, first the default optimizer
 #' (`L-BFGS-B`) is used to fit the model. If that converges, this is returned.
-#' If not, the other available optimizers, including `BFGS`, `CG` and `nlminb` are
+#' If not, the other available optimizers from [h_get_optimizers()],
+#' including `BFGS`, `CG` and `nlminb` are
 #' tried (in parallel if `n_cores` is set and not on Windows).
 #' If none of the optimizers converge, then the function fails. Otherwise
 #' the best fit is returned.
