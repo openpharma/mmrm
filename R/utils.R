@@ -261,7 +261,7 @@ h_optimizer_fun <- function(optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb")) {
 #' `args` is the argument for the function, and elements in `...` will override the existing
 #' arguments in attribute `args`. `additional_attr` will override the existing attributes.
 #'
-#' @return Object with S3 class `"partial"`, a `function` with `args` attribute(and possible more
+#' @return Object with S3 class `"partial"`, a `function` with `args` attribute (and possibly more
 #' attributes from `additional_attr`).
 #' @keywords internal
 h_partial_fun_args <- function(fun, ..., additional_attr = list()) {
