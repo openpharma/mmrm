@@ -349,21 +349,19 @@ test_that("mmrm works for custom optimizer", {
     start = c(1, 2, 3, 4),
     method = "Kenward-Roger"
   )
-  expect_snapshot(print(fit))
   expect_identical(fit$theta_est, c(3, 4, 5, 6))
 })
 
 test_that("mmrm works for constructed control", {
-  fit <- mmrm(
+  expect_silent(mmrm(
     FEV1 ~ ARMCD + ar1(AVISIT | SEX / USUBJID),
     data = fev_data,
     reml = TRUE,
     control = mmrm_control(optimizer = c("BFGS", "CG"))
-  )
-  expect_snapshot(print(fit))
+  ))
 })
 
-test_that("mmrm has still works for deprecated \"automatic\" optimizer", {
+test_that("mmrm still works for deprecated \"automatic\" optimizer", {
   expect_silent(mmrm(
     FEV1 ~ ARMCD + ar1(AVISIT | SEX / USUBJID),
     data = fev_data,
