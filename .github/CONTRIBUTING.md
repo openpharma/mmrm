@@ -30,7 +30,7 @@ deviate from this are explained below.
 
 In package `mmrm`, we follow the following convention in package imports.
 
-1. When only a few function from another package is needed:
+1. When only a few functions from another package are needed:
     1. In `DESCRIPTION`, add that package into `Imports`.
     1. In `mmrm-package.R`, we add a `importFrom` with a single function from the package.
         1. The function imported can be any random function within the package.
