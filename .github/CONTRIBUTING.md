@@ -38,7 +38,7 @@ In package `mmrm`, we follow the following convention in package imports.
     1. Example: `stats`.
 1. When many functions from another package are needed:
     1. In `DESCRIPTION`, add that package into `Imports`.
-    1. In `mmrm-package.R`, we use a `import` with to import every function.
+    1. In `mmrm-package.R`, we use a `import` to import every function.
     1. Use the functions directly without prefix.
     1. Example: `checkmate`.
 
