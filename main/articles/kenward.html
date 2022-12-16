@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="mmrm">
-<title>Details of the Kenward-Roger degree of freedom • mmrm</title>
+<title>Details of the Kenward-Roger calculations • mmrm</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <link href="../deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Details of the Kenward-Roger degree of freedom">
+<!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Details of the Kenward-Roger calculations">
 <meta property="og:description" content="mmrm">
 <meta property="og:image" content="https://openpharma.github.io/mmrm/main/logo.svg">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -39,7 +39,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5.9014</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5.9015</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,19 +57,14 @@
     <a class="dropdown-item" href="../articles/algorithm.html">Details of the Model Fitting in `mmrm`</a>
     <a class="dropdown-item" href="../articles/covariance.html">Covariance Structures in `mmrm`</a>
     <a class="dropdown-item" href="../articles/introduction.html">Introduction to `mmrm`</a>
-    <a class="dropdown-item" href="../articles/kenward.html">Details of the Kenward-Roger degree of freedom</a>
+    <a class="dropdown-item" href="../articles/kenward.html">Details of the Kenward-Roger calculations</a>
     <a class="dropdown-item" href="../articles/package_structure.html">Package Structure</a>
+    <a class="dropdown-item" href="../articles/satterthwaite.html">Details of the Satterthwaite calculations</a>
   </div>
 </li>
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -94,7 +89,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.svg" class="logo" alt=""><h1>Details of the Kenward-Roger degree of freedom</h1>
+      <img src="../logo.svg" class="logo" alt=""><h1>Details of the Kenward-Roger calculations</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/HEAD/vignettes/kenward.Rmd" class="external-link"><code>vignettes/kenward.Rmd</code></a></small>
@@ -103,16 +98,16 @@
 
     
     
-<p>Here we describe the the algorithms of Kenward-Roger degree of
-freedom (and adjusted covariance matrix).</p>
-<div class="section level2">
-<h2 id="model-definition">Model definition<a class="anchor" aria-label="anchor" href="#model-definition"></a>
-</h2>
+<p>Here we describe the details of the Kenward-Roger degrees of freedom
+and adjusted covariance matrix calculations.</p>
+<div class="section level3">
+<h3 id="model-definition">Model definition<a class="anchor" aria-label="anchor" href="#model-definition"></a>
+</h3>
 <p>The model definition is the same as what we have in <a href="algorithms.html">Details of the model fitting in
 <code>mmrm</code></a>. We are using the same notations.</p>
-<div class="section level3">
-<h3 id="linear-model">Linear model<a class="anchor" aria-label="anchor" href="#linear-model"></a>
-</h3>
+<div class="section level4">
+<h4 id="linear-model">Linear model<a class="anchor" aria-label="anchor" href="#linear-model"></a>
+</h4>
 <p>For each subject <span class="math inline">\(i\)</span> we observe a
 vector <span class="math display">\[
 Y_i = (y_{i1}, \dotsc, y_{im_i})^\top \in \mathbb{R}^{m_i}
@@ -146,9 +141,9 @@ multivariate normal distribution <span class="math display">\[
 diagonal and 0 in the remaining entries.</p>
 </div>
 </div>
-<div class="section level2">
-<h2 id="mathematical-details-of-kenward-roger-method">Mathematical Details of Kenward-Roger method<a class="anchor" aria-label="anchor" href="#mathematical-details-of-kenward-roger-method"></a>
-</h2>
+<div class="section level3">
+<h3 id="mathematical-details-of-kenward-roger-method">Mathematical Details of Kenward-Roger method<a class="anchor" aria-label="anchor" href="#mathematical-details-of-kenward-roger-method"></a>
+</h3>
 <p>The mathematical derivation of the Kenward-Roger method is based on
 the Taylor expansion of the obtained covariance matrix of <span class="math inline">\(\hat\beta\)</span> to get a more accurate estimate
 for it. All these derivations are based on the restricted maximum
@@ -158,8 +153,7 @@ represented as a function of covariance matrix parameters <span class="math inli
 \theta_k)^\top\)</span>, i.e. <span class="math inline">\(\Omega(\theta)\)</span>. Here after model fitting
 with <code>mmrm</code>, we obtain the estimate <span class="math inline">\(\hat\beta =
 \Phi(\hat\theta)X^\top\Omega(\hat\theta)^{-1}Y\)</span>, where <span class="math inline">\(\Phi(\theta) = \left\{X^\top \Omega(\theta)^{-1}
-X\right\} ^{-1}\)</span> is the asymptotic covariance matrix of <span class="math inline">\(\hat\beta\)</span>. However, Kackar and
-Harville(<span class="citation">@kackar1984</span>) suggests that
+X\right\} ^{-1}\)</span> is the asymptotic covariance matrix of <span class="math inline">\(\hat\beta\)</span>. However, <span class="citation">Kackar and Harville (1984)</span> suggests that
 although the <span class="math inline">\(\hat\beta\)</span> is unbiased
 for <span class="math inline">\(\beta\)</span>, the covariance matrix,
 <span class="math inline">\(\hat\Phi = \left\{X^\top \hat\Omega
@@ -187,7 +181,8 @@ P_h \Phi P_j)} }\right\} \Phi
 matrix of the log-likelihood function of <span class="math inline">\(\theta\)</span> evaluated at the estimate <span class="math inline">\(\hat\theta\)</span>, i.e. the observed Fisher
 Information matrix as a consistent estimator of the variance-covariance
 matrix of <span class="math inline">\(\hat\theta\)</span>.</p>
-<p>Again, based on a Taylor series expansion about <span class="math inline">\(\theta\)</span>, Kenward and Roger(<span class="citation">@kenward1997</span>) show that <span class="math display">\[
+<p>Again, based on a Taylor series expansion about <span class="math inline">\(\theta\)</span>, <span class="citation">Kenward
+and Roger (1997)</span> show that <span class="math display">\[
   \hat\Phi \simeq \Phi + \sum_{h=1}^k{(\hat\theta_h -
 \theta_h)\frac{\partial{\Phi}}{\partial{\theta_h}}} + \frac{1}{2}
 \sum_{h=1}^k{\sum_{j=1}^k{(\hat\theta_h - \theta_h)(\hat\theta_j -
@@ -215,10 +210,10 @@ replaces <span class="math inline">\(\Omega(\theta)\)</span> in the
 right-hand side.</p>
 <p>Please note that, if we ignore <span class="math inline">\(R_{hj}\)</span>, the second-order derivatives, we
 will get a different estimate of adjusted covariance matrix, and we call
-it “Kenward-Roger-Linear”.</p>
-<div class="section level3">
-<h3 id="special-considerations-for-mmrm-models">Special Considerations for mmrm models<a class="anchor" aria-label="anchor" href="#special-considerations-for-mmrm-models"></a>
-</h3>
+this the linear Kenward-Roger approximation.</p>
+<div class="section level4">
+<h4 id="special-considerations-for-mmrm-models">Special Considerations for mmrm models<a class="anchor" aria-label="anchor" href="#special-considerations-for-mmrm-models"></a>
+</h4>
 <p>In mmrm models, <span class="math inline">\(\Omega\)</span> is a
 block-diagonal matrix, hence we can calculate <span class="math inline">\(P\)</span>, <span class="math inline">\(Q\)</span>
 and <span class="math inline">\(R\)</span> for each subject and add them
@@ -238,9 +233,9 @@ up.</p>
 \Sigma_i^{-1} X_i}
 \]</span></p>
 </div>
-<div class="section level3">
-<h3 id="derivative-of-the-overall-covariance-matrix-sigma">Derivative of the overall covariance matrix <span class="math inline">\(\Sigma\)</span><a class="anchor" aria-label="anchor" href="#derivative-of-the-overall-covariance-matrix-sigma"></a>
-</h3>
+<div class="section level4">
+<h4 id="derivative-of-the-overall-covariance-matrix-sigma">Derivative of the overall covariance matrix <span class="math inline">\(\Sigma\)</span><a class="anchor" aria-label="anchor" href="#derivative-of-the-overall-covariance-matrix-sigma"></a>
+</h4>
 <p>The derivative of the overall covariance matrix <span class="math inline">\(\Sigma\)</span> with respect to the variance
 parameters can be calculated through the derivatives of the Cholesky
 factor, and hence obtained through automatic differentiation, following
@@ -260,9 +255,9 @@ L\frac{\partial^2{L^\top}}{\partial{\theta_h}\partial{\theta_j}} +
 \frac{\partial{L}}{\partial{\theta_j}}\frac{\partial{L^\top}}{\partial{\theta_h}}
 \]</span></p>
 </div>
-<div class="section level3">
-<h3 id="derivative-of-the-sigma-1">Derivative of the <span class="math inline">\(\Sigma^{-1}\)</span><a class="anchor" aria-label="anchor" href="#derivative-of-the-sigma-1"></a>
-</h3>
+<div class="section level4">
+<h4 id="derivative-of-the-sigma-1">Derivative of the <span class="math inline">\(\Sigma^{-1}\)</span><a class="anchor" aria-label="anchor" href="#derivative-of-the-sigma-1"></a>
+</h4>
 <p>The derivatives of <span class="math inline">\(\Sigma^{-1}\)</span>
 can be calculated through</p>
 <p><span class="math display">\[
@@ -275,9 +270,9 @@ can be calculated through</p>
 \frac{\partial{\Sigma}}{\partial{\theta_h}}\Sigma^{-1}
 \]</span></p>
 </div>
-<div class="section level3">
-<h3 id="subjects-with-missed-visits">Subjects with missed visits<a class="anchor" aria-label="anchor" href="#subjects-with-missed-visits"></a>
-</h3>
+<div class="section level4">
+<h4 id="subjects-with-missed-visits">Subjects with missed visits<a class="anchor" aria-label="anchor" href="#subjects-with-missed-visits"></a>
+</h4>
 <p>If a subject do not have all visits, the corresponding covariance
 matrix can be represented as <span class="math display">\[
   \Sigma_i = S_i^\top \Sigma S_i
@@ -296,9 +291,9 @@ S_i
 can be calculated through <span class="math inline">\(\Sigma_i^{-1}\)</span> and <span class="math inline">\(\frac{\partial{\Sigma_i}}{\partial{\theta_h}}\)</span>
 using the above.</p>
 </div>
-<div class="section level3">
-<h3 id="scenario-under-group-specific-covariance-estimates">Scenario under group specific covariance estimates<a class="anchor" aria-label="anchor" href="#scenario-under-group-specific-covariance-estimates"></a>
-</h3>
+<div class="section level4">
+<h4 id="scenario-under-group-specific-covariance-estimates">Scenario under group specific covariance estimates<a class="anchor" aria-label="anchor" href="#scenario-under-group-specific-covariance-estimates"></a>
+</h4>
 <p>When fitting grouped <code>mmrm</code> models, the covariance matrix
 for subject i of group <span class="math inline">\(g(i)\)</span>, can be
 written as <span class="math display">\[
@@ -350,9 +345,9 @@ b}{X_i^\top\Sigma_i^{-1}\frac{\partial^2\Sigma_i}{\partial{\theta_h}\partial{\th
 \]</span></p>
 <p>Similarly for <span class="math inline">\(R\)</span>.</p>
 </div>
-<div class="section level3">
-<h3 id="scenario-under-weighted-mmrm">Scenario under weighted mmrm<a class="anchor" aria-label="anchor" href="#scenario-under-weighted-mmrm"></a>
-</h3>
+<div class="section level4">
+<h4 id="scenario-under-weighted-mmrm">Scenario under weighted mmrm<a class="anchor" aria-label="anchor" href="#scenario-under-weighted-mmrm"></a>
+</h4>
 <p>Under weights mmrm model, the covariance matrix for subject <span class="math inline">\(i\)</span>, can be represented as</p>
 <p><span class="math display">\[
   \Sigma_i = G_i^{-1/2} S_i^\top \Sigma S_i G_i^{-1/2}
@@ -365,13 +360,12 @@ can simply multiply the formulas with <span class="math inline">\(G_i^{-1/2}\)</
 subsetting matrix.</p>
 </div>
 </div>
-<div class="section level2">
-<h2 id="inference">Inference<a class="anchor" aria-label="anchor" href="#inference"></a>
-</h2>
+<div class="section level3">
+<h3 id="inference">Inference<a class="anchor" aria-label="anchor" href="#inference"></a>
+</h3>
 <p>Suppose we are testing the linear combination of <span class="math inline">\(\beta\)</span>, <span class="math inline">\(C\beta\)</span> with <span class="math inline">\(C
-\in \mathbb{R}^{c\times p}\)</span>, we can use the following Wald-type
-statistic</p>
-<p><span class="math display">\[
+\in \mathbb{R}^{c\times p}\)</span>, we can use the following
+F-statistic <span class="math display">\[
   F = \frac{1}{c} (\hat\beta - \beta)^\top  C (C^\top \hat\Phi_A C)^{-1}
 C^\top (\hat\beta - \beta)
 \]</span> and <span class="math display">\[
@@ -416,20 +410,38 @@ B}{(1-c_2 B)^2(1-c_3 B)}\right\}}\]</span></p>
 <p><span class="math display">\[m = 4 + \frac{c+2}{c\rho - 1}\]</span>
 <span class="math display">\[\lambda = \frac{m}{E^*(m-2)}\]</span></p>
 </div>
-<div class="section level2">
-<h2 id="parameterization-methods-and-kenward-roger">Parameterization methods and Kenward-Roger<a class="anchor" aria-label="anchor" href="#parameterization-methods-and-kenward-roger"></a>
-</h2>
-<p>While the Kenward-Roger adjusted covariance matrix is adopting Taylor
-series to approximate the true value, the choices of parameterization
-can change the result. In a simple example of unstructured covariance
-structure, in our current approach, where the parameters are elements of
-the Cholesky factor of <span class="math inline">\(\Sigma\)</span> (see
-<a href="covariance.html">parameterization</a>), the second-order
+<div class="section level3">
+<h3 id="parameterization-methods-and-kenward-roger">Parameterization methods and Kenward-Roger<a class="anchor" aria-label="anchor" href="#parameterization-methods-and-kenward-roger"></a>
+</h3>
+<p>While the Kenward-Roger adjusted covariance matrix is adopting a
+Taylor series to approximate the true value, the choices of
+parameterization can change the result. In a simple example of
+unstructured covariance structure, in our current approach, where the
+parameters are elements of the Cholesky factor of <span class="math inline">\(\Sigma\)</span> (see <a href="covariance.html">parameterization</a>), the second-order
 derivatives of <span class="math inline">\(\Sigma\)</span> over our
 parameters, are non-zero matrices. However, if we use the elements of
 <span class="math inline">\(\Sigma\)</span> as our parameters, then the
 second-order derivatives are zero matrices. However, the differences can
-be small and will not affect the inference.</p>
+be small and will not affect the inference. If you would like to match
+SAS results for the unstructured covariance model, you can use the
+linear Kenward-Roger approximation.</p>
+</div>
+<div class="section level2">
+<h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-kackar1984" class="csl-entry">
+Kackar, Raghu N., and David A. Harville. 1984. <span>“Approximations for
+Standard Errors of Estimators of Fixed and Random Effects in Mixed
+Linear Models.”</span> <em>Journal of the American Statistical
+Association</em> 79 (388): 853–62. <a href="https://doi.org/10.1080/01621459.1984.10477102" class="external-link">https://doi.org/10.1080/01621459.1984.10477102</a>.
+</div>
+<div id="ref-kenward1997" class="csl-entry">
+Kenward, Michael G., and James H. Roger. 1997. <span>“Small Sample
+Inference for Fixed Effects from Restricted Maximum Likelihood.”</span>
+<em>Biometrics</em> 53 (3): 983–97. <a href="http://www.jstor.org/stable/2533558" class="external-link">http://www.jstor.org/stable/2533558</a>.
+</div>
+</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

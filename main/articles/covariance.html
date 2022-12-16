@@ -39,7 +39,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5.9014</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5.9015</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,19 +57,14 @@
     <a class="dropdown-item" href="../articles/algorithm.html">Details of the Model Fitting in `mmrm`</a>
     <a class="dropdown-item" href="../articles/covariance.html">Covariance Structures in `mmrm`</a>
     <a class="dropdown-item" href="../articles/introduction.html">Introduction to `mmrm`</a>
-    <a class="dropdown-item" href="../articles/kenward.html">Details of the Kenward-Roger degree of freedom</a>
+    <a class="dropdown-item" href="../articles/kenward.html">Details of the Kenward-Roger calculations</a>
     <a class="dropdown-item" href="../articles/package_structure.html">Package Structure</a>
+    <a class="dropdown-item" href="../articles/satterthwaite.html">Details of the Satterthwaite calculations</a>
   </div>
 </li>
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -191,7 +186,7 @@ details.</p>
 <h3 id="homogeneous-ad-and-heterogeneous-ante-dependence-adh">Homogeneous (<code>ad</code>) and Heterogeneous Ante-dependence
 (<code>adh</code>)<a class="anchor" aria-label="anchor" href="#homogeneous-ad-and-heterogeneous-ante-dependence-adh"></a>
 </h3>
-<p>The ante-dependence correlation structure (<span class="citation">Gabriel (1962)</span>) is useful for balanced designs
+<p>The ante-dependence correlation structure <span class="citation">(Gabriel 1962)</span> is useful for balanced designs
 where the observations are not necessarily equally spaced in time. Here
 we use an order one ante-dependence model, where the correlation matrix
 <span class="math inline">\(P\)</span> has elements <span class="math display">\[
@@ -218,7 +213,7 @@ SAS.</p>
 <h3 id="homogeneous-toep-and-heterogeneous-toeplitz-toeph">Homogeneous (<code>toep</code>) and Heterogeneous Toeplitz
 (<code>toeph</code>)<a class="anchor" aria-label="anchor" href="#homogeneous-toep-and-heterogeneous-toeplitz-toeph"></a>
 </h3>
-<p>Toeplitz matrices (<span class="citation">Toeplitz (1911)</span>) are
+<p>Toeplitz matrices <span class="citation">(Toeplitz 1911)</span> are
 diagonal-constant matrices. Here we can model the correlation matrix as
 a Toeplitz matrix: <span class="math display">\[
 P = \begin{pmatrix}

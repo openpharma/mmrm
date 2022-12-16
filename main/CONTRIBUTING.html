@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5.9014</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5.9015</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,19 +33,14 @@
     <a class="dropdown-item" href="articles/algorithm.html">Details of the Model Fitting in `mmrm`</a>
     <a class="dropdown-item" href="articles/covariance.html">Covariance Structures in `mmrm`</a>
     <a class="dropdown-item" href="articles/introduction.html">Introduction to `mmrm`</a>
-    <a class="dropdown-item" href="articles/kenward.html">Details of the Kenward-Roger degree of freedom</a>
+    <a class="dropdown-item" href="articles/kenward.html">Details of the Kenward-Roger calculations</a>
     <a class="dropdown-item" href="articles/package_structure.html">Package Structure</a>
+    <a class="dropdown-item" href="articles/satterthwaite.html">Details of the Satterthwaite calculations</a>
   </div>
 </li>
 <li class="nav-item">
   <a class="nav-link" href="news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -102,6 +97,24 @@
 <h3 id="comments">Comments<a class="anchor" aria-label="anchor" href="#comments"></a></h3>
 <ul><li>Comments should always follow sentence style.</li>
 <li>Comments should be as minimal as possible: Generally the code and variable names should be clear enough to not need any comments. Only use them when needed and explain the “Why” and not the “What”.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a></h3>
+<ul><li><p>All functions must be documented using <code>roxygen2</code> chunks, including internal functions (see also above).</p></li>
+<li>
+<p>Exported objects must have a <code>lifecycle</code> badge to clarify the maturity.</p>
+<ul><li>Start with <code>"experimental"</code> status and consider upgrading to <code>"stable"</code> once the interface has been stable for several months.</li>
+</ul></li>
+<li><p>Use <code>Title Style</code> for the title of the documentation.</p></li>
+<li><p>Always include a <code>@description</code> part with at least one sentence describing the object.</p></li>
+<li>
+<p>For the arguments use the following convention:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="sc">@</span>param <span class="fu">formula</span> (<span class="st">`</span><span class="at">formula</span><span class="st">`</span>)\cr the model formula, see details.</span></code></pre></div>
+<p>So the type of the argument is in parentheses, followed by line break, followed by lower case half-sentence ending with a full stop.</p>
+</li>
+<li><p>For references to other help pages use the corresponding markdown syntax, e.g. <code>[function()]</code> to reference other functions.</p></li>
+<li><p>Exported objects must be included in the <code>_pkgdown.yml</code> file to be populated on the <code>pkgdown</code> <a href="https://openpharma.github.io/mmrm/main/reference/index.html">website</a>.</p></li>
+<li><p>In vignettes, you cannot directly reference help pages but only <code>pkgdown</code> web pages. Note that this includes only exported objects. To make it look similar to the help page references, please here also use <code>function()</code> style.</p></li>
 </ul></div>
 </div>
 <div class="section level2">
@@ -180,7 +193,7 @@
 <h3 id="add-new-unit-tests">Add new unit tests<a class="anchor" aria-label="anchor" href="#add-new-unit-tests"></a></h3>
 <p>To add a new unit test, you need to first identify the test scope. Does the test fit in the scope of existing tests? If so, please modify the existing test files under <code>tests/testthat/</code> folder or <code>src/</code> folder, depending on whether the code to be tested is R or C++. Otherwise please create a new test file, with a name prefix of “test-”.</p>
 <p>In each test case, use the following structure:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">test_that</span><span class="op">(</span><span class="st">"function_name does something as expected"</span>, <span class="op">{</span></span>
 <span>  <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">function_name</span><span class="op">(</span><span class="va">input</span><span class="op">)</span></span>
 <span>  <span class="va">expected</span> <span class="op">&lt;-</span> <span class="va">hardcoded_result</span></span>
