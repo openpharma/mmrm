@@ -184,6 +184,17 @@ refit_multiple_optimizers <- function(fit,
 #' @param drop_visit_levels (`flag`)\cr whether to drop levels for visit variable, if visit variable is a factor.
 #' @param ... Additional arguments passed to [h_get_optimizers()].
 #'
+#' @details
+#' `drop_visit_levels`:
+#' This flag will decide whether unobserved visits will be kept for analysis.
+#' For example, if you have only VIS1, VIS3 and VIS4, by default
+#' they are treated to be equally spaced, the distance from VIS1 to VIS3, and from VIS3 to VIS4,
+#' are both 1. However, you can manually convert this visit into a factor, with
+#' `levels = c("VIS1", "VIS2", "VIS3", "VIS4")`, and also use `drop_visits_levels = FALSE`,
+#' then the distance from VIS1 to VIS3 will be 2, as "VIS2" is a valid visit.
+#' However, please be cautious because this can lead to convergence issues for unstructured covariance
+#' structure because there are no observations at that missing visit.
+#'
 #' @return List of class `mmrm_control` with the control parameters.
 #' @export
 #'

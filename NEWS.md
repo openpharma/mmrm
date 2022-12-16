@@ -12,14 +12,10 @@
   In addition, `optimizer = "automatic"` is deprecated and will give you warning. It is a default behavior now to
   try all optimizers (if multiple optimizer provided) if the first optimizer fails.
 - Add new argument `drop_visit_levels` to allow users to keep all levels in visits. This allows user to specify the distance of
-  visits, e.g., for ar1 covariance structure, if you have VIS1, VIS3 and VIS4 as available visits, by default all visits
-  are equally spaced, the distance from VIS1 to VIS3, and the distance from VIS3 to VIS4 are both 1.
-  This behavior, of dropping levels, is done silently, while in this version, a warning will be raised about the dropped level.
-  However, you can convert the visit into factors, with `levels = c("VIS1", "VIS2", "VIS3", "VIS4)`, and use
-  `drop_visit_levels = FALSE`, the visits observed will not be equally spaced:
-  the distance from VIS1 to VIS3 is 2, while the distance from VIS3 to VIS4 is 1.
+  visits. Dropping levels is done silently previously, and now a warning will be raised about the dropped levels.
   Please note that for some covariance structure, like unstructured, there will be warnings like model convergence problem
   with missed visits because this kept empty level without observation will lead to inestimable result.
+  Check `mmrm_control` to see more details.
 ### Bug Fixes
 
 - Previously duplicate time points could be present for a single subject,
