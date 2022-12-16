@@ -194,6 +194,7 @@ h_mmrm_tmb_formula_parts <- function(formula) {
 #' @param accept_singular (`flag`)\cr whether below full rank design matrices are reduced
 #'   to full rank `x_matrix` and remaining coefficients will be missing as per
 #'   `x_cols_aliased`. Otherwise the function fails for rank deficient design matrices.
+#' @param drop_visit_levels (`flag`)\cr whether to drop levels for visit variable, if visit variable is a factor.
 #'
 #' @return List of class `mmrm_tmb_data` with elements:
 #' - `full_frame`: `data.frame` with `n` rows containing all variables needed in the model.
@@ -228,7 +229,8 @@ h_mmrm_tmb_data <- function(formula_parts,
                             data,
                             weights,
                             reml,
-                            accept_singular) {
+                            accept_singular,
+                            drop_visit_levels) {
   assert_class(formula_parts, "mmrm_tmb_formula_parts")
   assert_data_frame(data)
   varname <- formula_parts[grepl("_var", names(formula_parts))]
@@ -240,6 +242,7 @@ h_mmrm_tmb_data <- function(formula_parts,
   assert_numeric(weights, len = nrow(data))
   assert_flag(reml)
   assert_flag(accept_singular)
+  assert_flag(drop_visit_levels)
 
   if (is.character(data[[formula_parts$subject_var]])) {
     data[[formula_parts$subject_var]] <- factor(
@@ -265,9 +268,19 @@ h_mmrm_tmb_data <- function(formula_parts,
   data <- data.frame(data, weights)
   # weights is always the last column
   weights_name <- colnames(data)[ncol(data)]
-  full_frame <- droplevels(eval(
+  full_frame <- eval(
     bquote(stats::model.frame(formula_parts$full_formula, data = data, weights = .(as.symbol(weights_name))))
-  ))
+  )
+  full_frame <- droplevels(full_frame, except = formula_parts$visit_var)
+  if (drop_visit_levels && !formula_parts$is_spatial && is.factor(full_frame[[formula_parts$visit_var]])) {
+    old_levels <- levels(full_frame[[formula_parts$visit_var]])
+    full_frame[[formula_parts$visit_var]] <- droplevels(full_frame[[formula_parts$visit_var]])
+    new_levels <- levels(full_frame[[formula_parts$visit_var]])
+    dropped <- setdiff(old_levels, new_levels)
+    if (length(dropped) > 0) {
+      warning("In ", formula_parts$visit_var, " there are dropped visits: ", toString(dropped))
+    }
+  }
 
   x_matrix <- stats::model.matrix(formula_parts$model_formula, data = full_frame)
   x_cols_aliased <- stats::setNames(rep(FALSE, ncol(x_matrix)), nm = colnames(x_matrix))
@@ -583,7 +596,10 @@ fit_mmrm <- function(formula,
   assert_list(control$optimizers, min.len = 1)
   assert_numeric(weights, any.missing = FALSE)
   assert_true(all(weights > 0))
-  tmb_data <- h_mmrm_tmb_data(formula_parts, data, weights, reml, accept_singular = control$accept_singular)
+  tmb_data <- h_mmrm_tmb_data(
+    formula_parts, data, weights, reml,
+    accept_singular = control$accept_singular, drop_visit_levels = control$drop_visit_levels
+  )
   tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = control$start, n_groups = tmb_data$n_groups)
 
   tmb_object <- TMB::MakeADFun(

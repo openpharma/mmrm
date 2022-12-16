@@ -11,6 +11,11 @@
   `mmrm(..., start = start, optimizer = c("BFGS", "nlminb"))`. These arguments will go into `mmrm_control`.
   In addition, `optimizer = "automatic"` is deprecated and will give you warning. It is a default behavior now to
   try all optimizers (if multiple optimizer provided) if the first optimizer fails.
+- Add new argument `drop_visit_levels` to allow users to keep all levels in visits. This allows user to specify the distance of
+  visits. Dropping levels is done silently previously, and now a warning will be raised about the dropped levels.
+  Please note that for some covariance structure, like unstructured, there will be warnings like model convergence problem
+  with missed visits because this kept empty level without observation will lead to inestimable result.
+  Check `mmrm_control` to see more details.
 ### Bug Fixes
 
 - Previously duplicate time points could be present for a single subject,
