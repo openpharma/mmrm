@@ -77,8 +77,8 @@ struct chols {
   std::map<std::vector<int>, matrix<Type>> sigma_inverse_d1_cache;
   std::map<std::vector<int>, Eigen::SparseMatrix<Type>> sel_mat_cache;
   std::string cov_type;
-  std::vector<int> full_visit;
   int n_visits;
+  std::vector<int> full_visit;
   int n_theta; // theta.size()
   vector<Type> theta;
   matrix<Type> chol_full;
@@ -86,7 +86,7 @@ struct chols {
     // this default constructor is needed because the use of `[]`.
   }
   // constructor from theta, n_visits and cov_type, and cache full_visits values
-  chols(vector<Type> theta, int n_visits, std::string cov_type): n_visits(n_visits), cov_type(cov_type), full_visit(std::vector<int>(n_visits)) {
+  chols(vector<Type> theta, int n_visits, std::string cov_type): cov_type(cov_type), n_visits(n_visits), full_visit(std::vector<int>(n_visits)) {
     this->theta = theta;
     for (int i = 0; i < n_visits; i++) {
       this->full_visit[i] = i;
@@ -149,7 +149,6 @@ struct chols {
       return this->sigma_cache[visits];
     } else {
       Eigen::SparseMatrix<Type> sel_mat = this->get_sel_mat(visits);
-      int n_visists_i = visits.size();
       matrix<Type> ret = sel_mat * this->sigma_cache[this->full_visit] * sel_mat.transpose();
       this->sigma_cache[visits] = ret;
       return ret;

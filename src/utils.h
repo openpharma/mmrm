@@ -20,7 +20,7 @@ Eigen::SparseMatrix<Type> get_select_matrix(const vector<int>& visits_i, const i
 template <class Type>
 Eigen::SparseMatrix<Type> get_select_matrix(const std::vector<int>& visits_i, const int& n_visits) {
   Eigen::SparseMatrix<Type> result(visits_i.size(), n_visits);
-  for (int i = 0; i < visits_i.size(); i++) {
+  for (std::size_t i = 0, max = visits_i.size(); i != max; ++i) {
     result.insert(i, visits_i[i]) = (Type) 1.0;
   }
   return result;
