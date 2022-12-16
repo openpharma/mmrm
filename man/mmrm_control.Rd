@@ -9,6 +9,7 @@ mmrm_control(
   method = c("Satterthwaite", "Kenward-Roger", "Kenward-Roger-Linear"),
   start = NULL,
   accept_singular = TRUE,
+  drop_visit_levels = TRUE,
   ...,
   optimizers = h_get_optimizers(...)
 )
@@ -23,6 +24,8 @@ parameters.}
 
 \item{accept_singular}{(\code{flag})\cr whether singular design matrices are reduced
 to full rank automatically and additional coefficient estimates will be missing.}
+
+\item{drop_visit_levels}{(\code{flag})\cr whether to drop levels for visit variable, if visit variable is a factor.}
 
 \item{...}{Additional arguments passed to \code{\link[=h_get_optimizers]{h_get_optimizers()}}.}
 

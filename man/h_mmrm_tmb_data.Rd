@@ -4,7 +4,14 @@
 \alias{h_mmrm_tmb_data}
 \title{Data for \code{TMB} Fit}
 \usage{
-h_mmrm_tmb_data(formula_parts, data, weights, reml, accept_singular)
+h_mmrm_tmb_data(
+  formula_parts,
+  data,
+  weights,
+  reml,
+  accept_singular,
+  drop_visit_levels = TRUE
+)
 }
 \arguments{
 \item{formula_parts}{(\code{mmrm_tmb_formula_parts})\cr list with formula parts

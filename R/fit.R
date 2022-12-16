@@ -181,6 +181,7 @@ refit_multiple_optimizers <- function(fit,
 #' @param accept_singular (`flag`)\cr whether singular design matrices are reduced
 #'   to full rank automatically and additional coefficient estimates will be missing.
 #' @param optimizers (`list`)\cr of optimizers created from [h_get_optimizers()].
+#' @param drop_visit_levels (`flag`)\cr whether to drop levels for visit variable, if visit variable is a factor.
 #' @param ... Additional arguments passed to [h_get_optimizers()].
 #'
 #' @return List of class `mmrm_control` with the control parameters.
@@ -195,12 +196,14 @@ mmrm_control <- function(n_cores = 1L,
                          method = c("Satterthwaite", "Kenward-Roger", "Kenward-Roger-Linear"),
                          start = NULL,
                          accept_singular = TRUE,
+                         drop_visit_levels = TRUE,
                          ...,
                          optimizers = h_get_optimizers(...)) {
   assert_int(n_cores, lower = 1L)
   assert_character(method)
   assert_numeric(start, null.ok = TRUE)
   assert_flag(accept_singular)
+  assert_flag(drop_visit_levels)
   assert_list(optimizers, names = "unique", types = c("function", "partial"))
   method <- match.arg(method)
   structure(
@@ -209,7 +212,8 @@ mmrm_control <- function(n_cores = 1L,
       start = start,
       accept_singular = accept_singular,
       method = method,
-      n_cores = as.integer(n_cores)
+      n_cores = as.integer(n_cores),
+      drop_visit_levels = drop_visit_levels
     ),
     class = "mmrm_control"
   )

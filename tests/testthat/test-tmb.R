@@ -11,7 +11,8 @@ test_that("mmrm_control works as expected", {
       start = NULL,
       accept_singular = TRUE,
       method = "Satterthwaite",
-      n_cores = 1L
+      n_cores = 1L,
+      drop_visit_levels = TRUE
     ),
     class = "mmrm_control"
   )
@@ -1609,15 +1610,58 @@ test_that("h_mmrm_tmb works even when time point variable has unused factor leve
   tmp_data$AVISIT[1] <- "SCREENING" # nolint
   tmp_data$AVISIT <- as.factor(tmp_data$AVISIT) # nolint
 
-  result <- expect_silent(fit_mmrm(
+  expect_warning(result <- fit_mmrm(
     FEV1 ~ FEV1_BL + RACE + us(AVISIT | USUBJID),
     data = tmp_data,
     weights = rep(1, nrow(tmp_data))
-  ))
+  ), "In AVISIT there are dropped visits: SCREENING")
   expect_class(result, "mmrm_tmb")
   expect_identical(
     rownames(VarCorr(result)),
     c("VIS1", "VIS2", "VIS3", "VIS4")
+  )
+})
+
+test_that("h_mmrm_tmb works if we keep the unused factor levels for specific covariance structure", {
+  # Create a data set where one visit level only has NA in the data.
+  tmp_data <- fev_data
+  tmp_data$FEV1_BL[1] <- tmp_data$FEV1[1] <- NA # nolint
+  tmp_data$AVISIT <- as.character(tmp_data$AVISIT) # nolint
+  tmp_data$AVISIT[1] <- "SCREENING" # nolint
+  tmp_data$AVISIT <- as.factor(tmp_data$AVISIT) # nolint
+
+  expect_silent(result <- fit_mmrm(
+    FEV1 ~ FEV1_BL + RACE + ar1(AVISIT | USUBJID),
+    data = tmp_data,
+    weights = rep(1, nrow(tmp_data)),
+    control = mmrm_control(drop_visit_levels = FALSE))
+  )
+  expect_class(result, "mmrm_tmb")
+  expect_identical(
+    rownames(VarCorr(result)),
+    c("SCREENING", "VIS1", "VIS2", "VIS3", "VIS4")
+  )
+})
+
+test_that("h_mmrm_tmb warns if we keep the unused factor levels for unstructured covariance", {
+  # Create a data set where one visit level only has NA in the data.
+  tmp_data <- fev_data
+  tmp_data$FEV1_BL[1] <- tmp_data$FEV1[1] <- NA # nolint
+  tmp_data$AVISIT <- as.character(tmp_data$AVISIT) # nolint
+  tmp_data$AVISIT[1] <- "SCREENING" # nolint
+  tmp_data$AVISIT <- as.factor(tmp_data$AVISIT) # nolint
+
+  expect_warning(result <- fit_mmrm(
+    FEV1 ~ FEV1_BL + RACE + us(AVISIT | USUBJID),
+    data = tmp_data,
+    weights = rep(1, nrow(tmp_data)),
+    control = mmrm_control(drop_visit_levels = FALSE)),
+    "Model convergence problem: hessian is singular, theta_vcov not available"
+  )
+  expect_class(result, "mmrm_tmb")
+  expect_identical(
+    rownames(VarCorr(result)),
+    c("SCREENING", "VIS1", "VIS2", "VIS3", "VIS4")
   )
 })
 
