@@ -1,5 +1,5 @@
 <!-- markdownlint-disable-file -->
-<!-- CONTRIBUTING.md needs to be generated from CONTRIBUTING.Rmd. Please edit that file -->
+<!-- Please edit only the Rmd file, and then knit to obtain CONTRIBUTING.md -->
 
 # Contributing
 
@@ -28,19 +28,23 @@ deviate from this are explained below.
 
 ### Imports
 
-In package `mmrm`, we follow the following convention in package imports.
+In package `mmrm`, we follow the following convention in package
+imports.
 
-1. When only a few functions from another package are needed:
-    1. In `DESCRIPTION`, add that package into `Imports`.
-    1. In `mmrm-package.R`, we add a `importFrom` with a single function from the package.
-        1. The function imported can be any random function within the package.
-    1. Always use `package::function` style wherever you need to use the function.
-    1. Example: `stats`.
-1. When many functions from another package are needed:
-    1. In `DESCRIPTION`, add that package into `Imports`.
-    1. In `mmrm-package.R`, we use a `import` to import every function.
-    1. Use the functions directly without prefix.
-    1. Example: `checkmate`.
+1.  When only a few functions from another package are needed:
+    1.  In `DESCRIPTION`, add that package into `Imports`.
+    2.  In `mmrm-package.R`, we add a `importFrom` with a single
+        function from the package.
+        1.  The function imported can be any random function within the
+            package.
+    3.  Always use `package::function` style wherever you need to use
+        the function.
+    4.  Example: `stats`.
+2.  When many functions from another package are needed:
+    1.  In `DESCRIPTION`, add that package into `Imports`.
+    2.  In `mmrm-package.R`, we use a `import` to import every function.
+    3.  Use the functions directly without prefix.
+    4.  Example: `checkmate`.
 
 ### Comments
 
@@ -48,6 +52,41 @@ In package `mmrm`, we follow the following convention in package imports.
 - Comments should be as minimal as possible: Generally the code and
   variable names should be clear enough to not need any comments. Only
   use them when needed and explain the “Why” and not the “What”.
+
+### Documentation
+
+- All functions must be documented using `roxygen2` chunks, including
+  internal functions (see also above).
+
+- Exported objects must have a `lifecycle` badge to clarify the
+  maturity.
+
+  - Start with `"experimental"` status and consider upgrading to
+    `"stable"` once the interface has been stable for several months.
+
+- Use `Title Style` for the title of the documentation.
+
+- Always include a `@description` part with at least one sentence
+  describing the object.
+
+- For the arguments use the following convention:
+
+      @param formula (`formula`)\cr the model formula, see details.
+
+  So the type of the argument is in parentheses, followed by line break,
+  followed by lower case half-sentence ending with a full stop.
+
+- For references to other help pages use the corresponding markdown
+  syntax, e.g. `[function()]` to reference other functions.
+
+- Exported objects must be included in the `_pkgdown.yml` file to be
+  populated on the `pkgdown`
+  [website](https://openpharma.github.io/mmrm/main/reference/index.html).
+
+- In vignettes, you cannot directly reference help pages but only
+  `pkgdown` web pages. Note that this includes only exported objects. To
+  make it look similar to the help page references, please here also use
+  `function()` style.
 
 ## Github conventions
 
@@ -58,15 +97,15 @@ When using github to collaborate, the following conventions are needed:
     - If you are going to work on this issue, please assign yourself.
 2.  Please create a branch in the `mmrm` repository, instead of creating
     forks, unless you are not yet a team member.
-    - Branches should be associated with a GitHub issue and linked to
-      an issue id.
+    - Branches should be associated with a GitHub issue and linked to an
+      issue id.
     - The name of a branch should be of the form:
       `<issue_id>_<short_discription>`.
 3.  Add changes to the branch and push it to github.
     - Please use clear commit messages.
     - Please keep your changes focused on the issue. If there are
-      independent changes, please separate it into another PR linking
-      to another issue.
+      independent changes, please separate it into another PR linking to
+      another issue.
 4.  Please create a Pull Request when you think your code changes are
     ready:
     - Functions are well documented.
