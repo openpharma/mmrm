@@ -1585,7 +1585,7 @@ test_that("h_mmrm_tmb works with sp_exp covariance structure and REML(2-dimensio
 
 ## misc ----
 
-test_that("h_mmrm_tmb also works with character ID variable", {
+test_that("fit_mmrm also works with character ID variable", {
   formula <- FEV1 ~ us(AVISIT | USUBJID)
   data <- fev_data
   data$USUBJID <- as.character(data$USUBJID) # nolint
@@ -1594,7 +1594,7 @@ test_that("h_mmrm_tmb also works with character ID variable", {
   expect_identical(result$beta_est, expected$beta_est)
 })
 
-test_that("h_mmrm_tmb saves data name in call element as expected", {
+test_that("fit_mmrm saves data name in call element as expected", {
   formula <- FEV1 ~ us(AVISIT | USUBJID)
   fit <- fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)))
   saved_call <- fit$call
@@ -1602,14 +1602,9 @@ test_that("h_mmrm_tmb saves data name in call element as expected", {
   expect_identical(saved_call$data, "fev_data")
 })
 
-test_that("h_mmrm_tmb works even when time point variable has unused factor levels", {
-  # Create a data set where one visit level only has NA in the data.
+test_that("fit_mmrm works even when time point variable has unused factor levels", {
   tmp_data <- fev_data
-  tmp_data$FEV1_BL[1] <- tmp_data$FEV1[1] <- NA # nolint
-  tmp_data$AVISIT <- as.character(tmp_data$AVISIT) # nolint
-  tmp_data$AVISIT[1] <- "SCREENING" # nolint
-  tmp_data$AVISIT <- as.factor(tmp_data$AVISIT) # nolint
-
+  tmp_data$AVISIT <- factor(tmp_data$AVISIT, levels = c("SCREENING", "VIS1", "VIS2", "VIS3", "VIS4"))
   expect_warning(result <- fit_mmrm(
     FEV1 ~ FEV1_BL + RACE + us(AVISIT | USUBJID),
     data = tmp_data,
@@ -1622,13 +1617,9 @@ test_that("h_mmrm_tmb works even when time point variable has unused factor leve
   )
 })
 
-test_that("h_mmrm_tmb works if we keep the unused factor levels for specific covariance structure", {
-  # Create a data set where one visit level only has NA in the data.
+test_that("fit_mmrm works if we keep the unused factor levels for specific covariance structure", {
   tmp_data <- fev_data
-  tmp_data$FEV1_BL[1] <- tmp_data$FEV1[1] <- NA # nolint
-  tmp_data$AVISIT <- as.character(tmp_data$AVISIT) # nolint
-  tmp_data$AVISIT[1] <- "SCREENING" # nolint
-  tmp_data$AVISIT <- as.factor(tmp_data$AVISIT) # nolint
+  tmp_data$AVISIT <- factor(tmp_data$AVISIT, levels = c("SCREENING", "VIS1", "VIS2", "VIS3", "VIS4"))
 
   expect_silent(result <- fit_mmrm(
     FEV1 ~ FEV1_BL + RACE + ar1(AVISIT | USUBJID),
@@ -1643,13 +1634,9 @@ test_that("h_mmrm_tmb works if we keep the unused factor levels for specific cov
   )
 })
 
-test_that("h_mmrm_tmb warns if we keep the unused factor levels for unstructured covariance", {
-  # Create a data set where one visit level only has NA in the data.
+test_that("fit_mmrm warns if we keep the unused factor levels for unstructured covariance", {
   tmp_data <- fev_data
-  tmp_data$FEV1_BL[1] <- tmp_data$FEV1[1] <- NA # nolint
-  tmp_data$AVISIT <- as.character(tmp_data$AVISIT) # nolint
-  tmp_data$AVISIT[1] <- "SCREENING" # nolint
-  tmp_data$AVISIT <- as.factor(tmp_data$AVISIT) # nolint
+  tmp_data$AVISIT <- factor(tmp_data$AVISIT, levels = c("SCREENING", "VIS1", "VIS2", "VIS3", "VIS4"))
 
   expect_warning(result <- fit_mmrm(
     FEV1 ~ FEV1_BL + RACE + us(AVISIT | USUBJID),
@@ -1665,7 +1652,7 @@ test_that("h_mmrm_tmb warns if we keep the unused factor levels for unstructured
   )
 })
 
-test_that("h_mmrm_tmb works with below full rank original design matrix by default", {
+test_that("fit_mmrm works with below full rank original design matrix by default", {
   formula <- FEV1 ~ RACE + SEX + SEX2 + ARMCD * AVISIT + us(AVISIT | USUBJID)
   dat <- fev_data
   dat$SEX2 <- dat$SEX # nolint
