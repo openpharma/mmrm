@@ -194,6 +194,7 @@ h_mmrm_tmb_formula_parts <- function(formula) {
 #' @param accept_singular (`flag`)\cr whether below full rank design matrices are reduced
 #'   to full rank `x_matrix` and remaining coefficients will be missing as per
 #'   `x_cols_aliased`. Otherwise the function fails for rank deficient design matrices.
+#' @param drop_visit_levels (`flag`)\cr whether to drop levels for visit variable, if visit variable is a factor.
 #'
 #' @return List of class `mmrm_tmb_data` with elements:
 #' - `full_frame`: `data.frame` with `n` rows containing all variables needed in the model.
@@ -229,7 +230,7 @@ h_mmrm_tmb_data <- function(formula_parts,
                             weights,
                             reml,
                             accept_singular,
-                            drop_visit_levels = TRUE) {
+                            drop_visit_levels) {
   assert_class(formula_parts, "mmrm_tmb_formula_parts")
   assert_data_frame(data)
   varname <- formula_parts[grepl("_var", names(formula_parts))]
