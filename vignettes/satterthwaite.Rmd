@@ -103,7 +103,7 @@ When $c > 1$ we are testing multiple contrasts at once. Here an F-statistic
 F = \frac{1}{c} (C\hat\beta)^\top  (C \Phi(\hat\theta) C^\top)^{-1} C^\top (C\hat\beta)
 \]
 is calculated, and we are interested in estimating an appropriate denominator degrees of freedom for $F$,
-while assuming $c$ numerator degrees of freedom. Note that only in special cases,
+while assuming $c$ are the numerator degrees of freedom. Note that only in special cases,
 such as orthogonal or balanced designs, the F distribution will be exact under the
 null hypothesis. In general, it is an approximation.
 
