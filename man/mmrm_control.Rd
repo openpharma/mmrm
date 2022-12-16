@@ -37,6 +37,17 @@ List of class \code{mmrm_control} with the control parameters.
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
+\details{
+\code{drop_visit_levels}:
+This flag will decide whether unobserved visits will be kept for analysis.
+For example, if you have only VIS1, VIS3 and VIS4, by default
+they are treated to be equally spaced, the distance from VIS1 to VIS3, and from VIS3 to VIS4,
+are both 1. However, you can manually convert this visit into a factor, with
+\code{levels = c("VIS1", "VIS2", "VIS3", "VIS4")}, and also use \code{drop_visits_levels = FALSE},
+then the distance from VIS1 to VIS3 will be 2, as "VIS2" is a valid visit.
+However, please be cautious because this can lead to convergence issues for unstructured covariance
+structure because there are no observations at that missing visit.
+}
 \examples{
 mmrm_control(
   optimizer_fun = stats::optim,
