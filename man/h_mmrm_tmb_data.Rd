@@ -10,7 +10,7 @@ h_mmrm_tmb_data(
   weights,
   reml,
   accept_singular,
-  drop_visit_levels = TRUE
+  drop_visit_levels
 )
 }
 \arguments{
@@ -27,6 +27,8 @@ otherwise maximum likelihood (ML) is used.}
 \item{accept_singular}{(\code{flag})\cr whether below full rank design matrices are reduced
 to full rank \code{x_matrix} and remaining coefficients will be missing as per
 \code{x_cols_aliased}. Otherwise the function fails for rank deficient design matrices.}
+
+\item{drop_visit_levels}{(\code{flag})\cr whether to drop levels for visit variable, if visit variable is a factor.}
 }
 \value{
 List of class \code{mmrm_tmb_data} with elements:
