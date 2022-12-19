@@ -39,7 +39,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5.9016</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -65,12 +65,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -104,12 +98,13 @@
 
     
     
-<p>Here we describe the details of the Kenward-Roger degrees of freedom
-and adjusted covariance matrix calculations.</p>
+<p>Here we describe the details of the calculations for the
+Kenward-Roger degrees of freedom and the adjusted covariance matrix of
+the coefficients.</p>
 <div class="section level3">
 <h3 id="model-definition">Model definition<a class="anchor" aria-label="anchor" href="#model-definition"></a>
 </h3>
-<p>The model definition is the same as what we have in <a href="algorithms.html">Details of the model fitting in
+<p>The model definition is the same as what we have in <a href="algorithm.html">Details of the model fitting in
 <code>mmrm</code></a>. We are using the same notations.</p>
 <div class="section level4">
 <h4 id="linear-model">Linear model<a class="anchor" aria-label="anchor" href="#linear-model"></a>
@@ -153,7 +148,7 @@ diagonal and 0 in the remaining entries.</p>
 <p>The mathematical derivation of the Kenward-Roger method is based on
 the Taylor expansion of the obtained covariance matrix of <span class="math inline">\(\hat\beta\)</span> to get a more accurate estimate
 for it. All these derivations are based on the restricted maximum
-likelihood. Following the same <a href="algorithms.html#covariance-matrix-model">notation</a>, the
+likelihood. Following the same <a href="algorithm.html#covariance-matrix-model">notation</a>, the
 covariance matrix, <span class="math inline">\(\Omega\)</span> can be
 represented as a function of covariance matrix parameters <span class="math inline">\(\theta = (\theta_1, \dotsc,
 \theta_k)^\top\)</span>, i.e. <span class="math inline">\(\Omega(\theta)\)</span>. Here after model fitting
@@ -379,9 +374,9 @@ C^\top (\hat\beta - \beta)
 \]</span> follows exact <span class="math inline">\(F_{c,m}\)</span>
 distribution.</p>
 <p>When we have only one coefficient to test, then <span class="math inline">\(C\)</span> is a column vector containing a single
-<span class="math inline">\(1\)</span> inside. The hypothesis testing is
-still the same and is similar to the Satterthwaite method. We can still
-follow the same calculations as for the multi-dimensional case.</p>
+<span class="math inline">\(1\)</span> inside. We can still follow the
+same calculations as for the multi-dimensional case. This recovers the
+degrees of freedom results of the Satterthwaite method.</p>
 <p><span class="math inline">\(\lambda\)</span> and <span class="math inline">\(m\)</span> can be calculated through</p>
 <p><span class="math display">\[
   M = C (C^\top \Phi C)^{-1} C^\top
@@ -445,7 +440,7 @@ Association</em> 79 (388): 853–62. <a href="https://doi.org/10.1080/01621459.1
 <div id="ref-kenward1997" class="csl-entry">
 Kenward, Michael G., and James H. Roger. 1997. <span>“Small Sample
 Inference for Fixed Effects from Restricted Maximum Likelihood.”</span>
-<em>Biometrics</em> 53 (3): 983–97. <a href="http://www.jstor.org/stable/2533558" class="external-link">http://www.jstor.org/stable/2533558</a>.
+<em>Biometrics</em> 53 (3): 983–97. <a href="https://doi.org/10.2307/2533558" class="external-link">https://doi.org/10.2307/2533558</a>.
 </div>
 </div>
 </div>

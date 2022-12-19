@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5.9016</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,12 +41,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -85,40 +79,44 @@
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>optimizer</dt>
-<dd><p>(<code>character</code>)<br> optimizer character. Only "L-BFGS-B", "BFGS", "CG" and "nlminb" supported.</p></dd>
+<dd><p>(<code>character</code>)<br> names of built-in optimizers to try, subset
+of "L-BFGS-B", "BFGS", "CG" and "nlminb".</p></dd>
 
 
 <dt>optimizer_fun</dt>
-<dd><p>(<code>function</code>)<br> or (<code>list</code>)<br> of (<code>function</code>)x<br>.</p></dd>
+<dd><p>(<code>function</code> or <code>list</code> of <code>function</code>)<br> alternatively to <code>optimizer</code>,
+an optimizer function or a list of optimizer functions can be passed directly here.</p></dd>
 
 
 <dt>optimizer_args</dt>
-<dd><p>(<code>list</code>)<br> of additional arguments for <code>optimizer_fun</code>.</p></dd>
+<dd><p>(<code>list</code>)<br> additional arguments for <code>optimizer_fun</code>.</p></dd>
 
 
 <dt>optimizer_control</dt>
-<dd><p>(<code>list</code>)<br> of control argument. Will serve as <code>control</code> in <code>optimizer_fun</code>.</p></dd>
+<dd><p>(<code>list</code>)<br> passed to argument <code>control</code> in <code>optimizer_fun</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>Named <code>list</code> of optimizers created by <code><a href="h_optimizer_fun.html">h_optimizer_fun()</a></code>.</p>
+<p>Named <code>list</code> of optimizers created by <code><a href="h_partial_fun_args.html">h_partial_fun_args()</a></code>.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>In this function, the final object to use is <code>optimizer_fun</code>, and <code>optimizer</code> is a shortcut to create
-multiple <code>optimizer_fun</code>. If you want to use your own optimizer function, make sure that there are three arguments,
-parameter(start value), objective function and gradient function are sequentially in the function arguments.
-If there are other named arguments in front of these, make sure they are correctly specified through
-<code>optimizer_args</code>. If hessian function can be applied, please make sure its argument name is <code>hessian</code> and
-please add attribute <code>use_hessian = TRUE</code> to the function, using <code>attr(fun, "use_hessian) &lt;- TRUE</code>
-If <code>optimizer_fun</code> is not provided, it will be created using the <code>optimizer</code> character. Other arguments should
-go into <code>optimizer_args</code>.
-Allowed are "L-BFGS-B", "BFGS", "CG"(using <code><a href="https://rdrr.io/r/stats/optim.html" class="external-link">stats::optim()</a></code> with corresponding method) and
-"nlminb"(using <code><a href="https://rdrr.io/r/stats/nlminb.html" class="external-link">stats::nlminb()</a></code>).</p>
-    </div>
+    <p>If you want to use only the built-in optimizers:</p><ul><li><p><code>optimizer</code> is a shortcut to create a list of built-in optimizer functions
+passed to <code>optimizer_fun</code>.</p></li>
+<li><p>Allowed are "L-BFGS-B", "BFGS", "CG" (using <code><a href="https://rdrr.io/r/stats/optim.html" class="external-link">stats::optim()</a></code> with corresponding method)
+and "nlminb" (using <code><a href="https://rdrr.io/r/stats/nlminb.html" class="external-link">stats::nlminb()</a></code>).</p></li>
+<li><p>Other arguments should go into <code>optimizer_args</code>.</p></li>
+</ul><p>If you want to use your own optimizer function:</p><ul><li><p>Make sure that there are three arguments: parameter (start value), objective function
+and gradient function are sequentially in the function arguments.</p></li>
+<li><p>If there are other named arguments in front of these, make sure they are correctly
+specified through <code>optimizer_args</code>.</p></li>
+<li><p>If the hessian can be used, please make sure its argument name is <code>hessian</code> and
+please add attribute <code>use_hessian = TRUE</code> to the function,
+using <code>attr(fun, "use_hessian) &lt;- TRUE</code>.</p></li>
+</ul></div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>

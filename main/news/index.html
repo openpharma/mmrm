@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5.9016</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,12 +41,6 @@
 <li class="active nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -68,14 +62,22 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.1.5.9016" id="mmrm-0159016">mmrm 0.1.5.9016<a class="anchor" aria-label="anchor" href="#mmrm-0159016"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.2.1" id="mmrm-021">mmrm 0.2.1<a class="anchor" aria-label="anchor" href="#mmrm-021"></a></h2>
 <div class="section level4">
-<h4 id="new-features-0-1-5-9016">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-1-5-9016"></a></h4>
-<ul><li><p>Add support for Kenward-Roger adjusted covariance and degree of freedom in <code>mmrm</code> function call with argument <code>method</code>. It now accepts “Kenward-Roger”, “Kenward-Roger-Linear” or “Satterthwaite” (which is still the default). Subsequent <code>summary</code>, <code>print</code> or <code>component</code> calls will also be based on this <code>method</code> argument, e.g. <code>component(fit, "beta_vcov")</code> will return the adjusted covariance matrix if a Kenward-Roger method has been used.</p></li>
-<li><p>Update the <code>mmrm</code> arguments to allow users to input the control arguments directly in <code>mmrm</code> function, e.g. <code>mmrm(..., start = start, optimizer = c("BFGS", "nlminb"))</code>. These arguments will go into <code>mmrm_control</code>. In addition, <code>optimizer = "automatic"</code> is deprecated and will give you warning. It is a default behavior now to try all optimizers (if multiple optimizer provided) if the first optimizer fails. ### Bug Fixes</p></li>
-<li><p>Previously duplicate time points could be present for a single subject, and this could lead to segmentation faults if more than the total number of unique time points were available for any subject. Now it is checked that there are no duplicate time points per subject, and this is explained also in the function documentation and the introduction vignette.</p></li>
-<li><p>Previously in <code>mmrm</code> calls, the <code>weights</code> object in the environment where formula is defined will be replaced by the <code>weights</code> used internally. Now this behavior is removed and your variable <code>weights</code> e.g. in the global environment will not be replaced. ### Miscellaneous</p></li>
-<li><p>Deprecated <code><a href="../reference/free_cores.html">free_cores()</a></code> in favor of <code>parallelly::availableCores(omit = 1)</code>.</p></li>
+<h4 id="new-features-0-2-1">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-2-1"></a></h4>
+<ul><li>Add support for Kenward-Roger adjusted coefficients covariance matrix and degrees of freedom in <code>mmrm</code> function call with argument <code>method</code>. Options are “Kenward-Roger”, “Kenward-Roger-Linear” and “Satterthwaite” (which is still the default). Subsequent methods calls will respect this initial choice, e.g. <code>vcov(fit)</code> will return the adjusted coefficients covariance matrix if a Kenward-Roger method has been used.</li>
+<li>Update the <code>mmrm</code> arguments to allow users more fine-grained control, e.g. <code>mmrm(..., start = start, optimizer = c("BFGS", "nlminb"))</code> to set the starting values for the variance estimates and to choose the available optimizers. These arguments will be passed to the new function <code>mmrm_control</code>.</li>
+<li>Add new argument <code>drop_visit_levels</code> to allow users to keep all levels in visits, even when they are not observed in the data. Dropping unobserved levels was done silently previously, and now a message will be given. See <code><a href="../reference/mmrm_control.html">?mmrm_control</a></code> for more details.</li>
+</ul></div>
+<div class="section level4">
+<h4 id="bug-fixes-0-2-1">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-2-1"></a></h4>
+<ul><li>Previously duplicate time points could be present for a single subject, and this could lead to segmentation faults if more than the total number of unique time points were available for any subject. Now it is checked that there are no duplicate time points per subject, and this is explained also in the function documentation and the introduction vignette.</li>
+<li>Previously in <code>mmrm</code> calls, the <code>weights</code> object in the environment where the formula is defined was replaced by the <code>weights</code> used internally. Now this behavior is removed and your variable <code>weights</code> e.g. in the global environment will no longer be replaced.</li>
+</ul></div>
+<div class="section level4">
+<h4 id="miscellaneous-0-2-1">Miscellaneous<a class="anchor" aria-label="anchor" href="#miscellaneous-0-2-1"></a></h4>
+<ul><li>Deprecated <code><a href="../reference/free_cores.html">free_cores()</a></code> in favor of <code>parallelly::availableCores(omit = 1)</code>.</li>
+<li>Deprecated <code>optimizer = "automatic"</code> in favor of not specifying the <code>optimizer</code>. By default, all remaining optimizers will be tried if the first optimizer fails to reach convergence.</li>
 </ul></div>
 </div>
     <div class="section level2">

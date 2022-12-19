@@ -18,7 +18,7 @@ This is the main function fitting the MMRM."><meta property="og:image" content="
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5.9016</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,12 +43,6 @@ This is the main function fitting the MMRM."><meta property="og:image" content="
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -108,11 +102,12 @@ otherwise maximum likelihood (ML) is used.</p></dd>
 
 
 <dt>control</dt>
-<dd><p>(<code>mmrm_control</code>)<br> object of mmrm fitting control.</p></dd>
+<dd><p>(<code>mmrm_control</code>)<br> fine-grained fitting specifications list
+created with <code><a href="mmrm_control.html">mmrm_control()</a></code>.</p></dd>
 
 
 <dt>...</dt>
-<dd><p>additional arguments for <code><a href="mmrm_control.html">mmrm_control()</a></code></p></dd>
+<dd><p>arguments passed to <code><a href="mmrm_control.html">mmrm_control()</a></code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -141,13 +136,21 @@ including <code>BFGS</code>, <code>CG</code> and <code>nlminb</code> are
 tried (in parallel if <code>n_cores</code> is set and not on Windows).
 If none of the optimizers converge, then the function fails. Otherwise
 the best fit is returned.</p>
+<p>Note that fine-grained control specifications can either be passed directly
+to the <code>mmrm</code> function, or via the <code>control</code> argument for bundling together
+with the <code><a href="mmrm_control.html">mmrm_control()</a></code> function. Both cannot be used together, since
+this would delete the arguments passed via <code>mmrm</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
     <p>The <code>mmrm</code> object is also an <code>mmrm_fit</code> and an <code>mmrm_tmb</code> object,
-therefore corresponding methods also work (see <code><a href="mmrm_tmb_methods.html">mmrm_tmb_methods</a></code>).
-In addition it contains the Jacobian information <code>jac_list</code> and the <code>call</code>.
-Use of the package <code>emmeans</code> is supported, see <code><a href="emmeans_support.html">emmeans_support</a></code>.</p>
+therefore corresponding methods also work (see <code><a href="mmrm_tmb_methods.html">mmrm_tmb_methods</a></code>).</p>
+<p>Additional contents depend on the choice of the adjustment <code>method</code>:</p><ul><li><p>If Satterthwaite adjustment is used, the Jacobian information <code>jac_list</code>
+is included.</p></li>
+<li><p>If Kenward-Roger adjustment is used, <code>kr_comp</code> contains necessary
+components and <code>beta_vcov_adj</code> includes the adjusted coefficients covariance
+matrix.</p></li>
+</ul><p>Use of the package <code>emmeans</code> is supported, see <code><a href="emmeans_support.html">emmeans_support</a></code>.</p>
     </div>
 
     <div class="section level2">
@@ -155,6 +158,22 @@ Use of the package <code>emmeans</code> is supported, see <code><a href="emmeans
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">mmrm</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">SEX</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  data <span class="op">=</span> <span class="va">fev_data</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Direct specification of control details:</span></span></span>
+<span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">mmrm</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">SEX</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="va">fev_data</span>,</span></span>
+<span class="r-in"><span>  weights <span class="op">=</span> <span class="va">fev_data</span><span class="op">$</span><span class="va">WEIGHTS</span>,</span></span>
+<span class="r-in"><span>  method <span class="op">=</span> <span class="st">"Kenward-Roger"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Alternative specification via control argument (but you cannot mix the</span></span></span>
+<span class="r-in"><span><span class="co"># two approaches):</span></span></span>
+<span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu">mmrm</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">SEX</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="va">fev_data</span>,</span></span>
+<span class="r-in"><span>  control <span class="op">=</span> <span class="fu"><a href="mmrm_control.html">mmrm_control</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"Kenward-Roger"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>

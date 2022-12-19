@@ -15,9 +15,9 @@
     Template Model Builder (TMB) which enables fast and robust model
     fitting. Users can specify a variety of covariance matrices, weight
     observations, fit models with restricted or standard maximum
-    likelihood inference, perform hypothesis testing with Satterthwaite
-    adjusted degrees of freedom, and extract least square means estimates
-    by using emmeans.">
+    likelihood inference, perform hypothesis testing with Satterthwaite or
+    Kenward-Roger adjustment, and extract least square means
+    estimates by using emmeans.">
 <title>Mixed Models for Repeated Measures • mmrm</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
@@ -40,9 +40,9 @@
     Template Model Builder (TMB) which enables fast and robust model
     fitting. Users can specify a variety of covariance matrices, weight
     observations, fit models with restricted or standard maximum
-    likelihood inference, perform hypothesis testing with Satterthwaite
-    adjusted degrees of freedom, and extract least square means estimates
-    by using emmeans.">
+    likelihood inference, perform hypothesis testing with Satterthwaite or
+    Kenward-Roger adjustment, and extract least square means
+    estimates by using emmeans.">
 <meta property="og:image" content="https://openpharma.github.io/mmrm/main/logo.svg">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -63,7 +63,7 @@
     
     <a class="navbar-brand me-2" href="index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5.9016</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -89,12 +89,6 @@
 <li class="nav-item">
   <a class="nav-link" href="news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -121,7 +115,7 @@
 </div>
 <!-- badges: start -->
 
-<p>Mixed models for repeated measures (MMRM) are a popular choice for analyzing longitudinal continuous outcomes in randomized clinical trials and beyond; see <a href="https://doi.org/10.1002/(SICI)1097-0258(19971030)16:20%3C2349::AID-SIM667%3E3.0.CO;2-E" class="external-link">Cnaan, Laird and Slasor (1997)</a> for a tutorial and <a href="https://doi.org/10.1177/009286150804200402" class="external-link">Mallinckrodt, Lane and Schnell (2008)</a> for a review. This package implements MMRM based on the marginal linear model without random effects using Template Model Builder (<code>TMB</code>) which enables fast and robust model fitting. Users can specify a variety of covariance matrices, weight observations, fit models with restricted or standard maximum likelihood inference, perform hypothesis testing with Satterthwaite adjusted degrees of freedom, and extract least square means estimates by using <code>emmeans</code>.</p>
+<p>Mixed models for repeated measures (MMRM) are a popular choice for analyzing longitudinal continuous outcomes in randomized clinical trials and beyond; see <a href="https://doi.org/10.1002/(SICI)1097-0258(19971030)16:20%3C2349::AID-SIM667%3E3.0.CO;2-E" class="external-link">Cnaan, Laird and Slasor (1997)</a> for a tutorial and <a href="https://doi.org/10.1177/009286150804200402" class="external-link">Mallinckrodt, Lane and Schnell (2008)</a> for a review. This package implements MMRM based on the marginal linear model without random effects using Template Model Builder (<code>TMB</code>) which enables fast and robust model fitting. Users can specify a variety of covariance matrices, weight observations, fit models with restricted or standard maximum likelihood inference, perform hypothesis testing with Satterthwaite or Kenward-Roger adjustment, and extract least square means estimates by using <code>emmeans</code>.</p>
 <p><strong>Scope:</strong></p>
 <ul>
 <li>Continuous responses with normal (but potentially heteroscedastic) residuals.</li>
@@ -132,16 +126,20 @@
 <li>Flexible covariance specification:
 <ul>
 <li>
-<a href="https://openpharma.github.io/mmrm/main/articles/covariance.html">Structures</a>: unstructured, Toeplitz, AR1, compound symmetry, spatial exponential, and ante-dependence.</li>
-<li>Groups: shared covariance structure for all subjects and, or group-specific covariance estimates.</li>
+<a href="https://openpharma.github.io/mmrm/main/articles/covariance.html">Structures</a>: unstructured, Toeplitz, AR1, compound symmetry, ante-dependence, and spatial exponential.</li>
+<li>Groups: shared covariance structure for all subjects or group-specific covariance estimates.</li>
 <li>Variances: homogeneous or heterogeneous across time points.</li>
 </ul>
 </li>
 <li>Hypothesis testing:
 <ul>
 <li>
-<a href="https://openpharma.github.io/mmrm/main/reference/emmeans_support.html">Least square means</a>: <code>emmeans</code> package can be used with model outputs to obtain least square means and test linear contrasts of model parameters.</li>
-<li>Degrees of freedom adjustment: Satterthwaite-adjusted one- and multi-dimensional contrasts.</li>
+<a href="https://openpharma.github.io/mmrm/main/reference/emmeans_support.html">Least square means</a>: can be obtained with the <code>emmeans</code> package</li>
+<li>One- and multi-dimensional linear contrasts of model parameters can be tested.</li>
+<li>
+<a href="https://openpharma.github.io/mmrm/main/articles/satterthwaite.html">Satterthwaite</a> adjusted degrees of freedom.</li>
+<li>
+<a href="https://openpharma.github.io/mmrm/main/articles/kenward.html">Kenward-Roger</a> adjusted degrees of freedom and coefficients covariance matrix.</li>
 </ul>
 </li>
 <li>Model inference:
@@ -215,7 +213,8 @@
 <span><span class="co">#&gt; Data:        fev_data (used 537 observations from 197 subjects with maximum 4 </span></span>
 <span><span class="co">#&gt; timepoints)</span></span>
 <span><span class="co">#&gt; Covariance:  unstructured (10 variance parameters)</span></span>
-<span><span class="co">#&gt; Method:      REML</span></span>
+<span><span class="co">#&gt; Method:      Satterthwaite</span></span>
+<span><span class="co">#&gt; Inference:   REML</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Model selection criteria:</span></span>
 <span><span class="co">#&gt;      AIC      BIC   logLik deviance </span></span>
