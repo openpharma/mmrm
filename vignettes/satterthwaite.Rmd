@@ -35,7 +35,7 @@ based on normal models is well detailed and the computational approach
 for models fitted with the `lme4` package is explained. We follow the
 algorithm and explain the implementation in this `mmrm` package. The
 model definition is the same as in [Details of the model fitting in
-`mmrm`](algorithms.html).
+`mmrm`](algorithm.html).
 
 We are also using the same notation as in the [Details of the
 Kenward-Roger calculations](kenward.html). In particular, we assume we

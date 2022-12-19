@@ -116,8 +116,8 @@ fit_opt
 ## Covariance Structure
 
 Covariance structures supported by the `mmrm` are being continuously developed.
-For a complete list and description please visit the [vignette in the package website](https://openpharma.github.io/mmrm/main/articles/covariance.html). Below
-we see the function call for homogeneous compound symmetry (`cs`).
+For a complete list and description please visit the [covariance vignette](covariance.html).
+Below we see the function call for homogeneous compound symmetry (`cs`).
 
 ```{r common-changes-cov}
 fit_cs <- mmrm(
@@ -210,7 +210,7 @@ fit_kr_lin <- mmrm(
 
 This is due to the different parametrization of the unstructured covariance
 matrix, see the
-[vignette](https://openpharma.github.io/mmrm/main/articles/kenward.html#parameterization-methods-and-kenward-roger)
+[Kenward-Roger vignette](kenward.html#parameterization-methods-and-kenward-roger)
 for details.
 
 ## Keeping Unobserved Visits
