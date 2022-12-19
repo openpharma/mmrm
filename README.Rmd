@@ -35,7 +35,7 @@ Template Model Builder (`TMB`) which enables fast and robust model
 fitting. Users can specify a variety of covariance matrices, weight
 observations, fit models with restricted or standard maximum
 likelihood inference, perform hypothesis testing with Satterthwaite
-or Kenward-Rogeradjusted degrees of freedom, and extract least 
+or Kenward-Roger adjustment, and extract least
 square means estimates by using `emmeans`.
 
 **Scope:**
@@ -51,12 +51,12 @@ square means estimates by using `emmeans`.
   covariance estimates.
   * Variances: homogeneous or heterogeneous across time points.
 * Hypothesis testing:
-  * [Least square means](https://openpharma.github.io/mmrm/main/reference/emmeans_support.html): 
+  * [Least square means](https://openpharma.github.io/mmrm/main/reference/emmeans_support.html):
     can be obtained with the `emmeans` package
   * One- and multi-dimensional linear contrasts of model parameters can be tested.
-  * [Satterthwaite](https://openpharma.github.io/mmrm/main/articles/satterthwaite.html) 
+  * [Satterthwaite](https://openpharma.github.io/mmrm/main/articles/satterthwaite.html)
     adjusted degrees of freedom.
-  * [Kenward-Roger](https://openpharma.github.io/mmrm/main/articles/kenward.html) 
+  * [Kenward-Roger](https://openpharma.github.io/mmrm/main/articles/kenward.html)
     adjusted degrees of freedom and coefficients covariance matrix.
 * Model inference:
   * Supports REML and ML.

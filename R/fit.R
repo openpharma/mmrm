@@ -174,7 +174,8 @@ refit_multiple_optimizers <- function(fit,
 #' control function.
 #'
 #' @param n_cores (`int`)\cr number of cores to be used.
-#' @param method (`string`)\cr vector of covariance/degree of freedom method.
+#' @param method (`string`)\cr adjustment method for degrees of freedom and
+#'   coefficients covariance matrix.
 #' @param start (`numeric` or `NULL`)\cr optional start values for variance
 #'   parameters.
 #' @param accept_singular (`flag`)\cr whether singular design matrices are reduced
@@ -191,9 +192,9 @@ refit_multiple_optimizers <- function(fit,
 #' are identical. However, you can manually convert this visit into a factor, with
 #' `levels = c("VIS1", "VIS2", "VIS3", "VIS4")`, and also use `drop_visits_levels = FALSE`,
 #' then the distance from `VIS1` to `VIS3` will be double, as `VIS2` is a valid visit.
-#' However, please be cautious because this can lead to convergence issues
-#' when using an unstructured covariance matrix because there are no observations
-#' at that missing visit.
+#' However, please be cautious because this can lead to convergence failure
+#' when using an unstructured covariance matrix and there are no observations
+#' at the missing visits.
 #'
 #' @return List of class `mmrm_control` with the control parameters.
 #' @export

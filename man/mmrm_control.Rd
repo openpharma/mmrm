@@ -17,7 +17,8 @@ mmrm_control(
 \arguments{
 \item{n_cores}{(\code{int})\cr number of cores to be used.}
 
-\item{method}{(\code{string})\cr vector of covariance/degree of freedom method.}
+\item{method}{(\code{string})\cr adjustment method for degrees of freedom and
+coefficients covariance matrix.}
 
 \item{start}{(\code{numeric} or \code{NULL})\cr optional start values for variance
 parameters.}
@@ -47,9 +48,9 @@ they are treated to be equally spaced, the distance from \code{VIS1} to \code{VI
 are identical. However, you can manually convert this visit into a factor, with
 \code{levels = c("VIS1", "VIS2", "VIS3", "VIS4")}, and also use \code{drop_visits_levels = FALSE},
 then the distance from \code{VIS1} to \code{VIS3} will be double, as \code{VIS2} is a valid visit.
-However, please be cautious because this can lead to convergence issues
-when using an unstructured covariance matrix because there are no observations
-at that missing visit.
+However, please be cautious because this can lead to convergence failure
+when using an unstructured covariance matrix and there are no observations
+at the missing visits.
 }
 \examples{
 mmrm_control(
