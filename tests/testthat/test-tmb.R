@@ -215,8 +215,12 @@ test_that("h_mmrm_tmb_data works as expected", {
   formula <- FEV1 ~ RACE + us(AVISIT | USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   result <- expect_silent(h_mmrm_tmb_data(
-    formula_parts, fev_data, fev_data$WEIGHT,
-    reml = FALSE, accept_singular = FALSE
+    formula_parts,
+    fev_data,
+    fev_data$WEIGHT,
+    reml = FALSE,
+    accept_singular = FALSE,
+    drop_visit_levels = TRUE
   ))
   expect_class(result, "mmrm_tmb_data")
   expect_named(
@@ -243,8 +247,12 @@ test_that("h_mmrm_tmb_data works as expected for grouped covariance", {
   formula <- FEV1 ~ RACE + us(AVISIT | ARMCD / USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   result <- expect_silent(h_mmrm_tmb_data(
-    formula_parts, fev_data,
-    reml = FALSE, weights = rep(1, nrow(fev_data)), accept_singular = FALSE
+    formula_parts,
+    fev_data,
+    reml = FALSE,
+    weights = rep(1, nrow(fev_data)),
+    accept_singular = FALSE,
+    drop_visit_levels = TRUE
   ))
   expect_class(result, "mmrm_tmb_data")
   expect_named(
@@ -270,8 +278,12 @@ test_that("h_mmrm_tmb_data works as expected for mutli-dimensional spatial expon
   formula <- FEV1 ~ RACE + sp_exp(VISITN, VISITN2 | ARMCD / USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   result <- expect_silent(h_mmrm_tmb_data(
-    formula_parts, fev_data,
-    reml = FALSE, weights = rep(1, nrow(fev_data)), accept_singular = FALSE
+    formula_parts,
+    fev_data,
+    reml = FALSE,
+    weights = rep(1, nrow(fev_data)),
+    accept_singular = FALSE,
+    drop_visit_levels = TRUE
   ))
   expect_class(result, "mmrm_tmb_data")
   expect_named(
@@ -299,12 +311,20 @@ test_that("h_mmrm_tmb_data works also for character ID variable", {
   dat <- fev_data
   dat$USUBJID <- as.character(dat$USUBJID) # nolint
   result <- expect_silent(h_mmrm_tmb_data(
-    formula_parts, dat,
-    weights = rep(1, nrow(dat)), reml = FALSE, accept_singular = FALSE
+    formula_parts,
+    dat,
+    weights = rep(1, nrow(dat)),
+    reml = FALSE,
+    accept_singular = FALSE,
+    drop_visit_levels = TRUE
   ))
   expected <- expect_silent(h_mmrm_tmb_data(
-    formula_parts, fev_data,
-    weights = rep(1, nrow(fev_data)), reml = FALSE, accept_singular = FALSE
+    formula_parts,
+    fev_data,
+    weights = rep(1, nrow(fev_data)),
+    reml = FALSE,
+    accept_singular = FALSE,
+    drop_visit_levels = TRUE
   ))
   expect_identical(result, expected)
 })
@@ -314,8 +334,12 @@ test_that("h_mmrm_tmb_data correctly processes design matrix below full rank cor
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   dat <- fev_data[11:25, ]
   result <- expect_silent(h_mmrm_tmb_data(
-    formula_parts, dat,
-    weights = rep(1, nrow(dat)), reml = FALSE, accept_singular = TRUE
+    formula_parts,
+    dat,
+    weights = rep(1, nrow(dat)),
+    reml = FALSE,
+    accept_singular = TRUE,
+    drop_visit_levels = TRUE
   ))
   assert_true(qr(result$x_matrix)$rank == ncol(result$x_matrix))
   assert_true(sum(result$x_cols_aliased) == 2)
@@ -328,8 +352,12 @@ test_that("h_mmrm_tmb_data gives error for rank deficient design matrix when not
   dat <- fev_data[11:25, ]
   expect_error(
     h_mmrm_tmb_data(
-      formula_parts, dat,
-      weights = rep(1, nrow(dat)), reml = FALSE, accept_singular = FALSE
+      formula_parts,
+      dat,
+      weights = rep(1, nrow(dat)),
+      reml = FALSE,
+      accept_singular = FALSE,
+      drop_visit_levels = TRUE
     ),
     paste(
       "design matrix only has rank 8 and 2 columns (ARMCDTRT:AVISITVIS2, ARMCDTRT:AVISITVIS3)",
@@ -368,7 +396,8 @@ test_that("h_mmrm_tmb_data catches case with multiple time points per subject ea
       data = dat,
       weights = rep_len(1, nrow(dat)),
       reml = TRUE,
-      accept_singular = TRUE
+      accept_singular = TRUE,
+      drop_visit_levels = TRUE
     ),
     paste0(
       "time points have to be unique for each subject, detected following duplicates in data:",
@@ -387,7 +416,8 @@ test_that("h_mmrm_tmb_data has no side effect of overwrite the weights in global
     data = fev_data,
     weights = rep_len(1, nrow(fev_data)),
     reml = TRUE,
-    accept_singular = TRUE
+    accept_singular = TRUE,
+    drop_visit_levels = TRUE
   )
   expect_identical(weights, "this is global weights")
 })
@@ -402,7 +432,8 @@ test_that("h_mmrm_tmb_data will not be affecte by `weights` in data", {
     data = fev_data,
     weights = rep_len(1, nrow(fev_data)),
     reml = TRUE,
-    accept_singular = TRUE
+    accept_singular = TRUE,
+    drop_visit_levels = TRUE
   )
   expect_identical(res$weights_vector, rep_len(1, nrow(res$x_matrix)))
   expect_identical(fev_data$weights, weights)
@@ -414,8 +445,12 @@ test_that("h_mmrm_tmb_parameters works as expected without start values", {
   formula <- FEV1 ~ SEX + us(AVISIT | USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   tmb_data <- h_mmrm_tmb_data(
-    formula_parts, fev_data,
-    weights = rep(1, nrow(fev_data)), reml = TRUE, accept_singular = FALSE
+    formula_parts,
+    fev_data,
+    weights = rep(1, nrow(fev_data)),
+    reml = TRUE,
+    accept_singular = FALSE,
+    drop_visit_levels = TRUE
   )
   result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
   expected <- list(theta = rep(0, 10))
@@ -426,8 +461,12 @@ test_that("h_mmrm_tmb_parameters works as expected with start values", {
   formula <- FEV1 ~ SEX + us(AVISIT | USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   tmb_data <- h_mmrm_tmb_data(
-    formula_parts, fev_data,
-    weights = rep(1, nrow(fev_data)), reml = TRUE, accept_singular = FALSE
+    formula_parts,
+    fev_data,
+    weights = rep(1, nrow(fev_data)),
+    reml = TRUE,
+    accept_singular = FALSE,
+    drop_visit_levels = TRUE
   )
   start <- 1:10
   result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = start))
@@ -439,8 +478,12 @@ test_that("h_mmrm_tmb_parameters works as expected with antedependence", {
   formula <- FEV1 ~ SEX + ad(AVISIT | USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   tmb_data <- h_mmrm_tmb_data(
-    formula_parts, fev_data,
-    weights = rep(1, nrow(fev_data)), reml = TRUE, accept_singular = FALSE
+    formula_parts,
+    fev_data,
+    weights = rep(1, nrow(fev_data)),
+    reml = TRUE,
+    accept_singular = FALSE,
+    drop_visit_levels = TRUE
   )
   result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
   expected <- list(theta = rep(0, 4)) # 4 parameters.
@@ -451,8 +494,12 @@ test_that("h_mmrm_tmb_parameters works as expected with heterogeneous antedepend
   formula <- FEV1 ~ SEX + adh(AVISIT | USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   tmb_data <- h_mmrm_tmb_data(
-    formula_parts, fev_data,
-    weights = rep(1, nrow(fev_data)), reml = TRUE, accept_singular = FALSE
+    formula_parts,
+    fev_data,
+    weights = rep(1, nrow(fev_data)),
+    reml = TRUE,
+    accept_singular = FALSE,
+    drop_visit_levels = TRUE
   )
   result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
   expected <- list(theta = rep(0, 7)) # 2 * 4 - 1 parameters.
@@ -463,8 +510,12 @@ test_that("h_mmrm_tmb_parameters works as expected with Toeplitz", {
   formula <- FEV1 ~ SEX + toep(AVISIT | USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   tmb_data <- h_mmrm_tmb_data(
-    formula_parts, fev_data,
-    weights = rep(1, nrow(fev_data)), reml = TRUE, accept_singular = FALSE
+    formula_parts,
+    fev_data,
+    weights = rep(1, nrow(fev_data)),
+    reml = TRUE,
+    accept_singular = FALSE,
+    drop_visit_levels = TRUE
   )
   result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
   expected <- list(theta = rep(0, 4)) # 4 parameters.
@@ -475,8 +526,12 @@ test_that("h_mmrm_tmb_parameters works as expected with heterogeneous Toeplitz",
   formula <- FEV1 ~ SEX + toeph(AVISIT | USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   tmb_data <- h_mmrm_tmb_data(
-    formula_parts, fev_data,
-    weights = rep(1, nrow(fev_data)), reml = TRUE, accept_singular = FALSE
+    formula_parts,
+    fev_data,
+    weights = rep(1, nrow(fev_data)),
+    reml = TRUE,
+    accept_singular = FALSE,
+    drop_visit_levels = TRUE
   )
   result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
   expected <- list(theta = rep(0, 7)) # 2 * 4 - 1 parameters.
@@ -487,8 +542,12 @@ test_that("h_mmrm_tmb_parameters works as expected with autoregressive", {
   formula <- FEV1 ~ SEX + ar1(AVISIT | USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   tmb_data <- h_mmrm_tmb_data(
-    formula_parts, fev_data,
-    weights = rep(1, nrow(fev_data)), reml = TRUE, accept_singular = FALSE
+    formula_parts,
+    fev_data,
+    weights = rep(1, nrow(fev_data)),
+    reml = TRUE,
+    accept_singular = FALSE,
+    drop_visit_levels = TRUE
   )
   result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
   expected <- list(theta = c(0, 0.5))
@@ -499,8 +558,12 @@ test_that("h_mmrm_tmb_parameters works as expected with heterogeneous autoregres
   formula <- FEV1 ~ SEX + ar1h(AVISIT | USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   tmb_data <- h_mmrm_tmb_data(
-    formula_parts, fev_data,
-    weights = rep(1, nrow(fev_data)), reml = TRUE, accept_singular = FALSE
+    formula_parts,
+    fev_data,
+    weights = rep(1, nrow(fev_data)),
+    reml = TRUE,
+    accept_singular = FALSE,
+    drop_visit_levels = TRUE
   )
   result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
   expected <- list(theta = c(rep(0, 4), 0.5)) # 4 + 1 parameters.
@@ -511,8 +574,12 @@ test_that("h_mmrm_tmb_parameters works as expected with compound symmetry", {
   formula <- FEV1 ~ SEX + cs(AVISIT | USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   tmb_data <- h_mmrm_tmb_data(
-    formula_parts, fev_data,
-    weights = rep(1, nrow(fev_data)), reml = TRUE, accept_singular = FALSE
+    formula_parts,
+    fev_data,
+    weights = rep(1, nrow(fev_data)),
+    reml = TRUE,
+    accept_singular = FALSE,
+    drop_visit_levels = TRUE
   )
   result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
   expected <- list(theta = rep(0, 2))
@@ -523,8 +590,12 @@ test_that("h_mmrm_tmb_parameters works as expected with heterogeneous compound s
   formula <- FEV1 ~ SEX + csh(AVISIT | USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   tmb_data <- h_mmrm_tmb_data(
-    formula_parts, fev_data,
-    weights = rep(1, nrow(fev_data)), reml = TRUE, accept_singular = FALSE
+    formula_parts,
+    fev_data,
+    weights = rep(1, nrow(fev_data)),
+    reml = TRUE,
+    accept_singular = FALSE,
+    drop_visit_levels = TRUE
   )
   result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
   expected <- list(theta = rep(0, 5)) # 4 + 1 parameters.
@@ -539,7 +610,8 @@ test_that("h_mmrm_tmb_parameters works as expected with spatial exponential", {
     fev_data,
     reml = TRUE,
     accept_singular = FALSE,
-    weights = rep(1, nrow(fev_data))
+    weights = rep(1, nrow(fev_data)),
+    drop_visit_levels = TRUE
   )
   result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
   expected <- list(theta = rep(0, 2)) # 1 + 1 parameters.
@@ -639,8 +711,12 @@ test_that("h_mmrm_tmb_extract_cov works as expected", {
   formula <- FEV1 ~ RACE + us(AVISIT | USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   tmb_data <- h_mmrm_tmb_data(
-    formula_parts, fev_data,
-    reml = FALSE, weights = rep(1, nrow(fev_data)), accept_singular = FALSE
+    formula_parts,
+    fev_data,
+    reml = FALSE,
+    weights = rep(1, nrow(fev_data)),
+    accept_singular = FALSE,
+    drop_visit_levels = TRUE
   )
   tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL)
   tmb_object <- TMB::MakeADFun(
@@ -673,8 +749,12 @@ test_that("h_mmrm_tmb_extract_cov works as expected for group covariance", {
   formula <- FEV1 ~ RACE + ar1(AVISIT | ARMCD / USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   tmb_data <- h_mmrm_tmb_data(
-    formula_parts, fev_data,
-    reml = FALSE, weights = rep(1, nrow(fev_data)), accept_singular = FALSE
+    formula_parts,
+    fev_data,
+    reml = FALSE,
+    weights = rep(1, nrow(fev_data)),
+    accept_singular = FALSE,
+    drop_visit_levels = TRUE
   )
   tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL, n_groups = 2L)
   tmb_object <- TMB::MakeADFun(
@@ -718,7 +798,8 @@ test_that("h_mmrm_tmb_fit works as expected", {
     fev_data,
     weights = weights,
     reml = FALSE,
-    accept_singular = FALSE
+    accept_singular = FALSE,
+    drop_visit_levels = TRUE
   )
   tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL)
   tmb_object <- TMB::MakeADFun(
@@ -769,8 +850,12 @@ test_that("h_mmrm_tmb_fit works as expected for grouped covariance", {
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   weights <- rep(1, nrow(fev_data))
   tmb_data <- h_mmrm_tmb_data(
-    formula_parts, fev_data,
-    reml = TRUE, weights = weights, accept_singular = TRUE
+    formula_parts,
+    fev_data,
+    reml = TRUE,
+    weights = weights,
+    accept_singular = TRUE,
+    drop_visit_levels = TRUE
   )
   tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL, n_group = tmb_data$n_groups)
   tmb_object <- TMB::MakeADFun(
@@ -822,7 +907,8 @@ test_that("h_mmrm_tmb_fit errors when an invalid covariance type is used", {
     fev_data,
     weights = rep(1, nrow(fev_data)),
     reml = FALSE,
-    accept_singular = FALSE
+    accept_singular = FALSE,
+    drop_visit_levels = TRUE
   )
   tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL)
 
@@ -1628,8 +1714,8 @@ test_that("fit_mmrm works if we keep the unused factor levels for specific covar
     FEV1 ~ FEV1_BL + RACE + ar1(AVISIT | USUBJID),
     data = tmp_data,
     weights = rep(1, nrow(tmp_data)),
-    control = mmrm_control(drop_visit_levels = FALSE))
-  )
+    control = mmrm_control(drop_visit_levels = FALSE)
+  ))
   expect_class(result, "mmrm_tmb")
   expect_identical(
     rownames(VarCorr(result)),
@@ -1641,11 +1727,13 @@ test_that("fit_mmrm warns if we keep the unused factor levels for unstructured c
   tmp_data <- fev_data
   tmp_data$AVISIT <- factor(tmp_data$AVISIT, levels = c("SCREENING", "VIS1", "VIS2", "VIS3", "VIS4"))
 
-  expect_warning(result <- fit_mmrm(
-    FEV1 ~ FEV1_BL + RACE + us(AVISIT | USUBJID),
-    data = tmp_data,
-    weights = rep(1, nrow(tmp_data)),
-    control = mmrm_control(drop_visit_levels = FALSE)),
+  expect_warning(
+    result <- fit_mmrm(
+      FEV1 ~ FEV1_BL + RACE + us(AVISIT | USUBJID),
+      data = tmp_data,
+      weights = rep(1, nrow(tmp_data)),
+      control = mmrm_control(drop_visit_levels = FALSE)
+    ),
     "Model convergence problem: hessian is singular, theta_vcov not available"
   )
   expect_class(result, "mmrm_tmb")

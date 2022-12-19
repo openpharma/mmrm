@@ -188,7 +188,7 @@ While this adjustment choice is not visible in the `print()` result of the fitte
 adjustment method), looking at the `summary` we see the method and the
 correspondingly adjusted standard errors and degrees of freedom:
 
-```{r}
+```{r kr_summary}
 summary(fit_kr)
 ```
 
@@ -200,7 +200,7 @@ are different.
 Note that if you would like to match SAS results for an unstructured
 covariance model, you can use the linear Kenward-Roger approximation:
 
-```{r}
+```{r kr_lin}
 fit_kr_lin <- mmrm(
   formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data,
@@ -226,7 +226,7 @@ We first fit the model where we do not drop the visit level explicitly, using th
 `drop_visit_levels = FALSE` choice. Second we fit the model by default without
 this option.
 
-```{r}
+```{r sparse}
 sparse_data <- fev_data[fev_data$AVISIT != "VIS3", ]
 sparse_result <- mmrm(
   FEV1 ~ RACE + ar1(AVISIT | USUBJID),
@@ -243,7 +243,7 @@ dropped_result <- mmrm(
 We see that we get a message about the dropped visit level by default.
 Now we can compare the estimated correlation matrices:
 
-```{r}
+```{r sparse_cor}
 cov2cor(VarCorr(sparse_result))
 cov2cor(VarCorr(dropped_result))
 ```
@@ -347,7 +347,7 @@ variance estimates for the test-statistics.
 Compute the test of a one-dimensional (vector) contrast for a `mmrm` object with
 Satterthwaite degrees of freedom.
 
-```{r}
+```{r 1d_satterthwaite}
 fit <- mmrm(
   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data
@@ -361,7 +361,7 @@ df_1d(fit, contrast)
 
 This works similarly when choosing a Kenward-Roger adjustment:
 
-```{r}
+```{r 1d_kr}
 fit_kr <- mmrm(
   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data,
@@ -380,7 +380,7 @@ are different and therefore the p-values are different.
 Compute the test of a multi-dimensional (matrix) contrast for the above defined
 `mmrm` object with Satterthwaite degrees of freedom:
 
-```{r}
+```{r md_satterthwaite}
 contrast <- matrix(data = 0, nrow = 2, ncol = length(component(fit, "beta_est")))
 contrast[1, 2] <- contrast[2, 3] <- 1
 
@@ -389,7 +389,7 @@ df_md(fit, contrast)
 
 And for the Kenward-Roger adjustment:
 
-```{r}
+```{r md_kr}
 df_md(fit_kr, contrast)
 ```
 
@@ -402,7 +402,7 @@ This package includes methods that allow `mmrm` objects to be used with the
 `emmeans` package. `emmeans` computes estimated marginal means (also called
 least-square means) for the coefficients of the MMRM.
 
-```{r}
+```{r emmeans}
 fit <- mmrm(
   formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data

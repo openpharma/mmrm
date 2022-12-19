@@ -224,7 +224,8 @@ h_get_optimizers <- function(optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb"),
   if ("automatic" %in% optimizer) {
     lifecycle::deprecate_warn(
       when = "0.2.0",
-      what = I("\"automatic\" optimizer")
+      what = I("\"automatic\" optimizer"),
+      details = "please just omit optimizer argument"
     )
     optimizer_fun <- h_optimizer_fun()
   }

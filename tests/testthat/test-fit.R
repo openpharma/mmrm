@@ -372,13 +372,17 @@ test_that("mmrm works for constructed control", {
   ))
 })
 
-test_that("mmrm still works for deprecated \"automatic\" optimizer", {
-  expect_silent(mmrm(
-    FEV1 ~ ARMCD + ar1(AVISIT | SEX / USUBJID),
-    data = fev_data,
-    reml = TRUE,
-    optimizer = "automatic"
-  ))
+test_that("mmrm still works for deprecated 'automatic' optimizer", {
+  expect_warning(
+    mmrm(
+      FEV1 ~ ARMCD + ar1(AVISIT | SEX / USUBJID),
+      data = fev_data,
+      reml = TRUE,
+      optimizer = "automatic"
+    ),
+    "\"automatic\" optimizer was deprecated in mmrm 0.2.0.",
+    fixed = TRUE
+  )
 })
 
 test_that("mmrm works and gives message for data with unobserved visit levels", {
