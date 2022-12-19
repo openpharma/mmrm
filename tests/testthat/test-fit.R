@@ -296,6 +296,8 @@ test_that("mmrm works as expected for toeplitz", {
 ## general ----
 
 test_that("mmrm falls back to other optimizers if default does not work", {
+  skip_on_cran()
+
   formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
   data_small <- fev_data[1:50, ]
   # Default does not work.
@@ -343,7 +345,7 @@ test_that("mmrm works for specific small data example", {
     id = "USUBJID",
     visit = "AVISIT"
   )
-  fit <- expect_silent(mmrm::mmrm(
+  fit <- expect_silent(mmrm(
     formula = FEV1 ~ AVISIT + ar1(AVISIT | USUBJID),
     data = small_dat
   ))
