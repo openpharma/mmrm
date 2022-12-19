@@ -187,26 +187,34 @@ h_split_control <- function(control, ...) {
 }
 
 #' Obtain Optimizer according to Optimizer String Value
+#'
 #' @description This function creates optimizer functions with arguments.
 #'
-#' @param optimizer (`character`)\cr optimizer character. Only "L-BFGS-B", "BFGS", "CG" and "nlminb" supported.
-#' @param optimizer_fun (`function`)\cr or (`list`)\cr of (`function`)x\cr.
-#' @param optimizer_args (`list`)\cr of additional arguments for `optimizer_fun`.
-#' @param optimizer_control (`list`)\cr of control argument. Will serve as `control` in `optimizer_fun`.
+#' @param optimizer (`character`)\cr names of built-in optimizers to try, subset
+#'   of "L-BFGS-B", "BFGS", "CG" and "nlminb".
+#' @param optimizer_fun (`function` or `list` of `function`)\cr alternatively to `optimizer`,
+#'   an optimizer function or a list of optimizer functions can be passed directly here.
+#' @param optimizer_args (`list`)\cr additional arguments for `optimizer_fun`.
+#' @param optimizer_control (`list`)\cr passed to argument `control` in `optimizer_fun`.
 #'
 #' @details
-#' In this function, the final object to use is `optimizer_fun`, and `optimizer` is a shortcut to create
-#' multiple `optimizer_fun`. If you want to use your own optimizer function, make sure that there are three arguments,
-#' parameter(start value), objective function and gradient function are sequentially in the function arguments.
-#' If there are other named arguments in front of these, make sure they are correctly specified through
-#' `optimizer_args`. If hessian function can be applied, please make sure its argument name is `hessian` and
-#' please add attribute `use_hessian = TRUE` to the function, using `attr(fun, "use_hessian) <- TRUE`
-#' If `optimizer_fun` is not provided, it will be created using the `optimizer` character. Other arguments should
-#' go into `optimizer_args`.
-#' Allowed are "L-BFGS-B", "BFGS", "CG"(using [stats::optim()] with corresponding method) and
-#' "nlminb"(using [stats::nlminb()]).
+#' If you want to use only the built-in optimizers:
+#' - `optimizer` is a shortcut to create a list of built-in optimizer functions
+#'   passed to `optimizer_fun`.
+#' - Allowed are "L-BFGS-B", "BFGS", "CG" (using [stats::optim()] with corresponding method)
+#'   and "nlminb" (using [stats::nlminb()]).
+#' - Other arguments should go into `optimizer_args`.
 #'
-#' @return Named `list` of optimizers created by [h_optimizer_fun()].
+#' If you want to use your own optimizer function:
+#' - Make sure that there are three arguments: parameter (start value), objective function
+#'   and gradient function are sequentially in the function arguments.
+#' - If there are other named arguments in front of these, make sure they are correctly
+#'   specified through `optimizer_args`.
+#' - If the hessian can be used, please make sure its argument name is `hessian` and
+#'   please add attribute `use_hessian = TRUE` to the function,
+#'   using `attr(fun, "use_hessian) <- TRUE`.
+#'
+#' @return Named `list` of optimizers created by [h_partial_fun_args()].
 #'
 #' @keywords internal
 h_get_optimizers <- function(optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb"),
@@ -216,7 +224,9 @@ h_get_optimizers <- function(optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb"),
   if ("automatic" %in% optimizer) {
     lifecycle::deprecate_warn(
       when = "0.2.0",
-      what = I("\"automatic\" optimizer"))
+      what = I("\"automatic\" optimizer"),
+      details = "please just omit optimizer argument"
+    )
     optimizer_fun <- h_optimizer_fun()
   }
   assert(

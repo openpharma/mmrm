@@ -57,7 +57,6 @@ h_df_md_kr <- function(object, contrast, linear = FALSE) {
   f_star <- f_statistic * df$lambda
   list(
     num_df = nrow(contrast),
-    num_df = nrow(contrast),
     denom_df = df$m,
     f_stat = f_star[1, 1],
     p_val = stats::pf(f_star[1, 1], nrow(contrast), df$m, lower.tail = FALSE)
@@ -160,14 +159,15 @@ h_kr_df <- function(v0, l, w, p) {
   c3 <- (nl + 2 - g) / denom
   v_star <- 2 / nl * (1 + c1 * b) / (1 - c2 * b)^2 / (1 - c3 * b)
   rho <- v_star / (2 * e_star^2)
-  m <- 4 + (nl + 2)  / (nl * rho - 1)
+  m <- 4 + (nl + 2) / (nl * rho - 1)
   lambda <- m / (e_star * (m - 2))
   list(m = m, lambda = lambda)
 }
 
 #' Obtain the Adjusted Covariance Matrix
 #'
-#' @description Obtains the Kenward-Roger adjusted covariance matrix.
+#' @description Obtains the Kenward-Roger adjusted covariance matrix for the
+#'   coefficient estimates.
 #' Used in [mmrm()] fitting if method is "Kenward-Roger" or "Kenward-Roger-Linear".
 #'
 #' @param v (`matrix`)\cr unadjusted covariance matrix.
@@ -190,8 +190,8 @@ h_var_adj <- function(v, w, p, q, r, linear = FALSE) {
   theta_per_group <- nrow(q) / nrow(p)
   n_groups <- n_theta / theta_per_group
   assert_matrix(p, nrows = n_theta * n_visits)
-  assert_matrix(q, nrows = theta_per_group ^ 2 * n_groups * n_visits, ncols = n_visits)
-  assert_matrix(r, nrows = theta_per_group ^ 2 * n_groups * n_visits, ncols = n_visits)
+  assert_matrix(q, nrows = theta_per_group^2 * n_groups * n_visits, ncols = n_visits)
+  assert_matrix(r, nrows = theta_per_group^2 * n_groups * n_visits, ncols = n_visits)
   if (linear) {
     r <- matrix(0, nrow = nrow(r), ncol = ncol(r))
   }
@@ -206,14 +206,14 @@ h_var_adj <- function(v, w, p, q, r, linear = FALSE) {
       jid <- (j - 1) * n_beta + 1
       ii <- i - (gi - 1) * theta_per_group
       jj <- j - (gi - 1) * theta_per_group
-      ijid <- ((ii - 1) * theta_per_group + jj - 1) * n_beta + (gi - 1) * n_beta * theta_per_group ^ 2 + 1
+      ijid <- ((ii - 1) * theta_per_group + jj - 1) * n_beta + (gi - 1) * n_beta * theta_per_group^2 + 1
       if (gi != gj) {
         ret <- ret + 2 * w[i, j] * v %*% (-p[iid:(iid + n_beta - 1), ] %*% v %*% p[jid:(jid + n_beta - 1), ]) %*% v
       } else {
         ret <- ret + 2 * w[i, j] * v %*% (
           q[ijid:(ijid + n_beta - 1), ] -
-          p[iid:(iid + n_beta - 1), ] %*% v %*% p[jid:(jid + n_beta - 1), ] -
-          1 / 4 * r[ijid:(ijid + n_beta - 1), ]
+            p[iid:(iid + n_beta - 1), ] %*% v %*% p[jid:(jid + n_beta - 1), ] -
+            1 / 4 * r[ijid:(ijid + n_beta - 1), ]
         ) %*% v
       }
     }

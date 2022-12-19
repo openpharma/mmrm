@@ -30,38 +30,41 @@ random effects using Template Model Builder (`TMB`) which enables fast
 and robust model fitting. Users can specify a variety of covariance
 matrices, weight observations, fit models with restricted or standard
 maximum likelihood inference, perform hypothesis testing with
-Satterthwaite adjusted degrees of freedom, and extract least square
+Satterthwaite or Kenward-Roger adjustment, and extract least square
 means estimates by using `emmeans`.
 
 **Scope:**
 
--   Continuous responses with normal (but potentially heteroscedastic)
-    residuals.
--   Marginal linear models (no individual-level random effects).
+- Continuous responses with normal (but potentially heteroscedastic)
+  residuals.
+- Marginal linear models (no individual-level random effects).
 
 **Main Features:**
 
--   Flexible covariance specification:
-    -   [Structures](https://openpharma.github.io/mmrm/main/articles/covariance.html):
-        unstructured, Toeplitz, AR1, compound symmetry, spatial
-        exponential, and ante-dependence.
-    -   Groups: shared covariance structure for all subjects and, or
-        group-specific covariance estimates.
-    -   Variances: homogeneous or heterogeneous across time points.
--   Hypothesis testing:
-    -   [Least square
-        means](https://openpharma.github.io/mmrm/main/reference/emmeans_support.html):
-        `emmeans` package can be used with model outputs to obtain least
-        square means and test linear contrasts of model parameters.
-    -   Degrees of freedom adjustment: Satterthwaite-adjusted one- and
-        multi-dimensional contrasts.
--   Model inference:
-    -   Supports REML and ML.
-    -   Supports weights.
--   Fast implementation using C++ and automatic differentiation to
-    obtain precise gradient information for model fitting. See
-    [here](https://openpharma.github.io/mmrm/main/articles/algorithm.html)
-    for details of the model fitting algorithm used in `mmrm`.
+- Flexible covariance specification:
+  - [Structures](https://openpharma.github.io/mmrm/main/articles/covariance.html):
+    unstructured, Toeplitz, AR1, compound symmetry, ante-dependence, and
+    spatial exponential.
+  - Groups: shared covariance structure for all subjects or
+    group-specific covariance estimates.
+  - Variances: homogeneous or heterogeneous across time points.
+- Hypothesis testing:
+  - [Least square
+    means](https://openpharma.github.io/mmrm/main/reference/emmeans_support.html):
+    can be obtained with the `emmeans` package
+  - One- and multi-dimensional linear contrasts of model parameters can
+    be tested.
+  - [Satterthwaite](https://openpharma.github.io/mmrm/main/articles/satterthwaite.html)
+    adjusted degrees of freedom.
+  - [Kenward-Roger](https://openpharma.github.io/mmrm/main/articles/kenward.html)
+    adjusted degrees of freedom and coefficients covariance matrix.
+- Model inference:
+  - Supports REML and ML.
+  - Supports weights.
+- Fast implementation using C++ and automatic differentiation to obtain
+  precise gradient information for model fitting. See
+  [here](https://openpharma.github.io/mmrm/main/articles/algorithm.html)
+  for details of the model fitting algorithm used in `mmrm`.
 
 ## Installation
 
@@ -147,7 +150,8 @@ summary(fit)
 #> Data:        fev_data (used 537 observations from 197 subjects with maximum 4 
 #> timepoints)
 #> Covariance:  unstructured (10 variance parameters)
-#> Method:      REML
+#> Method:      Satterthwaite
+#> Inference:   REML
 #> 
 #> Model selection criteria:
 #>      AIC      BIC   logLik deviance 

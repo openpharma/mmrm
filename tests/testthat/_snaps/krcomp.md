@@ -50,12 +50,12 @@
 
 # h_df_md_kr works as expected in the standard case
 
-    list(num_df = 2L, num_df = 2L, denom_df = 188.648444482487, f_stat = 3913.7241325595, 
+    list(num_df = 2L, denom_df = 188.648444482487, f_stat = 3913.7241325595, 
         p_val = 2.57603724255367e-154)
 
 ---
 
-    list(num_df = 2L, num_df = 2L, denom_df = 188.648444482487, f_stat = 3913.7241325595, 
+    list(num_df = 2L, denom_df = 188.648444482487, f_stat = 3913.7241325595, 
         p_val = 2.57603724255367e-154)
 
 # h_kr_df works as expected in the standard case
