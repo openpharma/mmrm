@@ -26,8 +26,8 @@ get_covar_mat <- function(fit) {
   } else if (class(fit)[1] == "data.frame") { # SAS PROC MIXED
     cor_est_mat <- matrix(fit$Estimate[11], nrow = 10, ncol = 10)
     diag(cor_est_mat) <- 1
-    std_errs <- sqrt(fit$Estimate[1:10])
-    unweighted_covar_mat <- outer(std_errs, std_errs)
+    std_devs <- sqrt(fit$Estimate[1:10])
+    unweighted_covar_mat <- outer(std_devs, std_devs)
     covar_mat <- cor_est_mat * unweighted_covar_mat
   }
 
@@ -101,5 +101,48 @@ spectral_loss_fun <- function(fit_results, true_covar_mat_ls) {
       )
     ) %>%
     dplyr::select(-fit)
+
+}
+
+
+#' Squared error loss of heterogeneous compound symmetry matrix parameters
+
+csh_param_sq_err_loss_fun <- function(fit_results, true_covar_mat_ls) {
+
+  ## extract the true variance parameter values
+  hom_vars <- diag(true_covar_mat_ls[[1]])
+  het_vars <- diag(true_covar_mat_ls[[2]])
+
+  ## extract the true correlation parameter value
+  hom_corr <- true_covar_mat_ls[[1]][1, 2] / sqrt(hom_vars[1] * hom_vars[2])
+  het_corr <- true_covar_mat_ls[[2]][1, 2] / sqrt(het_vars[1] * het_vars[2])
+
+  ## compute the squared error losses
+  fit_results %>%
+    dplyr::mutate(
+      sq_err_loss = purrr::map2_dfr(
+        fit, .dgp_name,
+        function(f, dgp_name) {
+          ## extract the estimated variances and correlation
+          est_covar_mat <- get_covar_mat(f)
+          vars_est <- diag(est_covar_mat)
+          corr_est <- est_covar_mat[1, 2] / sqrt(vars_est[1] * vars_est[2])
+
+          ## assemble the true parameter vector
+          if (dgp_name == "hom_rct")
+            true_params <- c(hom_vars, hom_corr)
+          else
+            true_params <- c(het_vars, het_corr)
+
+          ## compute the squared error loss
+          loss <- (c(vars_est, corr_est) - true_params)^2
+          names(loss) <- c(paste0("var_t", seq_len(10)), "corr")
+          return(loss)
+
+        }
+      )
+    ) %>%
+    dplyr::select(-fit) %>%
+    tidyr::unnest(cols = sq_err_loss)
 
 }

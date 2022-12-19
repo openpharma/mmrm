@@ -137,14 +137,14 @@ proc_mixed_fun <- function(
 ) {
 
   ## assemble the vectors into a data.frame
-  ## NOTE: Use tibble instead of data.frame to avoid sasr warning about rownames
-  df <- tibble::tibble(
+  df <- data.frame(
     "participant" = participant,
     "time" = time,
     "y" = y,
     "trt" = trt,
     "base_cov" = base_cov
   )
+  rownames(df) <- NULL
 
   ## create SAS dataset
   sasr::df2sd(df, "sas_df")
@@ -156,7 +156,6 @@ proc_mixed_fun <- function(
       CLASS trt time participant base_cov;
       MODEL y = trt time base_cov time*trt;
       REPEATED time / subject=participant type=CSH;
-      LSMEANS trt / alpha=0.05;
     RUN;"
 
   ## run the SAS code, and capture the output

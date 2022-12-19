@@ -61,6 +61,10 @@ spectral_loss_eval <- create_evaluator(
   .eval_fun = spectral_loss_fun,
   true_covar_mat_ls = true_covar_ls
 )
+sq_err_loss_eval <- create_evaluator(
+  .eval_fun = csh_param_sq_err_loss_fun,
+  true_covar_mat_ls = true_covar_ls
+)
 
 ## specify the result summarizers
 source(here("simulations/csh-benchmarks/R/visualizer-functions.R"))
@@ -71,17 +75,18 @@ loss_dist_viz <- create_visualizer(.viz_fun = loss_dist_fun)
 experiment <- create_experiment(name = "covar-matrix-estimation-comparison") %>%
   add_dgp(hom_rct_dgp, name = "hom_rct") %>%
   add_dgp(het_rct_dgp, name = "het_rct") %>%
-  add_vary_across(.dgp = "hom_rct", num_part = c(125, 250, 500, 1000)) %>%
-  add_vary_across(.dgp = "het_rct", num_part = c(125, 250, 500, 1000)) %>%
+  add_vary_across(.dgp = "hom_rct", num_part = c(250, 500, 1000)) %>%
+  add_vary_across(.dgp = "het_rct", num_part = c(250, 500, 1000)) %>%
   add_method(mrmm_method, name = "mmrm") %>%
   add_method(glmmTMB_method, name = "glmmTMB") %>%
   add_method(nlme_method, name = "nlme") %>%
   add_method(proc_mixed_method, name = "proc_mixed") %>%
   add_evaluator(frobenius_loss_eval, name = "frobenius_loss") %>%
   add_evaluator(spectral_loss_eval, name = "spectral_loss") %>%
+  add_evaluator(sq_err_loss_eval, name = "sq_err_loss") %>%
   add_visualizer(risk_tbl_viz, name = "risk_tibble") %>%
   add_visualizer(loss_dist_viz, name = "loss_dist_plot")
 
 ## run the experiment
 set.seed(1412)
-results <- experiment$run(n_reps = 500, save = FALSE)
+results <- experiment$run(n_reps = 50, save = TRUE)
