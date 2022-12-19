@@ -24,9 +24,10 @@ Should be NULL or a numeric vector.}
 \item{reml}{(\code{flag})\cr whether restricted maximum likelihood (REML) estimation is used,
 otherwise maximum likelihood (ML) is used.}
 
-\item{control}{(\code{mmrm_control})\cr object of mmrm fitting control.}
+\item{control}{(\code{mmrm_control})\cr fine-grained fitting specifications list
+created with \code{\link[=mmrm_control]{mmrm_control()}}.}
 
-\item{...}{additional arguments for \code{\link[=mmrm_control]{mmrm_control()}}}
+\item{...}{arguments passed to \code{\link[=mmrm_control]{mmrm_control()}}.}
 }
 \value{
 An \code{mmrm} object.
@@ -57,16 +58,46 @@ including \code{BFGS}, \code{CG} and \code{nlminb} are
 tried (in parallel if \code{n_cores} is set and not on Windows).
 If none of the optimizers converge, then the function fails. Otherwise
 the best fit is returned.
+
+Note that fine-grained control specifications can either be passed directly
+to the \code{mmrm} function, or via the \code{control} argument for bundling together
+with the \code{\link[=mmrm_control]{mmrm_control()}} function. Both cannot be used together, since
+this would delete the arguments passed via \code{mmrm}.
 }
 \note{
 The \code{mmrm} object is also an \code{mmrm_fit} and an \code{mmrm_tmb} object,
 therefore corresponding methods also work (see \code{\link{mmrm_tmb_methods}}).
-In addition it contains the Jacobian information \code{jac_list} and the \code{call}.
+
+Additional contents depend on the choice of the adjustment \code{method}:
+\itemize{
+\item If Satterthwaite adjustment is used, the Jacobian information \code{jac_list}
+is included.
+\item If Kenward-Roger adjustment is used, \code{kr_comp} contains necessary
+components and \code{beta_vcov_adj} includes the adjusted coefficients covariance
+matrix.
+}
+
 Use of the package \code{emmeans} is supported, see \code{\link{emmeans_support}}.
 }
 \examples{
 fit <- mmrm(
   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data
+)
+
+# Direct specification of control details:
+fit <- mmrm(
+  formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data,
+  weights = fev_data$WEIGHTS,
+  method = "Kenward-Roger"
+)
+
+# Alternative specification via control argument (but you cannot mix the
+# two approaches):
+fit <- mmrm(
+  formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data,
+  control = mmrm_control(method = "Kenward-Roger")
 )
 }

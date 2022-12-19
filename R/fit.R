@@ -170,17 +170,19 @@ refit_multiple_optimizers <- function(fit,
 #' Control Parameters for Fitting an MMRM
 #'
 #' @description `r lifecycle::badge("experimental")`
+#' Fine-grained specification of the MMRM fit details is possible using this
+#' control function.
 #'
 #' @param n_cores (`int`)\cr number of cores to be used.
-#' @param method (`character`)\cr vector of covariance/degree of freedom method.
+#' @param method (`string`)\cr vector of covariance/degree of freedom method.
 #' @param start (`numeric` or `NULL`)\cr optional start values for variance
 #'   parameters.
 #' @param accept_singular (`flag`)\cr whether singular design matrices are reduced
 #'   to full rank automatically and additional coefficient estimates will be missing.
-#' @param optimizers (`list`)\cr of optimizers created from [h_get_optimizers()].
+#' @param optimizers (`list`)\cr optimizer specification, created with [h_get_optimizers()].
 #' @param drop_visit_levels (`flag`)\cr whether to drop levels for visit variable,
 #'   if visit variable is a factor, see details.
-#' @param ... Additional arguments passed to [h_get_optimizers()].
+#' @param ... additional arguments passed to [h_get_optimizers()].
 #'
 #' @details
 #' The `drop_visit_levels` flag will decide whether unobserved visits will be kept for analysis.
@@ -241,8 +243,9 @@ mmrm_control <- function(n_cores = 1L,
 #'   Should be NULL or a numeric vector.
 #' @param reml (`flag`)\cr whether restricted maximum likelihood (REML) estimation is used,
 #'   otherwise maximum likelihood (ML) is used.
-#' @param control (`mmrm_control`)\cr object of mmrm fitting control.
-#' @param ... additional arguments for [mmrm_control()]
+#' @param control (`mmrm_control`)\cr fine-grained fitting specifications list
+#'   created with [mmrm_control()].
+#' @param ... arguments passed to [mmrm_control()].
 #'
 #' @details
 #' The `formula` typically looks like:
@@ -266,11 +269,23 @@ mmrm_control <- function(n_cores = 1L,
 #' If none of the optimizers converge, then the function fails. Otherwise
 #' the best fit is returned.
 #'
+#' Note that fine-grained control specifications can either be passed directly
+#' to the `mmrm` function, or via the `control` argument for bundling together
+#' with the [mmrm_control()] function. Both cannot be used together, since
+#' this would delete the arguments passed via `mmrm`.
+#'
 #' @return An `mmrm` object.
 #'
 #' @note The `mmrm` object is also an `mmrm_fit` and an `mmrm_tmb` object,
 #' therefore corresponding methods also work (see [`mmrm_tmb_methods`]).
-#' In addition it contains the Jacobian information `jac_list` and the `call`.
+#'
+#' Additional contents depend on the choice of the adjustment `method`:
+#' - If Satterthwaite adjustment is used, the Jacobian information `jac_list`
+#' is included.
+#' - If Kenward-Roger adjustment is used, `kr_comp` contains necessary
+#' components and `beta_vcov_adj` includes the adjusted coefficients covariance
+#' matrix.
+#'
 #' Use of the package `emmeans` is supported, see [`emmeans_support`].
 #'
 #' @export
@@ -280,12 +295,29 @@ mmrm_control <- function(n_cores = 1L,
 #'   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
 #'   data = fev_data
 #' )
+#'
+#' # Direct specification of control details:
+#' fit <- mmrm(
+#'   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+#'   data = fev_data,
+#'   weights = fev_data$WEIGHTS,
+#'   method = "Kenward-Roger"
+#' )
+#'
+#' # Alternative specification via control argument (but you cannot mix the
+#' # two approaches):
+#' fit <- mmrm(
+#'   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+#'   data = fev_data,
+#'   control = mmrm_control(method = "Kenward-Roger")
+#' )
 mmrm <- function(formula,
                  data,
                  weights = NULL,
                  reml = TRUE,
                  control = mmrm_control(...),
                  ...) {
+  assert_false(!missing(control) && !missing(...))
   assert_class(control, "mmrm_control")
   assert_list(control$optimizers, min.len = 1)
   if (control$method %in% c("Kenward-Roger", "Kenward-Roger-Linear") && !reml) {
@@ -337,14 +369,13 @@ mmrm <- function(formula,
     fit$jac_list <- h_jac_list(covbeta_fun, fit$theta_est)
   } else {
     fit$kr_comp <- h_get_kr_comp(fit$tmb_data, fit$theta_est)
-    linear <- (control$method == "Kenward-Roger-Linear")
     fit$beta_vcov_adj <- h_var_adj(
       v = fit$beta_vcov,
       w = component(fit, "theta_vcov"),
       p = fit$kr_comp$P,
       q = fit$kr_comp$Q,
       r = fit$kr_comp$R,
-      linear = linear
+      linear = (control$method == "Kenward-Roger-Linear")
     )
   }
   class(fit) <- c("mmrm", class(fit))

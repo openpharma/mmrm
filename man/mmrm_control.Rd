@@ -17,7 +17,7 @@ mmrm_control(
 \arguments{
 \item{n_cores}{(\code{int})\cr number of cores to be used.}
 
-\item{method}{(\code{character})\cr vector of covariance/degree of freedom method.}
+\item{method}{(\code{string})\cr vector of covariance/degree of freedom method.}
 
 \item{start}{(\code{numeric} or \code{NULL})\cr optional start values for variance
 parameters.}
@@ -28,15 +28,17 @@ to full rank automatically and additional coefficient estimates will be missing.
 \item{drop_visit_levels}{(\code{flag})\cr whether to drop levels for visit variable,
 if visit variable is a factor, see details.}
 
-\item{...}{Additional arguments passed to \code{\link[=h_get_optimizers]{h_get_optimizers()}}.}
+\item{...}{additional arguments passed to \code{\link[=h_get_optimizers]{h_get_optimizers()}}.}
 
-\item{optimizers}{(\code{list})\cr of optimizers created from \code{\link[=h_get_optimizers]{h_get_optimizers()}}.}
+\item{optimizers}{(\code{list})\cr optimizer specification, created with \code{\link[=h_get_optimizers]{h_get_optimizers()}}.}
 }
 \value{
 List of class \code{mmrm_control} with the control parameters.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+Fine-grained specification of the MMRM fit details is possible using this
+control function.
 }
 \details{
 The \code{drop_visit_levels} flag will decide whether unobserved visits will be kept for analysis.

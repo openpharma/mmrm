@@ -397,3 +397,16 @@ test_that("mmrm works and gives message for data with unobserved visit levels", 
   )
   expect_identical(deviance(result), deviance(expected))
 })
+
+test_that("mmrm fails when using ... and control at the same time", {
+  expect_error(
+    mmrm(
+      formula = FEV1 ~ us(AVISIT | USUBJID),
+      data = fev_data,
+      accept_singular = FALSE,
+      control = mmrm_control(method = "Kenward-Roger")
+    ),
+    "Assertion on '!missing(control) && !missing(...)' failed",
+    fixed = TRUE
+  )
+})

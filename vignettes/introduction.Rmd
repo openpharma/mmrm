@@ -58,10 +58,10 @@ interface, common changes to the default function call can be specified.
 
 For fine control, [`mmrm_control()`](https://openpharma.github.io/mmrm/main/reference/mmrm_control.html)
 is provided. This function allows the user to choose the adjustment method for
-the degrees of freedom and the coefficients covariance matrix, specify optimization routines, 
+the degrees of freedom and the coefficients covariance matrix, specify optimization routines,
 number of cores to be used on Unix systems for trying several optimizers in parallel,
 provide a vector of starting parameter values, decide the action to be taken when the
-defined design matrix is singular, not drop unobserved visit levels. 
+defined design matrix is singular, not drop unobserved visit levels.
 For example:
 
 ```{r low-level-control, eval=FALSE}
@@ -75,7 +75,7 @@ mmrm_control(
 )
 ```
 
-Note that this control list can either be passed via the `control` argument 
+Note that this control list can either be passed via the `control` argument
 to `mmrm`, or selected controls can be directly specified in the `mmrm` call.
 We will see this below.
 
@@ -100,8 +100,8 @@ four optimizers, which starts with `L-BFGS-B` and proceeds through the
 other choices if optimization fails to converge. Other choices are `BFGS`, `CG`, and
 `nlminb`.
 
-`L-BFGS-B`, `BFGS` and `CG` are all implemented with `stats::optim()` and the Hessian 
-is not used, while `nlminb` is using `stats::nlminb()` which in turn uses both the 
+`L-BFGS-B`, `BFGS` and `CG` are all implemented with `stats::optim()` and the Hessian
+is not used, while `nlminb` is using `stats::nlminb()` which in turn uses both the
 gradient and the Hessian (by default but can be switch off) for the optimization.
 
 ```{r common-changes-optim}
@@ -169,8 +169,8 @@ We can see that the estimated covariance matrices are different in different `AR
 ## Adjustment Method
 
 Both Satterthwaite and Kenward-Roger adjustment methods are available. The default
-is Satterthwaite adjustment of the degrees of freedom. To use Kenward-Roger 
-adjustment of the degrees of freedom as well as the coefficients covariance 
+is Satterthwaite adjustment of the degrees of freedom. To use Kenward-Roger
+adjustment of the degrees of freedom as well as the coefficients covariance
 matrix, use the `method` argument:
 
 ```{r kr}
@@ -181,7 +181,9 @@ fit_kr <- mmrm(
 )
 ```
 
-While this choice is not visible in the `print()` result of the fitted model 
+Note that this requires `reml = TRUE`, i.e. Kenward-Roger adjustment is not
+possible when using maximum likelihood inference.
+While this adjustment choice is not visible in the `print()` result of the fitted model
 (because the initial model fit is not affected by the choice of the
 adjustment method), looking at the `summary` we see the method and the
 correspondingly adjusted standard errors and degrees of freedom:
@@ -208,17 +210,17 @@ fit_kr_lin <- mmrm(
 
 This is due to the different parametrization of the unstructured covariance
 matrix, see the
-[vignette](https://openpharma.github.io/mmrm/main/articles/kenward.html#parameterization-methods-and-kenward-roger) 
+[vignette](https://openpharma.github.io/mmrm/main/articles/kenward.html#parameterization-methods-and-kenward-roger)
 for details.
 
 ## Keeping Unobserved Visits
 
-Sometimes not all possible time points are observed in a given data set. 
+Sometimes not all possible time points are observed in a given data set.
 When using a structured covariance matrix, e.g. with auto-regressive structure,
 then it can be relevant to keep the correct distance between the observed time
-points. 
+points.
 
-Consider the following example where we have deliberately removed the `VIS3` 
+Consider the following example where we have deliberately removed the `VIS3`
 observations from our initial example data set `fev_data` to obtain `sparse_data`.
 We first fit the model where we do not drop the visit level explicitly, using the
 `drop_visit_levels = FALSE` choice. Second we fit the model by default without
@@ -248,8 +250,8 @@ cov2cor(VarCorr(dropped_result))
 
 We see that when using the default, second result, we just drop the `VIS3` from
 the covariance matrix. As a consequence, we model the correlation between `VIS2`
-and `VIS4` the same as the correlation between `VIS1` and `VIS2`. Hence we get a smaller 
-correlation estimate here compared to the first result, which includes `VIS3` 
+and `VIS4` the same as the correlation between `VIS1` and `VIS2`. Hence we get a smaller
+correlation estimate here compared to the first result, which includes `VIS3`
 explicitly.
 
 # Extraction of model features
@@ -317,8 +319,8 @@ component(fit)
 
 The lower level function which is called by [`mmrm()`](https://openpharma.github.io/mmrm/main/reference/mmrm.html) is [`fit_mmrm()`](https://openpharma.github.io/mmrm/main/reference/fit_mmrm.html). This
 function is exported and can be used directly. It is similar to [`mmrm()`](https://openpharma.github.io/mmrm/main/reference/mmrm.html) but lacks
-some post-processing and support for Satterthwaite and Kenward-Roger calculations. 
-It may be useful for other packages that want to fit the model without 
+some post-processing and support for Satterthwaite and Kenward-Roger calculations.
+It may be useful for other packages that want to fit the model without
 the adjustment calculations.
 
 ```{r low-level-hmmrmtmb}
