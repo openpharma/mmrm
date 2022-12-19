@@ -167,7 +167,8 @@ h_kr_df <- function(v0, l, w, p) {
 
 #' Obtain the Adjusted Covariance Matrix
 #'
-#' @description Obtains the Kenward-Roger adjusted covariance matrix.
+#' @description Obtains the Kenward-Roger adjusted covariance matrix for the
+#'   coefficient estimates.
 #' Used in [mmrm()] fitting if method is "Kenward-Roger" or "Kenward-Roger-Linear".
 #'
 #' @param v (`matrix`)\cr unadjusted covariance matrix.

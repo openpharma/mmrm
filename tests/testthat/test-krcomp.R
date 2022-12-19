@@ -248,3 +248,22 @@ test_that("h_var_adj works as expected in the standard case for Kenward-Roger-Li
     linear = FALSE
   ))
 })
+
+# df_md ----
+
+test_that("df_md works as expected for Kenward-Roger", {
+  object_mmrm_kr <- get_mmrm_kr()
+  contrast <- matrix(c(0, 1, 1, 0), nrow = 2)
+  result <- expect_silent(df_md(object_mmrm_kr, contrast))
+  expected <- list(
+    num_df = 2L,
+    denom_df = 188.65,
+    f_stat = 3913.72,
+    p_val = 2.576e-154
+  )
+  expect_equal(
+    result,
+    expected,
+    tolerance = 1e-4
+  )
+})

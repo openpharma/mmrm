@@ -55,7 +55,6 @@ fit_single_optimizer <- function(formula,
     stop(quiet_fit$errors)
   }
   converged <- (length(quiet_fit$warnings) == 0L) &&
-    (length(quiet_fit$messages) == 0L) &&
     (quiet_fit$result$opt_details$convergence == 0)
   structure(
     quiet_fit$result,
@@ -120,11 +119,11 @@ refit_multiple_optimizers <- function(fit,
                                       control = mmrm_control(...)) {
   assert_class(fit, "mmrm_fit")
   assert_class(control, "mmrm_control")
+
   # Extract the components of the original fit.
   old_formula <- formula(fit)
   old_data <- fit$data
   old_weights <- fit$weights
-
 
   n_cores_used <- ifelse(
     .Platform$OS.type == "windows",
@@ -134,7 +133,6 @@ refit_multiple_optimizers <- function(fit,
       control$n_cores
     )
   )
-  # split controls
   controls <- h_split_control(
     control,
     start = fit$theta_est
@@ -169,7 +167,6 @@ refit_multiple_optimizers <- function(fit,
   all_fits[[best_optimizer]]
 }
 
-
 #' Control Parameters for Fitting an MMRM
 #'
 #' @description `r lifecycle::badge("experimental")`
@@ -181,19 +178,20 @@ refit_multiple_optimizers <- function(fit,
 #' @param accept_singular (`flag`)\cr whether singular design matrices are reduced
 #'   to full rank automatically and additional coefficient estimates will be missing.
 #' @param optimizers (`list`)\cr of optimizers created from [h_get_optimizers()].
-#' @param drop_visit_levels (`flag`)\cr whether to drop levels for visit variable, if visit variable is a factor.
+#' @param drop_visit_levels (`flag`)\cr whether to drop levels for visit variable,
+#'   if visit variable is a factor, see details.
 #' @param ... Additional arguments passed to [h_get_optimizers()].
 #'
 #' @details
-#' `drop_visit_levels`:
-#' This flag will decide whether unobserved visits will be kept for analysis.
-#' For example, if you have only VIS1, VIS3 and VIS4, by default
-#' they are treated to be equally spaced, the distance from VIS1 to VIS3, and from VIS3 to VIS4,
-#' are both 1. However, you can manually convert this visit into a factor, with
+#' The `drop_visit_levels` flag will decide whether unobserved visits will be kept for analysis.
+#' For example, if the data only has observations at visits `VIS1`, `VIS3` and `VIS4`, by default
+#' they are treated to be equally spaced, the distance from `VIS1` to `VIS3`, and from `VIS3` to `VIS4`,
+#' are identical. However, you can manually convert this visit into a factor, with
 #' `levels = c("VIS1", "VIS2", "VIS3", "VIS4")`, and also use `drop_visits_levels = FALSE`,
-#' then the distance from VIS1 to VIS3 will be 2, as "VIS2" is a valid visit.
-#' However, please be cautious because this can lead to convergence issues for unstructured covariance
-#' structure because there are no observations at that missing visit.
+#' then the distance from `VIS1` to `VIS3` will be double, as `VIS2` is a valid visit.
+#' However, please be cautious because this can lead to convergence issues
+#' when using an unstructured covariance matrix because there are no observations
+#' at that missing visit.
 #'
 #' @return List of class `mmrm_control` with the control parameters.
 #' @export
@@ -290,7 +288,6 @@ mmrm <- function(formula,
                  ...) {
   assert_class(control, "mmrm_control")
   assert_list(control$optimizers, min.len = 1)
-  use_automatic <- length(control$optimizers) > 1L
   if (control$method %in% c("Kenward-Roger", "Kenward-Roger-Linear") && !reml) {
     stop("Kenward-Roger only works for REML")
   }
@@ -310,7 +307,8 @@ mmrm <- function(formula,
     control = control
   )
   if (!attr(fit, "converged")) {
-    if (use_automatic) {
+    use_multiple <- length(control$optimizers) > 1L
+    if (use_multiple) {
       control_remain <- control
       control_remain$optimizers <- control$optimizers[-1]
       fit <- refit_multiple_optimizers(
@@ -319,15 +317,19 @@ mmrm <- function(formula,
       )
     } else {
       all_problems <- unlist(
-        attributes(fit)[c("errors", "messages", "warnings")],
+        attributes(fit)[c("errors", "warnings")],
         use.names = FALSE
       )
       stop(paste0(
         "Chosen optimizer '", toString(names(control$optimizer)), "' led to problems during model fit:\n",
         paste(paste0(seq_along(all_problems), ") ", all_problems), collapse = ";\n"), "\n",
-        "Consider using the default option to use multiple optimizers."
+        "Consider trying multiple optimizers."
       ))
     }
+  }
+  fit_msg <- attr(fit, "messages")
+  if (!is.null(fit_msg)) {
+    message(paste(fit_msg, collapse = "\n"))
   }
   fit$method <- control$method
   if (control$method == "Satterthwaite") {

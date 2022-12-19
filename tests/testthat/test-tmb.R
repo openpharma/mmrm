@@ -1605,11 +1605,14 @@ test_that("fit_mmrm saves data name in call element as expected", {
 test_that("fit_mmrm works even when time point variable has unused factor levels", {
   tmp_data <- fev_data
   tmp_data$AVISIT <- factor(tmp_data$AVISIT, levels = c("SCREENING", "VIS1", "VIS2", "VIS3", "VIS4"))
-  expect_warning(result <- fit_mmrm(
-    FEV1 ~ FEV1_BL + RACE + us(AVISIT | USUBJID),
-    data = tmp_data,
-    weights = rep(1, nrow(tmp_data))
-  ), "In AVISIT there are dropped visits: SCREENING")
+  expect_message(
+    result <- fit_mmrm(
+      FEV1 ~ FEV1_BL + RACE + us(AVISIT | USUBJID),
+      data = tmp_data,
+      weights = rep(1, nrow(tmp_data))
+    ),
+    "In AVISIT there are dropped visits: SCREENING"
+  )
   expect_class(result, "mmrm_tmb")
   expect_identical(
     rownames(VarCorr(result)),
