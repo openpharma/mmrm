@@ -25,7 +25,8 @@ parameters.}
 \item{accept_singular}{(\code{flag})\cr whether singular design matrices are reduced
 to full rank automatically and additional coefficient estimates will be missing.}
 
-\item{drop_visit_levels}{(\code{flag})\cr whether to drop levels for visit variable, if visit variable is a factor.}
+\item{drop_visit_levels}{(\code{flag})\cr whether to drop levels for visit variable,
+if visit variable is a factor, see details.}
 
 \item{...}{Additional arguments passed to \code{\link[=h_get_optimizers]{h_get_optimizers()}}.}
 
@@ -38,15 +39,15 @@ List of class \code{mmrm_control} with the control parameters.
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
 \details{
-\code{drop_visit_levels}:
-This flag will decide whether unobserved visits will be kept for analysis.
-For example, if you have only VIS1, VIS3 and VIS4, by default
-they are treated to be equally spaced, the distance from VIS1 to VIS3, and from VIS3 to VIS4,
-are both 1. However, you can manually convert this visit into a factor, with
+The \code{drop_visit_levels} flag will decide whether unobserved visits will be kept for analysis.
+For example, if the data only has observations at visits \code{VIS1}, \code{VIS3} and \code{VIS4}, by default
+they are treated to be equally spaced, the distance from \code{VIS1} to \code{VIS3}, and from \code{VIS3} to \code{VIS4},
+are identical. However, you can manually convert this visit into a factor, with
 \code{levels = c("VIS1", "VIS2", "VIS3", "VIS4")}, and also use \code{drop_visits_levels = FALSE},
-then the distance from VIS1 to VIS3 will be 2, as "VIS2" is a valid visit.
-However, please be cautious because this can lead to convergence issues for unstructured covariance
-structure because there are no observations at that missing visit.
+then the distance from \code{VIS1} to \code{VIS3} will be double, as \code{VIS2} is a valid visit.
+However, please be cautious because this can lead to convergence issues
+when using an unstructured covariance matrix because there are no observations
+at that missing visit.
 }
 \examples{
 mmrm_control(
