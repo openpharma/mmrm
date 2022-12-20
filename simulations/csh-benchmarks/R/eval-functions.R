@@ -106,7 +106,6 @@ spectral_loss_fun <- function(fit_results, true_covar_mat_ls) {
 
 
 #' Squared error loss of heterogeneous compound symmetry matrix parameters
-
 csh_param_sq_err_loss_fun <- function(fit_results, true_covar_mat_ls) {
 
   ## extract the true variance parameter values
@@ -144,5 +143,62 @@ csh_param_sq_err_loss_fun <- function(fit_results, true_covar_mat_ls) {
     ) %>%
     dplyr::select(-fit) %>%
     tidyr::unnest(cols = sq_err_loss)
+
+}
+
+#' Bias of heterogeneous compound symmetry matrix parameters
+csh_param_bias_fun <- function(fit_results, true_covar_mat_ls) {
+
+  ## extract the true variance parameter values
+  hom_vars <- diag(true_covar_mat_ls[[1]])
+  het_vars <- diag(true_covar_mat_ls[[2]])
+
+  ## extract the true correlation parameter value
+  hom_corr <- true_covar_mat_ls[[1]][1, 2] / sqrt(hom_vars[1] * hom_vars[2])
+  het_corr <- true_covar_mat_ls[[2]][1, 2] / sqrt(het_vars[1] * het_vars[2])
+
+  ## compute the biases
+  strata_vars <- c(".dgp_name", ".method_name", "num_part")
+  fit_results %>%
+    dplyr::mutate(
+      accuracy = purrr::map2_dfr(
+        fit, .dgp_name,
+        function(f, dgp_name) {
+          ## extract the estimated variances and correlation
+          est_covar_mat <- get_covar_mat(f)
+          vars_est <- diag(est_covar_mat)
+          corr_est <- est_covar_mat[1, 2] / sqrt(vars_est[1] * vars_est[2])
+
+          ## assemble the true parameter vector
+          if (dgp_name == "hom_rct")
+            true_params <- c(hom_vars, hom_corr)
+          else
+            true_params <- c(het_vars, het_corr)
+
+          ## compute the squared error loss
+          accuracy <- c(vars_est, corr_est) - true_params
+          names(accuracy) <- c(paste0("var_t", seq_len(10)), "corr")
+          return(accuracy)
+
+        }
+      )
+    ) %>%
+    dplyr::select(-fit) %>%
+    tidyr::unnest(cols = accuracy) %>%
+    dplyr::group_by(dplyr::across({{strata_vars}})) %>%
+    dplyr::summarize(
+      var_t1 = mean(var_t1),
+      var_t2 = mean(var_t2),
+      var_t3 = mean(var_t3),
+      var_t4 = mean(var_t4),
+      var_t5 = mean(var_t5),
+      var_t6 = mean(var_t6),
+      var_t7 = mean(var_t7),
+      var_t8 = mean(var_t8),
+      var_t9 = mean(var_t9),
+      var_t10 = mean(var_t10),
+      corr = mean(corr),
+      .groups = "drop"
+    )
 
 }
