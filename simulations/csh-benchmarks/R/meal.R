@@ -74,8 +74,8 @@ bias_eval <- create_evaluator(
 source(here("simulations/csh-benchmarks/R/visualizer-functions.R"))
 risk_tbl_viz <- create_visualizer(.viz_fun = risk_tbl_fun)
 loss_dist_viz <- create_visualizer(.viz_fun = loss_dist_fun)
-mse_viz <- create_visualizer(.viz_fun = sq_err_risk_fun)
-bias_viz <- create_visualizer(.viz_fun = param_bias_fun)
+mse_viz <- create_visualizer(.viz_fun = mse_fun)
+bias_viz <- create_visualizer(.viz_fun = bias_fun)
 
 ## define the experiment object
 experiment <- create_experiment(name = "covar-matrix-estimation-comparison") %>%

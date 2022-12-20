@@ -114,8 +114,18 @@ loss_dist_fun <- function(eval_results) {
 
 }
 
-#' Mean Squared Error Risk Plotting Function
-sq_err_risk_fun <- function(eval_results) {
+#' Mean Squared Error Plotting Function
+#'
+#' @description This function plots the covariance matrix estimators' empirical
+#'   mean squared error for each parameter. The squared error losses are
+#'   computed by the simChef evaluators.
+#'
+#' @param eval_results A list of tibbles containing the results of the evaluator
+#'   functions.
+#'
+#' @return A ggplot2 object depicting the stratified empirical mean squared
+#'   errors.
+mse_plot_fun <- function(eval_results) {
 
   ## strata variables
   strata_vars <- c(".dgp_name", ".method_name", "num_part")
@@ -173,7 +183,15 @@ sq_err_risk_fun <- function(eval_results) {
 }
 
 #' Parameter Bias Plotting Function
-param_bias_fun <- function(eval_results) {
+#'
+#' @description This function plots the covariance matrix estimators' empirical
+#'   bias for each parameter. The biases are computed by the simChef evaluators.
+#'
+#' @param eval_results A list of tibbles containing the results of the evaluator
+#'   functions.
+#'
+#' @return A ggplot2 object depicting the stratified empirical bias.
+bias_fun <- function(eval_results) {
 
   ## combine the loss tables
   bias_tbl <- eval_results$biases %>%
