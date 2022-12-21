@@ -245,3 +245,18 @@ residuals.mmrm_tmb <- function(object, type = c("response", "pearson", "normaliz
     return(unname(resids))
   }
 }
+
+#' nobs method for mmrm objects
+#'
+#' @describeIn mmrm_tmb_method to obtain number of observations used in model fit
+#' @param object (`mmrm_tmb`)\cr the fitted MMRM.
+#' @param ... \cr not used in this method.
+#' @return A single integer
+#' @importFrom stats nobs
+#' @exportS3Method
+#' @examples
+#' # nobs:
+#' nobs(object)
+nobs.mmrm_tmb <- function(object, ...) {
+  component(object, name = "n_obs")
+}

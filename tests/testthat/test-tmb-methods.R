@@ -174,3 +174,12 @@ test_that("residuals works as expected", {
   result_norm <- expect_silent(residuals(object, type = "normalized"))
   expect_double(result_norm, len = length(object$tmb_data$y_vector))
 })
+
+# nobs.mmrm_tmb ----
+
+test_that("nobs works as expected", {
+  object <- get_mmrm_tmb()
+  result <- expect_silent(nobs(object))
+  expected <- 537
+  expect_equal(result, expected)
+})
