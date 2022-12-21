@@ -23,11 +23,11 @@ knitr::opts_chunk$set(
 )
 ```
 
-Here we describe the details of the Kenward-Roger degrees of freedom and adjusted covariance matrix calculations.
+Here we describe the details of the calculations for the Kenward-Roger degrees of freedom and the adjusted covariance matrix of the coefficients.
 
 ## Model definition
 
-The model definition is the same as what we have in [Details of the model fitting in `mmrm`](algorithms.html).
+The model definition is the same as what we have in [Details of the model fitting in `mmrm`](algorithm.html).
 We are using the same notations.
 
 ### Linear model
@@ -79,7 +79,7 @@ remaining entries.
 
 The mathematical derivation of the Kenward-Roger method is based on the Taylor expansion of the obtained covariance matrix
 of $\hat\beta$ to get a more accurate estimate for it. All these derivations are based on the restricted maximum likelihood.
-Following the same [notation](algorithms.html#covariance-matrix-model), the covariance matrix, $\Omega$ can be represented as
+Following the same [notation](algorithm.html#covariance-matrix-model), the covariance matrix, $\Omega$ can be represented as
 a function of covariance matrix parameters $\theta = (\theta_1, \dotsc, \theta_k)^\top$, i.e. $\Omega(\theta)$.
 Here after model fitting with `mmrm`, we obtain the estimate $\hat\beta = \Phi(\hat\theta)X^\top\Omega(\hat\theta)^{-1}Y$,
 where $\Phi(\theta) = \left\{X^\top \Omega(\theta)^{-1} X\right\} ^{-1}$ is the asymptotic covariance matrix of $\hat\beta$.
@@ -272,8 +272,7 @@ and
 \]
 follows exact $F_{c,m}$ distribution.
 
-When we have only one coefficient to test, then $C$ is a column vector containing a single $1$ inside.
-The hypothesis testing is still the same and is similar to the Satterthwaite method. We can still follow the same calculations as for the multi-dimensional case.
+When we have only one coefficient to test, then $C$ is a column vector containing a single $1$ inside. We can still follow the same calculations as for the multi-dimensional case. This recovers the degrees of freedom results of the Satterthwaite method.
 
 $\lambda$ and $m$ can be calculated through
 

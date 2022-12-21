@@ -133,6 +133,17 @@ test_that("fit_single_optimizer catches convergence warning as expected", {
   expect_class(component(result, "theta_vcov"), "try-error")
 })
 
+test_that("fit_single_optimizer deals correctly with unobserved visits message", {
+  data_unobs <- fev_data[fev_data$AVISIT != "VIS3", ]
+  result <- expect_silent(fit_single_optimizer(
+    formula = FEV1 ~ RACE + ad(AVISIT | USUBJID),
+    data = data_unobs,
+    weights = rep(1, nrow(data_unobs))
+  ))
+  expect_identical(attr(result, "messages"), "In AVISIT there are dropped visits: VIS3")
+  expect_true(attr(result, "converged"))
+})
+
 # h_summarize_all_fits ----
 
 test_that("h_summarize_all_fits works as expected", {
@@ -285,6 +296,8 @@ test_that("mmrm works as expected for toeplitz", {
 ## general ----
 
 test_that("mmrm falls back to other optimizers if default does not work", {
+  skip_on_cran()
+
   formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
   data_small <- fev_data[1:50, ]
   # Default does not work.
@@ -332,7 +345,7 @@ test_that("mmrm works for specific small data example", {
     id = "USUBJID",
     visit = "AVISIT"
   )
-  fit <- expect_silent(mmrm::mmrm(
+  fit <- expect_silent(mmrm(
     formula = FEV1 ~ AVISIT + ar1(AVISIT | USUBJID),
     data = small_dat
   ))
@@ -361,11 +374,45 @@ test_that("mmrm works for constructed control", {
   ))
 })
 
-test_that("mmrm still works for deprecated \"automatic\" optimizer", {
-  expect_silent(mmrm(
-    FEV1 ~ ARMCD + ar1(AVISIT | SEX / USUBJID),
-    data = fev_data,
-    reml = TRUE,
-    optimizer = "automatic"
-  ))
+test_that("mmrm still works for deprecated 'automatic' optimizer", {
+  expect_warning(
+    mmrm(
+      FEV1 ~ ARMCD + ar1(AVISIT | SEX / USUBJID),
+      data = fev_data,
+      reml = TRUE,
+      optimizer = "automatic"
+    ),
+    "\"automatic\" optimizer was deprecated in mmrm 0.2.0.",
+    fixed = TRUE
+  )
+})
+
+test_that("mmrm works and gives message for data with unobserved visit levels", {
+  data_unobs <- fev_data[fev_data$AVISIT != "VIS3", ]
+  expect_message(
+    result <- mmrm(
+      FEV1 ~ RACE + ad(AVISIT | USUBJID),
+      data = data_unobs
+    ),
+    "In AVISIT there are dropped visits: VIS3"
+  )
+  data_dropped <- droplevels(data_unobs)
+  expected <- mmrm(
+    FEV1 ~ RACE + ad(AVISIT | USUBJID),
+    data = data_dropped
+  )
+  expect_identical(deviance(result), deviance(expected))
+})
+
+test_that("mmrm fails when using ... and control at the same time", {
+  expect_error(
+    mmrm(
+      formula = FEV1 ~ us(AVISIT | USUBJID),
+      data = fev_data,
+      accept_singular = FALSE,
+      control = mmrm_control(method = "Kenward-Roger")
+    ),
+    "Assertion on '!missing(control) && !missing(...)' failed",
+    fixed = TRUE
+  )
 })

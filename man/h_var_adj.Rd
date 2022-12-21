@@ -23,7 +23,8 @@ h_var_adj(v, w, p, q, r, linear = FALSE)
 The matrix of adjusted covariance matrix.
 }
 \description{
-Obtains the Kenward-Roger adjusted covariance matrix.
+Obtains the Kenward-Roger adjusted covariance matrix for the
+coefficient estimates.
 Used in \code{\link[=mmrm]{mmrm()}} fitting if method is "Kenward-Roger" or "Kenward-Roger-Linear".
 }
 \keyword{internal}

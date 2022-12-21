@@ -278,7 +278,7 @@ h_mmrm_tmb_data <- function(formula_parts,
     new_levels <- levels(full_frame[[formula_parts$visit_var]])
     dropped <- setdiff(old_levels, new_levels)
     if (length(dropped) > 0) {
-      warning("In ", formula_parts$visit_var, " there are dropped visits: ", toString(dropped))
+      message("In ", formula_parts$visit_var, " there are dropped visits: ", toString(dropped))
     }
   }
 

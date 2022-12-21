@@ -20,10 +20,12 @@
 #' - `convergence`: convergence code from optimizer.
 #' - `conv_message`: message accompanying the convergence code.
 #' - `evaluations`: number of function evaluations for optimization.
+#' - `method`: Adjustment method which was used (for `mmrm` objects),
+#'      otherwise `NULL` (for `mmrm_tmb` objects).
 #' - `beta_vcov`: estimated variance-covariance matrix of coefficients
 #'      (excluding aliased coefficients). For Kenward-Roger
-#'      methods, the adjusted covariance matrix is returned. To obtain the unadjusted
-#'      covariance matrix, use `object$beta_vcov` instead.
+#'      methods, the adjusted covariance matrix is returned (to still obtain the
+#'      unadjusted covariance matrix use `object$beta_vcov`).
 #' - `beta_vcov_complete`: estimated variance-covariance matrix including
 #'      aliased coefficients with entries set to `NA`.
 #' - `varcor`: estimated covariance matrix for residuals. If there are multiple
@@ -60,7 +62,7 @@ component <- function(object,
                         "cov_type", "n_theta", "n_subjects", "n_timepoints",
                         "n_obs", "beta_vcov", "beta_vcov_complete",
                         "varcor", "formula", "dataset", "n_groups",
-                        "reml", "convergence", "evaluations",
+                        "reml", "convergence", "evaluations", "method",
                         "conv_message", "call", "theta_est",
                         "beta_est", "beta_est_complete", "beta_aliased",
                         "x_matrix", "y_vector", "neg_log_lik", "jac_list", "theta_vcov"
@@ -91,6 +93,7 @@ component <- function(object,
       list(object$opt_details$counts),
       list(object$opt_details$evaluations)
     )),
+    "method" = object$method,
     "beta_est" = object$beta_est,
     "beta_est_complete" =
       if (any(object$tmb_data$x_cols_aliased)) {

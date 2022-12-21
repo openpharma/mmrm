@@ -12,30 +12,41 @@ h_get_optimizers(
 )
 }
 \arguments{
-\item{optimizer}{(\code{character})\cr optimizer character. Only "L-BFGS-B", "BFGS", "CG" and "nlminb" supported.}
+\item{optimizer}{(\code{character})\cr names of built-in optimizers to try, subset
+of "L-BFGS-B", "BFGS", "CG" and "nlminb".}
 
-\item{optimizer_fun}{(\code{function})\cr or (\code{list})\cr of (\code{function})x\cr.}
+\item{optimizer_fun}{(\code{function} or \code{list} of \code{function})\cr alternatively to \code{optimizer},
+an optimizer function or a list of optimizer functions can be passed directly here.}
 
-\item{optimizer_args}{(\code{list})\cr of additional arguments for \code{optimizer_fun}.}
+\item{optimizer_args}{(\code{list})\cr additional arguments for \code{optimizer_fun}.}
 
-\item{optimizer_control}{(\code{list})\cr of control argument. Will serve as \code{control} in \code{optimizer_fun}.}
+\item{optimizer_control}{(\code{list})\cr passed to argument \code{control} in \code{optimizer_fun}.}
 }
 \value{
-Named \code{list} of optimizers created by \code{\link[=h_optimizer_fun]{h_optimizer_fun()}}.
+Named \code{list} of optimizers created by \code{\link[=h_partial_fun_args]{h_partial_fun_args()}}.
 }
 \description{
 This function creates optimizer functions with arguments.
 }
 \details{
-In this function, the final object to use is \code{optimizer_fun}, and \code{optimizer} is a shortcut to create
-multiple \code{optimizer_fun}. If you want to use your own optimizer function, make sure that there are three arguments,
-parameter(start value), objective function and gradient function are sequentially in the function arguments.
-If there are other named arguments in front of these, make sure they are correctly specified through
-\code{optimizer_args}. If hessian function can be applied, please make sure its argument name is \code{hessian} and
-please add attribute \code{use_hessian = TRUE} to the function, using \verb{attr(fun, "use_hessian) <- TRUE}
-If \code{optimizer_fun} is not provided, it will be created using the \code{optimizer} character. Other arguments should
-go into \code{optimizer_args}.
-Allowed are "L-BFGS-B", "BFGS", "CG"(using \code{\link[stats:optim]{stats::optim()}} with corresponding method) and
-"nlminb"(using \code{\link[stats:nlminb]{stats::nlminb()}}).
+If you want to use only the built-in optimizers:
+\itemize{
+\item \code{optimizer} is a shortcut to create a list of built-in optimizer functions
+passed to \code{optimizer_fun}.
+\item Allowed are "L-BFGS-B", "BFGS", "CG" (using \code{\link[stats:optim]{stats::optim()}} with corresponding method)
+and "nlminb" (using \code{\link[stats:nlminb]{stats::nlminb()}}).
+\item Other arguments should go into \code{optimizer_args}.
+}
+
+If you want to use your own optimizer function:
+\itemize{
+\item Make sure that there are three arguments: parameter (start value), objective function
+and gradient function are sequentially in the function arguments.
+\item If there are other named arguments in front of these, make sure they are correctly
+specified through \code{optimizer_args}.
+\item If the hessian can be used, please make sure its argument name is \code{hessian} and
+please add attribute \code{use_hessian = TRUE} to the function,
+using \verb{attr(fun, "use_hessian) <- TRUE}.
+}
 }
 \keyword{internal}
