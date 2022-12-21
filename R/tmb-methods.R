@@ -207,3 +207,40 @@ print.mmrm_tmb <- function(x,
   cat("\n")
   invisible(x)
 }
+
+
+#' Residuals method for mmrm objects
+#'
+#' @describeIn mmrm_tmb_method to obtain residuals - either unscaled or normalized
+#' @param object (`mmrm_tmb`)\cr the fitted MMRM.
+#' @param type (`character`)\cr unscaled ('response') or 'normalized'.
+#' @return Vector of residuals
+#' @importFrom stats residuals
+#' @exportS3Method
+#' @examples
+#' # residuals:
+#' residuals(object, type = "response")
+residuals.mmrm_tmb <- function(object, type = c("response", "pearson", "normalized")) {
+  assert_class(object, "mmrm_tmb")
+  assert_character(type)
+  type <- match.arg(type, several.ok = FALSE)
+  resids_unscaled <- component(object, "y_vector") - fitted(object)
+  if (type == "response") {
+    return(unname(resids_unscaled))
+  } else if (type %in% c("pearson", "normalized")) {
+    if (component(object, "n_groups") == 1) {
+      visit_sigmas <- sqrt(diag(object$cov))
+      visits <- as.numeric(object$tmb_data$full_frame[[object$formula_parts$visit_var]])
+      resids <- resids_unscaled / (visit_sigmas[visits] / sqrt(object$tmb_data$weights_vector))
+    } else {
+      grp_visit_sigmas <- lapply(object$cov, function(x) sqrt(diag(x)))
+      subject_grps <- object$tmb_data$full_frame[[object$formula_parts$group_var]]
+      visits <- as.numeric(object$tmb_data$full_frame[[object$formula_parts$visit_var]])
+      nobs <- nrow(object$tmb_data$full_frame)
+      resids <- sapply(1:nobs, function(x) {
+        resids_unscaled[x] / grp_visit_sigmas[[subject_grps[x]]][visits[x]] / sqrt(object$tmb_data$weights_vector[x])
+      })
+    }
+    return(unname(resids))
+  }
+}

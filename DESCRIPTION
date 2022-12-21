@@ -71,7 +71,7 @@ Language: en-US
 LazyData: true
 NeedsCompilation: yes
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 Collate:
     'catch-routine-registration.R'
     'component.R'
