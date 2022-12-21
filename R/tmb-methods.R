@@ -214,13 +214,14 @@ print.mmrm_tmb <- function(x,
 #' @describeIn mmrm_tmb_method to obtain residuals - either unscaled or normalized
 #' @param object (`mmrm_tmb`)\cr the fitted MMRM.
 #' @param type (`character`)\cr unscaled ('response') or 'normalized'.
+#' @param ... \cr not used in this method.
 #' @return Vector of residuals
 #' @importFrom stats residuals
 #' @exportS3Method
 #' @examples
 #' # residuals:
 #' residuals(object, type = "response")
-residuals.mmrm_tmb <- function(object, type = c("response", "pearson", "normalized")) {
+residuals.mmrm_tmb <- function(object, type = c("response", "pearson", "normalized"), ...) {
   assert_class(object, "mmrm_tmb")
   assert_character(type)
   type <- match.arg(type, several.ok = FALSE)

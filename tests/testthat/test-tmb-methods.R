@@ -164,3 +164,13 @@ test_that("print.mmrm_tmb works as expected for rank deficient fits", {
   object_mmrm_tmb <- get_mmrm_tmb_rank_deficient()
   expect_snapshot_output(print(object_mmrm_tmb), cran = FALSE)
 })
+
+# residuals.mmrm_tmb ----
+
+test_that("residuals works as expected", {
+  object <- get_mmrm_tmb()
+  result_resp <- expect_silent(residuals(object, type = "response"))
+  expect_double(result_resp, len = length(object$tmb_data$y_vector))
+  result_norm <- expect_silent(residuals(object, type = "normalized"))
+  expect_double(result_norm, len = length(object$tmb_data$y_vector))
+})
