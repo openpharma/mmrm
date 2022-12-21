@@ -125,7 +125,7 @@ loss_dist_fun <- function(eval_results) {
 #'
 #' @return A ggplot2 object depicting the stratified empirical mean squared
 #'   errors.
-mse_plot_fun <- function(eval_results) {
+mse_fun <- function(eval_results) {
 
   ## strata variables
   strata_vars <- c(".dgp_name", ".method_name", "num_part")
