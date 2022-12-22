@@ -18,6 +18,7 @@ Numeric vector which contains the quadratic forms of each element of
 \code{jac_list} with the \code{contrast} vector.
 }
 \description{
-Computation of a Gradient Given Jacobian and Contrast Vector
+Computes the gradient of a linear combination of \code{beta} given the Jacobian matrix and
+variance parameters.
 }
 \keyword{internal}

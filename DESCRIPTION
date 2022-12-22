@@ -1,7 +1,7 @@
 Type: Package
 Package: mmrm
 Title: Mixed Models for Repeated Measures
-Version: 0.1.5.9009
+Version: 0.2.2.9000
 Authors@R: c(
     person("Daniel", "Sabanes Bove", , "daniel.sabanes_bove@roche.com", role = c("aut", "cre")),
     person("Julia", "Dedic", , "julia.dedic@roche.com", role = "aut"),
@@ -26,9 +26,9 @@ Description: Mixed models for repeated measures (MMRM) are a popular
     Template Model Builder ('TMB') which enables fast and robust model
     fitting. Users can specify a variety of covariance matrices, weight
     observations, fit models with restricted or standard maximum
-    likelihood inference, perform hypothesis testing with Satterthwaite
-    adjusted degrees of freedom, and extract least square means estimates
-    by using 'emmeans'.
+    likelihood inference, perform hypothesis testing with Satterthwaite or
+    Kenward-Roger adjustment, and extract least square means estimates by
+    using 'emmeans'.
 License: Apache License 2.0
 URL: https://openpharma.github.io/mmrm/
 BugReports: https://github.com/openpharma/mmrm/issues
@@ -41,10 +41,12 @@ Imports:
     nlme,
     numDeriv,
     parallel,
+    Rcpp,
     Rdpack,
     stats,
     stringr,
-    TMB (>= 1.9.1)
+    TMB (>= 1.9.1),
+    utils
 Suggests:
     emmeans (>= 1.6),
     estimability,
@@ -54,9 +56,10 @@ Suggests:
     testthat (>= 3.0.0),
     xml2
 LinkingTo:
+    Rcpp,
     RcppEigen,
     testthat,
-    TMB
+    TMB (>= 1.9.1)
 VignetteBuilder:
     knitr
 RdMacros:
@@ -75,9 +78,11 @@ Collate:
     'data.R'
     'emmeans.R'
     'fit.R'
+    'kenwardroger.R'
     'mmrm-methods.R'
     'mmrm-package.R'
     'utils.R'
     'satterthwaite.R'
+    'testing.R'
     'tmb-methods.R'
     'tmb.R'

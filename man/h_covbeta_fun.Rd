@@ -14,6 +14,7 @@ Function with argument \code{theta} that calculates the covariance matrix
 for the coefficient vector \code{beta}.
 }
 \description{
-Covariance Matrix for Coefficients Given Variance Parameters
+Obtain the covariance matrix function which accepts variance parameters as input.
+Used in \code{\link[=h_jac_list]{h_jac_list()}} to to calculate the Jacobian matrix using numerical differentiation.
 }
 \keyword{internal}

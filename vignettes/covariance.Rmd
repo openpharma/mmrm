@@ -112,7 +112,7 @@ vignette](algorithm.html) for details.
 
 ## Homogeneous (`ad`) and Heterogeneous Ante-dependence (`adh`)
 
-The ante-dependence correlation structure (@Gabriel1962) is useful for
+The ante-dependence correlation structure [@Gabriel1962] is useful for
 balanced designs where the observations are not necessarily equally
 spaced in time. Here we use an order one ante-dependence model, where
 the correlation matrix $P$ has elements
@@ -134,7 +134,7 @@ Note our naming convention for the homogeneous and heterogeneous covariance stru
 
 ## Homogeneous (`toep`) and Heterogeneous Toeplitz (`toeph`)
 
-Toeplitz matrices (@Toeplitz1911) are diagonal-constant matrices. Here
+Toeplitz matrices [@Toeplitz1911] are diagonal-constant matrices. Here
 we can model the correlation matrix as a Toeplitz matrix:
 \[
 P = \begin{pmatrix}

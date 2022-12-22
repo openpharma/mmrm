@@ -1,6 +1,7 @@
 #ifndef UTILS_INCLUDED_
 #define UTILS_INCLUDED_
-
+#include <Rcpp.h>
+#define INCLUDE_RCPP
 #include "tmb_includes.h"
 
 // Producing a sparse selection matrix to select rows and columns from
@@ -13,6 +14,23 @@ Eigen::SparseMatrix<Type> get_select_matrix(const vector<int>& visits_i, const i
   }
   return result;
 }
+
+// Producing a sparse selection matrix from visits to select rows and columns from
+// covariance matrix.
+template <class Type>
+Eigen::SparseMatrix<Type> get_select_matrix(const std::vector<int>& visits_i, const int& n_visits) {
+  Eigen::SparseMatrix<Type> result(visits_i.size(), n_visits);
+  for (std::size_t i = 0, max = visits_i.size(); i != max; ++i) {
+    result.insert(i, visits_i[i]) = (Type) 1.0;
+  }
+  return result;
+}
+// Conversion from Rcpp vector/matrix to eigen vector/matrix
+vector<double> as_vector(Rcpp::NumericVector input);
+vector<int> as_vector(Rcpp::IntegerVector input);
+Rcpp::NumericVector as_nv(vector<double> input);
+Rcpp::NumericMatrix as_mv(matrix<double> input);
+matrix<double> as_matrix(Rcpp::NumericMatrix input);
 
 // Calculate tcrossprod(lower_chol) = lower_chol * t(lower_chol).
 // If complete, then adds the upper triangular part to the result as well.

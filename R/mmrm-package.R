@@ -6,7 +6,7 @@
 "_PACKAGE"
 
 #' @useDynLib mmrm, .registration = TRUE
-#'
+#' @importFrom Rcpp evalCpp
 #' @import checkmate
 #' @importFrom lifecycle deprecated
 #' @importFrom methods is
@@ -15,4 +15,5 @@
 #' @importFrom stringr boundary
 #' @importFrom parallel clusterApply
 #' @importFrom Rdpack reprompt
+#' @importFrom utils modifyList
 NULL
