@@ -22,7 +22,7 @@ get_covar_mat <- function(fit) {
     out_stddev_mat <- outer(corr_fit_attributes$stddev, corr_fit_attributes$stddev)
     covar_mat <- corr_mat * out_stddev_mat
   } else if (class(fit)[1] == "mmrm") {
-    covar_mat <- fit$cov
+    covar_mat <- VarCorr(fit)
   } else if (class(fit)[1] == "data.frame") { # SAS PROC MIXED
     cor_est_mat <- matrix(fit$Estimate[11], nrow = 10, ncol = 10)
     diag(cor_est_mat) <- 1
@@ -191,9 +191,17 @@ csh_param_bias_fun <- function(fit_results, true_covar_mat_ls) {
       accuracy = purrr::map2_dfr(
         fit, .dgp_name,
         function(f, dgp_name) {
-          ## extract the estimated variances and correlation
+
+          ## extract the estimated covariance matrix from the model fit
           est_covar_mat <- get_covar_mat(f)
+
+          ## extract the estimated variances
           vars_est <- diag(est_covar_mat)
+
+          ## compute the estimated correlation coefficient
+          ## NOTE: This correlation coefficient is identical across all time
+          ## points. We use the covariance of the first and second time points
+          ## here, but any abitrary pair of time points could be used instead.
           corr_est <- est_covar_mat[1, 2] / sqrt(vars_est[1] * vars_est[2])
 
           ## assemble the true parameter vector
