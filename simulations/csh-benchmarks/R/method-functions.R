@@ -61,6 +61,9 @@ glmmTMB_wrapper_fun <- function(
     "trt" = trt
   )
 
+  ## NOTE: heterogeneous compound symmetry matrix is defined as cs() here. See
+  ## https://cran.r-project.org/web/packages/glmmTMB/vignettes/covstruct.html
+  ## for details.
   fit <- glmmTMB::glmmTMB(
     formula = y ~ trt + cs(time + 0 | participant), data = df,
     dispformula = ~ 0
