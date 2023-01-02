@@ -2,7 +2,66 @@
 ## Evaluator Functions
 ################################################################################
 
-#' Extract correlation matrix from model fits
+#' Compute glmmTMB covariance matrix
+#'
+#' @description Computes the heterogeneous compound symmetry covariance matrix
+#'   from the glmmTMB wrapper function.
+#'
+#' @param fit A glmmTMB fit object.
+#'
+#' @return The compound symmetry covariance matrix estimate obtained by glmmTMB.
+compute_glmmtmb_covar_mat <- function(fit) {
+
+  ## extract components of heterogeneous compound symmetry covariance matrix
+  ## estimate
+  corr_fit_attributes <- attributes(glmmTMB::VarCorr(fit)[["cond"]]$participant)
+
+  ## get the correlation matrix: off-diagonals are the correlation estimate,
+  ## diagonals are equal to one
+  corr_mat <- corr_fit_attributes$correlation
+
+  ## compute the unweighted covariance matrix
+  unweighted_covar_mat <- outer(
+    corr_fit_attributes$stddev, corr_fit_attributes$stddev
+  )
+
+  ## haddamard product of correlation coefficient with unweighted covariance
+  ## matrix
+  covar_mat <- corr_mat * unweighted_covar_mat
+
+  return(covar_mat)
+}
+
+#' Compute PROC MIXED covariance matrix from CovParams
+#'
+#' @description Computes the heterogeneous compound symmetry covariance matrix
+#'   from the CovParams output by PROC MIXED by way of sasr.
+#'
+#' @param fit A data.frame returned by the proc_mixed_fun() PROC MIXED wrapper
+#'   function. Assuming p repeated measures, the first p rows of this dataframe
+#'   contain the variance estimates of these repeated emasures. The last row
+#'   contains the heterogeneous compound symmetry correlation estimate.
+#'
+#' @return The compound symmetry covariance matrix estimate returned by PROC
+#'   MIXED.
+compute_sasr_covar_mat <- function(fit) {
+  ## number of repeated measures
+  num_rep_meas <- nrow(fit) - 1
+
+  ## compute the covariance matrix estimate, not accounting for correlation
+  var_ests <- fit$Estimate[1:num_rep_meas]
+  std_devs <- sqrt(var_ests)
+  unweighted_covar_mat <- outer(std_devs, std_devs)
+
+  ## weight covariance matrix by the estimated correlation
+  cor_est <- fit$Estimate[num_rep_meas + 1]
+  covar_mat <- unweighted_covar_mat * cor_est
+  diag(covar_mat) <- var_ests # variances shouldn't be weighted
+
+  return(covar_mat)
+}
+
+#' Extract covariance matrix from model fits
 #'
 #' @description Extracts the repeated measures' covariance matrix estimated by
 #'   the various fitting procedures.
@@ -17,18 +76,11 @@ get_covar_mat <- function(fit) {
   if (class(fit)[1] == "gls") {
     covar_mat <- nlme::getVarCov(fit)
   } else if (class(fit)[1] == "glmmTMB") {
-    corr_fit_attributes <- attributes(VarCorr(fit)[["cond"]]$participant)
-    corr_mat <- corr_fit_attributes$correlation
-    out_stddev_mat <- outer(corr_fit_attributes$stddev, corr_fit_attributes$stddev)
-    covar_mat <- corr_mat * out_stddev_mat
+    covar_mat <- compute_glmmtmb_covar_mat(fit)
   } else if (class(fit)[1] == "mmrm") {
-    covar_mat <- VarCorr(fit)
+    covar_mat <- mmrm::VarCorr(fit)
   } else if (class(fit)[1] == "data.frame") { # SAS PROC MIXED
-    cor_est_mat <- matrix(fit$Estimate[11], nrow = 10, ncol = 10)
-    diag(cor_est_mat) <- 1
-    std_devs <- sqrt(fit$Estimate[1:10])
-    unweighted_covar_mat <- outer(std_devs, std_devs)
-    covar_mat <- cor_est_mat * unweighted_covar_mat
+    covar_mat <- compute_sasr_covar_mat(fit)
   }
 
   ## standardize row and column names
