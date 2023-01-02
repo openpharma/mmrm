@@ -11,15 +11,13 @@
 #' @param time A factor vector of time points.
 #' @param y A numeric vector of outcomes.
 #' @param trt A binary vector of treatment group indicators.
-#' @param base_cov A numeric vector of baseline covariate values.
 #'
 #' @return A fitted mmrm model object.
 mmrm_wrapper_fun <- function(
   participant,
   time,
   y,
-  trt,
-  base_cov
+  trt
 ) {
 
   ## assemble the vectors into a data.frame
@@ -27,12 +25,11 @@ mmrm_wrapper_fun <- function(
     "participant" = participant,
     "time" = time,
     "y" = y,
-    "trt" = trt,
-    "base_cov" = base_cov
+    "trt" = trt
   )
 
   fit <- mmrm::mmrm(
-    formula = y ~ base_cov + trt*time + csh(time | participant), data = df
+    formula = y ~ trt + csh(time | participant), data = df
   )
 
   return(list(fit = fit))
@@ -47,15 +44,13 @@ mmrm_wrapper_fun <- function(
 #' @param time A factor vector of time points.
 #' @param y A numeric vector of outcomes.
 #' @param trt A binary vector of treatment group indicators.
-#' @param base_cov A numeric vector of baseline covariate values.
 #'
 #' @return A fitted glmmTMB model object.
 glmmTMB_wrapper_fun <- function(
   participant,
   time,
   y,
-  trt,
-  base_cov
+  trt
 ) {
 
   ## assemble the vectors into a data.frame
@@ -63,12 +58,11 @@ glmmTMB_wrapper_fun <- function(
     "participant" = participant,
     "time" = time,
     "y" = y,
-    "trt" = trt,
-    "base_cov" = base_cov
+    "trt" = trt
   )
 
   fit <- glmmTMB::glmmTMB(
-    formula = y ~ base_cov + trt*time + cs(time + 0 | participant), data = df,
+    formula = y ~ trt + cs(time + 0 | participant), data = df,
     dispformula = ~ 0
   )
 
@@ -85,15 +79,13 @@ glmmTMB_wrapper_fun <- function(
 #' @param time A factor vector of time points.
 #' @param y A numeric vector of outcomes.
 #' @param trt A binary vector of treatment group indicators.
-#' @param base_cov A numeric vector of baseline covariate values.
 #'
 #' @return A fitted gls model object.
 nlme_wrapper_fun <- function(
   participant,
   time,
   y,
-  trt,
-  base_cov
+  trt
 ) {
 
   ## assemble the vectors into a data.frame
@@ -101,12 +93,11 @@ nlme_wrapper_fun <- function(
     "participant" = participant,
     "time" = time,
     "y" = y,
-    "trt" = trt,
-    "base_cov" = base_cov
+    "trt" = trt
   )
 
   fit <- nlme::gls(
-    y ~ base_cov + trt*time,
+    y ~ trt,
     correlation = nlme::corCompSymm(form = ~ 1 | participant),
     weights = nlme::varIdent(form = ~ 1 | time), data = df
   )
@@ -124,7 +115,6 @@ nlme_wrapper_fun <- function(
 #' @param time A factor vector of time points.
 #' @param y A numeric vector of outcomes.
 #' @param trt A binary vector of treatment group indicators.
-#' @param base_cov A numeric vector of baseline covariate values.
 #'
 #' @return Estimated parameters of the repeated measures' covariance matrix.
 #'   These parameters are stored in a data.frame object.
@@ -132,8 +122,7 @@ proc_mixed_fun <- function(
   participant,
   time,
   y,
-  trt,
-  base_cov
+  trt
 ) {
 
   ## assemble the vectors into a data.frame
@@ -141,8 +130,7 @@ proc_mixed_fun <- function(
     "participant" = participant,
     "time" = time,
     "y" = y,
-    "trt" = trt,
-    "base_cov" = base_cov
+    "trt" = trt
   )
   rownames(df) <- NULL
 
@@ -153,8 +141,8 @@ proc_mixed_fun <- function(
   ## repeated measures
   sas_code <- "ods output CovParms = cov_parms;
     PROC MIXED DATA = sas_df;
-      CLASS trt time participant base_cov;
-      MODEL y = trt time base_cov time*trt;
+      CLASS trt time participant;
+      MODEL y = trt;
       REPEATED time / subject=participant type=CSH;
     RUN;"
 

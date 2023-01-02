@@ -34,11 +34,6 @@ compute_true_covar_mat <- function(vars, corr) {
 #' @param num_rep_meas A numeric indicating the number of repeated measures.
 #' @param fixed_int A numeric corresponding to the fixed intercept effect.
 #' @param fixed_trt A numeric corresponding to the fixed treatment effect.
-#' @param fixed_time A numeric corresponding to the fixed time point effect.
-#' @param fixed_time_trt A numeric corresponding to the fixed time x treatment
-#'   interaction effect.
-#' @param fixed_base_cov A numeric corresponding to the a baseline covariate's
-#'   fixed effect.
 #' @param outcome_vars A numeric vector with length equal to num_rep_meas. It is
 #'   the vector of the repeated measures' variances.
 #' @param outcome_cor A numeric corresponding to the correlation parameter in
@@ -59,12 +54,6 @@ rct_dgp_fun <- function(
   outcome_cor = 0.5
 ) {
 
-  compute_true_covar_mat <- function(vars, corr) {
-    csh_mat <- tcrossprod(sqrt(vars), sqrt(vars)) * corr
-    diag(csh_mat) <- vars
-    return(csh_mat)
-  }
-
   if (is.null(outcome_vars)) {
     outcome_vars <- rep(1, num_rep_meas)
   }
@@ -72,7 +61,6 @@ rct_dgp_fun <- function(
   ## form a balanced data.frame
   cov_df <- data.frame(
     participant = seq_len(num_part),
-    base_cov = rbinom(num_part, 1, 0.7),
     trt = c(rep(0, round(num_part / 2)), rep(1, num_part - round(num_part / 2)))
   )
   time_point_df <- expand.grid(
@@ -82,27 +70,24 @@ rct_dgp_fun <- function(
   df <- cov_df %>% dplyr::left_join(time_point_df, by = "participant")
 
   ## produce the model matrix for the fixed effects
-  fixed_model_mat <- model.matrix(
-    ~ base_cov + trt*time, data = df
-  )
+  fixed_model_mat <- model.matrix(~ trt, data = df)
 
   ## define the repeated measures correlation structure, assuming
   ## heterogeneous compound symmetry
   csh_mat <- compute_true_covar_mat(outcome_vars, outcome_cor)
 
   ## generate the outcomes
-  beta <- c(
-    fixed_int, fixed_base_cov, fixed_trt, fixed_time, fixed_time_trt
-  )
+  beta <- c(fixed_int, fixed_trt)
   df$y <- fixed_model_mat %*% beta +
     as.vector(t(MASS::mvrnorm(num_part, rep(0, num_rep_meas), csh_mat)))
 
   ## return the generated data
   return(list(
     participant = as.factor(df$participant),
-    time = as.factor(df$time),
+    time = as.factor(
+      stringr::str_pad(df$time, width = 2, side = "left", pad = "0")
+    ),
     y = df$y,
-    trt = df$trt,
-    base_cov = df$base_cov
+    trt = df$trt
   ))
 }
