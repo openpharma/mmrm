@@ -78,7 +78,10 @@ mse_viz <- create_visualizer(.viz_fun = mse_fun)
 bias_viz <- create_visualizer(.viz_fun = bias_fun)
 
 ## define the experiment object
-experiment <- create_experiment(name = "covar-matrix-estimation-comparison") %>%
+experiment <- create_experiment(
+    name = "covar-matrix-estimation-comparison",
+    save_dir = "results"
+  ) %>%
   add_dgp(hom_rct_dgp, name = "hom_rct") %>%
   add_dgp(het_rct_dgp, name = "het_rct") %>%
   add_vary_across(.dgp = "hom_rct", num_part = c(250, 500, 1000)) %>%
@@ -98,4 +101,12 @@ experiment <- create_experiment(name = "covar-matrix-estimation-comparison") %>%
 
 ## run the experiment
 set.seed(510)
-results <- experiment$run(n_reps = 50, save = TRUE)
+results <- experiment$run(
+  n_reps = 100,
+  future.globals = c("compute_true_covar_mat", "compute_sasr_covar_mat",
+                     "compute_glmmtmb_covar_mat", "get_covar_mat"),
+  save = TRUE
+)
+
+## create notebook
+create_rmd(experiment, open = FALSE)
