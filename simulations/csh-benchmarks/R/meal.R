@@ -107,6 +107,3 @@ results <- experiment$run(
                      "compute_glmmtmb_covar_mat", "get_covar_mat"),
   save = TRUE
 )
-
-## create notebook
-create_rmd(experiment, open = FALSE)

@@ -47,9 +47,6 @@ rct_dgp_fun <- function(
   num_rep_meas = 10,
   fixed_int = 1,
   fixed_trt = 1,
-  fixed_time = 1,
-  fixed_time_trt = 1,
-  fixed_base_cov = 1,
   outcome_vars = NULL,
   outcome_cor = 0.5
 ) {
