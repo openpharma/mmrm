@@ -203,19 +203,17 @@ struct sp_exp {
     matrix<Type> ret(2 * dist.rows(), dist.cols());
     // partial sigma / partial theta = sigma
     ret.block(0, 0, dist.rows(), dist.cols()) = exp(dist.array() * this->logrho) * this->const_sd;
-    Type drho = this->rho * (1 - this->rho);
-    ret.block(dist.rows(), 0, dist.rows(), dist.cols()) = matrix<Type>(exp((dist.array() - 1) * this->logrho)) * dist * this->const_sd * drho;
+    ret.block(dist.rows(), 0, dist.rows(), dist.cols()) = matrix<Type>(exp((dist.array()) * this->logrho) * dist.array()) * this->const_sd * (1 - this->rho);
     return ret;
   }
   matrix<Type> get_sigma_derivative2(matrix<Type> dist) {
     matrix<Type> ret(4 * dist.rows(), dist.cols());
     ret.block(0, 0, dist.rows(), dist.cols()) = exp(dist.array() * this->logrho) * this->const_sd;
-    Type drho = this->rho * (1 - this->rho);
-    matrix<Type> dtheta1dtheta2 = matrix<Type>(exp((dist.array() - 1) * log(this->rho))) * dist * this->const_sd * drho;
+    Type rho_r = 1 - this->rho;
+    matrix<Type> dtheta1dtheta2 = matrix<Type>(exp(dist.array() * log(this->rho)) * dist.array()) * this->const_sd * rho_r;
     ret.block(dist.rows(), 0, dist.rows(), dist.cols()) =  dtheta1dtheta2;
     ret.block(dist.rows() * 2, 0, dist.rows(), dist.cols()) = dtheta1dtheta2;
-    Type drho2 = (1 - 2 * this->rho) * this->rho * (1 - this->rho);
-    matrix<Type> dtheta2s = matrix<Type>(exp((dist.array() - 2) * this->logrho)) * dist * this->const_sd * dist * drho * matrix<double>(this->rho * (1 - 2 * this->rho) + (dist.array() - 1) * drho);
+    matrix<Type> dtheta2s = matrix<Type>(exp(dist.array() * this->logrho) * dist.array() * this->const_sd * rho_r * (dist.array() * rho_r - this->rho));
     ret.block(dist.rows() * 3, 0, dist.rows(), dist.cols()) = dtheta2s;
     return ret;
   }

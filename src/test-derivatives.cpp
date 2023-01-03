@@ -70,3 +70,58 @@ context("chols struct works as expected") {
     expect_equal_matrix(matrix<double>(inverse_derivative.block(0, 0, 3, 3)), matrix<double>(- v1_inverse * derivative1.block(0, 0, 3, 3) * v1_inverse));
   }
 }
+
+context("sp_exp struct works as expected") {
+  test_that("sp_exp struct gives correct sigma, inverse and derivatives") {
+    vector<double> theta {{1.0, 1.0}};
+    auto sp = sp_exp<double>(theta);
+    matrix<double> dist (3, 3);
+    dist << 
+      0, 0.5, 1,
+      0.5, 0, 0.5,
+      1, 0.5, 0;
+    auto sigma = sp.get_sigma(dist);
+    matrix<double> expected_sigma(3, 3);
+    expected_sigma << 
+      2.718282, 2.324184, 1.987223,
+      2.324184, 2.718282, 2.324184,
+      1.987223, 2.324184, 2.718282;
+    expect_equal_matrix(sigma, expected_sigma);
+
+    auto sigma_d1 = sp.get_sigma_derivative1(dist);
+    matrix<double> expected_sigma_d1(6, 3);
+    expected_sigma_d1 << 
+      2.71828182844263, 2.32418434058079, 1.9872232498215,
+      2.32418434058079, 2.71828182844263, 2.32418434058079,
+      1.9872232498215, 2.32418434058079, 2.71828182844263,
+      0, 0.312534720067585, 0.534446645412701,
+      0.312534720067585, 0, 0.312534720067585,
+      0.534446645412701, 0.312534720067585, 0;
+    expect_equal_matrix(sigma_d1, expected_sigma_d1);
+
+    auto sigma_d2 = sp.get_sigma_derivative2(dist);
+    matrix<double> expected_sigma_d2(12, 3);
+    expected_sigma_d2 << 
+      2.718281070007, 2.32418298874968, 1.98722393345662,
+      2.32418298874968, 2.718281070007, 2.32418298874968,
+      1.98722393345662, 2.32418298874968, 2.718281070007,
+      0, 0.312537183788863, 0.534447011054242,
+      0.312537183788863, 0, 0.312537183788863,
+      0.534447011054242, 0.312537183788863, 0,
+      0, 0.312537183793268, 0.53444701104616,
+      0.312537183793268, 0, 0.312537183793268,
+      0.53444701104616, 0.312537183793268, 0,
+      0, -0.1864537925375, -0.246976228442905,
+      -0.1864537925375, 0, -0.1864537925375,
+      -0.246976228442905, -0.1864537925375, 0;
+    expect_equal_matrix(sigma_d2, expected_sigma_d2);
+
+    auto sigma_inv = sp.get_inverse(dist);
+    matrix<double> expected_sigma_inv(3, 3);
+    expected_sigma_inv << 
+      1.367879, -1.169564, 0,
+      -1.169564, 2.367879, -1.169564,
+      0, -1.169564,  1.367879;
+    expect_equal_matrix(sigma_inv, expected_sigma_inv);
+  }
+}

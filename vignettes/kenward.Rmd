@@ -368,14 +368,15 @@ Second-order derivatives can be written as:
 \[
   \frac{\partial^2{\Sigma_{ij}}}{\partial\theta_1\partial\theta_2} = \frac{\partial^2{\Sigma_{ij}}}{\partial\theta_2\partial\theta_1} \\
   = \frac{\partial\Sigma_{ij}}{\partial\theta_2}\\
-  = \sigma\rho^{d_{ij}-1}{d_{ij}}\rho(1-\rho)
+  = \sigma\rho^{d_{ij}-1}{d_{ij}}\rho(1-\rho)\\
+  = \sigma\rho^{d_{ij}}{d_{ij}}(1-\rho)
 \]
 
 
 \[
   \frac{\partial^2{\Sigma_{ij}}}{\partial\theta_2\partial\theta_2}\\
-  = \frac{\partial{\sigma\rho^{d_{ij}-1}{d_{ij}}\rho(1-\rho)}}{\partial\theta_2}\\
-  = \sigma\rho^{d_{ij}-2}{d_{ij}}\rho(1-\rho)((d_{ij}-1)\rho(1-\rho)+\rho(1-2\rho))
+  = \frac{\partial{\sigma\rho^{d_{ij}}{d_{ij}}(1-\rho)}}{\partial\theta_2}\\
+  = \sigma\rho^{d_{ij}}{d_{ij}}(1-\rho)(d_{ij} (1-\rho) - \rho)
 \]
 
 # References

@@ -193,6 +193,27 @@ test_that("kr linear give similar results as SAS for unstructured", {
   expect_equal(res$se, expected[1], tolerance = 1e-3)
 })
 
+## Spatial Exponential ----
+
+### kr
+
+test_that("kr give similar results as SAS for spatial exponential", {
+  fit <- mmrm(FEV1 ~ ARMCD + sp_exp(VISITN, VISITN2 | USUBJID), data = fev_data, method = "Kenward-Roger-Linear")
+  res <- df_1d(fit, contrast = c(0, 1))
+  expected <- c(0.90552903839818, 195.584197921463)
+  expect_equal(res$df, expected[2], tolerance = 1e-3)
+  expect_equal(res$se, expected[1], tolerance = 1e-3)
+})
+
+### kr linear
+
+test_that("kr linear give similar results as SAS for spatial exponential", {
+  fit <- mmrm(FEV1 ~ ARMCD + sp_exp(VISITN, VISITN2 | USUBJID), data = fev_data, method = "Kenward-Roger-Linear")
+  res <- df_1d(fit, contrast = c(0, 1))
+  expected <- c(0.90527620094771, 195.584197921463)
+  expect_equal(res$df, expected[2], tolerance = 1e-3)
+  expect_equal(res$se, expected[1], tolerance = 1e-3)
+})
 
 # h_df_1d_kr ----
 
