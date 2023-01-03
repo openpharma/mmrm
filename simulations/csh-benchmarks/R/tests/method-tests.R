@@ -34,7 +34,7 @@ test_that("mmrm wrapper estimates a CSH parameters close to ground truth", {
   outcome_cor <- 0.2
   dt_ls <- rct_dgp_fun(
     num_part = 1000,
-    num_rep_meas = 10,
+    num_rep_meas = num_rep_meas,
     outcome_vars = outcome_vars,
     outcome_cor = outcome_cor
   )
