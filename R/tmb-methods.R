@@ -239,7 +239,7 @@ residuals.mmrm_tmb <- function(object, type = c("response", "pearson", "normaliz
       visits <- as.numeric(object$tmb_data$full_frame[[object$formula_parts$visit_var]])
       nobs <- nrow(object$tmb_data$full_frame)
       resids <- sapply(1:nobs, function(x) {
-        resids_unscaled[x] / grp_visit_sigmas[[subject_grps[x]]][visits[x]] / sqrt(object$tmb_data$weights_vector[x])
+        resids_unscaled[x] / grp_visit_sigmas[[subject_grps[x]]][visits[x]] * sqrt(object$tmb_data$weights_vector[x])
       })
     }
     return(unname(resids))
@@ -249,23 +249,30 @@ residuals.mmrm_tmb <- function(object, type = c("response", "pearson", "normaliz
                            residual = resids_unscaled,
                            weights = object$tmb_data$weights_vector)
 
+    subject_list <- split(resid_df, resid_df$subject)
+
     if (component(object, "n_groups") == 1) {
-      lower_chol <- solve(t(chol(object$cov)))
-      subject_list <- split(resid_df, resid_df$subject)
-      norm_resids <- lapply(subject_list, function(x) {
-        (lower_chol[x$time, x$time] %*% matrix(x$residual, ncol = 1))
+
+      lower_chol_list <- lapply(seq_along(subject_list), function(x) {
+        solve(t(chol(object$cov[subject_list[[x]]$time, subject_list[[x]]$time]))) *
+          sqrt(subject_list[[x]]$weights)
       })
     } else {
       groups <- data.frame(subject = object$tmb_data$full_frame[[object$formula_parts$subject_var]],
                            group = object$tmb_data$full_frame[[object$formula_parts$group_var]])
+
       groups <- groups[!duplicated(groups), ]
-      lower_chols <- lapply(object$cov, function(x) solve(t(chol(x))))
-      subject_list <- split(resid_df, resid_df$subject)
-      norm_resids <- lapply(1:length(subject_list), function(x) {
-        (lower_chols[[groups$group[x]]][subject_list[[x]]$time, subject_list[[x]]$time] %*%
-           matrix(subject_list[[x]]$residual, ncol = 1))
+
+      lower_chol_list <- lapply(seq_along(subject_list), function(x) {
+        this_cov <- object$cov[[groups$group[x]]]
+        solve(t(chol(this_cov[subject_list[[x]]$time, subject_list[[x]]$time]))) *
+          sqrt(subject_list[[x]]$weights)
       })
     }
+    norm_resids <- lapply(seq_along(subject_list), function(x) {
+      lower_chol_list[[x]] %*% matrix(subject_list[[x]]$residual, ncol = 1)
+    })
+
     return(unname(unlist(norm_resids)))
   }
 }
