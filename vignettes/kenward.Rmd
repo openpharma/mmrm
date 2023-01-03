@@ -324,4 +324,58 @@ of $\Sigma$ over our parameters, are non-zero matrices. However, if we use the e
 derivatives are zero matrices. However, the differences can be small and will not affect the inference.
 If you would like to match SAS results for the unstructured covariance model, you can use the linear Kenward-Roger approximation.
 
+## Implementations in `mmrm`
+
+In package `mmrm`, we have implemented Kenward-Roger calculations based on the previous sections.
+Specially, for the first-order and second-order derivatives, we use automatic differentiation to obtain
+the results easily for non-spatial covariance structure. For spatial covariance structure, we derive the
+exact results.
+
+### Spatial Exponential Derivatives
+
+For spatial exponential covariance structure, we have
+
+\[\theta = (\theta_1,\theta_2)\]
+\[\sigma = e^{\theta_1}\]
+\[\rho = \frac{e^{\theta_2}}{1 + e^{\theta_2}}\]
+
+\[\Sigma_{ij} = \sigma \rho^{d_{ij}}\]
+where $d_{ij}$ is the distance between time point $i$ and time point $j$.
+
+So the first-order derivatives can be written as:
+
+\[
+  \frac{\partial{\Sigma_{ij}}}{\partial\theta_1} = \frac{\partial\sigma}{\partial\theta_1} \rho^{d_{ij}}\\
+  = e^{\theta_1}\rho^{d_{ij}} \\
+  = \Sigma_{ij}
+\]
+
+\[
+  \frac{\partial{\Sigma_{ij}}}{\theta_2} = \sigma\frac{\partial{\rho^{d_{ij}}}}{\partial\theta_2} \\
+  = \sigma\rho^{d_{ij}-1}{d_{ij}}\frac{\partial\rho}{\partial\theta_2}\\
+  = \sigma\rho^{d_{ij}-1}{d_{ij}}\rho(1-\rho)
+\]
+
+Second-order derivatives can be written as:
+
+\[
+  \frac{\partial^2{\Sigma_{ij}}}{\partial\theta_1\partial\theta_1}\\
+  = \frac{\partial\Sigma_{ij}}{\partial\theta_1}\\
+  = \Sigma_{ij}
+\]
+
+
+\[
+  \frac{\partial^2{\Sigma_{ij}}}{\partial\theta_1\partial\theta_2} = \frac{\partial^2{\Sigma_{ij}}}{\partial\theta_2\partial\theta_1} \\
+  = \frac{\partial\Sigma_{ij}}{\partial\theta_2}\\
+  = \sigma\rho^{d_{ij}-1}{d_{ij}}\rho(1-\rho)
+\]
+
+
+\[
+  \frac{\partial^2{\Sigma_{ij}}}{\partial\theta_2\partial\theta_2}\\
+  = \frac{\partial{\sigma\rho^{d_{ij}-1}{d_{ij}}\rho(1-\rho)}}{\partial\theta_2}\\
+  = \sigma\rho^{d_{ij}-2}{d_{ij}}\rho(1-\rho)((d_{ij}-1)\rho(1-\rho)+\rho(1-2\rho))
+\]
+
 # References
