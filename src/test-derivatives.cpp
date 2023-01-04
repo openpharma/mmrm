@@ -82,6 +82,7 @@ context("derivatives_sp_exp struct works as expected") {
       1, 0.5, 0;
     auto sigma = sp.get_sigma(dist);
     matrix<double> expected_sigma(3, 3);
+    // expected values from R side two rho^dist * sigma
     expected_sigma << 
       2.718282, 2.324184, 1.987223,
       2.324184, 2.718282, 2.324184,
@@ -90,6 +91,7 @@ context("derivatives_sp_exp struct works as expected") {
 
     auto sigma_d1 = sp.get_sigma_derivative1(dist);
     matrix<double> expected_sigma_d1(6, 3);
+    // expected values from R side numDeriv::jacobian
     expected_sigma_d1 << 
       2.71828182844263, 2.32418434058079, 1.9872232498215,
       2.32418434058079, 2.71828182844263, 2.32418434058079,
@@ -101,6 +103,7 @@ context("derivatives_sp_exp struct works as expected") {
 
     auto sigma_d2 = sp.get_sigma_derivative2(dist);
     matrix<double> expected_sigma_d2(12, 3);
+    // expected values from R side two times numDeriv::jacobian
     expected_sigma_d2 << 
       2.718281070007, 2.32418298874968, 1.98722393345662,
       2.32418298874968, 2.718281070007, 2.32418298874968,
@@ -118,6 +121,7 @@ context("derivatives_sp_exp struct works as expected") {
 
     auto sigma_inv = sp.get_inverse(dist);
     matrix<double> expected_sigma_inv(3, 3);
+    // expected values from R side use solve
     expected_sigma_inv << 
       1.367879, -1.169564, 0,
       -1.169564, 2.367879, -1.169564,
