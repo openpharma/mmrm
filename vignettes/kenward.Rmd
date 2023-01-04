@@ -351,9 +351,10 @@ So the first-order derivatives can be written as:
 \]
 
 \[
-  \frac{\partial{\Sigma_{ij}}}{\theta_2} = \sigma\frac{\partial{\rho^{d_{ij}}}}{\partial\theta_2} \\
+  \frac{\partial{\Sigma_{ij}}}{\partial\theta_2} = \sigma\frac{\partial{\rho^{d_{ij}}}}{\partial\theta_2} \\
   = \sigma\rho^{d_{ij}-1}{d_{ij}}\frac{\partial\rho}{\partial\theta_2}\\
-  = \sigma\rho^{d_{ij}-1}{d_{ij}}\rho(1-\rho)
+  = \sigma\rho^{d_{ij}-1}{d_{ij}}\rho(1-\rho) \\
+  = \sigma \rho^{d_{ij}} {d_{ij}} (1-\rho)
 \]
 
 Second-order derivatives can be written as:
