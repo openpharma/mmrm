@@ -1,5 +1,5 @@
 #include "testthat-helpers.h"
-#include "chol_derivative.h"
+#include "derivatives.h"
 #include <iostream>
 
 context("cho_jacobian") {
@@ -23,10 +23,10 @@ context("cho_jacobian") {
   }
 }
 
-context("chols struct works as expected") {
-  test_that("chols struct correct sigma, inverse and derivatives") {
+context("derivatives_nonspatial struct works as expected") {
+  test_that("derivatives_nonspatial struct correct sigma, inverse and derivatives") {
     vector<double> theta {{1.0, 1.0}};
-    auto mychol = chols<double>(theta, 4, "ar1");
+    auto mychol = derivatives_nonspatial<double>(theta, 4, "ar1");
     std::vector<int> v1 {0, 1, 2};
     std::vector<int> v_full {0, 1, 2, 3};
     auto full_sigma = mychol.get_sigma(v_full);
@@ -71,10 +71,10 @@ context("chols struct works as expected") {
   }
 }
 
-context("sp_exp struct works as expected") {
-  test_that("sp_exp struct gives correct sigma, inverse and derivatives") {
+context("derivatives_sp_exp struct works as expected") {
+  test_that("derivatives_sp_exp struct gives correct sigma, inverse and derivatives") {
     vector<double> theta {{1.0, 1.0}};
-    auto sp = sp_exp<double>(theta);
+    auto sp = derivatives_sp_exp<double>(theta);
     matrix<double> dist (3, 3);
     dist << 
       0, 0.5, 1,

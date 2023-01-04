@@ -1,4 +1,4 @@
-#include "chol_derivative.h"
+#include "derivatives.h"
 
 using namespace Rcpp;
 using std::string;
@@ -27,14 +27,13 @@ List get_pqr(List mmrm_fit, NumericVector theta) {
   matrix<double> P = matrix<double>::Zero(p * n_theta, p);
   matrix<double> Q = matrix<double>::Zero(p * theta_size_per_group * n_theta, p);
   matrix<double> R = matrix<double>::Zero(p * theta_size_per_group * n_theta, p);
-  
-  std::map<int, sp_exp<double>> spatial_by_group;
-  std::map<int, chols<double>> nonspatial_by_group;
+  std::map<int, derivatives_sp_exp<double>> spatial_by_group;
+  std::map<int, derivatives_nonspatial<double>> nonspatial_by_group;
   for (int r = 0; r < n_groups; r++) {
     if (is_spatial) {
-      spatial_by_group[r] = sp_exp<double>(vector<double>(theta_v.segment(r * theta_size_per_group, theta_size_per_group)));
+      spatial_by_group[r] = derivatives_sp_exp<double>(vector<double>(theta_v.segment(r * theta_size_per_group, theta_size_per_group)));
     } else {
-      nonspatial_by_group[r] = chols<double>(vector<double>(theta_v.segment(r * theta_size_per_group, theta_size_per_group)), n_visits, cov_type);
+      nonspatial_by_group[r] = derivatives_nonspatial<double>(vector<double>(theta_v.segment(r * theta_size_per_group, theta_size_per_group)), n_visits, cov_type);
     }
   }
   for (int i = 0; i < n_subjects; i++) {

@@ -2,7 +2,7 @@
 
 using namespace Rcpp;
 using std::string;
-// struct chol to obtain the cholesky factor given theta.
+// Struct chol to obtain the cholesky factor given theta.
 // The reason to have it is that we need a functor that need only theta to
 // obtain the derivatives from autodiff.
 struct chol {
@@ -14,7 +14,7 @@ struct chol {
       return get_cov_lower_chol_grouped(theta, this->dim_cov_mat, this->cov_type, 1, false).vec();
     }
 };
-// struct chol_jacobian that has jacobian of the cholesky factor given theta.
+// Struct chol_jacobian that has jacobian of the cholesky factor given theta.
 // The reason to have it is that we need hessian so we use jacobian twice.
 struct chol_jacobian {
   int dim_cov_mat;
@@ -27,7 +27,7 @@ struct chol_jacobian {
     }
 };
 
-// template function to obtain derivatives from visits, cov_type and theta.
+// Template function to obtain derivatives from visits, cov_type and theta.
 // Basically this is calculating the derivatives for the sigma
 // from the derivatives for the cholesky factor.
 template <class Type>
@@ -64,12 +64,12 @@ std::map<std::string, matrix<Type>> derivatives(int n_visits, std::string cov_ty
   ret["derivative2"] = ret_d2;
   return ret;
 }
-// struct chols is created to get the derivatives with cache.
+// Struct derivatives_nonspatial is created to get the derivatives with cache.
 // The main reason to have it is that we nearly always have duplicated visits
 // and the inverse of a matrix is calculation expensive. In addition, we can save
 // the resource needed for select matrix calculations.
 template <class Type>
-struct chols {
+struct derivatives_nonspatial {
   std::map<std::vector<int>, matrix<Type>> inverse_cache;
   std::map<std::vector<int>, matrix<Type>> sigmad1_cache;
   std::map<std::vector<int>, matrix<Type>> sigmad2_cache;
@@ -82,11 +82,11 @@ struct chols {
   int n_theta; // theta.size()
   vector<Type> theta;
   matrix<Type> chol_full;
-  chols() {
-    // this default constructor is needed because the use of `[]`.
+  derivatives_nonspatial() {
+    // This default constructor is needed because the use of `[]` in map.
   }
-  // constructor from theta, n_visits and cov_type, and cache full_visits values
-  chols(vector<Type> theta, int n_visits, std::string cov_type): cov_type(cov_type), n_visits(n_visits), full_visit(std::vector<int>(n_visits)) {
+  // Constructor from theta, n_visits and cov_type, and cache full_visits values.
+  derivatives_nonspatial(vector<Type> theta, int n_visits, std::string cov_type): cov_type(cov_type), n_visits(n_visits), full_visit(std::vector<int>(n_visits)) {
     this->theta = theta;
     for (int i = 0; i < n_visits; i++) {
       this->full_visit[i] = i;
@@ -103,7 +103,7 @@ struct chols {
     this->inverse_cache[this->full_visit] = (this->sigma_cache[this->full_visit]).inverse();
     this->sel_mat_cache[this->full_visit] = get_select_matrix<Type>(full_visit, this->n_visits);
   }
-  // cache and return the select matrix
+  // Cache and return the select matrix.
   Eigen::SparseMatrix<Type> get_sel_mat(std::vector<int> visits) {
     if (this->sel_mat_cache.count(visits) > 0) {
       return this->sel_mat_cache[visits];
@@ -112,7 +112,7 @@ struct chols {
       return this->sel_mat_cache[visits];
     }
   }
-  // cache and return the first order derivatives using select matrix
+  // Cache and return the first order derivatives using select matrix.
   matrix<Type> get_sigma_derivative1(std::vector<int> visits) {
      if (this->sigmad1_cache.count(visits) > 0) {
       return this->sigmad1_cache[visits];
@@ -127,7 +127,7 @@ struct chols {
       return ret;
     }
   }
-  // cache and return the second order derivatives using select matrix
+  // Cache and return the second order derivatives using select matrix.
   matrix<Type> get_sigma_derivative2(std::vector<int> visits) {
      if (this->sigmad2_cache.count(visits) > 0) {
       return this->sigmad2_cache[visits];
@@ -143,7 +143,7 @@ struct chols {
       return ret;
     }
   }
-  // cache and return the sigma using select matrix
+  // Cache and return the sigma using select matrix.
   matrix<Type> get_sigma(std::vector<int> visits) {
      if (this->sigma_cache.count(visits) > 0) {
       return this->sigma_cache[visits];
@@ -154,7 +154,7 @@ struct chols {
       return ret;
     }
   }
-  // cache and return the inverse of sigma using select matrix
+  // Cache and return the inverse of sigma using select matrix.
   matrix<Type> get_inverse(std::vector<int> visits) {
     if (this->inverse_cache.count(visits) > 0) {
       return this->inverse_cache[visits];
@@ -167,7 +167,7 @@ struct chols {
       return sigmainv;
     }
   }
-  // cache and return the first order derivatives of inverse of sigma using select matrix
+  // Cache and return the first order derivatives of inverse of sigma using select matrix.
   matrix<Type> get_inverse_derivative(std::vector<int> visits) {
     if (this->sigma_inverse_d1_cache.count(visits) > 0) {
       return this->sigma_inverse_d1_cache[visits];
@@ -186,44 +186,56 @@ struct chols {
   }
 };
 
+// derivatives_sp_exp struct is created to obtain the exact derivatives of spatial exponential
+// covariance structure, and its inverse.
+// No caching is used because the distance can be hardly the same for spatial covariance
+// structures.
 template <class Type>
-struct sp_exp {
+struct derivatives_sp_exp {
   Type const_sd;
   Type rho;
   Type logrho;
-  sp_exp() {
-    
+  derivatives_sp_exp() {
+    // This default constructor is needed because the use of `[]` in maps.
   }
-  sp_exp(vector<Type> theta) {
-    this->const_sd = exp(theta(0));
-    this->rho = invlogit(theta(1));
+  // Initialize the theta values; the reason to have theta is that for a fit, the theta
+  // is the same for all subjects, while the distance between each visits for each subject
+  // can be different.
+  derivatives_sp_exp(vector<Type> theta): const_sd(exp(theta(0))), rho(invlogit(theta(1))) {
     this->logrho = log(this->rho);
   }
+  // Obtain first order derivatives
   matrix<Type> get_sigma_derivative1(matrix<Type> dist) {
     matrix<Type> ret(2 * dist.rows(), dist.cols());
-    // partial sigma / partial theta = sigma
-    ret.block(0, 0, dist.rows(), dist.cols()) = exp(dist.array() * this->logrho) * this->const_sd;
-    ret.block(dist.rows(), 0, dist.rows(), dist.cols()) = matrix<Type>(exp((dist.array()) * this->logrho) * dist.array()) * this->const_sd * (1 - this->rho);
+    // partial sigma / partial theta_1 = sigma.
+    auto sigma = this->get_sigma(dist);
+    ret.block(0, 0, dist.rows(), dist.cols()) = sigma;
+    ret.block(dist.rows(), 0, dist.rows(), dist.cols()) = sigma.array() * dist.array() * (1 - this->rho);
     return ret;
   }
+  // Obtain second order derivatives.
   matrix<Type> get_sigma_derivative2(matrix<Type> dist) {
     matrix<Type> ret(4 * dist.rows(), dist.cols());
-    ret.block(0, 0, dist.rows(), dist.cols()) = exp(dist.array() * this->logrho) * this->const_sd;
+    auto sigma = this->get_sigma(dist);
+    ret.block(0, 0, dist.rows(), dist.cols()) = sigma;
     Type rho_r = 1 - this->rho;
-    matrix<Type> dtheta1dtheta2 = matrix<Type>(exp(dist.array() * log(this->rho)) * dist.array()) * this->const_sd * rho_r;
+    auto dtheta1dtheta2 = sigma.array() * dist.array() * rho_r;
     ret.block(dist.rows(), 0, dist.rows(), dist.cols()) =  dtheta1dtheta2;
     ret.block(dist.rows() * 2, 0, dist.rows(), dist.cols()) = dtheta1dtheta2;
-    matrix<Type> dtheta2s = matrix<Type>(exp(dist.array() * this->logrho) * dist.array() * this->const_sd * rho_r * (dist.array() * rho_r - this->rho));
+    matrix<Type> dtheta2s = dtheta1dtheta2 * (dist.array() * rho_r - this->rho);
     ret.block(dist.rows() * 3, 0, dist.rows(), dist.cols()) = dtheta2s;
     return ret;
   }
+  // Obtain sigma.
   matrix<Type> get_sigma(matrix<Type> dist) {
     matrix<Type> result = exp(dist.array() * this->logrho) * this->const_sd;
     return result;
   }
+  // Obtain inverse of sigma.
   matrix<Type> get_inverse(matrix<Type> dist) {
     return this->get_sigma(dist).inverse();
   }
+  // Obtain first order derivatives for inverse of sigma.
   matrix<Type> get_inverse_derivative(matrix<Type> dist) {
     matrix<Type> sigma_inv_d1 = matrix<Type>::Zero(2 * dist.rows(), dist.cols());
     auto sigma_inv = this->get_inverse(dist);
