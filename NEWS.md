@@ -1,8 +1,7 @@
 # mmrm 0.2.2.9000
 
 ### New Features
-- Add support for Kenward-Roger adjusted coefficients covariance matrix and
-  degrees of freedom in `mmrm` for spatial exponential covariance structure.
+- Add Kenward-Roger support for spatial covariance structures.
 
 # mmrm 0.2.2
 
