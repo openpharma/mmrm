@@ -29,7 +29,7 @@ context("derivatives_nonspatial struct works as expected") {
     auto mychol = derivatives_nonspatial<double>(theta, 4, "ar1");
     std::vector<int> v1 {0, 1, 2};
     std::vector<int> v_full {0, 1, 2, 3};
-    matrix<double> dist(3, 3);
+    matrix<double> dist(0, 0);
     auto full_sigma = mychol.get_sigma(v_full, dist);
     auto part_sigma = mychol.get_sigma(v1, dist);
     auto selmat = get_select_matrix<double>(v1, 4);
@@ -81,7 +81,7 @@ context("derivatives_sp_exp struct works as expected") {
       0, 0.5, 1,
       0.5, 0, 0.5,
       1, 0.5, 0;
-    std::vector<int> v(3);
+    std::vector<int> v(0);
     auto sigma = sp.get_sigma(v, dist);
     matrix<double> expected_sigma(3, 3);
     // expected values from R side two rho^dist * sigma

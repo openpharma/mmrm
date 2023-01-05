@@ -1,12 +1,128 @@
 # h_get_kr_comp ----
-test_that("h_get_kr_comp works as expected on ungrouped mmrm", {
+test_that("h_get_kr_comp works as expected on ar1 ungrouped mmrm", {
     fit <- mmrm(FEV1 ~ ARMCD + ar1(AVISIT | USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
     expect_snapshot_tolerance(fit$kr_comp)
   }
 )
 
-test_that("h_get_kr_comp works as expected on grouped mmrm", {
+test_that("h_get_kr_comp works as expected on ar1 grouped mmrm", {
     fit <- mmrm(FEV1 ~ ARMCD + ar1(AVISIT | SEX / USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+    expect_snapshot_tolerance(fit$kr_comp)
+  }
+)
+
+test_that("h_get_kr_comp works as expected on ar1h ungrouped mmrm", {
+    fit <- mmrm(FEV1 ~ ARMCD + ar1h(AVISIT | USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+    expect_snapshot_tolerance(fit$kr_comp)
+  }
+)
+
+test_that("h_get_kr_comp works as expected on ar1h grouped mmrm", {
+    fit <- mmrm(FEV1 ~ ARMCD + ar1h(AVISIT | SEX / USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+    expect_snapshot_tolerance(fit$kr_comp)
+  }
+)
+
+test_that("h_get_kr_comp works as expected on cs ungrouped mmrm", {
+    fit <- mmrm(FEV1 ~ ARMCD + cs(AVISIT | USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+    expect_snapshot_tolerance(fit$kr_comp)
+  }
+)
+
+test_that("h_get_kr_comp works as expected on cs grouped mmrm", {
+    fit <- mmrm(FEV1 ~ ARMCD + cs(AVISIT | SEX / USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+    expect_snapshot_tolerance(fit$kr_comp)
+  }
+)
+
+test_that("h_get_kr_comp works as expected on csh ungrouped mmrm", {
+    fit <- mmrm(FEV1 ~ ARMCD + csh(AVISIT | USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+    expect_snapshot_tolerance(fit$kr_comp)
+  }
+)
+
+test_that("h_get_kr_comp works as expected on csh grouped mmrm", {
+    fit <- mmrm(FEV1 ~ ARMCD + csh(AVISIT | SEX / USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+    expect_snapshot_tolerance(fit$kr_comp)
+  }
+)
+
+test_that("h_get_kr_comp works as expected on toep ungrouped mmrm", {
+    fit <- mmrm(FEV1 ~ ARMCD + toep(AVISIT | USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+    expect_snapshot_tolerance(fit$kr_comp)
+  }
+)
+
+test_that("h_get_kr_comp works as expected on toep grouped mmrm", {
+    fit <- mmrm(FEV1 ~ ARMCD + toep(AVISIT | SEX / USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+    expect_snapshot_tolerance(fit$kr_comp)
+  }
+)
+
+test_that("h_get_kr_comp works as expected on toeph ungrouped mmrm", {
+    fit <- mmrm(FEV1 ~ ARMCD + toeph(AVISIT | USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+    expect_snapshot_tolerance(fit$kr_comp)
+  }
+)
+
+test_that("h_get_kr_comp works as expected on toeph grouped mmrm", {
+    fit <- mmrm(FEV1 ~ ARMCD + toeph(AVISIT | SEX / USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+    expect_snapshot_tolerance(fit$kr_comp)
+  }
+)
+
+test_that("h_get_kr_comp works as expected on us ungrouped mmrm", {
+    fit <- mmrm(FEV1 ~ ARMCD + us(AVISIT | USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+    expect_snapshot_tolerance(fit$kr_comp)
+  }
+)
+
+test_that("h_get_kr_comp works as expected on us grouped mmrm", {
+    fit <- mmrm(FEV1 ~ ARMCD + us(AVISIT | SEX / USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+    expect_snapshot_tolerance(fit$kr_comp)
+  }
+)
+
+test_that("h_get_kr_comp works as expected on adh ungrouped mmrm", {
+    fit <- mmrm(FEV1 ~ ARMCD + adh(AVISIT | USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+    expect_snapshot_tolerance(fit$kr_comp)
+  }
+)
+
+test_that("h_get_kr_comp works as expected on adh grouped mmrm", {
+    fit <- mmrm(FEV1 ~ ARMCD + adh(AVISIT | SEX / USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+    expect_snapshot_tolerance(fit$kr_comp)
+  }
+)
+
+test_that("h_get_kr_comp works as expected on ad ungrouped mmrm", {
+    fit <- mmrm(FEV1 ~ ARMCD + ad(AVISIT | USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+    expect_snapshot_tolerance(fit$kr_comp)
+  }
+)
+
+test_that("h_get_kr_comp works as expected on ad grouped mmrm", {
+    fit <- mmrm(FEV1 ~ ARMCD + ad(AVISIT | SEX / USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+    expect_snapshot_tolerance(fit$kr_comp)
+  }
+)
+
+test_that("h_get_kr_comp works as expected on spatial mmrm", {
+    fit <- mmrm(
+      FEV1 ~ ARMCD + sp_exp(VISITN, VISITN2 | USUBJID),
+      data = fev_data, reml = TRUE,
+      method = "Kenward-Roger"
+    )
+    expect_snapshot_tolerance(fit$kr_comp)
+  }
+)
+
+test_that("h_get_kr_comp works as expected on grouped spatial mmrm", {
+    fit <- mmrm(
+      FEV1 ~ ARMCD + sp_exp(VISITN, VISITN2 | SEX / USUBJID),
+      data = fev_data, reml = TRUE,
+      method = "Kenward-Roger"
+    )
     expect_snapshot_tolerance(fit$kr_comp)
   }
 )
