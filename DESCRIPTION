@@ -54,6 +54,7 @@ Suggests:
     parallelly (>= 1.32.0),
     rmarkdown,
     testthat (>= 3.0.0),
+    mockery,
     xml2
 LinkingTo:
     Rcpp,
@@ -76,7 +77,6 @@ Collate:
     'catch-routine-registration.R'
     'component.R'
     'data.R'
-    'emmeans.R'
     'fit.R'
     'kenwardroger.R'
     'mmrm-methods.R'
@@ -86,3 +86,6 @@ Collate:
     'testing.R'
     'tmb-methods.R'
     'tmb.R'
+    'interop-emmeans.R'
+    'interop-parsnip.R'
+    'zzz.R'
