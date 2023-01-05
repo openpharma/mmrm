@@ -131,8 +131,7 @@ struct derivatives_nonspatial: public derivatives_base<Type> {
       int n_visists_i = visits.size();
       matrix<Type> ret = matrix<Type>(this->n_theta * n_visists_i, n_visists_i);
       for (int i = 0; i < this->n_theta; i++) {
-        auto zz = sel_mat * this->sigmad1_cache[this->full_visit].block(i  * this->n_visits, 0, this->n_visits, this->n_visits) * sel_mat.transpose();
-        ret.block(i  * n_visists_i, 0, n_visists_i, n_visists_i) = zz;
+        ret.block(i  * n_visists_i, 0, n_visists_i, n_visists_i) = sel_mat * this->sigmad1_cache[this->full_visit].block(i  * this->n_visits, 0, this->n_visits, this->n_visits) * sel_mat.transpose();
       }
       this->sigmad1_cache[visits] = ret;
       return ret;
