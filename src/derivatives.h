@@ -64,12 +64,22 @@ std::map<std::string, matrix<Type>> derivatives(int n_visits, std::string cov_ty
   ret["derivative2"] = ret_d2;
   return ret;
 }
+// Base class of spatial and non-spatial derivatives.
+template <class Type>
+struct derivatives_base {
+  virtual matrix<Type> get_inverse(std::vector<int> visits, matrix<Type> dist) = 0;
+  virtual matrix<Type> get_sigma_derivative1(std::vector<int> visits, matrix<Type> dist) = 0;
+  virtual matrix<Type> get_sigma_derivative2(std::vector<int> visits, matrix<Type> dist) = 0;
+  virtual matrix<Type> get_sigma(std::vector<int> visits, matrix<Type> dist) = 0;
+  virtual matrix<Type> get_inverse_derivative(std::vector<int> visits, matrix<Type> dist) = 0;
+};
+
 // Struct derivatives_nonspatial is created to get the derivatives with cache.
 // The main reason to have it is that we nearly always have duplicated visits
 // and the inverse of a matrix is calculation expensive. In addition, we can save
 // the resource needed for select matrix calculations.
 template <class Type>
-struct derivatives_nonspatial {
+struct derivatives_nonspatial: public derivatives_base<Type> {
   std::map<std::vector<int>, matrix<Type>> inverse_cache;
   std::map<std::vector<int>, matrix<Type>> sigmad1_cache;
   std::map<std::vector<int>, matrix<Type>> sigmad2_cache;
@@ -101,7 +111,7 @@ struct derivatives_nonspatial {
     this->sigmad2_cache[this->full_visit] = sigma_d2;
     this->sigma_cache[this->full_visit] = allret["chol"] * allret["chol"].transpose();
     this->inverse_cache[this->full_visit] = (this->sigma_cache[this->full_visit]).inverse();
-    this->sel_mat_cache[this->full_visit] = get_select_matrix<Type>(full_visit, this->n_visits);
+    this->sel_mat_cache[this->full_visit] = get_select_matrix<Type>(this->full_visit, this->n_visits);
   }
   // Cache and return the select matrix.
   Eigen::SparseMatrix<Type> get_sel_mat(std::vector<int> visits) {
@@ -113,7 +123,7 @@ struct derivatives_nonspatial {
     }
   }
   // Cache and return the first order derivatives using select matrix.
-  matrix<Type> get_sigma_derivative1(std::vector<int> visits) {
+  matrix<Type> get_sigma_derivative1(std::vector<int> visits, matrix<Type> dist) override {
      if (this->sigmad1_cache.count(visits) > 0) {
       return this->sigmad1_cache[visits];
     } else {
@@ -121,14 +131,15 @@ struct derivatives_nonspatial {
       int n_visists_i = visits.size();
       matrix<Type> ret = matrix<Type>(this->n_theta * n_visists_i, n_visists_i);
       for (int i = 0; i < this->n_theta; i++) {
-        ret.block(i  * n_visists_i, 0, n_visists_i, n_visists_i) = sel_mat * this->sigmad1_cache[this->full_visit].block(i  * this->n_visits, 0, this->n_visits, this->n_visits) * sel_mat.transpose();
+        auto zz = sel_mat * this->sigmad1_cache[this->full_visit].block(i  * this->n_visits, 0, this->n_visits, this->n_visits) * sel_mat.transpose();
+        ret.block(i  * n_visists_i, 0, n_visists_i, n_visists_i) = zz;
       }
       this->sigmad1_cache[visits] = ret;
       return ret;
     }
   }
   // Cache and return the second order derivatives using select matrix.
-  matrix<Type> get_sigma_derivative2(std::vector<int> visits) {
+  matrix<Type> get_sigma_derivative2(std::vector<int> visits, matrix<Type> dist) override {
      if (this->sigmad2_cache.count(visits) > 0) {
       return this->sigmad2_cache[visits];
     } else {
@@ -144,7 +155,7 @@ struct derivatives_nonspatial {
     }
   }
   // Cache and return the sigma using select matrix.
-  matrix<Type> get_sigma(std::vector<int> visits) {
+  matrix<Type> get_sigma(std::vector<int> visits, matrix<Type> dist) override {
      if (this->sigma_cache.count(visits) > 0) {
       return this->sigma_cache[visits];
     } else {
@@ -155,7 +166,7 @@ struct derivatives_nonspatial {
     }
   }
   // Cache and return the inverse of sigma using select matrix.
-  matrix<Type> get_inverse(std::vector<int> visits) {
+  matrix<Type> get_inverse(std::vector<int> visits, matrix<Type> dist) override {
     if (this->inverse_cache.count(visits) > 0) {
       return this->inverse_cache[visits];
     } else {
@@ -168,15 +179,15 @@ struct derivatives_nonspatial {
     }
   }
   // Cache and return the first order derivatives of inverse of sigma using select matrix.
-  matrix<Type> get_inverse_derivative(std::vector<int> visits) {
+  matrix<Type> get_inverse_derivative(std::vector<int> visits, matrix<Type> dist) override {
     if (this->sigma_inverse_d1_cache.count(visits) > 0) {
       return this->sigma_inverse_d1_cache[visits];
     } else {
       Eigen::SparseMatrix<Type> sel_mat = this->get_sel_mat(visits);
-      auto sigma_d1 = this->get_sigma_derivative1(visits);
+      auto sigma_d1 = this->get_sigma_derivative1(visits, dist);
       matrix<Type> sigma_inv_d1(sigma_d1.rows(), sigma_d1.cols());
       int n_visits_i = visits.size();
-      auto sigma_inv = this->get_inverse(visits);
+      auto sigma_inv = this->get_inverse(visits, dist);
       for (int r = 0; r < this->n_theta; r++) {
         sigma_inv_d1.block(r * n_visits_i, 0, n_visits_i, n_visits_i) = - sigma_inv * sigma_d1.block(r * n_visits_i, 0, n_visits_i, n_visits_i) *sigma_inv;
       }
@@ -191,7 +202,7 @@ struct derivatives_nonspatial {
 // No caching is used because the distance can be hardly the same for spatial covariance
 // structures.
 template <class Type>
-struct derivatives_sp_exp {
+struct derivatives_sp_exp: public derivatives_base<Type> {
   Type const_sd;
   Type rho;
   Type logrho;
@@ -205,18 +216,18 @@ struct derivatives_sp_exp {
     this->logrho = log(this->rho);
   }
   // Obtain first order derivatives
-  matrix<Type> get_sigma_derivative1(matrix<Type> dist) {
+  matrix<Type> get_sigma_derivative1(std::vector<int> visits, matrix<Type> dist) override {
     matrix<Type> ret(2 * dist.rows(), dist.cols());
     // partial sigma / partial theta_1 = sigma.
-    auto sigma = this->get_sigma(dist);
+    auto sigma = this->get_sigma(visits, dist);
     ret.block(0, 0, dist.rows(), dist.cols()) = sigma;
     ret.block(dist.rows(), 0, dist.rows(), dist.cols()) = sigma.array() * dist.array() * (1 - this->rho);
     return ret;
   }
   // Obtain second order derivatives.
-  matrix<Type> get_sigma_derivative2(matrix<Type> dist) {
+  matrix<Type> get_sigma_derivative2(std::vector<int> visits, matrix<Type> dist) override {
     matrix<Type> ret(4 * dist.rows(), dist.cols());
-    auto sigma = this->get_sigma(dist);
+    auto sigma = this->get_sigma(visits, dist);
     ret.block(0, 0, dist.rows(), dist.cols()) = sigma;
     Type rho_r = 1 - this->rho;
     auto dtheta1dtheta2 = sigma.array() * dist.array() * rho_r;
@@ -227,19 +238,19 @@ struct derivatives_sp_exp {
     return ret;
   }
   // Obtain sigma.
-  matrix<Type> get_sigma(matrix<Type> dist) {
+  matrix<Type> get_sigma(std::vector<int> visits, matrix<Type> dist) override {
     matrix<Type> result = exp(dist.array() * this->logrho) * this->const_sd;
     return result;
   }
   // Obtain inverse of sigma.
-  matrix<Type> get_inverse(matrix<Type> dist) {
-    return this->get_sigma(dist).inverse();
+  matrix<Type> get_inverse(std::vector<int> visits, matrix<Type> dist) override {
+    return this->get_sigma(visits, dist).inverse();
   }
   // Obtain first order derivatives for inverse of sigma.
-  matrix<Type> get_inverse_derivative(matrix<Type> dist) {
+  matrix<Type> get_inverse_derivative(std::vector<int> visits, matrix<Type> dist) override {
     matrix<Type> sigma_inv_d1 = matrix<Type>::Zero(2 * dist.rows(), dist.cols());
-    auto sigma_inv = this->get_inverse(dist);
-    auto sigma_d1 = this->get_sigma_derivative1(dist);
+    auto sigma_inv = this->get_inverse(visits, dist);
+    auto sigma_d1 = this->get_sigma_derivative1(visits, dist);
     for (int r = 0; r < 2; r++) {
       sigma_inv_d1.block(r * dist.rows(), 0, dist.rows(), dist.cols()) = - sigma_inv * sigma_d1.block(r * dist.rows(), 0, dist.rows(), dist.cols()) *sigma_inv;
     }
