@@ -27,7 +27,7 @@ List get_pqr(List mmrm_fit, NumericVector theta) {
   matrix<double> P = matrix<double>::Zero(p * n_theta, p);
   matrix<double> Q = matrix<double>::Zero(p * theta_size_per_group * n_theta, p);
   matrix<double> R = matrix<double>::Zero(p * theta_size_per_group * n_theta, p);
-  // Use map to hold these base class pointer(can also work for child class)
+  // Use map to hold these base class pointers (can also work for child class objects).
   std::map<int, derivatives_base<double>*> derivatives_by_group;
   for (int r = 0; r < n_groups; r++) {
     // in loops using new keyword is required so that the objects stays on the heap
