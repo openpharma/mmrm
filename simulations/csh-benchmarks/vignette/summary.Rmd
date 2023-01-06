@@ -1,6 +1,6 @@
 ---
-title: "Heterogeneous Compound Symmetry Estimation"
-author: "Philippe Boileau"
+title: "Benchmarking Heterogeneous Compound Symmetry Covariance Matrix Estimation"
+author: "Philippe Boileau and Daniel Sabanes Bove"
 output:
   html_document:
     toc: true
