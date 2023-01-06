@@ -17,8 +17,6 @@ library(tidyr)
 library(rtables)
 library(ggplot2)
 
-## set up parallelization, if using
-## plan(multicore, workers = availableCores() - 1)
 ## NOTE: sasr doens't seem to play well with future... run simulations
 ## sequentially for now
 plan(sequential)
@@ -47,7 +45,7 @@ true_covar_ls <- list(
 ## specify the methods
 source(here("simulations/csh-benchmarks/R/method-functions.R"))
 mrmm_method <- create_method(.method_fun = mmrm_wrapper_fun)
-glmmTMB_method <- create_method(.method_fun = glmmTMB_wrapper_fun)
+glmmtmb_method <- create_method(.method_fun = glmmtmb_wrapper_fun)
 nlme_method <- create_method(.method_fun = nlme_wrapper_fun)
 proc_mixed_method <- create_method(.method_fun = proc_mixed_fun)
 
@@ -87,7 +85,7 @@ experiment <- create_experiment(
   add_vary_across(.dgp = "hom_rct", num_part = c(250, 500, 1000)) %>%
   add_vary_across(.dgp = "het_rct", num_part = c(250, 500, 1000)) %>%
   add_method(mrmm_method, name = "mmrm") %>%
-  add_method(glmmTMB_method, name = "glmmTMB") %>%
+  add_method(glmmtmb_method, name = "glmmTMB") %>%
   add_method(nlme_method, name = "nlme") %>%
   add_method(proc_mixed_method, name = "proc_mixed") %>%
   add_evaluator(frobenius_loss_eval, name = "frobenius_loss") %>%

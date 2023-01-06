@@ -179,7 +179,9 @@ mse_fun <- function(eval_results) {
     ggplot2::ylab("Empirical Mean Squared Error (100 Replicates)") +
     ggplot2::scale_fill_discrete(name = "Method") +
     ggplot2::theme_bw() +
-    ggplot2::theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+    ggplot2::theme(
+      axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)
+    )
 
 }
 
@@ -227,6 +229,8 @@ bias_fun <- function(eval_results) {
     ggplot2::ylab("Empirical Bias (100 Replicates)") +
     ggplot2::scale_fill_discrete(name = "Method") +
     ggplot2::theme_bw() +
-    ggplot2::theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+    ggplot2::theme(
+      axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)
+    )
 
 }

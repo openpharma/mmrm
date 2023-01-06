@@ -46,7 +46,7 @@ mmrm_wrapper_fun <- function(
 #' @param trt A binary vector of treatment group indicators.
 #'
 #' @return A fitted glmmTMB model object.
-glmmTMB_wrapper_fun <- function(
+glmmtmb_wrapper_fun <- function(
   participant,
   time,
   y,
@@ -157,4 +157,3 @@ proc_mixed_fun <- function(
   return(list(fit = cov_mat_df))
 
 }
-

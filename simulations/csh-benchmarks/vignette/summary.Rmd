@@ -196,7 +196,7 @@ rct_dgp_fun <- function(
   if (pad_zeroes) {
     df$time <- stringr::str_pad(df$time, width = 2, side = "left", pad = "0")
   }
-  
+
   ## return the generated data
   return(list(
     participant = as.factor(df$participant),
