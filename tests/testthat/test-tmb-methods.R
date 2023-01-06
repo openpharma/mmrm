@@ -168,9 +168,34 @@ test_that("print.mmrm_tmb works as expected for rank deficient fits", {
 # residuals.mmrm_tmb ----
 
 test_that("residuals works as expected", {
-  object <- get_mmrm_tmb()
+  object <- get_mmrm()
+
   result_resp <- expect_silent(residuals(object, type = "response"))
   expect_double(result_resp, len = length(object$tmb_data$y_vector))
+  expect_equal(head(result_resp, 5), c(-1.2349, -31.6025, -4.1618, -4.2406, 2.9770), tolerance = 1e-4)
+
+  result_pearson <- expect_silent(residuals(object, type = "pearson"))
+  expect_double(result_pearson, len = length(object$tmb_data$y_vector))
+  expect_equal(head(result_pearson, 5), c(-0.23957, -3.23296, -0.80740, -1.09871, 0.30455), tolerance = 1e-4)
+
   result_norm <- expect_silent(residuals(object, type = "normalized"))
   expect_double(result_norm, len = length(object$tmb_data$y_vector))
+  expect_equal(head(result_norm, 5), c(-0.23957, -3.23322, -0.80740, -0.99548, 0.43232), tolerance = 1e-4)
 })
+
+test_that("residuals works as expected with grouped covariance structure", {
+  object <- get_mmrm_group()
+
+  result_resp <- expect_silent(residuals(object, type = "response"))
+  expect_double(result_resp, len = length(object$tmb_data$y_vector))
+  expect_equal(head(result_resp, 5), c(-4.7084, -24.1957, -9.6965, -4.2728, 7.6564), tolerance = 1e-4)
+
+  result_pearson <- expect_silent(residuals(object, type = "pearson"))
+  expect_double(result_pearson, len = length(object$tmb_data$y_vector))
+  expect_equal(head(result_pearson, 5), c(-0.73835, -1.83991, -1.53172, -0.88145, 0.66653), tolerance = 1e-4)
+
+  result_norm <- expect_silent(residuals(object, type = "normalized"))
+  expect_double(result_norm, len = length(object$tmb_data$y_vector))
+  expect_equal(head(result_norm, 5), c(-0.73835, -1.88475, -1.53172, -1.02026, 0.54335), tolerance = 1e-4)
+})
+
