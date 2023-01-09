@@ -22,8 +22,8 @@
 #SBATCH --error=slurm.out
 #
 ## Command(s) to run:
-## Initialize work environment like
-cd ~/mmrm/simulations/csh-benchmarks
+## Initialize work environment
+cd ~/mmrm/simulations/csh-benchmarks || exit
 module load R/prd
 #
 ## Run the script
