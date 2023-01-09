@@ -226,7 +226,7 @@ The distance matrix is
 For spatial exponential, the covariance structure is defined as follows:
 
 \[
-  \rho_{ij} = \rho^{-d_{ij}}
+  \rho_{ij} = \rho^{d_{ij}}
 \]
 
 where $d_{ij}$ is the distance between time point $i$ and time point $j$,
