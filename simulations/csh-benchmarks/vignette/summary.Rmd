@@ -70,10 +70,11 @@ data-generating function is in `R/dgp-functions.R`, and the `mmrm`,
 `glmmTMB`,`nlme` and `PROC MIXED` wrapper functions are in
 `R/method-functions.R`. Functions for evaluating estimator performance and
 tabulating or plotting these results are contained in `R/eval-functions.R` and
-`R/visualizer-functions.R` respectively. `slurm/` contains a bash script for
-running this simulation on a SLURM HPC. The logs produced by running this bash
-script are saved in `logs/`. Simulation study results are stored in `results/`.
-Finally, the configuration file for
+`R/visualizer-functions.R` respectively. `R/tests/` contains files for testing
+the wrapper functions and evaluator functions using the `testthat` framework.
+`slurm/` contains a bash script for running this simulation on a SLURM HPC. The
+logs produced by running this bash script are saved in `logs/`. Simulation study
+results are stored in `results/`. Finally, the configuration file for
 [`sasr`](https://github.com/insightsengineering/sasr), required for benchmarking
 `PROC MIXED`, must be named `sascfg_personal.py`.
 
@@ -127,8 +128,8 @@ than the other procedures. This bias is neglible at larger sample sizes.
 The results suggest that the discrepencies previously observed between mixed
 models for repeated measures fit with R and SAS cannot be explained by errors in
 the repeated measures' covariance matrix estimation. They might instead be due
-to a difficult to diagnosis re-labelling issue performed by SAS "under the
-hood". See the example below.
+to a difficult-to-diagnose re-labelling issue performed by SAS "under the hood".
+See the example below.
 
 ## Time Point Re-Labelling Issue
 
