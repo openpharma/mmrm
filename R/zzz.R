@@ -40,9 +40,9 @@ register_on_load <- function(pkg, ver = c(NA, NA), callback, message = NULL) {
     action = "append",
     function(...) {
       register_on_load(
-        pkg = pkg, 
-        ver = ver, 
-        callback = callback, 
+        pkg = pkg,
+        ver = ver,
+        callback = callback,
         message = message
       )
     }
