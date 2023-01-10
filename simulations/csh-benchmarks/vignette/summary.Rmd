@@ -1,0 +1,260 @@
+---
+title: "Benchmarking Heterogeneous Compound Symmetry Covariance Matrix Estimation"
+author: "Philippe Boileau and Daniel Sabanes Bove"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, message=FALSE, echo=FALSE}
+## load required libraries
+library(here)
+library(rtables)
+library(ggplot2)
+
+## set global knitr options
+knitr::opts_chunk$set(
+  echo = FALSE, fig.width = 10, fig.height = 6, comment = ""
+)
+```
+```{css, echo=FALSE}
+.reveal .r code {
+    white-space: pre;
+}
+```
+
+# Description
+
+It's been noted that models fit using `mmrm`, `glmmTMB` and `nlme` differ from
+those produced by SAS's `PROC MIXED` procedure when the data-generating
+processe's repeated measures' covariance matrix is assumed to be a heterogeneous
+compound symmetry (CSH) matrix. This directory contains a simulation study,
+relying on the [`simChef`](https://github.com/Yu-Group/simChef) simulation
+framework, investigating whether this issue is due to the repeated measures'
+covariance matrix estimation procedure implemented in SAS.
+
+## Simulation Details
+
+Two data-generating processes mimicking 1:1 randomized control trials with 10
+repeated measures are considered: one in which the true covariance matrix is
+homoscedastic CSH, and one in which it is heteroscedastic CSH. No other
+covariates are considered. The former's variances are one at all time points.
+The latter's variances increase from 0.5 at time 1 to 2.75 at time 10. The
+outcome data is Gaussian conditional on treatment in both settings. One hundred
+replicates are produced at sample sizes of 250, 500 and 1000 for each
+data-generating process.
+
+## Methods
+
+Mixed models for repeated measures are fit with the `mmrm`, `glmmTMB` and `nlme`
+packages' `mmrm()`, `glmmTMB()` and `gsl()` functions respectively. SAS's `PROC
+MIXED` procedure is fit using the `sasr` package's SAS-R interface. All models
+are fit by specifying a sole fixed effect for the treatment indicator and a
+compound symmetry matrix for the repeated measures' covariance matrix.
+
+## Benchmark Summary
+
+Empirical risks based on the Frobenius and spectral norms are computed for each
+estimator. Recall that the Frobenius norm is analogous to the squared error:
+it's the square root of the sum of squared matrix elements. The spectral norm is
+the square root of the largest absolute eigenvalue. The empirical mean squared
+errors and biases are also computed for each of the CSH covariance matrix
+parameters.
+
+## Navigating the Directory
+
+The main R script is `R/meal.R`. This file assembles the simulation study
+components using the `simChef` framework and performs the experiment. The
+data-generating function is in `R/dgp-functions.R`, and the `mmrm`,
+`glmmTMB`,`nlme` and `PROC MIXED` wrapper functions are in
+`R/method-functions.R`. Functions for evaluating estimator performance and
+tabulating or plotting these results are contained in `R/eval-functions.R` and
+`R/visualizer-functions.R` respectively. `R/tests/` contains files for testing
+the wrapper functions and evaluator functions using the `testthat` framework.
+`slurm/` contains a bash script for running this simulation on a SLURM HPC. The
+logs produced by running this bash script are saved in `logs/`. Simulation study
+results are stored in `results/`. Finally, the configuration file for
+[`sasr`](https://github.com/insightsengineering/sasr), required for benchmarking
+`PROC MIXED`, must be named `sascfg_personal.py`.
+
+
+# Results
+
+Simulation study results are stored in
+`simulations/csh-benchmarks/results/hom_rct-het_rct/Varying
+num_part-num_part/viz_results.rds`. 
+
+```{r load-results}
+## load the results
+results <- readRDS(here(
+  "simulations/csh-benchmarks/results/hom_rct-het_rct/Varying num_part-num_part/viz_results.rds")
+)
+```
+
+## Frobenius and Spectral Risks
+
+```{r risk-tibble}
+results$risk_tibble
+```
+
+## Frobenius and Spectral Loss Distributions
+
+```{r loss-dist-plot}
+results$loss_dist_plot
+```
+
+## CSH Estimator Bias
+
+```{r bias-plot}
+results$bias_plot
+```
+
+## CSH Estimator MSE
+
+```{r mse-plot}
+results$mse_plot
+```
+
+
+# Discussion
+
+The covariance matrix estimates produced by `glmmTMB`, `mmrm`, `nlme` and `PROC
+MIXED` are virtually identical with respect to their Frobenius and spectral
+risks, as well as in terms of the CSH covariance matrix parameter estimates. The
+estimates output by the `glmmTMB` procedure are, in general, marginally more biased 
+than the other procedures. This bias is neglible at larger sample sizes.
+
+The results suggest that the discrepencies previously observed between mixed
+models for repeated measures fit with R and SAS cannot be explained by errors in
+the repeated measures' covariance matrix estimation. They might instead be due
+to a difficult-to-diagnose re-labelling issue performed by SAS "under the hood".
+See the example below.
+
+## Time Point Re-Labelling Issue
+
+Consider the following data-generating function:
+
+```{r dgp, echo=TRUE}
+#' A Simple RCT Data-Generating Function
+#'
+#' @description This function simulates a randomized control trial with
+#'   participants equally split across the control and treatment arms.
+#'   Participants' repeated measures are assumed to be normally distributed with
+#'   heterogeneous compound symmetry covariance matrix. Participants' outcomes
+#'   are collected at each time point.
+#'
+#' @param num_part A numeric indicating the total number of participants.
+#' @param num_rep_meas A numeric indicating the number of repeated measures.
+#' @param fixed_int A numeric corresponding to the fixed intercept effect.
+#' @param fixed_trt A numeric corresponding to the fixed treatment effect.
+#' @param outcome_vars A numeric vector with length equal to num_rep_meas. It is
+#'   the vector of the repeated measures' variances.
+#' @param outcome_cor A numeric corresponding to the correlation parameter in
+#'   the heterogeneous compound symmetry covariance matrix.
+#' @param pad_zeroes A logical indicating whether to pad the time points with a
+#'   leading zero. If set to FALSE, the default, then the time variable is an
+#'   integer. If set to true, the time variable is transformed into an ordered
+#'   factor.
+#'
+#' @return A list containing the simulated participants' IDs, time point
+#'   indicators, outcomes, treatment assignments and baseline covariates.
+rct_dgp_fun <- function(
+  num_part = 1000,
+  num_rep_meas = 10,
+  fixed_int = 1,
+  fixed_trt = 1,
+  outcome_vars = seq_len(num_rep_meas),
+  outcome_cor = 0.5,
+  pad_zeroes = FALSE
+) {
+
+  ## form a balanced data.frame
+  cov_df <- data.frame(
+    participant = seq_len(num_part),
+    trt = c(rep(0, round(num_part / 2)), rep(1, num_part - round(num_part / 2)))
+  )
+  time_point_df <- expand.grid(
+    time = seq_len(num_rep_meas),
+    participant = seq_len(num_part)
+  )
+  df <- cov_df %>% dplyr::left_join(time_point_df, by = "participant")
+
+  ## produce the model matrix for the fixed effects
+  fixed_model_mat <- model.matrix(~ trt, data = df)
+
+  ## define the repeated measures correlation structure, assuming
+  ## heterogeneous compound symmetry
+  csh_mat <- tcrossprod(sqrt(outcome_vars), sqrt(outcome_vars)) * outcome_cor
+  diag(csh_mat) <- outcome_vars
+
+  ## generate the outcomes
+  beta <- c(fixed_int, fixed_trt)
+  df$y <- fixed_model_mat %*% beta +
+    as.vector(t(MASS::mvrnorm(num_part, rep(0, num_rep_meas), csh_mat)))
+
+  ## time point variable transformation
+  if (pad_zeroes) {
+    df$time <- stringr::str_pad(df$time, width = 2, side = "left", pad = "0")
+  }
+
+  ## return the generated data
+  return(list(
+    participant = as.factor(df$participant),
+    time = as.factor(df$time),
+    y = df$y,
+    trt = df$trt
+  ))
+}
+```
+
+We apply the `PROC MIXED` wrapper function to datasets that are identical in all
+but their `time` variables. This function returns parameter estimates for the
+CSH covariance matrix. In the first dataset, `time` is a factor with levels `1`,
+`2`, ..., `10`. The second dataset's `time` variable is a factor with levels
+`01`, `02`, ..., `10`.
+
+```{r run-sasr, echo=TRUE}
+## generate datasets with and without time points padded by zeroes
+set.seed(123)
+rct_data_not_padded <- rct_dgp_fun()
+rct_data_not_padded$time %>% head(10)
+set.seed(123)
+rct_data_padded <- rct_dgp_fun(pad_zeroes = TRUE)
+rct_data_padded$time %>% head(10)
+
+## load the sasr wrapper function
+source(here("simulations/csh-benchmarks/R/method-functions.R"))
+proc_mixed_fun
+
+## fit the data to the non-paded time point data
+proc_mixed_fun(
+  participant = rct_data_not_padded$participant,
+  time = rct_data_not_padded$time,
+  y = rct_data_not_padded$y,
+  trt = rct_data_not_padded$trt
+)
+
+## fit the data to the paded time point data
+proc_mixed_fun(
+  participant = rct_data_padded$participant,
+  time = rct_data_padded$time,
+  y = rct_data_padded$y,
+  trt = rct_data_padded$trt
+)
+```
+
+When the `time` isn't padded by zeroes, we find that second and tenth time
+points' variances are swapped. The `time` data appears to be loaded as a string
+into the SAS session and subsequently sorted. That is, `"1", "2", ..., "10"` is
+reordered as `"1", "10", "2", ..., "9"`. That's not the entire story, though, as
+the names of the covariance parameters returned by applying the wrapper function
+to the dataset with padded `time` aren't padded. In any case, this issue should
+be taken into account when comparing `mmrm()` and `PROC MIXED` ouputs.
+
+
+# Session Information
+
+```{r session-information}
+sessionInfo()
+```
