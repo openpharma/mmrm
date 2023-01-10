@@ -291,3 +291,10 @@ h_partial_fun_args <- function(fun, ..., additional_attr = list()) {
     ), additional_attr)
   )
 }
+
+fill_names <- function(x) {
+  n <- names(x)
+  is_unnamed <- if (is.null(n)) rep_len(TRUE, length(x)) else n == ""
+  names(x)[is_unnamed] <- x[is_unnamed]
+  x
+}
