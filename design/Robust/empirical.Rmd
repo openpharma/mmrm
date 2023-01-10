@@ -1,0 +1,124 @@
+---
+title: "Design for empirical covariance"
+author: "Liming Li"
+output: html_document
+editor_options:
+  chunk_output_type: console
+---
+
+# Implementations in SAS
+
+According to SAS documentation, the robust sandwich estimator is implemented using "empirical" option.
+With this option enabled, the method "Satterthwaite" and "Kenward-Roger" are not available.
+A simple example in SAS can be
+
+```{r}
+library(sasr)
+
+df2sd(fev_data, "fev")
+
+code <- "
+ods output diffs = diff;
+PROC MIXED DATA = fev empirical cl method=reml;
+  CLASS RACE(ref = 'Asian') AVISIT(ref = 'VIS4') SEX(ref = 'Male') ARMCD(ref = 'PBO') USUBJID;
+  MODEL FEV1 = ARMCD / solution chisq;
+  REPEATED AVISIT / subject=USUBJID type=ar(1) r rcorr;
+  LSMEANS ARMCD / pdiff=all cl alpha=0.05 slice=AVISIT;
+RUN;"
+ret <- run_sas(code)
+df <- sd2df("diff")
+```
+
+In SAS result, the covariance matrix and degree of freedom are provided.
+The method for degree of freedom is "between within"
+
+```{r}
+cat(ret$LST)
+```
+
+# Implementations in `mmrm`
+
+Since using the "empirical" option, we are changing all standard errors and test statistics involving the
+fixed effect parameters, `beta_vcov`. So it can be similar to our other methods, "Satterthwaite" and "Kenward-Roger".
+So in `mmrm`, the method, stands for both "covariance adjust" and "degree of freedom calculation".
+In SAS, they are separated arguments.
+
+covariance:
+
+1. traditional ${X^\top \Omega^{-1} X}^{-1}$
+1. empirical ${X^\top \Omega^{-1} X}^{-1} \sum_{s}{X_i^\top \Omega^{-1} \epsilon_i \epsilon_i^\top \Omega^{-1} X_i} {X^\top \Omega^{-1} X}^{-1}$
+1. Kenward-Roger(see KR documentation)
+
+degree of freedom
+
+1. contain (not implemented)
+1. between within (default one)
+1. residual (not implemented)
+1. Kenward-Roger (this will always use the KR covariance matrix)
+1. Satterthwaite (this will always use the traditional covariance matrix)
+
+In our cases, currently we can, still use one option to control them, if we are not going to implement residual/contain covariance matrix.
+Of course, we will not have the option to combine the between within degree of freedom + traditional covariance matrix.
+
+```{r}
+library(Matrix)
+
+fit <- mmrm(FEV1 ~ ARMCD + ar1(AVISIT|USUBJID), data = fev_data)
+
+visits <- fit$tmb_data$visits_zero_inds
+sel_mat <- function(vis, n_vis) {
+  ret <- matrix(0, nrow = length(vis), ncol = n_vis)
+  for (i in seq_len(length(vis))) {
+    ret[i, vis[i]] <- 1
+  }
+  return(ret)
+}
+
+sel_matrix <- sel_mat(visits + 1L, 4)
+sel_matrix_i <- lapply(seq_len(length(fit$tmb_data$subject_zero_inds)), function(x) {
+  sel_matrix[(fit$tmb_data$subject_zero_inds[x]+1):(fit$tmb_data$subject_zero_inds[x]+fit$tmb_data$subject_n_visits[x]),, drop = FALSE]
+})
+v <- lapply(seq_len(length(sel_matrix_i)), function(i) {
+  sel_matrix_i[[i]] %*% fit$cov %*% t(sel_matrix_i[[i]])
+})
+vinv <- lapply(v, solve)
+
+vall <- bdiag(vinv)
+x <- fit$tmb_data$x_matrix
+eps <- fit$tmb_data$y_vector - fit$tmb_data$x_matrix %*% fit$beta_est
+bread <- fit$beta_vcov #solve(t(x) %*% vall %*% x)
+
+meat <- lapply(seq_len(length(sel_matrix_i)), function(i) {
+  ii <- (fit$tmb_data$subject_zero_inds[i]+1):(fit$tmb_data$subject_zero_inds[i]+fit$tmb_data$subject_n_visits[i])
+  t(x[ii, , drop = FALSE]) %*% vinv[[i]] %*% eps[ii, , drop = FALSE] %*% t(eps[ii, drop = FALSE]) %*% vinv[[i]] %*% x[ii, , drop = FALSE]
+})
+meat_sum <- Reduce(`+`, meat)
+
+empirical <- bread %*% meat_sum %*% bread
+```
+
+To achieve this, the following is proposed
+
+```{r}
+fit <- mmrm(FEV1 ~ ARMCD + ar1(AVISIT|USUBJID), data = fev_data, method = "empirical")
+```
+
+with this, the covariance matrix are computed.
+
+# Implementations in `nlme` and `clubSandwich`
+
+To run a similar model, we can use `gls` to create a AR1 mixed model.
+Then we can use `vcovCR` to obtain the empirical covariance matrix.
+Please note that `type = "CR0"` is used to match SAS results(SAS do not do small sample size correction).
+```{r}
+library(nlme)
+m <- gls(
+  FEV1 ~ ARMCD,
+  correlation = corAR1(form = ~1 | USUBJID),
+  data = fev_data, 
+  na.action = na.omit, 
+  method = "REML"
+)
+clubSandwich::vcovCR(m, type = "CR0")
+```
+
