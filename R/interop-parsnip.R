@@ -32,23 +32,6 @@ parsnip_add_mmrm <- function(quietly = FALSE) {
     )
   )
 
-  args <- fill_names(c(
-    "reml",
-    "n_cores"
-  ))
-
-  mapply(
-    parsnip = names(args),
-    original = args,
-    parsnip::set_model_arg,
-    MoreArgs = list(
-      model = "linear_reg",
-      eng = "mmrm",
-      func = list(pkg = "mmrm", fun = "mmrm"),
-      has_submodel = FALSE
-    )
-  )
-
   parsnip::set_fit(
     model = "linear_reg",
     eng = "mmrm",
