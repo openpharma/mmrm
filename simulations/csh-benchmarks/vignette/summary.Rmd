@@ -207,7 +207,7 @@ rct_dgp_fun <- function(
       df$time <- stringr::str_pad(df$time, width = 2, side = "left", pad = "0")
     }
     if (explicit_time_levels) {
-      df$time <- factor(df$time, levels = df$time[1:num_rep_meas])
+      df$time <- factor(df$time, levels = as.character(seq_len(num_rep_meas)))
     } else {
       df$time <- as.factor(df$time)
     }
@@ -284,13 +284,15 @@ proc_mixed_fun(
 )
 ```
 
-When the `time` isn't padded by zeroes, we find that second and tenth time
-points' variances are swapped. The `time` data appears to be loaded as a string
-into the SAS session and subsequently sorted. That is, `"1", "2", ..., "10"` is
-reordered as `"1", "10", "2", ..., "9"`. That's not the entire story, though, as
-the names of the covariance parameters returned by applying the wrapper function
-to the dataset with padded `time` aren't padded. In any case, this issue should
-be taken into account when comparing `mmrm()` and `PROC MIXED` ouputs.
+When the `time` isn't padded by zeroes---even with explicitly set factor
+levels---we find that second and tenth time points' variances are swapped. The
+`time` data appears to be loaded as a string into the SAS session and
+subsequently sorted. That is, `"1", "2", ..., "10"` is reordered as `"1", "10",
+"2", ..., "9"`. That's not the entire story, though, as the names of the
+covariance parameters returned by applying the wrapper function to the dataset
+with padded `time` aren't padded. Alternatively, time points might be fed to SAS
+as numerics to avoid this reordering issue. This behaviour should be taken into
+account when comparing `mmrm()` and `PROC MIXED` ouputs.
 
 
 # Session Information
