@@ -152,10 +152,16 @@ Consider the following data-generating function:
 #'   the vector of the repeated measures' variances.
 #' @param outcome_cor A numeric corresponding to the correlation parameter in
 #'   the heterogeneous compound symmetry covariance matrix.
+#' @param time_as_integer A logical indicating whether the time point variable
+#'   should be kept as an integer. Defaults to FALSE. If set to TRUE, the
+#'   pad_zeroes and explicit_time_levels are ignored.
 #' @param pad_zeroes A logical indicating whether to pad the time points with a
 #'   leading zero. If set to FALSE, the default, then the time variable is an
 #'   integer. If set to true, the time variable is transformed into an ordered
 #'   factor.
+#' @param explicit_time_levels A logical indicating whether the time point
+#'   variable's ordering should be explicit. Note that this time point variable
+#'   is a factor.
 #'
 #' @return A list containing the simulated participants' IDs, time point
 #'   indicators, outcomes, treatment assignments and baseline covariates.
@@ -166,7 +172,9 @@ rct_dgp_fun <- function(
   fixed_trt = 1,
   outcome_vars = seq_len(num_rep_meas),
   outcome_cor = 0.5,
-  pad_zeroes = FALSE
+  time_as_integer = FALSE,
+  pad_zeroes = FALSE,
+  explicit_time_levels = FALSE
 ) {
 
   ## form a balanced data.frame
@@ -194,14 +202,21 @@ rct_dgp_fun <- function(
     as.vector(t(MASS::mvrnorm(num_part, rep(0, num_rep_meas), csh_mat)))
 
   ## time point variable transformation
-  if (pad_zeroes) {
-    df$time <- stringr::str_pad(df$time, width = 2, side = "left", pad = "0")
+  if (!time_as_integer) {
+    if (pad_zeroes) {
+      df$time <- stringr::str_pad(df$time, width = 2, side = "left", pad = "0")
+    }
+    if (explicit_time_levels) {
+      df$time <- factor(df$time, levels = df$time[1:num_rep_meas])
+    } else {
+      df$time <- as.factor(df$time)
+    }
   }
 
   ## return the generated data
   return(list(
     participant = as.factor(df$participant),
-    time = as.factor(df$time),
+    time = df$time,
     y = df$y,
     trt = df$trt
   ))
@@ -211,8 +226,11 @@ rct_dgp_fun <- function(
 We apply the `PROC MIXED` wrapper function to datasets that are identical in all
 but their `time` variables. This function returns parameter estimates for the
 CSH covariance matrix. In the first dataset, `time` is a factor with levels `1`,
-`2`, ..., `10`. The second dataset's `time` variable is a factor with levels
-`01`, `02`, ..., `10`.
+`2`, ..., `10`. These factor levels are not set explicitly. The second dataset
+is identical to the first, save that `time`'s factor labels are explicitly
+provided. The third dataset's `time` variable is a factor with levels `01`,
+`02`, ..., `10`. These factors are not set explicitly. Finally, a fourth dataset
+is considered in which `time` is a numeric variable.
 
 ```{r run-sasr, echo=TRUE}
 ## generate datasets with and without time points padded by zeroes
@@ -220,14 +238,20 @@ set.seed(123)
 rct_data_not_padded <- rct_dgp_fun()
 rct_data_not_padded$time %>% head(10)
 set.seed(123)
+rct_data_not_padded_explicit_lvls <- rct_dgp_fun(explicit_time_levels = TRUE)
+rct_data_not_padded_explicit_lvls$time %>% head(10)
+set.seed(123)
 rct_data_padded <- rct_dgp_fun(pad_zeroes = TRUE)
 rct_data_padded$time %>% head(10)
+set.seed(123)
+rct_data_time_integer <- rct_dgp_fun(time_as_integer = TRUE)
+rct_data_time_integer$time %>% head(10)
 
 ## load the sasr wrapper function
 source(here("simulations/csh-benchmarks/R/method-functions.R"))
 proc_mixed_fun
 
-## fit the data to the non-paded time point data
+## fit procedure on the non-paded time point data
 proc_mixed_fun(
   participant = rct_data_not_padded$participant,
   time = rct_data_not_padded$time,
@@ -235,12 +259,28 @@ proc_mixed_fun(
   trt = rct_data_not_padded$trt
 )
 
-## fit the data to the paded time point data
+## fit procedure on the non-paded time point data with explicit factor levels
+proc_mixed_fun(
+  participant = rct_data_not_padded_explicit_lvls$participant,
+  time = rct_data_not_padded_explicit_lvls$time,
+  y = rct_data_not_padded_explicit_lvls$y,
+  trt = rct_data_not_padded_explicit_lvls$trt
+)
+
+## fit procedure to the paded time point data
 proc_mixed_fun(
   participant = rct_data_padded$participant,
   time = rct_data_padded$time,
   y = rct_data_padded$y,
   trt = rct_data_padded$trt
+)
+
+## fit procedure to the numeric time point data
+proc_mixed_fun(
+  participant = rct_data_time_integer$participant,
+  time = rct_data_time_integer$time,
+  y = rct_data_time_integer$y,
+  trt = rct_data_time_integer$trt
 )
 ```
 
