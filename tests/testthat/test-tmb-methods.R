@@ -199,3 +199,30 @@ test_that("residuals works as expected with grouped covariance structure", {
   expect_equal(head(result_norm, 5), c(-0.73835, -1.88475, -1.53172, -1.02026, 0.54335), tolerance = 1e-4)
 })
 
+test_that("residuals works as expected with weighted model fit", {
+  object <- get_mmrm_weighted()
+
+  result_resp <- expect_silent(residuals(object, type = "response"))
+  expect_double(result_resp, len = length(object$tmb_data$y_vector))
+  expect_equal(head(result_resp, 5), c(-1.3356, -31.6028, -3.7467, -3.9470, 2.8818), tolerance = 1e-4)
+
+  result_pearson <- expect_silent(residuals(object, type = "pearson"))
+  expect_double(result_pearson, len = length(object$tmb_data$y_vector))
+  expect_equal(head(result_pearson, 5), c(-0.29917, -4.07046, -0.51393, -1.01538, 0.37118), tolerance = 1e-4)
+
+  result_norm <- expect_silent(residuals(object, type = "normalized"))
+  expect_double(result_norm, len = length(object$tmb_data$y_vector))
+  expect_equal(head(result_norm, 5), c(-0.29917, -4.07727, -0.51393, -0.96419, 0.45466), tolerance = 1e-4)
+})
+
+test_that("residuals helper functions work as expected", {
+  object <- get_mmrm()
+  resid_response <- residuals(object, type = "response")
+
+  result_pearson <- h_residuals_pearson(object, resid_response)
+  expect_double(result_pearson, len = length(object$tmb_data$y_vector))
+
+  result_norm <- h_residuals_normalized(object, resid_response)
+  expect_double(result_norm, len = length(object$tmb_data$y_vector))
+})
+
