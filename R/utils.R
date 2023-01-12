@@ -291,3 +291,12 @@ h_partial_fun_args <- function(fun, ..., additional_attr = list()) {
     ), additional_attr)
   )
 }
+
+h_get_cov_default <- function(method) {
+  switch(
+    method,
+    "Satterthwaite" = "Asymptotic",
+    "Kenward-Roger" = "Kenward-Roger",
+    "Between-within" = "Asymptotic"
+  )
+}

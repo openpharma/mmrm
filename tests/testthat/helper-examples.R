@@ -56,7 +56,7 @@ get_mmrm_kr <- function() {
   .mmrm_kr
 }
 
-.mmrm_krl <- mmrm(.mmrm_kr_formula, data = fev_data, method = "Kenward-Roger-Linear")
+.mmrm_krl <- mmrm(.mmrm_kr_formula, data = fev_data, method = "Kenward-Roger", cov = "Kenward-Roger-Linear")
 get_mmrm_krl <- function() {
   .mmrm_krl
 }

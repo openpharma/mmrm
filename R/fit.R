@@ -176,6 +176,7 @@ refit_multiple_optimizers <- function(fit,
 #' @param n_cores (`int`)\cr number of cores to be used.
 #' @param method (`string`)\cr adjustment method for degrees of freedom and
 #'   coefficients covariance matrix.
+#' @param cov (`string`)\cr covariance calculation method.
 #' @param start (`numeric` or `NULL`)\cr optional start values for variance
 #'   parameters.
 #' @param accept_singular (`flag`)\cr whether singular design matrices are reduced
@@ -195,6 +196,15 @@ refit_multiple_optimizers <- function(fit,
 #' However, please be cautious because this can lead to convergence failure
 #' when using an unstructured covariance matrix and there are no observations
 #' at the missing visits.
+#' `method` and `cov` arguments will decide the covariance matrix and degree of freedom calculations.
+#' If `method` is "Kenward-Roger" then only "Kenward-Roger" or "Kenward-Roger-Linear" are allowed for `cov`.
+#' `cov` can accept a special string "Default" to use the default covariance method depending on the `method`
+#' used for degree of freedom, see the following table:
+#' | `method`  |  Default `cov`|
+#' |-----------|----------|
+#' |Satterthwaite| Asymptotic|
+#' |Kenward-Roger| Kenward-Roger|
+#' |Between-within| Asymptotic|
 #'
 #' @return List of class `mmrm_control` with the control parameters.
 #' @export
@@ -205,7 +215,8 @@ refit_multiple_optimizers <- function(fit,
 #'   optimizer_args = list(method = "L-BFGS-B")
 #' )
 mmrm_control <- function(n_cores = 1L,
-                         method = c("Satterthwaite", "Kenward-Roger", "Kenward-Roger-Linear"),
+                         method = c("Satterthwaite", "Kenward-Roger", "Between-within"),
+                         cov = c("Default", "Asymptotic", "Empirical", "Empirical-Jackknife", "Kenward-Roger", "Kenward-Roger-Linear"),
                          start = NULL,
                          accept_singular = TRUE,
                          drop_visit_levels = TRUE,
@@ -218,12 +229,20 @@ mmrm_control <- function(n_cores = 1L,
   assert_flag(drop_visit_levels)
   assert_list(optimizers, names = "unique", types = c("function", "partial"))
   method <- match.arg(method)
+  cov <- match.arg(cov)
+  if (identical(cov, "Default")) {
+    cov <- h_get_cov_default(method)
+  }
+  if (identical(method, "Kenward-Roger") && !cov %in% c("Kenward-Roger", "Kenward-Roger-Linear")) {
+    stop("Kenward-Roger degree of freedom must work together with Kenward-Roger or Kenward-Roger-Linear covariance!")
+  }
   structure(
     list(
       optimizers = optimizers,
       start = start,
       accept_singular = accept_singular,
       method = method,
+      cov = cov,
       n_cores = as.integer(n_cores),
       drop_visit_levels = drop_visit_levels
     ),
@@ -365,10 +384,11 @@ mmrm <- function(formula,
     message(paste(fit_msg, collapse = "\n"))
   }
   fit$method <- control$method
-  if (control$method == "Satterthwaite") {
+  fit$cov <- control$cov
+  if (control$cov == "Asymptotic") {
     covbeta_fun <- h_covbeta_fun(fit)
     fit$jac_list <- h_jac_list(covbeta_fun, fit$theta_est)
-  } else {
+  } else if (control$cov %in% c("Kenward-Roger", "Kenward-Roger-Linear")) {
     fit$kr_comp <- h_get_kr_comp(fit$tmb_data, fit$theta_est)
     fit$beta_vcov_adj <- h_var_adj(
       v = fit$beta_vcov,
@@ -376,8 +396,16 @@ mmrm <- function(formula,
       p = fit$kr_comp$P,
       q = fit$kr_comp$Q,
       r = fit$kr_comp$R,
-      linear = (control$method == "Kenward-Roger-Linear")
+      linear = (control$cov == "Kenward-Roger-Linear")
     )
+  } else if (identical(control$cov, "Empirical")) {
+    browser()
+    zz <- .Call(`_mmrm_get_empirical`, PACKAGE = "mmrm", fit$tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov)
+    fit$beta_vcov_adj <- fit$beta_vcov
+  } else if (identical(control$cov, "Empirical-Jackknife")) {
+    fit$beta_vcov_adj <- fit$beta_vcov
+  }else {
+    stop("Unrecognized covariance method")
   }
   class(fit) <- c("mmrm", class(fit))
   fit
