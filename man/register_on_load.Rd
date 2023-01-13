@@ -12,6 +12,10 @@ register_on_load(pkg, ver = c(NA, NA), callback, message = NULL)
 \item{ver}{A vector of length two, specifying minimum and maximum (inclusive)
 versions for interoperability.}
 
+\item{callback}{A function to execute upon package load. Note that no
+arguments are passed to this function. Any necessary data must be provided
+upon construction.}
+
 \item{message}{An optional message to print if mmrm functionality is
 successfully registered}
 }
