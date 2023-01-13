@@ -65,6 +65,7 @@ register_on_load <- function(pkg, ver = c(NA, NA), callback, message = NULL) {
 #' @return A logical (invisibly) indicating whether the loaded package meets
 #'   the version requirements. A warning is emitted otherwise.
 #'
+#' @importFrom utils packageVersion
 #' @keywords internal
 check_package_version <- function(pkg, ver = c(NA, NA)) {
   pkg_ver <- utils::packageVersion(pkg)
@@ -97,8 +98,12 @@ check_package_version <- function(pkg, ver = c(NA, NA)) {
 #' @return A character message to emit. Either a ansi-formatted cli output if
 #'   package 'cli' is available or a plain-text message otherwise.
 #'
+#' @importFrom utils packageName packageVersion
 #' @keywords internal
 emit_tidymodels_register_msg <- function() {
+  pkg <- utils::packageName()
+  ver <- utils::packageVersion(pkg)
+
   if (isTRUE(getOption("tidymodels.quiet")))
     return()
 
@@ -112,13 +117,13 @@ emit_tidymodels_register_msg <- function() {
     paste0(
       cli::rule(
         left = cli::style_bold("Model Registration"),
-        right = paste(packageName(), packageVersion(packageName()))
+        right = paste(pkg, ver)
       ),
       "\n",
       cli::col_green(cli::symbol$tick), " ",
       cli::col_blue("mmrm"), "::", cli::col_green("mmrm()")
     )
   } else {
-    paste0(packageName(), "::mmrm() registered for use with tidymodels")
+    paste0(pkg, "::mmrm() registered for use with tidymodels")
   }
 }

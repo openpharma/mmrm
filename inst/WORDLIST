@@ -3,6 +3,7 @@ aic
 alessandro
 Alessandro
 Annalen
+ansi
 aoms
 ar
 ARMCD
@@ -28,6 +29,7 @@ cdc
 cdots
 Chih
 chol
+cli
 CMD
 Cnaan
 Config
@@ -136,6 +138,7 @@ newcommand
 nlminb
 noci
 Noci
+onLoad
 openpharma
 optimizers
 Optimizers
@@ -181,6 +184,7 @@ testthat
 testthat's
 th
 Theorie
+tidymodels
 tmb
 TMB
 toep
@@ -215,5 +219,3 @@ www
 yaml
 yml
 Zur
-tidymodels
-onLoad

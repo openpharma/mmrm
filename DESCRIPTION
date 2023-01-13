@@ -49,6 +49,8 @@ Imports:
     utils
 Suggests:
     emmeans (>= 1.6),
+    cli,
+    parsnip,
     estimability,
     knitr,
     parallelly (>= 1.32.0),
