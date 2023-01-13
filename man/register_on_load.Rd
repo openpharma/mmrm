@@ -26,4 +26,4 @@ If not, a onLoad hook was set for the next time the package is loaded.
 \description{
 Helper function for registering functionality with suggests packages
 }
-\keyword{ineternal}
+\keyword{internal}

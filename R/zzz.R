@@ -30,7 +30,7 @@
 #' @return A logical (invisibly) indicating whether registration was successful.
 #'  If not, a onLoad hook was set for the next time the package is loaded.
 #'
-#' @keywords ineternal
+#' @keywords internal
 register_on_load <- function(pkg, ver = c(NA, NA), callback, message = NULL) {
   if (isNamespaceLoaded(pkg) && check_package_version(pkg, ver)) {
     callback()
