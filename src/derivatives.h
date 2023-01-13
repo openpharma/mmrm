@@ -168,8 +168,8 @@ struct derivatives_nonspatial: public derivatives_base<Type> {
   }
   // Cache and return the lower cholesky factor of inverse of sigma using select matrix.
   matrix<Type> get_inverse_chol(std::vector<int> visits, matrix<Type> dist) override {
-    if (this->inverse_cache.count(visits) > 0) {
-      return this->inverse_cache[visits];
+    if (this->inverse_chol_cache.count(visits) > 0) {
+      return this->inverse_chol_cache[visits];
     } else {
       Eigen::SparseMatrix<Type> sel_mat = this->get_sel_mat(visits);
       matrix<Type> Ltildei = sel_mat * this->chol_full;

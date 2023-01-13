@@ -20,7 +20,7 @@ BEGIN_RCPP
 END_RCPP
 }
 
-List get_empirical(List mmrm_fit, NumericVector theta, NumericVector beta, NumericMatrix beta_vcov, bool jackknife);
+NumericMatrix get_empirical(List mmrm_fit, NumericVector theta, NumericVector beta, NumericMatrix beta_vcov, bool jackknife);
 RcppExport SEXP _mmrm_get_empirical(SEXP mmrm_fitSEXP, SEXP thetaSEXP, SEXP betaSEXP, SEXP beta_vcovSEXP, SEXP jackknifeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;

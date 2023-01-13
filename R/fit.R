@@ -384,7 +384,7 @@ mmrm <- function(formula,
     message(paste(fit_msg, collapse = "\n"))
   }
   fit$method <- control$method
-  fit$cov <- control$cov
+  fit$cov_method <- control$cov
   if (control$cov == "Asymptotic") {
     covbeta_fun <- h_covbeta_fun(fit)
     fit$jac_list <- h_jac_list(covbeta_fun, fit$theta_est)
@@ -399,12 +399,10 @@ mmrm <- function(formula,
       linear = (control$cov == "Kenward-Roger-Linear")
     )
   } else if (identical(control$cov, "Empirical")) {
-    browser()
-    zz <- .Call(`_mmrm_get_empirical`, PACKAGE = "mmrm", fit$tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov)
-    fit$beta_vcov_adj <- fit$beta_vcov
+    fit$beta_vcov_adj <- h_get_empirical(fit$tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov, FALSE)
   } else if (identical(control$cov, "Empirical-Jackknife")) {
-    fit$beta_vcov_adj <- fit$beta_vcov
-  }else {
+    fit$beta_vcov_adj <- h_get_empirical(fit$tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov, TRUE)
+  } else {
     stop("Unrecognized covariance method")
   }
   class(fit) <- c("mmrm", class(fit))
