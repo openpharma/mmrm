@@ -13,7 +13,7 @@
   register_on_load(
     "parsnip", c(NA, NA),
     callback = parsnip_add_mmrm,
-    message = "mmrm() registered as tidymodel linear_reg model"
+    message = emit_tidymodels_register_msg
   )
 }
 
@@ -22,6 +22,9 @@
 #' Helper function for registering functionality with suggests packages
 #'
 #' @inheritParams check_package_version
+#' @param callback A function to execute upon package load. Note that no
+#'   arguments are passed to this function. Any necessary data must be provided
+#'   upon construction.
 #' @param message An optional message to print if mmrm functionality is
 #'  successfully registered
 #' @return A logical (invisibly) indicating whether registration was successful.
@@ -31,7 +34,8 @@
 register_on_load <- function(pkg, ver = c(NA, NA), callback, message = NULL) {
   if (isNamespaceLoaded(pkg) && check_package_version(pkg, ver)) {
     callback()
-    if (!is.null(message)) packageStartupMessage(message)
+    if (is.character(message)) packageStartupMessage(message)
+    if (is.function(message)) packageStartupMessage(message())
     return(invisible(TRUE))
   }
 
@@ -83,4 +87,38 @@ check_package_version <- function(pkg, ver = c(NA, NA)) {
   }
 
   invisible(TRUE)
+}
+
+
+
+
+#' Format a message to emit when tidymodels is loaded
+#'
+#' @return A character message to emit. Either a ansi-formatted cli output if
+#'   package 'cli' is available or a plain-text message otherwise.
+#'
+#' @keywords internal
+emit_tidymodels_register_msg <- function() {
+  if (isTRUE(getOption("tidymodels.quiet")))
+    return()
+
+  # if tidymodels is attached, cli packages come as a dependency
+  has_cli <- requireNamespace("cli", quietly = TRUE)
+  if (has_cli) {
+    # unfortunately, cli does not expose many formatting tools for emitting
+    # messages (only via conitions via stderr) which can't be suppressed using
+    # suppressPackageStartupMessages() so formatting must be done adhoc,
+    # similar to how it's done in {tidymodels} R/attach.R
+    paste0(
+      cli::rule(
+        left = cli::style_bold("Model Registration"),
+        right = paste(packageName(), packageVersion(packageName()))
+      ),
+      "\n",
+      cli::col_green(cli::symbol$tick), " ",
+      cli::col_blue("mmrm"), "::", cli::col_green("mmrm()")
+    )
+  } else {
+    paste0(packageName(), "::mmrm() registered for use with tidymodels")
+  }
 }
