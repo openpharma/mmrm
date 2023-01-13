@@ -1,7 +1,7 @@
 #' Obtain Kenward-Roger Adjustment Components
 #'
 #' @description Obtains the components needed downstream for the computation of Kenward-Roger degrees of freedom.
-#' Used in [mmrm()] fitting if method is "Kenward-Roger" or "Kenward-Roger-Linear".
+#' Used in [mmrm()] fitting if method is "Kenward-Roger".
 #'
 #' @param tmb_data (`mmrm_tmb_data`)\cr produced by [h_mmrm_tmb_data()].
 #' @param theta (`numeric`)\cr theta estimate.
@@ -35,7 +35,7 @@ h_get_kr_comp <- function(tmb_data, theta) {
 #'
 #' @param object (`mmrm`)\cr object.
 #' @param contrast (`matrix`)\cr contrast matrix.
-#' @param linear (`logical`)\cr whether to use linear Kenward-Roger approximation.
+#' @param linear (`flag`)\cr whether to use linear Kenward-Roger approximation.
 #'
 #' @return List with `num_df`, `denom_df`, `f_stat` and `p_val` (2-sided p-value).
 #'
@@ -71,7 +71,7 @@ h_df_md_kr <- function(object, contrast, linear = FALSE) {
 #'
 #' @param object (`mmrm`)\cr object created by [mmrm()] with Kenward-Roger(-Linear) method.
 #' @param contrast (`numeric`)\cr contrast vector.
-#' @param linear (`logical`)\cr whether to use linear Kenward-Roger approximation.
+#' @param linear (`flag`)\cr whether to use linear Kenward-Roger approximation.
 #'
 #' @return List with `est`, `se`, `df`, `t_stat` and `p_val`.
 #'
@@ -175,7 +175,7 @@ h_kr_df <- function(v0, l, w, p) {
 #' @param p (`matrix`)\cr P matrix from [h_get_kr_comp()].
 #' @param q (`matrix`)\cr Q matrix from [h_get_kr_comp()].
 #' @param r (`matrix`)\cr R matrix from [h_get_kr_comp()].
-#' @param linear (`logical`)\cr whether to use linear Kenward-Roger approximation.
+#' @param linear (`flag`)\cr whether to use linear Kenward-Roger approximation.
 #'
 #' @return The matrix of adjusted covariance matrix.
 #'

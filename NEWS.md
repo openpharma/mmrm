@@ -2,6 +2,11 @@
 
 ### New Features
 - Add Kenward-Roger support for spatial covariance structures.
+- Add empirical and empirical Jackknife covariance estimator for $\beta$.
+  In addition, the argument `method` now only stands for the method used
+  for degree of freedom, another argument `cov` is added to control the
+  method used to calculate the covariance for $\beta$.
+- Add support of "Between-within" degree of freedom.
 
 # mmrm 0.2.2
 

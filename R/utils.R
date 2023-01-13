@@ -292,7 +292,21 @@ h_partial_fun_args <- function(fun, ..., additional_attr = list()) {
   )
 }
 
-h_get_cov_default <- function(method) {
+#' Obtain Default Covariance Method
+#'
+#' @description Obtain the default covariance method depending on
+#' the degree of freedom method used.
+#'
+#' @param method (`string`) degree of freedom method.
+#'
+#' @details The default covariance method is different for different degree of freedom method.
+#' If degree of freedom is "Satterthwaite" or "Between-within", "Asymptotic" is returned.
+#' If degree of freedom is "Kenward-Roger", then "Kenward-Roger" is returned.
+#'
+#' @keywords internal
+h_get_cov_default <- function(method = c("Satterthwaite", "Kenward-Roger", "Between-within")) {
+  checkmate::assert_string(method)
+  method <- match.arg(method)
   switch(
     method,
     "Satterthwaite" = "Asymptotic",

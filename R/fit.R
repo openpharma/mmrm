@@ -216,7 +216,7 @@ refit_multiple_optimizers <- function(fit,
 #' )
 mmrm_control <- function(n_cores = 1L,
                          method = c("Satterthwaite", "Kenward-Roger", "Between-within"),
-                         cov = c("Default", "Asymptotic", "Empirical", "Empirical-Jackknife", "Kenward-Roger", "Kenward-Roger-Linear"),
+                         cov = NULL,
                          start = NULL,
                          accept_singular = TRUE,
                          drop_visit_levels = TRUE,
@@ -228,11 +228,15 @@ mmrm_control <- function(n_cores = 1L,
   assert_flag(accept_singular)
   assert_flag(drop_visit_levels)
   assert_list(optimizers, names = "unique", types = c("function", "partial"))
+  assert_string(cov, null.ok = TRUE)
   method <- match.arg(method)
-  cov <- match.arg(cov)
-  if (identical(cov, "Default")) {
+  if (is.null(cov)) {
     cov <- h_get_cov_default(method)
   }
+  assert_subset(
+    cov,
+    c("Asymptotic", "Empirical", "Empirical-Jackknife", "Kenward-Roger", "Kenward-Roger-Linear")
+  )
   if (identical(method, "Kenward-Roger") && !cov %in% c("Kenward-Roger", "Kenward-Roger-Linear")) {
     stop("Kenward-Roger degree of freedom must work together with Kenward-Roger or Kenward-Roger-Linear covariance!")
   }
@@ -373,7 +377,7 @@ mmrm <- function(formula,
         use.names = FALSE
       )
       stop(paste0(
-        "Chosen optimizer '", toString(names(control$optimizer)), "' led to problems during model fit:\n",
+        "Chosen optimizer '", toString(names(control$optimizers)), "' led to problems during model fit:\n",
         paste(paste0(seq_along(all_problems), ") ", all_problems), collapse = ";\n"), "\n",
         "Consider trying multiple optimizers."
       ))
@@ -385,7 +389,7 @@ mmrm <- function(formula,
   }
   fit$method <- control$method
   fit$cov_method <- control$cov
-  if (control$cov == "Asymptotic") {
+  if (identical(control$cov, "Asymptotic")) {
     covbeta_fun <- h_covbeta_fun(fit)
     fit$jac_list <- h_jac_list(covbeta_fun, fit$theta_est)
   } else if (control$cov %in% c("Kenward-Roger", "Kenward-Roger-Linear")) {

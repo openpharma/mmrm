@@ -65,7 +65,7 @@ h_mmrm_tmb_extract_terms <- function(cov_content) {
 #' - `subject_var`: `string` with the subject variable name.
 #' - `group_var`: `string` with the group variable name. If no group specified, this element
 #'      is NULL.
-#' - `is_spatial`: `logical` indicator of whether the covariance structure is spatial
+#' - `is_spatial`: `flag` indicator of whether the covariance structure is spatial
 #' @keywords internal
 h_mmrm_tmb_extract_vars <- function(cov_term) {
   assert_true(length(cov_term) >= 2L) # 2 because `fun (...)`.
@@ -446,8 +446,8 @@ h_mmrm_tmb_check_conv <- function(tmb_opt,
 #'
 #' @param tmb_report (`list`)\cr report created with [TMB::MakeADFun()] report function.
 #' @param tmb_data (`mmrm_tmb_data`)\cr produced by [h_mmrm_tmb_data()].
-#' @param visit_var `character`\cr character vector of the visit variable
-#' @param is_spatial `logical`\cr logical value indicating the covariance structure is spatial.
+#' @param visit_var (`character`)\cr character vector of the visit variable
+#' @param is_spatial (`flag`)\cr indicator whether the covariance structure is spatial.
 #' @return Return a simple covariance matrix if there is no grouping, or a named
 #' list of estimated grouped covariance matrices,
 #' with its name equal to the group levels.
