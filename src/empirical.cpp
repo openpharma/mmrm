@@ -48,10 +48,13 @@ NumericMatrix get_empirical(List mmrm_data, NumericVector theta, NumericVector b
     int n_visits_i = subject_n_visits[i];
     std::vector<int> visit_i(n_visits_i);
     matrix<double> dist_i(n_visits_i, n_visits_i);
-    for (int i = 0; i < n_visits_i; i++) {
-      visit_i[i] = visits_zero_inds[i + start_i];
+    if (is_spatial) {
+      for (int i = 0; i < n_visits_i; i++) {
+        visit_i[i] = visits_zero_inds[i + start_i];
+      }
+    } else {
+      dist_i = euclidean(matrix<double>(coords.block(start_i, 0, n_visits_i, coordinates.cols())));
     }
-    dist_i = euclidean(matrix<double>(coords.block(start_i, 0, n_visits_i, coordinates.cols())));
     int subject_group_i = subject_groups[i] - 1;
     matrix<double> sigma_inv_chol = derivatives_by_group[subject_group_i]->get_inverse_chol(visit_i, dist_i);
     matrix<double> Xi = x_matrix.block(start_i, 0, n_visits_i, x_matrix.cols());
@@ -64,7 +67,7 @@ NumericMatrix get_empirical(List mmrm_data, NumericVector theta, NumericVector b
     if (jackknife) {
       identity = identity - xt_gi_simga_inv_chol * beta_vcov_matrix * xt_gi_simga_inv_chol.transpose();
     }
-    matrix<double> z =  xt_gi_simga_inv_chol * identity * gi_simga_inv_chol.transpose() * residual_i;
+    matrix<double> z =  xt_gi_simga_inv_chol * identity.inverse() * gi_simga_inv_chol.transpose() * residual_i;
     meat = meat + z * z.transpose();
   }
   for (int r = 0; r < n_groups; r++) {

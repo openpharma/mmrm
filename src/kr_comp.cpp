@@ -43,10 +43,13 @@ List get_pqr(List mmrm_fit, NumericVector theta) {
     int n_visits_i = subject_n_visits[i];
     std::vector<int> visit_i(n_visits_i);
     matrix<double> dist_i(n_visits_i, n_visits_i);
-    for (int i = 0; i < n_visits_i; i++) {
-      visit_i[i] = visits_zero_inds[i + start_i];
+    if (is_spatial) {
+      for (int i = 0; i < n_visits_i; i++) {
+        visit_i[i] = visits_zero_inds[i + start_i];
+      }
+    } else {
+      dist_i = euclidean(matrix<double>(coords.block(start_i, 0, n_visits_i, coordinates.cols())));
     }
-    dist_i = euclidean(matrix<double>(coords.block(start_i, 0, n_visits_i, coordinates.cols())));
     int subject_group_i = subject_groups[i] - 1;
     matrix<double> sigma_inv, sigma_d1, sigma_d2, sigma, sigma_inv_d1;
     
