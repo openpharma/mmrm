@@ -48,7 +48,7 @@ NumericMatrix get_empirical(List mmrm_data, NumericVector theta, NumericVector b
     int n_visits_i = subject_n_visits[i];
     std::vector<int> visit_i(n_visits_i);
     matrix<double> dist_i(n_visits_i, n_visits_i);
-    if (is_spatial) {
+    if (!is_spatial) {
       for (int i = 0; i < n_visits_i; i++) {
         visit_i[i] = visits_zero_inds[i + start_i];
       }

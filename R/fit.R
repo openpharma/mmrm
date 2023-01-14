@@ -204,7 +204,6 @@ refit_multiple_optimizers <- function(fit,
 #' |-----------|----------|
 #' |Satterthwaite| Asymptotic|
 #' |Kenward-Roger| Kenward-Roger|
-#' |Between-within| Asymptotic|
 #'
 #' @return List of class `mmrm_control` with the control parameters.
 #' @export
@@ -215,7 +214,7 @@ refit_multiple_optimizers <- function(fit,
 #'   optimizer_args = list(method = "L-BFGS-B")
 #' )
 mmrm_control <- function(n_cores = 1L,
-                         method = c("Satterthwaite", "Kenward-Roger", "Between-within"),
+                         method = c("Satterthwaite", "Kenward-Roger"),
                          cov = NULL,
                          start = NULL,
                          accept_singular = TRUE,

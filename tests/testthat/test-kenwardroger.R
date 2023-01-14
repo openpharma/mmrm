@@ -144,7 +144,7 @@ test_that("kr give similar results as SAS for ar1", {
 ## kr linear ----
 
 test_that("kr linear give similar results as SAS for ar1", {
-  fit <- mmrm(FEV1 ~ ARMCD + ar1(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger-Linear")
+  fit <- mmrm(FEV1 ~ ARMCD + ar1(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger", cov = "Kenward-Roger-Linear")
   res <- df_1d(fit, contrast = c(0, 1))
   expected <- c(0.96058142305176, 188.46934887972)
   expect_equal(res$df, expected[2], tolerance = 1e-4)
@@ -166,7 +166,7 @@ test_that("kr give similar results as SAS for ar1h", {
 ### kr linear ----
 
 test_that("kr linear give similar results as SAS for ar1h", {
-  fit <- mmrm(FEV1 ~ ARMCD + ar1h(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger-Linear")
+  fit <- mmrm(FEV1 ~ ARMCD + ar1h(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger", cov = "Kenward-Roger-Linear")
   res <- df_1d(fit, contrast = c(0, 1))
   expected <- c(0.75924807546934, 188.225339095373)
   expect_equal(res$df, expected[2], tolerance = 1e-4)
@@ -188,7 +188,7 @@ test_that("kr give similar results as SAS for cs", {
 ### kr linear ----
 
 test_that("kr linear give similar results as SAS for cs", {
-  fit <- mmrm(FEV1 ~ ARMCD + cs(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger-Linear")
+  fit <- mmrm(FEV1 ~ ARMCD + cs(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger", cov = "Kenward-Roger-Linear")
   res <- df_1d(fit, contrast = c(0, 1))
   expected <- c(0.7964696053595, 177.038485931223)
   expect_equal(res$df, expected[2], tolerance = 1e-4)
@@ -210,7 +210,7 @@ test_that("kr give similar results as SAS for csh", {
 ### kr linear ----
 
 test_that("kr linear give similar results as SAS for csh", {
-  fit <- mmrm(FEV1 ~ ARMCD + csh(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger-Linear")
+  fit <- mmrm(FEV1 ~ ARMCD + csh(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger", cov = "Kenward-Roger-Linear")
   res <- df_1d(fit, contrast = c(0, 1))
   expected <- c(0.67403858183242, 190.737701349941)
   expect_equal(res$df, expected[2], tolerance = 1e-3)
@@ -232,7 +232,7 @@ test_that("kr give similar results as SAS for adh", {
 ### kr linear ----
 
 test_that("kr linear give similar results as SAS for adh", {
-  fit <- mmrm(FEV1 ~ ARMCD + adh(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger-Linear")
+  fit <- mmrm(FEV1 ~ ARMCD + adh(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger", cov = "Kenward-Roger-Linear")
   res <- df_1d(fit, contrast = c(0, 1))
   expected <- c(0.66158550758897, 162.393385281755)
   expect_equal(res$df, expected[2], tolerance = 1e-3)
@@ -254,7 +254,7 @@ test_that("kr give similar results as SAS for toep", {
 ### kr linear
 
 test_that("kr linear give similar results as SAS for toep", {
-  fit <- mmrm(FEV1 ~ ARMCD + toep(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger-Linear")
+  fit <- mmrm(FEV1 ~ ARMCD + toep(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger", cov = "Kenward-Roger-Linear")
   res <- df_1d(fit, contrast = c(0, 1))
   expected <- c(0.87839805519623, 160.027408337368)
   expect_equal(res$df, expected[2], tolerance = 1e-3)
@@ -276,7 +276,7 @@ test_that("kr give similar results as SAS for toeph", {
 ### kr linear
 
 test_that("kr linear give similar results as SAS for toeph", {
-  fit <- mmrm(FEV1 ~ ARMCD + toeph(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger-Linear")
+  fit <- mmrm(FEV1 ~ ARMCD + toeph(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger", cov = "Kenward-Roger-Linear")
   res <- df_1d(fit, contrast = c(0, 1))
   expected <- c(0.72537324518435, 180.062730071701)
   expect_equal(res$df, expected[2], tolerance = 1e-3)
@@ -302,7 +302,7 @@ test_that("kr give similar results as SAS for unstructured", {
 ### kr linear
 
 test_that("kr linear give similar results as SAS for unstructured", {
-  fit <- mmrm(FEV1 ~ ARMCD + us(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger-Linear")
+  fit <- mmrm(FEV1 ~ ARMCD + us(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger", cov = "Kenward-Roger-Linear")
   res <- df_1d(fit, contrast = c(0, 1))
   expected <- c(0.66124382270307, 160.73326640376)
   expect_equal(res$df, expected[2], tolerance = 1e-3)
@@ -314,7 +314,7 @@ test_that("kr linear give similar results as SAS for unstructured", {
 ### kr
 
 test_that("kr give similar results as SAS for spatial exponential", {
-  fit <- mmrm(FEV1 ~ ARMCD + sp_exp(VISITN, VISITN2 | USUBJID), data = fev_data, method = "Kenward-Roger-Linear")
+  fit <- mmrm(FEV1 ~ ARMCD + sp_exp(VISITN, VISITN2 | USUBJID), data = fev_data, method = "Kenward-Roger", cov = "Kenward-Roger-Linear")
   res <- df_1d(fit, contrast = c(0, 1))
   expected <- c(0.90552903839818, 195.584197921463)
   expect_equal(res$df, expected[2], tolerance = 1e-3)
@@ -324,7 +324,7 @@ test_that("kr give similar results as SAS for spatial exponential", {
 ### kr linear
 
 test_that("kr linear give similar results as SAS for spatial exponential", {
-  fit <- mmrm(FEV1 ~ ARMCD + sp_exp(VISITN, VISITN2 | USUBJID), data = fev_data, method = "Kenward-Roger-Linear")
+  fit <- mmrm(FEV1 ~ ARMCD + sp_exp(VISITN, VISITN2 | USUBJID), data = fev_data, method = "Kenward-Roger", cov = "Kenward-Roger-Linear")
   res <- df_1d(fit, contrast = c(0, 1))
   expected <- c(0.90527620094771, 195.584197921463)
   expect_equal(res$df, expected[2], tolerance = 1e-3)

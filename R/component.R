@@ -110,7 +110,7 @@ component <- function(object,
     "jac_list" = object$jac_list,
     # Matrices.
     "beta_vcov" =
-      if (!is.null(object$cov_method) && identical(object$cov_method, "Asymptotic")) {
+      if (is.null(object$cov_method) || identical(object$cov_method, "Asymptotic")) {
         object$beta_vcov
       } else {
         object$beta_vcov_adj

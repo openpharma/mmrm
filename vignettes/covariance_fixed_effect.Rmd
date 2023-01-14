@@ -1,0 +1,31 @@
+---
+title: "Covariance of Fixed Effects in `mmrm`"
+package: mmrm
+bibliography: '`r system.file("REFERENCES.bib", package = "mmrm")`'
+output:
+  rmarkdown::html_document:
+          theme: "spacelab"
+          highlight: "kate"
+          toc: true
+          toc_float: true
+vignette: |
+  %\VignetteIndexEntry{Covariance Structures in `mmrm`}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options:
+  chunk_output_type: console
+  markdown:
+    wrap: 72
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Here we describe the covariance matrix for fixed effects.
+
+# Introduction
+
