@@ -2,6 +2,9 @@
 
 ### New Features
 - Add Kenward-Roger support for spatial covariance structures.
+- Add support for `residuals` method with a `type` argument allowing for 
+  raw (the default, and only option for models with a spatial covariance structure),
+  Pearson and normalized residuals to be calculated from an `mmrm` fit.
 
 # mmrm 0.2.2
 
