@@ -215,14 +215,30 @@ test_that("residuals works as expected with weighted model fit", {
   expect_equal(head(result_norm, 5), c(-0.29917, -4.07727, -0.51393, -0.96419, 0.45466), tolerance = 1e-4)
 })
 
-test_that("residuals helper functions work as expected", {
+test_that("residuals works as expected with a model using spatial covariance structure", {
+  object <- get_mmrm_spatial()
+
+  result_resp <- expect_silent(residuals(object, type = "response"))
+  expect_double(result_resp, len = length(object$tmb_data$y_vector))
+
+  expect_error(residuals(object, type = "pearson"))
+  expect_error(residuals(object, type = "normalized"))
+})
+
+test_that("pearson residuals helper function works as expected", {
   object <- get_mmrm()
   resid_response <- residuals(object, type = "response")
 
   result_pearson <- h_residuals_pearson(object, resid_response)
   expect_double(result_pearson, len = length(object$tmb_data$y_vector))
+  expect_equal(tail(result_pearson, 5), c(2.22057, 1.79050, 0.53322, 0.87243, 0.70477), tolerance = 1e-4)
+})
+
+test_that("normalized residuals helper function works as expected", {
+  object <- get_mmrm()
+  resid_response <- residuals(object, type = "response")
 
   result_norm <- h_residuals_normalized(object, resid_response)
   expect_double(result_norm, len = length(object$tmb_data$y_vector))
+  expect_equal(tail(result_norm, 5), c(1.99092, 1.49689, 0.53322, 0.71055, 0.56152), tolerance = 1e-4)
 })
-
