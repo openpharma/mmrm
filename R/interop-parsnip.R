@@ -1,4 +1,4 @@
-#' Register mmrm for use with tidymodels
+#' Register `mmrm` For Use With `tidymodels`
 #'
 #' @inheritParams base::requireNamespace
 #' @return A logical value indicating whether registration was successful

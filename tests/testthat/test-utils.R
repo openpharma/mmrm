@@ -114,3 +114,47 @@ test_that("h_partial_fun_args works correctly to add attributes", {
   expect_identical(attr(opt1, "a"), 1)
   expect_identical(attr(opt1, "b"), 2)
 })
+
+test_that("fill_names completes names of input values", {
+  expect_identical(
+    fill_names(c("a", "b")),
+    c(a = "a", b = "b")
+  )
+
+  expect_identical(
+    fill_names(c(a = "a", "b")),
+    c(a = "a", b = "b")
+  )
+
+  expect_identical(
+    fill_names(list("a", "b")),
+    list(a = "a", b = "b")
+  )
+
+  expect_identical(
+    fill_names(list(a = "a", "b")),
+    list(a = "a", b = "b")
+  )
+})
+
+test_that("typed_params produces roxygen2-formatted @param tags", {
+  expect_identical(
+    typed_param(test, character(1L), "this is a test"),
+    "@param test (`character(1L)`)\\cr this is a test"
+  )
+
+  expect_identical(
+    typed_param(test, "written string", "this is a test"),
+    "@param test (written string)\\cr this is a test"
+  )
+
+  expect_identical(
+    typed_param(test, complicated | expression, "this is a test"),
+    "@param test (`complicated | expression`)\\cr this is a test"
+  )
+
+  expect_identical(
+    typed_param(test, function(type1, type2) return_type, "this is a test"),
+    "@param test (`function(type1, type2) return_type`)\\cr this is a test"
+  )
+})

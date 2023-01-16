@@ -2,7 +2,7 @@
 % Please edit documentation in R/interop-parsnip.R
 \name{parsnip_add_mmrm}
 \alias{parsnip_add_mmrm}
-\title{Register mmrm for use with tidymodels}
+\title{Register \code{mmrm} For Use With \code{tidymodels}}
 \usage{
 parsnip_add_mmrm(quietly = FALSE)
 }
@@ -13,6 +13,6 @@ parsnip_add_mmrm(quietly = FALSE)
 A logical value indicating whether registration was successful
 }
 \description{
-Register mmrm for use with tidymodels
+Register \code{mmrm} For Use With \code{tidymodels}
 }
 \keyword{internal}

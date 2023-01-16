@@ -1,4 +1,4 @@
-#' Dynamic registration for package interoperability
+#' Dynamic Registration for Package Interoperability
 #'
 #' @seealso See `vignette("xtending", package = "emmeans")` for background.
 #' @keywords internal
@@ -19,14 +19,19 @@
 
 
 
-#' Helper function for registering functionality with suggests packages
+#' Helper Function for Registering Functionality With Suggests Packages
 #'
 #' @inheritParams check_package_version
-#' @param callback A function to execute upon package load. Note that no
-#'   arguments are passed to this function. Any necessary data must be provided
-#'   upon construction.
-#' @param message An optional message to print if mmrm functionality is
-#'  successfully registered
+#'
+#' @eval typed_param(callback, function(...) ANY,
+#'   "A callback to execute upon package load. Note that no arguments are
+#'   passed to this function. Any necessary data must be provided upon
+#'   construction.")
+#'
+#' @eval typed_param(message, NULL | character(1L),
+#'   "An optional message to print after the callback is executed upon
+#'   successful registration.")
+#'
 #' @return A logical (invisibly) indicating whether registration was successful.
 #'  If not, a onLoad hook was set for the next time the package is loaded.
 #'
@@ -57,11 +62,17 @@ register_on_load <- function(pkg, ver = c(NA, NA), callback, message = NULL) {
 
 
 
-#' Check suggested dependency against version requirements
+#' Check Suggested Dependency Against Version Requirements
 #'
-#' @param pkg A package name
-#' @param ver A vector of length two, specifying minimum and maximum (inclusive)
-#'   versions for interoperability.
+#' @eval typed_param(pkg, character(1L),
+#'   "A package name.")
+#' @eval typed_param(ver,
+#'   "any object of length 2L whose elements can be provided to
+#'   `numeric_version()`",
+#'   "A minimum and maximum (inclusive) version requirement for
+#'   interoperability. When `NA`, no version requirement is imposed. Defaults to
+#'   no version requirement.")
+#'
 #' @return A logical (invisibly) indicating whether the loaded package meets
 #'   the version requirements. A warning is emitted otherwise.
 #'
@@ -93,7 +104,7 @@ check_package_version <- function(pkg, ver = c(NA, NA)) {
 
 
 
-#' Format a message to emit when tidymodels is loaded
+#' Format a Message to Emit When Tidymodels is Loaded
 #'
 #' @return A character message to emit. Either a ansi-formatted cli output if
 #'   package 'cli' is available or a plain-text message otherwise.
@@ -111,7 +122,7 @@ emit_tidymodels_register_msg <- function() {
   has_cli <- requireNamespace("cli", quietly = TRUE)
   if (has_cli) {
     # unfortunately, cli does not expose many formatting tools for emitting
-    # messages (only via conitions via stderr) which can't be suppressed using
+    # messages (only via conditions to stderr) which can't be suppressed using
     # suppressPackageStartupMessages() so formatting must be done adhoc,
     # similar to how it's done in {tidymodels} R/attach.R
     paste0(

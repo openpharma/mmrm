@@ -2,28 +2,29 @@
 % Please edit documentation in R/zzz.R
 \name{register_on_load}
 \alias{register_on_load}
-\title{Helper function for registering functionality with suggests packages}
+\title{Helper Function for Registering Functionality With Suggests Packages}
 \usage{
 register_on_load(pkg, ver = c(NA, NA), callback, message = NULL)
 }
 \arguments{
-\item{pkg}{A package name}
+\item{pkg}{(\code{character(1L)})\cr A package name.}
 
-\item{ver}{A vector of length two, specifying minimum and maximum (inclusive)
-versions for interoperability.}
+\item{ver}{(any object of length 2L whose elements can be provided to
+\code{numeric_version()})\cr A minimum and maximum (inclusive) version requirement for
+interoperability}
 
-\item{callback}{A function to execute upon package load. Note that no
-arguments are passed to this function. Any necessary data must be provided
-upon construction.}
+\item{callback}{(\code{function(...) ANY})\cr A callback to execute upon package load. Note that no arguments are
+passed to this function. Any necessary data must be provided upon
+construction.}
 
-\item{message}{An optional message to print if mmrm functionality is
-successfully registered}
+\item{message}{(\code{NULL(default) | character(1L)})\cr An optional message to print after the callback is executed upon
+successful registration.}
 }
 \value{
 A logical (invisibly) indicating whether registration was successful.
 If not, a onLoad hook was set for the next time the package is loaded.
 }
 \description{
-Helper function for registering functionality with suggests packages
+Helper Function for Registering Functionality With Suggests Packages
 }
 \keyword{internal}
