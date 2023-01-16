@@ -2,7 +2,7 @@
 % Please edit documentation in R/zzz.R
 \name{check_package_version}
 \alias{check_package_version}
-\title{Check suggested dependency against version requirements}
+\title{Check Suggested Dependency Against Version Requirements}
 \usage{
 check_package_version(pkg, ver = c(NA, NA))
 }
@@ -11,13 +11,14 @@ check_package_version(pkg, ver = c(NA, NA))
 
 \item{ver}{(any object of length 2L whose elements can be provided to
 \code{numeric_version()})\cr A minimum and maximum (inclusive) version requirement for
-interoperability}
+interoperability. When \code{NA}, no version requirement is imposed. Defaults to
+no version requirement.}
 }
 \value{
 A logical (invisibly) indicating whether the loaded package meets
 the version requirements. A warning is emitted otherwise.
 }
 \description{
-Check suggested dependency against version requirements
+Check Suggested Dependency Against Version Requirements
 }
 \keyword{internal}

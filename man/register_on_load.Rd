@@ -11,13 +11,14 @@ register_on_load(pkg, ver = c(NA, NA), callback, message = NULL)
 
 \item{ver}{(any object of length 2L whose elements can be provided to
 \code{numeric_version()})\cr A minimum and maximum (inclusive) version requirement for
-interoperability}
+interoperability. When \code{NA}, no version requirement is imposed. Defaults to
+no version requirement.}
 
 \item{callback}{(\code{function(...) ANY})\cr A callback to execute upon package load. Note that no arguments are
 passed to this function. Any necessary data must be provided upon
 construction.}
 
-\item{message}{(\code{NULL(default) | character(1L)})\cr An optional message to print after the callback is executed upon
+\item{message}{(\code{NULL | character(1L)})\cr An optional message to print after the callback is executed upon
 successful registration.}
 }
 \value{

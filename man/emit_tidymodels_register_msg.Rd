@@ -2,7 +2,7 @@
 % Please edit documentation in R/zzz.R
 \name{emit_tidymodels_register_msg}
 \alias{emit_tidymodels_register_msg}
-\title{Format a message to emit when tidymodels is loaded}
+\title{Format a Message to Emit When Tidymodels is Loaded}
 \usage{
 emit_tidymodels_register_msg()
 }
@@ -11,6 +11,6 @@ A character message to emit. Either a ansi-formatted cli output if
 package 'cli' is available or a plain-text message otherwise.
 }
 \description{
-Format a message to emit when tidymodels is loaded
+Format a Message to Emit When Tidymodels is Loaded
 }
 \keyword{internal}
