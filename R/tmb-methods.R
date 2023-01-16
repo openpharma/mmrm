@@ -213,7 +213,8 @@ print.mmrm_tmb <- function(x,
 #'
 #' @describeIn mmrm_tmb_method to obtain residuals - either unscaled or normalized
 #' @param object (`mmrm_tmb`)\cr the fitted MMRM.
-#' @param type (`character`)\cr unscaled ('response'), 'pearson' or 'normalized'.
+#' @param type (`character`)\cr unscaled ('response'), 'pearson' or 'normalized'. Default is 'response',
+#' and this is the only type available for use with models with a spatial covariance structure.
 #' @param ... \cr not used in this method.
 #' @return Vector of residuals
 #' @importFrom stats residuals
@@ -221,6 +222,10 @@ print.mmrm_tmb <- function(x,
 #' @examples
 #' # residuals:
 #' residuals(object, type = "response")
+#' residuals(object, type = "pearson")
+#' residuals(object, type = "normalized")
+#' @references
+#' - \insertRef{galecki2013linear}{mmrm}
 residuals.mmrm_tmb <- function(object, type = c("response", "pearson", "normalized"), ...) {
   assert_class(object, "mmrm_tmb")
   assert_character(type)
@@ -228,10 +233,15 @@ residuals.mmrm_tmb <- function(object, type = c("response", "pearson", "normaliz
   resids_unscaled <- component(object, "y_vector") - fitted(object)
   if (type == "response") {
     return(unname(resids_unscaled))
-  } else if (type == "pearson") {
-    h_residuals_pearson(object, resids_unscaled)
-  } else if (type == "normalized") {
-    h_residuals_normalized(object, resids_unscaled)
+  } else {
+    if (object$formula_parts$is_spatial) {
+      stop("Only raw / response residuals are available for models with spatial covariance structures.")
+    }
+    if (type == "pearson") {
+      h_residuals_pearson(object, resids_unscaled)
+    } else if (type == "normalized") {
+      h_residuals_normalized(object, resids_unscaled)
+    }
   }
 }
 
