@@ -7,7 +7,8 @@
 fill_names(x)
 }
 \arguments{
-\item{x}{(\code{character(N) | list(N)})\cr Value whose names should be completed from element values.}
+\item{x}{(\code{character} or \code{list})\cr
+Value whose names should be completed from element values.}
 }
 \value{
 A named vector or list.

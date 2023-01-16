@@ -23,12 +23,12 @@
 #'
 #' @inheritParams check_package_version
 #'
-#' @eval typed_param(callback, function(...) ANY,
-#'   "A callback to execute upon package load. Note that no arguments are
+#' @param callback (`function(...) ANY`)\cr
+#'   A callback to execute upon package load. Note that no arguments are
 #'   passed to this function. Any necessary data must be provided upon
-#'   construction.")
+#'   construction.
 #'
-#' @eval typed_param(message, NULL | character(1L),
+#' @param message (`NULL` or `character[1]`)\cr
 #'   "An optional message to print after the callback is executed upon
 #'   successful registration.")
 #'
@@ -64,14 +64,13 @@ register_on_load <- function(pkg, ver = c(NA, NA), callback, message = NULL) {
 
 #' Check Suggested Dependency Against Version Requirements
 #'
-#' @eval typed_param(pkg, character(1L),
-#'   "A package name.")
-#' @eval typed_param(ver,
-#'   "any object of length 2L whose elements can be provided to
-#'   `numeric_version()`",
-#'   "A minimum and maximum (inclusive) version requirement for
-#'   interoperability. When `NA`, no version requirement is imposed. Defaults to
-#'   no version requirement.")
+#' @param pkg (`character[1]`)\cr
+#'   A package name.
+#' @param ver (any object of length 2 whose elements can be provided to
+#'   `numeric_version()`)\cr
+#'   A minimum and maximum (inclusive) version requirement for interoperability.
+#'   When `NA`, no version requirement is imposed. Defaults to no version
+#'   requirement.
 #'
 #' @return A logical (invisibly) indicating whether the loaded package meets
 #'   the version requirements. A warning is emitted otherwise.

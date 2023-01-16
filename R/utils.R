@@ -294,8 +294,8 @@ h_partial_fun_args <- function(fun, ..., additional_attr = list()) {
 
 #' Complete `character` Vector Names From Values
 #'
-#' @eval typed_param(x, character(N) | list(N),
-#'   "Value whose names should be completed from element values.")
+#' @param x (`character` or `list`)\cr
+#'   Value whose names should be completed from element values.
 #'
 #' @return A named vector or list.
 #'
@@ -305,31 +305,4 @@ fill_names <- function(x) {
   is_unnamed <- if (is.null(n)) rep_len(TRUE, length(x)) else n == ""
   names(x)[is_unnamed] <- x[is_unnamed]
   x
-}
-
-#' Format 'roxygen2' Type-Annotated Parameter Definitions
-#'
-#' @eval typed_param(name, symbol | character(1L),
-#'   "A parameter name to annotate.")
-#' @eval typed_param(type, expr | character(1L),
-#'   "A type signature to use for annotation.")
-#' @eval typed_param(description, character(1L),
-#'   "Parameter description.")
-#'
-#' @return A 'roxygen2'-formatted `@param` string.
-#'
-#' @keywords internal
-typed_param <- function(name, type, description) {
-  lazy_args <- match.call()[-1]
-
-  lazy_name <- lazy_args[["name"]]
-  name <- as.character(lazy_name)
-
-  lazy_type <- lazy_args[["type"]]
-  if (is.character(lazy_type) && length(lazy_type) == 1L && nchar(lazy_type)) {
-    sprintf("@param %s (%s)\\cr %s", name, lazy_type, description)
-  } else {
-    type <- paste0(deparse(lazy_type), collapse = "; ")
-    sprintf("@param %s (`%s`)\\cr %s", name, type, description)
-  }
 }
