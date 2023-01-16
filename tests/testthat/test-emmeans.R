@@ -1,8 +1,8 @@
 # recover_data ----
 
 test_that("emmeans emits a message about mmrm registration on load", {
-  # don't use skip_if_not_installed yet since it runs requireNamespace, which
-  # will itself load the package without testing startup
+  # Don't use skip_if_not_installed yet since it runs requireNamespace, which
+  # will itself load the package without testing startup.
   skip_if(length(find.package("emmeans")) < 1)
   expect_message(library(emmeans), "mmrm")
 })

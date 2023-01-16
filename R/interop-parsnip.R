@@ -45,7 +45,5 @@ parsnip_add_mmrm <- function(quietly = FALSE) {
     )
   )
 
-  # awaiting `predict()` implementation in #189 for `parsnip::set_pred()`
-
   TRUE
 }
