@@ -74,7 +74,10 @@ NumericMatrix get_empirical(List mmrm_data, NumericVector theta, NumericVector b
     delete derivatives_by_group[r];
   }
   // beta_vcov already take gi into consideration;
-  auto ret = beta_vcov_matrix * meat * beta_vcov_matrix;
+  matrix<double> ret = beta_vcov_matrix * meat * beta_vcov_matrix;
+  if (jackknife) {
+    ret = ret * (n_subjects - 1) / n_subjects;
+  }
   return as_mv(ret);
 }
 
