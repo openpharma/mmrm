@@ -5,6 +5,7 @@
 .Rhistory
 .Rproj.user
 .Ruserdata
+*.tar.gz
 .settings/**
 *.html
 *.Rcheck

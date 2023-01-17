@@ -80,9 +80,9 @@ h_summarize_all_fits <- function(all_fits) {
   warnings[is_error] <- lapply(all_fits[is_error], as.character)
   warnings[!is_error] <- lapply(all_fits[!is_error], attr, which = "warnings")
   messages[!is_error] <- lapply(all_fits[!is_error], attr, which = "messages")
-  log_liks <- as.numeric(rep(NA, length = length(all_fits)))
+  log_liks <- as.numeric(rep(NA, length.out = length(all_fits)))
   log_liks[!is_error] <- vapply(all_fits[!is_error], stats::logLik, numeric(1L))
-  converged <- rep(FALSE, length = length(all_fits))
+  converged <- rep(FALSE, length.out = length(all_fits))
   converged[!is_error] <- vapply(all_fits[!is_error], attr, logical(1), which = "converged")
 
   list(
@@ -354,7 +354,7 @@ mmrm <- function(formula,
         use.names = FALSE
       )
       stop(paste0(
-        "Chosen optimizer '", toString(names(control$optimizer)), "' led to problems during model fit:\n",
+        "Chosen optimizer '", toString(names(control$optimizers)), "' led to problems during model fit:\n",
         paste(paste0(seq_along(all_problems), ") ", all_problems), collapse = ";\n"), "\n",
         "Consider trying multiple optimizers."
       ))
