@@ -90,8 +90,8 @@ $$
 $$
 so that $V_i$ describes the variance and $C_i$ describes the correlation of the within-subject errors $\epsilon_i$.
 This decomposition is appealing both theoretically and computationally, as it allows to model and to estimate the two structures separately and to combine them in a flexible manner.
+The `mmrm` package supports a wide range of correlation
 
-The `mmrm` package supports
 
 <!-- TO DO: Below we describe variance and correlation function structures to represent the two components. -->
 
@@ -114,7 +114,7 @@ Potential additions:
 * Further reading
 -->
 
-# References
+## References
 
 
 
