@@ -1,7 +1,7 @@
 Type: Package
 Package: mmrm
 Title: Mixed Models for Repeated Measures
-Version: 0.2.2.9002
+Version: 0.2.2.9003
 Authors@R: c(
     person("Daniel", "Sabanes Bove", , "daniel.sabanes_bove@roche.com", role = c("aut", "cre")),
     person("Julia", "Dedic", , "julia.dedic@roche.com", role = "aut"),
@@ -48,15 +48,15 @@ Imports:
     TMB (>= 1.9.1),
     utils
 Suggests:
-    emmeans (>= 1.6),
     cli,
-    parsnip,
+    emmeans (>= 1.6),
     estimability,
     knitr,
+    mockery,
     parallelly (>= 1.32.0),
+    parsnip,
     rmarkdown,
     testthat (>= 3.0.0),
-    mockery,
     xml2
 LinkingTo:
     Rcpp,
