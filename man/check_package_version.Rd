@@ -7,14 +7,13 @@
 check_package_version(pkg, ver = c(NA, NA))
 }
 \arguments{
-\item{pkg}{(\code{character[1]})\cr
+\item{pkg}{(\code{string})\cr
 A package name.}
 
-\item{ver}{(any object of length 2 whose elements can be provided to
-\code{numeric_version()})\cr
-A minimum and maximum (inclusive) version requirement for interoperability.
-When \code{NA}, no version requirement is imposed. Defaults to no version
-requirement.}
+\item{ver}{Accepts any object of length 2 whose elements can be provided to
+\code{numeric_version()}, representing a minimum and maximum (inclusive) version
+requirement for interoperability. When \code{NA}, no version requirement is
+imposed. Defaults to no version requirement.}
 }
 \value{
 A logical (invisibly) indicating whether the loaded package meets

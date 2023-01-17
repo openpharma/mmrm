@@ -28,9 +28,9 @@
 #'   passed to this function. Any necessary data must be provided upon
 #'   construction.
 #'
-#' @param message (`NULL` or `character[1]`)\cr
-#'   "An optional message to print after the callback is executed upon
-#'   successful registration.")
+#' @param message (`NULL` or `string`)\cr
+#'   An optional message to print after the callback is executed upon successful
+#'   registration.
 #'
 #' @return A logical (invisibly) indicating whether registration was successful.
 #'  If not, a onLoad hook was set for the next time the package is loaded.
@@ -64,13 +64,12 @@ register_on_load <- function(pkg, ver = c(NA, NA), callback, message = NULL) {
 
 #' Check Suggested Dependency Against Version Requirements
 #'
-#' @param pkg (`character[1]`)\cr
+#' @param pkg (`string`)\cr
 #'   A package name.
-#' @param ver (any object of length 2 whose elements can be provided to
-#'   `numeric_version()`)\cr
-#'   A minimum and maximum (inclusive) version requirement for interoperability.
-#'   When `NA`, no version requirement is imposed. Defaults to no version
-#'   requirement.
+#' @param ver Accepts any object of length 2 whose elements can be provided to
+#'   `numeric_version()`, representing a minimum and maximum (inclusive) version
+#'   requirement for interoperability. When `NA`, no version requirement is
+#'   imposed. Defaults to no version requirement.
 #'
 #' @return A logical (invisibly) indicating whether the loaded package meets
 #'   the version requirements. A warning is emitted otherwise.
