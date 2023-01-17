@@ -27,8 +27,8 @@ They are specifically suited to model continuous variables that were repeatedly 
 In a clinical trial, these time points are typically visits according to a schedule that is pre-defined in the trial protocol.
 The distinguishing feature of MMRMs, compared to other implementations of linear mixed models, is that subject-specific random effects (which are not of direct interest for estimation and inference) are considered as residual effects, i.e. they are part of the error correlation matrix.
 This vignette provides a brief introduction to MMRMs from a methodological perspective<!--, largely irrespective of issues related to their technical implementation-->. 
-MMRMs are introduced as an extension to basic linear mixed-effects model.
-They are also contrasted to other types of statistical models for longitudinal data, such as linear mixed effects models with random intercepts and/or slopes) and models based on generalized estimating equations (GEEs). 
+MMRMs are described as an extension to basic linear mixed-effects model.
+<!-- TO DO: They are also contrasted to other types of statistical models for longitudinal data, such as linear mixed effects models with random intercepts and/or slopes) and models based on generalized estimating equations (GEEs). --> 
 The aim of the vignette is to provide a basic orientation and guide for applied statisticians working in the field of clinical trials regarding theoretical underpinnings of MMRMs. In the descriptions of the models below, we generally follow @Pinheiro2000 and @Mallinckrodt2017.
 
 
@@ -45,6 +45,7 @@ $\beta$ is the $p$-dimensional vector of fixed effects,
 $b$ is the $q$-dimensional vector of random patient-specific effects, 
 $X_i$ (of size $n_i \times p$) and $Z_i$ (of size $n_i \times q$) are known regressor matrices relating observations to the fixed-effects and random-effects, respectively, and 
 $\epsilon_i$ is the $n_i$-dimensional within-subject error.
+<!-- TO DO: explain fixed effects -->
 The random effects $b_i$ and the within-group errors $\epsilon_i$ are assumed to  follow a normal distribution, with means of $0$ and variance-covariance matrices  $\Psi$ and $\sigma^2I$, where $I$ is an identity matrix. They are assumed to be independent for different subjects and independent of each other for the same subject.
 The random effects $b_i$ describe the shift from the mean of the linear predictor for each subject. As they are defined to have a mean of $0$, any
 non-zero mean for a term in the random effects must be expressed as part
@@ -90,10 +91,8 @@ $$
 $$
 so that $V_i$ describes the variance and $C_i$ describes the correlation of the within-subject errors $\epsilon_i$.
 This decomposition is appealing both theoretically and computationally, as it allows to model and to estimate the two structures separately and to combine them in a flexible manner.
-The `mmrm` package supports a wide range of correlation
+The `mmrm` package supports a wide range of correlation structures<!-- add link -->.
 
-
-<!-- TO DO: Below we describe variance and correlation function structures to represent the two components. -->
 
 
 
