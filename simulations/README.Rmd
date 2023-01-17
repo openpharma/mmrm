@@ -1,0 +1,288 @@
+---
+title: "Simulation Study Resources"
+author: "Philippe Boileau and Daniel Sabanes Bove"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, message=FALSE, echo=FALSE}
+## load required libraries
+library(dplyr)
+library(stringr)
+library(MASS)
+library(sasr)
+
+## set global knitr options
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+Simulation studies are large-scale integration tests used to assess the
+correctness of statistical software. This notebook provides information and
+guidance on conducting simulation studies in the `mmrm` package. Please review
+this resource before performing numerical experiments with `mmrm`.
+
+*This document is a work in progress. Contributions are welcome.*
+
+# The `simChef` Simulation Framework
+
+The [`simChef`](https://yu-group.github.io/simChef/) R package provides a
+framework for constructing efficient, high-quality and reproducible simulation
+studies. We rely on `simChef` for all numerical experiments. A case study
+demonstrating its use is available
+[here](https://github.com/PhilBoileau/simChef-case-study). The
+`simulations/csh-benchmarks/` directory provides an `mmrm`-specific example.
+Please review these resources prior to begining your own numerical experiments.
+
+
+# Benchmarking `mmrm()`
+
+`mmrm()`'s correctness might be assessed through its comparison to established
+software implementing procedures for performing inference about mixed models
+with repeated measures. Examples include, but are not limited to, the `nlme`,
+`lme4`, and `glmmTMB` R packages and SAS's `PROC MIXED` procedure. Some notes
+are provided below to ensure the fair comparison of these software.
+
+
+## Working with `PROC MIXED`
+
+`mmrm()`'s and SAS's `PROC MIXED` outputs can be directly compared when using
+the [`sasr`](https://github.com/insightsengineering/sasr) R package. However,
+special consideration is required when handling the repeated measures variable.
+If this variable is a factor, then its levels' alphanumeric ordering must
+coincide with the expected ordering. An opaque relabeling and reordering of the
+repeated measures variable might occur otherwise.
+
+An example is provided in the code blocks below. We begin by defining a
+data-generating function:
+
+```{r dgp, echo=TRUE}
+#' A Simple RCT Data-Generating Function
+#'
+#' @description This function simulates a randomized control trial with
+#'   participants equally split across the control and treatment arms.
+#'   Participants' repeated measures are assumed to be normally distributed with
+#'   heterogeneous compound symmetry covariance matrix. Participants' outcomes
+#'   are collected at each time point.
+#'
+#' @param num_part A numeric indicating the total number of participants.
+#' @param num_rep_meas A numeric indicating the number of repeated measures.
+#' @param fixed_int A numeric corresponding to the fixed intercept effect.
+#' @param fixed_trt A numeric corresponding to the fixed treatment effect.
+#' @param outcome_vars A numeric vector with length equal to num_rep_meas. It is
+#'   the vector of the repeated measures' variances.
+#' @param outcome_cor A numeric corresponding to the correlation parameter in
+#'   the heterogeneous compound symmetry covariance matrix.
+#' @param time_as_integer A logical indicating whether the time point variable
+#'   should be kept as an integer. Defaults to FALSE. If set to TRUE, the
+#'   pad_zeroes and explicit_time_levels are ignored.
+#' @param pad_zeroes A logical indicating whether to pad the time points with a
+#'   leading zero. If set to FALSE, the default, then the time variable is an
+#'   integer. If set to true, the time variable is transformed into an ordered
+#'   factor.
+#' @param explicit_time_levels A logical indicating whether the time point
+#'   variable's ordering should be explicit. Note that this time point variable
+#'   is a factor.
+#'
+#' @return A list containing the simulated participants' IDs, time point
+#'   indicators, outcomes, treatment assignments and baseline covariates.
+rct_dgp_fun <- function(
+  num_part = 1000,
+  num_rep_meas = 10,
+  fixed_int = 1,
+  fixed_trt = 1,
+  outcome_vars = seq_len(num_rep_meas),
+  outcome_cor = 0.5,
+  time_as_integer = FALSE,
+  pad_zeroes = FALSE,
+  explicit_time_levels = FALSE
+) {
+
+  ## form a balanced data.frame
+  cov_df <- data.frame(
+    participant = seq_len(num_part),
+    trt = c(rep(0, round(num_part / 2)), rep(1, num_part - round(num_part / 2)))
+  )
+  time_point_df <- expand.grid(
+    time = seq_len(num_rep_meas),
+    participant = seq_len(num_part)
+  )
+  df <- cov_df %>% dplyr::left_join(time_point_df, by = "participant")
+
+  ## produce the model matrix for the fixed effects
+  fixed_model_mat <- model.matrix(~ trt, data = df)
+
+  ## define the repeated measures correlation structure, assuming
+  ## heterogeneous compound symmetry
+  csh_mat <- tcrossprod(sqrt(outcome_vars), sqrt(outcome_vars)) * outcome_cor
+  diag(csh_mat) <- outcome_vars
+
+  ## generate the outcomes
+  beta <- c(fixed_int, fixed_trt)
+  df$y <- fixed_model_mat %*% beta +
+    as.vector(t(MASS::mvrnorm(num_part, rep(0, num_rep_meas), csh_mat)))
+
+  ## time point variable transformation
+  if (!time_as_integer) {
+    if (pad_zeroes) {
+      df$time <- stringr::str_pad(df$time, width = 2, side = "left", pad = "0")
+    }
+    if (explicit_time_levels) {
+      df$time <- factor(df$time, levels = as.character(seq_len(num_rep_meas)))
+    } else {
+      df$time <- as.factor(df$time)
+    }
+  }
+
+  ## return the generated data
+  return(list(
+    participant = as.factor(df$participant),
+    time = df$time,
+    y = df$y,
+    trt = df$trt
+  ))
+}
+```
+
+Next, we define a wrapper function for `PROC MIXED` relying on `sasr`:
+
+```{r proc-mixed-fun, echo = TRUE}
+#' PROC MIXED Wrapper Function
+#'
+#' @description This function takes as input the ouput of a data-generating
+#'   process function, and fits PROC MIXED repeated measures model on this data.
+#'
+#' @param participant A factor vector of participant IDs.
+#' @param time A factor vector of time points.
+#' @param y A numeric vector of outcomes.
+#' @param trt A binary vector of treatment group indicators.
+#'
+#' @return Estimated parameters of the repeated measures' covariance matrix.
+#'   These parameters are stored in a data.frame object.
+proc_mixed_fun <- function(
+  participant,
+  time,
+  y,
+  trt
+) {
+
+  ## assemble the vectors into a data.frame
+  df <- data.frame(
+    "participant" = participant,
+    "time" = time,
+    "y" = y,
+    "trt" = trt
+  )
+  rownames(df) <- NULL
+
+  ## create SAS dataset
+  sasr::df2sd(df, "sas_df")
+
+  ## specify the SAS code: only return covariance matrix estimates for
+  ## repeated measures
+  sas_code <- "ods output CovParms = cov_parms;
+    PROC MIXED DATA = sas_df;
+      CLASS trt time participant;
+      MODEL y = trt;
+      REPEATED time / subject=participant type=CSH;
+    RUN;"
+
+  ## run the SAS code, and capture the output
+  sas_result <- sasr::run_sas(sas_code)
+  cov_mat_df <- sasr::sd2df("cov_parms")
+
+  ## prepare the fit object
+  return(list(fit = cov_mat_df))
+
+}
+```
+
+
+We then apply this wrapper function to datasets that are identical in all but
+their `time` variables. This function returns parameter estimates for the
+heterogeneous compound symmetry (CSH) covariance matrix. Eleven parameter
+estimates are returned by each procedure: a variance estimate for each time
+point, as well as inter-time-point correlation estimate.
+
+In the first dataset, `time` is a factor with levels `1`, `2`, ..., `10`. These
+factor levels are not set explicitly. The second dataset is identical to the
+first, save that `time`'s factor labels are explicitly provided. The third
+dataset's `time` variable is a factor with levels `01`, `02`, ..., `10`. These
+factors are not set explicitly. Finally, a fourth dataset is considered in which
+`time` is a numeric variable.
+
+```{r run-sasr, echo=TRUE}
+## generate datasets with and without time points padded by zeroes
+set.seed(123)
+rct_data_not_padded <- rct_dgp_fun()
+rct_data_not_padded$time %>% head(10)
+set.seed(123)
+rct_data_not_padded_w_lvls <- rct_dgp_fun(explicit_time_levels = TRUE)
+rct_data_not_padded_w_lvls$time %>% head(10)
+set.seed(123)
+rct_data_padded <- rct_dgp_fun(pad_zeroes = TRUE)
+rct_data_padded$time %>% head(10)
+set.seed(123)
+rct_data_time_integer <- rct_dgp_fun(time_as_integer = TRUE)
+rct_data_time_integer$time %>% head(10)
+
+## fit procedure on the non-paded time point data
+proc_mixed_fun(
+  participant = rct_data_not_padded$participant,
+  time = rct_data_not_padded$time,
+  y = rct_data_not_padded$y,
+  trt = rct_data_not_padded$trt
+)
+
+## fit procedure on the non-paded time point data with explicit factor levels
+proc_mixed_fun(
+  participant = rct_data_not_padded_w_lvls$participant,
+  time = rct_data_not_padded_w_lvls$time,
+  y = rct_data_not_padded_w_lvls$y,
+  trt = rct_data_not_padded_w_lvls$trt
+)
+
+## fit procedure to the paded time point data
+proc_mixed_fun(
+  participant = rct_data_padded$participant,
+  time = rct_data_padded$time,
+  y = rct_data_padded$y,
+  trt = rct_data_padded$trt
+)
+
+## fit procedure to the numeric time point data
+proc_mixed_fun(
+  participant = rct_data_time_integer$participant,
+  time = rct_data_time_integer$time,
+  y = rct_data_time_integer$y,
+  trt = rct_data_time_integer$trt
+)
+```
+
+When the `time` isn't padded by zeroes---even with explicitly set factor
+levels---we find that second and tenth time points' variances are swapped. The
+`time` data appears to be loaded as a string into the SAS session and
+subsequently sorted. That is, `"1", "2", ..., "10"` is reordered as `"1", "10",
+"2", ..., "9"`. That's not the entire story, though, as the names of the
+covariance parameters returned by applying the wrapper function to the dataset
+with padded `time` aren't padded. As is made clear by the final application,
+time points might be fed to SAS as numerics to avoid this issue altogether.
+
+Why is this happening? `sasr` is built on top of
+[`SASPy`](https://sassoftware.github.io/saspy/), an interface between SAS and
+Python. That means that when an R `data.frame` object is ingested by `sasr`, it
+is converted to a [`pandas`
+`DataFrame`](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html)
+prior to being transformed into a SAS data set. Factor variables in the original
+`data.frame` are converted to `Categorical` variables in Python, which are then
+read recognized as strings by SAS. Hence, if a factor has levels `c(1, 2, ...,
+10)`, they are reorderd as `"1", "10", "2", ..., "9"` SAS before being renamed
+as `"1", "2", ..., "10"`.
+
+
+# Session information
+
+```{r session-information}
+sessionInfo()
+```
