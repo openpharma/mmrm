@@ -1,4 +1,4 @@
-# mmrm 0.2.2.9001
+# mmrm 0.2.2.9002
 
 ### New Features
 - Add Kenward-Roger support for spatial covariance structures.
