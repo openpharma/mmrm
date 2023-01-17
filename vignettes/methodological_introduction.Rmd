@@ -45,7 +45,6 @@ $\beta$ is the $p$-dimensional vector of fixed effects,
 $b$ is the $q$-dimensional vector of random patient-specific effects, 
 $X_i$ (of size $n_i \times p$) and $Z_i$ (of size $n_i \times q$) are known regressor matrices relating observations to the fixed-effects and random-effects, respectively, and 
 $\epsilon_i$ is the $n_i$-dimensional within-subject error.
-<!-- TO DO: explain fixed effects -->
 The random effects $b_i$ and the within-group errors $\epsilon_i$ are assumed to  follow a normal distribution, with means of $0$ and variance-covariance matrices  $\Psi$ and $\sigma^2I$, where $I$ is an identity matrix. They are assumed to be independent for different subjects and independent of each other for the same subject.
 The random effects $b_i$ describe the shift from the mean of the linear predictor for each subject. As they are defined to have a mean of $0$, any
 non-zero mean for a term in the random effects must be expressed as part
@@ -66,9 +65,9 @@ small, set of parameters $\lambda$. As in the basic model, the within-group erro
 
 The variance-covariance matrix of the response vector $y_i$,
 $$ 
-  \text{Var}(y_i) = \Sigma_i = \left( Z_i D Z_{i}^{T} + \Delta_i \right),
+  \text{Var}(y_i) = \Sigma_i = \left( Z_i \Psi Z_{i}^{T} + \Delta_i \right),  
 $$
-comprises a random-effects component, given by $Z_i D Z_{i}^{T}$, and a within-subject component, given by $\Delta_i$. <!-- check D -->
+comprises a random-effects component, given by $Z_i \Psi Z_{i}^{T}$, and a within-subject component, given by $\Delta_i$. 
 There will generally be a "competition" and trade-off between the complexities of the two components, and care must be exercised to prevent nonidentifiability, or near nonidentifyability, of the parameters.
 
 ## The MMRM as a special case
@@ -91,17 +90,18 @@ $$
 $$
 so that $V_i$ describes the variance and $C_i$ describes the correlation of the within-subject errors $\epsilon_i$.
 This decomposition is appealing both theoretically and computationally, as it allows to model and to estimate the two structures separately and to combine them in a flexible manner.
-The `mmrm` package supports a wide range of correlation structures<!-- add link -->.
+The `mmrm` package supports a wide range of correlation structures and also makes use of the decomposition<!-- add link / note: differences in notation -->.
+
+When modeling longitudinal responses in a clinical trial with multiple follow-up visits, the linear predictor $X_i\beta$ typically considers fixed effects of baseline values, treatment and visit, as well as interactions between treatment and visit, and possibly between baseline and visit.
 
 
 
+## Further reading
 
+Various authors have 
 
-
-
-
-
-
+See @Cnaan1997 for a tutorial
+@Mallinckrodt2008 for a review.
 
 
 <!---
@@ -110,6 +110,8 @@ Potential additions:
 * Estimation
 * Correlation structures
 * Missing values
+* Contrast to RI&S models
+* Contrast to GEE models (incl. assumption on missingness)
 * Further reading
 -->
 
