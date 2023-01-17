@@ -98,10 +98,13 @@ When modeling longitudinal responses in a clinical trial with multiple follow-up
 
 ## Further reading
 
-Various authors have 
+Various authors have provided introductory publications or made methodological contributions in the context of MMRMs.
 
-See @Cnaan1997 for a tutorial
+See 
+@Cnaan1997 for a tutorial,
+
 @Mallinckrodt2008 for a review.
+
 
 
 <!---
