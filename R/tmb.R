@@ -331,6 +331,18 @@ h_mmrm_tmb_data <- function(formula_parts,
     n_visits <- nlevels(coordinates[[1L]])
     assert_true(all(subject_n_visits <= n_visits))
   }
+  # obtain variables that changes overtime
+  assign_var <- attr(x_matrix, "assign")
+  terms_formula <- terms(formula_parts$model_formula)
+  terms_labels <- attr(terms_formula, "term.labels")
+  var <- terms_labels[assign_var[index]]
+  if (grepl(":", var)) {
+    var <- strsplit(var, ":")[[1]]
+  }
+  within_subject_var <- split(
+    full_frame[var],
+    full_frame[[object$formula_parts$subject_var]]
+  )
   structure(
     list(
       full_frame = full_frame,

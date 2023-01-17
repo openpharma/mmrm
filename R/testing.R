@@ -1,8 +1,8 @@
 #' Calculation of Degrees of Freedom for One-Dimensional Contrast
 #'
 #' @description `r lifecycle::badge("experimental")`
-#' Calculates the degree of freedom, F statistic and p value for multi-dimensional contrast, depending on
-#' the method used in [mmrm()].
+#' Calculates the estimate, adjusted standard error, degree of freedom,
+#' t statistic and p-value for one-dimensional contrast.
 #'
 #' @param object (`mmrm`)\cr the MMRM fit.
 #' @param contrast (`numeric`)\cr contrast vector. Note that this should not include
@@ -23,12 +23,12 @@ df_1d <- function(object, contrast) {
   assert_class(object, "mmrm")
   assert_numeric(contrast, len = length(component(object, "beta_est")), any.missing = FALSE)
   contrast <- as.vector(contrast)
-  if (object$method == "Satterthwaite") {
+  if (identical(object$method, "Satterthwaite")) {
     h_df_1d_sat(object, contrast)
-  } else if (object$method == "Kenward-Roger") {
-    h_df_1d_kr(object, contrast, linear = FALSE)
-  } else if (object$method == "Kenward-Roger-Linear") {
-    h_df_1d_kr(object, contrast, linear = TRUE)
+  } else if (identical(object$method, "Kenward-Roger")) {
+    h_df_1d_kr(object, contrast)
+  } else if (identical(object$method, "Between-within")) {
+    h_df_1d_bw(object, contrast)
   }
 }
 
@@ -64,11 +64,11 @@ df_md <- function(object, contrast) {
     contrast <- matrix(contrast, ncol = length(contrast))
   }
   assert_matrix(contrast, ncols = length(component(object, "beta_est")))
-  if (object$method == "Satterthwaite") {
+  if (identical(object$method, "Satterthwaite")) {
     h_df_md_sat(object, contrast)
-  } else if (object$method == "Kenward-Roger") {
+  } else if (identical(object$method, "Kenward-Roger")) {
     h_df_md_kr(object, contrast)
-  } else if (object$method == "Kenward-Roger-Linear") {
-    h_df_md_kr(object, contrast, linear = TRUE)
+  } else if (identical(object$method, "Between-within")) {
+    h_df_md_bw(object, contrast)
   }
 }

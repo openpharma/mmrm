@@ -35,14 +35,12 @@ h_get_kr_comp <- function(tmb_data, theta) {
 #'
 #' @param object (`mmrm`)\cr object.
 #' @param contrast (`matrix`)\cr contrast matrix.
-#' @param linear (`flag`)\cr whether to use linear Kenward-Roger approximation.
 #'
 #' @return List with `num_df`, `denom_df`, `f_stat` and `p_val` (2-sided p-value).
 #'
 #' @keywords internal
-h_df_md_kr <- function(object, contrast, linear = FALSE) {
+h_df_md_kr <- function(object, contrast) {
   assert_class(object, "mmrm")
-  assert_flag(linear)
   assert_matrix(contrast, mode = "numeric", any.missing = FALSE, ncols = length(component(object, "beta_est")))
   if (component(object, "reml") != 1) {
     stop("Kenward-Roger is only for REML")
@@ -71,14 +69,12 @@ h_df_md_kr <- function(object, contrast, linear = FALSE) {
 #'
 #' @param object (`mmrm`)\cr object created by [mmrm()] with Kenward-Roger(-Linear) method.
 #' @param contrast (`numeric`)\cr contrast vector.
-#' @param linear (`flag`)\cr whether to use linear Kenward-Roger approximation.
 #'
 #' @return List with `est`, `se`, `df`, `t_stat` and `p_val`.
 #'
 #' @keywords internal
-h_df_1d_kr <- function(object, contrast, linear = FALSE) {
+h_df_1d_kr <- function(object, contrast) {
   assert_class(object, "mmrm")
-  assert_flag(linear)
   assert_numeric(contrast, len = length(component(object, "beta_est")))
   if (component(object, "reml") != 1) {
     stop("Kenward-Roger is only for REML!")

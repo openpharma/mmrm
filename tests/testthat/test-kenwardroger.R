@@ -335,16 +335,16 @@ test_that("kr linear give similar results as SAS for spatial exponential", {
 
 test_that("h_df_1d_kr works as expected in the standard case", {
   object_mmrm_kr <- get_mmrm_kr()
-  expect_snapshot_tolerance(h_df_1d_kr(object_mmrm_kr, c(0, 1), TRUE))
-  expect_snapshot_tolerance(h_df_1d_kr(object_mmrm_kr, c(1, 1), FALSE))
+  expect_snapshot_tolerance(h_df_1d_kr(object_mmrm_kr, c(0, 1)))
+  expect_snapshot_tolerance(h_df_1d_kr(object_mmrm_kr, c(1, 1)))
 })
 
 # h_df_md_kr ----
 
 test_that("h_df_md_kr works as expected in the standard case", {
   object_mmrm_kr <- get_mmrm_kr()
-  expect_snapshot_tolerance(h_df_md_kr(object_mmrm_kr, matrix(c(0, 1, 1, 0), nrow = 2), TRUE))
-  expect_snapshot_tolerance(h_df_md_kr(object_mmrm_kr, matrix(c(0, -1, 1, 0), nrow = 2), FALSE))
+  expect_snapshot_tolerance(h_df_md_kr(object_mmrm_kr, matrix(c(0, 1, 1, 0), nrow = 2)))
+  expect_snapshot_tolerance(h_df_md_kr(object_mmrm_kr, matrix(c(0, -1, 1, 0), nrow = 2)))
 })
 
 # h_kr_df ----
