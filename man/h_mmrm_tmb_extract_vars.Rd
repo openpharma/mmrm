@@ -16,7 +16,7 @@ Named list of with elements:
 \item \code{subject_var}: \code{string} with the subject variable name.
 \item \code{group_var}: \code{string} with the group variable name. If no group specified, this element
 is NULL.
-\item \code{is_spatial}: \code{logical} indicator of whether the covariance structure is spatial
+\item \code{is_spatial}: \code{flag} indicator of whether the covariance structure is spatial
 }
 }
 \description{

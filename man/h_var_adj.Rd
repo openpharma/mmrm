@@ -17,7 +17,7 @@ h_var_adj(v, w, p, q, r, linear = FALSE)
 
 \item{r}{(\code{matrix})\cr R matrix from \code{\link[=h_get_kr_comp]{h_get_kr_comp()}}.}
 
-\item{linear}{(\code{logical})\cr whether to use linear Kenward-Roger approximation.}
+\item{linear}{(\code{flag})\cr whether to use linear Kenward-Roger approximation.}
 }
 \value{
 The matrix of adjusted covariance matrix.

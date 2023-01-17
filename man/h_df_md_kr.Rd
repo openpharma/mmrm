@@ -4,14 +4,12 @@
 \alias{h_df_md_kr}
 \title{Calculation of Kenward-Roger Degrees of Freedom for Multi-Dimensional Contrast}
 \usage{
-h_df_md_kr(object, contrast, linear = FALSE)
+h_df_md_kr(object, contrast)
 }
 \arguments{
 \item{object}{(\code{mmrm})\cr object.}
 
 \item{contrast}{(\code{matrix})\cr contrast matrix.}
-
-\item{linear}{(\code{logical})\cr whether to use linear Kenward-Roger approximation.}
 }
 \value{
 List with \code{num_df}, \code{denom_df}, \code{f_stat} and \code{p_val} (2-sided p-value).

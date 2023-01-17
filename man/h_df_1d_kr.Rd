@@ -4,14 +4,12 @@
 \alias{h_df_1d_kr}
 \title{Calculation of Kenward-Roger Degrees of Freedom for One-Dimensional Contrast}
 \usage{
-h_df_1d_kr(object, contrast, linear = FALSE)
+h_df_1d_kr(object, contrast)
 }
 \arguments{
 \item{object}{(\code{mmrm})\cr object created by \code{\link[=mmrm]{mmrm()}} with Kenward-Roger(-Linear) method.}
 
 \item{contrast}{(\code{numeric})\cr contrast vector.}
-
-\item{linear}{(\code{logical})\cr whether to use linear Kenward-Roger approximation.}
 }
 \value{
 List with \code{est}, \code{se}, \code{df}, \code{t_stat} and \code{p_val}.
