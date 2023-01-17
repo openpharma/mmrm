@@ -61,6 +61,15 @@ get_mmrm_krl <- function() {
   .mmrm_krl
 }
 
+.mmrm_emp <- mmrm(.mmrm_kr_formula, data = fev_data, cov = "Empirical")
+get_mmrm_emp <- function() {
+  .mmrm_emp
+}
+
+.mmrm_jackknife <- mmrm(.mmrm_kr_formula, data = fev_data, cov = "Empirical-Jackknife")
+get_mmrm_jack <- function() {
+  .mmrm_jackknife
+}
 
 square_matrix <- function(values_by_row) {
   n <- length(values_by_row)

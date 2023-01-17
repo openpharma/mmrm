@@ -27,8 +27,8 @@ df_1d <- function(object, contrast) {
     h_df_1d_sat(object, contrast)
   } else if (identical(object$method, "Kenward-Roger")) {
     h_df_1d_kr(object, contrast)
-  } else if (identical(object$method, "Between-within")) {
-    h_df_1d_bw(object, contrast)
+  } else {
+    stop("Unrecognized degree of freedom method: ", object$method)
   }
 }
 
@@ -68,7 +68,7 @@ df_md <- function(object, contrast) {
     h_df_md_sat(object, contrast)
   } else if (identical(object$method, "Kenward-Roger")) {
     h_df_md_kr(object, contrast)
-  } else if (identical(object$method, "Between-within")) {
-    h_df_md_bw(object, contrast)
+  } else {
+    stop("Unrecognized degree of freedom method: ", object$method)
   }
 }
