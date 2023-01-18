@@ -45,7 +45,7 @@ otherwise \code{NULL} (for \code{mmrm_tmb} objects).
 \item \code{beta_vcov}: estimated variance-covariance matrix of coefficients
 (excluding aliased coefficients). For Kenward-Roger/Empirical
 methods, the adjusted covariance matrix is returned (to still obtain the
-original aysmptotic covariance matrix use \code{object$beta_vcov}).
+original asymptotic covariance matrix use \code{object$beta_vcov}).
 \item \code{beta_vcov_complete}: estimated variance-covariance matrix including
 aliased coefficients with entries set to \code{NA}.
 \item \code{varcor}: estimated covariance matrix for residuals. If there are multiple
