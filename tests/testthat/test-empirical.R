@@ -65,3 +65,22 @@ test_that("empirical covariance are the same with SAS result for sp_exp", {
   expected <- 0.80974821922674
   expect_equal(sqrt(component(fit, "beta_vcov")[2, 2]), expected, tolerance = 1e-4)
 })
+
+# jackknife ----
+
+test_that("Jackknife works as expected", {
+  formula <- FEV1 ~ ARMCD + ar1(AVISIT | USUBJID)
+  data_full <- fev_data[complete.cases(fev_data), ]
+  data_full$USUBJID <- droplevels(data_full$USUBJID)
+  ids <- lapply(levels(data_full$USUBJID), function(x) {which(data_full$USUBJID == x)})
+  betas <- lapply(ids, function(i) {
+    fit <- mmrm(formula = formula, data = data_full[-i, ])
+    fit$beta_est
+  })
+  beta_all <- do.call(cbind, betas)
+  fit <- mmrm(formula = formula, data = data_full, cov = "Empirical-Jackknife")
+  n <- component(fit, "n_subjects")
+  expected <- (n - 1) / n * (beta_all - fit$beta_est) %*% t(beta_all - fit$beta_est)
+  dimnames(expected) <- NULL
+  expect_equal(fit$beta_vcov_adj, expected, tolerance = 1e-2)
+})
