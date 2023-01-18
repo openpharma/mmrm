@@ -56,10 +56,12 @@ Empirical covariance, also known as the robust sandwich estimator, is derived by
 covariance matrix.
 
 \[
-  cov(\hat\beta) = (X^\top W X)^{-1}(\sum_{i}{X_i^\top W_i \hat\epsilon_i\hat\epsilon_i^\top W_i X_i})(X^\top W X)^{-1}
+  cov(\hat\beta) = (X^\top W X)^{-1}(\sum_{i}{X_i^\top W_i \hat\epsilon_i\hat\epsilon_i^\top W_i X_i})(X^\top W X)^{-1} &
+  = (X^\top W X)^{-1}(\sum_{i}{X_i^\top L_{i} L_{i}^\top \hat\epsilon_i\hat\epsilon_i^\top L_{i} L_{i}^\top X_i})(X^\top W X)^{-1}
 \]
 
-Where $W_i$ is the block diagonal part for subject $i$ of $W$ matrix, $\hat\epsilon_i$ is the observed residuals for subject i.
+Where $W_i$ is the block diagonal part for subject $i$ of $W$ matrix, $\hat\epsilon_i$ is the observed residuals for subject i, $L_i$
+is the Cholesky factor of $W_i$.
 
 
 ## Jackknife Covariance
@@ -72,10 +74,7 @@ Following @mccaffrey2003bias, we have
 \]
 
 where
-\[
-  L_{i}L_{i}^\top = W_{i}
-\]
-and
+
 \[H_{ii} = X_i(X^\top X)^{-1}X_i^\top\].
 
 
