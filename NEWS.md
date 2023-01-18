@@ -1,11 +1,13 @@
-# mmrm 0.2.2.9002
+# mmrm 0.2.2.9003
 
 ### New Features
+
 - Add Kenward-Roger support for spatial covariance structures.
 - Add empirical and empirical Jackknife covariance estimator for $\beta$.
   In addition, the argument `method` now only stands for the method used
   for degree of freedom, another argument `cov` is added to control the
   method used to calculate the covariance for $\beta$.
+- Add optional tidymodels support.
 
 # mmrm 0.2.2
 

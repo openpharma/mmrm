@@ -1,18 +1,3 @@
-#' Dynamic Registration of `emmeans` Methods
-#'
-#' @seealso See `vignette("xtending", package = "emmeans")` for background.
-#' @keywords internal
-#' @noRd
-.onLoad <- function(libname, pkgname) { # nolint
-  if (requireNamespace("emmeans", quietly = TRUE)) {
-    if (utils::packageVersion("emmeans") < "1.6") {
-      warning("please install a newer version of emmeans (>= 1.6)")
-      return(NULL)
-    }
-    emmeans::.emm_register("mmrm", pkgname)
-  }
-}
-
 #' Support for `emmeans`
 #'
 #' @description `r lifecycle::badge("experimental")`
