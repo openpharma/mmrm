@@ -65,7 +65,7 @@ NumericMatrix get_empirical(List mmrm_data, NumericVector theta, NumericVector b
     matrix<double> identity(n_visits_i, n_visits_i);
     identity.setIdentity();
     if (jackknife) {
-      identity = identity - xt_gi_simga_inv_chol * beta_vcov_matrix * xt_gi_simga_inv_chol.transpose();
+      identity = identity - xt_gi_simga_inv_chol.transpose() * beta_vcov_matrix * xt_gi_simga_inv_chol;
     }
     matrix<double> z =  xt_gi_simga_inv_chol * identity.inverse() * gi_simga_inv_chol.transpose() * residual_i;
     meat = meat + z * z.transpose();

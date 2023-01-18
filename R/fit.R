@@ -198,7 +198,7 @@ refit_multiple_optimizers <- function(fit,
 #' at the missing visits.
 #' The `method` and `cov` arguments will decide the covariance matrix and degree of freedom calculations.
 #' If `method` is "Kenward-Roger" then only "Kenward-Roger" or "Kenward-Roger-Linear" are allowed for `cov`.
-#' The `cov` argument can accept a special string "Default" to use the default covariance method depending on the `method`
+#' The `cov` argument can be `NULL` to use the default covariance method depending on the `method`
 #' used for degree of freedom, see the following table:
 #' | `method`  |  Default `cov`|
 #' |-----------|----------|
@@ -236,7 +236,7 @@ mmrm_control <- function(n_cores = 1L,
     cov,
     c("Asymptotic", "Empirical", "Empirical-Jackknife", "Kenward-Roger", "Kenward-Roger-Linear")
   )
-  if (identical(method, "Kenward-Roger") && !cov %in% c("Kenward-Roger", "Kenward-Roger-Linear")) {
+  if (xor(identical(method, "Kenward-Roger"), cov %in% c("Kenward-Roger", "Kenward-Roger-Linear"))) {
     stop("Kenward-Roger degree of freedom must work together with Kenward-Roger or Kenward-Roger-Linear covariance!")
   }
   structure(
@@ -388,10 +388,12 @@ mmrm <- function(formula,
   }
   fit$method <- control$method
   fit$cov_method <- control$cov
-  if (identical(control$cov, "Asymptotic")) {
+  if (identical(fit$method, "Satterthwaite")) {
     covbeta_fun <- h_covbeta_fun(fit)
     fit$jac_list <- h_jac_list(covbeta_fun, fit$theta_est)
-  } else if (control$cov %in% c("Kenward-Roger", "Kenward-Roger-Linear")) {
+  } 
+  
+  if (control$cov %in% c("Kenward-Roger", "Kenward-Roger-Linear")) {
     fit$kr_comp <- h_get_kr_comp(fit$tmb_data, fit$theta_est)
     fit$beta_vcov_adj <- h_var_adj(
       v = fit$beta_vcov,
@@ -405,6 +407,7 @@ mmrm <- function(formula,
     fit$beta_vcov_adj <- h_get_empirical(fit$tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov, FALSE)
   } else if (identical(control$cov, "Empirical-Jackknife")) {
     fit$beta_vcov_adj <- h_get_empirical(fit$tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov, TRUE)
+  } else if (identical(control$cov, "Asymptotic")) {
   } else {
     stop("Unrecognized covariance method")
   }

@@ -416,3 +416,120 @@ test_that("mmrm fails when using ... and control at the same time", {
     fixed = TRUE
   )
 })
+
+## cov and method combination ----
+
+test_that("mmrm works for cov: Asymptotic and method: Sattherthwaite", {
+  expect_silent(
+    mmrm(
+      formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+      data = fev_data,
+      method = "Satterthwaite",
+      cov = "Asymptotic"
+    )
+  )
+})
+
+test_that("mmrm fails for cov: Kenward-Roger and method: Sattherthwaite", {
+  expect_error(
+    mmrm(
+      formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+      data = fev_data,
+      method = "Satterthwaite",
+      cov = "Kenward-Roger"
+    ),
+    "Kenward-Roger degree of freedom must work together with Kenward-Roger or Kenward-Roger-Linear covariance!"
+  )
+})
+
+test_that("mmrm fails for cov: Kenward-Roger-Linear and method: Sattherthwaite", {
+  expect_error(
+    mmrm(
+      formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+      data = fev_data,
+      method = "Satterthwaite",
+      cov = "Kenward-Roger-Linear"
+    ),
+    "Kenward-Roger degree of freedom must work together with Kenward-Roger or Kenward-Roger-Linear covariance!"
+  )
+})
+
+test_that("mmrm works for cov: Empirical and method: Sattherthwaite", {
+  expect_silent(
+    mmrm(
+      formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+      data = fev_data,
+      method = "Satterthwaite",
+      cov = "Empirical"
+    )
+  )
+})
+
+test_that("mmrm works for cov: Jackknife and method: Sattherthwaite", {
+  expect_silent(
+    mmrm(
+      formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+      data = fev_data,
+      method = "Satterthwaite",
+      cov = "Empirical-Jackknife"
+    )
+  )
+})
+
+test_that("mmrm works for cov: Asymptotic and method: Kenward-Roger", {
+  expect_error(
+    mmrm(
+      formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+      data = fev_data,
+      method = "Kenward-Roger",
+      cov = "Asymptotic"
+    ),
+    "Kenward-Roger degree of freedom must work together with Kenward-Roger or Kenward-Roger-Linear covariance!"
+  )
+})
+
+test_that("mmrm fails for cov: Kenward-Roger and method: Kenward-Roger", {
+  expect_silent(
+    mmrm(
+      formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+      data = fev_data,
+      method = "Kenward-Roger",
+      cov = "Kenward-Roger"
+    )
+  )
+})
+
+test_that("mmrm fails for cov: Kenward-Roger-Linear and method: Kenward-Roger", {
+  expect_silent(
+    mmrm(
+      formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+      data = fev_data,
+      method = "Kenward-Roger",
+      cov = "Kenward-Roger-Linear"
+    )
+  )
+})
+
+test_that("mmrm works for cov: Empirical and method: Kenward-Roger", {
+  expect_error(
+    mmrm(
+      formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+      data = fev_data,
+      method = "Kenward-Roger",
+      cov = "Empirical"
+    ),
+    "Kenward-Roger degree of freedom must work together with Kenward-Roger or Kenward-Roger-Linear covariance!"
+  )
+})
+
+test_that("mmrm works for cov: Jackknife and method: Kenward-Roger", {
+  expect_error(
+    mmrm(
+      formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+      data = fev_data,
+      method = "Kenward-Roger",
+      cov = "Empirical-Jackknife"
+    ),
+    "Kenward-Roger degree of freedom must work together with Kenward-Roger or Kenward-Roger-Linear covariance!"
+  )
+})
