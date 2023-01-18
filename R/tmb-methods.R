@@ -209,14 +209,9 @@ print.mmrm_tmb <- function(x,
 }
 
 
-#' Residuals method for mmrm objects
-#'
-#' @describeIn mmrm_tmb_method to obtain residuals - either unscaled or normalized
-#' @param object (`mmrm_tmb`)\cr the fitted MMRM.
-#' @param type (`character`)\cr unscaled ('response'), 'pearson' or 'normalized'. Default is 'response',
+#' @describeIn mmrm_tmb_methods to obtain residuals - either unscaled ('response'), 'pearson' or 'normalized'.
+#' @param type (`string`)\cr unscaled (`response`), `pearson` or `normalized`. Default is `response`,
 #' and this is the only type available for use with models with a spatial covariance structure.
-#' @param ... \cr not used in this method.
-#' @return Vector of residuals
 #' @importFrom stats residuals
 #' @exportS3Method
 #' @examples
@@ -227,15 +222,13 @@ print.mmrm_tmb <- function(x,
 #' @references
 #' - \insertRef{galecki2013linear}{mmrm}
 residuals.mmrm_tmb <- function(object, type = c("response", "pearson", "normalized"), ...) {
-  assert_class(object, "mmrm_tmb")
-  assert_character(type)
-  type <- match.arg(type, several.ok = FALSE)
+  type <- match.arg(type)
   resids_unscaled <- component(object, "y_vector") - fitted(object)
   if (type == "response") {
     return(unname(resids_unscaled))
   } else {
     if (object$formula_parts$is_spatial) {
-      stop("Only raw / response residuals are available for models with spatial covariance structures.")
+      stop("Only 'response' residuals are available for models with spatial covariance structures.")
     }
     if (type == "pearson") {
       h_residuals_pearson(object, resids_unscaled)
@@ -245,14 +238,14 @@ residuals.mmrm_tmb <- function(object, type = c("response", "pearson", "normaliz
   }
 }
 
-#' Calculate Pearson residuals
+#' Calculate Pearson Residuals
 #'
 #' This is used by [residuals.mmrm_tmb()] to calculate Pearson residuals.
 #'
 #' @param object (`mmrm_tmb`)\cr the fitted MMRM.
-#' @param resids_unscaled (`numeric`)\cr the raw/response residuals.
+#' @param resids_unscaled (`numeric`)\cr the response residuals.
 #'
-#' @return Vector of residuals
+#' @return Vector of residuals.
 #'
 #' @keywords internal
 h_residuals_pearson <- function(object, resids_unscaled) {
