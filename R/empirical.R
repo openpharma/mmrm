@@ -13,5 +13,11 @@
 #'
 #' @keywords internal
 h_get_empirical <- function(tmb_data, theta, beta, beta_vcov, jackknife) {
+  assert_class(tmb_data, "mmrm_tmb_data")
+  assert_numeric(theta)
+  n_beta <- ncol(tmb_data$x_matrix)
+  assert_numeric(beta, finite = TRUE, any.missing = FALSE, len = n_beta)
+  assert_matrix(beta_vcov, mode = "numeric", any.missing = FALSE, nrows = n_beta, ncols = n_beta)
+  assert_flag(jackknife)
   .Call(`_mmrm_get_empirical`, PACKAGE = "mmrm", tmb_data, theta, beta, beta_vcov, jackknife)
 }
