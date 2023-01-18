@@ -1,4 +1,4 @@
-#' Obtain Empirical/Jackknife Covariance.
+#' Obtain Empirical/Jackknife Covariance
 #'
 #' @description Obtain the empirical or Jackknife covariance for \eqn{\beta}.
 #' Used in `mmrm` fitting if method is "Empirical" or "Empirical-Jackknife".
