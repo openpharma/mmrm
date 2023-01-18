@@ -297,7 +297,7 @@ h_partial_fun_args <- function(fun, ..., additional_attr = list()) {
 #' @description Obtain the default covariance method depending on
 #' the degree of freedom method used.
 #'
-#' @param method (`string`) degree of freedom method.
+#' @param method (`string`)\cr degree of freedom method.
 #'
 #' @details The default covariance method is different for different degree of freedom method.
 #' If degree of freedom is "Satterthwaite", "Asymptotic" is returned.
