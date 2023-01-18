@@ -2,7 +2,7 @@
 % Please edit documentation in R/empirical.R
 \name{h_get_empirical}
 \alias{h_get_empirical}
-\title{Obtain Empirical/Jackknife Covariance.}
+\title{Obtain Empirical/Jackknife Covariance}
 \usage{
 h_get_empirical(tmb_data, theta, beta, beta_vcov, jackknife)
 }

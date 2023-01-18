@@ -54,9 +54,9 @@ then the distance from \code{VIS1} to \code{VIS3} will be double, as \code{VIS2}
 However, please be cautious because this can lead to convergence failure
 when using an unstructured covariance matrix and there are no observations
 at the missing visits.
-\code{method} and \code{cov} arguments will decide the covariance matrix and degree of freedom calculations.
+The \code{method} and \code{cov} arguments will decide the covariance matrix and degree of freedom calculations.
 If \code{method} is "Kenward-Roger" then only "Kenward-Roger" or "Kenward-Roger-Linear" are allowed for \code{cov}.
-\code{cov} can accept a special string "Default" to use the default covariance method depending on the \code{method}
+The \code{cov} argument can be \code{NULL} to use the default covariance method depending on the \code{method}
 used for degree of freedom, see the following table:\tabular{ll}{
    \code{method} \tab Default \code{cov} \cr
    Satterthwaite \tab Asymptotic \cr

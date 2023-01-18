@@ -7,7 +7,7 @@
 h_get_cov_default(method = c("Satterthwaite", "Kenward-Roger"))
 }
 \arguments{
-\item{method}{(\code{string}) degree of freedom method.}
+\item{method}{(\code{string})\cr degree of freedom method.}
 }
 \description{
 Obtain the default covariance method depending on
