@@ -19,6 +19,7 @@ h_df_1d_list(est, var, v_num, v_denom)
 List with \code{est}, \code{se}, \code{df}, \code{t_stat} and \code{p_val} (2-sided p-value).
 }
 \description{
-Creating Results List for One-Dimensional Contrast
+Creates a list of results for one-dimensional contrasts using the estimated
+values from quadratic form.
 }
 \keyword{internal}

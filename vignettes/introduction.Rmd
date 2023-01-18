@@ -29,7 +29,7 @@ A minimal call of [`mmrm()`](https://openpharma.github.io/mmrm/main/reference/mm
 consisting of only formula and data arguments will produce an object of class
 `mmrm`, `mmrm_fit`, and `mmrm_tmb`. Here we fit a mmrm
 model with `us` (unstructured) covariance structure specified, as well as the defaults
-of `reml = TRUE` and `optimizer = 'automatic'`.
+of `reml = TRUE` and `control = mmrm_control()`.
 
 ```{r common-usage-modelcall}
 fit <- mmrm(
@@ -54,6 +54,31 @@ print(fit)
 From the high-level [`mmrm()`](https://openpharma.github.io/mmrm/main/reference/mmrm.html)
 interface, common changes to the default function call can be specified.
 
+## Control Function
+
+For fine control, [`mmrm_control()`](https://openpharma.github.io/mmrm/main/reference/mmrm_control.html)
+is provided. This function allows the user to choose the adjustment method for
+the degrees of freedom and the coefficients covariance matrix, specify optimization routines,
+number of cores to be used on Unix systems for trying several optimizers in parallel,
+provide a vector of starting parameter values, decide the action to be taken when the
+defined design matrix is singular, not drop unobserved visit levels.
+For example:
+
+```{r low-level-control, eval=FALSE}
+mmrm_control(
+  method = "Kenward-Roger",
+  optimizer = c("L-BFGS-B", "BFGS"),
+  n_cores = 2,
+  start = c(0, 1, 1, 0, 1, 0),
+  accept_singular = FALSE,
+  drop_visit_levels = FALSE
+)
+```
+
+Note that this control list can either be passed via the `control` argument
+to `mmrm`, or selected controls can be directly specified in the `mmrm` call.
+We will see this below.
+
 ## REML or ML
 
 Users can specify if REML should be used (default) or if ML should be used in
@@ -65,19 +90,19 @@ fit_ml <- mmrm(
   data = fev_data,
   reml = FALSE
 )
-
-print(fit_ml)
+fit_ml
 ```
 
 ## Optimizer
 
 Users can specify which optimizer should be used, changing from the default of
-`automatic` selection, which starts with `L-BFGS-B` and proceeds through the
+four optimizers, which starts with `L-BFGS-B` and proceeds through the
 other choices if optimization fails to converge. Other choices are `BFGS`, `CG`, and
 `nlminb`.
 
-`L-BFGS-B`, `BFGS` and `CG` are all implemented with `stats::optim()` and the Hessian is not used,
-while `nlminb` is using `stats::nlminb() which in turn uses both the gradient and the Hessian for the optimization.
+`L-BFGS-B`, `BFGS` and `CG` are all implemented with `stats::optim()` and the Hessian
+is not used, while `nlminb` is using `stats::nlminb()` which in turn uses both the
+gradient and the Hessian (by default but can be switch off) for the optimization.
 
 ```{r common-changes-optim}
 fit_opt <- mmrm(
@@ -85,15 +110,14 @@ fit_opt <- mmrm(
   data = fev_data,
   optimizer = "BFGS"
 )
-
-print(fit_opt)
+fit_opt
 ```
 
 ## Covariance Structure
 
 Covariance structures supported by the `mmrm` are being continuously developed.
-For a complete list and description please visit the [vignette in the package website](https://openpharma.github.io/mmrm/main/articles/covariance.html). Below
-we see the function call for homogeneous compound symmetry (`cs`).
+For a complete list and description please visit the [covariance vignette](covariance.html).
+Below we see the function call for homogeneous compound symmetry (`cs`).
 
 ```{r common-changes-cov}
 fit_cs <- mmrm(
@@ -101,9 +125,14 @@ fit_cs <- mmrm(
   data = fev_data,
   reml = FALSE
 )
-
-print(fit_cs)
+fit_cs
 ```
+
+The time points have to be unique for each subject. That is,
+there cannot be time points with multiple observations for any subject.
+The rationale is that these observations would need to be correlated, but it
+is not possible within the currently implemented covariance structure framework
+to do that correctly.
 
 ## Weighting
 
@@ -115,8 +144,7 @@ fit_wt <- mmrm(
   data = fev_data,
   weights = fev_data$WEIGHT
 )
-
-print(fit_wt)
+fit_wt
 ```
 
 ## Grouped Covariance Structure
@@ -133,11 +161,98 @@ fit_cs <- mmrm(
   data = fev_data,
   reml = FALSE
 )
-
-print(VarCorr(fit_cs))
+VarCorr(fit_cs)
 ```
 
 We can see that the estimated covariance matrices are different in different `ARMCD` groups.
+
+## Adjustment Method
+
+Both Satterthwaite and Kenward-Roger adjustment methods are available. The default
+is Satterthwaite adjustment of the degrees of freedom. To use Kenward-Roger
+adjustment of the degrees of freedom as well as the coefficients covariance
+matrix, use the `method` argument:
+
+```{r kr}
+fit_kr <- mmrm(
+  formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data,
+  method = "Kenward-Roger"
+)
+```
+
+Note that this requires `reml = TRUE`, i.e. Kenward-Roger adjustment is not
+possible when using maximum likelihood inference.
+While this adjustment choice is not visible in the `print()` result of the fitted model
+(because the initial model fit is not affected by the choice of the
+adjustment method), looking at the `summary` we see the method and the
+correspondingly adjusted standard errors and degrees of freedom:
+
+```{r kr_summary}
+summary(fit_kr)
+```
+
+For one-dimensional contrasts as in the coefficients table above,
+the degrees of freedom are the same for Kenward-Roger and Satterthwaite.
+However, Kenward-Roger uses adjusted standard errors, hence the p-values
+are different.
+
+Note that if you would like to match SAS results for an unstructured
+covariance model, you can use the linear Kenward-Roger approximation:
+
+```{r kr_lin}
+fit_kr_lin <- mmrm(
+  formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data,
+  method = "Kenward-Roger-Linear"
+)
+```
+
+This is due to the different parametrization of the unstructured covariance
+matrix, see the
+[Kenward-Roger vignette](kenward.html#parameterization-methods-and-kenward-roger)
+for details.
+
+## Keeping Unobserved Visits
+
+Sometimes not all possible time points are observed in a given data set.
+When using a structured covariance matrix, e.g. with auto-regressive structure,
+then it can be relevant to keep the correct distance between the observed time
+points.
+
+Consider the following example where we have deliberately removed the `VIS3`
+observations from our initial example data set `fev_data` to obtain `sparse_data`.
+We first fit the model where we do not drop the visit level explicitly, using the
+`drop_visit_levels = FALSE` choice. Second we fit the model by default without
+this option.
+
+```{r sparse}
+sparse_data <- fev_data[fev_data$AVISIT != "VIS3", ]
+sparse_result <- mmrm(
+  FEV1 ~ RACE + ar1(AVISIT | USUBJID),
+  data = sparse_data,
+  drop_visit_levels = FALSE
+)
+
+dropped_result <- mmrm(
+  FEV1 ~ RACE + ar1(AVISIT | USUBJID),
+  data = sparse_data
+)
+```
+
+We see that we get a message about the dropped visit level by default.
+Now we can compare the estimated correlation matrices:
+
+```{r sparse_cor}
+cov2cor(VarCorr(sparse_result))
+cov2cor(VarCorr(dropped_result))
+```
+
+We see that when using the default, second result, we just drop the `VIS3` from
+the covariance matrix. As a consequence, we model the correlation between `VIS2`
+and `VIS4` the same as the correlation between `VIS1` and `VIS2`. Hence we get a smaller
+correlation estimate here compared to the first result, which includes `VIS3`
+explicitly.
 
 # Extraction of model features
 
@@ -148,7 +263,7 @@ interested in digging through model output.
 Complete documentation of standard model output methods supported for `mmrm_tmb`
 objects [can be found at the package website.](https://openpharma.github.io/mmrm/main/reference/mmrm_tmb_methods.html)
 
-## Summary extraction
+## Summary
 
 The `summary` method for `mmrm` objects provides easy access to frequently needed
 model components.
@@ -158,7 +273,6 @@ fit <- mmrm(
   formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data
 )
-
 fit_summary <- summary(fit)
 ```
 
@@ -205,9 +319,9 @@ component(fit)
 
 The lower level function which is called by [`mmrm()`](https://openpharma.github.io/mmrm/main/reference/mmrm.html) is [`fit_mmrm()`](https://openpharma.github.io/mmrm/main/reference/fit_mmrm.html). This
 function is exported and can be used directly. It is similar to [`mmrm()`](https://openpharma.github.io/mmrm/main/reference/mmrm.html) but lacks
-some post-processing and support for Satterthwaite d.f. calculations. However, it exposes
-an argument for fine control over optimization which may be needed by some
-users.
+some post-processing and support for Satterthwaite and Kenward-Roger calculations.
+It may be useful for other packages that want to fit the model without
+the adjustment calculations.
 
 ```{r low-level-hmmrmtmb}
 fit_mmrm(
@@ -219,37 +333,21 @@ fit_mmrm(
 )
 ```
 
-For fine control of optimization routine, [`mmrm_control()`](https://openpharma.github.io/mmrm/main/reference/mmrm_control.html)
-is provided. This function allows the user to specify optimization routine with
-`optimizer`, pass arguments to that optimizer with `optimizer_args`, provide a
-list of control parameters with `optimizer_control`, provide a list of starting
-parameter values with `start`, and decide the action to be taken when the
-defined design matrix is singular with `accept_singular`.
-
-```{r low-level-control, eval=FALSE}
-mmrm_control(
-  optimizer = stats::nlminb,
-  optimizer_args = list(upper = Inf, lower = 0),
-  optimizer_control = list(),
-  start = c(0, 1, 1, 0, 1, 0),
-  accept_singular = FALSE
-)
-```
-
 # Hypothesis testing
 
 This package supports estimation of one- and multi-dimensional contrasts
 (t-test and F-test calculation) with the [`df_1d()`](https://openpharma.github.io/mmrm/main/reference/df_1d.html) and
 [`df_md()`](https://openpharma.github.io/mmrm/main/reference/df_md.html) functions.
-Both functions utilize Satterthwaite's method for the calculation of test
-degrees of freedom.
+Both functions utilize the chosen adjustment method from the initial `mmrm` call
+for the calculation of degrees of freedom and (for Kenward-Roger methods) the
+variance estimates for the test-statistics.
 
 ## One-dimensional contrasts
 
 Compute the test of a one-dimensional (vector) contrast for a `mmrm` object with
 Satterthwaite degrees of freedom.
 
-```{r}
+```{r 1d_satterthwaite}
 fit <- mmrm(
   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data
@@ -261,22 +359,42 @@ contrast[3] <- 1
 df_1d(fit, contrast)
 ```
 
-## Multi-dimensional contrasts
+This works similarly when choosing a Kenward-Roger adjustment:
 
-Compute the test of a multi-dimensional (matrix) contrast for a `mmrm` object with
-Satterthwaite degrees of freedom.
-
-```{r}
-fit <- mmrm(
+```{r 1d_kr}
+fit_kr <- mmrm(
   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
-  data = fev_data
+  data = fev_data,
+  method = "Kenward-Roger"
 )
 
+df_1d(fit_kr, contrast)
+```
+
+We see that because this is a one-dimensional contrast, the degrees of freedoms
+are identical for Satterthwaite and Kenward-Roger. However, the standard errors
+are different and therefore the p-values are different.
+
+## Multi-dimensional contrasts
+
+Compute the test of a multi-dimensional (matrix) contrast for the above defined
+`mmrm` object with Satterthwaite degrees of freedom:
+
+```{r md_satterthwaite}
 contrast <- matrix(data = 0, nrow = 2, ncol = length(component(fit, "beta_est")))
 contrast[1, 2] <- contrast[2, 3] <- 1
 
 df_md(fit, contrast)
 ```
+
+And for the Kenward-Roger adjustment:
+
+```{r md_kr}
+df_md(fit_kr, contrast)
+```
+
+We see that for the multi-dimensional contrast we get slightly different
+denominator degrees of freedom for the two adjustment methods.
 
 ## Support for emmeans
 
@@ -284,7 +402,7 @@ This package includes methods that allow `mmrm` objects to be used with the
 `emmeans` package. `emmeans` computes estimated marginal means (also called
 least-square means) for the coefficients of the MMRM.
 
-```{r}
+```{r emmeans}
 fit <- mmrm(
   formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data
@@ -295,7 +413,6 @@ if (require(emmeans)) {
 }
 ```
 
-
 # Acknowledgments
 
 The `mmrm` package is based on previous work internal in Roche, namely
@@ -304,7 +421,6 @@ The work done in the `rbmi` package has been important since it used
 `glmmTMB` for fitting MMRMs.
 
 We would like to thank Ben Bolker from the `glmmTMB` team for multiple
-discussions when we tried to get Satterthwaite degrees of freedom implemented
-with `glmmTMB` (see https://github.com/glmmTMB/glmmTMB/blob/satterthwaite_df/glmmTMB/vignettes/satterthwaite_unstructured_example2.Rmd).
-Also Ben helped significantly with an example showing how to
-use `TMB` for a random effect vector (https://github.com/bbolker/tmb-case-studies/tree/master/vectorMixed).
+discussions when we tried to get the Satterthwaite degrees of freedom
+implemented with `glmmTMB` (see https://github.com/glmmTMB/glmmTMB/blob/satterthwaite_df/glmmTMB/vignettes/satterthwaite_unstructured_example2.Rmd). Also Ben helped us significantly with
+an example showing how to use `TMB` for a random effect vector (https://github.com/bbolker/tmb-case-studies/tree/master/vectorMixed).

@@ -6,7 +6,7 @@
 #' This function, take the call of `time | group / subject`, last element of the covariance term,
 #' extract the corresponding grouping var, time var and subject var.
 #'
-#' @param cov_content (`call`)\cr covariance term
+#' @param cov_content (`call`)\cr covariance term.
 #'
 #' @return Named list with elements:
 #' - `visit_var`: `character` with the visit variable name.
@@ -194,6 +194,7 @@ h_mmrm_tmb_formula_parts <- function(formula) {
 #' @param accept_singular (`flag`)\cr whether below full rank design matrices are reduced
 #'   to full rank `x_matrix` and remaining coefficients will be missing as per
 #'   `x_cols_aliased`. Otherwise the function fails for rank deficient design matrices.
+#' @param drop_visit_levels (`flag`)\cr whether to drop levels for visit variable, if visit variable is a factor.
 #'
 #' @return List of class `mmrm_tmb_data` with elements:
 #' - `full_frame`: `data.frame` with `n` rows containing all variables needed in the model.
@@ -228,7 +229,8 @@ h_mmrm_tmb_data <- function(formula_parts,
                             data,
                             weights,
                             reml,
-                            accept_singular) {
+                            accept_singular,
+                            drop_visit_levels) {
   assert_class(formula_parts, "mmrm_tmb_formula_parts")
   assert_data_frame(data)
   varname <- formula_parts[grepl("_var", names(formula_parts))]
@@ -240,6 +242,7 @@ h_mmrm_tmb_data <- function(formula_parts,
   assert_numeric(weights, len = nrow(data))
   assert_flag(reml)
   assert_flag(accept_singular)
+  assert_flag(drop_visit_levels)
 
   if (is.character(data[[formula_parts$subject_var]])) {
     data[[formula_parts$subject_var]] <- factor(
@@ -247,16 +250,37 @@ h_mmrm_tmb_data <- function(formula_parts,
       levels = stringr::str_sort(unique(data[[formula_parts$subject_var]]), numeric = TRUE)
     )
   }
-  if (!formula_parts$is_spatial) {
-    data_order <- order(data[[formula_parts$subject_var]], data[[formula_parts$visit_var]])
+  data_order <- if (formula_parts$is_spatial) {
+    order(data[[formula_parts$subject_var]])
   } else {
-    data_order <- order(data[[formula_parts$subject_var]])
+    subject_visit_data <- data[, c(formula_parts$subject_var, formula_parts$visit_var)]
+    is_duplicated <- duplicated(subject_visit_data)
+    if (any(is_duplicated)) {
+      stop(
+        "time points have to be unique for each subject, detected following duplicates in data:\n",
+        paste(utils::capture.output(print(subject_visit_data[is_duplicated, ])), collapse = "\n")
+      )
+    }
+    order(data[[formula_parts$subject_var]], data[[formula_parts$visit_var]])
   }
   data <- data[data_order, ]
   weights <- weights[data_order]
-
-  assign("weights", weights, envir = environment(formula_parts$full_formula))
-  full_frame <- droplevels(stats::model.frame(formula_parts$full_formula, data = data, weights = weights))
+  data <- data.frame(data, weights)
+  # weights is always the last column
+  weights_name <- colnames(data)[ncol(data)]
+  full_frame <- eval(
+    bquote(stats::model.frame(formula_parts$full_formula, data = data, weights = .(as.symbol(weights_name))))
+  )
+  full_frame <- droplevels(full_frame, except = formula_parts$visit_var)
+  if (drop_visit_levels && !formula_parts$is_spatial && is.factor(full_frame[[formula_parts$visit_var]])) {
+    old_levels <- levels(full_frame[[formula_parts$visit_var]])
+    full_frame[[formula_parts$visit_var]] <- droplevels(full_frame[[formula_parts$visit_var]])
+    new_levels <- levels(full_frame[[formula_parts$visit_var]])
+    dropped <- setdiff(old_levels, new_levels)
+    if (length(dropped) > 0) {
+      message("In ", formula_parts$visit_var, " there are dropped visits: ", toString(dropped))
+    }
+  }
 
   x_matrix <- stats::model.matrix(formula_parts$model_formula, data = full_frame)
   x_cols_aliased <- stats::setNames(rep(FALSE, ncol(x_matrix)), nm = colnames(x_matrix))
@@ -284,6 +308,7 @@ h_mmrm_tmb_data <- function(formula_parts,
   subject_zero_inds <- which(!duplicated(full_frame[[formula_parts$subject_var]])) - 1L
   subject_n_visits <- c(utils::tail(subject_zero_inds, -1L), nrow(full_frame)) - subject_zero_inds
   assert_true(identical(subject_n_visits, as.integer(table(full_frame[[formula_parts$subject_var]]))))
+  assert_true(all(subject_n_visits > 0))
   if (!is.null(formula_parts$group_var)) {
     assert_factor(data[[formula_parts$group_var]])
     subject_groups <- full_frame[[formula_parts$group_var]][subject_zero_inds + 1L]
@@ -304,6 +329,7 @@ h_mmrm_tmb_data <- function(formula_parts,
     visits_zero_inds <- as.integer(coordinates[[1L]]) - 1L
     coordinates_matrix <- as.matrix(visits_zero_inds, ncol = 1)
     n_visits <- nlevels(coordinates[[1L]])
+    assert_true(all(subject_n_visits <= n_visits))
   }
   structure(
     list(
@@ -552,6 +578,7 @@ h_mmrm_tmb_fit <- function(tmb_object,
 #' so specifies response and covariates as usual, and exactly one special term
 #' defines which covariance structure is used and what are the visit and
 #' subject variables.
+#' Always use only the first optimizer if multiple optimizers are provided.
 #'
 #' @export
 #'
@@ -566,9 +593,13 @@ fit_mmrm <- function(formula,
                      control = mmrm_control()) {
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   assert_class(control, "mmrm_control")
+  assert_list(control$optimizers, min.len = 1)
   assert_numeric(weights, any.missing = FALSE)
   assert_true(all(weights > 0))
-  tmb_data <- h_mmrm_tmb_data(formula_parts, data, weights, reml, accept_singular = control$accept_singular)
+  tmb_data <- h_mmrm_tmb_data(
+    formula_parts, data, weights, reml,
+    accept_singular = control$accept_singular, drop_visit_levels = control$drop_visit_levels
+  )
   tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = control$start, n_groups = tmb_data$n_groups)
 
   tmb_object <- TMB::MakeADFun(
@@ -579,18 +610,19 @@ fit_mmrm <- function(formula,
     silent = TRUE
   )
   h_mmrm_tmb_assert_start(tmb_object)
+  used_optimizer <- control$optimizers[[1]]
   args <- with(
     tmb_object,
     c(
-      list(par, fn, gr, control = control$optimizer_control),
-      control$optimizer_args
+      list(par, fn, gr),
+      attr(used_optimizer, "args")
     )
   )
-  if (identical(control$optimizer, stats::nlminb)) {
+  if (identical(attr(used_optimizer, "use_hessian"), TRUE)) {
     args$hessian <- tmb_object$he
   }
   tmb_opt <- do.call(
-    what = control$optimizer,
+    what = used_optimizer,
     args = args
   )
   # Ensure negative log likelihood is stored in `objective` element of list.

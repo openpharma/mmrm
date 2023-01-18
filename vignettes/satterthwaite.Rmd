@@ -1,0 +1,122 @@
+---
+title: "Details of the Satterthwaite calculations"
+package: mmrm
+bibliography: '`r system.file("REFERENCES.bib", package = "mmrm")`'
+output:
+  rmarkdown::html_document:
+          theme: "spacelab"
+          highlight: "kate"
+          toc: true
+          toc_float: true
+vignette: |
+  %\VignetteIndexEntry{Details of the Satterthwaite calculations}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options:
+  chunk_output_type: console
+  markdown:
+    wrap: 72
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Here we describe the details of the Satterthwaite degrees of freedom
+calculations.
+
+## Introduction
+
+In @Christensen2018 the Satterthwaite degrees of freedom approximation
+based on normal models is well detailed and the computational approach
+for models fitted with the `lme4` package is explained. We follow the
+algorithm and explain the implementation in this `mmrm` package. The
+model definition is the same as in [Details of the model fitting in
+`mmrm`](algorithm.html).
+
+We are also using the same notation as in the [Details of the
+Kenward-Roger calculations](kenward.html). In particular, we assume we
+have a contrast matrix $C \in \mathbb{R}^{c\times p}$ with which we want
+to test the linear hypothesis $C\beta = 0$. Further, $W(\hat\theta)$ is
+the inverse of the Hessian matrix of the log-likelihood function of
+$\theta$ evaluated at the estimate $\hat\theta$, i.e. the observed
+Fisher Information matrix as a consistent estimator of the
+variance-covariance matrix of $\hat\theta$.
+$\Phi(\theta) = \left\{X^\top \Omega(\theta)^{-1} X\right\} ^{-1}$ is
+the asymptotic covariance matrix of $\hat\beta$.
+
+## One-dimensional contrast
+
+We start with the case of a one-dimensional contrast, i.e. $c = 1$. The
+Satterthwaite adjusted degrees of freedom for the corresponding t-test
+are then defined as:
+\[
+\hat\nu(\hat\theta) = \frac{2f(\hat\theta)^2}{f{'}(\hat\theta)^\top W(\hat\theta) f{'}(\hat\theta)}
+\]
+where $f(\hat\theta) = C \Phi(\hat\theta) C^\top$ is the scalar in the
+numerator and we can identify it as the variance estimate for the
+estimated scalar contrast $C\hat\beta$. The computational challenge is
+essentially to evaluate the denominator in the expression for
+$\hat\nu(\hat\theta)$, which amounts to computing the $k$-dimensional
+gradient $f{'}(\hat\theta)$ of $f(\theta)$ (for the given contrast
+matrix $C$) at the estimate $\hat\theta$. We already have the
+variance-covariance matrix $W(\hat\theta)$ of the variance parameter
+vector $\theta$ from the model fitting.
+
+### Jacobian approach
+
+However, if we proceeded in a naive way here, we would need to recompute
+the denominator again for every chosen $C$. This would be slow, e.g.
+when changing $C$ every time we want to test a single coefficient within
+$\beta$. It is better to instead evaluate the gradient of the matrix
+valued function $\Phi(\theta)$, which is therefore the Jacobian, with
+regards to $\theta$, $\mathcal{J}(\theta) = \nabla_\theta \Phi(\theta)$.
+Imagine $\mathcal{J}(\theta)$ as the the 3-dimensional array with $k$
+faces of size $p\times p$. Left and right multiplying each face by $C$
+and $C^\top$ respectively leads to the $k$-dimensional gradient
+$f'(\theta) = C \mathcal{J}(\theta) C^\top$. Therefore for each
+new contrast $C$ we just need to perform simple matrix multiplications,
+which is fast (see `h_gradient()` where this is implemented). Thus,
+having computed the estimated Jacobian $\mathcal{J}(\hat\theta)$,
+it is only a matter of putting the different quantities together to
+compute the estimate of the denominator degrees of freedom,
+$\hat\nu(\hat\theta)$.
+
+### Jacobian calculation
+
+Currently, we evaluate the gradient of $\Phi(\theta)$ (which is created
+as an R function using `h_covbeta_fun()`) with regards to $\theta$
+evaluated at $\hat\theta$, i.e. the Jacobian $\mathcal{J}(\hat\theta)$,
+numerically using the `jacobian` function from the `numDeriv` package
+and organize it as a list (of length $k$ where $k$ is the dimension of
+the variance parameter vector $\theta$) of $c\times p$ matrices where
+$p$ is the dimension of $\beta$. This is implemented in function
+`h_jac_list()`.
+
+## Multi-dimensional contrast
+
+When $c > 1$ we are testing multiple contrasts at once. Here an F-statistic
+\[
+F = \frac{1}{c} (C\hat\beta)^\top  (C \Phi(\hat\theta) C^\top)^{-1} C^\top (C\hat\beta)
+\]
+is calculated, and we are interested in estimating an appropriate denominator degrees of freedom for $F$,
+while assuming $c$ are the numerator degrees of freedom. Note that only in special cases,
+such as orthogonal or balanced designs, the F distribution will be exact under the
+null hypothesis. In general, it is an approximation.
+
+The calculations are described in detail in @Christensen2018, and we don't repeat
+them here in detail. The implementation is in `h_df_md_sat()` and starts with an
+eigen-decomposition of the asymptotic variance-covariance matrix of the contrast estimate,
+i.e. $C \Phi(\hat\theta) C^\top$. The F-statistic can be rewritten as a sum
+of $t^2$ statistics based on these eigen-values. The corresponding random variables
+are independent (by design because they are derived from the orthogonal eigen-vectors) and
+essentially have one degree of freedom each. Hence, each of the $t$ statistics is
+treated as above in the one-dimensional contrast case, i.e. the denominator degree
+of freedom is calculated for each of them. Finally, using properties of the F
+distribution's expectation, the denominator degree of freedom for the whole F statistic
+is derived.
+
+# References

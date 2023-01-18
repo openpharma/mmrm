@@ -7,7 +7,7 @@
 h_mmrm_tmb_extract_terms(cov_content)
 }
 \arguments{
-\item{cov_content}{(\code{call})\cr covariance term}
+\item{cov_content}{(\code{call})\cr covariance term.}
 }
 \value{
 Named list with elements:

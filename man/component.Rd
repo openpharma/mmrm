@@ -8,9 +8,9 @@ component(
   object,
   name = c("cov_type", "n_theta", "n_subjects", "n_timepoints", "n_obs", "beta_vcov",
     "beta_vcov_complete", "varcor", "formula", "dataset", "n_groups", "reml",
-    "convergence", "evaluations", "conv_message", "call", "theta_est", "beta_est",
-    "beta_est_complete", "beta_aliased", "x_matrix", "y_vector", "neg_log_lik",
-    "jac_list", "theta_vcov")
+    "convergence", "evaluations", "method", "conv_message", "call", "theta_est",
+    "beta_est", "beta_est_complete", "beta_aliased", "x_matrix", "y_vector",
+    "neg_log_lik", "jac_list", "theta_vcov")
 )
 }
 \arguments{
@@ -40,8 +40,12 @@ Available \code{component()} names are as follows:
 \item \code{convergence}: convergence code from optimizer.
 \item \code{conv_message}: message accompanying the convergence code.
 \item \code{evaluations}: number of function evaluations for optimization.
+\item \code{method}: Adjustment method which was used (for \code{mmrm} objects),
+otherwise \code{NULL} (for \code{mmrm_tmb} objects).
 \item \code{beta_vcov}: estimated variance-covariance matrix of coefficients
-(excluding aliased coefficients).
+(excluding aliased coefficients). For Kenward-Roger
+methods, the adjusted covariance matrix is returned (to still obtain the
+unadjusted covariance matrix use \code{object$beta_vcov}).
 \item \code{beta_vcov_complete}: estimated variance-covariance matrix including
 aliased coefficients with entries set to \code{NA}.
 \item \code{varcor}: estimated covariance matrix for residuals. If there are multiple

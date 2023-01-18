@@ -19,6 +19,6 @@ of the same dimensions as the covariance matrix. The values are the derivatives
 with regards to this variance parameter.
 }
 \description{
-Obtain List of Jacobian Matrix Entries for Covariance Matrix
+Obtain the Jacobian matrices given the covariance function and variance parameters.
 }
 \keyword{internal}

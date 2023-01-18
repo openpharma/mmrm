@@ -4,9 +4,7 @@
 \alias{h_quad_form}
 \alias{h_quad_form_vec}
 \alias{h_quad_form_mat}
-\title{Quadratic Form Calculations
-These helpers are mainly for easier readability and slightly better efficiency
-of the quadratic forms used in the Satterthwaite calculations.}
+\title{Quadratic Form Calculations}
 \usage{
 h_quad_form_vec(vec, center)
 
@@ -23,7 +21,6 @@ h_quad_form_mat(mat, center)
 in \code{center}.}
 }
 \description{
-Quadratic Form Calculations
 These helpers are mainly for easier readability and slightly better efficiency
 of the quadratic forms used in the Satterthwaite calculations.
 }

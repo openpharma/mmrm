@@ -2,7 +2,7 @@
 
 ## overall ----
 
-test_that("component works as expected", {
+test_that("component works as expected for mmrm_tmb objects", {
   object_mmrm_tmb <- get_mmrm_tmb()
 
   expect_equal(
@@ -10,7 +10,7 @@ test_that("component works as expected", {
     c(
       "cov_type", "n_theta", "n_subjects", "n_timepoints",
       "n_obs", "beta_vcov", "beta_vcov_complete", "varcor", "formula", "dataset",
-      "n_groups", "reml", "convergence", "evaluations",
+      "n_groups", "reml", "convergence", "evaluations", "method",
       "conv_message", "call", "theta_est",
       "beta_est", "beta_est_complete", "beta_aliased",
       "x_matrix", "y_vector", "neg_log_lik",
@@ -25,10 +25,17 @@ test_that("component works as expected", {
   )
 
   expect_list(test_list, len = 3)
-
   expect_named(test_list, c("n_theta", "x_matrix", "varcor"))
-
   expect_identical(component(object_mmrm_tmb, "varcor"), component(object_mmrm_tmb)$varcor)
+  expect_identical(component(object_mmrm_tmb, "beta_vcov"), object_mmrm_tmb$beta_vcov)
+  expect_null(component(object_mmrm_tmb, "method"))
+})
+
+## beta_vcov ----
+
+test_that("component returns adjusted beta cov matrix for Kenward-Roger adjusted mmrm", {
+  object_mmrm_kr <- get_mmrm_kr()
+  expect_identical(component(object_mmrm_kr, "beta_vcov"), object_mmrm_kr$beta_vcov_adj)
 })
 
 ## best_est_complete ----

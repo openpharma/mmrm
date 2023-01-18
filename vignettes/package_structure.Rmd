@@ -27,7 +27,7 @@ To make it easier for new developers to join, this documentation is created.
 ## data
 
 The `data/` folder is where `mmrm` internal data is stored.
-See [documentation](../reference/fev_data.html) and [introduction](introduction.html#common-usage) for details.
+See the [`fev_data` documentation](https://openpharma.github.io/mmrm/main/reference/fev_data.html) and the [introduction vignette](introduction.html#common-usage) for details.
 
 ## design
 
@@ -62,7 +62,7 @@ Please do not edit any file in this folder otherwise you may run into issues.
 ## R
 
 This folder contains all the source code written in R, just like every other R packages.
-Please refer to [documentation page](../reference/index.html) for details.
+Please refer to the [documentation page](https://openpharma.github.io/mmrm/main/reference/) for details.
 
 ## src
 

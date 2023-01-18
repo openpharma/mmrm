@@ -2,7 +2,7 @@
 #define TESTTHAT_WRAP_H
 #include <testthat.h>
 #include <limits>
-#include "tmb_includes.h"
+#include "utils.h"
 
 // Expect equal: Here use a default epsilon which gives around 1e-4 on
 // my computer here.
