@@ -391,8 +391,8 @@ mmrm <- function(formula,
   if (identical(fit$method, "Satterthwaite")) {
     covbeta_fun <- h_covbeta_fun(fit)
     fit$jac_list <- h_jac_list(covbeta_fun, fit$theta_est)
-  } 
-  
+  }
+
   if (control$cov %in% c("Kenward-Roger", "Kenward-Roger-Linear")) {
     fit$kr_comp <- h_get_kr_comp(fit$tmb_data, fit$theta_est)
     fit$beta_vcov_adj <- h_var_adj(

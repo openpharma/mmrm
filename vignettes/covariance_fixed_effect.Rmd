@@ -32,7 +32,7 @@ Here we describe the covariance matrix for fixed effects.
 To estimate the covariance matrix of fixed effects, there are many ways.
 In `mmrm` package, we implemented asymptotic, empirical, Jackknife and Kenward-Roger methods.
 For simplicity, the following derivation are all for unweighted mmrm.
-For weighted mmrm, we can follow the [details of weighted leaset square estimator](https://openpharma.github.io/mmrm/main/articles/algorithm.html#weighted-least-squares-estimator).
+For weighted mmrm, we can follow the [details of weighted least square estimator](https://openpharma.github.io/mmrm/main/articles/algorithm.html#weighted-least-squares-estimator).
 
 ## Asymptotic Covariance
 
@@ -76,7 +76,7 @@ where
   L_{i}L_{i}^\top = W_{i}
 \]
 and
-\[H_{ii} = X_i(X^\topX)^{-1}X_i^\top\].
+\[H_{ii} = X_i(X^\top X)^{-1}X_i^\top\].
 
 
 ## Kenward-Roger Covariance

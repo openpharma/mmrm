@@ -72,7 +72,9 @@ test_that("Jackknife works as expected", {
   formula <- FEV1 ~ ARMCD + ar1(AVISIT | USUBJID)
   data_full <- fev_data[complete.cases(fev_data), ]
   data_full$USUBJID <- droplevels(data_full$USUBJID)
-  ids <- lapply(levels(data_full$USUBJID), function(x) {which(data_full$USUBJID == x)})
+  ids <- lapply(levels(data_full$USUBJID), function(x) {
+    which(data_full$USUBJID == x)
+  })
   betas <- lapply(ids, function(i) {
     fit <- mmrm(formula = formula, data = data_full[-i, ])
     fit$beta_est
