@@ -196,9 +196,9 @@ refit_multiple_optimizers <- function(fit,
 #' However, please be cautious because this can lead to convergence failure
 #' when using an unstructured covariance matrix and there are no observations
 #' at the missing visits.
-#' `method` and `cov` arguments will decide the covariance matrix and degree of freedom calculations.
+#' The `method` and `cov` arguments will decide the covariance matrix and degree of freedom calculations.
 #' If `method` is "Kenward-Roger" then only "Kenward-Roger" or "Kenward-Roger-Linear" are allowed for `cov`.
-#' `cov` can accept a special string "Default" to use the default covariance method depending on the `method`
+#' The `cov` argument can accept a special string "Default" to use the default covariance method depending on the `method`
 #' used for degree of freedom, see the following table:
 #' | `method`  |  Default `cov`|
 #' |-----------|----------|
