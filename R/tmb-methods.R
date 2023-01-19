@@ -223,9 +223,9 @@ print.mmrm_tmb <- function(x,
 #' - \insertRef{galecki2013linear}{mmrm}
 residuals.mmrm_tmb <- function(object, type = c("response", "pearson", "normalized"), ...) {
   type <- match.arg(type)
-  resids_unscaled <- component(object, "y_vector") - fitted(object)
+  resids_unscaled <- component(object, "y_vector") - unname(fitted(object))
   if (type == "response") {
-    return(unname(resids_unscaled))
+    return(resids_unscaled)
   } else {
     if (object$formula_parts$is_spatial) {
       stop("Only 'response' residuals are available for models with spatial covariance structures.")
@@ -251,17 +251,17 @@ residuals.mmrm_tmb <- function(object, type = c("response", "pearson", "normaliz
 h_residuals_pearson <- function(object, resids_unscaled) {
   visits <- as.numeric(object$tmb_data$full_frame[[object$formula_parts$visit_var]])
   if (component(object, "n_groups") == 1) {
-    visit_sigmas <- sqrt(diag(object$cov))
+    visit_sigmas <- sqrt(diag(object$cov, names = FALSE))
     resids <- resids_unscaled / visit_sigmas[visits] * sqrt(object$tmb_data$weights_vector)
   } else {
-    grp_visit_sigmas <- lapply(object$cov, function(x) sqrt(diag(x)))
+    grp_visit_sigmas <- lapply(object$cov, function(x) sqrt(diag(x, names = FALSE)))
     subject_grps <- object$tmb_data$full_frame[[object$formula_parts$group_var]]
     nobs <- nrow(object$tmb_data$full_frame)
     resids <- sapply(1:nobs, function(x) {
       resids_unscaled[x] / grp_visit_sigmas[[subject_grps[x]]][visits[x]] * sqrt(object$tmb_data$weights_vector[x])
     })
   }
-  return(unname(resids))
+  return(resids)
 }
 
 #' Calculate normalized residuals
@@ -275,15 +275,17 @@ h_residuals_pearson <- function(object, resids_unscaled) {
 #'
 #' @keywords internal
 h_residuals_normalized <- function(object, resids_unscaled) {
-  resid_df <- data.frame(subject = object$tmb_data$full_frame[[object$formula_parts$subject_var]],
-                         time = as.numeric(object$tmb_data$full_frame[[object$formula_parts$visit_var]]),
-                         residual = resids_unscaled,
-                         weights = object$tmb_data$weights_vector)
+  resid_df <- data.frame(
+    subject = object$tmb_data$full_frame[[object$formula_parts$subject_var]],
+    time = as.numeric(object$tmb_data$full_frame[[object$formula_parts$visit_var]]),
+    residual = resids_unscaled,
+    weights = object$tmb_data$weights_vector
+  )
 
   subject_list <- split(resid_df, resid_df$subject)
 
-  if (component(object, "n_groups") == 1) {
-    lower_chol_list <- lapply(seq_along(subject_list), function(x) {
+  lower_chol_list <- if (component(object, "n_groups") == 1) {
+    lapply(seq_along(subject_list), function(x) {
 
       weighted_cov <- object$cov[subject_list[[x]]$time, subject_list[[x]]$time] /
         sqrt(tcrossprod(matrix(subject_list[[x]]$weights, ncol = 1)))
@@ -291,10 +293,12 @@ h_residuals_normalized <- function(object, resids_unscaled) {
       solve(t(chol(weighted_cov)))
     })
   } else {
-    groups <- data.frame(subject = object$tmb_data$full_frame[[object$formula_parts$subject_var]],
-                         group = object$tmb_data$full_frame[[object$formula_parts$group_var]])
+    groups <- data.frame(
+      subject = object$tmb_data$full_frame[[object$formula_parts$subject_var]],
+      group = object$tmb_data$full_frame[[object$formula_parts$group_var]]
+    )
     groups <- groups[!duplicated(groups), ]
-    lower_chol_list <- lapply(seq_along(subject_list), function(x) {
+    lapply(seq_along(subject_list), function(x) {
       this_cov <- object$cov[[groups$group[x]]]
 
       weighted_cov <- this_cov[subject_list[[x]]$time, subject_list[[x]]$time] /
@@ -303,8 +307,7 @@ h_residuals_normalized <- function(object, resids_unscaled) {
       solve(t(chol(weighted_cov)))
     })
   }
-  norm_resids <- lapply(seq_along(subject_list), function(x) {
+  unlist(lapply(seq_along(subject_list), function(x) {
     lower_chol_list[[x]] %*% matrix(subject_list[[x]]$residual, ncol = 1)
-  })
-  return(unname(unlist(norm_resids)))
+  }))
 }
