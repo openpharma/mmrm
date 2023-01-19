@@ -249,6 +249,8 @@ residuals.mmrm_tmb <- function(object, type = c("response", "pearson", "normaliz
 #'
 #' @keywords internal
 h_residuals_pearson <- function(object, resids_unscaled) {
+  assert_class(object, "mmrm_tmb")
+  assert_numeric(resids_unscaled)
   visits <- as.numeric(object$tmb_data$full_frame[[object$formula_parts$visit_var]])
   if (component(object, "n_groups") == 1) {
     visit_sigmas <- sqrt(diag(object$cov, names = FALSE))
@@ -275,6 +277,9 @@ h_residuals_pearson <- function(object, resids_unscaled) {
 #'
 #' @keywords internal
 h_residuals_normalized <- function(object, resids_unscaled) {
+  assert_class(object, "mmrm_tmb")
+  assert_numeric(resids_unscaled)
+
   resid_df <- data.frame(
     subject = object$tmb_data$full_frame[[object$formula_parts$subject_var]],
     time = as.numeric(object$tmb_data$full_frame[[object$formula_parts$visit_var]]),
