@@ -225,7 +225,7 @@ residuals.mmrm_tmb <- function(object, type = c("response", "pearson", "normaliz
   type <- match.arg(type)
   resids_unscaled <- component(object, "y_vector") - unname(fitted(object))
   if (type == "response") {
-    return(resids_unscaled)
+    resids_unscaled
   } else {
     if (object$formula_parts$is_spatial) {
       stop("Only 'response' residuals are available for models with spatial covariance structures.")
@@ -254,16 +254,15 @@ h_residuals_pearson <- function(object, resids_unscaled) {
   visits <- as.numeric(object$tmb_data$full_frame[[object$formula_parts$visit_var]])
   if (component(object, "n_groups") == 1) {
     visit_sigmas <- sqrt(diag(object$cov, names = FALSE))
-    resids <- resids_unscaled / visit_sigmas[visits] * sqrt(object$tmb_data$weights_vector)
+    resids_unscaled / visit_sigmas[visits] * sqrt(object$tmb_data$weights_vector)
   } else {
     grp_visit_sigmas <- lapply(object$cov, function(x) sqrt(diag(x, names = FALSE)))
     subject_grps <- object$tmb_data$full_frame[[object$formula_parts$group_var]]
     nobs <- nrow(object$tmb_data$full_frame)
-    resids <- sapply(1:nobs, function(x) {
+    sapply(1:nobs, function(x) {
       resids_unscaled[x] / grp_visit_sigmas[[subject_grps[x]]][visits[x]] * sqrt(object$tmb_data$weights_vector[x])
     })
   }
-  return(resids)
 }
 
 #' Calculate normalized residuals
