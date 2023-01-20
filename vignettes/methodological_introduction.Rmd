@@ -2,7 +2,7 @@
 title: "What are MMRMs? A brief introduction"
 package: mmrm
 #bibliography: '`r system.file("REFERENCES.bib", package = "mmrm")`'
-bibliography: references.bib # temporary bibliography
+#bibliography: references.bib # temporary bibliography
 csl: jrss_style.csl
 output:
   rmarkdown::html_document:
@@ -23,18 +23,18 @@ editor_options:
 ## Abstract
 
 Mixed models for repeated measures (MMRMs) are frequently used in the analysis of data from clinical trials. 
-They are specifically suited to model continuous variables that were repeatedly measured at discrete time points (or defined time-windows).
+They are specifically suited to model continuous variables that were repeatedly measured at discrete time points (or within defined time-windows).
 In a clinical trial, these time points are typically visits according to a schedule that is pre-defined in the trial protocol.
 The distinguishing feature of MMRMs, compared to other implementations of linear mixed models, is that subject-specific random effects (which are not of direct interest for estimation and inference) are considered as residual effects, i.e. they are part of the error correlation matrix.
-This vignette provides a brief introduction to MMRMs from a methodological perspective<!--, largely irrespective of issues related to their technical implementation-->. 
-MMRMs are described as an extension to basic linear mixed-effects model.
+This vignette provides a brief methodological introduction to MMRMs.<!--, largely irrespective of issues related to their technical implementation-->. 
+MMRMs are described as an extension to a basic linear mixed-effects model.
 <!-- TO DO: They are also contrasted to other types of statistical models for longitudinal data, such as linear mixed effects models with random intercepts and/or slopes) and models based on generalized estimating equations (GEEs). --> 
-The aim of the vignette is to provide a basic orientation and guide for applied statisticians working in the field of clinical trials regarding theoretical underpinnings of MMRMs. In the descriptions of the models below, we generally follow @Pinheiro2000 and @Mallinckrodt2017.
+The aim is to provide a basic orientation and guide for applied statisticians working in the field of clinical trials regarding theoretical underpinnings of MMRMs. In the descriptions of the models below, we generally follow  Pinheiro and Bates (2000) and Mallinckrodt and Lipkovich (2017) <!-- @Pinheiro2000 and @Mallinckrodt2017-->.
 
 
 ## The basic linear mixed-effects model
 
-@Laird1982 introduced the basic linear mixed-effects model for a single level of grouping to be any model that expresses an $n_i$-dimensional response (column) vector $y_i$ for the $i$th subject (or, more generally, group or unit) as
+Laird and Ware (1982) <!-- @Laird1982 --> introduced the basic linear mixed-effects model for a single level of grouping to be any model that expresses an $n_i$-dimensional response (column) vector $y_i$ for the $i$th subject (or, more generally, group or unit) as
 
 $$
  y_i = X_i \beta + Z_i b_i + \epsilon_i, \quad i=1,\ldots,M ,\\
@@ -50,32 +50,33 @@ The random effects $b_i$ describe the shift from the mean of the linear predicto
 non-zero mean for a term in the random effects must be expressed as part
 of the fixed-effects terms. Therefore, the columns of $Z_i$ are usually a (small) subset of the columns of $X_i$.
 
-Although the basic linear mixed effects model allows considerable flexibility, even in the specification of the random-effects structure, it still restricts within-group errors to be independent, identically distributed random variables with mean zero and constant variance. These assumptions may often be seen as too restrictive (unrealistic) for applications. For example, in case of repeated measurements of subjects over time in clinical trials, observations are not independent and within-subject correlation needs to be accounted for by the model.
+Mixed models are called ''mixed'' because they consider both fixed and random effects and thus allow considerable modeling flexibility. This is the case even for the basic formulation described above. However, it still restricts within-group errors to be independent, identically distributed random variables with mean of zero and constant variance. These assumptions may often be seen as too restrictive (unrealistic) for applications. For example, in the case of clinical trials with  repeated measurements of subjects over time, observations are not independent and within-subject correlation needs to be accounted for by the model.
 
 
 ## Extending the basic linear mixed-effects model
 
-The basic linear mixed-effects model can be extended to incorporate within-subject errors that are heteroscedastic (i.e.\ have unequal variances) and/ or are correlated.
-For this purpose, we express the within-subject errors as:
+The basic linear mixed-effects model can be extended in order to incorporate within-subject errors that are heteroscedastic (i.e.\ have unequal variances) and/ or are correlated.
+For this purpose, we can express the within-subject errors as:
 $$
   \epsilon_i \sim \mathcal{N}(0,\sigma^2\Delta_i), \quad i=1,\ldots,M,
 $$
-where the $\Delta_i$ are positive-definite matrices parameterized by a fixed, generally
-small, set of parameters $\lambda$. As in the basic model, the within-group errors $\epsilon_i$ are assumed to be independent for different $i$ and independent of the random effects $b_i$.
+where the $\Delta_i$ are positive-definite matrices parameterized by a fixed, generally small set of parameters <!-- $\lambda$-->. As in the basic model, the within-group errors $\epsilon_i$ are assumed to be independent for different $i$ and independent of the random effects $b_i$.
 
 The variance-covariance matrix of the response vector $y_i$,
 $$ 
   \text{Var}(y_i) = \Sigma_i = \left( Z_i \Psi Z_{i}^{T} + \Delta_i \right),  
 $$
 comprises a random-effects component, given by $Z_i \Psi Z_{i}^{T}$, and a within-subject component, given by $\Delta_i$. 
-There will generally be a "competition" and trade-off between the complexities of the two components, and care must be exercised to prevent nonidentifiability, or near nonidentifyability, of the parameters.
+When fitting such models, there will generally be a "competition" and trade-off between the complexities of the two components, and care must be exercised to prevent nonidentifiability, or near nonidentifyability, of the parameters. This is one of the reasons why it can be advantageous in practice to use only one of these components as long as it still allows to capture all relevant sources of variability. In longitudinal studies with only one level of grouping, the within-subject component is particularly important to be considered in order to account for within-subject correlation, whereas an additional random-effects component is often not strictly needed.
+
+Of note, in the literature, the random-effects component and the within-subject component are sometimes also referred to as $R$ and $G$, or as $R$-side and $R$-side random effects (Cnaan et al. (1997), Littell et al. (2000)).<!--(@Cnaan1997, @Littell2000).-->
 
 ## The MMRM as a special case
 
-In a clinical trial setting, one often chooses to omit the random effects in the model to account for dependencies and to use the within-group component $\Delta_i$ to directly model the variance-covariance structure of the response. This yields the MMRM:
+In a clinical trial setting, one often chooses to directly model the variance-covariance structure of the response, i.e. to account for within-subject dependencies using the within-group component $\Delta_i$, and can omit the random effects component ($Z_i b_i$). This yields the MMRM with:
 
 $$
-     y_i = X_i\beta + \epsilon_i, \quad \epsilon_i \sim \mathcal{N}(0,\sigma^2\Delta_i), \quad i=1,\ldots,M,
+     y_i = X_i\beta + \epsilon_i, \quad \epsilon_i \sim \mathcal{N}(0,\sigma^2\Delta_i), \quad i=1,\ldots,M.
 $$
 The $\Delta_i$ matrices can be decomposed and be represented by the product of a variance structure component and a correlation structure component,
 
@@ -90,37 +91,52 @@ $$
 $$
 so that $V_i$ describes the variance and $C_i$ describes the correlation of the within-subject errors $\epsilon_i$.
 This decomposition is appealing both theoretically and computationally, as it allows to model and to estimate the two structures separately and to combine them in a flexible manner.
-The `mmrm` package supports a wide range of correlation structures and also makes use of the decomposition<!-- add link / note: differences in notation -->.
-
-When modeling longitudinal responses in a clinical trial with multiple follow-up visits, the linear predictor $X_i\beta$ typically considers fixed effects of baseline values, treatment and visit, as well as interactions between treatment and visit, and possibly between baseline and visit.
 
 
+When modeling longitudinal responses in a clinical trial with multiple follow-up visits, the linear predictor $X_i\beta$ typically considers fixed effects of baseline values, treatment and visit, as well as interactions between treatment and visit, and possibly between baseline and visit. 
+Commonly the fixed effects are of most interest and the correlation structure $\sigma^2\Delta_i$ can be viewed as a nuisance quantity. However, it is important to model it carefully, since it affects validity of the estimated variance of $\beta$. The `mmrm`-package supports a wide range of correlation structures and also makes use of the decomposition<!-- add cross-vignette link / note: differences in notation -->.
 
+
+
+
+## Missing data
+
+Mixed models can accommodate unbalanced data and use all available observations and subjects in the analysis. Inferences are valid under the assumption that missing observations are independent of unobserved data, but may be dependent on observed data. This assumption that is often seen as reasonable and is called "missing at random"-assumption.
+By contrast, some imputation methods to handle missing data and modeling alternatives, such as the last-observation carried forward-approach or models based on generalized estimating equations, require stricter assumptions on missingness mechanisms  (Mallinckrodt et al. (2008), Fitzmaurice (2016)). <!-- (@Mallinckrodt2008, @Fitzmaurice2016).-->
+
+
+<!--
 ## Further reading
-
 Various authors have provided introductory publications or made methodological contributions in the context of MMRMs.
-
-See 
-@Cnaan1997 for a tutorial,
-
-@Mallinckrodt2008 for a review.
-
+-->
 
 
 <!---
 Potential additions:
 * Likelihood 
-* Estimation
+* Estimation process
 * Correlation structures
 * Missing values
 * Contrast to RI&S models
-* Contrast to GEE models (incl. assumption on missingness)
+* Contrast to GEE models 
 * Further reading
 -->
 
 ## References
 
+Cnaan, A., Laird, N. M. and Slasor, P. (1997) Using the general linear mixed model to analyse unbalanced repeated measures and longitudinal data. Stat Med, 16, 2349–2380.
 
+Fitzmaurice, G. M. (2016) Generalized estimating equations. In Wiley Statsref: Statistics Reference Online, pp. 1–4. John Wiley & Sons, Ltd.
+
+Laird, N. M. and Ware, J. H. (1982) Random-effects models for longitudinal data. Biometrics, 38, 963–974.
+
+Littell, R. C., Pendergast, J. and Natarajan, R. (2000) Modelling covariance structure in the analysis of repeated measures data. Stat Med, 19, 1793–1819.
+
+Mallinckrodt, C. and Lipkovich, I. (2017) Analyzing Longitudinal Clinical Trial Data. A Practical Guide. Chapman & Hall/ CRC Biostatistics Series.
+
+Mallinckrodt, C. H., Lane, P. W., Schnell, D., et al. (2008) Recommendations for the Primary Analysis of Continuous Endpoints in Longitudinal Clinical Trials. Drug Inf J, 42, 303–319.
+
+Pinheiro, J. and Bates, D. M. (2000) Mixed-Effects Models in S and S-PLUS. Statistics and computing. Springer (Statistics and Computing).
 
 
 
