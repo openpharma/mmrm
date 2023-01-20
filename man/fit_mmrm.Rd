@@ -4,7 +4,14 @@
 \alias{fit_mmrm}
 \title{Low-Level Fitting Function for MMRM}
 \usage{
-fit_mmrm(formula, data, weights, reml = TRUE, control = mmrm_control())
+fit_mmrm(
+  formula,
+  data,
+  weights,
+  covariance = as.cov_struct(formula, warn_partial = FALSE),
+  reml = TRUE,
+  control = mmrm_control()
+)
 }
 \arguments{
 \item{formula}{(\code{formula})\cr model formula with exactly one special term

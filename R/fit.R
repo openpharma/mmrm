@@ -30,9 +30,17 @@
 fit_single_optimizer <- function(formula,
                                  data,
                                  weights,
+                                 covariance = as.cov_struct(
+                                   formula,
+                                   warn_partial = FALSE
+                                 ),
                                  reml = TRUE,
                                  ...,
                                  control = mmrm_control(...)) {
+
+  covariance <- as.cov_struct(covariance)
+  formula <- drop_covariance_terms(formula)
+
   assert_formula(formula)
   assert_data_frame(data)
   assert_vector(weights)
@@ -44,6 +52,7 @@ fit_single_optimizer <- function(formula,
       formula = formula,
       data = data,
       weights = weights,
+      covariance = covariance,
       reml = reml,
       control = control
     ),
@@ -315,9 +324,13 @@ mmrm_control <- function(n_cores = 1L,
 mmrm <- function(formula,
                  data,
                  weights = NULL,
+                 covariance = as.cov_struct(formula, warn_partial = FALSE),
                  reml = TRUE,
                  control = mmrm_control(...),
                  ...) {
+  covariance <- as.cov_struct(covariance)
+  formula <- drop_covariance_terms(formula)
+
   assert_false(!missing(control) && !missing(...))
   assert_class(control, "mmrm_control")
   assert_list(control$optimizers, min.len = 1)
@@ -336,9 +349,11 @@ mmrm <- function(formula,
     formula = formula,
     data = data,
     weights = weights,
+    covariance = covariance,
     reml = reml,
     control = control
   )
+
   if (!attr(fit, "converged")) {
     use_multiple <- length(control$optimizers) > 1L
     if (use_multiple) {

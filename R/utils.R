@@ -113,7 +113,7 @@ free_cores <- function() {
 #' abbreviation for covariance structures
 #' ## Common Covariance Structures
 #'
-#' | **Structure**     | **Description**                       | **Parameters**      | **\eqn{(i, j)} element**         |
+#' | **Structure** | **Description**                           | **Parameters**      | **\eqn{(i, j)} element**         |
 #' | ------------- |-------------------------------------------|:---------------|----------------------------------|
 #' | ad            | Ante-dependence                           | \eqn{m}        | \eqn{\sigma^{2}\prod_{k=i}^{j-1}\rho_{k}} |
 #' | adh           | Heterogeneous ante-dependence             | \eqn{2m-1}     | \eqn{\sigma_{i}\sigma_{j}\prod_{k=i}^{j-1}\rho_{k}} |
@@ -145,6 +145,7 @@ NULL
 #' @describeIn covariance_types non-spatial covariance structure
 #' @format NULL
 cov_type <- c("us", "toep", "toeph", "ar1", "ar1h", "ad", "adh", "cs", "csh")
+
 #' @describeIn covariance_types spatial covariance structure
 #' @format NULL
 cov_type_spatial <- c("sp_exp")
