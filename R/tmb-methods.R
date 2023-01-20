@@ -252,17 +252,21 @@ h_residuals_pearson <- function(object, resids_unscaled) {
   assert_class(object, "mmrm_tmb")
   assert_numeric(resids_unscaled)
   visits <- as.numeric(object$tmb_data$full_frame[[object$formula_parts$visit_var]])
-  if (component(object, "n_groups") == 1) {
-    visit_sigmas <- sqrt(diag(object$cov, names = FALSE))
-    resids_unscaled / visit_sigmas[visits] * sqrt(object$tmb_data$weights_vector)
+  cov_list <- if (component(object, "n_groups") == 1) {
+    list(object$cov)
   } else {
-    grp_visit_sigmas <- lapply(object$cov, function(x) sqrt(diag(x, names = FALSE)))
-    subject_grps <- object$tmb_data$full_frame[[object$formula_parts$group_var]]
-    nobs <- nrow(object$tmb_data$full_frame)
-    sapply(1:nobs, function(x) {
-      resids_unscaled[x] / grp_visit_sigmas[[subject_grps[x]]][visits[x]] * sqrt(object$tmb_data$weights_vector[x])
-    })
+    object$cov
   }
+  visit_sigmas <- lapply(cov_list, function(x) sqrt(diag(x, names = FALSE)))
+  nobs <- nrow(object$tmb_data$full_frame)
+  subject_grps <- if (component(object, "n_groups") == 1) {
+    rep(1, times = nobs)
+  } else {
+    object$tmb_data$full_frame[[object$formula_parts$group_var]]
+  }
+  sapply(1:nobs, function(x) {
+    resids_unscaled[x] / visit_sigmas[[subject_grps[x]]][visits[x]] * sqrt(object$tmb_data$weights_vector[x])
+  })
 }
 
 #' Calculate normalized residuals
