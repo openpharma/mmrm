@@ -1,33 +1,188 @@
-#' Covariance Types
+#' Covariance Type Database
 #'
-#' An internal constant for covariance type lookup
+#' An internal constant for covariance type information.
+#'
+#' Contains columns:
+#'
+#'  * `name`:          The long-form name of the covariance structure type
+#'  * `abbr`:          The abbreviated name of the covariance structure type
+#'  * `habbr`:         The abbreviated name of the heterogeneous version of a
+#'                     covariance structure type.
+#'  * `heterogeneous`: A logical value indicating whether the covariance
+#'                     structure has a heterogeneous counterpart.
+#'  * `spatial`:       A logical value indicating whether the covariance
+#'                     structure is spatial.
 #'
 #' @keywords internal
-COV_TYPES <- matrix(  # nolint
-  ncol = 3,
-  byrow = TRUE,
-  dimnames = list(c(), c("abbr", "abbr_hetero", "full")),
-  c(
-    "us",     NA,      "unstructured",
-    "toep",   "toeph", "toeplitz",
-    "ar1",    "ar1h",  "auto regressive",
-    "ad",     "adh",   "ante dependence",
-    "cs",     "csh",   "compound symmetry",
-    "sp_exp", NA,      "spatial"
+COV_TYPES_DB <- local({  # nolint
+  type <- function(name, abbr, habbr, heterogeneous, spatial) {
+    args <- as.list(match.call()[-1])
+    do.call(data.frame, args)
+  }
+
+  as.data.frame(
+    col.names = names(formals(type)),
+    rbind(
+      type("unstructured",              "us",     NA,      FALSE, FALSE),
+      type("Toeplitz",                  "toep",   "toeph", TRUE,  FALSE),
+      type("auto-regressive order one", "ar1",    "ar1h",  TRUE,  FALSE),
+      type("ante-dependence",           "ad",     "adh",   TRUE,  FALSE),
+      type("compound symmetry",         "cs",     "csh",   TRUE,  FALSE),
+      type("spatial exponential",       "sp_exp", NA,      FALSE, TRUE)
+    )
   )
-)
+})
 
 
 
-#' Retrieve Available Covariance Structures
+#' Covariance Types
+#'
+#' @param form (`character`)\cr
+#'   Covariance structure type name form. One or more of `"name"`, `"abbr"`
+#'   (abbreviation), or `"habbr"` (heterogeneous abbreviation).
+#' @param filter (`character`)\cr
+#'   Covariance structure type filter. One or more of `"heterogeneous"` or
+#'   `"spatial"`.
 #'
 #' @return A character vector of accepted covariance structure type names and
 #'   abbreviations
 #'
+#' @section Abbreviations for Covariance Structures:
+#'
+#' ## Common Covariance Structures:
+#'
+#' \tabular{clll}{
+#'   \strong{Structure}
+#'   \tab \strong{Description}
+#'   \tab \strong{Parameters}
+#'   \tab \strong{\eqn{(i, j)} element}
+#'   \cr
+#'
+#'   ad
+#'   \tab Ante-dependence
+#'   \tab \eqn{m}
+#'   \tab \eqn{\sigma^{2}\prod_{k=i}^{j-1}\rho_{k}}
+#'   \cr
+#'
+#'   adh
+#'   \tab Heterogeneous ante-dependence
+#'   \tab \eqn{2m-1}
+#'   \tab \eqn{\sigma_{i}\sigma_{j}\prod_{k=i}^{j-1}\rho_{k}}
+#'   \cr
+#'
+#'   ar1
+#'   \tab First-order auto-regressive
+#'   \tab \eqn{2}
+#'   \tab \eqn{\sigma^{2}\rho^{\left \vert {i-j} \right \vert}}
+#'   \cr
+#'
+#'   ar1h
+#'   \tab Heterogeneous first-order auto-regressive
+#'   \tab \eqn{m+1}
+#'   \tab \eqn{\sigma_{i}\sigma_{j}\rho^{\left \vert {i-j} \right \vert}}
+#'   \cr
+#'
+#'   cs
+#'   \tab Compound symmetry
+#'   \tab \eqn{2}
+#'   \tab \eqn{\sigma^{2}\left[ \rho I(i \neq j)+I(i=j) \right]}
+#'   \cr
+#'
+#'   csh
+#'   \tab Heterogeneous compound symmetry
+#'   \tab \eqn{m+1}
+#'   \tab \eqn{\sigma_{i}\sigma_{j}\left[ \rho I(i \neq j)+I(i=j) \right]}
+#'   \cr
+#'
+#'   toep
+#'   \tab Toeplitz
+#'   \tab \eqn{m}
+#'   \tab \eqn{\sigma_{\left \vert {i-j} \right \vert +1}}
+#'   \cr
+#'
+#'   toeph
+#'   \tab Heterogeneous Toeplitz
+#'   \tab \eqn{2m-1}
+#'   \tab \eqn{\sigma_{i}\sigma_{j}\rho_{\left \vert {i-j} \right \vert}}
+#'   \cr
+#'
+#'   us
+#'   \tab Unstructured
+#'   \tab \eqn{m(m+1)/2}
+#'   \tab \eqn{\sigma_{ij}}
+#'
+#' }
+#'
+#' where \eqn{i} and \eqn{j} denote \eqn{i}-th and \eqn{j}-th time points,
+#' respectively, out of total \eqn{m} time points, \eqn{1 \leq i, j \leq m}.
+#'
+#' Note the **ante-dependence** covariance structure in this package refers to
+#' homogeneous ante-dependence, while the ante-dependence covariance structure
+#' from SAS `PROC MIXED` refers to heterogeneous ante-dependence and the
+#' homogeneous version is not available in SAS.
+#'
+#' ## Spatial Covariance structures:
+#'
+#' \tabular{clll}{
+#'   \strong{Structure}
+#'   \tab \strong{Description}
+#'   \tab \strong{Parameters}
+#'   \tab \strong{\eqn{(i, j)} element}
+#'   \cr
+#'
+#'   sp_exp
+#'   \tab spatial exponential
+#'   \tab \eqn{2}
+#'   \tab \eqn{\sigma^{2}\rho^{-d_{ij}}}
+#'
+#' }
+#'
+#' where \eqn{d_{ij}} denotes the Euclidean distance between time points
+#' \eqn{i} and \eqn{j}.
+#'
 #' @family cov_struct
+#' @name covariance_types
 #' @export
-cov_types <- function() {
-  as.vector(t(COV_TYPES)[!is.na(t(COV_TYPES))])
+cov_types <- function(
+  form = c("name", "abbr", "habbr"),
+  filter = c("heterogeneous", "spatial")
+) {
+  form <- match.arg(form, several.ok = TRUE)
+  filter <- if (missing(filter)) c() else match.arg(filter, several.ok = TRUE)
+  df <- COV_TYPES_DB[form][rowSums(!COV_TYPES_DB[filter]) == 0, ]
+  Filter(Negate(is.na), unlist(t(df), use.names = FALSE))
+}
+
+
+
+#' Retrieve Associated Abbreviated Covariance Structure Type Name
+#'
+#' @param type (`string`)\cr
+#'   Either a full name or abbreviate covariance structure type name to collapse
+#'   into an abbreviated type.
+#'
+#' @return The corresponding abbreviated covariance type name
+#'
+#' @keywords internal
+cov_type_abbr <- function(type) {
+  row <- which(COV_TYPES_DB == type, arr.ind = TRUE)[, 1]
+  COV_TYPES_DB$abbr[row]
+}
+
+
+
+#' Retrieve Associated Full Covariance Structure Type Name
+#'
+#' @param type (`string`)\cr
+#'   Either a full name or abbreviate covariance structure type name to convert
+#'   to a long-form type.
+#'
+#' @return The corresponding abbreviated covariance type name
+#'
+#' @keywords internal
+cov_type_name <- function(type) {
+  row <- which(COV_TYPES_DB == type, arr.ind = TRUE)[, 1]
+  COV_TYPES_DB$name[row]
 }
 
 
@@ -71,7 +226,7 @@ tmb_cov_type <- function(cov) {
 #'
 #' @family cov_struct
 #' @export
-cov_struct <- function(type = cov_types(), visits, subject, group = NULL,
+cov_struct <- function(type = cov_types(), visits, subject, group = character(),
   heterogeneous = FALSE) {
 
   # if heterogeneous isn't provided, derive from provided type
@@ -84,7 +239,7 @@ cov_struct <- function(type = cov_types(), visits, subject, group = NULL,
 
   # coerce all type options into abbreviated form
   type <- match.arg(type)
-  type <- COV_TYPES[, 1][which(COV_TYPES == type, arr.ind = TRUE)[, 1]]
+  type <- cov_type_abbr(type)
 
   x <- structure(
     list(
@@ -111,24 +266,25 @@ cov_struct <- function(type = cov_types(), visits, subject, group = NULL,
 #'
 #' @return `x` if successful, or an error is thrown otherwise
 #'
+#' @importFrom checkmate makeAssertCollection
 #' @keywords internal
 validate_cov_struct <- function(x) {
-  check("stop", length(x$subject) == 1,
-    "Exactly one variable must be provided for the covariance structure's `subject`")
+  checks <- checkmate::makeAssertCollection()
 
-  check("stop", length(x$group) <= 1,
-    "At most one variable is allowed for the covariance structure's `group`")
+  with(x, {
+    assert_character(subject, len = 1, add = checks)
+    assert_logical(heterogeneous, len = 1, add = checks)
+    assert_character(group, max.len = 1, add = checks)
+    assert_character(visits, min.len = 1, unique = TRUE, add = checks)
+    if (!type %in% cov_types(filter = "spatial") && length(visits) > 1) {
+      checks$push(paste0(
+        "Non-spatial covariance structures must have a single longitudinal",
+        "variable"
+      ))
+    }
+  })
 
-  check("stop", length(x$visits) > 0,
-    "A variable must be provided for the covariance structure's `time`")
-
-  check("stop", x$type == "sp_exp" || length(x$visits) < 2,
-    "Multiple `time` variables are only permitted for 'spatial' type covariance")
-
-  check("warn", !any(dup <- duplicated(x$visits)),
-    "Duplicated `time` variable(s): ", fmt_syms(unique(x$visits[dup])))
-
-  emit_check_results()
+  with_error_call(reportAssertions(checks), sys.call(-1))
   x
 }
 
@@ -145,12 +301,11 @@ validate_cov_struct <- function(x) {
 #'
 #' @export
 format.cov_struct <- function(x, ...) {
-  long_name <- COV_TYPES[, 3][which(COV_TYPES == x$type, arr.ind = TRUE)[, 1]]
   sprintf("<covariance structure>\n%s%s:\n\n  %s | %s%s\n",
-    long_name,
-    if (x$heterogeneous) " (heterogeneous)" else "",
+    if (x$heterogeneous) "heterogeneous " else "",
+    cov_type_name(x$type),
     fmt_syms(x$visits),
-    if (!is.null(x$group)) paste0(fmt_syms(x$group), " / ") else "",
+    if (length(x$group) > 0) paste0(fmt_syms(x$group), " / ") else "",
     fmt_syms(x$subject)
   )
 }
@@ -190,15 +345,15 @@ print.cov_struct <- function(x, ...) {
 #' ```r
 #' us(time | subject)
 #' cp(time | group / subject)
-#' sp_exp(time1, time2 | group / subject)
+#' sp_exp(coord1, coord2 | group / subject)
 #' ```
 #'
 #' Note that only `sp_exp` (spatial) covariance structures may provide multiple
-#' longitudinal variables.
+#' coordinates, which identify the Euclidean distance between the time points.
 #'
 #' @param x An object from which to derive a covariance structure. See object
 #'   specific sections for details.
-#' @param warn_partial (`bool`)\cr
+#' @param warn_partial (`flag`)\cr
 #'   Whether to emit a warning when parts of the formula are disregarded.
 #'
 #' @return A `cov_struct` object
@@ -240,29 +395,23 @@ as.cov_struct.cov_struct <- function(x, ...) {
 #' searching for a covariance definition.
 #'
 #' @export
-as.cov_struct.formula <- function(x, ...) {
-  as.cov_struct(formula_rhs(x), ...)
-}
+as.cov_struct.formula <- function(x, warn_partial = TRUE, ...) {
+  x_calls <- extract_covariance_terms(x)
 
-
-
-#' @describeIn as.cov_struct
-#' Calls may be provided directly to `as.cov_struct`, but are more likely used
-#' internally to process the right-hand side of a formula.
-#'
-#' @export
-as.cov_struct.call <- function(x, warn_partial = TRUE) {
-  x_calls <- expr_cov_struct_calls(x)
-
-  if (warn_partial && !identical(x, x_calls[[1]])) {
-    warning("Formula contains unrecognized covariance structure terms.")
+  if (length(x_calls) < 1) {
+    stop(
+      "Covariance structure must be specified in formula. ",
+      "Possible covariance structures include: ",
+      paste0(cov_types(c("abbr", "habbr")), collapse = ", ")
+    )
   }
 
   if (length(x_calls) > 1) {
-    cov_struct_types <- as.character(lapply(x_calls, `[[`, , 1L))
+    cov_struct_types <- as.character(lapply(x_calls, `[[`, 1L))
     stop(
-      "Ambiguous covariance structure. Found multiple calls in formula: ",
-      paste0('"', cov_struct_types, '"', collapse = ", ")
+      "Only one covariance structure can be specified. ",
+      "Currently specified covariance structures are: ",
+      paste0(cov_struct_types, collapse = ", ")
     )
   }
 
@@ -273,13 +422,22 @@ as.cov_struct.call <- function(x, warn_partial = TRUE) {
 
   # take visits until "|"
   i <- position_symbol(x, "|", nomatch = FALSE)
-  if (!i) stop("Covariance structure requires form `visit | ..`")
+
+  # if longitudinal terms not found (before "|"), error with format hint
+  if (!i) stop("Covariance structure must be of the form `time | (group /) subject`")
+
+  # visit vars are anything until "|" (at `i`)
   visits <- as.character(head(x, i - 1))
   if (i) x <- x[-seq(to = i)]
 
   # take group until "/"
   i <- position_symbol(x, "/", nomatch = FALSE)
-  group <- if (!i) NULL else as.character(head(x, i - 1))
+
+  # if there is more than one term found (before "/"), error with format hint
+  if (i > 2) stop("Covariance structure must be of the form `time | (group /) subject`")
+
+  # group is either empty (if no "/" found) or the remainder until "/" (at `i`)
+  group <- if (!i) character(0) else as.character(head(x, i - 1))
   if (i) x <- x[-seq(to = i)]
 
   # remainder is subject

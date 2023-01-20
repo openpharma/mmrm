@@ -1,3 +1,22 @@
+#' Extract Formula Terms used for Covariance Structure Definition
+#'
+#' @param f (`formula`)\cr
+#'   A formula from which covariance terms should be extracted.
+#'
+#' @return A list of covariance structure expressions found in `f`.
+#'
+#' @importFrom stats terms
+#' @keywords internal
+extract_covariance_terms <- function(f) {
+  specials <- cov_types(c("abbr", "habbr"))
+  terms <- stats::terms(f, specials = specials)
+  covariance_terms <- Filter(Negate(is.null), attr(terms, "specials"))
+  lapply(covariance_terms, function(i) formula_rhs(formula(terms[i - 1])))
+}
+
+
+
+
 #' Drop Formula Terms used for Covariance Structure Definition
 #'
 #' @param f (`formula`)\cr
@@ -8,20 +27,18 @@
 #' @importFrom stats terms drop.terms
 #' @keywords internal
 drop_covariance_terms <- function(f) {
-  specials <- Filter(Negate(is.na), COV_TYPES[, -3])
+  specials <- cov_types(c("abbr", "habbr"))
 
   terms <- stats::terms(f, specials = specials)
-  covariance_term <- Filter(Negate(is.null), attr(terms, "specials"))
+  covariance_terms <- Filter(Negate(is.null), attr(terms, "specials"))
 
-  if (length(covariance_term) == 0)
-    return(f)
+  # if no covariance terms were found, return original formula
+  if (length(covariance_terms) == 0) return(f)
 
-  terms <- stats::drop.terms(
-    terms,
-    as.numeric(covariance_term) - 1,
-    keep.response = TRUE
-  )
+  # drop covariance terms (position - 1 to account for response term)
+  covariance_term_indices <- as.numeric(covariance_terms) - 1
 
+  terms <- terms[-covariance_term_indices]
   formula(terms)
 }
 

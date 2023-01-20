@@ -30,16 +30,15 @@
 fit_single_optimizer <- function(formula,
                                  data,
                                  weights,
+                                 reml = TRUE,
                                  covariance = as.cov_struct(
                                    formula,
                                    warn_partial = FALSE
                                  ),
-                                 reml = TRUE,
                                  ...,
                                  control = mmrm_control(...)) {
 
   covariance <- as.cov_struct(covariance)
-  formula <- drop_covariance_terms(formula)
 
   assert_formula(formula)
   assert_data_frame(data)
@@ -52,8 +51,8 @@ fit_single_optimizer <- function(formula,
       formula = formula,
       data = data,
       weights = weights,
-      covariance = covariance,
       reml = reml,
+      covariance = covariance,
       control = control
     ),
     remove = list(
@@ -249,10 +248,15 @@ mmrm_control <- function(n_cores = 1L,
 #'
 #' @param formula (`formula`)\cr the model formula, see details.
 #' @param data (`data`)\cr the data to be used for the model.
-#' @param weights (`vector`)\cr an optional vector of weights to be used in the fitting process.
-#'   Should be NULL or a numeric vector.
-#' @param reml (`flag`)\cr whether restricted maximum likelihood (REML) estimation is used,
-#'   otherwise maximum likelihood (ML) is used.
+#' @param weights (`vector`)\cr an optional vector of weights to be used in
+#'   the fitting process. Should be `NULL` or a numeric vector.
+#' @param reml (`flag`)\cr whether restricted maximum likelihood (REML)
+#'   estimation is used, otherwise maximum likelihood (ML) is used.
+#' @param covariance (`cov_struct`)\cr
+#'   A covariance structure type definition as produced with [cov_struct()],
+#'   or value that can be coerced to a covariance structure using
+#'   [as.cov_struct()]. If no value is provided, alstructure is derived from
+#'   the provided formula.
 #' @param control (`mmrm_control`)\cr fine-grained fitting specifications list
 #'   created with [mmrm_control()].
 #' @param ... arguments passed to [mmrm_control()].
@@ -329,8 +333,6 @@ mmrm <- function(formula,
                  control = mmrm_control(...),
                  ...) {
   covariance <- as.cov_struct(covariance)
-  formula <- drop_covariance_terms(formula)
-
   assert_false(!missing(control) && !missing(...))
   assert_class(control, "mmrm_control")
   assert_list(control$optimizers, min.len = 1)

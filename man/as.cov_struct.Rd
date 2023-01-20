@@ -3,20 +3,17 @@
 \name{as.cov_struct}
 \alias{as.cov_struct}
 \alias{as.cov_struct.formula}
-\alias{as.cov_struct.call}
 \title{Coerce into a Covariance Structure Definition}
 \usage{
 as.cov_struct(x, ...)
 
-\method{as.cov_struct}{formula}(x, ...)
-
-\method{as.cov_struct}{call}(x, warn_partial = TRUE)
+\method{as.cov_struct}{formula}(x, warn_partial = TRUE, ...)
 }
 \arguments{
 \item{x}{An object from which to derive a covariance structure. See object
 specific sections for details.}
 
-\item{warn_partial}{(\code{bool})\cr
+\item{warn_partial}{(\code{flag})\cr
 Whether to emit a warning when parts of the formula are disregarded.}
 }
 \value{
@@ -37,11 +34,11 @@ For example, formulas may include terms such as
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{us(time | subject)
 cp(time | group / subject)
-sp_exp(time1, time2 | group / subject)
+sp_exp(coord1, coord2 | group / subject)
 }\if{html}{\out{</div>}}
 
 Note that only \code{sp_exp} (spatial) covariance structures may provide multiple
-longitudinal variables.
+coordinates, which identify the Euclidean distance between the time points.
 }
 \section{Methods (by class)}{
 \itemize{
@@ -53,9 +50,6 @@ covariance structure defintions and must follow the form:
 
 Any component on the right hand side of a formula is considered when
 searching for a covariance definition.
-
-\item \code{as.cov_struct(call)}: Calls may be provided directly to \code{as.cov_struct}, but are more likely used
-internally to process the right-hand side of a formula.
 
 }}
 \examples{
@@ -72,6 +66,6 @@ as.cov_struct(quote(sp_exp(visitA, visitB | group / subject)))
 \seealso{
 Other cov_struct: 
 \code{\link{cov_struct}()},
-\code{\link{cov_types}()}
+\code{\link{covariance_types}}
 }
 \concept{cov_struct}

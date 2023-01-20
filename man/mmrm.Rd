@@ -19,11 +19,17 @@ mmrm(
 
 \item{data}{(\code{data})\cr the data to be used for the model.}
 
-\item{weights}{(\code{vector})\cr an optional vector of weights to be used in the fitting process.
-Should be NULL or a numeric vector.}
+\item{weights}{(\code{vector})\cr an optional vector of weights to be used in
+the fitting process. Should be \code{NULL} or a numeric vector.}
 
-\item{reml}{(\code{flag})\cr whether restricted maximum likelihood (REML) estimation is used,
-otherwise maximum likelihood (ML) is used.}
+\item{covariance}{(\code{cov_struct})\cr
+A covariance structure type definition as produced with \code{\link[=cov_struct]{cov_struct()}},
+or value that can be coerced to a covariance structure using
+\code{\link[=as.cov_struct]{as.cov_struct()}}. If no value is provided, alstructure is derived from
+the provided formula.}
+
+\item{reml}{(\code{flag})\cr whether restricted maximum likelihood (REML)
+estimation is used, otherwise maximum likelihood (ML) is used.}
 
 \item{control}{(\code{mmrm_control})\cr fine-grained fitting specifications list
 created with \code{\link[=mmrm_control]{mmrm_control()}}.}

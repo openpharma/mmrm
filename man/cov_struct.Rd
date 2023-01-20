@@ -8,7 +8,7 @@ cov_struct(
   type = cov_types(),
   visits,
   subject,
-  group = NULL,
+  group = character(),
   heterogeneous = FALSE
 )
 }
@@ -45,6 +45,6 @@ cov_struct("spatial", c("VISITA", "VISITB"), group = "GRP", subject = "SBJ")
 \seealso{
 Other cov_struct: 
 \code{\link{as.cov_struct}()},
-\code{\link{cov_types}()}
+\code{\link{covariance_types}}
 }
 \concept{cov_struct}

@@ -3,7 +3,7 @@
 #' @param formula (`formula`)\cr
 #'   original formula.
 #' @param covariance (`cov_struct`)\cr
-#'   A covariance structure from which additional formula parts should be added
+#'   A covariance structure from which additional formula parts should be added.
 #'
 #' @return List of class `mmrm_tmb_formula_parts` with elements:
 #' - `model_formula`: `formula` with the covariance term removed.
@@ -18,22 +18,24 @@
 #'   this element is `NULL`.
 #'
 #' @keywords internal
-h_mmrm_tmb_formula_parts <- function(formula, covariance) {
+h_mmrm_tmb_formula_parts <- function(formula,
+  covariance = as.cov_struct(formula, warn_partial = FALSE)) {
+
   assert_formula(formula)
   assert_true(identical(length(formula), 3L))
 
-  full_formula <- add_covariance_variable_terms(formula, covariance)
+  model_formula <- drop_covariance_terms(formula)
 
   structure(
     list(
-      # formula = formula,
-      model_formula = formula,
-      full_formula = full_formula,
+      formula = formula,
+      model_formula = model_formula,
+      full_formula = add_covariance_variable_terms(model_formula, covariance),
       cov_type = tmb_cov_type(covariance),
       is_spatial = covariance$type == "sp_exp",
       visit_var = covariance$visits,
       subject_var = covariance$subject,
-      group_var = covariance$group
+      group_var = if (length(covariance$group) < 1) NULL else covariance$group
     ),
     class = "mmrm_tmb_formula_parts"
   )
@@ -417,22 +419,32 @@ h_mmrm_tmb_fit <- function(tmb_object,
 #' try different optimizers or adds Jacobian information etc. in contrast to
 #' [mmrm()].
 #'
-#' @param formula (`formula`)\cr model formula with exactly one special term
-#'   specifying the visits within subjects, see details.
-#' @param data (`data.frame`)\cr input data containing the variables used
-#'   in `formula`.
-#' @param weights (`vector`)\cr input vector containing the weights.
+#' @param formula (`formula`)\cr
+#'   model formula with exactly one special term specifying the visits within
+#'   subjects, see details.
+#' @param data (`data.frame`)\cr
+#'   input data containing the variables used in `formula`.
+#' @param weights (`vector`)\cr
+#'   input vector containing the weights.
 #' @inheritParams h_mmrm_tmb_data
-#' @param control (`mmrm_control`)\cr list of control options produced
-#'   by [mmrm_control()].
+#' @param covariance (`cov_struct`)\cr
+#'   A covariance structure type definition, or value that can be coerced to a
+#'   covariance structure using [as.cov_struct()]. If no value is provided, a
+#'   structure is derived from the provided formula.
+#' @param control (`mmrm_control`)\cr
+#'   list of control options produced by [mmrm_control()].
 #'
 #' @return List of class `mmrm_tmb`, see [h_mmrm_tmb_fit()] for details.
 #'
-#' @details The `formula` typically looks like:
+#' @details
+#' The `formula` typically looks like:
+#'
 #' `FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)`
-#' so specifies response and covariates as usual, and exactly one special term
+#'
+#' which specifies response and covariates as usual, and exactly one special term
 #' defines which covariance structure is used and what are the visit and
 #' subject variables.
+#'
 #' Always use only the first optimizer if multiple optimizers are provided.
 #'
 #' @export
@@ -444,10 +456,9 @@ h_mmrm_tmb_fit <- function(tmb_object,
 fit_mmrm <- function(formula,
                      data,
                      weights,
-                     covariance = as.cov_struct(formula, warn_partial = FALSE),
                      reml = TRUE,
+                     covariance = as.cov_struct(formula, warn_partial = FALSE),
                      control = mmrm_control()) {
-
   covariance <- as.cov_struct(covariance)
   formula_parts <- h_mmrm_tmb_formula_parts(formula, covariance)
 
