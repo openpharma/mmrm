@@ -857,7 +857,7 @@ test_that("h_mmrm_tmb_fit works as expected for grouped covariance", {
     accept_singular = TRUE,
     drop_visit_levels = TRUE
   )
-  tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL, n_group = tmb_data$n_groups)
+  tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL, n_groups = tmb_data$n_groups)
   tmb_object <- TMB::MakeADFun(
     data = tmb_data,
     parameters = tmb_parameters,

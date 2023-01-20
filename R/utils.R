@@ -291,3 +291,18 @@ h_partial_fun_args <- function(fun, ..., additional_attr = list()) {
     ), additional_attr)
   )
 }
+
+#' Complete `character` Vector Names From Values
+#'
+#' @param x (`character` or `list`)\cr
+#'   Value whose names should be completed from element values.
+#'
+#' @return A named vector or list.
+#'
+#' @keywords internal
+fill_names <- function(x) {
+  n <- names(x)
+  is_unnamed <- if (is.null(n)) rep_len(TRUE, length(x)) else n == ""
+  names(x)[is_unnamed] <- x[is_unnamed]
+  x
+}
