@@ -24,6 +24,5 @@ with_error_call <- function(expr, call = sys.call(-1)) {
       stop(e)
     }
   )
-
   res
 }

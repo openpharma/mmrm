@@ -259,3 +259,20 @@ fill_names <- function(x) {
   names(x)[is_unnamed] <- x[is_unnamed]
   x
 }
+
+#' Drop Items from an Indexable
+#'
+#' Drop elements from an indexible objec (`vector`, `list`, etc.).
+#'
+#' @param x (`indexible`)\cr
+#'   Any object that can be consumed by [seq_along()] and indexed by a logical
+#'   vector of the same length.
+#' @param n (`integer`)\cr
+#'   The number of terms to drop
+#'
+#' @return A subset of `x`
+#'
+#' @keywords internal
+drop_elements <- function(x, n) {
+  x[seq_along(x) > n]
+}

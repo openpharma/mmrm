@@ -11,7 +11,9 @@ extract_covariance_terms <- function(f) {
   specials <- cov_types(c("abbr", "habbr"))
   terms <- stats::terms(f, specials = specials)
   covariance_terms <- Filter(Negate(is.null), attr(terms, "specials"))
-  lapply(covariance_terms, function(i) formula_rhs(formula(terms[i - 1])))
+  lapply(covariance_terms, function(i) {
+    formula_rhs(formula(terms[i - (length(f) > 2)]))
+  })
 }
 
 
@@ -36,7 +38,7 @@ drop_covariance_terms <- function(f) {
   if (length(covariance_terms) == 0) return(f)
 
   # drop covariance terms (position - 1 to account for response term)
-  covariance_term_indices <- as.numeric(covariance_terms) - 1
+  covariance_term_indices <- as.numeric(covariance_terms) - (length(f) > 2)
 
   terms <- terms[-covariance_term_indices]
   formula(terms)

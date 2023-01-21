@@ -52,35 +52,6 @@ flatten_expr <- function(expr) {
 
 
 
-#' Discover Covariance Structure Calls in Expression
-#'
-#' Provided an expression, find any calls as candidates for a covariance
-#' structure specification.
-#'
-#' @param expr (`expression` or `quote` or `call`)\cr
-#'   An expression or language object to traverse in search of formula-style
-#'   covariance structure specifications.
-#'
-#' @return A list of outer-most calls within the expression.
-#'
-#' @examples
-#' expr_cov_struct_calls(quote(a + b + c(d | f) + g + h(i)))
-#' expr_cov_struct_calls(quote(c(d | f)))
-#'
-#' @keywords internal
-expr_cov_struct_calls <- function(expr) {
-  if (length(expr) <= 1)
-    return(NULL)
-
-  if (inherits(expr, "call") && !is_infix(expr[[1]])) {
-    list(expr)
-  } else {
-    unlist(Filter(Negate(is.null), lapply(expr[-1], expr_cov_struct_calls)))
-  }
-}
-
-
-
 #' Extract Right-Hand-Side (rhs) from Formula
 #'
 #' @param f (`formula`)\cr
@@ -132,5 +103,5 @@ is_infix <- function(name) {
 #'
 #' @keywords internal
 fmt_syms <- function(x) {
-  paste0(lapply(x, function(i) deparse(as.symbol(i))), collapse = ", ")
+  paste0(lapply(x, function(i) capture.output(as.symbol(i))), collapse = ", ")
 }

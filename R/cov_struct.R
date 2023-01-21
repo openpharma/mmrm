@@ -274,10 +274,15 @@ validate_cov_struct <- function(x) {
   with(x, {
     assert_character(subject, len = 1, add = checks)
     assert_logical(heterogeneous, len = 1, add = checks)
-    assert_character(group, max.len = 1, add = checks)
-    assert_character(visits, min.len = 1, unique = TRUE, add = checks)
+
+    if (length(group) > 1 || length(visits) < 1) {
+      checks$push(
+        "Covariance structure must be of the form `time | (group /) subject`"
+      )
+    }
+
     if (!type %in% cov_types(filter = "spatial") && length(visits) > 1) {
-      checks$push(paste0(
+      checks$push(paste(
         "Non-spatial covariance structures must have a single longitudinal",
         "variable"
       ))
@@ -421,24 +426,14 @@ as.cov_struct.formula <- function(x, warn_partial = TRUE, ...) {
   x <- unlist(lapply(x[-1], flatten_expr))
 
   # take visits until "|"
-  i <- position_symbol(x, "|", nomatch = FALSE)
-
-  # if longitudinal terms not found (before "|"), error with format hint
-  if (!i) stop("Covariance structure must be of the form `time | (group /) subject`")
-
-  # visit vars are anything until "|" (at `i`)
-  visits <- as.character(head(x, i - 1))
-  if (i) x <- x[-seq(to = i)]
+  n <- position_symbol(x, "|", nomatch = 0)
+  visits <- as.character(head(x, max(n - 1, 0)))
+  x <- drop_elements(x, n)
 
   # take group until "/"
-  i <- position_symbol(x, "/", nomatch = FALSE)
-
-  # if there is more than one term found (before "/"), error with format hint
-  if (i > 2) stop("Covariance structure must be of the form `time | (group /) subject`")
-
-  # group is either empty (if no "/" found) or the remainder until "/" (at `i`)
-  group <- if (!i) character(0) else as.character(head(x, i - 1))
-  if (i) x <- x[-seq(to = i)]
+  n <- position_symbol(x, "/", nomatch = 0)
+  group <- as.character(head(x, max(n - 1, 0)))
+  x <- drop_elements(x, n)
 
   # remainder is subject
   subject <- as.character(x)
