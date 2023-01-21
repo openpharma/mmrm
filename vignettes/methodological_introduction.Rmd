@@ -9,7 +9,7 @@ output:
           toc: true
           toc_float: true
 vignette: |
-  %\VignetteIndexEntry{Details of the Satterthwaite calculations}
+  %\VignetteIndexEntry{What are MMRMs? A brief introduction}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options:
