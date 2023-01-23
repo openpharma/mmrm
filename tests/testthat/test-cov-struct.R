@@ -1,3 +1,5 @@
+# cov_struct ----
+
 test_that("cov_struct can be produced from string variable names", {
   expect_class(
     cov_struct("us", "visit", "subject", "group"),
@@ -40,12 +42,16 @@ test_that("cov_struct raises errors for common mis-specifications", {
   )
 })
 
+# as.cov_struct.cov_struct ----
+
 test_that("as.cov_struct returns self if already a cov_struct", {
   expect_identical(
     cs <- cov_struct("us", "visit", "subject"),
     cs
   )
 })
+
+# as.cov_struct.formula ----
 
 test_that("as.cov_struct can derive a covariance structure from a formula", {
   expect_identical(
@@ -64,6 +70,8 @@ test_that("as.cov_struct can derive a covariance structure from a formula", {
   )
 })
 
+# tmb_cov_type ----
+
 test_that("tmb_cov_type derives abbreviated string from covariance structure", {
   expect_identical(
     tmb_cov_type(cov_struct("cs", "visit", "subject", heterogeneous = TRUE)),
@@ -76,12 +84,16 @@ test_that("tmb_cov_type derives abbreviated string from covariance structure", {
   )
 })
 
+# cov_types ----
+
 test_that("cov_types returns list of covariance structure keywords", {
   expect_true(all(c("Toeplitz", "ante-dependence", "ar1", "sp_exp") %in% cov_types()))
   expect_false("Toeplitz" %in% cov_types("abbr"))
   expect_true("csh" %in% cov_types("habbr"))
   expect_true("sp_exp" %in% cov_types(filter = "spatial"))
 })
+
+# cov_types_abbr ----
 
 test_that("cov_type_abbr converts full names to abbreviations", {
   expect_identical(cov_type_abbr("Toeplitz"), "toep")
@@ -90,11 +102,15 @@ test_that("cov_type_abbr converts full names to abbreviations", {
   expect_identical(cov_type_abbr("ad"), "ad")
 })
 
+# cov_types_name ----
+
 test_that("cov_type_name converts full names to full name", {
   expect_identical(cov_type_name("toep"), "Toeplitz")
   expect_identical(cov_type_name("ar1"), "auto-regressive order one")
   expect_identical(cov_type_name("ante-dependence"), "ante-dependence")
 })
+
+# print.cov_struct, format.cov_struct ----
 
 test_that("print.cov_struct pretty-formats covariance structure object", {
   expect_output(

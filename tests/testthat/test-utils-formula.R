@@ -1,3 +1,5 @@
+# extract_covariance_terms ----
+
 test_that("extract_covariance_terms returns a list of possible covariance terms", {
   expect_identical(
     extract_covariance_terms(a ~ b + us(a | g / s) + other(b, c)),
@@ -21,6 +23,8 @@ test_that("extract_covariance_terms returns a list of possible covariance terms"
   )
 })
 
+# drop_covariance_terms ----
+
 test_that("drop_covariance_terms identifies covariance terms specifically", {
   expect_identical(
     drop_covariance_terms(a ~ b + us(a | g / s)),
@@ -42,6 +46,8 @@ test_that("drop_covariance_terms identifies covariance terms specifically", {
     a ~ b + other(a | g / s) + c
   )
 })
+
+# add_covariance_variable_terms ----
 
 test_that("add_covariance_variable_terms adds covariance variables as terms", {
   cs <- cov_struct("us", "AVISITN", "USUBJID")
