@@ -8,7 +8,7 @@ add_covariance_variable_terms(f, covariance)
 }
 \arguments{
 \item{f}{(\code{formula})\cr A formula to which covariance structure terms should
-be added}
+be added.}
 
 \item{covariance}{(\code{cov_struct})\cr A covariance structure object from which
 additional variables should be sourced.}

@@ -5,6 +5,9 @@
 #'   additional formula parts should be added.
 #'
 #' @return List of class `mmrm_tmb_formula_parts` with elements:
+#'
+#' - `formula`: the original input.
+#' - `model_formula`: `formula` with the covariance term is removed.
 #' - `model_formula`: `formula` with the covariance term removed.
 #' - `full_formula`: same as `model_formula` but includes the covariance
 #'   structure's subject, visit and (optionally) group variables.

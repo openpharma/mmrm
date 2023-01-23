@@ -20,8 +20,8 @@ The position of the symbol if found, or the \code{nomatch} value
 otherwise.
 }
 \description{
-A thin wrapper around \code{Position()} to search through a list of language
-objects, as produced by \code{flatten_expr()}, for the presence of a specific
-symbol.
+A thin wrapper around \code{\link[base:funprog]{base::Position()}} to search through a list of language
+objects, as produced by \code{\link[=flatten_call]{flatten_call()}} or \code{\link[=flatten_expr]{flatten_expr()}}, for the
+presence of a specific symbol.
 }
 \keyword{internal}

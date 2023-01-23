@@ -85,7 +85,6 @@ Collate:
     'mmrm-methods.R'
     'mmrm-package.R'
     'utils.R'
-    'utils-checkmate.R'
     'utils-nse.R'
     'utils-formula.R'
     'satterthwaite.R'

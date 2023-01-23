@@ -286,7 +286,7 @@ validate_cov_struct <- function(x) {
     }
   })
 
-  with_error_call(reportAssertions(checks), sys.call(-1))
+  reportAssertions(checks)
   x
 }
 
