@@ -43,7 +43,7 @@ coordinates, which identify the Euclidean distance between the time points.
 \section{Methods (by class)}{
 \itemize{
 \item \code{as.cov_struct(formula)}: When provided a formula, any specialized functions are assumed to be
-covariance structure defintions and must follow the form:
+covariance structure definitions and must follow the form:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{y ~ xs + type( (visit, )* visit | (group /)? subject )
 }\if{html}{\out{</div>}}
@@ -64,8 +64,8 @@ as.cov_struct(quote(sp_exp(visitA, visitB | group / subject)))
 
 }
 \seealso{
-Other cov_struct: 
+Other \code{cov_struct}: 
 \code{\link{cov_struct}()},
 \code{\link{covariance_types}}
 }
-\concept{cov_struct}
+\concept{\code{cov_struct}}

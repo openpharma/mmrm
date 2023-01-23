@@ -16,8 +16,8 @@ cov_struct(
 \item{type}{(\code{string})\cr
 The name of the covariance structure type to use. For available options,
 see \code{cov_types()}. If a type abbreviation is used that implies
-heterogenicity (e.g. \code{cph}) and no value is provided to \code{heterogeneous},
-then the heterogenicity is derived from the type name.}
+heterogeneity (e.g. \code{cph}) and no value is provided to \code{heterogeneous},
+then the heterogeneity is derived from the type name.}
 
 \item{visits}{(\code{character})\cr
 A vector of variable names to use for the longitudinal terms of the
@@ -43,8 +43,8 @@ cov_struct("spatial", c("VISITA", "VISITB"), group = "GRP", subject = "SBJ")
 
 }
 \seealso{
-Other cov_struct: 
+Other \code{cov_struct}: 
 \code{\link{as.cov_struct}()},
 \code{\link{covariance_types}}
 }
-\concept{cov_struct}
+\concept{\code{cov_struct}}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{drop_elements}
 \alias{drop_elements}
-\title{Drop Items from an Indexable}
+\title{Drop Items from an Indexible}
 \usage{
 drop_elements(x, n)
 }
@@ -16,6 +16,6 @@ logical vector of the same length.}
 A subset of \code{x}.
 }
 \description{
-Drop elements from an indexible objec (\code{vector}, \code{list}, etc.).
+Drop elements from an indexible object (\code{vector}, \code{list}, etc.).
 }
 \keyword{internal}

@@ -148,8 +148,8 @@ where \eqn{d_{ij}} denotes the Euclidean distance between time points
 }
 
 \seealso{
-Other cov_struct: 
+Other \code{cov_struct}: 
 \code{\link{as.cov_struct}()},
 \code{\link{cov_struct}()}
 }
-\concept{cov_struct}
+\concept{\code{cov_struct}}
