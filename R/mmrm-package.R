@@ -7,7 +7,6 @@
 
 #' @useDynLib mmrm, .registration = TRUE
 #' @importFrom Rcpp evalCpp
-#' @import utils
 #' @import checkmate
 #' @importFrom lifecycle deprecated
 #' @importFrom methods is
