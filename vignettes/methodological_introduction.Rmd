@@ -41,7 +41,6 @@ The aim is to provide a basic orientation and guide for applied statisticians wo
 ## The basic linear mixed-effects model
 
 @Laird1982 introduced the basic linear mixed-effects model for a single level of grouping to be any model that expresses an $n_i$-dimensional response (column) vector $y_i$ for the $i$th subject (or, more generally, group or unit) as
-
 \[
  y_i = X_i \beta + Z_i b_i + \epsilon_i, \quad i=1,\ldots,M ,\\
  b_i \sim \mathcal{N}(0,\Psi), \quad \epsilon_i \sim \mathcal{N}(0,\sigma^2I),
