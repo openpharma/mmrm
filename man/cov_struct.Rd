@@ -15,7 +15,7 @@ cov_struct(
 \arguments{
 \item{type}{(\code{string})\cr the name of the covariance structure type to use.
 For available options, see \code{cov_types()}. If a type abbreviation is used
-that impliesheterogeneity (e.g. \code{cph}) and no value is provided to
+that implies heterogeneity (e.g. \code{cph}) and no value is provided to
 \code{heterogeneous}, then the heterogeneity is derived from the type name.}
 
 \item{visits}{(\code{character})\cr a vector of variable names to use for the
