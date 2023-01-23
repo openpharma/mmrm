@@ -55,7 +55,7 @@ The random effects $b_i$ describe the shift from the mean of the linear predicto
 non-zero mean for a term in the random effects must be expressed as part
 of the fixed-effects terms. Therefore, the columns of $Z_i$ are usually a (small) subset of the columns of $X_i$.
 
-Mixed models are called ''mixed'' because they consider both fixed and random effects and thus allow considerable modeling flexibility. This is the case even for the basic formulation described above. However, it still restricts within-group errors to be independent, identically distributed random variables with mean of zero and constant variance. These assumptions may often be seen as too restrictive (unrealistic) for applications. For example, in the case of clinical trials with  repeated measurements of subjects over time, observations are not independent and within-subject correlation needs to be accounted for by the model.
+Mixed models are called "mixed" because they consider both fixed and random effects and thus allow considerable modeling flexibility. This is the case even for the basic formulation described above. However, it still restricts within-group errors to be independent, identically distributed random variables with mean of zero and constant variance. These assumptions may often be seen as too restrictive (unrealistic) for applications. For example, in the case of clinical trials with  repeated measurements of subjects over time, observations are not independent and within-subject correlation needs to be accounted for by the model.
 
 
 ## Extending the basic linear mixed-effects model
