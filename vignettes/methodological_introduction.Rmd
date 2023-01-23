@@ -96,7 +96,7 @@ where $V_i$ is a diagonal matrix with all diagonal elements being positive, and 
 so that $V_i$ describes the variance and $C_i$ describes the correlation of the within-subject errors $\epsilon_i$.
 This decomposition is appealing both theoretically and computationally, as it allows to model and to estimate the two structures separately and to combine them in a flexible manner.
 
-When modeling longitudinal responses in a clinical trial with multiple follow-up visits, the linear predictor $X_i\beta$ typically considers fixed effects of baseline values, treatment and visit, as well as interactions between treatment and visit, and possibly between baseline and visit. Commonly the fixed effects are of most interest and the correlation structure $\sigma^2\Delta_i$ can be viewed as a nuisance quantity. However, it is important to model it carefully, since it affects validity of the estimated variance of $\beta$. The `mmrm`-package supports a wide range of correlation structures and also makes use of the decomposition.
+When modeling longitudinal responses in a clinical trial with multiple follow-up visits, the linear predictor $X_i\beta$ typically considers fixed effects of baseline values, treatment and visit, as well as interactions between treatment and visit, and possibly between baseline and visit. Commonly the fixed effects are of most interest and the correlation structure $\sigma^2\Delta_i$ can be viewed as a nuisance quantity. However, it is important to model it carefully, since it affects validity of the estimated variance of $\beta$. The `mmrm` package supports a wide range of correlation structures and also makes use of the decomposition.
 
 
 ## Missing data
