@@ -7,11 +7,10 @@
 tmb_cov_type(cov)
 }
 \arguments{
-\item{cov}{(\code{cov_struct})\cr
-A covariance structure object}
+\item{cov}{(\code{cov_struct})\cr A covariance structure object.}
 }
 \value{
-A string used for method dispatch when passed to TMB
+A string used for method dispatch when passed to TMB.
 }
 \description{
 Produce A Covariance Identifier Passing to TMB

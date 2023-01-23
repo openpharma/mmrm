@@ -7,12 +7,11 @@
 cov_type_abbr(type)
 }
 \arguments{
-\item{type}{(\code{string})\cr
-Either a full name or abbreviate covariance structure type name to collapse
-into an abbreviated type.}
+\item{type}{(\code{string})\cr Either a full name or abbreviate covariance
+structure type name to collapse into an abbreviated type.}
 }
 \value{
-The corresponding abbreviated covariance type name
+The corresponding abbreviated covariance type name.
 }
 \description{
 Retrieve Associated Abbreviated Covariance Structure Type Name

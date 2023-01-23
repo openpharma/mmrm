@@ -2,19 +2,31 @@
 #'
 #' An internal constant for covariance type information.
 #'
-#' Contains columns:
+#' @format A data frame with 5 variables and one record per covariance type:
 #'
-#'  * `name`:          The long-form name of the covariance structure type
-#'  * `abbr`:          The abbreviated name of the covariance structure type
-#'  * `habbr`:         The abbreviated name of the heterogeneous version of a
-#'                     covariance structure type.
-#'  * `heterogeneous`: A logical value indicating whether the covariance
-#'                     structure has a heterogeneous counterpart.
-#'  * `spatial`:       A logical value indicating whether the covariance
-#'                     structure is spatial.
+#' \describe{
+#'   \item{name}{
+#'     The long-form name of the covariance structure type
+#'   }
+#'   \item{abbr}{
+#'     The abbreviated name of the covariance structure type
+#'   }
+#'   \item{habbr}{
+#'     The abbreviated name of the heterogeneous version of a covariance
+#'     structure type (The abbreviated name (`abbr`) with a trailing `"h"` if
+#'     the structure has a heterogeneous implementation or `NA` otherwise).
+#'   }
+#'   \item{heterogeneous}{
+#'     A logical value indicating whether the covariance structure has a
+#'     heterogeneous counterpart.
+#'   }
+#'   \item{spatial}{
+#'     A logical value indicating whether the covariance structure is spatial.
+#'   }
+#' }
 #'
 #' @keywords internal
-COV_TYPES_DB <- local({  # nolint
+COV_TYPES <- local({  # nolint
   type <- function(name, abbr, habbr, heterogeneous, spatial) {
     args <- as.list(match.call()[-1])
     do.call(data.frame, args)
@@ -33,80 +45,78 @@ COV_TYPES_DB <- local({  # nolint
   )
 })
 
-
-
 #' Covariance Types
 #'
-#' @param form (`character`)\cr
-#'   Covariance structure type name form. One or more of `"name"`, `"abbr"`
-#'   (abbreviation), or `"habbr"` (heterogeneous abbreviation).
-#' @param filter (`character`)\cr
-#'   Covariance structure type filter. One or more of `"heterogeneous"` or
-#'   `"spatial"`.
+#' @param form (`character`)\cr Covariance structure type name form. One or
+#'   more of `"name"`, `"abbr"` (abbreviation), or `"habbr"` (heterogeneous
+#'   abbreviation).
+#' @param filter (`character`)\cr Covariance structure type filter. One or
+#'   more of `"heterogeneous"` or `"spatial"`.
 #'
 #' @return A character vector of accepted covariance structure type names and
-#'   abbreviations
+#'   abbreviations.
 #'
 #' @section Abbreviations for Covariance Structures:
 #'
 #' ## Common Covariance Structures:
 #'
 #' \tabular{clll}{
-#'   \strong{Structure}
+#'
+#'        \strong{Structure}
 #'   \tab \strong{Description}
 #'   \tab \strong{Parameters}
 #'   \tab \strong{\eqn{(i, j)} element}
 #'   \cr
 #'
-#'   ad
+#'        ad
 #'   \tab Ante-dependence
 #'   \tab \eqn{m}
 #'   \tab \eqn{\sigma^{2}\prod_{k=i}^{j-1}\rho_{k}}
 #'   \cr
 #'
-#'   adh
+#'        adh
 #'   \tab Heterogeneous ante-dependence
 #'   \tab \eqn{2m-1}
 #'   \tab \eqn{\sigma_{i}\sigma_{j}\prod_{k=i}^{j-1}\rho_{k}}
 #'   \cr
 #'
-#'   ar1
+#'        ar1
 #'   \tab First-order auto-regressive
 #'   \tab \eqn{2}
 #'   \tab \eqn{\sigma^{2}\rho^{\left \vert {i-j} \right \vert}}
 #'   \cr
 #'
-#'   ar1h
+#'        ar1h
 #'   \tab Heterogeneous first-order auto-regressive
 #'   \tab \eqn{m+1}
 #'   \tab \eqn{\sigma_{i}\sigma_{j}\rho^{\left \vert {i-j} \right \vert}}
 #'   \cr
 #'
-#'   cs
+#'        cs
 #'   \tab Compound symmetry
 #'   \tab \eqn{2}
 #'   \tab \eqn{\sigma^{2}\left[ \rho I(i \neq j)+I(i=j) \right]}
 #'   \cr
 #'
-#'   csh
+#'        csh
 #'   \tab Heterogeneous compound symmetry
 #'   \tab \eqn{m+1}
 #'   \tab \eqn{\sigma_{i}\sigma_{j}\left[ \rho I(i \neq j)+I(i=j) \right]}
 #'   \cr
 #'
-#'   toep
+#'        toep
 #'   \tab Toeplitz
 #'   \tab \eqn{m}
 #'   \tab \eqn{\sigma_{\left \vert {i-j} \right \vert +1}}
 #'   \cr
 #'
-#'   toeph
+#'        toeph
 #'   \tab Heterogeneous Toeplitz
 #'   \tab \eqn{2m-1}
 #'   \tab \eqn{\sigma_{i}\sigma_{j}\rho_{\left \vert {i-j} \right \vert}}
 #'   \cr
 #'
-#'   us
+#'        us
 #'   \tab Unstructured
 #'   \tab \eqn{m(m+1)/2}
 #'   \tab \eqn{\sigma_{ij}}
@@ -124,13 +134,14 @@ COV_TYPES_DB <- local({  # nolint
 #' ## Spatial Covariance structures:
 #'
 #' \tabular{clll}{
-#'   \strong{Structure}
+#'
+#'        \strong{Structure}
 #'   \tab \strong{Description}
 #'   \tab \strong{Parameters}
 #'   \tab \strong{\eqn{(i, j)} element}
 #'   \cr
 #'
-#'   sp_exp
+#'        sp_exp
 #'   \tab spatial exponential
 #'   \tab \eqn{2}
 #'   \tab \eqn{\sigma^{2}\rho^{-d_{ij}}}
@@ -149,57 +160,46 @@ cov_types <- function(
 ) {
   form <- match.arg(form, several.ok = TRUE)
   filter <- if (missing(filter)) c() else match.arg(filter, several.ok = TRUE)
-  df <- COV_TYPES_DB[form][rowSums(!COV_TYPES_DB[filter]) == 0, ]
+  df <- COV_TYPES[form][rowSums(!COV_TYPES[filter]) == 0, ]
   Filter(Negate(is.na), unlist(t(df), use.names = FALSE))
 }
 
-
-
 #' Retrieve Associated Abbreviated Covariance Structure Type Name
 #'
-#' @param type (`string`)\cr
-#'   Either a full name or abbreviate covariance structure type name to collapse
-#'   into an abbreviated type.
+#' @param type (`string`)\cr Either a full name or abbreviate covariance
+#'   structure type name to collapse into an abbreviated type.
 #'
-#' @return The corresponding abbreviated covariance type name
+#' @return The corresponding abbreviated covariance type name.
 #'
 #' @keywords internal
 cov_type_abbr <- function(type) {
-  row <- which(COV_TYPES_DB == type, arr.ind = TRUE)[, 1]
-  COV_TYPES_DB$abbr[row]
+  row <- which(COV_TYPES == type, arr.ind = TRUE)[, 1]
+  COV_TYPES$abbr[row]
 }
-
-
 
 #' Retrieve Associated Full Covariance Structure Type Name
 #'
-#' @param type (`string`)\cr
-#'   Either a full name or abbreviate covariance structure type name to convert
-#'   to a long-form type.
+#' @param type (`string`)\cr Either a full name or abbreviate covariance
+#'   structure type name to convert to a long-form type.
 #'
-#' @return The corresponding abbreviated covariance type name
+#' @return The corresponding abbreviated covariance type name.
 #'
 #' @keywords internal
 cov_type_name <- function(type) {
-  row <- which(COV_TYPES_DB == type, arr.ind = TRUE)[, 1]
-  COV_TYPES_DB$name[row]
+  row <- which(COV_TYPES == type, arr.ind = TRUE)[, 1]
+  COV_TYPES$name[row]
 }
-
-
 
 #' Produce A Covariance Identifier Passing to TMB
 #'
-#' @param cov (`cov_struct`)\cr
-#'   A covariance structure object
+#' @param cov (`cov_struct`)\cr A covariance structure object.
 #'
-#' @return A string used for method dispatch when passed to TMB
+#' @return A string used for method dispatch when passed to TMB.
 #'
 #' @keywords internal
 tmb_cov_type <- function(cov) {
   paste0(cov$type, if (cov$heterogeneous) "h")
 }
-
-
 
 #' Define a Covariance Structure
 #'
@@ -218,7 +218,7 @@ tmb_cov_type <- function(cov) {
 #'   Optionally, the name of the variable that encodes a grouping variable for
 #'   subjects.
 #'
-#' @return A `cov_struct` object
+#' @return A `cov_struct` object.
 #'
 #' @examples
 #' cov_struct("csh", "AVISITN", "USUBJID")
@@ -255,16 +255,13 @@ cov_struct <- function(type = cov_types(), visits, subject, group = character(),
   validate_cov_struct(x)
 }
 
-
-
 #' Validate Covariance Structure Data
 #'
 #' Run checks against relational integrity of covariance definition
 #'
-#' @param x (`cov_struct`)\cr
-#'   A covariance structure object
+#' @param x (`cov_struct`)\cr A covariance structure object.
 #'
-#' @return `x` if successful, or an error is thrown otherwise
+#' @return `x` if successful, or an error is thrown otherwise.
 #'
 #' @importFrom checkmate makeAssertCollection
 #' @keywords internal
@@ -293,16 +290,12 @@ validate_cov_struct <- function(x) {
   x
 }
 
-
-
 #' Format Covariance Structure Object
 #'
-#' @param x (`cov_struct`)\cr
-#'   A covariance structure object
-#' @param ...
-#'   Additional arguments unused
+#' @param x (`cov_struct`)\cr A covariance structure object.
+#' @param ... Additional arguments unused.
 #'
-#' @return A formatted string for `x`
+#' @return A formatted string for `x`.
 #'
 #' @export
 format.cov_struct <- function(x, ...) {
@@ -315,24 +308,18 @@ format.cov_struct <- function(x, ...) {
   )
 }
 
-
-
 #' Print a Covariance Structure Object
 #'
-#' @param x (`cov_struct`)\cr
-#'   A covariance structure object
-#' @param ...
-#'   Additional arguments unused
+#' @param x (`cov_struct`)\cr A covariance structure object.
+#' @param ... Additional arguments unused.
 #'
-#' @return `x` invisibly
+#' @return `x` invisibly.
 #'
 #' @export
 print.cov_struct <- function(x, ...) {
   cat(format(x, ...), "\n")
   invisible(x)
 }
-
-
 
 #' Coerce into a Covariance Structure Definition
 #'
@@ -358,10 +345,10 @@ print.cov_struct <- function(x, ...) {
 #'
 #' @param x An object from which to derive a covariance structure. See object
 #'   specific sections for details.
-#' @param warn_partial (`flag`)\cr
-#'   Whether to emit a warning when parts of the formula are disregarded.
+#' @param warn_partial (`flag`)\cr Whether to emit a warning when parts of the
+#'   formula are disregarded.
 #'
-#' @return A `cov_struct` object
+#' @return A [cov_struct()] object.
 #'
 #' @examples
 #' # provide a covariance structure as a right-sided formula
@@ -379,14 +366,10 @@ as.cov_struct <- function(x, ...) {  # nolint
   UseMethod("as.cov_struct")
 }
 
-
-
 #' @export
 as.cov_struct.cov_struct <- function(x, ...) {
   x
 }
-
-
 
 #' @describeIn as.cov_struct
 #' When provided a formula, any specialized functions are assumed to be
@@ -421,9 +404,9 @@ as.cov_struct.formula <- function(x, warn_partial = TRUE, ...) {
   }
 
   # flatten into list of infix operators, calls and names/atomics
-  x <- x_calls[[1]]
+  x <- flatten_call(x_calls[[1]])
   type <- as.character(x[[1]])
-  x <- unlist(lapply(x[-1], flatten_expr))
+  x <- drop_elements(x, 1)
 
   # take visits until "|"
   n <- position_symbol(x, "|", nomatch = 0)

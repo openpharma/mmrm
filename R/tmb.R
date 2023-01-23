@@ -1,9 +1,8 @@
 #' Processing the Formula for `TMB` Fit
 #'
-#' @param formula (`formula`)\cr
-#'   original formula.
-#' @param covariance (`cov_struct`)\cr
-#'   A covariance structure from which additional formula parts should be added.
+#' @param formula (`formula`)\cr Original formula.
+#' @param covariance (`cov_struct`)\cr A covariance structure from which
+#'   additional formula parts should be added.
 #'
 #' @return List of class `mmrm_tmb_formula_parts` with elements:
 #' - `model_formula`: `formula` with the covariance term removed.
@@ -19,7 +18,7 @@
 #'
 #' @keywords internal
 h_mmrm_tmb_formula_parts <- function(formula,
-  covariance = as.cov_struct(formula, warn_partial = FALSE)) {
+    covariance = as.cov_struct(formula, warn_partial = FALSE)) {
 
   assert_formula(formula)
   assert_true(identical(length(formula), 3L))
@@ -419,20 +418,18 @@ h_mmrm_tmb_fit <- function(tmb_object,
 #' try different optimizers or adds Jacobian information etc. in contrast to
 #' [mmrm()].
 #'
-#' @param formula (`formula`)\cr
-#'   model formula with exactly one special term specifying the visits within
-#'   subjects, see details.
-#' @param data (`data.frame`)\cr
-#'   input data containing the variables used in `formula`.
-#' @param weights (`vector`)\cr
-#'   input vector containing the weights.
+#' @param formula (`formula`)\cr model formula with exactly one special term
+#'   specifying the visits within subjects, see details.
+#' @param data (`data.frame`)\cr input data containing the variables used in
+#'   `formula`.
+#' @param weights (`vector`)\cr input vector containing the weights.
 #' @inheritParams h_mmrm_tmb_data
-#' @param covariance (`cov_struct`)\cr
-#'   A covariance structure type definition, or value that can be coerced to a
-#'   covariance structure using [as.cov_struct()]. If no value is provided, a
-#'   structure is derived from the provided formula.
-#' @param control (`mmrm_control`)\cr
-#'   list of control options produced by [mmrm_control()].
+#' @param covariance (`cov_struct`)\cr A covariance structure type definition,
+#'   or value that can be coerced to a covariance structure using
+#'   [as.cov_struct()]. If no value is provided, a structure is derived from
+#'   the provided formula.
+#' @param control (`mmrm_control`)\cr list of control options produced by
+#'   [mmrm_control()].
 #'
 #' @return List of class `mmrm_tmb`, see [h_mmrm_tmb_fit()] for details.
 #'

@@ -247,8 +247,8 @@ h_partial_fun_args <- function(fun, ..., additional_attr = list()) {
 
 #' Complete `character` Vector Names From Values
 #'
-#' @param x (`character` or `list`)\cr
-#'   Value whose names should be completed from element values.
+#' @param x (`character` or `list`)\cr Value whose names should be completed
+#'   from element values.
 #'
 #' @return A named vector or list.
 #'
@@ -264,13 +264,11 @@ fill_names <- function(x) {
 #'
 #' Drop elements from an indexible objec (`vector`, `list`, etc.).
 #'
-#' @param x (`indexible`)\cr
-#'   Any object that can be consumed by [seq_along()] and indexed by a logical
-#'   vector of the same length.
-#' @param n (`integer`)\cr
-#'   The number of terms to drop
+#' @param x Any object that can be consumed by [seq_along()] and indexed by a
+#'   logical vector of the same length.
+#' @param n (`integer`)\cr The number of terms to drop.
 #'
-#' @return A subset of `x`
+#' @return A subset of `x`.
 #'
 #' @keywords internal
 drop_elements <- function(x, n) {

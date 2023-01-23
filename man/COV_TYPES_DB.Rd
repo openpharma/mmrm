@@ -5,25 +5,33 @@
 \alias{COV_TYPES_DB}
 \title{Covariance Type Database}
 \format{
-An object of class \code{data.frame} with 6 rows and 5 columns.
+A data frame with 5 variables and one record per covariance type:
+
+\describe{
+\item{name}{
+The long-form name of the covariance structure type
+}
+\item{abbr}{
+The abbreviated name of the covariance structure type
+}
+\item{habbr}{
+The abbreviated name of the heterogeneous version of a covariance
+structure type (The abbreviated name (\code{abbr}) with a trailing \code{"h"} if
+the structure has a heterogeneous implementation or \code{NA} otherwise).
+}
+\item{heterogeneous}{
+A logical value indicating whether the covariance structure has a
+heterogeneous counterpart.
+}
+\item{spatial}{
+A logical value indicating whether the covariance structure is spatial.
+}
+}
 }
 \usage{
 COV_TYPES_DB
 }
 \description{
 An internal constant for covariance type information.
-}
-\details{
-Contains columns:
-\itemize{
-\item \code{name}:          The long-form name of the covariance structure type
-\item \code{abbr}:          The abbreviated name of the covariance structure type
-\item \code{habbr}:         The abbreviated name of the heterogeneous version of a
-covariance structure type.
-\item \code{heterogeneous}: A logical value indicating whether the covariance
-structure has a heterogeneous counterpart.
-\item \code{spatial}:       A logical value indicating whether the covariance
-structure is spatial.
-}
 }
 \keyword{internal}

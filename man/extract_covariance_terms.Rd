@@ -7,8 +7,8 @@
 extract_covariance_terms(f)
 }
 \arguments{
-\item{f}{(\code{formula})\cr
-A formula from which covariance terms should be extracted.}
+\item{f}{(\code{formula})\cr A formula from which covariance terms should be
+extracted.}
 }
 \value{
 A list of covariance structure expressions found in \code{f}.

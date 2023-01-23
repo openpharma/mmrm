@@ -7,12 +7,11 @@
 formula_rhs(f)
 }
 \arguments{
-\item{f}{(\code{formula})\cr
-A formula}
+\item{f}{(\code{formula})\cr A formula.}
 }
 \value{
 A quote or atomic value derived from the right-hand-side of the
-formula
+formula.
 }
 \description{
 Extract Right-Hand-Side (rhs) from Formula

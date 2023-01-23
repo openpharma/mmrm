@@ -7,12 +7,11 @@
 cov_type_name(type)
 }
 \arguments{
-\item{type}{(\code{string})\cr
-Either a full name or abbreviate covariance structure type name to convert
-to a long-form type.}
+\item{type}{(\code{string})\cr Either a full name or abbreviate covariance
+structure type name to convert to a long-form type.}
 }
 \value{
-The corresponding abbreviated covariance type name
+The corresponding abbreviated covariance type name.
 }
 \description{
 Retrieve Associated Full Covariance Structure Type Name

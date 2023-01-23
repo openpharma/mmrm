@@ -7,8 +7,8 @@
 is_infix(name)
 }
 \arguments{
-\item{name}{(\code{symbol} or \code{name} or \code{string})
-A possible reference to an infix operator to check.}
+\item{name}{(\code{symbol} or \code{name} or \code{string})\cr A possible reference to an
+infix operator to check.}
 }
 \value{
 A logical indicating whether the name is the name of an infix

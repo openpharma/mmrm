@@ -7,13 +7,12 @@
 \method{print}{cov_struct}(x, ...)
 }
 \arguments{
-\item{x}{(\code{cov_struct})\cr
-A covariance structure object}
+\item{x}{(\code{cov_struct})\cr A covariance structure object.}
 
-\item{...}{Additional arguments unused}
+\item{...}{Additional arguments unused.}
 }
 \value{
-\code{x} invisibly
+\code{x} invisibly.
 }
 \description{
 Print a Covariance Structure Object

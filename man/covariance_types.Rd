@@ -11,17 +11,16 @@ cov_types(
 )
 }
 \arguments{
-\item{form}{(\code{character})\cr
-Covariance structure type name form. One or more of \code{"name"}, \code{"abbr"}
-(abbreviation), or \code{"habbr"} (heterogeneous abbreviation).}
+\item{form}{(\code{character})\cr Covariance structure type name form. One or
+more of \code{"name"}, \code{"abbr"} (abbreviation), or \code{"habbr"} (heterogeneous
+abbreviation).}
 
-\item{filter}{(\code{character})\cr
-Covariance structure type filter. One or more of \code{"heterogeneous"} or
-\code{"spatial"}.}
+\item{filter}{(\code{character})\cr Covariance structure type filter. One or
+more of \code{"heterogeneous"} or \code{"spatial"}.}
 }
 \value{
 A character vector of accepted covariance structure type names and
-abbreviations
+abbreviations.
 }
 \description{
 Covariance Types
@@ -31,61 +30,82 @@ Covariance Types
 \subsection{Common Covariance Structures:}{
 
 \tabular{clll}{
-\strong{Structure}
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{   \\strong\{Structure\}
+}\if{html}{\out{</div>}}
+
 \tab \strong{Description}
 \tab \strong{Parameters}
 \tab \strong{\eqn{(i, j)} element}
 \cr
 
-ad
+\if{html}{\out{<div class="sourceCode">}}\preformatted{   ad
+}\if{html}{\out{</div>}}
+
 \tab Ante-dependence
 \tab \eqn{m}
 \tab \eqn{\sigma^{2}\prod_{k=i}^{j-1}\rho_{k}}
 \cr
 
-adh
+\if{html}{\out{<div class="sourceCode">}}\preformatted{   adh
+}\if{html}{\out{</div>}}
+
 \tab Heterogeneous ante-dependence
 \tab \eqn{2m-1}
 \tab \eqn{\sigma_{i}\sigma_{j}\prod_{k=i}^{j-1}\rho_{k}}
 \cr
 
-ar1
+\if{html}{\out{<div class="sourceCode">}}\preformatted{   ar1
+}\if{html}{\out{</div>}}
+
 \tab First-order auto-regressive
 \tab \eqn{2}
 \tab \eqn{\sigma^{2}\rho^{\left \vert {i-j} \right \vert}}
 \cr
 
-ar1h
+\if{html}{\out{<div class="sourceCode">}}\preformatted{   ar1h
+}\if{html}{\out{</div>}}
+
 \tab Heterogeneous first-order auto-regressive
 \tab \eqn{m+1}
 \tab \eqn{\sigma_{i}\sigma_{j}\rho^{\left \vert {i-j} \right \vert}}
 \cr
 
-cs
+\if{html}{\out{<div class="sourceCode">}}\preformatted{   cs
+}\if{html}{\out{</div>}}
+
 \tab Compound symmetry
 \tab \eqn{2}
 \tab \eqn{\sigma^{2}\left[ \rho I(i \neq j)+I(i=j) \right]}
 \cr
 
-csh
+\if{html}{\out{<div class="sourceCode">}}\preformatted{   csh
+}\if{html}{\out{</div>}}
+
 \tab Heterogeneous compound symmetry
 \tab \eqn{m+1}
 \tab \eqn{\sigma_{i}\sigma_{j}\left[ \rho I(i \neq j)+I(i=j) \right]}
 \cr
 
-toep
+\if{html}{\out{<div class="sourceCode">}}\preformatted{   toep
+}\if{html}{\out{</div>}}
+
 \tab Toeplitz
 \tab \eqn{m}
 \tab \eqn{\sigma_{\left \vert {i-j} \right \vert +1}}
 \cr
 
-toeph
+\if{html}{\out{<div class="sourceCode">}}\preformatted{   toeph
+}\if{html}{\out{</div>}}
+
 \tab Heterogeneous Toeplitz
 \tab \eqn{2m-1}
 \tab \eqn{\sigma_{i}\sigma_{j}\rho_{\left \vert {i-j} \right \vert}}
 \cr
 
-us
+\if{html}{\out{<div class="sourceCode">}}\preformatted{   us
+}\if{html}{\out{</div>}}
+
 \tab Unstructured
 \tab \eqn{m(m+1)/2}
 \tab \eqn{\sigma_{ij}}
@@ -104,13 +124,18 @@ homogeneous version is not available in SAS.
 \subsection{Spatial Covariance structures:}{
 
 \tabular{clll}{
-\strong{Structure}
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{   \\strong\{Structure\}
+}\if{html}{\out{</div>}}
+
 \tab \strong{Description}
 \tab \strong{Parameters}
 \tab \strong{\eqn{(i, j)} element}
 \cr
 
-sp_exp
+\if{html}{\out{<div class="sourceCode">}}\preformatted{   sp_exp
+}\if{html}{\out{</div>}}
+
 \tab spatial exponential
 \tab \eqn{2}
 \tab \eqn{\sigma^{2}\rho^{-d_{ij}}}

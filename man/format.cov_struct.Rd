@@ -7,13 +7,12 @@
 \method{format}{cov_struct}(x, ...)
 }
 \arguments{
-\item{x}{(\code{cov_struct})\cr
-A covariance structure object}
+\item{x}{(\code{cov_struct})\cr A covariance structure object.}
 
-\item{...}{Additional arguments unused}
+\item{...}{Additional arguments unused.}
 }
 \value{
-A formatted string for \code{x}
+A formatted string for \code{x}.
 }
 \description{
 Format Covariance Structure Object

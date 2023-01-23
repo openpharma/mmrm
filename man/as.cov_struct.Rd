@@ -13,11 +13,11 @@ as.cov_struct(x, ...)
 \item{x}{An object from which to derive a covariance structure. See object
 specific sections for details.}
 
-\item{warn_partial}{(\code{flag})\cr
-Whether to emit a warning when parts of the formula are disregarded.}
+\item{warn_partial}{(\code{flag})\cr Whether to emit a warning when parts of the
+formula are disregarded.}
 }
 \value{
-A \code{cov_struct} object
+A \code{\link[=cov_struct]{cov_struct()}} object.
 }
 \description{
 Coerce into a Covariance Structure Definition

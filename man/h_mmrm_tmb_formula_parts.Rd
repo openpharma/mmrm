@@ -4,14 +4,16 @@
 \alias{h_mmrm_tmb_formula_parts}
 \title{Processing the Formula for \code{TMB} Fit}
 \usage{
-h_mmrm_tmb_formula_parts(formula, covariance)
+h_mmrm_tmb_formula_parts(
+  formula,
+  covariance = as.cov_struct(formula, warn_partial = FALSE)
+)
 }
 \arguments{
-\item{formula}{(\code{formula})\cr
-original formula.}
+\item{formula}{(\code{formula})\cr Original formula.}
 
-\item{covariance}{(\code{cov_struct})\cr
-A covariance structure from which additional formula parts should be added}
+\item{covariance}{(\code{cov_struct})\cr A covariance structure from which
+additional formula parts should be added.}
 }
 \value{
 List of class \code{mmrm_tmb_formula_parts} with elements:

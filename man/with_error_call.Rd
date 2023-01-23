@@ -7,12 +7,11 @@
 with_error_call(expr, call = sys.call(-1))
 }
 \arguments{
-\item{expr}{(\code{expression})\cr
-An expression to evaluate in the parent frame, which may raise a
-\code{condition}.}
+\item{expr}{(\code{expression})\cr An expression to evaluate in the parent frame,
+which may raise a \code{condition}.}
 
-\item{call}{(\code{call})\cr
-A call to associate with any errors before they are raised.}
+\item{call}{(\code{call})\cr A call to associate with any errors before they are
+raised.}
 }
 \value{
 The result of evaluating \code{expr} if no errors are raised. An error is

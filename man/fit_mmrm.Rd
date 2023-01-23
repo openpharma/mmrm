@@ -14,26 +14,24 @@ fit_mmrm(
 )
 }
 \arguments{
-\item{formula}{(\code{formula})\cr
-model formula with exactly one special term specifying the visits within
-subjects, see details.}
+\item{formula}{(\code{formula})\cr model formula with exactly one special term
+specifying the visits within subjects, see details.}
 
-\item{data}{(\code{data.frame})\cr
-input data containing the variables used in \code{formula}.}
+\item{data}{(\code{data.frame})\cr input data containing the variables used in
+\code{formula}.}
 
-\item{weights}{(\code{vector})\cr
-input vector containing the weights.}
+\item{weights}{(\code{vector})\cr input vector containing the weights.}
 
 \item{reml}{(\code{flag})\cr whether restricted maximum likelihood (REML) estimation is used,
 otherwise maximum likelihood (ML) is used.}
 
-\item{covariance}{(\code{cov_struct})\cr
-A covariance structure type definition, or value that can be coerced to a
-covariance structure using \code{\link[=as.cov_struct]{as.cov_struct()}}. If no value is provided, a
-structure is derived from the provided formula.}
+\item{covariance}{(\code{cov_struct})\cr A covariance structure type definition,
+or value that can be coerced to a covariance structure using
+\code{\link[=as.cov_struct]{as.cov_struct()}}. If no value is provided, a structure is derived from
+the provided formula.}
 
-\item{control}{(\code{mmrm_control})\cr
-list of control options produced by \code{\link[=mmrm_control]{mmrm_control()}}.}
+\item{control}{(\code{mmrm_control})\cr list of control options produced by
+\code{\link[=mmrm_control]{mmrm_control()}}.}
 }
 \value{
 List of class \code{mmrm_tmb}, see \code{\link[=h_mmrm_tmb_fit]{h_mmrm_tmb_fit()}} for details.

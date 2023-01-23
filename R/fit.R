@@ -252,11 +252,10 @@ mmrm_control <- function(n_cores = 1L,
 #'   the fitting process. Should be `NULL` or a numeric vector.
 #' @param reml (`flag`)\cr whether restricted maximum likelihood (REML)
 #'   estimation is used, otherwise maximum likelihood (ML) is used.
-#' @param covariance (`cov_struct`)\cr
-#'   A covariance structure type definition as produced with [cov_struct()],
-#'   or value that can be coerced to a covariance structure using
-#'   [as.cov_struct()]. If no value is provided, alstructure is derived from
-#'   the provided formula.
+#' @param covariance (`cov_struct`)\cr A covariance structure type definition
+#'   as produced with [cov_struct()], or value that can be coerced to a
+#'   covariance structure using [as.cov_struct()]. If no value is provided,
+#'   a structure is derived from the provided formula.
 #' @param control (`mmrm_control`)\cr fine-grained fitting specifications list
 #'   created with [mmrm_control()].
 #' @param ... arguments passed to [mmrm_control()].

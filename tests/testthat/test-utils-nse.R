@@ -10,6 +10,18 @@ test_that("flatten_expr collapses expressions into sequential atoms and ops", {
   )
 })
 
+test_that("flatten_call collapses expressions into sequential atoms and ops", {
+  expect_identical(
+    flatten_call(quote(us(1 + 2 | 3))),
+    list(as.symbol("us"), 1, as.name("+"), 2, as.name("|"), 3)
+  )
+
+  expect_identical(
+    flatten_call(quote(sp_exp(1, 2, 3, 4 | 5))),
+    list(as.symbol("sp_exp"), 1, 2, 3, 4, as.name("|"), 5)
+  )
+})
+
 test_that("position_symbol returns position of a symbol in a list of language", {
   expect_identical(
     position_symbol(flatten_expr(quote(1 + 2 | 3)), "|"),

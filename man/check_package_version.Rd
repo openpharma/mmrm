@@ -7,8 +7,7 @@
 check_package_version(pkg, ver = c(NA, NA))
 }
 \arguments{
-\item{pkg}{(\code{string})\cr
-A package name.}
+\item{pkg}{(\code{string})\cr A package name.}
 
 \item{ver}{Accepts any object of length 2 whose elements can be provided to
 \code{numeric_version()}, representing a minimum and maximum (inclusive) version

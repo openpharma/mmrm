@@ -7,11 +7,11 @@
 drop_covariance_terms(f)
 }
 \arguments{
-\item{f}{(\code{formula})\cr
-A formula from which covariance terms should be dropped.}
+\item{f}{(\code{formula})\cr A formula from which covariance terms should be
+dropped.}
 }
 \value{
-The formula without accepted covariance terms
+The formula without accepted covariance terms.
 }
 \description{
 Drop Formula Terms used for Covariance Structure Definition

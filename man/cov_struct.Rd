@@ -32,7 +32,7 @@ Optionally, the name of the variable that encodes a grouping variable for
 subjects.}
 }
 \value{
-A \code{cov_struct} object
+A \code{cov_struct} object.
 }
 \description{
 Define a Covariance Structure

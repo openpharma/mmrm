@@ -7,11 +7,10 @@
 fmt_syms(x)
 }
 \arguments{
-\item{x}{(\code{character})
-A vector of variable names}
+\item{x}{(\code{character}) A vector of variable names.}
 }
 \value{
-A formatted string of comma-separated variables
+A formatted string of comma-separated variables.
 }
 \description{
 For printing, variable names are converted to symbols and deparsed to use R's

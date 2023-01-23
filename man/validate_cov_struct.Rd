@@ -7,11 +7,10 @@
 validate_cov_struct(x)
 }
 \arguments{
-\item{x}{(\code{cov_struct})\cr
-A covariance structure object}
+\item{x}{(\code{cov_struct})\cr A covariance structure object.}
 }
 \value{
-\code{x} if successful, or an error is thrown otherwise
+\code{x} if successful, or an error is thrown otherwise.
 }
 \description{
 Run checks against relational integrity of covariance definition
