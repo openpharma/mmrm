@@ -4,9 +4,9 @@
 #' objects, as produced by [flatten_call()] or [flatten_expr()], for the
 #' presence of a specific symbol.
 #'
-#' @param x (`list` of `language`)\cr A list of language objects in which to
+#' @param x (`list` of `language`)\cr a list of language objects in which to
 #'   search for a specific symbol.
-#' @param sym (`name` or `symbol` or `character`)\cr A symbol to search for in
+#' @param sym (`name` or `symbol` or `character`)\cr a symbol to search for in
 #'   `x`.
 #' @param ... Additional arguments passed to `Position()`.
 #'
@@ -30,7 +30,7 @@ position_symbol <- function(x, sym, ...) {
 #' makes for more fluent interpretation of non-standard grammar rules used in
 #' formulas.
 #'
-#' @param call,expr (`language`)\cr A language object to flatten.
+#' @param call,expr (`language`)\cr a language object to flatten.
 #'
 #' @return A list of atomic values, symbols, infix operator names and
 #'   subexpressions.
@@ -46,9 +46,11 @@ NULL
 #' call of the form \code{sp_exp(a, b, c | d / e)} produces a list of the form
 #' \code{(sp_exp, a, b, c, |, d, /, e)}.
 #'
-#' @examples
+#' ```
 #' flatten_call(quote(sp_exp(a, b, c | d / e)))
+#' ```
 #'
+#' @keywords internal
 flatten_call <- function(call) {
   flattened_args <- unlist(lapply(call[-1], flatten_expr))
   c(flatten_expr(call[[1]]), flattened_args)
@@ -57,9 +59,11 @@ flatten_call <- function(call) {
 #' @describeIn flat_expr
 #' Flatten nested expressions
 #'
-#' @examples
+#' ```
 #' flatten_expr(quote(1 + 2 + 3 | 4))
+#' ```
 #'
+#' @keywords internal
 flatten_expr <- function(expr) {
   if (length(expr) > 1 && is_infix(expr[[1]])) {
     op  <- list(expr[[1]])
@@ -73,14 +77,15 @@ flatten_expr <- function(expr) {
 
 #' Extract Right-Hand-Side (rhs) from Formula
 #'
-#' @param f (`formula`)\cr A formula.
+#' @param f (`formula`)\cr a formula.
 #'
 #' @return A quote or atomic value derived from the right-hand-side of the
 #'   formula.
 #'
-#' @examples
+#' ```
 #' formula_rhs(a ~ b + c)
 #' formula_rhs(~ b + c)
+#' ```
 #'
 #' @keywords internal
 formula_rhs <- function(f) {
@@ -89,16 +94,17 @@ formula_rhs <- function(f) {
 
 #' Test Whether a Symbol is an Infix Operator
 #'
-#' @param name (`symbol` or `name` or `string`)\cr A possible reference to an
+#' @param name (`symbol` or `name` or `string`)\cr a possible reference to an
 #'   infix operator to check.
 #'
 #' @return A logical indicating whether the name is the name of an infix
 #'   operator.
 #'
-#' @examples
+#' ```
 #' is_infix(as.name("|"))
 #' is_infix("|")
 #' is_infix("c")
+#' ```
 #'
 #' @keywords internal
 is_infix <- function(name) {
@@ -114,7 +120,10 @@ is_infix <- function(name) {
 #'
 #' @return A formatted string of comma-separated variables.
 #'
+#' @importFrom utils capture.output
 #' @keywords internal
-fmt_syms <- function(x) {
-  paste0(lapply(x, function(i) capture.output(as.symbol(i))), collapse = ", ")
+format_symbols <- function(x) {
+  paste0(collapse = ", ", lapply(x, function(i) {
+    utils::capture.output(as.symbol(i))
+  }))
 }

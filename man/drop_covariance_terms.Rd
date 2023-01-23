@@ -7,7 +7,7 @@
 drop_covariance_terms(f)
 }
 \arguments{
-\item{f}{(\code{formula})\cr A formula from which covariance terms should be
+\item{f}{(\code{formula})\cr a formula from which covariance terms should be
 dropped.}
 }
 \value{

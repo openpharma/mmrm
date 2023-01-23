@@ -11,11 +11,11 @@ cov_types(
 )
 }
 \arguments{
-\item{form}{(\code{character})\cr Covariance structure type name form. One or
+\item{form}{(\code{character})\cr covariance structure type name form. One or
 more of \code{"name"}, \code{"abbr"} (abbreviation), or \code{"habbr"} (heterogeneous
 abbreviation).}
 
-\item{filter}{(\code{character})\cr Covariance structure type filter. One or
+\item{filter}{(\code{character})\cr covariance structure type filter. One or
 more of \code{"heterogeneous"} or \code{"spatial"}.}
 }
 \value{

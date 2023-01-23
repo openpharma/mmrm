@@ -11,7 +11,7 @@ flatten_call(call)
 flatten_expr(expr)
 }
 \arguments{
-\item{call, expr}{(\code{language})\cr A language object to flatten.}
+\item{call, expr}{(\code{language})\cr a language object to flatten.}
 }
 \value{
 A list of atomic values, symbols, infix operator names and
@@ -37,13 +37,13 @@ The call name and all arguments are flattened into the same list, meaning a
 call of the form \code{sp_exp(a, b, c | d / e)} produces a list of the form
 \code{(sp_exp, a, b, c, |, d, /, e)}.
 
+\if{html}{\out{<div class="sourceCode">}}\preformatted{flatten_call(quote(sp_exp(a, b, c | d / e)))
+}\if{html}{\out{</div>}}
+
 \item \code{flatten_expr()}: Flatten nested expressions
 
+\if{html}{\out{<div class="sourceCode">}}\preformatted{flatten_expr(quote(1 + 2 + 3 | 4))
+}\if{html}{\out{</div>}}
+
 }}
-\examples{
-flatten_call(quote(sp_exp(a, b, c | d / e)))
-
-flatten_expr(quote(1 + 2 + 3 | 4))
-
-}
 \keyword{internal}

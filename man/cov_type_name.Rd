@@ -7,7 +7,7 @@
 cov_type_name(type)
 }
 \arguments{
-\item{type}{(\code{string})\cr Either a full name or abbreviate covariance
+\item{type}{(\code{string})\cr either a full name or abbreviate covariance
 structure type name to convert to a long-form type.}
 }
 \value{

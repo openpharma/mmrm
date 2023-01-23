@@ -13,23 +13,22 @@ cov_struct(
 )
 }
 \arguments{
-\item{type}{(\code{string})\cr
-The name of the covariance structure type to use. For available options,
-see \code{cov_types()}. If a type abbreviation is used that implies
-heterogeneity (e.g. \code{cph}) and no value is provided to \code{heterogeneous},
-then the heterogeneity is derived from the type name.}
+\item{type}{(\code{string})\cr the name of the covariance structure type to use.
+For available options, see \code{cov_types()}. If a type abbreviation is used
+that impliesheterogeneity (e.g. \code{cph}) and no value is provided to
+\code{heterogeneous}, then the heterogeneity is derived from the type name.}
 
-\item{visits}{(\code{character})\cr
-A vector of variable names to use for the longitudinal terms of the
-covariance structure. Multiple terms are only permitted for the \code{"spatial"}
-covariance type.}
+\item{visits}{(\code{character})\cr a vector of variable names to use for the
+longitudinal terms of the covariance structure. Multiple terms are only
+permitted for the \code{"spatial"} covariance type.}
 
-\item{subject}{(\code{string})\cr
-The name of the variable that encodes a subject identifier.}
+\item{subject}{(\code{string})\cr the name of the variable that encodes a subject
+identifier.}
 
-\item{group}{(\code{string})\cr
-Optionally, the name of the variable that encodes a grouping variable for
-subjects.}
+\item{group}{(\code{string})\cr optionally, the name of the variable that encodes
+a grouping variable for subjects.}
+
+\item{heterogeneous}{(\code{flag})\cr}
 }
 \value{
 A \code{cov_struct} object.

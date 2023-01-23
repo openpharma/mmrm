@@ -1,6 +1,6 @@
 #' Extract Formula Terms used for Covariance Structure Definition
 #'
-#' @param f (`formula`)\cr A formula from which covariance terms should be
+#' @param f (`formula`)\cr a formula from which covariance terms should be
 #'   extracted.
 #'
 #' @return A list of covariance structure expressions found in `f`.
@@ -18,7 +18,7 @@ extract_covariance_terms <- function(f) {
 
 #' Drop Formula Terms used for Covariance Structure Definition
 #'
-#' @param f (`formula`)\cr A formula from which covariance terms should be
+#' @param f (`formula`)\cr a formula from which covariance terms should be
 #'   dropped.
 #'
 #' @return The formula without accepted covariance terms.
@@ -43,9 +43,9 @@ drop_covariance_terms <- function(f) {
 
 #' Add Individual Covariance Variables As Terms to Formula
 #'
-#' @param f (`formula`)\cr A formula to which covariance structure terms should
+#' @param f (`formula`)\cr a formula to which covariance structure terms should
 #'   be added.
-#' @param covariance (`cov_struct`)\cr A covariance structure object from which
+#' @param covariance (`cov_struct`)\cr a covariance structure object from which
 #'   additional variables should be sourced.
 #'
 #' @return A new formula with included covariance terms.

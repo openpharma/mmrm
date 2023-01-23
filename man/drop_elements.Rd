@@ -10,7 +10,7 @@ drop_elements(x, n)
 \item{x}{Any object that can be consumed by \code{\link[=seq_along]{seq_along()}} and indexed by a
 logical vector of the same length.}
 
-\item{n}{(\code{integer})\cr The number of terms to drop.}
+\item{n}{(\code{integer})\cr the number of terms to drop.}
 }
 \value{
 A subset of \code{x}.

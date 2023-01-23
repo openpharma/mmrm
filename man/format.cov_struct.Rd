@@ -7,7 +7,7 @@
 \method{format}{cov_struct}(x, ...)
 }
 \arguments{
-\item{x}{(\code{cov_struct})\cr A covariance structure object.}
+\item{x}{(\code{cov_struct})\cr a covariance structure object.}
 
 \item{...}{Additional arguments unused.}
 }

@@ -7,10 +7,10 @@
 position_symbol(x, sym, ...)
 }
 \arguments{
-\item{x}{(\code{list} of \code{language})\cr A list of language objects in which to
+\item{x}{(\code{list} of \code{language})\cr a list of language objects in which to
 search for a specific symbol.}
 
-\item{sym}{(\code{name} or \code{symbol} or \code{character})\cr A symbol to search for in
+\item{sym}{(\code{name} or \code{symbol} or \code{character})\cr a symbol to search for in
 \code{x}.}
 
 \item{...}{Additional arguments passed to \code{Position()}.}

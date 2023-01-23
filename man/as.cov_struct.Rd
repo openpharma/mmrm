@@ -10,10 +10,12 @@ as.cov_struct(x, ...)
 \method{as.cov_struct}{formula}(x, warn_partial = TRUE, ...)
 }
 \arguments{
-\item{x}{An object from which to derive a covariance structure. See object
+\item{x}{an object from which to derive a covariance structure. See object
 specific sections for details.}
 
-\item{warn_partial}{(\code{flag})\cr Whether to emit a warning when parts of the
+\item{...}{additional arguments unused.}
+
+\item{warn_partial}{(\code{flag})\cr whether to emit a warning when parts of the
 formula are disregarded.}
 }
 \value{
@@ -56,11 +58,8 @@ searching for a covariance definition.
 # provide a covariance structure as a right-sided formula
 as.cov_struct( ~ csh(visit | group / subject) )
 
-# when part of a model, suppress warnings using `warn_partial = FALSE`
+# when part of a full formula, suppress warnings using `warn_partial = FALSE`
 as.cov_struct( y ~ x + csh(visit | group / subject), warn_partial = FALSE)
-
-# provide a quoted expression
-as.cov_struct(quote(sp_exp(visitA, visitB | group / subject)))
 
 }
 \seealso{

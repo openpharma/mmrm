@@ -49,10 +49,10 @@ COV_TYPES <- local({  # nolint
 #'
 #' @description `r lifecycle::badge("maturing")`
 #'
-#' @param form (`character`)\cr Covariance structure type name form. One or
+#' @param form (`character`)\cr covariance structure type name form. One or
 #'   more of `"name"`, `"abbr"` (abbreviation), or `"habbr"` (heterogeneous
 #'   abbreviation).
-#' @param filter (`character`)\cr Covariance structure type filter. One or
+#' @param filter (`character`)\cr covariance structure type filter. One or
 #'   more of `"heterogeneous"` or `"spatial"`.
 #'
 #' @return A character vector of accepted covariance structure type names and
@@ -168,7 +168,7 @@ cov_types <- function(
 
 #' Retrieve Associated Abbreviated Covariance Structure Type Name
 #'
-#' @param type (`string`)\cr Either a full name or abbreviate covariance
+#' @param type (`string`)\cr either a full name or abbreviate covariance
 #'   structure type name to collapse into an abbreviated type.
 #'
 #' @return The corresponding abbreviated covariance type name.
@@ -181,7 +181,7 @@ cov_type_abbr <- function(type) {
 
 #' Retrieve Associated Full Covariance Structure Type Name
 #'
-#' @param type (`string`)\cr Either a full name or abbreviate covariance
+#' @param type (`string`)\cr either a full name or abbreviate covariance
 #'   structure type name to convert to a long-form type.
 #'
 #' @return The corresponding abbreviated covariance type name.
@@ -194,7 +194,7 @@ cov_type_name <- function(type) {
 
 #' Produce A Covariance Identifier Passing to TMB
 #'
-#' @param cov (`cov_struct`)\cr A covariance structure object.
+#' @param cov (`cov_struct`)\cr a covariance structure object.
 #'
 #' @return A string used for method dispatch when passed to TMB.
 #'
@@ -207,20 +207,18 @@ tmb_cov_type <- function(cov) {
 #'
 #' @description `r lifecycle::badge("maturing")`
 #'
-#' @param type (`string`)\cr
-#'   The name of the covariance structure type to use. For available options,
-#'   see `cov_types()`. If a type abbreviation is used that implies
-#'   heterogeneity (e.g. `cph`) and no value is provided to `heterogeneous`,
-#'   then the heterogeneity is derived from the type name.
-#' @param visits (`character`)\cr
-#'   A vector of variable names to use for the longitudinal terms of the
-#'   covariance structure. Multiple terms are only permitted for the `"spatial"`
-#'   covariance type.
-#' @param subject (`string`)\cr
-#'   The name of the variable that encodes a subject identifier.
-#' @param group (`string`)\cr
-#'   Optionally, the name of the variable that encodes a grouping variable for
-#'   subjects.
+#' @param type (`string`)\cr the name of the covariance structure type to use.
+#'   For available options, see `cov_types()`. If a type abbreviation is used
+#'   that impliesheterogeneity (e.g. `cph`) and no value is provided to
+#'   `heterogeneous`, then the heterogeneity is derived from the type name.
+#' @param visits (`character`)\cr a vector of variable names to use for the
+#'   longitudinal terms of the covariance structure. Multiple terms are only
+#'   permitted for the `"spatial"` covariance type.
+#' @param subject (`string`)\cr the name of the variable that encodes a subject
+#'   identifier.
+#' @param group (`string`)\cr optionally, the name of the variable that encodes
+#'   a grouping variable for subjects.
+#' @param heterogeneous (`flag`)\cr
 #'
 #' @return A `cov_struct` object.
 #'
@@ -263,7 +261,7 @@ cov_struct <- function(type = cov_types(), visits, subject, group = character(),
 #'
 #' Run checks against relational integrity of covariance definition
 #'
-#' @param x (`cov_struct`)\cr A covariance structure object.
+#' @param x (`cov_struct`)\cr a covariance structure object.
 #'
 #' @return `x` if successful, or an error is thrown otherwise.
 #'
@@ -296,7 +294,7 @@ validate_cov_struct <- function(x) {
 
 #' Format Covariance Structure Object
 #'
-#' @param x (`cov_struct`)\cr A covariance structure object.
+#' @param x (`cov_struct`)\cr a covariance structure object.
 #' @param ... Additional arguments unused.
 #'
 #' @return A formatted string for `x`.
@@ -314,7 +312,7 @@ format.cov_struct <- function(x, ...) {
 
 #' Print a Covariance Structure Object
 #'
-#' @param x (`cov_struct`)\cr A covariance structure object.
+#' @param x (`cov_struct`)\cr a covariance structure object.
 #' @param ... Additional arguments unused.
 #'
 #' @return `x` invisibly.
@@ -349,10 +347,11 @@ print.cov_struct <- function(x, ...) {
 #' Note that only `sp_exp` (spatial) covariance structures may provide multiple
 #' coordinates, which identify the Euclidean distance between the time points.
 #'
-#' @param x An object from which to derive a covariance structure. See object
+#' @param x an object from which to derive a covariance structure. See object
 #'   specific sections for details.
-#' @param warn_partial (`flag`)\cr Whether to emit a warning when parts of the
+#' @param warn_partial (`flag`)\cr whether to emit a warning when parts of the
 #'   formula are disregarded.
+#' @param ... additional arguments unused.
 #'
 #' @return A [cov_struct()] object.
 #'
@@ -360,11 +359,8 @@ print.cov_struct <- function(x, ...) {
 #' # provide a covariance structure as a right-sided formula
 #' as.cov_struct( ~ csh(visit | group / subject) )
 #'
-#' # when part of a model, suppress warnings using `warn_partial = FALSE`
+#' # when part of a full formula, suppress warnings using `warn_partial = FALSE`
 #' as.cov_struct( y ~ x + csh(visit | group / subject), warn_partial = FALSE)
-#'
-#' # provide a quoted expression
-#' as.cov_struct(quote(sp_exp(visitA, visitB | group / subject)))
 #'
 #' @family `cov_struct`
 #' @export
@@ -388,6 +384,7 @@ as.cov_struct.cov_struct <- function(x, ...) {
 #' Any component on the right hand side of a formula is considered when
 #' searching for a covariance definition.
 #'
+#' @importFrom utils head
 #' @export
 as.cov_struct.formula <- function(x, warn_partial = TRUE, ...) {
   x_calls <- extract_covariance_terms(x)
@@ -416,12 +413,12 @@ as.cov_struct.formula <- function(x, warn_partial = TRUE, ...) {
 
   # take visits until "|"
   n <- position_symbol(x, "|", nomatch = 0)
-  visits <- as.character(head(x, max(n - 1, 0)))
+  visits <- as.character(utils::head(x, max(n - 1, 0)))
   x <- drop_elements(x, n)
 
   # take group until "/"
   n <- position_symbol(x, "/", nomatch = 0)
-  group <- as.character(head(x, max(n - 1, 0)))
+  group <- as.character(utils::head(x, max(n - 1, 0)))
   x <- drop_elements(x, n)
 
   # remainder is subject

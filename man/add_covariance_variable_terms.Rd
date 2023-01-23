@@ -7,10 +7,10 @@
 add_covariance_variable_terms(f, covariance)
 }
 \arguments{
-\item{f}{(\code{formula})\cr A formula to which covariance structure terms should
+\item{f}{(\code{formula})\cr a formula to which covariance structure terms should
 be added.}
 
-\item{covariance}{(\code{cov_struct})\cr A covariance structure object from which
+\item{covariance}{(\code{cov_struct})\cr a covariance structure object from which
 additional variables should be sourced.}
 }
 \value{

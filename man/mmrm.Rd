@@ -22,7 +22,7 @@ mmrm(
 \item{weights}{(\code{vector})\cr an optional vector of weights to be used in
 the fitting process. Should be \code{NULL} or a numeric vector.}
 
-\item{covariance}{(\code{cov_struct})\cr A covariance structure type definition
+\item{covariance}{(\code{cov_struct})\cr a covariance structure type definition
 as produced with \code{\link[=cov_struct]{cov_struct()}}, or value that can be coerced to a
 covariance structure using \code{\link[=as.cov_struct]{as.cov_struct()}}. If no value is provided,
 a structure is derived from the provided formula.}

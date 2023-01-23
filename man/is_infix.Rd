@@ -7,20 +7,19 @@
 is_infix(name)
 }
 \arguments{
-\item{name}{(\code{symbol} or \code{name} or \code{string})\cr A possible reference to an
+\item{name}{(\code{symbol} or \code{name} or \code{string})\cr a possible reference to an
 infix operator to check.}
 }
 \value{
 A logical indicating whether the name is the name of an infix
 operator.
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{is_infix(as.name("|"))
+is_infix("|")
+is_infix("c")
+}\if{html}{\out{</div>}}
 }
 \description{
 Test Whether a Symbol is an Infix Operator
-}
-\examples{
-is_infix(as.name("|"))
-is_infix("|")
-is_infix("c")
-
 }
 \keyword{internal}

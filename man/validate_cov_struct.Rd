@@ -7,7 +7,7 @@
 validate_cov_struct(x)
 }
 \arguments{
-\item{x}{(\code{cov_struct})\cr A covariance structure object.}
+\item{x}{(\code{cov_struct})\cr a covariance structure object.}
 }
 \value{
 \code{x} if successful, or an error is thrown otherwise.
