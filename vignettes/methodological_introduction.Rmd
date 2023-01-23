@@ -46,11 +46,13 @@ The aim is to provide a basic orientation and guide for applied statisticians wo
  b_i \sim \mathcal{N}(0,\Psi), \quad \epsilon_i \sim \mathcal{N}(0,\sigma^2I),
 \]
 where 
-$\beta$ is the $p$-dimensional vector of fixed effects,
-$b$ is the $q$-dimensional vector of random patient-specific effects, 
-$X_i$ (of size $n_i \times p$) and $Z_i$ (of size $n_i \times q$) are known regressor matrices relating observations to the fixed-effects and random-effects, respectively, and 
-$\epsilon_i$ is the $n_i$-dimensional within-subject error.
-The random effects $b_i$ and the within-group errors $\epsilon_i$ are assumed to  follow a normal distribution, with means of $0$ and variance-covariance matrices  $\Psi$ and $\sigma^2I$, where $I$ is an identity matrix. They are assumed to be independent for different subjects and independent of each other for the same subject.
+
+* $\beta$ is the $p$-dimensional vector of fixed effects,
+* $b$ is the $q$-dimensional vector of random patient-specific effects, 
+* $X_i$ (of size $n_i \times p$) and $Z_i$ (of size $n_i \times q$) are known regressor matrices relating observations to the fixed-effects and random-effects, respectively, and 
+* $\epsilon_i$ is the $n_i$-dimensional within-subject error.
+
+The random effects $b_i$ and the within-group errors $\epsilon_i$ are assumed to  follow a normal distribution, with means of $0$ and variance-covariance matrices  $\Psi$ and $\sigma^2I$, where $I$ is an identity matrix. They are further assumed to be independent for different subjects and independent of each other for the same subject.
 The random effects $b_i$ describe the shift from the mean of the linear predictor for each subject. As they are defined to have a mean of $0$, any
 non-zero mean for a term in the random effects must be expressed as part
 of the fixed-effects terms. Therefore, the columns of $Z_i$ are usually a (small) subset of the columns of $X_i$.
