@@ -260,9 +260,9 @@ fill_names <- function(x) {
   x
 }
 
-#' Drop Items from an Indexable
+#' Drop Items from an Indexible
 #'
-#' Drop elements from an indexible objec (`vector`, `list`, etc.).
+#' Drop elements from an indexible object (`vector`, `list`, etc.).
 #'
 #' @param x Any object that can be consumed by [seq_along()] and indexed by a
 #'   logical vector of the same length.

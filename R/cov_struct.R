@@ -151,7 +151,7 @@ COV_TYPES <- local({  # nolint
 #' where \eqn{d_{ij}} denotes the Euclidean distance between time points
 #' \eqn{i} and \eqn{j}.
 #'
-#' @family cov_struct
+#' @family `cov_struct`
 #' @name covariance_types
 #' @export
 cov_types <- function(
@@ -206,8 +206,8 @@ tmb_cov_type <- function(cov) {
 #' @param type (`string`)\cr
 #'   The name of the covariance structure type to use. For available options,
 #'   see `cov_types()`. If a type abbreviation is used that implies
-#'   heterogenicity (e.g. `cph`) and no value is provided to `heterogeneous`,
-#'   then the heterogenicity is derived from the type name.
+#'   heterogeneity (e.g. `cph`) and no value is provided to `heterogeneous`,
+#'   then the heterogeneity is derived from the type name.
 #' @param visits (`character`)\cr
 #'   A vector of variable names to use for the longitudinal terms of the
 #'   covariance structure. Multiple terms are only permitted for the `"spatial"`
@@ -224,7 +224,7 @@ tmb_cov_type <- function(cov) {
 #' cov_struct("csh", "AVISITN", "USUBJID")
 #' cov_struct("spatial", c("VISITA", "VISITB"), group = "GRP", subject = "SBJ")
 #'
-#' @family cov_struct
+#' @family `cov_struct`
 #' @export
 cov_struct <- function(type = cov_types(), visits, subject, group = character(),
   heterogeneous = FALSE) {
@@ -302,9 +302,9 @@ format.cov_struct <- function(x, ...) {
   sprintf("<covariance structure>\n%s%s:\n\n  %s | %s%s\n",
     if (x$heterogeneous) "heterogeneous " else "",
     cov_type_name(x$type),
-    fmt_syms(x$visits),
-    if (length(x$group) > 0) paste0(fmt_syms(x$group), " / ") else "",
-    fmt_syms(x$subject)
+    format_symbols(x$visits),
+    if (length(x$group) > 0) paste0(format_symbols(x$group), " / ") else "",
+    format_symbols(x$subject)
   )
 }
 
@@ -360,7 +360,7 @@ print.cov_struct <- function(x, ...) {
 #' # provide a quoted expression
 #' as.cov_struct(quote(sp_exp(visitA, visitB | group / subject)))
 #'
-#' @family cov_struct
+#' @family `cov_struct`
 #' @export
 as.cov_struct <- function(x, ...) {  # nolint
   UseMethod("as.cov_struct")
@@ -373,7 +373,7 @@ as.cov_struct.cov_struct <- function(x, ...) {
 
 #' @describeIn as.cov_struct
 #' When provided a formula, any specialized functions are assumed to be
-#' covariance structure defintions and must follow the form:
+#' covariance structure definitions and must follow the form:
 #'
 #' ```
 #' y ~ xs + type( (visit, )* visit | (group /)? subject )
