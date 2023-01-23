@@ -64,64 +64,64 @@ COV_TYPES <- local({  # nolint
 #'
 #' \tabular{clll}{
 #'
-#'        \strong{Structure}
-#'   \tab \strong{Description}
-#'   \tab \strong{Parameters}
-#'   \tab \strong{\eqn{(i, j)} element}
-#'   \cr
+#' \strong{Structure}
+#' \tab \strong{Description}
+#' \tab \strong{Parameters}
+#' \tab \strong{\eqn{(i, j)} element}
+#' \cr
 #'
-#'        ad
-#'   \tab Ante-dependence
-#'   \tab \eqn{m}
-#'   \tab \eqn{\sigma^{2}\prod_{k=i}^{j-1}\rho_{k}}
-#'   \cr
+#' ad
+#' \tab Ante-dependence
+#' \tab \eqn{m}
+#' \tab \eqn{\sigma^{2}\prod_{k=i}^{j-1}\rho_{k}}
+#' \cr
 #'
-#'        adh
-#'   \tab Heterogeneous ante-dependence
-#'   \tab \eqn{2m-1}
-#'   \tab \eqn{\sigma_{i}\sigma_{j}\prod_{k=i}^{j-1}\rho_{k}}
-#'   \cr
+#' adh
+#' \tab Heterogeneous ante-dependence
+#' \tab \eqn{2m-1}
+#' \tab \eqn{\sigma_{i}\sigma_{j}\prod_{k=i}^{j-1}\rho_{k}}
+#' \cr
 #'
-#'        ar1
-#'   \tab First-order auto-regressive
-#'   \tab \eqn{2}
-#'   \tab \eqn{\sigma^{2}\rho^{\left \vert {i-j} \right \vert}}
-#'   \cr
+#' ar1
+#' \tab First-order auto-regressive
+#' \tab \eqn{2}
+#' \tab \eqn{\sigma^{2}\rho^{\left \vert {i-j} \right \vert}}
+#' \cr
 #'
-#'        ar1h
-#'   \tab Heterogeneous first-order auto-regressive
-#'   \tab \eqn{m+1}
-#'   \tab \eqn{\sigma_{i}\sigma_{j}\rho^{\left \vert {i-j} \right \vert}}
-#'   \cr
+#' ar1h
+#' \tab Heterogeneous first-order auto-regressive
+#' \tab \eqn{m+1}
+#' \tab \eqn{\sigma_{i}\sigma_{j}\rho^{\left \vert {i-j} \right \vert}}
+#' \cr
 #'
-#'        cs
-#'   \tab Compound symmetry
-#'   \tab \eqn{2}
-#'   \tab \eqn{\sigma^{2}\left[ \rho I(i \neq j)+I(i=j) \right]}
-#'   \cr
+#' cs
+#' \tab Compound symmetry
+#' \tab \eqn{2}
+#' \tab \eqn{\sigma^{2}\left[ \rho I(i \neq j)+I(i=j) \right]}
+#' \cr
 #'
-#'        csh
-#'   \tab Heterogeneous compound symmetry
-#'   \tab \eqn{m+1}
-#'   \tab \eqn{\sigma_{i}\sigma_{j}\left[ \rho I(i \neq j)+I(i=j) \right]}
-#'   \cr
+#' csh
+#' \tab Heterogeneous compound symmetry
+#' \tab \eqn{m+1}
+#' \tab \eqn{\sigma_{i}\sigma_{j}\left[ \rho I(i \neq j)+I(i=j) \right]}
+#' \cr
 #'
-#'        toep
-#'   \tab Toeplitz
-#'   \tab \eqn{m}
-#'   \tab \eqn{\sigma_{\left \vert {i-j} \right \vert +1}}
-#'   \cr
+#' toep
+#' \tab Toeplitz
+#' \tab \eqn{m}
+#' \tab \eqn{\sigma_{\left \vert {i-j} \right \vert +1}}
+#' \cr
 #'
-#'        toeph
-#'   \tab Heterogeneous Toeplitz
-#'   \tab \eqn{2m-1}
-#'   \tab \eqn{\sigma_{i}\sigma_{j}\rho_{\left \vert {i-j} \right \vert}}
-#'   \cr
+#' toeph
+#' \tab Heterogeneous Toeplitz
+#' \tab \eqn{2m-1}
+#' \tab \eqn{\sigma_{i}\sigma_{j}\rho_{\left \vert {i-j} \right \vert}}
+#' \cr
 #'
-#'        us
-#'   \tab Unstructured
-#'   \tab \eqn{m(m+1)/2}
-#'   \tab \eqn{\sigma_{ij}}
+#' us
+#' \tab Unstructured
+#' \tab \eqn{m(m+1)/2}
+#' \tab \eqn{\sigma_{ij}}
 #'
 #' }
 #'
@@ -137,16 +137,16 @@ COV_TYPES <- local({  # nolint
 #'
 #' \tabular{clll}{
 #'
-#'        \strong{Structure}
-#'   \tab \strong{Description}
-#'   \tab \strong{Parameters}
-#'   \tab \strong{\eqn{(i, j)} element}
-#'   \cr
+#' \strong{Structure}
+#' \tab \strong{Description}
+#' \tab \strong{Parameters}
+#' \tab \strong{\eqn{(i, j)} element}
+#' \cr
 #'
-#'        sp_exp
-#'   \tab spatial exponential
-#'   \tab \eqn{2}
-#'   \tab \eqn{\sigma^{2}\rho^{-d_{ij}}}
+#' sp_exp
+#' \tab spatial exponential
+#' \tab \eqn{2}
+#' \tab \eqn{\sigma^{2}\rho^{-d_{ij}}}
 #'
 #' }
 #'

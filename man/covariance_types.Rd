@@ -31,81 +31,61 @@ abbreviations.
 
 \tabular{clll}{
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{   \\strong\{Structure\}
-}\if{html}{\out{</div>}}
-
+\strong{Structure}
 \tab \strong{Description}
 \tab \strong{Parameters}
 \tab \strong{\eqn{(i, j)} element}
 \cr
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{   ad
-}\if{html}{\out{</div>}}
-
+ad
 \tab Ante-dependence
 \tab \eqn{m}
 \tab \eqn{\sigma^{2}\prod_{k=i}^{j-1}\rho_{k}}
 \cr
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{   adh
-}\if{html}{\out{</div>}}
-
+adh
 \tab Heterogeneous ante-dependence
 \tab \eqn{2m-1}
 \tab \eqn{\sigma_{i}\sigma_{j}\prod_{k=i}^{j-1}\rho_{k}}
 \cr
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{   ar1
-}\if{html}{\out{</div>}}
-
+ar1
 \tab First-order auto-regressive
 \tab \eqn{2}
 \tab \eqn{\sigma^{2}\rho^{\left \vert {i-j} \right \vert}}
 \cr
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{   ar1h
-}\if{html}{\out{</div>}}
-
+ar1h
 \tab Heterogeneous first-order auto-regressive
 \tab \eqn{m+1}
 \tab \eqn{\sigma_{i}\sigma_{j}\rho^{\left \vert {i-j} \right \vert}}
 \cr
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{   cs
-}\if{html}{\out{</div>}}
-
+cs
 \tab Compound symmetry
 \tab \eqn{2}
 \tab \eqn{\sigma^{2}\left[ \rho I(i \neq j)+I(i=j) \right]}
 \cr
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{   csh
-}\if{html}{\out{</div>}}
-
+csh
 \tab Heterogeneous compound symmetry
 \tab \eqn{m+1}
 \tab \eqn{\sigma_{i}\sigma_{j}\left[ \rho I(i \neq j)+I(i=j) \right]}
 \cr
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{   toep
-}\if{html}{\out{</div>}}
-
+toep
 \tab Toeplitz
 \tab \eqn{m}
 \tab \eqn{\sigma_{\left \vert {i-j} \right \vert +1}}
 \cr
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{   toeph
-}\if{html}{\out{</div>}}
-
+toeph
 \tab Heterogeneous Toeplitz
 \tab \eqn{2m-1}
 \tab \eqn{\sigma_{i}\sigma_{j}\rho_{\left \vert {i-j} \right \vert}}
 \cr
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{   us
-}\if{html}{\out{</div>}}
-
+us
 \tab Unstructured
 \tab \eqn{m(m+1)/2}
 \tab \eqn{\sigma_{ij}}
@@ -125,17 +105,13 @@ homogeneous version is not available in SAS.
 
 \tabular{clll}{
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{   \\strong\{Structure\}
-}\if{html}{\out{</div>}}
-
+\strong{Structure}
 \tab \strong{Description}
 \tab \strong{Parameters}
 \tab \strong{\eqn{(i, j)} element}
 \cr
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{   sp_exp
-}\if{html}{\out{</div>}}
-
+sp_exp
 \tab spatial exponential
 \tab \eqn{2}
 \tab \eqn{\sigma^{2}\rho^{-d_{ij}}}
