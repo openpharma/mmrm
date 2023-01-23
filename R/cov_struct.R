@@ -209,7 +209,7 @@ tmb_cov_type <- function(cov) {
 #'
 #' @param type (`string`)\cr the name of the covariance structure type to use.
 #'   For available options, see `cov_types()`. If a type abbreviation is used
-#'   that impliesheterogeneity (e.g. `cph`) and no value is provided to
+#'   that implies heterogeneity (e.g. `cph`) and no value is provided to
 #'   `heterogeneous`, then the heterogeneity is derived from the type name.
 #' @param visits (`character`)\cr a vector of variable names to use for the
 #'   longitudinal terms of the covariance structure. Multiple terms are only
