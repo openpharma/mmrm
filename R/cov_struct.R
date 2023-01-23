@@ -265,7 +265,6 @@ cov_struct <- function(type = cov_types(), visits, subject, group = character(),
 #'
 #' @return `x` if successful, or an error is thrown otherwise.
 #'
-#' @importFrom checkmate makeAssertCollection
 #' @keywords internal
 validate_cov_struct <- function(x) {
   checks <- checkmate::makeAssertCollection()
