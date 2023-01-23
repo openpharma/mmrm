@@ -67,7 +67,6 @@ register_on_load <- function(pkg, ver = c(NA, NA), callback, message = NULL) {
 #' @return A logical (invisibly) indicating whether the loaded package meets
 #'   the version requirements. A warning is emitted otherwise.
 #'
-#' @importFrom utils packageVersion
 #' @keywords internal
 check_package_version <- function(pkg, ver = c(NA, NA)) {
   pkg_ver <- utils::packageVersion(pkg)
@@ -97,7 +96,6 @@ check_package_version <- function(pkg, ver = c(NA, NA)) {
 #' @return A character message to emit. Either a ansi-formatted cli output if
 #'   package 'cli' is available or a plain-text message otherwise.
 #'
-#' @importFrom utils packageName packageVersion
 #' @keywords internal
 emit_tidymodels_register_msg <- function() {
   pkg <- utils::packageName()

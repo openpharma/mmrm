@@ -120,7 +120,6 @@ is_infix <- function(name) {
 #'
 #' @return A formatted string of comma-separated variables.
 #'
-#' @importFrom utils capture.output
 #' @keywords internal
 format_symbols <- function(x) {
   paste0(collapse = ", ", lapply(x, function(i) {

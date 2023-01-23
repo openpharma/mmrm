@@ -384,7 +384,6 @@ as.cov_struct.cov_struct <- function(x, ...) {
 #' Any component on the right hand side of a formula is considered when
 #' searching for a covariance definition.
 #'
-#' @importFrom utils head
 #' @export
 as.cov_struct.formula <- function(x, warn_partial = TRUE, ...) {
   x_calls <- extract_covariance_terms(x)
