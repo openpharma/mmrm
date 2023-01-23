@@ -114,3 +114,25 @@ test_that("h_partial_fun_args works correctly to add attributes", {
   expect_identical(attr(opt1, "a"), 1)
   expect_identical(attr(opt1, "b"), 2)
 })
+
+test_that("fill_names completes names of input values", {
+  expect_identical(
+    fill_names(c("a", "b")),
+    c(a = "a", b = "b")
+  )
+
+  expect_identical(
+    fill_names(c(a = "a", "b")),
+    c(a = "a", b = "b")
+  )
+
+  expect_identical(
+    fill_names(list("a", "b")),
+    list(a = "a", b = "b")
+  )
+
+  expect_identical(
+    fill_names(list(a = "a", "b")),
+    list(a = "a", b = "b")
+  )
+})
