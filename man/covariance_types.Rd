@@ -23,7 +23,7 @@ A character vector of accepted covariance structure type names and
 abbreviations.
 }
 \description{
-Covariance Types
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#maturing}{\figure{lifecycle-maturing.svg}{options: alt='[Maturing]'}}}{\strong{[Maturing]}}
 }
 \section{Abbreviations for Covariance Structures}{
 

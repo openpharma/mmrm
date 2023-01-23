@@ -35,7 +35,7 @@ subjects.}
 A \code{cov_struct} object.
 }
 \description{
-Define a Covariance Structure
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#maturing}{\figure{lifecycle-maturing.svg}{options: alt='[Maturing]'}}}{\strong{[Maturing]}}
 }
 \examples{
 cov_struct("csh", "AVISITN", "USUBJID")

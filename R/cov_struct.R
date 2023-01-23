@@ -47,6 +47,8 @@ COV_TYPES <- local({  # nolint
 
 #' Covariance Types
 #'
+#' @description `r lifecycle::badge("maturing")`
+#'
 #' @param form (`character`)\cr Covariance structure type name form. One or
 #'   more of `"name"`, `"abbr"` (abbreviation), or `"habbr"` (heterogeneous
 #'   abbreviation).
@@ -203,6 +205,8 @@ tmb_cov_type <- function(cov) {
 
 #' Define a Covariance Structure
 #'
+#' @description `r lifecycle::badge("maturing")`
+#'
 #' @param type (`string`)\cr
 #'   The name of the covariance structure type to use. For available options,
 #'   see `cov_types()`. If a type abbreviation is used that implies
@@ -322,6 +326,8 @@ print.cov_struct <- function(x, ...) {
 }
 
 #' Coerce into a Covariance Structure Definition
+#'
+#' @description `r lifecycle::badge("maturing")`
 #'
 #' @details
 #' A covariance structure can be parsed from a model definition formula or call.

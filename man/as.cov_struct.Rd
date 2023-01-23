@@ -20,7 +20,7 @@ formula are disregarded.}
 A \code{\link[=cov_struct]{cov_struct()}} object.
 }
 \description{
-Coerce into a Covariance Structure Definition
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#maturing}{\figure{lifecycle-maturing.svg}{options: alt='[Maturing]'}}}{\strong{[Maturing]}}
 }
 \details{
 A covariance structure can be parsed from a model definition formula or call.
