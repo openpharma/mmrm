@@ -183,7 +183,7 @@ print.mmrm_tmb <- function(x,
   )
   h_print_cov(component(x, "cov_type"), component(x, "n_theta"), component(x, "n_groups"))
 
-  cat("Method:      ")
+  cat("Inference:   ")
   cat(ifelse(component(x, "reml"), "REML", "ML"))
   cat("\n")
   cat("Deviance:    ")

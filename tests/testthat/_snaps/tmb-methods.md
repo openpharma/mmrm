@@ -6,7 +6,7 @@
     Data:        fev_data (used 537 observations from 197 subjects with maximum 4 
     timepoints)
     Covariance:  unstructured (10 variance parameters)
-    Method:      REML
+    Inference:   REML
     Deviance:    3642.395
     
     Coefficients: 
@@ -26,7 +26,7 @@
     Data:        fev_data (used 537 observations from 197 subjects with maximum 4 
     timepoints)
     Covariance:  unstructured (10 variance parameters)
-    Method:      REML
+    Inference:   REML
     Deviance:    3386.45
     
     Coefficients: 
@@ -54,7 +54,7 @@
     Data:        .mmrm_tmb_dat_rank_deficient (used 537 observations from 197 
     subjects with maximum 4 timepoints)
     Covariance:  unstructured (10 variance parameters)
-    Method:      REML
+    Inference:   REML
     Deviance:    3699.803
     
     Coefficients: (1 not defined because of singularities)
