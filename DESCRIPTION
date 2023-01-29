@@ -9,6 +9,7 @@ Authors@R: c(
     person("Kevin", "Kunzmann", , "kevin.kunzmann@boehringer-ingelheim.com", role = "aut"),
     person("Brian Matthew", "Lang", , "brian.lang@msd.com", role = "aut"),
     person("Liming", "Li", , "liming.li@roche.com", role = "aut"),
+    person("Christian", "Stock", , "christian.stock@boehringer-ingelheim.com", role = "aut"),
     person("Ya", "Wang", , "ya.wang10@gilead.com", role = "aut"),
     person("Craig", "Gower-Page", , "craig.gower-page@roche.com", role = "ctb"),
     person("Boehringer Ingelheim Ltd.", role = c("cph", "fnd")),
