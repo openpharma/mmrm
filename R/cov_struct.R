@@ -262,7 +262,7 @@ cov_struct <- function(type = cov_types(), visits, subject, group = character(),
 #' @inheritParams mmrm
 #'
 #' @return The value `covariance` if it's provided or a covariance structure
-#'   durived from the provided `formula` otherwise. An error is raised of both
+#'   derived from the provided `formula` otherwise. An error is raised of both
 #'   are provided.
 #'
 #' @keywords internal

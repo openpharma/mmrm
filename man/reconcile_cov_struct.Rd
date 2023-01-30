@@ -16,7 +16,7 @@ a structure is derived from the provided formula.}
 }
 \value{
 The value \code{covariance} if it's provided or a covariance structure
-durived from the provided \code{formula} otherwise. An error is raised of both
+derived from the provided \code{formula} otherwise. An error is raised of both
 are provided.
 }
 \description{
