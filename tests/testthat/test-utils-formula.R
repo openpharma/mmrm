@@ -21,6 +21,11 @@ test_that("extract_covariance_terms returns a list of possible covariance terms"
       csh = quote(csh(a2 | g2 / s2))
     )
   )
+
+  expect_identical(
+    extract_covariance_terms(a ~ a + us(a | g / s)),
+    list(us = quote(us(a | g / s)))
+  )
 })
 
 # drop_covariance_terms ----

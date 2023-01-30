@@ -66,17 +66,17 @@ test_that("is_infix identifies primitive infix operators", {
 test_that("formula_rhs fetches the right-most part of a formula", {
   expect_identical(
     formula_rhs(a ~ b + c),
-    quote(b + c)
+    ~b + c,
   )
 
   expect_identical(
     formula_rhs(a + b ~ c),
-    quote(c)
+    ~c
   )
 
   expect_identical(
     formula_rhs(~ c | d),
-    quote(c | d)
+    ~c | d
   )
 })
 

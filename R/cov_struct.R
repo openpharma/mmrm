@@ -257,6 +257,29 @@ cov_struct <- function(type = cov_types(), visits, subject, group = character(),
   validate_cov_struct(x)
 }
 
+#' Reconcile Possible Covariance Structure Inputs
+#'
+#' @inheritParams mmrm
+#'
+#' @return The value `covariance` if it's provided or a covariance structure
+#'   durived from the provided `formula` otherwise. An error is raised of both
+#'   are provided.
+#'
+#' @keywords internal
+reconcile_cov_struct <- function(formula = NULL, covariance = NULL) {
+  if (!is.null(covariance) && length(extract_covariance_terms(formula)) > 0) {
+    stop(paste0(
+      "Redundant covariance structure definition in `formula` and ",
+      "`covariance` arguments"
+    ))
+  }
+
+  if (!is.null(covariance))
+    return(covariance)
+
+  as.cov_struct(formula, warn_partial = FALSE)
+}
+
 #' Validate Covariance Structure Data
 #'
 #' Run checks against relational integrity of covariance definition

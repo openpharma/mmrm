@@ -9,7 +9,7 @@ fit_single_optimizer(
   data,
   weights,
   reml = TRUE,
-  covariance = as.cov_struct(formula, warn_partial = FALSE),
+  covariance = NULL,
   ...,
   control = mmrm_control(...)
 )

@@ -418,3 +418,15 @@ test_that("mmrm fails when using ... and control at the same time", {
     fixed = TRUE
   )
 })
+
+test_that("mmrm fails when using formula covariance with covariance argument", {
+  expect_error(
+    mmrm(
+      formula = FEV1 ~ us(AVISIT | USUBJID),
+      covariance = cov_struct("us", "AVISIT", "USUBJID"),
+      data = fev_data,
+    ),
+    "Redundant covariance structure",
+    fixed = TRUE
+  )
+})

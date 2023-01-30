@@ -10,8 +10,8 @@ formula_rhs(f)
 \item{f}{(\code{formula})\cr a formula.}
 }
 \value{
-A quote or atomic value derived from the right-hand-side of the
-formula.
+A formula without a response, derived from the right-hand-side of the
+formula, \code{f}.
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{formula_rhs(a ~ b + c)
 formula_rhs(~ b + c)

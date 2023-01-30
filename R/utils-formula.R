@@ -9,11 +9,9 @@
 #' @keywords internal
 extract_covariance_terms <- function(f) {
   specials <- cov_types(c("abbr", "habbr"))
-  terms <- stats::terms(f, specials = specials)
-  covariance_terms <- Filter(Negate(is.null), attr(terms, "specials"))
-  lapply(covariance_terms, function(i) {
-    formula_rhs(formula(terms[i - (length(f) > 2)]))
-  })
+  terms <- stats::terms(formula_rhs(f), specials = specials)
+  covariance_terms <- Filter(length, attr(terms, "specials"))
+  lapply(covariance_terms, function(i) formula(terms[i])[[2]])
 }
 
 #' Drop Formula Terms used for Covariance Structure Definition

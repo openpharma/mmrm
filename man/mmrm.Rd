@@ -8,7 +8,7 @@ mmrm(
   formula,
   data,
   weights = NULL,
-  covariance = as.cov_struct(formula, warn_partial = FALSE),
+  covariance = NULL,
   reml = TRUE,
   control = mmrm_control(...),
   ...

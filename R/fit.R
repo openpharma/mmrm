@@ -31,15 +31,9 @@ fit_single_optimizer <- function(formula,
                                  data,
                                  weights,
                                  reml = TRUE,
-                                 covariance = as.cov_struct(
-                                   formula,
-                                   warn_partial = FALSE
-                                 ),
+                                 covariance = NULL,
                                  ...,
                                  control = mmrm_control(...)) {
-
-  covariance <- as.cov_struct(covariance)
-
   assert_formula(formula)
   assert_data_frame(data)
   assert_vector(weights)
@@ -327,14 +321,14 @@ mmrm_control <- function(n_cores = 1L,
 mmrm <- function(formula,
                  data,
                  weights = NULL,
-                 covariance = as.cov_struct(formula, warn_partial = FALSE),
+                 covariance = NULL,
                  reml = TRUE,
                  control = mmrm_control(...),
                  ...) {
-  covariance <- as.cov_struct(covariance)
   assert_false(!missing(control) && !missing(...))
   assert_class(control, "mmrm_control")
   assert_list(control$optimizers, min.len = 1)
+
   if (control$method %in% c("Kenward-Roger", "Kenward-Roger-Linear") && !reml) {
     stop("Kenward-Roger only works for REML")
   }

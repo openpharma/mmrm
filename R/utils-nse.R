@@ -79,8 +79,8 @@ flatten_expr <- function(expr) {
 #'
 #' @param f (`formula`)\cr a formula.
 #'
-#' @return A quote or atomic value derived from the right-hand-side of the
-#'   formula.
+#' @return A formula without a response, derived from the right-hand-side of the
+#'   formula, `f`.
 #'
 #' ```
 #' formula_rhs(a ~ b + c)
@@ -89,7 +89,8 @@ flatten_expr <- function(expr) {
 #'
 #' @keywords internal
 formula_rhs <- function(f) {
-  f[[length(f)]]
+  if (length(f) == 2) f
+  else f[-2]
 }
 
 #' Test Whether a Symbol is an Infix Operator

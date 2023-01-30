@@ -457,9 +457,9 @@ fit_mmrm <- function(formula,
                      data,
                      weights,
                      reml = TRUE,
-                     covariance = as.cov_struct(formula, warn_partial = FALSE),
+                     covariance = NULL,
                      control = mmrm_control()) {
-  covariance <- as.cov_struct(covariance)
+  covariance <- reconcile_cov_struct(formula, covariance)
   formula_parts <- h_mmrm_tmb_formula_parts(formula, covariance)
 
   assert_class(control, "mmrm_control")
