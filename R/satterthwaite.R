@@ -89,6 +89,7 @@ NULL
 #'
 #' @keywords internal
 h_quad_form_vec <- function(vec, center) {
+  vec <- as.vector(vec)
   assert_numeric(vec, any.missing = FALSE)
   assert_matrix(
     center,

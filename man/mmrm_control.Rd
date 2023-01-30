@@ -6,7 +6,7 @@
 \usage{
 mmrm_control(
   n_cores = 1L,
-  method = c("Satterthwaite", "Kenward-Roger"),
+  method = c("Satterthwaite", "Kenward-Roger", "Residual"),
   cov = NULL,
   start = NULL,
   accept_singular = TRUE,

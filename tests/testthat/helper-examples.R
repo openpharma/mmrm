@@ -61,12 +61,12 @@ get_mmrm_krl <- function() {
   .mmrm_krl
 }
 
-.mmrm_emp <- mmrm(.mmrm_kr_formula, data = fev_data, cov = "Empirical")
+.mmrm_emp <- mmrm(.mmrm_kr_formula, data = fev_data, cov = "Empirical", method = "Residual")
 get_mmrm_emp <- function() {
   .mmrm_emp
 }
 
-.mmrm_jackknife <- mmrm(.mmrm_kr_formula, data = fev_data, cov = "Empirical-Jackknife")
+.mmrm_jackknife <- mmrm(.mmrm_kr_formula, data = fev_data, cov = "Empirical-Jackknife", method = "Residual")
 get_mmrm_jack <- function() {
   .mmrm_jackknife
 }

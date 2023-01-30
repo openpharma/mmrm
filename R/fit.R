@@ -214,7 +214,7 @@ refit_multiple_optimizers <- function(fit,
 #'   optimizer_args = list(method = "L-BFGS-B")
 #' )
 mmrm_control <- function(n_cores = 1L,
-                         method = c("Satterthwaite", "Kenward-Roger"),
+                         method = c("Satterthwaite", "Kenward-Roger", "Residual"),
                          cov = NULL,
                          start = NULL,
                          accept_singular = TRUE,
@@ -236,6 +236,9 @@ mmrm_control <- function(n_cores = 1L,
     cov,
     c("Asymptotic", "Empirical", "Empirical-Jackknife", "Kenward-Roger", "Kenward-Roger-Linear")
   )
+  if (xor(cov %in% c("Empirical", "Empirical-Jackknife"), identical(method, "Residual"))) {
+    stop("Empirical and Empirical-Jackknife only works for Residual degree of freedom currently!")
+  }
   if (xor(identical(method, "Kenward-Roger"), cov %in% c("Kenward-Roger", "Kenward-Roger-Linear"))) {
     stop("Kenward-Roger degree of freedom must work together with Kenward-Roger or Kenward-Roger-Linear covariance!")
   }
@@ -403,10 +406,11 @@ mmrm <- function(formula,
       r = fit$kr_comp$R,
       linear = (control$cov == "Kenward-Roger-Linear")
     )
-  } else if (identical(control$cov, "Empirical")) {
-    fit$beta_vcov_adj <- h_get_empirical(fit$tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov, FALSE)
-  } else if (identical(control$cov, "Empirical-Jackknife")) {
-    fit$beta_vcov_adj <- h_get_empirical(fit$tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov, TRUE)
+  } else if (control$cov %in% c("Empirical", "Empirical-Jackknife")) {
+    fit$beta_vcov_adj <- h_get_empirical(
+      fit$tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov, control$cov == "Empirical-Jackknife"
+    )
+    dimnames(fit$beta_vcov_adj) <- dimnames(fit$beta_vcov)
   } else if (identical(control$cov, "Asymptotic")) {
   } else {
     stop("Unrecognized covariance method")

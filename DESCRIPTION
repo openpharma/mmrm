@@ -86,6 +86,7 @@ Collate:
     'mmrm-methods.R'
     'mmrm-package.R'
     'utils.R'
+    'residual.R'
     'satterthwaite.R'
     'testing.R'
     'tmb-methods.R'

@@ -454,23 +454,23 @@ test_that("mmrm fails for cov: Kenward-Roger-Linear and method: Sattherthwaite",
   )
 })
 
-test_that("mmrm works for cov: Empirical and method: Sattherthwaite", {
+test_that("mmrm works for cov: Empirical and method: Residual", {
   expect_silent(
     mmrm(
       formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
       data = fev_data,
-      method = "Satterthwaite",
+      method = "Residual",
       cov = "Empirical"
     )
   )
 })
 
-test_that("mmrm works for cov: Jackknife and method: Sattherthwaite", {
+test_that("mmrm works for cov: Jackknife and method: Residual", {
   expect_silent(
     mmrm(
       formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
       data = fev_data,
-      method = "Satterthwaite",
+      method = "Residual",
       cov = "Empirical-Jackknife"
     )
   )
@@ -518,7 +518,7 @@ test_that("mmrm works for cov: Empirical and method: Kenward-Roger", {
       method = "Kenward-Roger",
       cov = "Empirical"
     ),
-    "Kenward-Roger degree of freedom must work together with Kenward-Roger or Kenward-Roger-Linear covariance!"
+    "Empirical and Empirical-Jackknife only works for Residual degree of freedom currently!"
   )
 })
 
@@ -530,6 +530,6 @@ test_that("mmrm works for cov: Jackknife and method: Kenward-Roger", {
       method = "Kenward-Roger",
       cov = "Empirical-Jackknife"
     ),
-    "Kenward-Roger degree of freedom must work together with Kenward-Roger or Kenward-Roger-Linear covariance!"
+    "Empirical and Empirical-Jackknife only works for Residual degree of freedom currently!"
   )
 })
