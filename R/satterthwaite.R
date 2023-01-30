@@ -289,7 +289,7 @@ h_df_md_list <- function(f_stat, num_df, denom_df) {
 #'
 #' @keywords internal
 h_df_md_from_1d <- function(object, contrast) {
-  res_1d <- df_1d(object, contrast)
+  res_1d <- h_df_1d_sat(object, contrast)
   h_df_md_list(
     f_stat = res_1d$t_stat^2,
     num_df = 1,
