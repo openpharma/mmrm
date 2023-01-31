@@ -50,6 +50,7 @@ Imports:
     utils
 Suggests:
     cli,
+    clubSandwich,
     emmeans (>= 1.6),
     estimability,
     knitr,
