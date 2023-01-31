@@ -13,7 +13,10 @@ test_that("h_get_empirical obtain jackknife covariance", {
 # integration test ----
 
 test_that("empirical covariance are the same with SAS result for ar1", {
-  fit <- mmrm(FEV1 ~ ARMCD + ar1(AVISIT | USUBJID), data = fev_data, weights = fev_data$WEIGHT, cov = "Empirical", method = "Residual")
+  fit <- mmrm(
+    FEV1 ~ ARMCD + ar1(AVISIT | USUBJID), data = fev_data,
+    cov = "Empirical", method = "Residual"
+  )
   expected <- 0.82581291651503
   expect_equal(sqrt(component(fit, "beta_vcov")[2, 2]), expected, tolerance = 1e-4)
 })
@@ -68,20 +71,13 @@ test_that("empirical covariance are the same with SAS result for sp_exp", {
 
 # jackknife ----
 
-test_that("Jackknife works as expected", {
+test_that("Jackknife works as expected for ar1", {
+  skip_if_not_installed("nlme")
+  skip_if_not_installed("clubSandwich")
   formula <- FEV1 ~ ARMCD + ar1(AVISIT | USUBJID)
   data_full <- fev_data[complete.cases(fev_data), ]
-  data_full$USUBJID <- droplevels(data_full$USUBJID)
-  ids <- lapply(levels(data_full$USUBJID), function(x) {
-    which(data_full$USUBJID == x)
-  })
-  betas <- lapply(ids, function(i) {
-    fit <- mmrm(formula = formula, data = data_full[-i, ])
-    fit$beta_est
-  })
-  beta_all <- do.call(cbind, betas)
   fit <- mmrm(formula = formula, data = data_full, cov = "Empirical-Jackknife", method = "Residual")
-  n <- component(fit, "n_subjects")
-  expected <- (n - 1) / n * (beta_all - fit$beta_est) %*% t(beta_all - fit$beta_est)
-  expect_equal(fit$beta_vcov_adj, expected, tolerance = 1e-2)
+  fit_gls <- nlme::gls(FEV1 ~ ARMCD, data_full, correlation = nlme::corAR1(form = ~ VISITN | USUBJID))
+  expected <- clubSandwich::vcovCR(fit_gls, type = "CR3")
+  expect_equal(fit$beta_vcov_adj, expected, tolerance = 1e-4, ignore_attr = TRUE)
 })

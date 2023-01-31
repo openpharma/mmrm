@@ -476,7 +476,7 @@ test_that("mmrm works for cov: Jackknife and method: Residual", {
   )
 })
 
-test_that("mmrm works for cov: Asymptotic and method: Kenward-Roger", {
+test_that("mmrm fails for cov: Asymptotic and method: Kenward-Roger", {
   expect_error(
     mmrm(
       formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
@@ -488,7 +488,7 @@ test_that("mmrm works for cov: Asymptotic and method: Kenward-Roger", {
   )
 })
 
-test_that("mmrm fails for cov: Kenward-Roger and method: Kenward-Roger", {
+test_that("mmrm works for cov: Kenward-Roger and method: Kenward-Roger", {
   expect_silent(
     mmrm(
       formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
@@ -499,7 +499,7 @@ test_that("mmrm fails for cov: Kenward-Roger and method: Kenward-Roger", {
   )
 })
 
-test_that("mmrm fails for cov: Kenward-Roger-Linear and method: Kenward-Roger", {
+test_that("mmrm works for cov: Kenward-Roger-Linear and method: Kenward-Roger", {
   expect_silent(
     mmrm(
       formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
@@ -510,7 +510,7 @@ test_that("mmrm fails for cov: Kenward-Roger-Linear and method: Kenward-Roger", 
   )
 })
 
-test_that("mmrm works for cov: Empirical and method: Kenward-Roger", {
+test_that("mmrm fails for cov: Empirical and method: Kenward-Roger", {
   expect_error(
     mmrm(
       formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
@@ -522,7 +522,7 @@ test_that("mmrm works for cov: Empirical and method: Kenward-Roger", {
   )
 })
 
-test_that("mmrm works for cov: Jackknife and method: Kenward-Roger", {
+test_that("mmrm fails for cov: Jackknife and method: Kenward-Roger", {
   expect_error(
     mmrm(
       formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),

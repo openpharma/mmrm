@@ -75,9 +75,11 @@ NumericMatrix get_empirical(List mmrm_data, NumericVector theta, NumericVector b
   }
   // beta_vcov already take gi into consideration;
   matrix<double> ret = beta_vcov_matrix * meat * beta_vcov_matrix;
-  if (jackknife) {
-    ret = ret * (n_subjects - 1) / n_subjects;
-  }
+  // Removed because this scale factor can be applied by user manually
+  // not important.
+  //if (jackknife) {
+  //  ret = ret * (n_subjects - 1) / n_subjects;
+  //}
   return as_mv(ret);
 }
 
