@@ -4,24 +4,32 @@
 \alias{h_mmrm_tmb_formula_parts}
 \title{Processing the Formula for \code{TMB} Fit}
 \usage{
-h_mmrm_tmb_formula_parts(formula)
+h_mmrm_tmb_formula_parts(
+  formula,
+  covariance = as.cov_struct(formula, warn_partial = FALSE)
+)
 }
 \arguments{
-\item{formula}{(\code{formula})\cr original formula.}
+\item{formula}{(\code{formula})\cr Original formula.}
+
+\item{covariance}{(\code{cov_struct})\cr A covariance structure from which
+additional formula parts should be added.}
 }
 \value{
 List of class \code{mmrm_tmb_formula_parts} with elements:
 \itemize{
 \item \code{formula}: the original input.
 \item \code{model_formula}: \code{formula} with the covariance term is removed.
-\item \code{full_formula}: same as \code{model_formula} but includes the \code{subject_var} and
-\code{visit_var}.
+\item \code{model_formula}: \code{formula} with the covariance term removed.
+\item \code{full_formula}: same as \code{model_formula} but includes the covariance
+structure's subject, visit and (optionally) group variables.
 \item \code{cov_type}: \code{string} with covariance term type (e.g. \code{"us"}).
-\item \code{is_spatial}: \code{flag} indicator of whether the covariance structure is spatial
+\item \code{is_spatial}: \code{flag} indicator of whether the covariance structure is
+spatial
 \item \code{visit_var}: \code{character} with the visit variable name.
 \item \code{subject_var}: \code{string} with the subject variable name.
-\item \code{group_var}: \code{string} with the group variable name. If no group specified, this element
-is \code{NULL}.
+\item \code{group_var}: \code{string} with the group variable name. If no group specified,
+this element is \code{NULL}.
 }
 }
 \description{

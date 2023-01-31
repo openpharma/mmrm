@@ -2,8 +2,11 @@
 
 ### New Features
 
+- Add argument `covariance` to `mmrm()` to allow for easier programmatic access
+  to specifying the model's covariance structure and to expose covariance
+  customization through the `tidymodels` interface.
 - Add Kenward-Roger support for spatial covariance structures.
-- Add optional tidymodels support.
+- Add optional `tidymodels` support.
 
 # mmrm 0.2.2
 
