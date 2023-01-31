@@ -1,5 +1,5 @@
 ---
-title: "Covariance of Fixed Effects in `mmrm`"
+title: "Coefficients Covariance Matrix Adjustment in `mmrm`"
 package: mmrm
 bibliography: '`r system.file("REFERENCES.bib", package = "mmrm")`'
 output:
