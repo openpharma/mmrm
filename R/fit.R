@@ -204,6 +204,7 @@ refit_multiple_optimizers <- function(fit,
 #' |-----------|----------|
 #' |Satterthwaite| Asymptotic|
 #' |Kenward-Roger| Kenward-Roger|
+#' |Residual| Asymptotic|
 #'
 #' @return List of class `mmrm_control` with the control parameters.
 #' @export
@@ -236,7 +237,7 @@ mmrm_control <- function(n_cores = 1L,
     cov,
     c("Asymptotic", "Empirical", "Empirical-Jackknife", "Kenward-Roger", "Kenward-Roger-Linear")
   )
-  if (xor(cov %in% c("Empirical", "Empirical-Jackknife"), identical(method, "Residual"))) {
+  if (cov %in% c("Empirical", "Empirical-Jackknife") &&  !identical(method, "Residual")) {
     stop("Empirical and Empirical-Jackknife only works for Residual degree of freedom currently!")
   }
   if (xor(identical(method, "Kenward-Roger"), cov %in% c("Kenward-Roger", "Kenward-Roger-Linear"))) {

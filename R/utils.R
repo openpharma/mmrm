@@ -304,11 +304,12 @@ h_partial_fun_args <- function(fun, ..., additional_attr = list()) {
 #' If degree of freedom is "Kenward-Roger", then "Kenward-Roger" is returned.
 #'
 #' @keywords internal
-h_get_cov_default <- function(method = c("Satterthwaite", "Kenward-Roger")) {
+h_get_cov_default <- function(method = c("Satterthwaite", "Kenward-Roger", "Residual")) {
   checkmate::assert_string(method)
   method <- match.arg(method)
   switch(
     method,
+    "Residual" = "Empirical",
     "Satterthwaite" = "Asymptotic",
     "Kenward-Roger" = "Kenward-Roger"
   )
