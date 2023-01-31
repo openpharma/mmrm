@@ -3,7 +3,7 @@
 ### New Features
 
 - Add Kenward-Roger support for spatial covariance structures.
-- Add empirical and empirical Jackknife covariance estimator for $\beta$.
+- Add empirical and empirical Jackknife adjusted coefficients covariance matrix.
   In addition, the argument `method` now only stands for the method used
   for degree of freedom, another argument `cov` is added to control the
   method used to calculate the covariance for $\beta$.
