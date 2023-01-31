@@ -305,7 +305,7 @@ h_partial_fun_args <- function(fun, ..., additional_attr = list()) {
 #'
 #' @keywords internal
 h_get_cov_default <- function(method = c("Satterthwaite", "Kenward-Roger", "Residual")) {
-  checkmate::assert_string(method)
+  assert_string(method)
   method <- match.arg(method)
   switch(
     method,
