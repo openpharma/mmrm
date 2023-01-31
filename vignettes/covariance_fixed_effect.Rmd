@@ -77,7 +77,7 @@ where
 
 \[H_{ii} = X_i(X^\top X)^{-1}X_i^\top\].
 
-Please note that in the paper there is an additional scaler $\frac{n-1}{n}$ where $n$ is the number of subjects, here we do not include this scaler.
+Please note that in the paper there is an additional scale parameter $\frac{n-1}{n}$ where $n$ is the number of subjects, here we do not include this parameter.
 
 ## Kenward-Roger Covariance
 
