@@ -70,13 +70,14 @@ Jackknife method in `mmrm` is the "leave-one-cluster-out" method.
 Following @mccaffrey2003bias, we have
 
 \[
-  cov(\hat\beta) = \frac{n-1}{n}(X^\top W X)^{-1}(\sum_{i}{X_i^\top L_{i} (I_{i} - H_{ii})^{-1} L_{i}^\top \hat\epsilon_i\hat\epsilon_i^\top L_{i} (I_{i} - H_{ii})^{-1} L_{i}^\top X_i})(X^\top W X)^{-1}
+  cov(\hat\beta) = (X^\top W X)^{-1}(\sum_{i}{X_i^\top L_{i} (I_{i} - H_{ii})^{-1} L_{i}^\top \hat\epsilon_i\hat\epsilon_i^\top L_{i} (I_{i} - H_{ii})^{-1} L_{i}^\top X_i})(X^\top W X)^{-1}
 \]
 
 where
 
 \[H_{ii} = X_i(X^\top X)^{-1}X_i^\top\].
 
+Please note that in the paper there is an additional scaler $\frac{n-1}{n}$ where $n$ is the number of subjects, here we do not include this scaler.
 
 ## Kenward-Roger Covariance
 

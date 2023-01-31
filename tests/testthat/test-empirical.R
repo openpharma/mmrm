@@ -12,9 +12,12 @@ test_that("h_get_empirical obtain jackknife covariance", {
 
 # integration test ----
 
+# unweighted mmrm ----
+
 test_that("empirical covariance are the same with SAS result for ar1", {
   fit <- mmrm(
-    FEV1 ~ ARMCD + ar1(AVISIT | USUBJID), data = fev_data,
+    FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+    data = fev_data,
     cov = "Empirical", method = "Residual"
   )
   expected <- 0.82581291651503
@@ -69,7 +72,92 @@ test_that("empirical covariance are the same with SAS result for sp_exp", {
   expect_equal(sqrt(component(fit, "beta_vcov")[2, 2]), expected, tolerance = 1e-4)
 })
 
-# jackknife ----
+# weighted mmrm ----
+
+test_that("empirical covariance are the same with SAS result for ar1", {
+  fit <- mmrm(
+    FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+    data = fev_data,
+    cov = "Empirical", method = "Residual",
+    weights = fev_data$WEIGHT
+  )
+  expected <- 0.9766083014759
+  expect_equal(sqrt(component(fit, "beta_vcov")[2, 2]), expected, tolerance = 1e-4)
+})
+
+test_that("empirical covariance are the same with SAS result for ar1h", {
+  fit <- mmrm(FEV1 ~ ARMCD + ar1h(AVISIT | USUBJID),
+    data = fev_data, cov = "Empirical", method = "Residual",
+    weights = fev_data$WEIGHT
+  )
+  expected <- 0.77913503559498
+  expect_equal(sqrt(component(fit, "beta_vcov")[2, 2]), expected, tolerance = 1e-4)
+})
+
+test_that("empirical covariance are the same with SAS result for cs", {
+  fit <- mmrm(FEV1 ~ ARMCD + cs(AVISIT | USUBJID),
+    data = fev_data, cov = "Empirical", method = "Residual",
+    weights = fev_data$WEIGHT
+  )
+  expected <- 0.90291936438319
+  expect_equal(sqrt(component(fit, "beta_vcov")[2, 2]), expected, tolerance = 1e-4)
+})
+
+test_that("empirical covariance are the same with SAS result for csh", {
+  fit <- mmrm(FEV1 ~ ARMCD + csh(AVISIT | USUBJID),
+    data = fev_data, cov = "Empirical", method = "Residual",
+    weights = fev_data$WEIGHT
+  )
+  expected <- 0.76200584549261
+  expect_equal(sqrt(component(fit, "beta_vcov")[2, 2]), expected, tolerance = 1e-4)
+})
+
+test_that("empirical covariance are the same with SAS result for toep", {
+  fit <- mmrm(FEV1 ~ ARMCD + toep(AVISIT | USUBJID),
+    data = fev_data, cov = "Empirical", method = "Residual",
+    weights = fev_data$WEIGHT
+  )
+  expected <- 1.00281379688484
+  expect_equal(sqrt(component(fit, "beta_vcov")[2, 2]), expected, tolerance = 1e-4)
+})
+
+test_that("empirical covariance are the same with SAS result for toeph", {
+  fit <- mmrm(FEV1 ~ ARMCD + toeph(AVISIT | USUBJID),
+    data = fev_data, cov = "Empirical", method = "Residual",
+    weights = fev_data$WEIGHT
+  )
+  expected <- 0.77628714727105
+  expect_equal(sqrt(component(fit, "beta_vcov")[2, 2]), expected, tolerance = 1e-4)
+})
+
+test_that("empirical covariance are the same with SAS result for adh", {
+  fit <- mmrm(FEV1 ~ ARMCD + adh(AVISIT | USUBJID),
+    data = fev_data, cov = "Empirical", method = "Residual",
+    weights = fev_data$WEIGHT
+  )
+  expected <- 0.73422273273261
+  expect_equal(sqrt(component(fit, "beta_vcov")[2, 2]), expected, tolerance = 1e-4)
+})
+
+test_that("empirical covariance are the same with SAS result for us", {
+  fit <- mmrm(FEV1 ~ ARMCD + us(AVISIT | USUBJID),
+    data = fev_data, cov = "Empirical", method = "Residual",
+    weights = fev_data$WEIGHT
+  )
+  expected <- 0.73089269734199
+  expect_equal(sqrt(component(fit, "beta_vcov")[2, 2]), expected, tolerance = 1e-4)
+})
+
+test_that("empirical covariance are the same with SAS result for sp_exp", {
+  fit <- mmrm(FEV1 ~ ARMCD + sp_exp(VISITN, VISITN2 | USUBJID),
+    data = fev_data, cov = "Empirical", method = "Residual",
+    weights = fev_data$WEIGHT
+  )
+  expected <- 0.93828496200941
+  expect_equal(sqrt(component(fit, "beta_vcov")[2, 2]), expected, tolerance = 1e-4)
+})
+
+## jackknife ----
 
 test_that("Jackknife works as expected for ar1", {
   skip_if_not_installed("nlme")

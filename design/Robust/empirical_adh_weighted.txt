@@ -1,0 +1,178 @@
+
+
+                                                           The SAS System                  Tuesday, January 31, 2023 06:12:00 AM   5
+
+                                                        The Mixed Procedure
+
+                                                         Model Information
+
+                                       Data Set                     WORK.FEV                 
+                                       Dependent Variable           FEV1                     
+                                       Weight Variable              WEIGHT                   
+                                       Covariance Structure         Ante-dependence          
+                                       Subject Effect               USUBJID                  
+                                       Estimation Method            REML                     
+                                       Residual Variance Method     None                     
+                                       Fixed Effects SE Method      Empirical                
+                                       Degrees of Freedom Method    Between-Within           
+
+
+                                                      Class Level Information
+ 
+                                        Class      Levels    Values
+
+                                        RACE            3    Black or African American     
+                                                             White Asian                   
+                                        AVISIT          4    VIS1 VIS2 VIS3 VIS4           
+                                        SEX             2    Female Male                   
+                                        ARMCD           2    TRT PBO                       
+                                        USUBJID       200    PT1 PT10 PT100 PT101 PT102    
+                                                             PT103 PT104 PT105 PT106 PT107 
+                                                             PT108 PT109 PT11 PT110 PT111  
+                                                             PT112 PT113 PT114 PT115 PT116 
+                                                             PT117 PT118 PT119 PT12 PT120  
+                                                             PT121 PT122 PT123 PT124 PT125 
+                                                             PT126 PT127 PT128 PT129 PT13  
+                                                             PT130 PT131 PT132 PT133 PT134 
+                                                             PT135 PT136 PT137 PT138 PT139 
+                                                             PT14 PT140 PT141 PT142 PT143  
+                                                             PT144 PT145 PT146 PT147 PT148 
+                                                             PT149 PT15 PT150 PT151 PT152  
+                                                             PT153 PT154 PT155 PT156 PT157 
+                                                             PT158 PT159 PT16 PT160 PT161  
+                                                             PT162 PT163 PT164 PT165 PT166 
+                                                             PT167 PT168 PT169 PT17 PT170  
+                                                             PT171 PT172 PT173 PT174 PT175 
+                                                             PT176 PT177 PT178 PT179 PT18  
+                                                             PT180 PT181 PT182 PT183 PT184 
+                                                             PT185 PT186 PT187 PT188 PT189 
+                                                             PT19 PT190 PT191 PT192 PT193  
+                                                             PT194 PT195 PT196 PT197 PT198 
+                                                             PT199 PT2 PT20 PT200 PT21 PT22
+                                                             PT23 PT24 PT25 PT26 PT27 PT28 
+                                                             PT29 PT3 PT30 PT31 PT32 PT33  
+                                                             PT34 PT35 PT36 PT37 PT38 PT39 
+                                                             PT4 PT40 PT41 PT42 PT43 PT44  
+                                                             PT45 PT46 PT47 PT48 PT49 PT5  
+                                                             PT50 PT51 PT52 PT53 PT54 PT55 
+                                                             PT56 PT57 PT58 PT59 PT6 PT60  
+                                                             PT61 PT62 PT63 PT64 PT65 PT66 
+                                                             PT67 PT68 PT69 PT7 PT70 PT71  
+                                                             PT72 PT73 PT74 PT75 PT76 PT77 
+                                                             PT78 PT79 PT8 PT80 PT81 PT82  
+                                                             PT83 PT84 PT85 PT86 PT87 PT88 
+                                                             PT89 PT9 PT90 PT91 PT92 PT93  
+                                                             PT94 PT95 PT96 PT97 PT98 PT99 
+
+
+                                                            Dimensions
+
+                                                Covariance Parameters             7
+                                                Columns in X                      3
+                                                Columns in Z                      0
+                                                Subjects                        200
+                                                Max Obs per Subject               4
+
+
+                                                      Number of Observations
+
+                                            Number of Observations Read             800
+                                            Number of Observations Used             537
+                                            Number of Observations Not Used         263
+
+
+                                                         Iteration History
+ 
+                                    Iteration    Evaluations    -2 Res Log Like       Criterion
+
+                                            0              1      3968.46554800                
+                                            1              2      3773.54748733      0.00003359
+                                            2              1      3773.49973649      0.00000003
+                                            3              1      3773.49969419      0.00000000
+
+
+                                                     Convergence criteria met.                    
+
+
+                                                       Estimated R Matrix for
+                                                        USUBJID PT1/Weighted
+                                                              by WEIGHT
+ 
+                                                     Row        Col1        Col2
+
+                                                       1     23.4928     -0.1733
+                                                       2     -0.1733     98.4974
+
+
+                                                       Estimated R Correlation
+                                                         Matrix for USUBJID
+                                                       PT1/Weighted by WEIGHT
+ 
+                                                     Row        Col1        Col2
+
+                                                       1      1.0000    -0.00360
+                                                       2    -0.00360      1.0000
+
+
+                                                   Covariance Parameter Estimates
+ 
+                                  Cov
+                                  Parm       Subject    Estimate     Alpha       Lower       Upper
+
+                                  Var(1)     USUBJID     59.6125      0.05     46.4574     79.3015
+                                  Var(2)     USUBJID     18.8088      0.05     14.5166     25.3428
+                                  Var(3)     USUBJID     14.2700      0.05     10.8439     19.6307
+                                  Var(4)     USUBJID     79.6745      0.05     62.6195      104.83
+                                  Rho(1)     USUBJID      0.6322      0.05      0.5086      0.7557
+                                  Rho(2)     USUBJID    -0.01106      0.05     -0.2173      0.1952
+                                  Rho(3)     USUBJID      0.3257      0.05      0.1222      0.5292
+
+
+                                                          Fit Statistics
+
+                                               -2 Res Log Likelihood          3773.5
+                                               AIC (Smaller is Better)        3787.5
+                                               AICC (Smaller is Better)       3787.7
+                                               BIC (Smaller is Better)        3810.6
+
+
+                                                  Null Model Likelihood Ratio Test
+ 
+                                                    DF    Chi-Square      Pr > ChiSq
+
+                                                     6        194.97          <.0001
+
+
+                                                    Solution for Fixed Effects
+ 
+                                                               Standard
+                             Effect       ARMCD    Estimate       Error      DF    t Value    Pr > |t|
+
+                             Intercept              40.8732      0.4434     195      92.18      <.0001
+                             ARMCD        TRT        3.4501      0.7342     195       4.70      <.0001
+                             ARMCD        PBO             0           .       .        .         .    
+
+
+                                                   Type 3 Tests of Fixed Effects
+ 
+                                          Num     Den
+                            Effect         DF      DF    Chi-Square    F Value      Pr > ChiSq    Pr > F
+
+                            ARMCD           1     195         22.08      22.08          <.0001    <.0001
+
+
+                                                        Least Squares Means
+ 
+                                             Standard
+              Effect    ARMCD    Estimate       Error      DF    t Value    Pr > |t|     Alpha       Lower       Upper
+
+              ARMCD     TRT       44.3234      0.5852     195      75.74      <.0001      0.05     43.1692     45.4776
+              ARMCD     PBO       40.8732      0.4434     195      92.18      <.0001      0.05     39.9988     41.7477
+
+
+                                                 Differences of Least Squares Means
+ 
+                                                  Standard
+         Effect    ARMCD    _ARMCD    Estimate       Error      DF    t Value    Pr > |t|     Alpha       Lower       Upper
+
+         ARMCD     TRT      PBO         3.4501      0.7342     195       4.70      <.0001      0.05      2.0021      4.8982
