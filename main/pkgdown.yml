@@ -6,9 +6,10 @@ articles:
   covariance: covariance.html
   introduction: introduction.html
   kenward: kenward.html
+  methodological_introduction: methodological_introduction.html
   package_structure: package_structure.html
   satterthwaite: satterthwaite.html
-last_built: 2023-01-17T15:57Z
+last_built: 2023-01-31T11:01Z
 urls:
   reference: https://openpharma.github.io/mmrm/main/reference
   article: https://openpharma.github.io/mmrm/main/articles

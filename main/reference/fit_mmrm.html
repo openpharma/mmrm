@@ -22,7 +22,7 @@ mmrm()."><meta property="og:image" content="https://openpharma.github.io/mmrm/ma
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9002</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9003</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,6 +40,7 @@ mmrm()."><meta property="og:image" content="https://openpharma.github.io/mmrm/ma
     <a class="dropdown-item" href="../articles/covariance.html">Covariance Structures in `mmrm`</a>
     <a class="dropdown-item" href="../articles/introduction.html">Introduction to `mmrm`</a>
     <a class="dropdown-item" href="../articles/kenward.html">Details of the Kenward-Roger calculations</a>
+    <a class="dropdown-item" href="../articles/methodological_introduction.html">What are MMRMs? A brief introduction</a>
     <a class="dropdown-item" href="../articles/package_structure.html">Package Structure</a>
     <a class="dropdown-item" href="../articles/satterthwaite.html">Details of the Satterthwaite calculations</a>
   </div>
@@ -47,12 +48,6 @@ mmrm()."><meta property="og:image" content="https://openpharma.github.io/mmrm/ma
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -83,7 +78,14 @@ try different optimizers or adds Jacobian information etc. in contrast to
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">fit_mmrm</span><span class="op">(</span><span class="va">formula</span>, <span class="va">data</span>, <span class="va">weights</span>, reml <span class="op">=</span> <span class="cn">TRUE</span>, control <span class="op">=</span> <span class="fu"><a href="mmrm_control.html">mmrm_control</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">fit_mmrm</span><span class="op">(</span></span>
+<span>  <span class="va">formula</span>,</span>
+<span>  <span class="va">data</span>,</span>
+<span>  <span class="va">weights</span>,</span>
+<span>  reml <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  covariance <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  control <span class="op">=</span> <span class="fu"><a href="mmrm_control.html">mmrm_control</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -94,8 +96,8 @@ specifying the visits within subjects, see details.</p></dd>
 
 
 <dt>data</dt>
-<dd><p>(<code>data.frame</code>)<br> input data containing the variables used
-in <code>formula</code>.</p></dd>
+<dd><p>(<code>data.frame</code>)<br> input data containing the variables used in
+<code>formula</code>.</p></dd>
 
 
 <dt>weights</dt>
@@ -107,9 +109,16 @@ in <code>formula</code>.</p></dd>
 otherwise maximum likelihood (ML) is used.</p></dd>
 
 
+<dt>covariance</dt>
+<dd><p>(<code>cov_struct</code>)<br> A covariance structure type definition,
+or value that can be coerced to a covariance structure using
+<code><a href="as.cov_struct.html">as.cov_struct()</a></code>. If no value is provided, a structure is derived from
+the provided formula.</p></dd>
+
+
 <dt>control</dt>
-<dd><p>(<code>mmrm_control</code>)<br> list of control options produced
-by <code><a href="mmrm_control.html">mmrm_control()</a></code>.</p></dd>
+<dd><p>(<code>mmrm_control</code>)<br> list of control options produced by
+<code><a href="mmrm_control.html">mmrm_control()</a></code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -120,12 +129,12 @@ by <code><a href="mmrm_control.html">mmrm_control()</a></code>.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The <code>formula</code> typically looks like:
-<code>FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)</code>
-so specifies response and covariates as usual, and exactly one special term
+    <p>The <code>formula</code> typically looks like:</p>
+<p><code>FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)</code></p>
+<p>which specifies response and covariates as usual, and exactly one special term
 defines which covariance structure is used and what are the visit and
-subject variables.
-Always use only the first optimizer if multiple optimizers are provided.</p>
+subject variables.</p>
+<p>Always use only the first optimizer if multiple optimizers are provided.</p>
     </div>
 
     <div class="section level2">
@@ -134,7 +143,7 @@ Always use only the first optimizer if multiple optimizers are provided.</p>
 <span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">fev_data</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">fit_mmrm</span><span class="op">(</span><span class="va">formula</span>, <span class="va">data</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">fev_data</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    user  system elapsed </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   0.041   0.001   0.041 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   0.042   0.000   0.042 </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -142,7 +151,7 @@ Always use only the first optimizer if multiple optimizers are provided.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by Daniel Sabanes Bove, Julia Dedic, Doug Kelkhoff, Kevin Kunzmann, Brian Matthew Lang, Liming Li, Ya Wang, Boehringer Ingelheim Ltd., Gilead Sciences, Inc., F. Hoffmann-La Roche AG, Merck Sharp &amp; Dohme, Inc..</p>
+  <p></p><p>Developed by Daniel Sabanes Bove, Julia Dedic, Doug Kelkhoff, Kevin Kunzmann, Brian Matthew Lang, Liming Li, Christian Stock, Ya Wang, Boehringer Ingelheim Ltd., Gilead Sciences, Inc., F. Hoffmann-La Roche AG, Merck Sharp &amp; Dohme, Inc..</p>
 </div>
 
 <div class="pkgdown-footer-right">

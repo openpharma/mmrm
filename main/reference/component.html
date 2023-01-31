@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9002</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9003</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -34,6 +34,7 @@
     <a class="dropdown-item" href="../articles/covariance.html">Covariance Structures in `mmrm`</a>
     <a class="dropdown-item" href="../articles/introduction.html">Introduction to `mmrm`</a>
     <a class="dropdown-item" href="../articles/kenward.html">Details of the Kenward-Roger calculations</a>
+    <a class="dropdown-item" href="../articles/methodological_introduction.html">What are MMRMs? A brief introduction</a>
     <a class="dropdown-item" href="../articles/package_structure.html">Package Structure</a>
     <a class="dropdown-item" href="../articles/satterthwaite.html">Details of the Satterthwaite calculations</a>
   </div>
@@ -41,12 +42,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -324,7 +319,7 @@ or not.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $call</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> fit_mmrm(formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     USUBJID), data = "fev_data", weights = weights, reml = reml, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     control = control)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     covariance = covariance, control = control)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $theta_est</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  1.85131306  1.53312022  1.32799829  2.25400062  0.48798054  0.20701987</span>
@@ -2501,7 +2496,7 @@ or not.</p></li>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by Daniel Sabanes Bove, Julia Dedic, Doug Kelkhoff, Kevin Kunzmann, Brian Matthew Lang, Liming Li, Ya Wang, Boehringer Ingelheim Ltd., Gilead Sciences, Inc., F. Hoffmann-La Roche AG, Merck Sharp &amp; Dohme, Inc..</p>
+  <p></p><p>Developed by Daniel Sabanes Bove, Julia Dedic, Doug Kelkhoff, Kevin Kunzmann, Brian Matthew Lang, Liming Li, Christian Stock, Ya Wang, Boehringer Ingelheim Ltd., Gilead Sciences, Inc., F. Hoffmann-La Roche AG, Merck Sharp &amp; Dohme, Inc..</p>
 </div>
 
 <div class="pkgdown-footer-right">

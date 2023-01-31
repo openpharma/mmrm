@@ -20,7 +20,7 @@ while capturing messages and warnings."><meta property="og:image" content="https
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9002</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9003</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,6 +38,7 @@ while capturing messages and warnings."><meta property="og:image" content="https
     <a class="dropdown-item" href="../articles/covariance.html">Covariance Structures in `mmrm`</a>
     <a class="dropdown-item" href="../articles/introduction.html">Introduction to `mmrm`</a>
     <a class="dropdown-item" href="../articles/kenward.html">Details of the Kenward-Roger calculations</a>
+    <a class="dropdown-item" href="../articles/methodological_introduction.html">What are MMRMs? A brief introduction</a>
     <a class="dropdown-item" href="../articles/package_structure.html">Package Structure</a>
     <a class="dropdown-item" href="../articles/satterthwaite.html">Details of the Satterthwaite calculations</a>
   </div>
@@ -45,12 +46,6 @@ while capturing messages and warnings."><meta property="og:image" content="https
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -85,6 +80,7 @@ while capturing messages and warnings.</p>
 <span>  <span class="va">data</span>,</span>
 <span>  <span class="va">weights</span>,</span>
 <span>  reml <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  covariance <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span>,</span>
 <span>  control <span class="op">=</span> <span class="fu"><a href="mmrm_control.html">mmrm_control</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -101,13 +97,20 @@ while capturing messages and warnings.</p>
 
 
 <dt>weights</dt>
-<dd><p>(<code>vector</code>)<br> an optional vector of weights to be used in the fitting process.
-Should be NULL or a numeric vector.</p></dd>
+<dd><p>(<code>vector</code>)<br> an optional vector of weights to be used in
+the fitting process. Should be <code>NULL</code> or a numeric vector.</p></dd>
 
 
 <dt>reml</dt>
-<dd><p>(<code>flag</code>)<br> whether restricted maximum likelihood (REML) estimation is used,
-otherwise maximum likelihood (ML) is used.</p></dd>
+<dd><p>(<code>flag</code>)<br> whether restricted maximum likelihood (REML)
+estimation is used, otherwise maximum likelihood (ML) is used.</p></dd>
+
+
+<dt>covariance</dt>
+<dd><p>(<code>cov_struct</code>)<br> a covariance structure type definition
+as produced with <code><a href="cov_struct.html">cov_struct()</a></code>, or value that can be coerced to a
+covariance structure using <code><a href="as.cov_struct.html">as.cov_struct()</a></code>. If no value is provided,
+a structure is derived from the provided formula.</p></dd>
 
 
 <dt>...</dt>
@@ -150,7 +153,7 @@ will be used.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by Daniel Sabanes Bove, Julia Dedic, Doug Kelkhoff, Kevin Kunzmann, Brian Matthew Lang, Liming Li, Ya Wang, Boehringer Ingelheim Ltd., Gilead Sciences, Inc., F. Hoffmann-La Roche AG, Merck Sharp &amp; Dohme, Inc..</p>
+  <p></p><p>Developed by Daniel Sabanes Bove, Julia Dedic, Doug Kelkhoff, Kevin Kunzmann, Brian Matthew Lang, Liming Li, Christian Stock, Ya Wang, Boehringer Ingelheim Ltd., Gilead Sciences, Inc., F. Hoffmann-La Roche AG, Merck Sharp &amp; Dohme, Inc..</p>
 </div>
 
 <div class="pkgdown-footer-right">

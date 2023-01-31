@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9002</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9003</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -34,6 +34,7 @@
     <a class="dropdown-item" href="../articles/covariance.html">Covariance Structures in `mmrm`</a>
     <a class="dropdown-item" href="../articles/introduction.html">Introduction to `mmrm`</a>
     <a class="dropdown-item" href="../articles/kenward.html">Details of the Kenward-Roger calculations</a>
+    <a class="dropdown-item" href="../articles/methodological_introduction.html">What are MMRMs? A brief introduction</a>
     <a class="dropdown-item" href="../articles/package_structure.html">Package Structure</a>
     <a class="dropdown-item" href="../articles/satterthwaite.html">Details of the Satterthwaite calculations</a>
   </div>
@@ -41,12 +42,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -74,13 +69,21 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">h_mmrm_tmb_formula_parts</span><span class="op">(</span><span class="va">formula</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">h_mmrm_tmb_formula_parts</span><span class="op">(</span></span>
+<span>  <span class="va">formula</span>,</span>
+<span>  covariance <span class="op">=</span> <span class="fu"><a href="as.cov_struct.html">as.cov_struct</a></span><span class="op">(</span><span class="va">formula</span>, warn_partial <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>formula</dt>
-<dd><p>(<code>formula</code>)<br> original formula.</p></dd>
+<dd><p>(<code>formula</code>)<br> Original formula.</p></dd>
+
+
+<dt>covariance</dt>
+<dd><p>(<code>cov_struct</code>)<br> A covariance structure from which
+additional formula parts should be added.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -89,14 +92,16 @@
 
 <p>List of class <code>mmrm_tmb_formula_parts</code> with elements:</p><ul><li><p><code>formula</code>: the original input.</p></li>
 <li><p><code>model_formula</code>: <code>formula</code> with the covariance term is removed.</p></li>
-<li><p><code>full_formula</code>: same as <code>model_formula</code> but includes the <code>subject_var</code> and
-<code>visit_var</code>.</p></li>
+<li><p><code>model_formula</code>: <code>formula</code> with the covariance term removed.</p></li>
+<li><p><code>full_formula</code>: same as <code>model_formula</code> but includes the covariance
+structure's subject, visit and (optionally) group variables.</p></li>
 <li><p><code>cov_type</code>: <code>string</code> with covariance term type (e.g. <code>"us"</code>).</p></li>
-<li><p><code>is_spatial</code>: <code>flag</code> indicator of whether the covariance structure is spatial</p></li>
+<li><p><code>is_spatial</code>: <code>flag</code> indicator of whether the covariance structure is
+spatial</p></li>
 <li><p><code>visit_var</code>: <code>character</code> with the visit variable name.</p></li>
 <li><p><code>subject_var</code>: <code>string</code> with the subject variable name.</p></li>
-<li><p><code>group_var</code>: <code>string</code> with the group variable name. If no group specified, this element
-is <code>NULL</code>.</p></li>
+<li><p><code>group_var</code>: <code>string</code> with the group variable name. If no group specified,
+this element is <code>NULL</code>.</p></li>
 </ul></div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -104,7 +109,7 @@ is <code>NULL</code>.</p></li>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by Daniel Sabanes Bove, Julia Dedic, Doug Kelkhoff, Kevin Kunzmann, Brian Matthew Lang, Liming Li, Ya Wang, Boehringer Ingelheim Ltd., Gilead Sciences, Inc., F. Hoffmann-La Roche AG, Merck Sharp &amp; Dohme, Inc..</p>
+  <p></p><p>Developed by Daniel Sabanes Bove, Julia Dedic, Doug Kelkhoff, Kevin Kunzmann, Brian Matthew Lang, Liming Li, Christian Stock, Ya Wang, Boehringer Ingelheim Ltd., Gilead Sciences, Inc., F. Hoffmann-La Roche AG, Merck Sharp &amp; Dohme, Inc..</p>
 </div>
 
 <div class="pkgdown-footer-right">

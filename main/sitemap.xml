@@ -25,6 +25,9 @@
     <loc>https://openpharma.github.io/mmrm/main/articles/kenward.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/mmrm/main/articles/methodological_introduction.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/mmrm/main/articles/package_structure.html</loc>
   </url>
   <url>
@@ -40,10 +43,28 @@
     <loc>https://openpharma.github.io/mmrm/main/news/index.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/COV_TYPES.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/add_covariance_variable_terms.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/as.cov_struct.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/check_package_version.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/component.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/cov_struct.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/cov_type_abbr.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/cov_type_name.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/covariance_types.html</loc>
@@ -55,10 +76,19 @@
     <loc>https://openpharma.github.io/mmrm/main/reference/df_md.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/drop_covariance_terms.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/drop_elements.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/emit_tidymodels_register_msg.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/emmeans_support.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/extract_covariance_terms.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/fev_data.html</loc>
@@ -71,6 +101,18 @@
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/fit_single_optimizer.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/flat_expr.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/format.cov_struct.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/format_symbols.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/formula_rhs.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/free_cores.html</loc>
@@ -136,12 +178,6 @@
     <loc>https://openpharma.github.io/mmrm/main/reference/h_mmrm_tmb_extract_cov.html</loc>
   </url>
   <url>
-    <loc>https://openpharma.github.io/mmrm/main/reference/h_mmrm_tmb_extract_terms.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/main/reference/h_mmrm_tmb_extract_vars.html</loc>
-  </url>
-  <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/h_mmrm_tmb_fit.html</loc>
   </url>
   <url>
@@ -187,6 +223,9 @@
     <loc>https://openpharma.github.io/mmrm/main/reference/index.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/is_infix.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/mmrm-package.html</loc>
   </url>
   <url>
@@ -205,9 +244,24 @@
     <loc>https://openpharma.github.io/mmrm/main/reference/parsnip_add_mmrm.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/position_symbol.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/print.cov_struct.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/reconcile_cov_struct.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/refit_multiple_optimizers.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/register_on_load.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/tmb_cov_type.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/validate_cov_struct.html</loc>
   </url>
 </urlset>

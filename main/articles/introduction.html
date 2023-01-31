@@ -39,7 +39,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9002</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9003</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,6 +58,7 @@
     <a class="dropdown-item" href="../articles/covariance.html">Covariance Structures in `mmrm`</a>
     <a class="dropdown-item" href="../articles/introduction.html">Introduction to `mmrm`</a>
     <a class="dropdown-item" href="../articles/kenward.html">Details of the Kenward-Roger calculations</a>
+    <a class="dropdown-item" href="../articles/methodological_introduction.html">What are MMRMs? A brief introduction</a>
     <a class="dropdown-item" href="../articles/package_structure.html">Package Structure</a>
     <a class="dropdown-item" href="../articles/satterthwaite.html">Details of the Satterthwaite calculations</a>
   </div>
@@ -65,12 +66,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -590,7 +585,7 @@ is as follows:</p>
 <span><span class="co">#&gt;   ..$ BIC     : num 3440</span></span>
 <span><span class="co">#&gt;   ..$ logLik  : num -1694</span></span>
 <span><span class="co">#&gt;   ..$ deviance: num 3387</span></span>
-<span><span class="co">#&gt;  $ call            : language fit_mmrm(formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),      data = "fev_data", weights = weights| __truncated__</span></span>
+<span><span class="co">#&gt;  $ call            : language fit_mmrm(formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),      data = "fev_data", weights = weights| __truncated__ ...</span></span>
 <span><span class="co">#&gt;  - attr(*, "class")= chr "summary.mmrm"</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -616,7 +611,7 @@ function. The default will output all supported components.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/component.html">component</a></span><span class="op">(</span><span class="va">fit</span>, name <span class="op">=</span> <span class="st">"call"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; fit_mmrm(formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | </span></span>
 <span><span class="co">#&gt;     USUBJID), data = "fev_data", weights = weights, reml = reml, </span></span>
-<span><span class="co">#&gt;     control = control)</span></span></code></pre></div>
+<span><span class="co">#&gt;     covariance = covariance, control = control)</span></span></code></pre></div>
 <p>the user could also ask for all provided components by not specifying
 the <code>name</code> argument.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
@@ -839,7 +834,7 @@ Also Ben helped us significantly with an example showing how to use
 
     <footer><div class="pkgdown-footer-left">
   <p></p>
-<p>Developed by Daniel Sabanes Bove, Julia Dedic, Doug Kelkhoff, Kevin Kunzmann, Brian Matthew Lang, Liming Li, Ya Wang, Boehringer Ingelheim Ltd., Gilead Sciences, Inc., F. Hoffmann-La Roche AG, Merck Sharp &amp; Dohme, Inc..</p>
+<p>Developed by Daniel Sabanes Bove, Julia Dedic, Doug Kelkhoff, Kevin Kunzmann, Brian Matthew Lang, Liming Li, Christian Stock, Ya Wang, Boehringer Ingelheim Ltd., Gilead Sciences, Inc., F. Hoffmann-La Roche AG, Merck Sharp &amp; Dohme, Inc..</p>
 </div>
 
 <div class="pkgdown-footer-right">
