@@ -61,6 +61,7 @@ used for degree of freedom, see the following table:\tabular{ll}{
    \code{method} \tab Default \code{cov} \cr
    Satterthwaite \tab Asymptotic \cr
    Kenward-Roger \tab Kenward-Roger \cr
+   Residual \tab Asymptotic \cr
 }
 }
 \examples{
