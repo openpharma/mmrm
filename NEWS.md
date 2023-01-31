@@ -4,9 +4,9 @@
 
 - Add Kenward-Roger support for spatial covariance structures.
 - Add empirical and empirical Jackknife adjusted coefficients covariance matrix.
-  In addition, the argument `method` now only stands for the method used
-  for degree of freedom, another argument `cov` is added to control the
-  method used to calculate the covariance for $\beta$.
+  In addition, the argument `method` now only specifies the method used
+  for the degrees of freedom, another argument `cov` is added to specify the
+  method used to adjust the coefficients covariance matrix.
 - Add optional tidymodels support.
 
 # mmrm 0.2.2
