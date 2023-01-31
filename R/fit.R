@@ -199,7 +199,7 @@ refit_multiple_optimizers <- function(fit,
 #' The `method` and `cov` arguments specify the coefficients covariance matrix and degrees of freedom adjustments.
 #' If `method` is "Kenward-Roger" then only "Kenward-Roger" or "Kenward-Roger-Linear" are allowed for `cov`.
 #' The `cov` argument can be `NULL` to use the default covariance method depending on the `method`
-#' used for degree of freedom, see the following table:
+#' used for degrees of freedom, see the following table:
 #' | `method`  |  Default `cov`|
 #' |-----------|----------|
 #' |Satterthwaite| Asymptotic|
