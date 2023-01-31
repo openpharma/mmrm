@@ -7,7 +7,7 @@
   In addition, the argument `method` now only specifies the method used
   for the degrees of freedom, another argument `cov` is added to specify the
   method used to adjust the coefficients covariance matrix.
-- Add optional tidymodels support.
+- Add optional `tidymodels` framework support.
 
 # mmrm 0.2.2
 
