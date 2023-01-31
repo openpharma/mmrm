@@ -23,8 +23,8 @@
 #' - `method`: Adjustment method which was used (for `mmrm` objects),
 #'      otherwise `NULL` (for `mmrm_tmb` objects).
 #' - `beta_vcov`: estimated variance-covariance matrix of coefficients
-#'      (excluding aliased coefficients). For Kenward-Roger/Empirical
-#'      methods, the adjusted covariance matrix is returned (to still obtain the
+#'      (excluding aliased coefficients). When Kenward-Roger/Empirical adjusted
+#'      coefficients covariance matrix is used, the adjusted covariance matrix is returned (to still obtain the
 #'      original asymptotic covariance matrix use `object$beta_vcov`).
 #' - `beta_vcov_complete`: estimated variance-covariance matrix including
 #'      aliased coefficients with entries set to `NA`.
