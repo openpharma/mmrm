@@ -31,6 +31,7 @@ fit_single_optimizer <- function(formula,
                                  data,
                                  weights,
                                  reml = TRUE,
+                                 covariance = NULL,
                                  ...,
                                  control = mmrm_control(...)) {
   assert_formula(formula)
@@ -45,6 +46,7 @@ fit_single_optimizer <- function(formula,
       data = data,
       weights = weights,
       reml = reml,
+      covariance = covariance,
       control = control
     ),
     remove = list(
@@ -266,10 +268,14 @@ mmrm_control <- function(n_cores = 1L,
 #'
 #' @param formula (`formula`)\cr the model formula, see details.
 #' @param data (`data`)\cr the data to be used for the model.
-#' @param weights (`vector`)\cr an optional vector of weights to be used in the fitting process.
-#'   Should be NULL or a numeric vector.
-#' @param reml (`flag`)\cr whether restricted maximum likelihood (REML) estimation is used,
-#'   otherwise maximum likelihood (ML) is used.
+#' @param weights (`vector`)\cr an optional vector of weights to be used in
+#'   the fitting process. Should be `NULL` or a numeric vector.
+#' @param reml (`flag`)\cr whether restricted maximum likelihood (REML)
+#'   estimation is used, otherwise maximum likelihood (ML) is used.
+#' @param covariance (`cov_struct`)\cr a covariance structure type definition
+#'   as produced with [cov_struct()], or value that can be coerced to a
+#'   covariance structure using [as.cov_struct()]. If no value is provided,
+#'   a structure is derived from the provided formula.
 #' @param control (`mmrm_control`)\cr fine-grained fitting specifications list
 #'   created with [mmrm_control()].
 #' @param ... arguments passed to [mmrm_control()].
@@ -341,12 +347,14 @@ mmrm_control <- function(n_cores = 1L,
 mmrm <- function(formula,
                  data,
                  weights = NULL,
+                 covariance = NULL,
                  reml = TRUE,
                  control = mmrm_control(...),
                  ...) {
   assert_false(!missing(control) && !missing(...))
   assert_class(control, "mmrm_control")
   assert_list(control$optimizers, min.len = 1)
+
   if (control$method %in% c("Kenward-Roger", "Kenward-Roger-Linear") && !reml) {
     stop("Kenward-Roger only works for REML")
   }
@@ -362,9 +370,11 @@ mmrm <- function(formula,
     formula = formula,
     data = data,
     weights = weights,
+    covariance = covariance,
     reml = reml,
     control = control
   )
+
   if (!attr(fit, "converged")) {
     use_multiple <- length(control$optimizers) > 1L
     if (use_multiple) {

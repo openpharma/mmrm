@@ -17,20 +17,16 @@
   )
 }
 
-
-
 #' Helper Function for Registering Functionality With Suggests Packages
 #'
 #' @inheritParams check_package_version
 #'
-#' @param callback (`function(...) ANY`)\cr
-#'   A callback to execute upon package load. Note that no arguments are
-#'   passed to this function. Any necessary data must be provided upon
-#'   construction.
+#' @param callback (`function(...) ANY`)\cr A callback to execute upon package
+#'   load. Note that no arguments are passed to this function. Any necessary
+#'   data must be provided upon construction.
 #'
-#' @param message (`NULL` or `string`)\cr
-#'   An optional message to print after the callback is executed upon successful
-#'   registration.
+#' @param message (`NULL` or `string`)\cr An optional message to print after
+#'   the callback is executed upon successful registration.
 #'
 #' @return A logical (invisibly) indicating whether registration was successful.
 #'  If not, a onLoad hook was set for the next time the package is loaded.
@@ -60,12 +56,9 @@ register_on_load <- function(pkg, ver = c(NA, NA), callback, message = NULL) {
   invisible(FALSE)
 }
 
-
-
 #' Check Suggested Dependency Against Version Requirements
 #'
-#' @param pkg (`string`)\cr
-#'   A package name.
+#' @param pkg (`string`)\cr A package name.
 #' @param ver Accepts any object of length 2 whose elements can be provided to
 #'   `numeric_version()`, representing a minimum and maximum (inclusive) version
 #'   requirement for interoperability. When `NA`, no version requirement is
@@ -74,7 +67,6 @@ register_on_load <- function(pkg, ver = c(NA, NA), callback, message = NULL) {
 #' @return A logical (invisibly) indicating whether the loaded package meets
 #'   the version requirements. A warning is emitted otherwise.
 #'
-#' @importFrom utils packageVersion
 #' @keywords internal
 check_package_version <- function(pkg, ver = c(NA, NA)) {
   pkg_ver <- utils::packageVersion(pkg)
@@ -99,15 +91,11 @@ check_package_version <- function(pkg, ver = c(NA, NA)) {
   invisible(TRUE)
 }
 
-
-
-
 #' Format a Message to Emit When Tidymodels is Loaded
 #'
 #' @return A character message to emit. Either a ansi-formatted cli output if
 #'   package 'cli' is available or a plain-text message otherwise.
 #'
-#' @importFrom utils packageName packageVersion
 #' @keywords internal
 emit_tidymodels_register_msg <- function() {
   pkg <- utils::packageName()

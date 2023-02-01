@@ -70,7 +70,8 @@ test_that("fit_single_optimizer gives error messages", {
     fit_mmrm(formula, fev_data),
     paste(
       "Covariance structure must be specified in formula.",
-      "Possible covariance structures include: us, toep, toeph, ar1, ar1h, ad, adh, cs, csh"
+      "Possible covariance structures include:",
+      "us, toep, toeph, ar1, ar1h, ad, adh, cs, csh, sp_exp"
     ),
     fixed = TRUE
   )
@@ -78,7 +79,8 @@ test_that("fit_single_optimizer gives error messages", {
     fit_single_optimizer(formula, fev_data, weights = rep(1, nrow(fev_data))),
     paste(
       "Covariance structure must be specified in formula.",
-      "Possible covariance structures include: us, toep, toeph, ar1, ar1h, ad, adh, cs, csh"
+      "Possible covariance structures include:",
+      "us, toep, toeph, ar1, ar1h, ad, adh, cs, csh"
     ),
     fixed = TRUE
   )
@@ -413,6 +415,18 @@ test_that("mmrm fails when using ... and control at the same time", {
       control = mmrm_control(method = "Kenward-Roger")
     ),
     "Assertion on '!missing(control) && !missing(...)' failed",
+    fixed = TRUE
+  )
+})
+
+test_that("mmrm fails when using formula covariance with covariance argument", {
+  expect_error(
+    mmrm(
+      formula = FEV1 ~ us(AVISIT | USUBJID),
+      covariance = cov_struct("us", "AVISIT", "USUBJID"),
+      data = fev_data,
+    ),
+    "Redundant covariance structure",
     fixed = TRUE
   )
 })
