@@ -168,8 +168,8 @@ We can see that the estimated covariance matrices are different in different `AR
 
 ## Adjustment Method
 
-Both Satterthwaite and Kenward-Roger adjustment methods are available. The default
-is Satterthwaite adjustment of the degrees of freedom. To use Kenward-Roger
+In additional to the residual degrees of freedom, both Satterthwaite and Kenward-Roger adjustment methods
+are available. The default is Satterthwaite adjustment of the degrees of freedom. To use Kenward-Roger
 adjustment of the degrees of freedom as well as the coefficients covariance
 matrix, use the `method` argument:
 
@@ -205,7 +205,7 @@ fit_kr_lin <- mmrm(
   formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data,
   method = "Kenward-Roger",
-  cov = "Kenward-Roger-Linear"
+  vcov = "Kenward-Roger-Linear"
 )
 ```
 
@@ -213,6 +213,23 @@ This is due to the different parametrization of the unstructured covariance
 matrix, see the
 [Kenward-Roger vignette](kenward.html#parameterization-methods-and-kenward-roger)
 for details.
+
+## Variance-covariance for Coefficients
+
+There are multiple variance-covariance estimator available for the coefficients, including:
+
+1. Asymptotic
+1. Empirical (Cluster Robust Sandwich)
+1. Empirical-Jackknife
+1. Kenward-Roger
+1. Kenward-Roger-Linear
+
+Please note that, not all combinations of variance-covariance for coefficients and method of
+degrees of freedom are possible, e.g. "Kenward-Roger" and "Kenward-Roger-Linear" are available only
+when the degrees of freedom method is "Kenward-Roger", while "Empirical" and "Empirical-Jackknife"
+only works for "Residual" degrees of freedom currently.
+
+Details can be found in [Coefficients Covariance Matrix Adjustment vignette](coef_vcov.html).
 
 ## Keeping Unobserved Visits
 

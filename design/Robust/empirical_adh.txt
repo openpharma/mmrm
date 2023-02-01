@@ -1,6 +1,6 @@
 
 
-                                                           The SAS System                  Tuesday, January 17, 2023 06:45:00 AM   6
+                                                           The SAS System               Wednesday, February  1, 2023 03:41:00 AM  14
 
                                                         The Mixed Procedure
 
@@ -148,6 +148,15 @@
                              Intercept              41.1661      0.4165     195      98.83      <.0001
                              ARMCD        TRT        3.7234      0.6446     195       5.78      <.0001
                              ARMCD        PBO             0           .       .        .         .    
+
+
+                                            Empirical Covariance Matrix for Fixed Effects
+ 
+                 Row    Effect                  ARMCD                                   Col1        Col2        Col3
+
+                   1    Intercept                                                     0.1735     -0.1735            
+                   2    ARMCD                   TRT                                  -0.1735      0.4155            
+                   3    ARMCD                   PBO                                                                 
 
 
                                                    Type 3 Tests of Fixed Effects

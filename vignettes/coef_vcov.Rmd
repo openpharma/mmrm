@@ -9,7 +9,7 @@ output:
           toc: true
           toc_float: true
 vignette: |
-  %\VignetteIndexEntry{Covariance of Fixed Effects in `mmrm`}
+  %\VignetteIndexEntry{Coefficients Covariance Matrix Adjustment in `mmrm`}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options:
@@ -25,11 +25,11 @@ knitr::opts_chunk$set(
 )
 ```
 
-Here we describe the covariance matrix for fixed effects.
+Here we describe the variance-covariance matrix adjustment of coefficients.
 
 # Introduction
 
-To estimate the covariance matrix of fixed effects, there are many ways.
+To estimate the covariance matrix of coefficients, there are many ways.
 In `mmrm` package, we implemented asymptotic, empirical, Jackknife and Kenward-Roger methods.
 For simplicity, the following derivation are all for unweighted mmrm.
 For weighted mmrm, we can follow the [details of weighted least square estimator](https://openpharma.github.io/mmrm/main/articles/algorithm.html#weighted-least-squares-estimator).

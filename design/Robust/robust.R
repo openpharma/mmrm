@@ -2,11 +2,11 @@ library(sasr)
 library(mmrm)
 df2sd(fev_data, "fev")
 
-sas_code <- function(covtype, weight = FALSE) {
-  sprintf("ods output diffs = diff;
+sas_code <- function(covtype, weight) {
+  sprintf("ods output diffs = diff covb = vcov;
     PROC MIXED DATA = fev empirical cl method=reml;
       CLASS RACE(ref = 'Asian') AVISIT(ref = 'VIS4') SEX(ref = 'Male') ARMCD(ref = 'PBO') USUBJID;
-      MODEL FEV1 = ARMCD /solution chisq;
+      MODEL FEV1 = ARMCD /solution chisq covb;
       REPEATED AVISIT / subject=USUBJID type=%s r rcorr;
       LSMEANS ARMCD / pdiff=all cl alpha=0.05 slice=AVISIT;
       %s
@@ -14,11 +14,14 @@ sas_code <- function(covtype, weight = FALSE) {
 }
 
 
-sas_wrapper <- function(ddfm, result_name, weight) {
+sas_wrapper <- function(ddfm, result_name, weight = FALSE) {
   sas_result <- run_sas(sas_code(ddfm, weight))
-  result <- sd2df("diff")
+  result_lsmean <- sd2df("diff")
+  result_vcov <- sd2df("vcov")
   cat(sas_result$LST, file = sprintf("design/Robust/%s.txt", result_name))
-  write.csv(result, file = sprintf("design/Robust/%s.csv", result_name))
+  write.csv(result_lsmean, file = sprintf("design/Robust/%s_lsmean.csv", result_name))
+  result_vcov$ARMCD <- as.character(result_vcov$ARMCD)
+  write.csv(result_vcov, file = sprintf("design/Robust/%s_covb.csv", result_name))
 }
 
 sas_wrapper("ar(1)", "empirical_ar1")

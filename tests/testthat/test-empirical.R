@@ -20,56 +20,85 @@ test_that("empirical covariance are the same with SAS result for ar1", {
     data = fev_data,
     vcov = "Empirical", method = "Residual"
   )
-  expected <- 0.82581291651503
-  expect_equal(sqrt(component(fit, "beta_vcov")[2, 2]), expected, tolerance = 1e-4)
+  expected <- matrix(
+    c(0.27666930670945, -0.27666930670945, -0.27666930670945, 0.68196697308307), ncol = 2,
+    dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
+  )
+  expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)
 })
 
 test_that("empirical covariance are the same with SAS result for ar1h", {
   fit <- mmrm(FEV1 ~ ARMCD + ar1h(AVISIT | USUBJID), data = fev_data, vcov = "Empirical", method = "Residual")
-  expected <- 0.67973236317634
-  expect_equal(sqrt(component(fit, "beta_vcov")[2, 2]), expected, tolerance = 1e-4)
+  expected <- matrix(
+    c(0.19106397930347, -0.19106397930347, -0.19106397930347, 0.46203608554929), ncol = 2,
+    dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
+  )
+  expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)
 })
 
 test_that("empirical covariance are the same with SAS result for cs", {
   fit <- mmrm(FEV1 ~ ARMCD + cs(AVISIT | USUBJID), data = fev_data, vcov = "Empirical", method = "Residual")
-  expected <- 0.79354667955483
-  expect_equal(sqrt(component(fit, "beta_vcov")[2, 2]), expected, tolerance = 1e-4)
+  expected <- matrix(
+    c(0.26910953746582, -0.26910953746582, -0.26910953746582, 0.6297163326325), ncol = 2,
+    dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
+  )
+  expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)
 })
 
 test_that("empirical covariance are the same with SAS result for csh", {
   fit <- mmrm(FEV1 ~ ARMCD + csh(AVISIT | USUBJID), data = fev_data, vcov = "Empirical", method = "Residual")
-  expected <- 0.67851405488729
-  expect_equal(sqrt(component(fit, "beta_vcov")[2, 2]), expected, tolerance = 1e-4)
+  expected <- matrix(
+    c(0.19635239056617, -0.19635239056617, -0.19635239056617, 0.46038132267959), ncol = 2,
+    dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
+  )
+  expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)
 })
 
 test_that("empirical covariance are the same with SAS result for toep", {
   fit <- mmrm(FEV1 ~ ARMCD + toep(AVISIT | USUBJID), data = fev_data, vcov = "Empirical", method = "Residual")
-  expected <- 0.87390988854018
-  expect_equal(sqrt(component(fit, "beta_vcov")[2, 2]), expected, tolerance = 1e-4)
+  expected <- matrix(
+    c(0.30022945455349, -0.30022945455349, -0.30022945455349, 0.76371849328831), ncol = 2,
+    dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
+  )
+  expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)
 })
 
 test_that("empirical covariance are the same with SAS result for toeph", {
   fit <- mmrm(FEV1 ~ ARMCD + toeph(AVISIT | USUBJID), data = fev_data, vcov = "Empirical", method = "Residual")
-  expected <- 0.68088497850656
-  expect_equal(sqrt(component(fit, "beta_vcov")[2, 2]), expected, tolerance = 1e-4)
+  expected <- matrix(
+    c(0.18350201218893, -0.18350201218893, -0.18350201218893, 0.46360435395588), ncol = 2,
+    dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
+  )
+  expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)
 })
 
 test_that("empirical covariance are the same with SAS result for adh", {
   fit <- mmrm(FEV1 ~ ARMCD + adh(AVISIT | USUBJID), data = fev_data, vcov = "Empirical", method = "Residual")
-  expected <- 0.64461343431037
-  expect_equal(sqrt(component(fit, "beta_vcov")[2, 2]), expected, tolerance = 1e-4)
+  expected <- matrix(
+    c(0.17350223093416, -0.17350223093416, -0.17350223093416, 0.41552647969341), ncol = 2,
+    dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
+  )
+  expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)
 })
 
 test_that("empirical covariance are the same with SAS result for us", {
   fit <- mmrm(FEV1 ~ ARMCD + us(AVISIT | USUBJID), data = fev_data, vcov = "Empirical", method = "Residual")
-  expected <- 0.63959860090712
-  expect_equal(sqrt(component(fit, "beta_vcov")[2, 2]), expected, tolerance = 1e-4)
+  expected <- matrix(
+    c(0.16725909903518, -0.16725909903518, -0.16725909903518, 0.40908637028234), ncol = 2,
+    dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
+  )
+  expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)
 })
 
 test_that("empirical covariance are the same with SAS result for sp_exp", {
-  fit <- mmrm(FEV1 ~ ARMCD + sp_exp(VISITN, VISITN2 | USUBJID), data = fev_data, vcov = "Empirical", method = "Residual")
-  expected <- 0.80974821922674
-  expect_equal(sqrt(component(fit, "beta_vcov")[2, 2]), expected, tolerance = 1e-4)
+  fit <- mmrm(
+    FEV1 ~ ARMCD + sp_exp(VISITN, VISITN2 | USUBJID), data = fev_data, vcov = "Empirical", method = "Residual"
+  )
+  expected <- matrix(
+    c(0.26947559034166, -0.26947559034166, -0.26947559034166, 0.65569217854087), ncol = 2,
+    dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
+  )
+  expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)
 })
 
 # weighted mmrm ----
@@ -81,8 +110,11 @@ test_that("empirical covariance are the same with SAS result for ar1", {
     vcov = "Empirical", method = "Residual",
     weights = fev_data$WEIGHT
   )
-  expected <- 0.9766083014759
-  expect_equal(sqrt(component(fit, "beta_vcov")[2, 2]), expected, tolerance = 1e-4)
+  expected <- matrix(
+    c(0.3741856039623, -0.3741856039623, -0.3741856039623, 0.95376377451164), ncol = 2,
+    dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
+  )
+  expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)
 })
 
 test_that("empirical covariance are the same with SAS result for ar1h", {
@@ -90,35 +122,44 @@ test_that("empirical covariance are the same with SAS result for ar1h", {
     data = fev_data, vcov = "Empirical", method = "Residual",
     weights = fev_data$WEIGHT
   )
-  expected <- 0.77913503559498
-  expect_equal(sqrt(component(fit, "beta_vcov")[2, 2]), expected, tolerance = 1e-4)
-})
+  expected <- matrix(
+    c(0.22611242154248, -0.22611242154248, -0.22611242154248, 0.60705140369159), ncol = 2,
+    dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
+  )
+  expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)})
 
 test_that("empirical covariance are the same with SAS result for cs", {
   fit <- mmrm(FEV1 ~ ARMCD + cs(AVISIT | USUBJID),
     data = fev_data, vcov = "Empirical", method = "Residual",
     weights = fev_data$WEIGHT
   )
-  expected <- 0.90291936438319
-  expect_equal(sqrt(component(fit, "beta_vcov")[2, 2]), expected, tolerance = 1e-4)
-})
+  expected <- matrix(
+    c(0.32402882795093, -0.32402882795093, -0.32402882795093, 0.81526337857816), ncol = 2,
+    dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
+  )
+  expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)})
 
 test_that("empirical covariance are the same with SAS result for csh", {
   fit <- mmrm(FEV1 ~ ARMCD + csh(AVISIT | USUBJID),
     data = fev_data, vcov = "Empirical", method = "Residual",
     weights = fev_data$WEIGHT
   )
-  expected <- 0.76200584549261
-  expect_equal(sqrt(component(fit, "beta_vcov")[2, 2]), expected, tolerance = 1e-4)
-})
+  expected <- matrix(
+    c(0.21754684649458, -0.21754684649458, -0.21754684649458, 0.5806529085649), ncol = 2,
+    dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
+  )
+  expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)})
 
 test_that("empirical covariance are the same with SAS result for toep", {
   fit <- mmrm(FEV1 ~ ARMCD + toep(AVISIT | USUBJID),
     data = fev_data, vcov = "Empirical", method = "Residual",
     weights = fev_data$WEIGHT
   )
-  expected <- 1.00281379688484
-  expect_equal(sqrt(component(fit, "beta_vcov")[2, 2]), expected, tolerance = 1e-4)
+  expected <- matrix(
+    c(0.39272956491025, -0.39272956491025, -0.39272956491025, 1.00563551122259), ncol = 2,
+    dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
+  )
+  expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)
 })
 
 test_that("empirical covariance are the same with SAS result for toeph", {
@@ -126,8 +167,11 @@ test_that("empirical covariance are the same with SAS result for toeph", {
     data = fev_data, vcov = "Empirical", method = "Residual",
     weights = fev_data$WEIGHT
   )
-  expected <- 0.77628714727105
-  expect_equal(sqrt(component(fit, "beta_vcov")[2, 2]), expected, tolerance = 1e-4)
+  expected <- matrix(
+    c(0.22472893956932, -0.22472893956932, -0.22472893956932, 0.60262173501823), ncol = 2,
+    dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
+  )
+  expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)
 })
 
 test_that("empirical covariance are the same with SAS result for adh", {
@@ -135,8 +179,11 @@ test_that("empirical covariance are the same with SAS result for adh", {
     data = fev_data, vcov = "Empirical", method = "Residual",
     weights = fev_data$WEIGHT
   )
-  expected <- 0.73422273273261
-  expect_equal(sqrt(component(fit, "beta_vcov")[2, 2]), expected, tolerance = 1e-4)
+  expected <- matrix(
+    c(0.19660064483548, -0.19660064483548, -0.19660064483548, 0.53908302126134), ncol = 2,
+    dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
+  )
+  expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)
 })
 
 test_that("empirical covariance are the same with SAS result for us", {
@@ -144,8 +191,11 @@ test_that("empirical covariance are the same with SAS result for us", {
     data = fev_data, vcov = "Empirical", method = "Residual",
     weights = fev_data$WEIGHT
   )
-  expected <- 0.73089269734199
-  expect_equal(sqrt(component(fit, "beta_vcov")[2, 2]), expected, tolerance = 1e-4)
+  expected <- matrix(
+    c(0.198001710472, -0.198001710472, -0.198001710472, 0.53420413502786), ncol = 2,
+    dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
+  )
+  expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)
 })
 
 test_that("empirical covariance are the same with SAS result for sp_exp", {
@@ -153,8 +203,11 @@ test_that("empirical covariance are the same with SAS result for sp_exp", {
     data = fev_data, vcov = "Empirical", method = "Residual",
     weights = fev_data$WEIGHT
   )
-  expected <- 0.93828496200941
-  expect_equal(sqrt(component(fit, "beta_vcov")[2, 2]), expected, tolerance = 1e-4)
+  expected <- matrix(
+    c(0.34876862866685, -0.34876862866685, -0.34876862866685, 0.88037866993301), ncol = 2,
+    dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
+  )
+  expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)
 })
 
 ## jackknife ----
