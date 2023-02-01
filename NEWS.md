@@ -5,7 +5,7 @@
 - Add Kenward-Roger support for spatial covariance structures.
 - Add empirical and empirical Jackknife adjusted coefficients covariance matrix.
   In addition, the argument `method` now only specifies the method used
-  for the degrees of freedom, another argument `cov` is added to specify the
+  for the degrees of freedom, another argument `vcov` is added to specify the
   method used to adjust the coefficients covariance matrix.
 - Add optional `tidymodels` framework support.
 

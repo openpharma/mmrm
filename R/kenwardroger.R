@@ -30,7 +30,7 @@ h_get_kr_comp <- function(tmb_data, theta) {
 
 #' Calculation of Kenward-Roger Degrees of Freedom for Multi-Dimensional Contrast
 #'
-#' @description Calculates the Kenward-Roger degree of freedom, F statistic and p value for multi-dimensional contrast.
+#' @description Calculates the Kenward-Roger degrees of freedom, F statistic and p value for multi-dimensional contrast.
 #' Used in [df_md()] if method is "Kenward-Roger" or "Kenward-Roger-Linear".
 #'
 #' @param object (`mmrm`)\cr object.
@@ -63,7 +63,7 @@ h_df_md_kr <- function(object, contrast) {
 
 #' Calculation of Kenward-Roger Degrees of Freedom for One-Dimensional Contrast
 #'
-#' @description Calculates the estimate, adjusted standard error, Kenward-Roger degree of freedom,
+#' @description Calculates the estimate, adjusted standard error, Kenward-Roger degrees of freedom,
 #' t statistic and p-value for one-dimensional contrast. Used in [df_1d()] if method is
 #' "Kenward-Roger" or "Kenward-Roger-Linear".
 #'
@@ -100,9 +100,9 @@ h_df_1d_kr <- function(object, contrast) {
   )
 }
 
-#' Obtain the Adjusted Kenward-Roger Degree of Freedom
+#' Obtain the Adjusted Kenward-Roger degrees of freedom
 #'
-#' @description Obtains the adjusted Kenward-Roger degree of freedom and F statistic scale parameter.
+#' @description Obtains the adjusted Kenward-Roger degrees of freedom and F statistic scale parameter.
 #' Used in [h_df_md_kr()] or [h_df_1d_kr].
 #'
 #' @param v0 (`matrix`)\cr unadjusted covariance matrix.
@@ -111,7 +111,7 @@ h_df_1d_kr <- function(object, contrast) {
 #' @param p (`matrix`)\cr P matrix from [h_get_kr_comp()].
 #'
 #' @return Named list with elements:
-#' - `m`: `numeric` degree of freedom.
+#' - `m`: `numeric` degrees of freedom.
 #' - `lambda`: `numeric` F statistic scale parameter.
 #'
 #' @keywords internal

@@ -29,8 +29,8 @@ ret <- run_sas(code)
 df <- sd2df("diff")
 ```
 
-In SAS result, the covariance matrix and degree of freedom are provided.
-The method for degree of freedom is "between within"
+In SAS result, the covariance matrix and degrees of freedom are provided.
+The method for degrees of freedom is "between within"
 
 ```{r}
 cat(ret$LST)
@@ -40,7 +40,7 @@ cat(ret$LST)
 
 Since using the "empirical" option, we are changing all standard errors and test statistics involving the
 fixed effect parameters, `beta_vcov`. So it can be similar to our other methods, "Satterthwaite" and "Kenward-Roger".
-So in `mmrm`, the method, stands for both "covariance adjust" and "degree of freedom calculation".
+So in `mmrm`, the method, stands for both "covariance adjust" and "degrees of freedom calculation".
 In SAS, they are separated arguments.
 
 covariance:
@@ -49,7 +49,7 @@ covariance:
 1. empirical ${X^\top \Omega^{-1} X}^{-1} \sum_{s}{X_i^\top \Omega^{-1} \epsilon_i \epsilon_i^\top \Omega^{-1} X_i} {X^\top \Omega^{-1} X}^{-1}$
 1. Kenward-Roger(see KR documentation)
 
-degree of freedom
+degrees of freedom
 
 1. contain (not implemented)
 1. between within (default one)
@@ -58,7 +58,7 @@ degree of freedom
 1. Satterthwaite (this will always use the traditional covariance matrix)
 
 In our cases, currently we can, still use one option to control them, if we are not going to implement residual/contain covariance matrix.
-Of course, we will not have the option to combine the between within degree of freedom + traditional covariance matrix.
+Of course, we will not have the option to combine the between within degrees of freedom + traditional covariance matrix.
 
 ```{r}
 library(Matrix)

@@ -1,6 +1,6 @@
 #' Calculation of Residual Degrees of Freedom for One-Dimensional Contrast
 #'
-#' @description Calculates the estimate, standard error, degree of freedom,
+#' @description Calculates the estimate, standard error, degrees of freedom,
 #' t statistic and p-value for one-dimensional contrast. Used in [df_1d()] if method is
 #' "Residual".
 #'
@@ -31,7 +31,7 @@ h_df_1d_res <- function(object, contrast) {
 
 #' Calculation of Residual Degrees of Freedom for Multi-Dimensional Contrast
 #'
-#' @description Calculates the residual degree of freedom, F statistic and p value for multi-dimensional contrast.
+#' @description Calculates the residual degrees of freedom, F statistic and p value for multi-dimensional contrast.
 #' Used in [df_md()] if method is "Residual".
 #'
 #' @param object (`mmrm`)\cr object.

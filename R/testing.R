@@ -1,7 +1,7 @@
 #' Calculation of Degrees of Freedom for One-Dimensional Contrast
 #'
 #' @description `r lifecycle::badge("experimental")`
-#' Calculates the estimate, adjusted standard error, degree of freedom,
+#' Calculates the estimate, adjusted standard error, degrees of freedom,
 #' t statistic and p-value for one-dimensional contrast.
 #'
 #' @param object (`mmrm`)\cr the MMRM fit.
@@ -23,22 +23,20 @@ df_1d <- function(object, contrast) {
   assert_class(object, "mmrm")
   assert_numeric(contrast, len = length(component(object, "beta_est")), any.missing = FALSE)
   contrast <- as.vector(contrast)
-  if (identical(object$method, "Satterthwaite")) {
-    h_df_1d_sat(object, contrast)
-  } else if (identical(object$method, "Kenward-Roger")) {
-    h_df_1d_kr(object, contrast)
-  } else if (identical(object$method, "Residual")) {
-    h_df_1d_res(object, contrast)
-  } else {
-    stop("Unrecognized degree of freedom method: ", object$method)
-  }
+  switch(
+    object$method,
+    "Satterthwaite" = h_df_1d_sat(object, contrast),
+    "Kenward-Roger" = h_df_1d_kr(object, contrast),
+    "Residual" = h_df_1d_res(object, contrast),
+    stop("Unrecognized degrees of freedom method: ", object$method)
+  )
 }
 
 
 #' Calculation of Degrees of Freedom for Multi-Dimensional Contrast
 #'
 #' @description `r lifecycle::badge("experimental")`
-#' Calculates the estimate, standard error, degree of freedom,
+#' Calculates the estimate, standard error, degrees of freedom,
 #' t statistic and p-value for one-dimensional contrast, depending on the method
 #' used in [mmrm()].
 #'
@@ -66,13 +64,11 @@ df_md <- function(object, contrast) {
     contrast <- matrix(contrast, ncol = length(contrast))
   }
   assert_matrix(contrast, ncols = length(component(object, "beta_est")))
-  if (identical(object$method, "Satterthwaite")) {
-    h_df_md_sat(object, contrast)
-  } else if (identical(object$method, "Kenward-Roger")) {
-    h_df_md_kr(object, contrast)
-  } else if (identical(object$method, "Residual")) {
-    h_df_md_res(object, contrast)
-  } else {
-    stop("Unrecognized degree of freedom method: ", object$method)
-  }
+  switch(
+    object$method,
+    "Satterthwaite" = h_df_md_sat(object, contrast),
+    "Kenward-Roger" = h_df_md_kr(object, contrast),
+    "Residual" = h_df_md_res(object, contrast),
+    stop("Unrecognized degrees of freedom method: ", object$method)
+  )
 }

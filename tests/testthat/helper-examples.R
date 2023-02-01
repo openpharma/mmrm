@@ -56,17 +56,17 @@ get_mmrm_kr <- function() {
   .mmrm_kr
 }
 
-.mmrm_krl <- mmrm(.mmrm_kr_formula, data = fev_data, method = "Kenward-Roger", cov = "Kenward-Roger-Linear")
+.mmrm_krl <- mmrm(.mmrm_kr_formula, data = fev_data, method = "Kenward-Roger", vcov = "Kenward-Roger-Linear")
 get_mmrm_krl <- function() {
   .mmrm_krl
 }
 
-.mmrm_emp <- mmrm(.mmrm_kr_formula, data = fev_data, cov = "Empirical", method = "Residual")
+.mmrm_emp <- mmrm(.mmrm_kr_formula, data = fev_data, vcov = "Empirical", method = "Residual")
 get_mmrm_emp <- function() {
   .mmrm_emp
 }
 
-.mmrm_jackknife <- mmrm(.mmrm_kr_formula, data = fev_data, cov = "Empirical-Jackknife", method = "Residual")
+.mmrm_jackknife <- mmrm(.mmrm_kr_formula, data = fev_data, vcov = "Empirical-Jackknife", method = "Residual")
 get_mmrm_jack <- function() {
   .mmrm_jackknife
 }

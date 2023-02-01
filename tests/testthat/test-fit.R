@@ -417,119 +417,146 @@ test_that("mmrm fails when using ... and control at the same time", {
   )
 })
 
-## cov and method combination ----
+## vcov and method combination ----
 
-test_that("mmrm works for cov: Asymptotic and method: Sattherthwaite", {
-  expect_silent(
+test_that("mmrm works for vcov: Asymptotic and method: Sattherthwaite", {
+  result <- expect_silent(
     mmrm(
       formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
       data = fev_data,
       method = "Satterthwaite",
-      cov = "Asymptotic"
+      vcov = "Asymptotic"
     )
   )
+  expect_class(result, c("mmrm", "mmrm_fit", "mmrm_tmb"))
+  expect_true(attr(result, "converged"))
+  expect_class(result$call, "call")
+  expect_true(result$reml)
+  expect_list(result$jac_list, types = "matrix")
 })
 
-test_that("mmrm fails for cov: Kenward-Roger and method: Sattherthwaite", {
+test_that("mmrm fails for vcov: Kenward-Roger and method: Sattherthwaite", {
   expect_error(
     mmrm(
       formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
       data = fev_data,
       method = "Satterthwaite",
-      cov = "Kenward-Roger"
+      vcov = "Kenward-Roger"
     ),
-    "Kenward-Roger degree of freedom must work together with Kenward-Roger or Kenward-Roger-Linear covariance!"
+    "Kenward-Roger degrees of freedom must work together with Kenward-Roger or Kenward-Roger-Linear covariance!"
   )
 })
 
-test_that("mmrm fails for cov: Kenward-Roger-Linear and method: Sattherthwaite", {
+test_that("mmrm fails for vcov: Kenward-Roger-Linear and method: Sattherthwaite", {
   expect_error(
     mmrm(
       formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
       data = fev_data,
       method = "Satterthwaite",
-      cov = "Kenward-Roger-Linear"
+      vcov = "Kenward-Roger-Linear"
     ),
-    "Kenward-Roger degree of freedom must work together with Kenward-Roger or Kenward-Roger-Linear covariance!"
+    "Kenward-Roger degrees of freedom must work together with Kenward-Roger or Kenward-Roger-Linear covariance!"
   )
 })
 
-test_that("mmrm works for cov: Empirical and method: Residual", {
-  expect_silent(
+test_that("mmrm works for vcov: Empirical and method: Residual", {
+  result <- expect_silent(
     mmrm(
       formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
       data = fev_data,
       method = "Residual",
-      cov = "Empirical"
+      vcov = "Empirical"
     )
   )
+  expect_class(result, c("mmrm", "mmrm_fit", "mmrm_tmb"))
+  expect_true(attr(result, "converged"))
+  expect_class(result$call, "call")
+  expect_true(result$reml)
+  expect_matrix(result$beta_vcov_adj)
 })
 
-test_that("mmrm works for cov: Jackknife and method: Residual", {
-  expect_silent(
+test_that("mmrm works for vcov: Jackknife and method: Residual", {
+  result <- expect_silent(
     mmrm(
       formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
       data = fev_data,
       method = "Residual",
-      cov = "Empirical-Jackknife"
+      vcov = "Empirical-Jackknife"
     )
   )
+  expect_class(result, c("mmrm", "mmrm_fit", "mmrm_tmb"))
+  expect_true(attr(result, "converged"))
+  expect_class(result$call, "call")
+  expect_true(result$reml)
+  expect_matrix(result$beta_vcov_adj)
 })
 
-test_that("mmrm fails for cov: Asymptotic and method: Kenward-Roger", {
+test_that("mmrm fails for vcov: Asymptotic and method: Kenward-Roger", {
   expect_error(
     mmrm(
       formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
       data = fev_data,
       method = "Kenward-Roger",
-      cov = "Asymptotic"
+      vcov = "Asymptotic"
     ),
-    "Kenward-Roger degree of freedom must work together with Kenward-Roger or Kenward-Roger-Linear covariance!"
+    "Kenward-Roger degrees of freedom must work together with Kenward-Roger or Kenward-Roger-Linear covariance!"
   )
 })
 
-test_that("mmrm works for cov: Kenward-Roger and method: Kenward-Roger", {
-  expect_silent(
+test_that("mmrm works for vcov: Kenward-Roger and method: Kenward-Roger", {
+  result <- expect_silent(
     mmrm(
       formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
       data = fev_data,
       method = "Kenward-Roger",
-      cov = "Kenward-Roger"
+      vcov = "Kenward-Roger"
     )
   )
+  expect_class(result, c("mmrm", "mmrm_fit", "mmrm_tmb"))
+  expect_true(attr(result, "converged"))
+  expect_class(result$call, "call")
+  expect_true(result$reml)
+  expect_list(result$kr_comp, types = "matrix")
+  expect_matrix(result$beta_vcov_adj)
 })
 
-test_that("mmrm works for cov: Kenward-Roger-Linear and method: Kenward-Roger", {
-  expect_silent(
+test_that("mmrm works for vcov: Kenward-Roger-Linear and method: Kenward-Roger", {
+  result <- expect_silent(
     mmrm(
       formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
       data = fev_data,
       method = "Kenward-Roger",
-      cov = "Kenward-Roger-Linear"
+      vcov = "Kenward-Roger-Linear"
     )
   )
+  expect_class(result, c("mmrm", "mmrm_fit", "mmrm_tmb"))
+  expect_true(attr(result, "converged"))
+  expect_class(result$call, "call")
+  expect_true(result$reml)
+  expect_list(result$kr_comp, types = "matrix")
+  expect_matrix(result$beta_vcov_adj)
 })
 
-test_that("mmrm fails for cov: Empirical and method: Kenward-Roger", {
+test_that("mmrm fails for vcov: Empirical and method: Kenward-Roger", {
   expect_error(
     mmrm(
       formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
       data = fev_data,
       method = "Kenward-Roger",
-      cov = "Empirical"
+      vcov = "Empirical"
     ),
-    "Empirical and Empirical-Jackknife only works for Residual degree of freedom currently!"
+    "Empirical and Empirical-Jackknife only works for Residual degrees of freedom currently!"
   )
 })
 
-test_that("mmrm fails for cov: Jackknife and method: Kenward-Roger", {
+test_that("mmrm fails for vcov: Jackknife and method: Kenward-Roger", {
   expect_error(
     mmrm(
       formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
       data = fev_data,
       method = "Kenward-Roger",
-      cov = "Empirical-Jackknife"
+      vcov = "Empirical-Jackknife"
     ),
-    "Empirical and Empirical-Jackknife only works for Residual degree of freedom currently!"
+    "Empirical and Empirical-Jackknife only works for Residual degrees of freedom currently!"
   )
 })
