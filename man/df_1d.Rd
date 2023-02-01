@@ -18,7 +18,7 @@ List with \code{est}, \code{se}, \code{df}, \code{t_stat} and \code{p_val}.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
-Calculates the estimate, adjusted standard error, degree of freedom,
+Calculates the estimate, adjusted standard error, degrees of freedom,
 t statistic and p-value for one-dimensional contrast.
 }
 \examples{

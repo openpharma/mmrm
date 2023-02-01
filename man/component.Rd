@@ -43,8 +43,8 @@ Available \code{component()} names are as follows:
 \item \code{method}: Adjustment method which was used (for \code{mmrm} objects),
 otherwise \code{NULL} (for \code{mmrm_tmb} objects).
 \item \code{beta_vcov}: estimated variance-covariance matrix of coefficients
-(excluding aliased coefficients). For Kenward-Roger/Empirical
-methods, the adjusted covariance matrix is returned (to still obtain the
+(excluding aliased coefficients). When Kenward-Roger/Empirical adjusted
+coefficients covariance matrix is used, the adjusted covariance matrix is returned (to still obtain the
 original asymptotic covariance matrix use \code{object$beta_vcov}).
 \item \code{beta_vcov_complete}: estimated variance-covariance matrix including
 aliased coefficients with entries set to \code{NA}.

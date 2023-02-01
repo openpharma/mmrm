@@ -15,7 +15,7 @@ h_df_md_res(object, contrast)
 List with \code{num_df}, \code{denom_df}, \code{f_stat} and \code{p_val} (2-sided p-value).
 }
 \description{
-Calculates the residual degree of freedom, F statistic and p value for multi-dimensional contrast.
+Calculates the residual degrees of freedom, F statistic and p value for multi-dimensional contrast.
 Used in \code{\link[=df_md]{df_md()}} if method is "Residual".
 }
 \keyword{internal}

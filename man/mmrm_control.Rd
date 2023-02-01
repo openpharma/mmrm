@@ -7,7 +7,7 @@
 mmrm_control(
   n_cores = 1L,
   method = c("Satterthwaite", "Kenward-Roger", "Residual"),
-  cov = NULL,
+  vcov = NULL,
   start = NULL,
   accept_singular = TRUE,
   drop_visit_levels = TRUE,
@@ -21,7 +21,7 @@ mmrm_control(
 \item{method}{(\code{string})\cr adjustment method for degrees of freedom and
 coefficients covariance matrix.}
 
-\item{cov}{(\code{string})\cr covariance calculation method.}
+\item{vcov}{(\code{string})\cr coefficients covariance matrix adjustment method.}
 
 \item{start}{(\code{numeric} or \code{NULL})\cr optional start values for variance
 parameters.}
@@ -54,14 +54,14 @@ then the distance from \code{VIS1} to \code{VIS3} will be double, as \code{VIS2}
 However, please be cautious because this can lead to convergence failure
 when using an unstructured covariance matrix and there are no observations
 at the missing visits.
-The \code{method} and \code{cov} arguments will decide the covariance matrix and degree of freedom calculations.
-If \code{method} is "Kenward-Roger" then only "Kenward-Roger" or "Kenward-Roger-Linear" are allowed for \code{cov}.
-The \code{cov} argument can be \code{NULL} to use the default covariance method depending on the \code{method}
-used for degree of freedom, see the following table:\tabular{ll}{
-   \code{method} \tab Default \code{cov} \cr
+The \code{method} and \code{vcov} arguments specify the coefficients covariance matrix and degrees of freedom adjustments.
+If \code{method} is "Kenward-Roger" then only "Kenward-Roger" or "Kenward-Roger-Linear" are allowed for \code{vcov}.
+The \code{vcov} argument can be \code{NULL} to use the default covariance method depending on the \code{method}
+used for degrees of freedom, see the following table:\tabular{ll}{
+   \code{method} \tab Default \code{vcov} \cr
    Satterthwaite \tab Asymptotic \cr
    Kenward-Roger \tab Kenward-Roger \cr
-   Residual \tab Asymptotic \cr
+   Residual \tab Empirical \cr
 }
 }
 \examples{

@@ -14,7 +14,7 @@ Usually the calculation is returning \code{2 * E / (E - n)} where
 \code{E} is the sum of \code{t / (t - 2)} over all \code{t_stat_df} values \code{t}.
 }
 \description{
-Calculates the degree of freedom for multi-dimensional contrast.
+Calculates the degrees of freedom for multi-dimensional contrast.
 }
 \note{
 If the input values are two similar to each other then just the average

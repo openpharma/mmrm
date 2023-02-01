@@ -2,7 +2,7 @@
 % Please edit documentation in R/kenwardroger.R
 \name{h_kr_df}
 \alias{h_kr_df}
-\title{Obtain the Adjusted Kenward-Roger Degree of Freedom}
+\title{Obtain the Adjusted Kenward-Roger degrees of freedom}
 \usage{
 h_kr_df(v0, l, w, p)
 }
@@ -18,12 +18,12 @@ h_kr_df(v0, l, w, p)
 \value{
 Named list with elements:
 \itemize{
-\item \code{m}: \code{numeric} degree of freedom.
+\item \code{m}: \code{numeric} degrees of freedom.
 \item \code{lambda}: \code{numeric} F statistic scale parameter.
 }
 }
 \description{
-Obtains the adjusted Kenward-Roger degree of freedom and F statistic scale parameter.
+Obtains the adjusted Kenward-Roger degrees of freedom and F statistic scale parameter.
 Used in \code{\link[=h_df_md_kr]{h_df_md_kr()}} or \link{h_df_1d_kr}.
 }
 \keyword{internal}
