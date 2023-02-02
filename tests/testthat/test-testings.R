@@ -37,5 +37,5 @@ test_that("df_md use correct function on Kenward-Roger-Linear method fit", {
   contrast_md <- matrix(0, nrow = 2, ncol = length(object_kr$beta_est))
   contrast_md[2, 1] <- 1
   contrast_md[1, 2] <- 1
-  expect_identical(df_md(object_kr, contrast_md), h_df_md_kr(object_kr, contrast_md, linear = TRUE))
+  expect_identical(df_md(object_kr, contrast_md), h_df_md_kr(object_kr, contrast_md))
 })

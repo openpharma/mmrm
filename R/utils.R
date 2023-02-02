@@ -101,53 +101,6 @@ free_cores <- function() {
   as.integer(max(1, all_cores - busy_cores - 1))
 }
 
-# covariance types ----
-
-# nolint start
-
-#' covariance type
-#'
-#' @format vector of supported covariance structures. `cov_type` for common time points covariance structures,
-#' `cov_type_spatial` for spatial covariance structures.
-#' @details
-#' abbreviation for covariance structures
-#' ## Common Covariance Structures
-#'
-#' | **Structure**     | **Description**                       | **Parameters**      | **\eqn{(i, j)} element**         |
-#' | ------------- |-------------------------------------------|:---------------|----------------------------------|
-#' | ad            | Ante-dependence                           | \eqn{m}        | \eqn{\sigma^{2}\prod_{k=i}^{j-1}\rho_{k}} |
-#' | adh           | Heterogeneous ante-dependence             | \eqn{2m-1}     | \eqn{\sigma_{i}\sigma_{j}\prod_{k=i}^{j-1}\rho_{k}} |
-#' | ar1           | First-order auto-regressive               | \eqn{2}        | \eqn{\sigma^{2}\rho^{\left \vert {i-j} \right \vert}} |
-#' | ar1h          | Heterogeneous first-order auto-regressive | \eqn{m+1}      | \eqn{\sigma_{i}\sigma_{j}\rho^{\left \vert {i-j} \right \vert}} |
-#' | cs            | Compound symmetry                         | \eqn{2}        | \eqn{\sigma^{2}\left[ \rho I(i \neq j)+I(i=j) \right]} |
-#' | csh           | Heterogeneous compound symmetry           | \eqn{m+1}      | \eqn{\sigma_{i}\sigma_{j}\left[ \rho I(i \neq j)+I(i=j) \right]} |
-#' | toep          | Toeplitz                                  | \eqn{m}        | \eqn{\sigma_{\left \vert {i-j} \right \vert +1}} |
-#' | toeph         | Heterogeneous Toeplitz                    | \eqn{2m-1}     | \eqn{\sigma_{i}\sigma_{j}\rho_{\left \vert {i-j} \right \vert}} |
-#' | us            | Unstructured                              | \eqn{m(m+1)/2} | \eqn{\sigma_{ij}} |
-#'
-#' where \eqn{i} and \eqn{j} denote \eqn{i}-th and \eqn{j}-th time points, respectively, out of total \eqn{m} time points, \eqn{1 \leq i, j \leq m}.
-#'
-#' Note the **ante-dependence** covariance structure in this package refers to homogeneous ante-dependence, while the ante-dependence covariance structure from SAS `PROC MIXED` refers to heterogeneous ante-dependence and the homogeneous version is not available in SAS.
-#'
-#' ## Spatial Covariance structures
-#'
-#' | **Structure**     | **Description**                       | **Parameters**      | **\eqn{(i, j)} element**         |
-#' | ------------- |-------------------------------------------|:---------------|----------------------------------|
-#' | sp_exp        | spatial exponential                       | \eqn{2}        | \eqn{\sigma^{2}\rho^{-d_{ij}}} |
-#'
-#' where \eqn{d_{ij}} denotes the Euclidean distance between time points \eqn{i} and \eqn{j}.
-#' @md
-#' @name covariance_types
-NULL
-
-# nolint end
-
-#' @describeIn covariance_types non-spatial covariance structure
-#' @format NULL
-cov_type <- c("us", "toep", "toeph", "ar1", "ar1h", "ad", "adh", "cs", "csh")
-#' @describeIn covariance_types spatial covariance structure
-#' @format NULL
-cov_type_spatial <- c("sp_exp")
 
 
 #' Trace of a Matrix
@@ -292,10 +245,33 @@ h_partial_fun_args <- function(fun, ..., additional_attr = list()) {
   )
 }
 
+#' Obtain Default Covariance Method
+#'
+#' @description Obtain the default covariance method depending on
+#' the degrees of freedom method used.
+#'
+#' @param method (`string`)\cr degrees of freedom method.
+#'
+#' @details The default covariance method is different for different degrees of freedom method.
+#' If degrees of freedom is "Satterthwaite", "Asymptotic" is returned.
+#' If degrees of freedom is "Kenward-Roger", then "Kenward-Roger" is returned.
+#'
+#' @keywords internal
+h_get_cov_default <- function(method = c("Satterthwaite", "Kenward-Roger", "Residual")) {
+  assert_string(method)
+  method <- match.arg(method)
+  switch(
+    method,
+    "Residual" = "Empirical",
+    "Satterthwaite" = "Asymptotic",
+    "Kenward-Roger" = "Kenward-Roger"
+  )
+}
+
 #' Complete `character` Vector Names From Values
 #'
-#' @param x (`character` or `list`)\cr
-#'   Value whose names should be completed from element values.
+#' @param x (`character` or `list`)\cr value whose names should be completed
+#'   from element values.
 #'
 #' @return A named vector or list.
 #'
@@ -305,4 +281,19 @@ fill_names <- function(x) {
   is_unnamed <- if (is.null(n)) rep_len(TRUE, length(x)) else n == ""
   names(x)[is_unnamed] <- x[is_unnamed]
   x
+}
+
+#' Drop Items from an Indexible
+#'
+#' Drop elements from an indexible object (`vector`, `list`, etc.).
+#'
+#' @param x Any object that can be consumed by [seq_along()] and indexed by a
+#'   logical vector of the same length.
+#' @param n (`integer`)\cr the number of terms to drop.
+#'
+#' @return A subset of `x`.
+#'
+#' @keywords internal
+drop_elements <- function(x, n) {
+  x[seq_along(x) > n]
 }

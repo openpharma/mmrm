@@ -22,10 +22,11 @@ Useful links:
 Authors:
 \itemize{
   \item Julia Dedic \email{julia.dedic@roche.com}
-  \item Doug Kelkhoff \email{kelkhoff.douglas@gene.com}
+  \item Doug Kelkhoff \email{doug.kelkhoff@roche.com}
   \item Kevin Kunzmann \email{kevin.kunzmann@boehringer-ingelheim.com}
   \item Brian Matthew Lang \email{brian.lang@msd.com}
   \item Liming Li \email{liming.li@roche.com}
+  \item Christian Stock \email{christian.stock@boehringer-ingelheim.com}
   \item Ya Wang \email{ya.wang10@gilead.com}
 }
 

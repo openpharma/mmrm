@@ -89,6 +89,7 @@ NULL
 #'
 #' @keywords internal
 h_quad_form_vec <- function(vec, center) {
+  vec <- as.vector(vec)
   assert_numeric(vec, any.missing = FALSE)
   assert_matrix(
     center,
@@ -187,7 +188,7 @@ h_df_1d_list <- function(est,
 
 #' Calculation of Satterthwaite Degrees of Freedom for One-Dimensional Contrast
 #'
-#' @description Calculates the estimate, standard error, degree of freedom,
+#' @description Calculates the estimate, standard error, degrees of freedom,
 #' t statistic and p-value for one-dimensional contrast. Used in [df_1d()] if method is
 #' "Satterthwaite".
 #'
@@ -218,7 +219,7 @@ h_df_1d_sat <- function(object, contrast) {
 
 #' Calculating Denominator Degrees of Freedom for the Multi-Dimensional Case
 #'
-#' @description Calculates the degree of freedom for multi-dimensional contrast.
+#' @description Calculates the degrees of freedom for multi-dimensional contrast.
 #'
 #' @param t_stat_df (`numeric`)\cr `n` t-statistic derived degrees of freedom.
 #'
@@ -248,7 +249,7 @@ h_md_denom_df <- function(t_stat_df) {
 #' Creating Results List for Multi-Dimensional Contrast
 #'
 #' @description Calculate the p-value using the F statistic and the numerator/denominator
-#' degree of freedom and return a list.
+#' degrees of freedom and return a list.
 #'
 #' @param f_stat (`number`)\cr F-statistic.
 #' @param num_df (`number`)\cr numerator degrees of freedom.
@@ -289,7 +290,7 @@ h_df_md_list <- function(f_stat, num_df, denom_df) {
 #'
 #' @keywords internal
 h_df_md_from_1d <- function(object, contrast) {
-  res_1d <- df_1d(object, contrast)
+  res_1d <- h_df_1d_sat(object, contrast)
   h_df_md_list(
     f_stat = res_1d$t_stat^2,
     num_df = 1,
@@ -299,7 +300,7 @@ h_df_md_from_1d <- function(object, contrast) {
 
 #' Calculation of Satterthwaite Degrees of Freedom for Multi-Dimensional Contrast
 #'
-#' @description Calculates the degree of freedom, F statistic and p value for multi-dimensional contrast.
+#' @description Calculates the degrees of freedom, F statistic and p value for multi-dimensional contrast.
 #' Used in [df_md()] if method is "Satterthwaite".
 #'
 #' @param object (`mmrm`)\cr the MMRM fit.
