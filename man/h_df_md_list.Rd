@@ -18,6 +18,6 @@ List with \code{num_df}, \code{denom_df}, \code{f_stat} and \code{p_val} (2-side
 }
 \description{
 Calculate the p-value using the F statistic and the numerator/denominator
-degree of freedom and return a list.
+degrees of freedom and return a list.
 }
 \keyword{internal}

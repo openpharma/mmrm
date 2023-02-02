@@ -50,6 +50,7 @@ Imports:
     utils
 Suggests:
     cli,
+    clubSandwich,
     emmeans (>= 1.6),
     estimability,
     knitr,
@@ -81,11 +82,13 @@ Collate:
     'component.R'
     'cov_struct.R'
     'data.R'
+    'empirical.R'
     'fit.R'
     'kenwardroger.R'
     'mmrm-methods.R'
     'mmrm-package.R'
     'utils.R'
+    'residual.R'
     'utils-nse.R'
     'utils-formula.R'
     'satterthwaite.R'

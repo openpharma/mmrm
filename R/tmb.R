@@ -305,8 +305,8 @@ h_mmrm_tmb_check_conv <- function(tmb_opt, mmrm_tmb) {
 #'
 #' @param tmb_report (`list`)\cr report created with [TMB::MakeADFun()] report function.
 #' @param tmb_data (`mmrm_tmb_data`)\cr produced by [h_mmrm_tmb_data()].
-#' @param visit_var `character`\cr character vector of the visit variable
-#' @param is_spatial `logical`\cr logical value indicating the covariance structure is spatial.
+#' @param visit_var (`character`)\cr character vector of the visit variable
+#' @param is_spatial (`flag`)\cr indicator whether the covariance structure is spatial.
 #' @return Return a simple covariance matrix if there is no grouping, or a named
 #' list of estimated grouped covariance matrices,
 #' with its name equal to the group levels.

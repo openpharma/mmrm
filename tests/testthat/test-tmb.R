@@ -11,6 +11,7 @@ test_that("mmrm_control works as expected", {
       start = NULL,
       accept_singular = TRUE,
       method = "Satterthwaite",
+      vcov = "Asymptotic",
       n_cores = 1L,
       drop_visit_levels = TRUE
     ),

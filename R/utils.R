@@ -245,6 +245,29 @@ h_partial_fun_args <- function(fun, ..., additional_attr = list()) {
   )
 }
 
+#' Obtain Default Covariance Method
+#'
+#' @description Obtain the default covariance method depending on
+#' the degrees of freedom method used.
+#'
+#' @param method (`string`)\cr degrees of freedom method.
+#'
+#' @details The default covariance method is different for different degrees of freedom method.
+#' If degrees of freedom is "Satterthwaite", "Asymptotic" is returned.
+#' If degrees of freedom is "Kenward-Roger", then "Kenward-Roger" is returned.
+#'
+#' @keywords internal
+h_get_cov_default <- function(method = c("Satterthwaite", "Kenward-Roger", "Residual")) {
+  assert_string(method)
+  method <- match.arg(method)
+  switch(
+    method,
+    "Residual" = "Empirical",
+    "Satterthwaite" = "Asymptotic",
+    "Kenward-Roger" = "Kenward-Roger"
+  )
+}
+
 #' Complete `character` Vector Names From Values
 #'
 #' @param x (`character` or `list`)\cr value whose names should be completed

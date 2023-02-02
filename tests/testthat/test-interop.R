@@ -1,4 +1,5 @@
 test_that("check_package_version warns when version is not compatible", {
+  skip_if_not_installed("mockery")
   mockery::stub(check_package_version, "utils::packageVersion", numeric_version("1.2.3"))
 
   # When no version requirements are specified, checking package always succeeds

@@ -33,11 +33,20 @@ test_that("component works as expected for mmrm_tmb objects", {
 
 ## beta_vcov ----
 
-test_that("component returns adjusted beta cov matrix for Kenward-Roger adjusted mmrm", {
+test_that("component returns adjusted beta vcov matrix for Kenward-Roger adjusted mmrm", {
   object_mmrm_kr <- get_mmrm_kr()
   expect_identical(component(object_mmrm_kr, "beta_vcov"), object_mmrm_kr$beta_vcov_adj)
 })
 
+test_that("component returns empirical beta vcov matrix", {
+  object_mmrm_emp <- get_mmrm_emp()
+  expect_identical(component(object_mmrm_emp, "beta_vcov"), object_mmrm_emp$beta_vcov_adj)
+})
+
+test_that("component returns Jackknife beta vcov matrix", {
+  object_mmrm_jack <- get_mmrm_jack()
+  expect_identical(component(object_mmrm_jack, "beta_vcov"), object_mmrm_jack$beta_vcov_adj)
+})
 ## best_est_complete ----
 
 test_that("component produces complete coefficient vector as expected in full rank model", {
