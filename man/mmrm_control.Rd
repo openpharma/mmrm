@@ -54,7 +54,7 @@ then the distance from \code{VIS1} to \code{VIS3} will be double, as \code{VIS2}
 However, please be cautious because this can lead to convergence failure
 when using an unstructured covariance matrix and there are no observations
 at the missing visits.
-The \code{method} and \code{vcov} arguments specify the coefficients covariance matrix and degrees of freedom adjustments.
+The \code{method} and \code{vcov} arguments specify the degrees of freedom and coefficients covariance matrix adjustment methods, respectively.
 If \code{method} is "Kenward-Roger" then only "Kenward-Roger" or "Kenward-Roger-Linear" are allowed for \code{vcov}.
 The \code{vcov} argument can be \code{NULL} to use the default covariance method depending on the \code{method}
 used for degrees of freedom, see the following table:\tabular{ll}{
