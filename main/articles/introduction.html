@@ -39,7 +39,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9003</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9004</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,6 +55,7 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/algorithm.html">Details of the Model Fitting in `mmrm`</a>
+    <a class="dropdown-item" href="../articles/coef_vcov.html">Coefficients Covariance Matrix Adjustment in `mmrm`</a>
     <a class="dropdown-item" href="../articles/covariance.html">Covariance Structures in `mmrm`</a>
     <a class="dropdown-item" href="../articles/introduction.html">Introduction to `mmrm`</a>
     <a class="dropdown-item" href="../articles/kenward.html">Details of the Kenward-Roger calculations</a>
@@ -66,12 +67,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -137,7 +132,7 @@ information.</p>
 <span><span class="co">#&gt; Data:        fev_data (used 537 observations from 197 subjects with maximum 4 </span></span>
 <span><span class="co">#&gt; timepoints)</span></span>
 <span><span class="co">#&gt; Covariance:  unstructured (10 variance parameters)</span></span>
-<span><span class="co">#&gt; Method:      REML</span></span>
+<span><span class="co">#&gt; Inference:   REML</span></span>
 <span><span class="co">#&gt; Deviance:    3387.373</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients: </span></span>
@@ -204,7 +199,7 @@ used in optimization.</p>
 <span><span class="co">#&gt; Data:        fev_data (used 537 observations from 197 subjects with maximum 4 </span></span>
 <span><span class="co">#&gt; timepoints)</span></span>
 <span><span class="co">#&gt; Covariance:  unstructured (10 variance parameters)</span></span>
-<span><span class="co">#&gt; Method:      ML</span></span>
+<span><span class="co">#&gt; Inference:   ML</span></span>
 <span><span class="co">#&gt; Deviance:    3397.934</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients: </span></span>
@@ -248,7 +243,7 @@ be switch off) for the optimization.</p>
 <span><span class="co">#&gt; Data:        fev_data (used 537 observations from 197 subjects with maximum 4 </span></span>
 <span><span class="co">#&gt; timepoints)</span></span>
 <span><span class="co">#&gt; Covariance:  unstructured (10 variance parameters)</span></span>
-<span><span class="co">#&gt; Method:      REML</span></span>
+<span><span class="co">#&gt; Inference:   REML</span></span>
 <span><span class="co">#&gt; Deviance:    3387.373</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients: </span></span>
@@ -286,7 +281,7 @@ function call for homogeneous compound symmetry (<code>cs</code>).</p>
 <span><span class="co">#&gt; Data:        fev_data (used 537 observations from 197 subjects with maximum 4 </span></span>
 <span><span class="co">#&gt; timepoints)</span></span>
 <span><span class="co">#&gt; Covariance:  compound symmetry (2 variance parameters)</span></span>
-<span><span class="co">#&gt; Method:      ML</span></span>
+<span><span class="co">#&gt; Inference:   ML</span></span>
 <span><span class="co">#&gt; Deviance:    3536.989</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients: </span></span>
@@ -328,7 +323,7 @@ framework to do that correctly.</p>
 <span><span class="co">#&gt; timepoints)</span></span>
 <span><span class="co">#&gt; Weights:     fev_data$WEIGHT</span></span>
 <span><span class="co">#&gt; Covariance:  unstructured (10 variance parameters)</span></span>
-<span><span class="co">#&gt; Method:      REML</span></span>
+<span><span class="co">#&gt; Inference:   REML</span></span>
 <span><span class="co">#&gt; Deviance:    3476.526</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients: </span></span>
@@ -383,11 +378,11 @@ different <code>ARMCD</code> groups.</p>
 <div class="section level3">
 <h3 id="adjustment-method">Adjustment Method<a class="anchor" aria-label="anchor" href="#adjustment-method"></a>
 </h3>
-<p>Both Satterthwaite and Kenward-Roger adjustment methods are
-available. The default is Satterthwaite adjustment of the degrees of
-freedom. To use Kenward-Roger adjustment of the degrees of freedom as
-well as the coefficients covariance matrix, use the <code>method</code>
-argument:</p>
+<p>In additional to the residual degrees of freedom, both Satterthwaite
+and Kenward-Roger adjustment methods are available. The default is
+Satterthwaite adjustment of the degrees of freedom. To use Kenward-Roger
+adjustment of the degrees of freedom as well as the coefficients
+covariance matrix, use the <code>method</code> argument:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit_kr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
@@ -410,6 +405,7 @@ standard errors and degrees of freedom:</p>
 <span><span class="co">#&gt; timepoints)</span></span>
 <span><span class="co">#&gt; Covariance:  unstructured (10 variance parameters)</span></span>
 <span><span class="co">#&gt; Method:      Kenward-Roger</span></span>
+<span><span class="co">#&gt; Vcov Method: Kenward-Roger</span></span>
 <span><span class="co">#&gt; Inference:   REML</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Model selection criteria:</span></span>
@@ -459,11 +455,33 @@ approximation:</p>
 <code class="sourceCode R"><span><span class="va">fit_kr_lin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">fev_data</span>,</span>
-<span>  method <span class="op">=</span> <span class="st">"Kenward-Roger-Linear"</span></span>
+<span>  method <span class="op">=</span> <span class="st">"Kenward-Roger"</span>,</span>
+<span>  vcov <span class="op">=</span> <span class="st">"Kenward-Roger-Linear"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>This is due to the different parametrization of the unstructured
 covariance matrix, see the <a href="kenward.html#parameterization-methods-and-kenward-roger">Kenward-Roger
 vignette</a> for details.</p>
+</div>
+<div class="section level3">
+<h3 id="variance-covariance-for-coefficients">Variance-covariance for Coefficients<a class="anchor" aria-label="anchor" href="#variance-covariance-for-coefficients"></a>
+</h3>
+<p>There are multiple variance-covariance estimator available for the
+coefficients, including:</p>
+<ol style="list-style-type: decimal">
+<li>Asymptotic</li>
+<li>Empirical (Cluster Robust Sandwich)</li>
+<li>Empirical-Jackknife</li>
+<li>Kenward-Roger</li>
+<li>Kenward-Roger-Linear</li>
+</ol>
+<p>Please note that, not all combinations of variance-covariance for
+coefficients and method of degrees of freedom are possible,
+e.g. “Kenward-Roger” and “Kenward-Roger-Linear” are available only when
+the degrees of freedom method is “Kenward-Roger”, while “Empirical” and
+“Empirical-Jackknife” only works for “Residual” degrees of freedom
+currently.</p>
+<p>Details can be found in <a href="coef_vcov.html">Coefficients
+Covariance Matrix Adjustment vignette</a>.</p>
 </div>
 <div class="section level3">
 <h3 id="keeping-unobserved-visits">Keeping Unobserved Visits<a class="anchor" aria-label="anchor" href="#keeping-unobserved-visits"></a>
@@ -564,7 +582,7 @@ table.</p>
 is as follows:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">fit_summary</span><span class="op">)</span></span>
-<span><span class="co">#&gt; List of 14</span></span>
+<span><span class="co">#&gt; List of 15</span></span>
 <span><span class="co">#&gt;  $ cov_type        : chr "us"</span></span>
 <span><span class="co">#&gt;  $ reml            : logi TRUE</span></span>
 <span><span class="co">#&gt;  $ n_groups        : int 1</span></span>
@@ -581,6 +599,7 @@ is as follows:</p>
 <span><span class="co">#&gt;   .. ..$ : chr [1:4] "VIS1" "VIS2" "VIS3" "VIS4"</span></span>
 <span><span class="co">#&gt;   .. ..$ : chr [1:4] "VIS1" "VIS2" "VIS3" "VIS4"</span></span>
 <span><span class="co">#&gt;  $ method          : chr "Satterthwaite"</span></span>
+<span><span class="co">#&gt;  $ vcov            : chr "Asymptotic"</span></span>
 <span><span class="co">#&gt;  $ coefficients    : num [1:10, 1:5] 30.97 1.5 5.61 3.78 4.83 ...</span></span>
 <span><span class="co">#&gt;   ..- attr(*, "dimnames")=List of 2</span></span>
 <span><span class="co">#&gt;   .. ..$ : chr [1:10] "(Intercept)" "RACEBlack or African American" "RACEWhite" "ARMCDTRT" ...</span></span>
@@ -650,7 +669,7 @@ want to fit the model without the adjustment calculations.</p>
 <span><span class="co">#&gt; Data:        fev_data (used 537 observations from 197 subjects with maximum 4 </span></span>
 <span><span class="co">#&gt; timepoints)</span></span>
 <span><span class="co">#&gt; Covariance:  unstructured (10 variance parameters)</span></span>
-<span><span class="co">#&gt; Method:      REML</span></span>
+<span><span class="co">#&gt; Inference:   REML</span></span>
 <span><span class="co">#&gt; Deviance:    3387.373</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients: </span></span>
