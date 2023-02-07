@@ -28,6 +28,7 @@ Authors:
   \item Liming Li \email{liming.li@roche.com}
   \item Christian Stock \email{christian.stock@boehringer-ingelheim.com}
   \item Ya Wang \email{ya.wang10@gilead.com}
+  \item Dan James \email{dan.james@astrazeneca.com}
 }
 
 Other contributors:
@@ -37,6 +38,7 @@ Other contributors:
   \item Gilead Sciences, Inc. [copyright holder, funder]
   \item F. Hoffmann-La Roche AG [copyright holder, funder]
   \item Merck Sharp & Dohme, Inc. [copyright holder, funder]
+  \item AstraZeneca plc [copyright holder, funder]
 }
 
 }
