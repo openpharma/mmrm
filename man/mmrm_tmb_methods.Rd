@@ -14,6 +14,7 @@
 \alias{AIC.mmrm_tmb}
 \alias{BIC.mmrm_tmb}
 \alias{print.mmrm_tmb}
+\alias{residuals.mmrm_tmb}
 \title{Methods for \code{mmrm_tmb} Objects}
 \usage{
 \method{coef}{mmrm_tmb}(object, complete = TRUE, ...)
@@ -37,6 +38,8 @@
 \method{BIC}{mmrm_tmb}(object, ...)
 
 \method{print}{mmrm_tmb}(x, ...)
+
+\method{residuals}{mmrm_tmb}(object, type = c("response", "pearson", "normalized"), ...)
 }
 \arguments{
 \item{object}{(\code{mmrm_tmb})\cr the fitted MMRM object.}
@@ -58,6 +61,9 @@ coefficients.}
 
 \item{k}{(\code{number})\cr the penalty per parameter to be used; default \code{k = 2}
 is the classical AIC.}
+
+\item{type}{(\code{string})\cr unscaled (\code{response}), \code{pearson} or \code{normalized}. Default is \code{response},
+and this is the only type available for use with models with a spatial covariance structure.}
 }
 \value{
 Depends on the method, see Functions.
@@ -99,6 +105,8 @@ penalty parameter \code{k}.
 
 \item \code{print(mmrm_tmb)}: prints the object.
 
+\item \code{residuals(mmrm_tmb)}: to obtain residuals - either unscaled ('response'), 'pearson' or 'normalized'.
+
 }}
 \examples{
 formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
@@ -125,10 +133,18 @@ AIC(object)
 AIC(object, corrected = TRUE)
 # BIC:
 BIC(object)
+# residuals:
+residuals(object, type = "response")
+residuals(object, type = "pearson")
+residuals(object, type = "normalized")
 }
 \references{
 \itemize{
 \item \insertRef{hurvich1989regression}{mmrm}
 \item \insertRef{burnham1998practical}{mmrm}
+}
+
+\itemize{
+\item \insertRef{galecki2013linear}{mmrm}
 }
 }
