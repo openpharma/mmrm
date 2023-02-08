@@ -70,7 +70,8 @@ test_that("fit_single_optimizer gives error messages", {
     fit_mmrm(formula, fev_data),
     paste(
       "Covariance structure must be specified in formula.",
-      "Possible covariance structures include: us, toep, toeph, ar1, ar1h, ad, adh, cs, csh"
+      "Possible covariance structures include:",
+      "us, toep, toeph, ar1, ar1h, ad, adh, cs, csh, sp_exp"
     ),
     fixed = TRUE
   )
@@ -78,7 +79,8 @@ test_that("fit_single_optimizer gives error messages", {
     fit_single_optimizer(formula, fev_data, weights = rep(1, nrow(fev_data))),
     paste(
       "Covariance structure must be specified in formula.",
-      "Possible covariance structures include: us, toep, toeph, ar1, ar1h, ad, adh, cs, csh"
+      "Possible covariance structures include:",
+      "us, toep, toeph, ar1, ar1h, ad, adh, cs, csh"
     ),
     fixed = TRUE
   )
@@ -414,5 +416,161 @@ test_that("mmrm fails when using ... and control at the same time", {
     ),
     "Assertion on '!missing(control) && !missing(...)' failed",
     fixed = TRUE
+  )
+})
+
+test_that("mmrm fails when using formula covariance with covariance argument", {
+  expect_error(
+    mmrm(
+      formula = FEV1 ~ us(AVISIT | USUBJID),
+      covariance = cov_struct("us", "AVISIT", "USUBJID"),
+      data = fev_data,
+    ),
+    "Redundant covariance structure",
+    fixed = TRUE
+  )
+})
+
+## vcov and method combination ----
+
+test_that("mmrm works for vcov: Asymptotic and method: Sattherthwaite", {
+  result <- expect_silent(
+    mmrm(
+      formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+      data = fev_data,
+      method = "Satterthwaite",
+      vcov = "Asymptotic"
+    )
+  )
+  expect_class(result, c("mmrm", "mmrm_fit", "mmrm_tmb"))
+  expect_true(attr(result, "converged"))
+  expect_class(result$call, "call")
+  expect_true(result$reml)
+  expect_list(result$jac_list, types = "matrix")
+})
+
+test_that("mmrm fails for vcov: Kenward-Roger and method: Sattherthwaite", {
+  expect_error(
+    mmrm(
+      formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+      data = fev_data,
+      method = "Satterthwaite",
+      vcov = "Kenward-Roger"
+    ),
+    "Kenward-Roger degrees of freedom must work together with Kenward-Roger or Kenward-Roger-Linear covariance!"
+  )
+})
+
+test_that("mmrm fails for vcov: Kenward-Roger-Linear and method: Sattherthwaite", {
+  expect_error(
+    mmrm(
+      formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+      data = fev_data,
+      method = "Satterthwaite",
+      vcov = "Kenward-Roger-Linear"
+    ),
+    "Kenward-Roger degrees of freedom must work together with Kenward-Roger or Kenward-Roger-Linear covariance!"
+  )
+})
+
+test_that("mmrm works for vcov: Empirical and method: Residual", {
+  result <- expect_silent(
+    mmrm(
+      formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+      data = fev_data,
+      method = "Residual",
+      vcov = "Empirical"
+    )
+  )
+  expect_class(result, c("mmrm", "mmrm_fit", "mmrm_tmb"))
+  expect_true(attr(result, "converged"))
+  expect_class(result$call, "call")
+  expect_true(result$reml)
+  expect_matrix(result$beta_vcov_adj)
+})
+
+test_that("mmrm works for vcov: Jackknife and method: Residual", {
+  result <- expect_silent(
+    mmrm(
+      formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+      data = fev_data,
+      method = "Residual",
+      vcov = "Empirical-Jackknife"
+    )
+  )
+  expect_class(result, c("mmrm", "mmrm_fit", "mmrm_tmb"))
+  expect_true(attr(result, "converged"))
+  expect_class(result$call, "call")
+  expect_true(result$reml)
+  expect_matrix(result$beta_vcov_adj)
+})
+
+test_that("mmrm fails for vcov: Asymptotic and method: Kenward-Roger", {
+  expect_error(
+    mmrm(
+      formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+      data = fev_data,
+      method = "Kenward-Roger",
+      vcov = "Asymptotic"
+    ),
+    "Kenward-Roger degrees of freedom must work together with Kenward-Roger or Kenward-Roger-Linear covariance!"
+  )
+})
+
+test_that("mmrm works for vcov: Kenward-Roger and method: Kenward-Roger", {
+  result <- expect_silent(
+    mmrm(
+      formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+      data = fev_data,
+      method = "Kenward-Roger",
+      vcov = "Kenward-Roger"
+    )
+  )
+  expect_class(result, c("mmrm", "mmrm_fit", "mmrm_tmb"))
+  expect_true(attr(result, "converged"))
+  expect_class(result$call, "call")
+  expect_true(result$reml)
+  expect_list(result$kr_comp, types = "matrix")
+  expect_matrix(result$beta_vcov_adj)
+})
+
+test_that("mmrm works for vcov: Kenward-Roger-Linear and method: Kenward-Roger", {
+  result <- expect_silent(
+    mmrm(
+      formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+      data = fev_data,
+      method = "Kenward-Roger",
+      vcov = "Kenward-Roger-Linear"
+    )
+  )
+  expect_class(result, c("mmrm", "mmrm_fit", "mmrm_tmb"))
+  expect_true(attr(result, "converged"))
+  expect_class(result$call, "call")
+  expect_true(result$reml)
+  expect_list(result$kr_comp, types = "matrix")
+  expect_matrix(result$beta_vcov_adj)
+})
+
+test_that("mmrm fails for vcov: Empirical and method: Kenward-Roger", {
+  expect_error(
+    mmrm(
+      formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+      data = fev_data,
+      method = "Kenward-Roger",
+      vcov = "Empirical"
+    ),
+    "Empirical and Empirical-Jackknife only works for Residual degrees of freedom currently!"
+  )
+})
+
+test_that("mmrm fails for vcov: Jackknife and method: Kenward-Roger", {
+  expect_error(
+    mmrm(
+      formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+      data = fev_data,
+      method = "Kenward-Roger",
+      vcov = "Empirical-Jackknife"
+    ),
+    "Empirical and Empirical-Jackknife only works for Residual degrees of freedom currently!"
   )
 })

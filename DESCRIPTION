@@ -1,20 +1,23 @@
 Type: Package
 Package: mmrm
 Title: Mixed Models for Repeated Measures
-Version: 0.2.2.9003
+Version: 0.2.2.9006
 Authors@R: c(
     person("Daniel", "Sabanes Bove", , "daniel.sabanes_bove@roche.com", role = c("aut", "cre")),
     person("Julia", "Dedic", , "julia.dedic@roche.com", role = "aut"),
-    person("Doug", "Kelkhoff", , "kelkhoff.douglas@gene.com", role = "aut"),
+    person("Doug", "Kelkhoff", , "doug.kelkhoff@roche.com", role = "aut"),
     person("Kevin", "Kunzmann", , "kevin.kunzmann@boehringer-ingelheim.com", role = "aut"),
     person("Brian Matthew", "Lang", , "brian.lang@msd.com", role = "aut"),
     person("Liming", "Li", , "liming.li@roche.com", role = "aut"),
+    person("Christian", "Stock", , "christian.stock@boehringer-ingelheim.com", role = "aut"),
     person("Ya", "Wang", , "ya.wang10@gilead.com", role = "aut"),
     person("Craig", "Gower-Page", , "craig.gower-page@roche.com", role = "ctb"),
+    person("Dan", "James", , "dan.james@astrazeneca.com", role = "aut"),
     person("Boehringer Ingelheim Ltd.", role = c("cph", "fnd")),
     person("Gilead Sciences, Inc.", role = c("cph", "fnd")),
     person("F. Hoffmann-La Roche AG", role = c("cph", "fnd")),
-    person("Merck Sharp & Dohme, Inc.", role = c("cph", "fnd"))
+    person("Merck Sharp & Dohme, Inc.", role = c("cph", "fnd")),
+    person("AstraZeneca plc", role = c("cph", "fnd"))
   )
 Description: Mixed models for repeated measures (MMRM) are a popular
     choice for analyzing longitudinal continuous outcomes in randomized
@@ -49,6 +52,7 @@ Imports:
     utils
 Suggests:
     cli,
+    clubSandwich,
     emmeans (>= 1.6),
     estimability,
     knitr,
@@ -78,12 +82,17 @@ RoxygenNote: 7.2.3
 Collate:
     'catch-routine-registration.R'
     'component.R'
+    'cov_struct.R'
     'data.R'
+    'empirical.R'
     'fit.R'
     'kenwardroger.R'
     'mmrm-methods.R'
     'mmrm-package.R'
     'utils.R'
+    'residual.R'
+    'utils-nse.R'
+    'utils-formula.R'
     'satterthwaite.R'
     'testing.R'
     'tmb-methods.R'

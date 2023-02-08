@@ -1,7 +1,7 @@
 #' Obtain Kenward-Roger Adjustment Components
 #'
 #' @description Obtains the components needed downstream for the computation of Kenward-Roger degrees of freedom.
-#' Used in [mmrm()] fitting if method is "Kenward-Roger" or "Kenward-Roger-Linear".
+#' Used in [mmrm()] fitting if method is "Kenward-Roger".
 #'
 #' @param tmb_data (`mmrm_tmb_data`)\cr produced by [h_mmrm_tmb_data()].
 #' @param theta (`numeric`)\cr theta estimate.
@@ -30,19 +30,17 @@ h_get_kr_comp <- function(tmb_data, theta) {
 
 #' Calculation of Kenward-Roger Degrees of Freedom for Multi-Dimensional Contrast
 #'
-#' @description Calculates the Kenward-Roger degree of freedom, F statistic and p value for multi-dimensional contrast.
+#' @description Calculates the Kenward-Roger degrees of freedom, F statistic and p value for multi-dimensional contrast.
 #' Used in [df_md()] if method is "Kenward-Roger" or "Kenward-Roger-Linear".
 #'
 #' @param object (`mmrm`)\cr object.
 #' @param contrast (`matrix`)\cr contrast matrix.
-#' @param linear (`logical`)\cr whether to use linear Kenward-Roger approximation.
 #'
 #' @return List with `num_df`, `denom_df`, `f_stat` and `p_val` (2-sided p-value).
 #'
 #' @keywords internal
-h_df_md_kr <- function(object, contrast, linear = FALSE) {
+h_df_md_kr <- function(object, contrast) {
   assert_class(object, "mmrm")
-  assert_flag(linear)
   assert_matrix(contrast, mode = "numeric", any.missing = FALSE, ncols = length(component(object, "beta_est")))
   if (component(object, "reml") != 1) {
     stop("Kenward-Roger is only for REML")
@@ -65,20 +63,18 @@ h_df_md_kr <- function(object, contrast, linear = FALSE) {
 
 #' Calculation of Kenward-Roger Degrees of Freedom for One-Dimensional Contrast
 #'
-#' @description Calculates the estimate, adjusted standard error, Kenward-Roger degree of freedom,
+#' @description Calculates the estimate, adjusted standard error, Kenward-Roger degrees of freedom,
 #' t statistic and p-value for one-dimensional contrast. Used in [df_1d()] if method is
 #' "Kenward-Roger" or "Kenward-Roger-Linear".
 #'
 #' @param object (`mmrm`)\cr object created by [mmrm()] with Kenward-Roger(-Linear) method.
 #' @param contrast (`numeric`)\cr contrast vector.
-#' @param linear (`logical`)\cr whether to use linear Kenward-Roger approximation.
 #'
 #' @return List with `est`, `se`, `df`, `t_stat` and `p_val`.
 #'
 #' @keywords internal
-h_df_1d_kr <- function(object, contrast, linear = FALSE) {
+h_df_1d_kr <- function(object, contrast) {
   assert_class(object, "mmrm")
-  assert_flag(linear)
   assert_numeric(contrast, len = length(component(object, "beta_est")))
   if (component(object, "reml") != 1) {
     stop("Kenward-Roger is only for REML!")
@@ -104,9 +100,9 @@ h_df_1d_kr <- function(object, contrast, linear = FALSE) {
   )
 }
 
-#' Obtain the Adjusted Kenward-Roger Degree of Freedom
+#' Obtain the Adjusted Kenward-Roger degrees of freedom
 #'
-#' @description Obtains the adjusted Kenward-Roger degree of freedom and F statistic scale parameter.
+#' @description Obtains the adjusted Kenward-Roger degrees of freedom and F statistic scale parameter.
 #' Used in [h_df_md_kr()] or [h_df_1d_kr].
 #'
 #' @param v0 (`matrix`)\cr unadjusted covariance matrix.
@@ -115,7 +111,7 @@ h_df_1d_kr <- function(object, contrast, linear = FALSE) {
 #' @param p (`matrix`)\cr P matrix from [h_get_kr_comp()].
 #'
 #' @return Named list with elements:
-#' - `m`: `numeric` degree of freedom.
+#' - `m`: `numeric` degrees of freedom.
 #' - `lambda`: `numeric` F statistic scale parameter.
 #'
 #' @keywords internal
@@ -175,7 +171,7 @@ h_kr_df <- function(v0, l, w, p) {
 #' @param p (`matrix`)\cr P matrix from [h_get_kr_comp()].
 #' @param q (`matrix`)\cr Q matrix from [h_get_kr_comp()].
 #' @param r (`matrix`)\cr R matrix from [h_get_kr_comp()].
-#' @param linear (`logical`)\cr whether to use linear Kenward-Roger approximation.
+#' @param linear (`flag`)\cr whether to use linear Kenward-Roger approximation.
 #'
 #' @return The matrix of adjusted covariance matrix.
 #'

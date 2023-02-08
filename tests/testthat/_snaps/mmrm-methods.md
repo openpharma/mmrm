@@ -33,6 +33,7 @@
     timepoints)
     Covariance:  unstructured (10 variance parameters)
     Method:      Satterthwaite
+    Vcov Method: Asymptotic
     Inference:   REML
     
     Model selection criteria:
@@ -73,6 +74,7 @@
     Weights:     .mmrm_weights
     Covariance:  unstructured (10 variance parameters)
     Method:      Satterthwaite
+    Vcov Method: Asymptotic
     Inference:   REML
     
     Model selection criteria:
@@ -112,6 +114,7 @@
     subjects with maximum 4 timepoints)
     Covariance:  unstructured (10 variance parameters)
     Method:      Satterthwaite
+    Vcov Method: Asymptotic
     Inference:   REML
     
     Model selection criteria:
@@ -152,6 +155,7 @@
     timepoints)
     Covariance:  unstructured (20 variance parameters of 2 groups)
     Method:      Satterthwaite
+    Vcov Method: Asymptotic
     Inference:   REML
     
     Model selection criteria:
@@ -189,6 +193,7 @@
     timepoints)
     Covariance:  spatial exponential (2 variance parameters)
     Method:      Satterthwaite
+    Vcov Method: Asymptotic
     Inference:   REML
     
     Model selection criteria:

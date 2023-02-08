@@ -164,3 +164,82 @@ test_that("print.mmrm_tmb works as expected for rank deficient fits", {
   object_mmrm_tmb <- get_mmrm_tmb_rank_deficient()
   expect_snapshot_output(print(object_mmrm_tmb), cran = FALSE)
 })
+
+# residuals.mmrm_tmb ----
+
+test_that("residuals works as expected", {
+  object <- get_mmrm()
+
+  result_resp <- expect_silent(residuals(object, type = "response"))
+  expect_double(result_resp, len = length(object$tmb_data$y_vector))
+  expect_equal(head(result_resp, 5), c(-1.2349, -31.6025, -4.1618, -4.2406, 2.9770), tolerance = 1e-4)
+
+  result_pearson <- expect_silent(residuals(object, type = "pearson"))
+  expect_double(result_pearson, len = length(object$tmb_data$y_vector))
+  expect_equal(head(result_pearson, 5), c(-0.23957, -3.23296, -0.80740, -1.09871, 0.30455), tolerance = 1e-4)
+
+  result_norm <- expect_silent(residuals(object, type = "normalized"))
+  expect_double(result_norm, len = length(object$tmb_data$y_vector))
+  expect_equal(head(result_norm, 5), c(-0.23957, -3.23322, -0.80740, -0.99548, 0.43232), tolerance = 1e-4)
+})
+
+test_that("residuals works as expected with grouped covariance structure", {
+  object <- get_mmrm_group()
+
+  result_resp <- expect_silent(residuals(object, type = "response"))
+  expect_double(result_resp, len = length(object$tmb_data$y_vector))
+  expect_equal(head(result_resp, 5), c(-4.7084, -24.1957, -9.6965, -4.2728, 7.6564), tolerance = 1e-4)
+
+  result_pearson <- expect_silent(residuals(object, type = "pearson"))
+  expect_double(result_pearson, len = length(object$tmb_data$y_vector))
+  expect_equal(head(result_pearson, 5), c(-0.73835, -1.83991, -1.53172, -0.88145, 0.66653), tolerance = 1e-4)
+
+  result_norm <- expect_silent(residuals(object, type = "normalized"))
+  expect_double(result_norm, len = length(object$tmb_data$y_vector))
+  expect_equal(head(result_norm, 5), c(-0.73835, -1.88475, -1.53172, -1.02026, 0.54335), tolerance = 1e-4)
+})
+
+test_that("residuals works as expected with weighted model fit", {
+  object <- get_mmrm_weighted()
+
+  result_resp <- expect_silent(residuals(object, type = "response"))
+  expect_double(result_resp, len = length(object$tmb_data$y_vector))
+  expect_equal(head(result_resp, 5), c(-1.3356, -31.6028, -3.7467, -3.9470, 2.8818), tolerance = 1e-4)
+
+  result_pearson <- expect_silent(residuals(object, type = "pearson"))
+  expect_double(result_pearson, len = length(object$tmb_data$y_vector))
+  expect_equal(head(result_pearson, 5), c(-0.29917, -4.07046, -0.51393, -1.01538, 0.37118), tolerance = 1e-4)
+
+  result_norm <- expect_silent(residuals(object, type = "normalized"))
+  expect_double(result_norm, len = length(object$tmb_data$y_vector))
+  expect_equal(head(result_norm, 5), c(-0.29917, -4.07727, -0.51393, -0.96419, 0.45466), tolerance = 1e-4)
+})
+
+test_that("residuals works as expected with a model using spatial covariance structure", {
+  object <- get_mmrm_spatial()
+
+  result_resp <- expect_silent(residuals(object, type = "response"))
+  expect_double(result_resp, len = length(object$tmb_data$y_vector))
+  expect_equal(head(result_resp, 5), c(-4.5428, -24.0301, -8.8329, -3.4092, 8.5200), tolerance = 1e-4)
+
+  expect_error(residuals(object, type = "pearson"))
+  expect_error(residuals(object, type = "normalized"))
+})
+
+test_that("pearson residuals helper function works as expected", {
+  object <- get_mmrm()
+  resid_response <- residuals(object, type = "response")
+
+  result_pearson <- h_residuals_pearson(object, resid_response)
+  expect_double(result_pearson, len = length(object$tmb_data$y_vector))
+  expect_equal(tail(result_pearson, 5), c(2.22057, 1.79050, 0.53322, 0.87243, 0.70477), tolerance = 1e-4)
+})
+
+test_that("normalized residuals helper function works as expected", {
+  object <- get_mmrm()
+  resid_response <- residuals(object, type = "response")
+
+  result_norm <- h_residuals_normalized(object, resid_response)
+  expect_double(result_norm, len = length(object$tmb_data$y_vector))
+  expect_equal(tail(result_norm, 5), c(1.99092, 1.49689, 0.53322, 0.71055, 0.56152), tolerance = 1e-4)
+})

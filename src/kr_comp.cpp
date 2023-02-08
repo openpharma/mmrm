@@ -5,6 +5,7 @@ using std::string;
 // Obtain P,Q,R element from a mmrm fit, given theta.
 List get_pqr(List mmrm_fit, NumericVector theta) {
   NumericMatrix x = mmrm_fit["x_matrix"];
+  auto x_matrix = as_matrix(x);
   IntegerVector subject_zero_inds = mmrm_fit["subject_zero_inds"];
   IntegerVector visits_zero_inds = mmrm_fit["visits_zero_inds"];
   int n_subjects = mmrm_fit["n_subjects"];
@@ -19,7 +20,6 @@ List get_pqr(List mmrm_fit, NumericVector theta) {
   NumericMatrix coordinates = mmrm_fit["coordinates"];
   matrix<double> coords = as_matrix(coordinates);
   auto theta_v = as_vector(theta);
-  std::string covtype_str = string(cov_type);
   auto G_sqrt = as_vector(sqrt(weights_vector));
   int n_theta = theta.size();
   int theta_size_per_group = n_theta / n_groups;
@@ -43,10 +43,13 @@ List get_pqr(List mmrm_fit, NumericVector theta) {
     int n_visits_i = subject_n_visits[i];
     std::vector<int> visit_i(n_visits_i);
     matrix<double> dist_i(n_visits_i, n_visits_i);
-    for (int i = 0; i < n_visits_i; i++) {
-      visit_i[i] = visits_zero_inds[i + start_i];
+    if (!is_spatial) {
+      for (int i = 0; i < n_visits_i; i++) {
+        visit_i[i] = visits_zero_inds[i + start_i];
+      }
+    } else {
+      dist_i = euclidean(matrix<double>(coords.block(start_i, 0, n_visits_i, coordinates.cols())));
     }
-    dist_i = euclidean(matrix<double>(coords.block(start_i, 0, n_visits_i, coordinates.cols())));
     int subject_group_i = subject_groups[i] - 1;
     matrix<double> sigma_inv, sigma_d1, sigma_d2, sigma, sigma_inv_d1;
     
@@ -56,7 +59,6 @@ List get_pqr(List mmrm_fit, NumericVector theta) {
     sigma = derivatives_by_group[subject_group_i]->get_sigma(visit_i, dist_i);
     sigma_inv_d1 = derivatives_by_group[subject_group_i]->get_inverse_derivative(visit_i, dist_i);
     
-    auto x_matrix = as_matrix(x);
     matrix<double> Xi = x_matrix.block(start_i, 0, n_visits_i, x_matrix.cols());
     auto gi_sqrt_root = G_sqrt.segment(start_i, n_visits_i).matrix().asDiagonal();
     for (int r = 0; r < theta_size_per_group; r ++) {

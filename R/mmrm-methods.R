@@ -90,6 +90,7 @@ summary.mmrm <- function(object, ...) {
   ))
 
   components$method <- object$method
+  components$vcov <- object$vcov
   structure(
     c(
       components,
@@ -194,6 +195,7 @@ print.summary.mmrm <- function(x,
   h_print_call(x$call, x$n_obs, x$n_subjects, x$n_timepoints)
   h_print_cov(x$cov_type, x$n_theta, x$n_groups)
   cat("Method:      ", x$method, "\n", sep = "")
+  cat("Vcov Method: ", x$vcov, "\n", sep = "")
   cat("Inference:   ")
   cat(ifelse(x$reml, "REML", "ML"))
   cat("\n\n")

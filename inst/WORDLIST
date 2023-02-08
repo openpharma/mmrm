@@ -7,6 +7,7 @@ ansi
 aoms
 ar
 ARMCD
+AstraZeneca
 aut
 AVISIT
 bilinearen
@@ -45,6 +46,7 @@ csh
 customizations
 daniel
 ddots
+de
 DeclareMathOperator
 dedic
 Dedic
@@ -92,6 +94,7 @@ ijk
 ik
 im
 incollection
+indexible
 infty
 Ingelheim
 init
@@ -101,6 +104,7 @@ issn
 jac
 jh
 jj
+jk
 jstor
 julia
 Kackar
@@ -112,6 +116,7 @@ knitr
 kr
 Kunzmann
 LazyData
+ldots
 leq
 lifecycle
 lik
@@ -138,6 +143,7 @@ newcommand
 nlminb
 noci
 Noci
+nonidentifiability
 onLoad
 openpharma
 optimizers
@@ -147,7 +153,9 @@ parametrized
 params
 Parm
 PBO
+pearson
 pkgdown
+plc
 pmatrix
 Polymorphism
 pre
@@ -185,6 +193,7 @@ testthat's
 th
 Theorie
 tidymodels
+Tidymodels
 tmb
 TMB
 toep

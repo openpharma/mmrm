@@ -1,9 +1,19 @@
-# mmrm 0.2.2.9003
+# mmrm 0.2.2.9006
 
 ### New Features
 
+- Add argument `covariance` to `mmrm()` to allow for easier programmatic access
+  to specifying the model's covariance structure and to expose covariance
+  customization through the `tidymodels` interface.
 - Add Kenward-Roger support for spatial covariance structures.
-- Add optional tidymodels support.
+- Add support for `residuals` method with a `type` argument allowing for 
+  raw (the default, and only option for models with a spatial covariance structure),
+  Pearson and normalized residuals to be calculated from an `mmrm` fit.
+- Add empirical and empirical Jackknife adjusted coefficients covariance matrix.
+  In addition, the argument `method` now only specifies the method used
+  for the degrees of freedom, another argument `vcov` is added to specify the
+  method used to adjust the coefficients covariance matrix.
+- Add optional `tidymodels` framework support.
 
 # mmrm 0.2.2
 

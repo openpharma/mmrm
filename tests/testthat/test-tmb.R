@@ -11,91 +11,13 @@ test_that("mmrm_control works as expected", {
       start = NULL,
       accept_singular = TRUE,
       method = "Satterthwaite",
+      vcov = "Asymptotic",
       n_cores = 1L,
       drop_visit_levels = TRUE
     ),
     class = "mmrm_control"
   )
   expect_identical(result, expected)
-})
-
-# h_mmrm_tmb_exract_terms ---
-test_that("h_mmrm_tmb_extract_terms works for covariance terms as expected", {
-  expect_identical(
-    h_mmrm_tmb_extract_terms(quote(a | b)),
-    list(subject_var = "b", visit_var = "a", group_var = NULL)
-  )
-  expect_error(
-    h_mmrm_tmb_extract_terms(quote(a + b | b)),
-    "`time` in `time|\\(group/\\)subject` must be specified as one single variable."
-  )
-  expect_error(
-    h_mmrm_tmb_extract_terms(quote(a | (b + c))),
-    "Covariance structure must be of the form `time|\\(group/\\)subject`."
-  )
-  expect_identical(
-    h_mmrm_tmb_extract_terms(quote(a | b / c)),
-    list(subject_var = "c", visit_var = "a", group_var = "b")
-  )
-  expect_error(
-    h_mmrm_tmb_extract_terms(quote(a | (b + d) / c)),
-    "`group` in `time|\\(group/\\)subject` must be specified as one single variable."
-  )
-  expect_error(
-    h_mmrm_tmb_extract_terms(quote(a | b / (c + d))),
-    "`subject` in `time|\\(group/\\)subject` must be specified as one single variable."
-  )
-})
-
-# h_mmrm_tmb_extract_vars ----
-test_that("h_mmrm_tmb_extract_vars works for non-grouped formula as expected", {
-  expect_identical(
-    h_mmrm_tmb_extract_vars(quote(cs(a | b))),
-    list(subject_var = "b", visit_var = "a", group_var = NULL, is_spatial = FALSE)
-  )
-  expect_identical(
-    h_mmrm_tmb_extract_vars(quote(sp_exp(a1, a2 | b))),
-    list(subject_var = "b", visit_var = c("a1", "a2"), group_var = NULL, is_spatial = TRUE)
-  )
-  expect_error(
-    h_mmrm_tmb_extract_vars(quote(cs(a + b))),
-    "Covariance structure must be of the form `time|\\(group/\\)subject`."
-  )
-})
-
-test_that("h_mmrm_tmb_extract_vars works for grouped formula as expected", {
-  expect_identical(
-    h_mmrm_tmb_extract_vars(quote(cs(a | b / c))),
-    list(subject_var = "c", visit_var = "a", group_var = "b", is_spatial = FALSE)
-  )
-  expect_error(
-    h_mmrm_tmb_extract_vars(quote(cs((a + b) | c / d))),
-    "`time` in `time|\\(group/\\)subject` must be specified as one single variable."
-  )
-  expect_error(
-    h_mmrm_tmb_extract_vars(quote(cs(a | b / (c + d)))),
-    "`subject` in `time|\\(group/\\)subject` must be specified as one single variable."
-  )
-  expect_error(
-    h_mmrm_tmb_extract_vars(quote(cs(a | (b + c) / d))),
-    "`group` in `time|\\(group/\\)subject` must be specified as one single variable."
-  )
-})
-
-
-test_that("h_mmrm_tmb_extract_vars works for multiple coordinates as expected", {
-  expect_identical(
-    h_mmrm_tmb_extract_vars(quote(sp_exp(a1, a2, a3 | b))),
-    list(subject_var = "b", visit_var = c("a1", "a2", "a3"), group_var = NULL, is_spatial = TRUE)
-  )
-  expect_error(
-    h_mmrm_tmb_extract_vars(quote(us(a1, a2, a3 | b))),
-    "Non-spatial covariance term should not include multiple `time` variables."
-  )
-  expect_warning(
-    h_mmrm_tmb_extract_vars(quote(sp_exp(a1, a1 | b))),
-    "Duplicated `time` variable spotted: a1. This may indicate input errors in the formula."
-  )
 })
 
 # h_mmrm_tmb_formula_parts ----
@@ -141,31 +63,42 @@ test_that("h_mmrm_tmb_formula_parts works as expected", {
     h_mmrm_tmb_formula_parts(FEV1 ~ RACE + AVISIT + USUBJID),
     paste(
       "Covariance structure must be specified in formula.",
-      "Possible covariance structures include: us, toep, toeph, ar1, ar1h, ad, adh, cs, csh"
-    )
+      "Possible covariance structures include:",
+      "us, toep, toeph, ar1, ar1h, ad, adh, cs, csh"
+    ),
+    fixed = TRUE
   )
   expect_error(
     h_mmrm_tmb_formula_parts(FEV1 ~ RACE + arh1(AVISIT | USUBJID)),
     paste(
       "Covariance structure must be specified in formula.",
-      "Possible covariance structures include: us, toep, toeph, ar1, ar1h, ad, adh, cs, csh"
-    )
+      "Possible covariance structures include:",
+      "us, toep, toeph, ar1, ar1h, ad, adh, cs, csh"
+    ),
+    fixed = TRUE
   )
   expect_error(
     h_mmrm_tmb_formula_parts(FEV1 ~ RACE + ar1h(AVISIT | USUBJID) + cs(AVISIT | USUBJID)),
-    "Only one covariance structure can be specified. Currently specified covariance structures are: ar1h, cs"
+    paste0(
+      "Only one covariance structure can be specified. ",
+      "Currently specified covariance structures are: ar1h, cs"
+    ),
+    fixed = TRUE
   )
   expect_error(
     h_mmrm_tmb_formula_parts(FEV1 ~ RACE + cs(AVISIT)),
-    "Covariance structure must be of the form `time\\|\\(group/\\)subject`"
+    "Covariance structure must be of the form `time | (group /) subject`",
+    fixed = TRUE
   )
   expect_error(
     h_mmrm_tmb_formula_parts(FEV1 ~ RACE + cs(AVISIT | RACE + ARMCD / USUBJID)),
-    "Covariance structure must be of the form `time\\|\\(group/\\)subject`"
+    "Covariance structure must be of the form `time | (group /) subject`",
+    fixed = TRUE
   )
   expect_error(
     h_mmrm_tmb_formula_parts(FEV1 ~ RACE + cs(AVISIT, AVISIT | RACE + ARMCD / USUBJID)),
-    "Covariance structure must be of the form `time\\|\\(group/\\)subject`"
+    "Covariance structure must be of the form `time | (group /) subject`",
+    fixed = TRUE
   )
 })
 

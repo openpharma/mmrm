@@ -23,9 +23,9 @@
 #' - `method`: Adjustment method which was used (for `mmrm` objects),
 #'      otherwise `NULL` (for `mmrm_tmb` objects).
 #' - `beta_vcov`: estimated variance-covariance matrix of coefficients
-#'      (excluding aliased coefficients). For Kenward-Roger
-#'      methods, the adjusted covariance matrix is returned (to still obtain the
-#'      unadjusted covariance matrix use `object$beta_vcov`).
+#'      (excluding aliased coefficients). When Kenward-Roger/Empirical adjusted
+#'      coefficients covariance matrix is used, the adjusted covariance matrix is returned (to still obtain the
+#'      original asymptotic covariance matrix use `object$beta_vcov`).
 #' - `beta_vcov_complete`: estimated variance-covariance matrix including
 #'      aliased coefficients with entries set to `NA`.
 #' - `varcor`: estimated covariance matrix for residuals. If there are multiple
@@ -110,10 +110,10 @@ component <- function(object,
     "jac_list" = object$jac_list,
     # Matrices.
     "beta_vcov" =
-      if (!is.null(object$method) && object$method %in% c("Kenward-Roger", "Kenward-Roger-Linear")) {
-        object$beta_vcov_adj
-      } else {
+      if (is.null(object$vcov) || identical(object$vcov, "Asymptotic")) {
         object$beta_vcov
+      } else {
+        object$beta_vcov_adj
       },
     "beta_vcov_complete" =
       if (any(object$tmb_data$x_cols_aliased)) {
