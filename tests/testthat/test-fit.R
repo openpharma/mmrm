@@ -505,6 +505,38 @@ test_that("mmrm works for vcov: Jackknife and method: Residual", {
   expect_matrix(result$beta_vcov_adj)
 })
 
+test_that("mmrm works for vcov: Empirical and method: Satterthwaite", {
+  result <- expect_silent(
+    mmrm(
+      formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+      data = fev_data,
+      method = "Satterthwaite",
+      vcov = "Empirical"
+    )
+  )
+  expect_class(result, c("mmrm", "mmrm_fit", "mmrm_tmb"))
+  expect_true(attr(result, "converged"))
+  expect_class(result$call, "call")
+  expect_true(result$reml)
+  expect_matrix(result$beta_vcov_adj)
+})
+
+test_that("mmrm works for vcov: Jackknife and method: Satterthwaite", {
+  result <- expect_silent(
+    mmrm(
+      formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+      data = fev_data,
+      method = "Satterthwaite",
+      vcov = "Empirical-Jackknife"
+    )
+  )
+  expect_class(result, c("mmrm", "mmrm_fit", "mmrm_tmb"))
+  expect_true(attr(result, "converged"))
+  expect_class(result$call, "call")
+  expect_true(result$reml)
+  expect_matrix(result$beta_vcov_adj)
+})
+
 test_that("mmrm fails for vcov: Asymptotic and method: Kenward-Roger", {
   expect_error(
     mmrm(

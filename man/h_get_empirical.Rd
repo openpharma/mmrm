@@ -18,7 +18,11 @@ h_get_empirical(tmb_data, theta, beta, beta_vcov, jackknife)
 \item{jackknife}{(\code{flag})\cr indicator of whether Jackknife covariance is returned.}
 }
 \value{
-The matrix of covariance matrix of beta.
+Named list with elements:
+\itemize{
+\item \code{cov}: \code{matrix} empirical covariance.
+\item \code{df_mat}: \code{matrix} to calculate Satterthwaite degree of freedom.
+}
 }
 \description{
 Obtain the empirical or Jackknife covariance for \eqn{\beta}.
