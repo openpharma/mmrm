@@ -218,7 +218,7 @@ h_df_1d_sat <- function(object, contrast) {
     contrast_matrix <- Matrix::.bdiag(rep(list(matrix(contrast, nrow = 1)), component(object, "n_subjects")))
     contrast_matrix <- as.matrix(contrast_matrix)
     g_matrix <- h_quad_form_mat(contrast_matrix, object$empirical_df_mat)
-    df <- h_tr(g_matrix) ^ 2 / sum(g_matrix^2)
+    df <- h_tr(g_matrix)^2 / sum(g_matrix^2)
     se <- sqrt(var)
     list(
       est = est,
@@ -375,7 +375,7 @@ h_df_md_sat <- function(object, contrast) {
         )
         contrast_matrix <- as.matrix(contrast_matrix)
         g_matrix <- h_quad_form_mat(contrast_matrix, object$empirical_df_mat)
-        h_tr(g_matrix) ^ 2 / sum(g_matrix^2)
+        h_tr(g_matrix)^2 / sum(g_matrix^2)
       },
       FUN.VALUE = 0
     )
