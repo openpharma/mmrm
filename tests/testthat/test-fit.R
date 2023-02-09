@@ -559,7 +559,7 @@ test_that("mmrm fails for vcov: Empirical and method: Kenward-Roger", {
       method = "Kenward-Roger",
       vcov = "Empirical"
     ),
-    "Empirical and Empirical-Jackknife only works for Residual degrees of freedom currently!"
+    "Kenward-Roger degrees of freedom must work together with Kenward-Roger or Kenward-Roger-Linear covariance!"
   )
 })
 
@@ -571,6 +571,6 @@ test_that("mmrm fails for vcov: Jackknife and method: Kenward-Roger", {
       method = "Kenward-Roger",
       vcov = "Empirical-Jackknife"
     ),
-    "Empirical and Empirical-Jackknife only works for Residual degrees of freedom currently!"
+    "Kenward-Roger degrees of freedom must work together with Kenward-Roger or Kenward-Roger-Linear covariance!"
   )
 })

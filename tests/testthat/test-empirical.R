@@ -212,17 +212,66 @@ test_that("empirical covariance are the same with SAS result for sp_exp", {
   expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)
 })
 
-## jackknife ----
+## Empirical Satterthwaite vs gls/clubSandwich ----
+
+test_that("Empirical works as expected for ar1", {
+  skip_if_not_installed("nlme")
+  skip_if_not_installed("clubSandwich")
+  formula <- FEV1 ~ ARMCD + ar1(AVISIT | USUBJID)
+  data_full <- fev_data[complete.cases(fev_data), ]
+  fit <- mmrm(formula = formula, data = data_full, vcov = "Empirical", method = "Satterthwaite")
+  fit_gls <- nlme::gls(FEV1 ~ ARMCD, data_full, correlation = nlme::corAR1(form = ~ VISITN | USUBJID))
+  expected <- clubSandwich::vcovCR(fit_gls, type = "CR0")
+  expect_equal(fit$beta_vcov_adj, expected, tolerance = 1e-4, ignore_attr = TRUE)
+  coef_obj <- clubSandwich::coef_test(fit_gls, expected)
+  sfit <- summary(fit)
+  result <- sfit$coefficients[, "df", drop = TRUE]
+  names(result) <- NULL
+  expect_equal(result, coef_obj[, "df_Satt"], tolerance = 1e-4)
+})
+
+test_that("Empirical works as expected for weighted ar1", {
+  skip_if_not_installed("nlme")
+  skip_if_not_installed("clubSandwich")
+  formula <- FEV1 ~ ARMCD + ar1(AVISIT | USUBJID)
+  data_full <- fev_data[complete.cases(fev_data), ]
+  fit <- mmrm(
+    formula = formula, data = data_full, vcov = "Empirical",
+    method = "Satterthwaite", weights = data_full$WEIGHT
+  )
+  # the weights are different in gls and mmrm/SAS;
+  data_full$WEIGHT2 <- 1 / data_full$WEIGHT
+  fit_gls <- nlme::gls(
+    FEV1 ~ ARMCD, data_full, correlation = nlme::corAR1(form = ~ VISITN | USUBJID),
+    weights = nlme::varFixed(~ WEIGHT2)
+  )
+  expected <- clubSandwich::vcovCR(fit_gls, type = "CR0")
+  expect_equal(fit$beta_vcov_adj, expected, tolerance = 1e-4, ignore_attr = TRUE)
+
+  coef_obj <- clubSandwich::coef_test(fit_gls, expected)
+  sfit <- summary(fit)
+  result <- sfit$coefficients[, "df", drop = TRUE]
+  names(result) <- NULL
+  expect_equal(result, coef_obj[, "df_Satt"], tolerance = 1e-4)
+})
+
+
+## jackknife Satterthwaite vs gls/clubSandwich ----
 
 test_that("Jackknife works as expected for ar1", {
   skip_if_not_installed("nlme")
   skip_if_not_installed("clubSandwich")
   formula <- FEV1 ~ ARMCD + ar1(AVISIT | USUBJID)
   data_full <- fev_data[complete.cases(fev_data), ]
-  fit <- mmrm(formula = formula, data = data_full, vcov = "Empirical-Jackknife", method = "Residual")
+  fit <- mmrm(formula = formula, data = data_full, vcov = "Empirical-Jackknife", method = "Satterthwaite")
   fit_gls <- nlme::gls(FEV1 ~ ARMCD, data_full, correlation = nlme::corAR1(form = ~ VISITN | USUBJID))
   expected <- clubSandwich::vcovCR(fit_gls, type = "CR3")
   expect_equal(fit$beta_vcov_adj, expected, tolerance = 1e-4, ignore_attr = TRUE)
+  coef_obj <- clubSandwich::coef_test(fit_gls, expected)
+  sfit <- summary(fit)
+  result <- sfit$coefficients[, "df", drop = TRUE]
+  names(result) <- NULL
+  expect_equal(result, coef_obj[, "df_Satt"], tolerance = 1e-4)
 })
 
 test_that("Jackknife works as expected for weighted ar1", {
@@ -232,7 +281,7 @@ test_that("Jackknife works as expected for weighted ar1", {
   data_full <- fev_data[complete.cases(fev_data), ]
   fit <- mmrm(
     formula = formula, data = data_full, vcov = "Empirical-Jackknife",
-    method = "Residual", weights = data_full$WEIGHT
+    method = "Satterthwaite", weights = data_full$WEIGHT
   )
   # the weights are different in gls and mmrm/SAS;
   data_full$WEIGHT2 <- 1 / data_full$WEIGHT
@@ -242,4 +291,10 @@ test_that("Jackknife works as expected for weighted ar1", {
   )
   expected <- clubSandwich::vcovCR(fit_gls, type = "CR3")
   expect_equal(fit$beta_vcov_adj, expected, tolerance = 1e-4, ignore_attr = TRUE)
+
+  coef_obj <- clubSandwich::coef_test(fit_gls, expected)
+  sfit <- summary(fit)
+  result <- sfit$coefficients[, "df", drop = TRUE]
+  names(result) <- NULL
+  expect_equal(result, coef_obj[, "df_Satt"], tolerance = 1e-4)
 })

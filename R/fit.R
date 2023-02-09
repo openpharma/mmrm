@@ -240,9 +240,7 @@ mmrm_control <- function(n_cores = 1L,
     vcov,
     c("Asymptotic", "Empirical", "Empirical-Jackknife", "Kenward-Roger", "Kenward-Roger-Linear")
   )
-  if (vcov %in% c("Empirical", "Empirical-Jackknife") &&  !identical(method, "Residual")) {
-    stop("Empirical and Empirical-Jackknife only works for Residual degrees of freedom currently!")
-  }
+
   if (xor(identical(method, "Kenward-Roger"), vcov %in% c("Kenward-Roger", "Kenward-Roger-Linear"))) {
     stop("Kenward-Roger degrees of freedom must work together with Kenward-Roger or Kenward-Roger-Linear covariance!")
   }
