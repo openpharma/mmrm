@@ -130,7 +130,7 @@ and [Details of the Kenward-Roger calculations](kenward.html), we have the follo
 For an estimator of variance with the following term
 
 \[
-  v = s c(X^\topX)^{-1}\sum_{i}{X_i^\top A_i \epsilon_i \epsilon_i^\top A_i X_i} (X^\topX)^{-1} c^\top
+  v = s c(X^\top X)^{-1}\sum_{i}{X_i^\top A_i \epsilon_i \epsilon_i^\top A_i X_i} (X^\top X)^{-1} c^\top
 \]
 
 where $s$ takes the value of $\frac{n}{n-1}$, $1$ or $\frac{n-1}{n}$, and $A_i$ takes $I_i$, $(I_i - H_{ii})^{-\frac{1}{2}}$, or $(I_i - H_{ii})^{-1}$
@@ -165,11 +165,11 @@ the original $X$ into $\tilde{x}$ to use the above equations.
 To avoid repeated computation of matrix $A_i$, $H$ etc for different contrasts, we calculate and cache the following
 
 \[
-  GG_i = (I - H)_i^\top A_i X_i (X^\top X)^{-1}
+  G^\ast_i = (I - H)_i^\top A_i X_i (X^\top X)^{-1}
 \]
 is a $\sum_i{m_i} \times p$ matrix. With different contrasts, we need only calculate the following
 \[
-  g_i = GG_i c
+  g_i = G^\ast_i c
 \]
 to obtain a $\sum_i{m_i} \times 1$ matrix, $G$ can be computed with $g_i$.
 
