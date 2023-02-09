@@ -294,6 +294,7 @@ mmrm_control <- function(n_cores = 1L,
 #' The rationale is that these observations would need to be correlated, but it
 #' is not possible within the currently implemented covariance structure framework
 #' to do that correctly.
+#' TODO specify time point variables -> factor variables here.
 #'
 #' When optimizer is not set, first the default optimizer
 #' (`L-BFGS-B`) is used to fit the model. If that converges, this is returned.
