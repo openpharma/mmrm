@@ -7,6 +7,7 @@ ansi
 aoms
 ar
 ARMCD
+AstraZeneca
 aut
 AVISIT
 bilinearen
@@ -45,6 +46,7 @@ csh
 customizations
 daniel
 ddots
+de
 DeclareMathOperator
 dedic
 Dedic
@@ -151,7 +153,9 @@ parametrized
 params
 Parm
 PBO
+pearson
 pkgdown
+plc
 pmatrix
 Polymorphism
 pre
