@@ -2,12 +2,14 @@
 
 test_that("h_get_empirical obtain empirical covariance", {
   fit <- get_mmrm_emp()
-  expect_snapshot_tolerance(h_get_empirical(fit$tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov, FALSE))
+  result <- h_get_empirical(fit$tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov, FALSE)
+  expect_snapshot_tolerance(result$cov)
 })
 
 test_that("h_get_empirical obtain jackknife covariance", {
   fit <- get_mmrm_jack()
-  expect_snapshot_tolerance(h_get_empirical(fit$tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov, TRUE))
+  result <- h_get_empirical(fit$tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov, TRUE)
+  expect_snapshot_tolerance(result$cov)
 })
 
 # integration test ----

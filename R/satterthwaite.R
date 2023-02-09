@@ -204,17 +204,30 @@ h_df_1d_sat <- function(object, contrast) {
   assert_numeric(contrast, len = length(component(object, "beta_est")))
   est <- sum(contrast * component(object, "beta_est"))
   var <- h_quad_form_vec(contrast, component(object, "beta_vcov"))
-  grad <- h_gradient(component(object, "jac_list"), contrast)
-
-  v_num <- 2 * var^2
-  v_denom <- h_quad_form_vec(grad, component(object, "theta_vcov"))
-
-  h_df_1d_list(
-    est = est,
-    var = var,
-    v_num = v_num,
-    v_denom = v_denom
-  )
+  if (identical(object$vcov, "Asymptotic")) {
+    grad <- h_gradient(component(object, "jac_list"), contrast)
+    v_num <- 2 * var^2
+    v_denom <- h_quad_form_vec(grad, component(object, "theta_vcov"))
+    h_df_1d_list(
+      est = est,
+      var = var,
+      v_num = v_num,
+      v_denom = v_denom
+    )
+  } else {
+    contrast_matrix <- Matrix::.bdiag(rep(list(contrast), component(object, "n_subjects")))
+    g_matrix <- t(contrast_matrix) %*% object$empirical_df_mat %*% contrast_matrix
+    ev <- eigen(g_matrix)$values
+    df <- sum(ev) ^ 2 / sum(ev ^ 2)
+    se <- sqrt(var)
+    list(
+      est = est,
+      se = se,
+      df = df,
+      t_stat = est / se,
+      p_val = 2 * pt(abs(t_stat), df = df, lower.tail = FALSE)
+    )
+  }
 }
 
 #' Calculating Denominator Degrees of Freedom for the Multi-Dimensional Case
