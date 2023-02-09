@@ -9,7 +9,9 @@
 #' @param beta_vcov (`matrix`)\cr covariance of beta estimate.
 #' @param jackknife (`flag`)\cr indicator of whether Jackknife covariance is returned.
 #'
-#' @return The matrix of covariance matrix of beta.
+#' @return Named list with elements:
+#' - `cov`: `matrix` empirical covariance.
+#' - `df_mat`: `matrix` to calculate Satterthwaite degree of freedom.
 #'
 #' @keywords internal
 h_get_empirical <- function(tmb_data, theta, beta, beta_vcov, jackknife) {

@@ -120,7 +120,6 @@ h_quad_form_mat <- function(mat, center) {
     nrows = ncol(center),
     ncols = ncol(center)
   )
-
   mat %*% tcrossprod(center, mat)
 }
 
@@ -201,20 +200,34 @@ h_df_1d_list <- function(est,
 #' @keywords internal
 h_df_1d_sat <- function(object, contrast) {
   assert_class(object, "mmrm")
+  contrast <- as.numeric(contrast)
   assert_numeric(contrast, len = length(component(object, "beta_est")))
   est <- sum(contrast * component(object, "beta_est"))
   var <- h_quad_form_vec(contrast, component(object, "beta_vcov"))
-  grad <- h_gradient(component(object, "jac_list"), contrast)
-
-  v_num <- 2 * var^2
-  v_denom <- h_quad_form_vec(grad, component(object, "theta_vcov"))
-
-  h_df_1d_list(
-    est = est,
-    var = var,
-    v_num = v_num,
-    v_denom = v_denom
-  )
+  if (identical(object$vcov, "Asymptotic")) {
+    grad <- h_gradient(component(object, "jac_list"), contrast)
+    v_num <- 2 * var^2
+    v_denom <- h_quad_form_vec(grad, component(object, "theta_vcov"))
+    h_df_1d_list(
+      est = est,
+      var = var,
+      v_num = v_num,
+      v_denom = v_denom
+    )
+  } else if (object$vcov %in% c("Empirical", "Empirical-Jackknife")) {
+    contrast_matrix <- Matrix::.bdiag(rep(list(matrix(contrast, nrow = 1)), component(object, "n_subjects")))
+    contrast_matrix <- as.matrix(contrast_matrix)
+    g_matrix <- h_quad_form_mat(contrast_matrix, object$empirical_df_mat)
+    df <- h_tr(g_matrix) ^ 2 / sum(g_matrix^2)
+    se <- sqrt(var)
+    list(
+      est = est,
+      se = se,
+      df = df,
+      t_stat = est / se,
+      p_val = 2 * pt(abs(est / se), df = df, lower.tail = FALSE)
+    )
+  }
 }
 
 #' Calculating Denominator Degrees of Freedom for the Multi-Dimensional Case
@@ -340,18 +353,33 @@ h_df_md_sat <- function(object, contrast) {
   t_squared_denoms <- eigen_cont_cov_vals[rank_seq]
   t_squared <- t_squared_nums / t_squared_denoms
   f_stat <- sum(t_squared) / rank_cont_cov
-  grads_vctrs_cont_prod <- lapply(
-    rank_seq,
-    function(m) h_gradient(component(object, "jac_list"), contrast = vctrs_cont_prod[m, ])
-  )
   t_stat_df_nums <- 2 * eigen_cont_cov_vals^2
-  t_stat_df_denoms <- vapply(
-    grads_vctrs_cont_prod,
-    h_quad_form_vec,
-    center = component(object, "theta_vcov"),
-    numeric(1)
-  )
-  t_stat_df <- t_stat_df_nums / t_stat_df_denoms
+  if (identical(object$vcov, "Asymptotic")) {
+    grads_vctrs_cont_prod <- lapply(
+      rank_seq,
+      function(m) h_gradient(component(object, "jac_list"), contrast = vctrs_cont_prod[m, ])
+    )
+    t_stat_df_denoms <- vapply(
+      grads_vctrs_cont_prod,
+      h_quad_form_vec,
+      center = component(object, "theta_vcov"),
+      numeric(1)
+    )
+    t_stat_df <- t_stat_df_nums / t_stat_df_denoms
+  } else {
+    t_stat_df <- vapply(
+      rank_seq,
+      function(m) {
+        contrast_matrix <- Matrix::.bdiag(
+          rep(list(vctrs_cont_prod[m, , drop = FALSE]), component(object, "n_subjects"))
+        )
+        contrast_matrix <- as.matrix(contrast_matrix)
+        g_matrix <- h_quad_form_mat(contrast_matrix, object$empirical_df_mat)
+        h_tr(g_matrix) ^ 2 / sum(g_matrix^2)
+      },
+      FUN.VALUE = 0
+    )
+  }
   denom_df <- h_md_denom_df(t_stat_df)
 
   h_df_md_list(

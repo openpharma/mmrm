@@ -116,7 +116,7 @@ h_tr <- function(x) {
   if (nrow(x) != ncol(x)) {
     stop("x must be square matrix")
   }
-  sum(diag(x))
+  sum(Matrix::diag(x))
 }
 
 #' Split Control List

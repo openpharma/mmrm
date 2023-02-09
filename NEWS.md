@@ -14,6 +14,8 @@
   for the degrees of freedom, another argument `vcov` is added to specify the
   method used to adjust the coefficients covariance matrix.
 - Add optional `tidymodels` framework support.
+- Add Satterthwaite degrees of freedom support for empirical and empirical Jackknife
+  covariance.
 
 # mmrm 0.2.2
 

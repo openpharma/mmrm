@@ -3,7 +3,7 @@
 using namespace Rcpp;
 using std::string;
 // Obtain the empirical given beta, beta_vcov, theta.
-NumericMatrix get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, NumericMatrix beta_vcov, bool jackknife) {
+List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, NumericMatrix beta_vcov, bool jackknife) {
   NumericMatrix x = mmrm_data["x_matrix"];
   matrix<double> x_matrix = as_matrix(x);
   NumericVector y = mmrm_data["y_vector"];
@@ -11,6 +11,7 @@ NumericMatrix get_empirical(List mmrm_data, NumericVector theta, NumericVector b
   IntegerVector subject_zero_inds = mmrm_data["subject_zero_inds"];
   IntegerVector visits_zero_inds = mmrm_data["visits_zero_inds"];
   int n_subjects = mmrm_data["n_subjects"];
+  int n_observations = x_matrix.rows();
   IntegerVector subject_n_visits = mmrm_data["subject_n_visits"];
   int n_visits = mmrm_data["n_visits"];
   String cov_type = mmrm_data["cov_type"];
@@ -41,8 +42,9 @@ NumericMatrix get_empirical(List mmrm_data, NumericVector theta, NumericVector b
       derivatives_by_group[r] = new derivatives_nonspatial<double>(vector<double>(theta_v.segment(r * theta_size_per_group, theta_size_per_group)), n_visits, cov_type);
     }
   }
-  matrix<double> meat = matrix<double>::Zero(beta_vcov_matrix.rows(), beta_vcov_matrix.cols());
-  
+  matrix<double> meat = matrix<double>::Zero(beta_vcov_matrix.rows(), beta_vcov_matrix.cols());  
+  matrix<double> xt_g_simga_inv_chol = matrix<double>::Zero(p, n_observations);
+  matrix<double> ax = matrix<double>::Zero(n_observations, p);
   for (int i = 0; i < n_subjects; i++) {
     int start_i = subject_zero_inds[i];
     int n_visits_i = subject_n_visits[i];
@@ -62,14 +64,27 @@ NumericMatrix get_empirical(List mmrm_data, NumericVector theta, NumericVector b
     matrix<double> gi_sqrt_root = G_sqrt.segment(start_i, n_visits_i).matrix().asDiagonal();
     matrix<double> gi_simga_inv_chol = gi_sqrt_root * sigma_inv_chol;
     matrix<double> xt_gi_simga_inv_chol = Xi.transpose() * gi_simga_inv_chol;
-    matrix<double> identity(n_visits_i, n_visits_i);
-    identity.setIdentity();
+    matrix<double> identity = matrix<double>::Identity(n_visits_i, n_visits_i);
+    //std::cout << identity << "\n---\n";
     if (jackknife) {
       identity = identity - xt_gi_simga_inv_chol.transpose() * beta_vcov_matrix * xt_gi_simga_inv_chol;
     }
-    matrix<double> z =  xt_gi_simga_inv_chol * identity.inverse() * gi_simga_inv_chol.transpose() * residual_i;
+    matrix<double> xta = xt_gi_simga_inv_chol * identity.inverse();
+    matrix<double> z = xta * gi_simga_inv_chol.transpose() * residual_i;
     meat = meat + z * z.transpose();
+    xt_g_simga_inv_chol.block(0, start_i, p, n_visits_i) = xt_gi_simga_inv_chol;
+    ax.block(start_i, 0, n_visits_i, p) = xta.transpose();
   }
+  matrix<double> h = xt_g_simga_inv_chol.transpose() * beta_vcov_matrix * xt_g_simga_inv_chol;
+  matrix<double> imh = matrix<double>::Identity(n_observations, n_observations) - h;
+  matrix<double> ax_xtx =  ax * beta_vcov_matrix;
+  matrix<double> g = matrix<double>::Zero(n_observations, p * n_subjects);
+  for (int i = 0; i < n_subjects; i++) {
+    int start_i = subject_zero_inds[i];
+    int n_visits_i = subject_n_visits[i];
+    g.block(0, i * p, n_observations, p) = imh.block(0, start_i, n_observations, n_visits_i) * ax_xtx.block(start_i, 0, n_visits_i, p);
+  }
+  matrix<double> gtvg = g.transpose() * g;
   for (int r = 0; r < n_groups; r++) {
     delete derivatives_by_group[r];
   }
@@ -80,6 +95,9 @@ NumericMatrix get_empirical(List mmrm_data, NumericVector theta, NumericVector b
   //if (jackknife) {
   //  ret = ret * (n_subjects - 1) / n_subjects;
   //}
-  return as_mv(ret);
+  return List::create(
+    Named("cov") = as_mv(ret),
+    Named("df_mat") = as_mv(gtvg)
+  );
 }
 
