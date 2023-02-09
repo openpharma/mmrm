@@ -42,7 +42,7 @@ List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, Nume
       derivatives_by_group[r] = new derivatives_nonspatial<double>(vector<double>(theta_v.segment(r * theta_size_per_group, theta_size_per_group)), n_visits, cov_type);
     }
   }
-  matrix<double> meat = matrix<double>::Zero(beta_vcov_matrix.rows(), beta_vcov_matrix.cols());  
+  matrix<double> meat = matrix<double>::Zero(p, p);  
   matrix<double> xt_g_simga_inv_chol = matrix<double>::Zero(p, n_observations);
   matrix<double> ax = matrix<double>::Zero(n_observations, p);
   for (int i = 0; i < n_subjects; i++) {
@@ -65,7 +65,6 @@ List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, Nume
     matrix<double> gi_simga_inv_chol = gi_sqrt_root * sigma_inv_chol;
     matrix<double> xt_gi_simga_inv_chol = Xi.transpose() * gi_simga_inv_chol;
     matrix<double> identity = matrix<double>::Identity(n_visits_i, n_visits_i);
-    //std::cout << identity << "\n---\n";
     if (jackknife) {
       identity = identity - xt_gi_simga_inv_chol.transpose() * beta_vcov_matrix * xt_gi_simga_inv_chol;
     }
