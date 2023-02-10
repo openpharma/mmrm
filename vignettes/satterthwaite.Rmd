@@ -119,7 +119,7 @@ of freedom is calculated for each of them. Finally, using properties of the F
 distribution's expectation, the denominator degree of freedom for the whole F statistic
 is derived.
 
-## Satterthwaite degrees of freedom for sandwich covariance
+## Satterthwaite degrees of freedom for empirical covariance
 
 In @bell2002bias the Satterthwaite degrees of freedom in combination with a sandwich covariance matrix estimator are described.
 
