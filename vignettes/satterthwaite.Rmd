@@ -157,7 +157,7 @@ So the degrees of freedom can be represented as
 \]
 
 where $\lambda_i, i = 1, \dotsc, n$ are the eigenvalues of $G$.
-@bell2002bias also suggests that $V$ can be chosen as identify matrix, so $G_{ij} = g_i  g_j$.
+@bell2002bias also suggests that $V$ can be chosen as identify matrix, so $G_{ij} = g_i ^\top g_j$.
 
 Following [Weighted Least Square Estimator](algorithm.html#weighted-least-squares-estimator), we can transform
 the original $X$ into $\tilde{x}$ to use the above equations.
