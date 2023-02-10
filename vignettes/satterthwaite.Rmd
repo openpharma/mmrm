@@ -130,11 +130,11 @@ and [Details of the Kenward-Roger calculations](kenward.html), we have the follo
 For an estimator of variance with the following term
 
 \[
-  v = s c(X^\top X)^{-1}\sum_{i}{X_i^\top A_i \epsilon_i \epsilon_i^\top A_i X_i} (X^\top X)^{-1} c^\top
+  v = s c^\top(X^\top X)^{-1}\sum_{i}{X_i^\top A_i \epsilon_i \epsilon_i^\top A_i X_i} (X^\top X)^{-1} c
 \]
 
 where $s$ takes the value of $\frac{n}{n-1}$, $1$ or $\frac{n-1}{n}$, and $A_i$ takes $I_i$, $(I_i - H_{ii})^{-\frac{1}{2}}$, or $(I_i - H_{ii})^{-1}$
-respectively, $c$ is a vector, then $v$ can be decomposed into the a weighted sum of independent $\Chi_1^2$ distribution, where the weights are
+respectively, $c$ is a column vector, then $v$ can be decomposed into the a weighted sum of independent $\chi_1^2$ distribution, where the weights are
 the eigenvalues of the $n\times n$ matrix $G$ with elements
 \[
   G_{ij} = g_i^\top V g_j
@@ -177,6 +177,56 @@ To obtain the degrees of freedom, and to avoid eigen computation on a large matr
 
 \[
   \nu = \frac{(\sum_{i}\lambda_i)^2}{\sum_{i}{\lambda_i^2}} = \frac{tr(G)^2}{\sum_{i}{\sum_{j}{G_{ij}^2}}}
+\]
+
+The proof is as following
+
+1. Proof of
+\[
+  tr(AB) = tr(BA)
+\]
+
+Let $A$ has dimension $p\times q$, $B$ has dimension $q\times p$
+\[
+  tr(AB) = \sum_{i=1}^{p}{(AB)_{ii}} = \sum_{i=1}^{p}{\sum_{j=1}^{q}{A_{ij}B_{ji}}}
+\]
+
+\[
+  tr(BA) = \sum_{i=1}^{q}{(BA)_{ii}} = \sum_{i=1}^{q}{\sum_{j=1}^{p}{B_{ij}A_{ji}}}
+\]
+
+so $tr(AB) = tr(BA)$
+
+2. Proof of
+\[
+  tr(G) = \sum_{i}(\lambda_i)
+\]
+and
+\[
+  \sum_{i}(\lambda_i^2) = \sum_{i}{\sum_{j}{G_{ij}^2}}
+\]
+if $G = G^\top$
+
+Following eigen decomposition, we have
+\[
+  G = Q \Lambda Q^\top
+\]
+where $\Lambda$ is diagonal matrix, $Q$ is orthogonal matrix.
+
+Using the previous formula that $tr(AB) = tr(BA)$, we have
+
+\[
+  tr(G) = tr(Q \Lambda Q^\top) = tr(\Lambda Q^\top Q) = tr(\Lambda) = \sum_{i}(\lambda_i)
+\]
+
+\[
+  tr(G^\top G) = tr(Q \Lambda Q^\top Q \Lambda Q^\top) = tr(\Lambda^2 Q^\top Q) = tr(\Lambda^2) = \sum_{i}(\lambda_i^2)
+\]
+
+and $tr(G^\top G)$ can be further expressed as
+
+\[
+  tr(G^\top G) = \sum_{i}{(G^\top G)_{ii}} = \sum_{i}{\sum_{j}{G^\top_{ij}G_{ji}}} = \sum_{i}{\sum_{j}{G_{ij}^2}}
 \]
 
 ### Multi-dimensional contrast
