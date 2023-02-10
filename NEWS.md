@@ -12,9 +12,9 @@
 - Add empirical and empirical Jackknife adjusted coefficients covariance matrix.
   In addition, the argument `method` now only specifies the method used
   for the degrees of freedom, another argument `vcov` is added to specify the
-  method used to adjust the coefficients covariance matrix.
+  method used to adjust the coefficients covariance matrix. Empirical and empirical-Jackknife
+  covariance support residual and Satterthwaite degrees of freedom.
 - Add optional `tidymodels` framework support.
-
 # mmrm 0.2.2
 
 ### New Features

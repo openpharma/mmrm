@@ -116,7 +116,7 @@ h_tr <- function(x) {
   if (nrow(x) != ncol(x)) {
     stop("x must be square matrix")
   }
-  sum(diag(x))
+  sum(Matrix::diag(x))
 }
 
 #' Split Control List
@@ -260,8 +260,7 @@ h_partial_fun_args <- function(fun, ..., additional_attr = list()) {
 h_get_cov_default <- function(method = c("Satterthwaite", "Kenward-Roger", "Residual")) {
   assert_string(method)
   method <- match.arg(method)
-  switch(
-    method,
+  switch(method,
     "Residual" = "Empirical",
     "Satterthwaite" = "Asymptotic",
     "Kenward-Roger" = "Kenward-Roger"
