@@ -137,7 +137,7 @@ where $s$ takes the value of $\frac{n}{n-1}$, $1$ or $\frac{n-1}{n}$, and $A_i$ 
 respectively, $c$ is a vector, then $v$ can be decomposed into the a weighted sum of independent $\Chi_1^2$ distribution, where the weights are
 the eigenvalues of the $n\times n$ matrix $G$ with elements
 \[
-  G_{ij} = g_i V g_j
+  G_{ij} = g_i^\top V g_j
 \]
 
 where
