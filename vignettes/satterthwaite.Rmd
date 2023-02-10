@@ -135,7 +135,7 @@ For an estimator of variance with the following term
 
 where $s$ takes the value of $\frac{n}{n-1}$, $1$ or $\frac{n-1}{n}$, and $A_i$ takes $I_i$, $(I_i - H_{ii})^{-\frac{1}{2}}$, or $(I_i - H_{ii})^{-1}$
 respectively, $c$ is a vector, then $v$ can be decomposed into the a weighted sum of independent $\Chi_1^2$ distribution, where the weights are
-the eigen values of $n\times n$ matrix $G$, its element can be represented as
+the eigenvalues of the $n\times n$ matrix $G$ with elements
 \[
   G_{ij} = g_i V g_j
 \]
