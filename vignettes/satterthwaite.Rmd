@@ -156,7 +156,7 @@ So the degrees of freedom can be represented as
   \nu = \frac{(\sum_{i}\lambda_i)^2}{\sum_{i}{\lambda_i^2}}
 \]
 
-where $\lambda_i$ is the eigen value of matrix $G$.
+where $\lambda_i, i = 1, \dotsc, n$ are the eigenvalues of $G$.
 @bell2002bias also suggests that $V$ can be chosen as identify matrix, so $G_{ij} = g_i  g_j$.
 
 Following [Weighted Least Square Estimator](algorithm.html#weighted-least-squares-estimator), we can transform
