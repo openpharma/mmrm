@@ -167,7 +167,7 @@ To avoid repeated computation of matrix $A_i$, $H$ etc for different contrasts, 
 \[
   G^\ast_i = (I - H)_i^\top A_i X_i (X^\top X)^{-1}
 \]
-is a $\sum_i{m_i} \times p$ matrix. With different contrasts, we need only calculate the following
+which is a $\sum_i{m_i} \times p$ matrix. With different contrasts, we need only calculate the following
 \[
   g_i = G^\ast_i c
 \]
