@@ -121,7 +121,7 @@ is derived.
 
 ## Satterthwaite degrees of freedom for sandwich covariance
 
-In @bell2002bias the degrees of freedom of sandwich covariance are described.
+In @bell2002bias the Satterthwaite degrees of freedom in combination with a sandwich covariance matrix estimator are described.
 
 ### One-dimensional contrast
 
