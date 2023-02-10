@@ -179,6 +179,8 @@ To obtain the degrees of freedom, and to avoid eigen computation on a large matr
   \nu = \frac{(\sum_{i}\lambda_i)^2}{\sum_{i}{\lambda_i^2}} = \frac{tr(G)^2}{\sum_{i}{\sum_{j}{G_{ij}^2}}}
 \]
 
+The scale parameter is not used throughout the package.
+
 The proof is as following
 
 1. Proof of
