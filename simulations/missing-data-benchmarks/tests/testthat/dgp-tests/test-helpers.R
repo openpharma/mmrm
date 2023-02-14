@@ -70,3 +70,14 @@ test_that(paste(
   expect_equal(diag(us_mat), true_vars)
   expect_equal(sum(eigen(us_mat)$values > 0), length(true_vars))
 })
+
+test_that(paste(
+  "passing a covariates dataframe with 10 observations and 5 visits produces",
+  "a vector of 50 outcomes"
+), {
+  set.seed(510)
+  covars_df <- generate_covariates(n_obs = 10, n_visits = 5)
+  cov_mat <- compute_csh_matrix(vars = rep(1, 5), corr = 0.2)
+  bcva_out <- generate_outcomes(covars_df, cov_mat)
+  expect_equal(length(bcva_out), 50)
+})

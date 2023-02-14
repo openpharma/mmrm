@@ -4,9 +4,9 @@ generate_covariates <- function(n_obs, n_visits = 10) {
   base_bcva <- rnorm(n = n_obs, mean = 59, sd = 3)
 
   # statification factor
-  strata <- as.vector(
+  strata <- as.factor(as.vector(
     c(1, 2, 3) %*% rmultinom(n = n_obs, 1, prob = c(0.3, 0.3, 0.4))
-  )
+  ))
 
   # treatment indicator
   trt <- rbinom(n = n_obs, size = 1, prob = 0.5)
@@ -39,4 +39,34 @@ compute_unstructured_matrix <- function(
   sd_mat <- diag(sqrt(vars))
   us_mat <- sd_mat %*% corr_mat %*% sd_mat
   return(us_mat)
+}
+
+generate_outcomes <- function(
+  covars_df,
+  cov_mat,
+  intercept = 5,
+  base_bcva_coef = 1,
+  strata_2_coef = -1,
+  strata_3_coef = 1,
+  trt_coef = 1,
+  visit_coef = 0.25,
+  trt_visit_coef = 0.25
+) {
+
+  # construct the model matrix
+  model_mat <- model.matrix(
+    ~ base_bcva + strata + trt * visit_num,
+    data = covars_df
+  )
+
+  # generate the bvca outcomes
+  n_visits <- nrow(cov_mat)
+  n_obs <- nrow(covars_df) / n_visits
+  effect_coefs <- c(
+    intercept, base_bcva_coef, strata_2_coef, strata_3_coef,
+    trt_coef, visit_coef, trt_visit_coef
+  )
+  model_mat %*% effect_coefs +
+    as.vector(t(MASS::mvrnorm(n_obs, rep(0, n_visits), cov_mat)))
+
 }
