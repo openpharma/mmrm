@@ -84,6 +84,8 @@ matrix.
 }
 
 Use of the package \code{emmeans} is supported, see \code{\link{emmeans_support}}.
+
+NA values are always omitted regardless of \code{na.action} setting.
 }
 \examples{
 fit <- mmrm(
