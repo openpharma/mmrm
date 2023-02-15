@@ -26,7 +26,7 @@
 #' }
 #'
 #' @keywords internal
-COV_TYPES <- local({  # nolint
+COV_TYPES <- local({ # nolint
   type <- function(name, abbr, habbr, heterogeneous, spatial) {
     args <- as.list(match.call()[-1])
     do.call(data.frame, args)
@@ -35,12 +35,12 @@ COV_TYPES <- local({  # nolint
   as.data.frame(
     col.names = names(formals(type)),
     rbind(
-      type("unstructured",              "us",     NA,      FALSE, FALSE),
-      type("Toeplitz",                  "toep",   "toeph", TRUE,  FALSE),
-      type("auto-regressive order one", "ar1",    "ar1h",  TRUE,  FALSE),
-      type("ante-dependence",           "ad",     "adh",   TRUE,  FALSE),
-      type("compound symmetry",         "cs",     "csh",   TRUE,  FALSE),
-      type("spatial exponential",       "sp_exp", NA,      FALSE, TRUE)
+      type("unstructured", "us", NA, FALSE, FALSE),
+      type("Toeplitz", "toep", "toeph", TRUE, FALSE),
+      type("auto-regressive order one", "ar1", "ar1h", TRUE, FALSE),
+      type("ante-dependence", "ad", "adh", TRUE, FALSE),
+      type("compound symmetry", "cs", "csh", TRUE, FALSE),
+      type("spatial exponential", "sp_exp", NA, FALSE, TRUE)
     )
   )
 })
@@ -160,9 +160,8 @@ COV_TYPES <- local({  # nolint
 #' @name covariance_types
 #' @export
 cov_types <- function(
-  form = c("name", "abbr", "habbr"),
-  filter = c("heterogeneous", "spatial")
-) {
+    form = c("name", "abbr", "habbr"),
+    filter = c("heterogeneous", "spatial")) {
   form <- match.arg(form, several.ok = TRUE)
   filter <- if (missing(filter)) c() else match.arg(filter, several.ok = TRUE)
   df <- COV_TYPES[form][rowSums(!COV_TYPES[filter]) == 0, ]
@@ -231,13 +230,16 @@ tmb_cov_type <- function(cov) {
 #'
 #' @family `cov_struct`
 #' @export
-cov_struct <- function(type = cov_types(), visits, subject, group = character(),
-  heterogeneous = FALSE) {
-
+cov_struct <- function(
+    type = cov_types(), visits, subject, group = character(),
+    heterogeneous = FALSE) {
   # if heterogeneous isn't provided, derive from provided type
   if (missing(heterogeneous)) {
     heterogeneous <- switch(type,
-      toeph = , ar1h = , adh = , csh = TRUE,
+      toeph = ,
+      ar1h = ,
+      adh = ,
+      csh = TRUE,
       heterogeneous
     )
   }
@@ -277,8 +279,9 @@ reconcile_cov_struct <- function(formula = NULL, covariance = NULL) {
     ))
   }
 
-  if (!is.null(covariance))
+  if (!is.null(covariance)) {
     return(covariance)
+  }
 
   as.cov_struct(formula, warn_partial = FALSE)
 }
@@ -326,7 +329,8 @@ validate_cov_struct <- function(x) {
 #'
 #' @export
 format.cov_struct <- function(x, ...) {
-  sprintf("<covariance structure>\n%s%s:\n\n  %s | %s%s\n",
+  sprintf(
+    "<covariance structure>\n%s%s:\n\n  %s | %s%s\n",
     if (x$heterogeneous) "heterogeneous " else "",
     cov_type_name(x$type),
     format_symbols(x$visits),
@@ -382,14 +386,14 @@ print.cov_struct <- function(x, ...) {
 #'
 #' @examples
 #' # provide a covariance structure as a right-sided formula
-#' as.cov_struct( ~ csh(visit | group / subject) )
+#' as.cov_struct(~ csh(visit | group / subject))
 #'
 #' # when part of a full formula, suppress warnings using `warn_partial = FALSE`
-#' as.cov_struct( y ~ x + csh(visit | group / subject), warn_partial = FALSE)
+#' as.cov_struct(y ~ x + csh(visit | group / subject), warn_partial = FALSE)
 #'
 #' @family `cov_struct`
 #' @export
-as.cov_struct <- function(x, ...) {  # nolint
+as.cov_struct <- function(x, ...) { # nolint
   UseMethod("as.cov_struct")
 }
 
