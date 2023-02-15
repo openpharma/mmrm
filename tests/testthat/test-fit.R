@@ -440,15 +440,24 @@ test_that("mmrm works for different na.actions", {
   expect_class(res1, "mmrm")
 
   options(na.action = "na.pass")
-  res2 <- expect_silent(mmrm(formula, fev_data))
+  expect_message(
+    res2 <- mmrm(formula, fev_data),
+    "NA values will always be removed regardless of na.action in options."
+  )
   expect_class(res2, "mmrm")
 
   options(na.action = "na.fail")
-  res3 <- expect_silent(mmrm(formula, fev_data))
+  expect_message(
+    res3 <- mmrm(formula, fev_data),
+    "NA values will always be removed regardless of na.action in options."
+  )
   expect_class(res3, "mmrm")
 
   options(na.action = "na.exclude")
-  res4 <- expect_silent(mmrm(formula, fev_data))
+  expect_message(
+    res4 <- mmrm(formula, fev_data),
+    "NA values will always be removed regardless of na.action in options."
+  )
   expect_class(res4, "mmrm")
 
   options(na.action = na_action$na.action)

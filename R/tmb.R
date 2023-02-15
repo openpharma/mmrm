@@ -128,6 +128,11 @@ h_mmrm_tmb_data <- function(formula_parts,
   data <- data.frame(data, weights)
   # weights is always the last column
   weights_name <- colnames(data)[ncol(data)]
+  if (!identical(getOption("na.action"), "na.omit")) {
+    message(
+      "NA values will always be removed regardless of na.action in options."
+    )
+  }
   full_frame <- eval(
     bquote(stats::model.frame(
       formula_parts$full_formula,
