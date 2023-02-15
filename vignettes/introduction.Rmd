@@ -132,8 +132,8 @@ The time points have to be unique for each subject. That is,
 there cannot be time points with multiple observations for any subject.
 The rationale is that these observations would need to be correlated, but it
 is not possible within the currently implemented covariance structure framework
-to do that correctly.
-TODO specify time point variables -> factor variables here.
+to do that correctly. Moreover, for non-spatial covariance structures, the time 
+variable must be coded as a factor.
 
 ## Weighting
 
