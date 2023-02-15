@@ -50,7 +50,7 @@ fit_single_optimizer <- function(formula,
       control = control
     ),
     remove = list(
-      warning = c("NA/NaN function evaluation") # Transient visit to invalid parameters.
+      warnings = c("NA/NaN function evaluation") # Transient visit to invalid parameters.
     )
   )
   if (length(quiet_fit$errors)) {
@@ -319,6 +319,8 @@ mmrm_control <- function(n_cores = 1L,
 #' matrix.
 #'
 #' Use of the package `emmeans` is supported, see [`emmeans_support`].
+#'
+#' NA values are always omitted regardless of `na.action` setting.
 #'
 #' @export
 #'

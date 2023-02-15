@@ -372,6 +372,55 @@ test_that("h_mmrm_tmb_data will not be affecte by `weights` in data", {
   expect_identical(fev_data$weights, weights)
 })
 
+test_that("h_mmrm_tmb_data works even if na.action is not na.omit", {
+  na_action <- options("na.action")
+  options(na.action = "na.omit")
+  formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula)
+  res1 <- h_mmrm_tmb_data(
+    formula_parts,
+    data = fev_data,
+    weights = rep_len(1, nrow(fev_data)),
+    reml = TRUE,
+    accept_singular = TRUE,
+    drop_visit_levels = TRUE
+  )
+  options(na.action = "na.pass")
+  res2 <- h_mmrm_tmb_data(
+    formula_parts,
+    data = fev_data,
+    weights = rep_len(1, nrow(fev_data)),
+    reml = TRUE,
+    accept_singular = TRUE,
+    drop_visit_levels = TRUE
+  )
+  expect_identical(res1, res2)
+
+  options(na.action = "na.fail")
+  res3 <- h_mmrm_tmb_data(
+    formula_parts,
+    data = fev_data,
+    weights = rep_len(1, nrow(fev_data)),
+    reml = TRUE,
+    accept_singular = TRUE,
+    drop_visit_levels = TRUE
+  )
+  expect_identical(res1, res3)
+
+  options(na.action = "na.exclude")
+  res4 <- h_mmrm_tmb_data(
+    formula_parts,
+    data = fev_data,
+    weights = rep_len(1, nrow(fev_data)),
+    reml = TRUE,
+    accept_singular = TRUE,
+    drop_visit_levels = TRUE
+  )
+  expect_identical(res1, res4)
+
+  options(na.action = na_action$na.action)
+})
+
 # h_mmrm_tmb_parameters ----
 
 test_that("h_mmrm_tmb_parameters works as expected without start values", {
