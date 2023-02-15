@@ -20,9 +20,9 @@
 #'   this element is `NULL`.
 #'
 #' @keywords internal
-h_mmrm_tmb_formula_parts <- function(formula,
+h_mmrm_tmb_formula_parts <- function(
+    formula,
     covariance = as.cov_struct(formula, warn_partial = FALSE)) {
-
   assert_formula(formula)
   assert_true(identical(length(formula), 3L))
 
@@ -130,7 +130,8 @@ h_mmrm_tmb_data <- function(formula_parts,
   weights_name <- colnames(data)[ncol(data)]
   full_frame <- eval(
     bquote(stats::model.frame(
-      formula_parts$full_formula, data = data,
+      formula_parts$full_formula,
+      data = data,
       weights = .(as.symbol(weights_name)),
       na.action = na.omit
     ))
