@@ -1,5 +1,8 @@
 generate_covariates <- function(n_obs, n_visits = 10) {
 
+  # participant ID
+  participant <- seq_len(n_obs)
+
   # baseline best corrected visual acuity score
   base_bcva <- rnorm(n = n_obs, mean = 59, sd = 3)
 
@@ -16,6 +19,7 @@ generate_covariates <- function(n_obs, n_visits = 10) {
 
   # assemble into a covariates data.frame
   data.frame(
+    participant = rep(participant, each = n_visits),
     base_bcva = rep(base_bcva, each = n_visits),
     strata = rep(strata, each = n_visits),
     trt = rep(trt, each = n_visits),
@@ -66,7 +70,7 @@ generate_outcomes <- function(
     intercept, base_bcva_coef, strata_2_coef, strata_3_coef,
     trt_coef, visit_coef, trt_visit_coef
   )
-  model_mat %*% effect_coefs +
-    as.vector(t(MASS::mvrnorm(n_obs, rep(0, n_visits), cov_mat)))
+  as.vector(model_mat %*% effect_coefs +
+    as.vector(t(MASS::mvrnorm(n_obs, rep(0, n_visits), cov_mat))))
 
 }
