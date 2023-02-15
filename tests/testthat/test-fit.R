@@ -431,6 +431,29 @@ test_that("mmrm fails when using formula covariance with covariance argument", {
   )
 })
 
+test_that("mmrm works for different na.actions", {
+  na_action <- options("na.action")
+  options(na.action = "na.omit")
+  formula <- FEV1 ~ ARMCD + us(AVISIT | USUBJID)
+
+  res1 <- expect_silent(mmrm(formula, fev_data))
+  expect_class(res1, "mmrm")
+
+  options(na.action = "na.pass")
+  res2 <- expect_silent(mmrm(formula, fev_data))
+  expect_class(res2, "mmrm")
+
+  options(na.action = "na.fail")
+  res3 <- expect_silent(mmrm(formula, fev_data))
+  expect_class(res3, "mmrm")
+
+  options(na.action = "na.exclude")
+  res4 <- expect_silent(mmrm(formula, fev_data))
+  expect_class(res4, "mmrm")
+
+  options(na.action = na_action$na.action)
+})
+
 ## vcov and method combination ----
 
 test_that("mmrm works for vcov: Asymptotic and method: Sattherthwaite", {

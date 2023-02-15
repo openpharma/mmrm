@@ -129,7 +129,11 @@ h_mmrm_tmb_data <- function(formula_parts,
   # weights is always the last column
   weights_name <- colnames(data)[ncol(data)]
   full_frame <- eval(
-    bquote(stats::model.frame(formula_parts$full_formula, data = data, weights = .(as.symbol(weights_name))))
+    bquote(stats::model.frame(
+      formula_parts$full_formula, data = data,
+      weights = .(as.symbol(weights_name)),
+      na.action = na.omit
+    ))
   )
   full_frame <- droplevels(full_frame, except = formula_parts$visit_var)
   if (drop_visit_levels && !formula_parts$is_spatial && is.factor(full_frame[[formula_parts$visit_var]])) {
