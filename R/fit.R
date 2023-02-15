@@ -320,6 +320,8 @@ mmrm_control <- function(n_cores = 1L,
 #'
 #' Use of the package `emmeans` is supported, see [`emmeans_support`].
 #'
+#' NA values are always omitted regardless of `na.action` setting.
+#'
 #' @export
 #'
 #' @examples

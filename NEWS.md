@@ -15,6 +15,13 @@
   method used to adjust the coefficients covariance matrix. Empirical and empirical-Jackknife
   covariance support residual and Satterthwaite degrees of freedom.
 - Add optional `tidymodels` framework support.
+
+### Bug Fixes
+
+- Previously `mmrm` fit follows the global option `na.action` and if it is set
+  other than "na.omit" error will happen. This is now fixed and `NA` values are
+  always removed prior to model fitting.
+
 # mmrm 0.2.2
 
 ### New Features
