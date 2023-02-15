@@ -133,7 +133,7 @@ h_mmrm_tmb_data <- function(formula_parts,
       formula_parts$full_formula,
       data = data,
       weights = .(as.symbol(weights_name)),
-      na.action = na.omit
+      na.action = stats::na.omit
     ))
   )
   full_frame <- droplevels(full_frame, except = formula_parts$visit_var)
