@@ -291,7 +291,8 @@ mmrm_control <- function(n_cores = 1L,
 #' there cannot be time points with multiple observations for any subject.
 #' The rationale is that these observations would need to be correlated, but it
 #' is not possible within the currently implemented covariance structure framework
-#' to do that correctly.
+#' to do that correctly. Moreover, for non-spatial covariance structures, the time
+#' variable must be a factor variable.
 #'
 #' When optimizer is not set, first the default optimizer
 #' (`L-BFGS-B`) is used to fit the model. If that converges, this is returned.
@@ -359,6 +360,8 @@ mmrm <- function(formula,
   if (control$method %in% c("Kenward-Roger", "Kenward-Roger-Linear") && !reml) {
     stop("Kenward-Roger only works for REML")
   }
+  # TODO insert informative error message if cov struc is non-spatial and time point variables is not factor
+
   attr(data, which = "dataname") <- toString(match.call()$data)
 
   if (is.null(weights)) {

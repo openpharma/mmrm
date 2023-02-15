@@ -133,6 +133,9 @@ COV_TYPES <- local({  # nolint
 #' from SAS `PROC MIXED` refers to heterogeneous ante-dependence and the
 #' homogeneous version is not available in SAS.
 #'
+#' Note that for all non-spatial covariance structures, the time variable must
+#' be coded as a factor.
+#'
 #' ## Spatial Covariance structures:
 #'
 #' \tabular{clll}{
