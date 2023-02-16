@@ -39,7 +39,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9006</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9009</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -67,14 +67,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.2.2">v0.2.2</a> </div></li>
-<!-- end dropdown for versions -->
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -111,7 +103,7 @@
 <p>Here we describe the details of the Satterthwaite degrees of freedom
 calculations.</p>
 <div class="section level3">
-<h3 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+<h3 id="satterthwaite-degrees-of-freedom-for-asymptotic-covariance">Satterthwaite degrees of freedom for asymptotic covariance<a class="anchor" aria-label="anchor" href="#satterthwaite-degrees-of-freedom-for-asymptotic-covariance"></a>
 </h3>
 <p>In <span class="citation">Christensen (2018)</span> the Satterthwaite
 degrees of freedom approximation based on normal models is well detailed
@@ -128,10 +120,9 @@ Hessian matrix of the log-likelihood function of <span class="math inline">\(\th
 Information matrix as a consistent estimator of the variance-covariance
 matrix of <span class="math inline">\(\hat\theta\)</span>. <span class="math inline">\(\Phi(\theta) = \left\{X^\top \Omega(\theta)^{-1}
 X\right\} ^{-1}\)</span> is the asymptotic covariance matrix of <span class="math inline">\(\hat\beta\)</span>.</p>
-</div>
-<div class="section level3">
-<h3 id="one-dimensional-contrast">One-dimensional contrast<a class="anchor" aria-label="anchor" href="#one-dimensional-contrast"></a>
-</h3>
+<div class="section level4">
+<h4 id="one-dimensional-contrast">One-dimensional contrast<a class="anchor" aria-label="anchor" href="#one-dimensional-contrast"></a>
+</h4>
 <p>We start with the case of a one-dimensional contrast, i.e. <span class="math inline">\(c = 1\)</span>. The Satterthwaite adjusted degrees
 of freedom for the corresponding t-test are then defined as: <span class="math display">\[
 \hat\nu(\hat\theta) = \frac{2f(\hat\theta)^2}{f{'}(\hat\theta)^\top
@@ -149,9 +140,9 @@ matrix <span class="math inline">\(C\)</span>) at the estimate <span class="math
 variance-covariance matrix <span class="math inline">\(W(\hat\theta)\)</span> of the variance parameter
 vector <span class="math inline">\(\theta\)</span> from the model
 fitting.</p>
-<div class="section level4">
-<h4 id="jacobian-approach">Jacobian approach<a class="anchor" aria-label="anchor" href="#jacobian-approach"></a>
-</h4>
+<div class="section level5">
+<h5 id="jacobian-approach">Jacobian approach<a class="anchor" aria-label="anchor" href="#jacobian-approach"></a>
+</h5>
 <p>However, if we proceeded in a naive way here, we would need to
 recompute the denominator again for every chosen <span class="math inline">\(C\)</span>. This would be slow, e.g. when changing
 <span class="math inline">\(C\)</span> every time we want to test a
@@ -171,9 +162,9 @@ is implemented). Thus, having computed the estimated Jacobian <span class="math 
 matter of putting the different quantities together to compute the
 estimate of the denominator degrees of freedom, <span class="math inline">\(\hat\nu(\hat\theta)\)</span>.</p>
 </div>
-<div class="section level4">
-<h4 id="jacobian-calculation">Jacobian calculation<a class="anchor" aria-label="anchor" href="#jacobian-calculation"></a>
-</h4>
+<div class="section level5">
+<h5 id="jacobian-calculation">Jacobian calculation<a class="anchor" aria-label="anchor" href="#jacobian-calculation"></a>
+</h5>
 <p>Currently, we evaluate the gradient of <span class="math inline">\(\Phi(\theta)\)</span> (which is created as an R
 function using <code><a href="../reference/h_covbeta_fun.html">h_covbeta_fun()</a></code>) with regards to <span class="math inline">\(\theta\)</span> evaluated at <span class="math inline">\(\hat\theta\)</span>, i.e. the Jacobian <span class="math inline">\(\mathcal{J}(\hat\theta)\)</span>, numerically
 using the <code>jacobian</code> function from the <code>numDeriv</code>
@@ -182,9 +173,9 @@ parameter vector <span class="math inline">\(\theta\)</span>) of <span class="ma
 <code><a href="../reference/h_jac_list.html">h_jac_list()</a></code>.</p>
 </div>
 </div>
-<div class="section level3">
-<h3 id="multi-dimensional-contrast">Multi-dimensional contrast<a class="anchor" aria-label="anchor" href="#multi-dimensional-contrast"></a>
-</h3>
+<div class="section level4">
+<h4 id="multi-dimensional-contrast">Multi-dimensional contrast<a class="anchor" aria-label="anchor" href="#multi-dimensional-contrast"></a>
+</h4>
 <p>When <span class="math inline">\(c &gt; 1\)</span> we are testing
 multiple contrasts at once. Here an F-statistic <span class="math display">\[
 F = \frac{1}{c} (C\hat\beta)^\top  (C \Phi(\hat\theta) C^\top)^{-1}
@@ -209,10 +200,127 @@ freedom is calculated for each of them. Finally, using properties of the
 F distribution’s expectation, the denominator degree of freedom for the
 whole F statistic is derived.</p>
 </div>
+</div>
+<div class="section level3">
+<h3 id="satterthwaite-degrees-of-freedom-for-empirical-covariance">Satterthwaite degrees of freedom for empirical covariance<a class="anchor" aria-label="anchor" href="#satterthwaite-degrees-of-freedom-for-empirical-covariance"></a>
+</h3>
+<p>In <span class="citation">Bell and McCaffrey (2002)</span> the
+Satterthwaite degrees of freedom in combination with a sandwich
+covariance matrix estimator are described.</p>
+<div class="section level4">
+<h4 id="one-dimensional-contrast-1">One-dimensional contrast<a class="anchor" aria-label="anchor" href="#one-dimensional-contrast-1"></a>
+</h4>
+<p>For one-dimensional contrast, following the same notation in <a href="algorithm.html">Details of the model fitting in
+<code>mmrm</code></a> and <a href="kenward.html">Details of the
+Kenward-Roger calculations</a>, we have the following derivation. For an
+estimator of variance with the following term</p>
+<p><span class="math display">\[
+  v = s c^\top(X^\top X)^{-1}\sum_{i}{X_i^\top A_i \epsilon_i
+\epsilon_i^\top A_i X_i} (X^\top X)^{-1} c
+\]</span></p>
+<p>where <span class="math inline">\(s\)</span> takes the value of <span class="math inline">\(\frac{n}{n-1}\)</span>, <span class="math inline">\(1\)</span> or <span class="math inline">\(\frac{n-1}{n}\)</span>, and <span class="math inline">\(A_i\)</span> takes <span class="math inline">\(I_i\)</span>, <span class="math inline">\((I_i -
+H_{ii})^{-\frac{1}{2}}\)</span>, or <span class="math inline">\((I_i -
+H_{ii})^{-1}\)</span> respectively, <span class="math inline">\(c\)</span> is a column vector, then <span class="math inline">\(v\)</span> can be decomposed into the a weighted
+sum of independent <span class="math inline">\(\chi_1^2\)</span>
+distribution, where the weights are the eigenvalues of the <span class="math inline">\(n\times n\)</span> matrix <span class="math inline">\(G\)</span> with elements <span class="math display">\[
+  G_{ij} = g_i^\top V g_j
+\]</span></p>
+<p>where</p>
+<p><span class="math display">\[
+  g_i = s^{\frac{1}{2}} (I - H)_i^\top A_i X_i (X^\top X)^{-1} c
+\]</span> <span class="math display">\[
+  H = X(X^\top X)^{-1}X^\top
+\]</span></p>
+<p><span class="math inline">\((I - H)_i\)</span> corresponds to the
+rows of subject <span class="math inline">\(i\)</span>.</p>
+<p>So the degrees of freedom can be represented as <span class="math display">\[
+  \nu = \frac{(\sum_{i}\lambda_i)^2}{\sum_{i}{\lambda_i^2}}
+\]</span></p>
+<p>where <span class="math inline">\(\lambda_i, i = 1, \dotsc,
+n\)</span> are the eigenvalues of <span class="math inline">\(G\)</span>. <span class="citation">Bell and
+McCaffrey (2002)</span> also suggests that <span class="math inline">\(V\)</span> can be chosen as identify matrix, so
+<span class="math inline">\(G_{ij} = g_i ^\top g_j\)</span>.</p>
+<p>Following <a href="algorithm.html#weighted-least-squares-estimator">Weighted Least
+Square Estimator</a>, we can transform the original <span class="math inline">\(X\)</span> into <span class="math inline">\(\tilde{x}\)</span> to use the above equations.</p>
+<p>To avoid repeated computation of matrix <span class="math inline">\(A_i\)</span>, <span class="math inline">\(H\)</span> etc for different contrasts, we
+calculate and cache the following</p>
+<p><span class="math display">\[
+  G^\ast_i = (I - H)_i^\top A_i X_i (X^\top X)^{-1}
+\]</span> which is a <span class="math inline">\(\sum_i{m_i} \times
+p\)</span> matrix. With different contrasts, we need only calculate the
+following <span class="math display">\[
+  g_i = G^\ast_i c
+\]</span> to obtain a <span class="math inline">\(\sum_i{m_i} \times
+1\)</span> matrix, <span class="math inline">\(G\)</span> can be
+computed with <span class="math inline">\(g_i\)</span>.</p>
+<p>To obtain the degrees of freedom, and to avoid eigen computation on a
+large matrix, we can use the following equation</p>
+<p><span class="math display">\[
+  \nu = \frac{(\sum_{i}\lambda_i)^2}{\sum_{i}{\lambda_i^2}} =
+\frac{tr(G)^2}{\sum_{i}{\sum_{j}{G_{ij}^2}}}
+\]</span></p>
+<p>The scale parameter is not used throughout the package.</p>
+<p>The proof is as following</p>
+<ol style="list-style-type: decimal">
+<li>Proof of <span class="math display">\[
+  tr(AB) = tr(BA)
+\]</span>
+</li>
+</ol>
+<p>Let <span class="math inline">\(A\)</span> has dimension <span class="math inline">\(p\times q\)</span>, <span class="math inline">\(B\)</span> has dimension <span class="math inline">\(q\times p\)</span> <span class="math display">\[
+  tr(AB) = \sum_{i=1}^{p}{(AB)_{ii}} =
+\sum_{i=1}^{p}{\sum_{j=1}^{q}{A_{ij}B_{ji}}}
+\]</span></p>
+<p><span class="math display">\[
+  tr(BA) = \sum_{i=1}^{q}{(BA)_{ii}} =
+\sum_{i=1}^{q}{\sum_{j=1}^{p}{B_{ij}A_{ji}}}
+\]</span></p>
+<p>so <span class="math inline">\(tr(AB) = tr(BA)\)</span></p>
+<ol start="2" style="list-style-type: decimal">
+<li>Proof of <span class="math display">\[
+  tr(G) = \sum_{i}(\lambda_i)
+\]</span> and <span class="math display">\[
+  \sum_{i}(\lambda_i^2) = \sum_{i}{\sum_{j}{G_{ij}^2}}
+\]</span> if <span class="math inline">\(G = G^\top\)</span>
+</li>
+</ol>
+<p>Following eigen decomposition, we have <span class="math display">\[
+  G = Q \Lambda Q^\top
+\]</span> where <span class="math inline">\(\Lambda\)</span> is diagonal
+matrix, <span class="math inline">\(Q\)</span> is orthogonal matrix.</p>
+<p>Using the previous formula that <span class="math inline">\(tr(AB) =
+tr(BA)\)</span>, we have</p>
+<p><span class="math display">\[
+  tr(G) = tr(Q \Lambda Q^\top) = tr(\Lambda Q^\top Q) = tr(\Lambda) =
+\sum_{i}(\lambda_i)
+\]</span></p>
+<p><span class="math display">\[
+  tr(G^\top G) = tr(Q \Lambda Q^\top Q \Lambda Q^\top) = tr(\Lambda^2
+Q^\top Q) = tr(\Lambda^2) = \sum_{i}(\lambda_i^2)
+\]</span></p>
+<p>and <span class="math inline">\(tr(G^\top G)\)</span> can be further
+expressed as</p>
+<p><span class="math display">\[
+  tr(G^\top G) = \sum_{i}{(G^\top G)_{ii}} =
+\sum_{i}{\sum_{j}{G^\top_{ij}G_{ji}}} = \sum_{i}{\sum_{j}{G_{ij}^2}}
+\]</span></p>
+</div>
+<div class="section level4">
+<h4 id="multi-dimensional-contrast-1">Multi-dimensional contrast<a class="anchor" aria-label="anchor" href="#multi-dimensional-contrast-1"></a>
+</h4>
+<p>For multi-dimensional contrast we use the same technique for
+multi-dimensional contrast for asymptotic covariance.</p>
+</div>
+</div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-bell2002bias" class="csl-entry">
+Bell, Robert M, and Daniel F McCaffrey. 2002. <span>“Bias Reduction in
+Standard Errors for Linear Regression with Multi-Stage Samples.”</span>
+<em>Survey Methodology</em> 28 (2): 169–82.
+</div>
 <div id="ref-Christensen2018" class="csl-entry">
 Christensen, Rune H. B. 2018. <em>Satterthwaite’s Method for Degrees of
 Freedom in Linear Mixed Models</em>. <a href="https://github.com/runehaubo/lmerTestR/blob/35dc5885205d709cdc395b369b08ca2b7273cb78/pkg_notes/Satterthwaite_for_LMMs.pdf" class="external-link">https://github.com/runehaubo/lmerTestR/blob/35dc5885205d709cdc395b369b08ca2b7273cb78/pkg_notes/Satterthwaite_for_LMMs.pdf</a>.
