@@ -1732,3 +1732,19 @@ test_that("fit_mmrm works with below full rank original design matrix by default
   result <- expect_silent(fit_mmrm(formula, dat, weights = rep(1, nrow(dat))))
   expect_match(names(which(result$tmb_data$x_cols_aliased)), "SEX2")
 })
+
+test_that("fit_mmrm throws informative error when covariance structure is not
+          spatial and time variable is not a factor", {
+  tmp_data <- fev_data
+  levels(tmp_data$AVISIT) <- c(1, 2, 3, 4)
+  tmp_data$AVISIT <- as.numeric(tmp_data$AVISIT)
+
+  expect_error(
+    fit_mmrm(
+      FEV1 ~ FEV1_BL + RACE + us(AVISIT | USUBJID),
+      data = tmp_data,
+      weights = rep(1, nrow(tmp_data))
+    ),
+    "Time variable must be a factor for non-spatial covariance structures"
+  )
+})

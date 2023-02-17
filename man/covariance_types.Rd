@@ -99,6 +99,9 @@ Note the \strong{ante-dependence} covariance structure in this package refers to
 homogeneous ante-dependence, while the ante-dependence covariance structure
 from SAS \verb{PROC MIXED} refers to heterogeneous ante-dependence and the
 homogeneous version is not available in SAS.
+
+Note that for all non-spatial covariance structures, the time variable must
+be coded as a factor.
 }
 
 \subsection{Spatial Covariance structures:}{
