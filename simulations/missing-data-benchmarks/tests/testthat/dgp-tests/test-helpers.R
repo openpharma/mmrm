@@ -20,7 +20,7 @@ test_that(paste(
 
 test_that(paste(
   "generate_covariates produces data with baseline BVCA values centered",
-  "at 59"
+  "at 75"
 ), {
   library(dplyr)
   set.seed(5123)
@@ -28,7 +28,7 @@ test_that(paste(
     filter(visit_num == 1) %>%
     summarize(mean(base_bcva)) %>%
     pull(1)
-  expect_equal(est_base_mean, 59, tolerance = 0.5)
+  expect_equal(est_base_mean, 75, tolerance = 0.5)
 })
 
 test_that(paste(

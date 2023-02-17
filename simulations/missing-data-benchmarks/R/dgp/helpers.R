@@ -4,12 +4,12 @@ generate_covariates <- function(n_obs, n_visits = 10) {
   participant <- seq_len(n_obs)
 
   # baseline best corrected visual acuity score
-  base_bcva <- rnorm(n = n_obs, mean = 59, sd = 3)
+  base_bcva <- rnorm(n = n_obs, mean = 75, sd = 10)
 
   # statification factor
-  strata <- as.factor(as.vector(
+  strata <- as.vector(
     c(1, 2, 3) %*% rmultinom(n = n_obs, 1, prob = c(0.3, 0.3, 0.4))
-  ))
+  )
 
   # treatment indicator
   trt <- rbinom(n = n_obs, size = 1, prob = 0.5)
@@ -21,7 +21,7 @@ generate_covariates <- function(n_obs, n_visits = 10) {
   data.frame(
     participant = rep(participant, each = n_visits),
     base_bcva = rep(base_bcva, each = n_visits),
-    strata = rep(strata, each = n_visits),
+    strata = as.factor(rep(strata, each = n_visits)),
     trt = rep(trt, each = n_visits),
     visit_num
   )
