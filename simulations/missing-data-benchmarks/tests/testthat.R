@@ -1,6 +1,10 @@
 # load required libraries
 library(simChef)
 library(testthat)
+library(mmrm)
+library(glmmTMB)
+library(nlme)
+library(sasr)
 
 # source the R scripts
 sim_functions_files = list.files(
