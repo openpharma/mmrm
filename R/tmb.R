@@ -474,7 +474,7 @@ fit_mmrm <- function(formula,
 
   if (!formula_parts$is_spatial && !is.factor(data[[formula_parts$visit_var]])) {
     stop("Time variable must be a factor for non-spatial covariance structures")
-    }
+  }
 
   assert_class(control, "mmrm_control")
   assert_list(control$optimizers, min.len = 1)
