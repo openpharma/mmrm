@@ -33,7 +33,9 @@ glmmtmb_wrapper_fun <- function(
     base_bcva,
     strata,
     trt,
-    bcva_change
+    bcva_change,
+    participant_as_factor = TRUE,
+    visit_num_as_factor = TRUE
   )
 
   if (covar_type == "csh") {
