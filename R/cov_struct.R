@@ -128,12 +128,12 @@ COV_TYPES <- local({ # nolint
 #' where \eqn{i} and \eqn{j} denote \eqn{i}-th and \eqn{j}-th time points,
 #' respectively, out of total \eqn{m} time points, \eqn{1 \leq i, j \leq m}.
 #'
-#' Note the **ante-dependence** covariance structure in this package refers to
+#' @note The **ante-dependence** covariance structure in this package refers to
 #' homogeneous ante-dependence, while the ante-dependence covariance structure
 #' from SAS `PROC MIXED` refers to heterogeneous ante-dependence and the
 #' homogeneous version is not available in SAS.
 #'
-#' Note that for all non-spatial covariance structures, the time variable must
+#' @note For all non-spatial covariance structures, the time variable must
 #' be coded as a factor.
 #'
 #' ## Spatial Covariance structures:
