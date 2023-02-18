@@ -39,30 +39,44 @@ glmmtmb_wrapper_fun <- function(
   )
 
   if (covar_type == "csh") {
-    fit <- glmmTMB::glmmTMB(
-      formula = bcva_change ~ base_bcva + strata + trt * visit_num +
-        cs(visit_num + 0 | participant),
-      dispformula = ~ 0,
-      data = df
+    fit_time <- microbenchmark::microbenchmark(
+      fit <- glmmTMB::glmmTMB(
+        formula = bcva_change ~ base_bcva + strata + trt * visit_num +
+          cs(visit_num + 0 | participant),
+        dispformula = ~ 0,
+        data = df
+      ),
+      times = 1L
     )
   } else if (covar_type == "us") {
-    fit <- glmmTMB::glmmTMB(
-      formula = bcva_change ~ base_bcva + strata + trt * visit_num +
-        us(visit_num + 0 | participant),
-      dispformula = ~ 0,
-      data = df
+    fit_time <- microbenchmark::microbenchmark(
+      fit <- glmmTMB::glmmTMB(
+        formula = bcva_change ~ base_bcva + strata + trt * visit_num +
+          us(visit_num + 0 | participant),
+        dispformula = ~ 0,
+        data = df
+      ),
+      times = 1L
     )
+
   } else if (covar_type == "toeph"){
-    fit <- glmmTMB::glmmTMB(
-      formula = bcva_change ~ base_bcva + strata + trt * visit_num +
-        toep(visit_num + 0 | participant),
-      dispformula = ~ 0,
-      data = df
+    fit_time <- microbenchmark::microbenchmark(
+      fit <- glmmTMB::glmmTMB(
+        formula = bcva_change ~ base_bcva + strata + trt * visit_num +
+          toep(visit_num + 0 | participant),
+        dispformula = ~ 0,
+        data = df
+      ),
+      times = 1L
     )
+
   } else {
     stop("This covariance matrix is not supported by this wrapper function.")
   }
 
-  return(list(fit = fit))
+  return(list(
+    fit = fit,
+    fit_time = fit_time$time / 1e9 # NOTE: time in seconds
+    ))
 
 }

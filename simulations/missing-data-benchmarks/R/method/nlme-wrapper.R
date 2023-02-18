@@ -36,21 +36,32 @@ nlme_wrapper_fun <- function(
   )
 
   if (covar_type == "csh") {
-    fit <- nlme::gls(
-      bcva_change ~ base_bcva + strata + trt * visit_num,
-      correlation = nlme::corCompSymm(form = ~ 1 | participant),
-      weights = nlme::varIdent(form = ~ 1 | visit_num), data = df
+    fit_time <- microbenchmark::microbenchmark(
+      fit <- nlme::gls(
+        bcva_change ~ base_bcva + strata + trt * visit_num,
+        correlation = nlme::corCompSymm(form = ~ 1 | participant),
+        weights = nlme::varIdent(form = ~ 1 | visit_num), data = df
+      ),
+      times = 1L
     )
+
   } else if (covar_type == "us") {
-    fit <- nlme::gls(
-      bcva_change ~ base_bcva + strata + trt * visit_num,
-      correlation = nlme::corSymm(form = ~ 1 | participant),
-      weights = nlme::varIdent(form = ~ 1 | visit_num), data = df
+    fit_time <- microbenchmark::microbenchmark(
+      fit <- nlme::gls(
+        bcva_change ~ base_bcva + strata + trt * visit_num,
+        correlation = nlme::corSymm(form = ~ 1 | participant),
+        weights = nlme::varIdent(form = ~ 1 | visit_num), data = df
+      ),
+      times = 1L
     )
+
   } else {
     stop("This covariance matrix is not supported by this wrapper function.")
   }
 
-  return(list(fit = fit))
+  return(list(
+    fit = fit,
+    fit_time = fit_time$time / 1e9 # NOTE: time in seconds
+  ))
 
 }

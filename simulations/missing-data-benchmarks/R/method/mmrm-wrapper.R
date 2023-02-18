@@ -38,23 +38,38 @@ mmrm_wrapper_fun <- function(
   )
 
   if (covar_type == "us") {
-    fit <- mmrm::mmrm(
-      formula = bcva_change ~ base_bcva + strata + trt * visit_num +
-        us(visit_num | participant), data = df
+    fit_time <- microbenchmark::microbenchmark(
+      fit <- mmrm::mmrm(
+        formula = bcva_change ~ base_bcva + strata + trt * visit_num +
+          us(visit_num | participant), data = df
+      ),
+      times = 1L
     )
+
   } else if (covar_type == "csh") {
-    fit <- mmrm::mmrm(
-      formula = bcva_change ~ base_bcva + strata + trt * visit_num +
-        csh(visit_num | participant), data = df
+    fit_time <- microbenchmark::microbenchmark(
+      fit <- mmrm::mmrm(
+        formula = bcva_change ~ base_bcva + strata + trt * visit_num +
+          csh(visit_num | participant), data = df
+      ),
+      times = 1L
     )
+
   } else if (covar_type == "toeph") {
-    fit <- mmrm::mmrm(
-      formula = bcva_change ~ base_bcva + strata + trt * visit_num +
-        toeph(visit_num | participant), data = df
+    fit_time <- microbenchmark::microbenchmark(
+      fit <- mmrm::mmrm(
+        formula = bcva_change ~ base_bcva + strata + trt * visit_num +
+          toeph(visit_num | participant), data = df
+      ),
+      times = 1L
     )
+
   } else {
     stop("This covariance matrix is not supported by this wrapper function.")
   }
 
-  return(list(fit = fit))
+  return(list(
+    fit = fit,
+    fit_time = fit_time$time / 1e9 # NOTE: time in seconds
+  ))
 }
