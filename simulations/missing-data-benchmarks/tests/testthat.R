@@ -5,6 +5,8 @@ library(mmrm)
 library(glmmTMB)
 library(nlme)
 library(sasr)
+library(stringr)
+library(dplyr)
 
 # source the R scripts
 sim_functions_files = list.files(
