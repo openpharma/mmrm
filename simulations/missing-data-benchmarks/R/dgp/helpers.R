@@ -27,7 +27,9 @@ generate_covariates <- function(n_obs, n_visits = 10) {
   )
 }
 
-compute_csh_matrix <- function(vars, corr) {
+compute_csh_matrix <- function(
+  vars = seq(from = 1, by = 0.5, length.out = 10), corr = 0.25
+) {
   csh_mat <- tcrossprod(sqrt(vars), sqrt(vars)) * corr
   diag(csh_mat) <- vars
   return(csh_mat)
