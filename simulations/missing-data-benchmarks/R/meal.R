@@ -15,17 +15,20 @@ sim_functions_files = list.files(
 sapply(sim_functions_files, source)
 
 # specify the DGPs
+us_cov_mat <- compute_unstructured_matrix()
 no_miss_no_effect_us_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
-  outcome_covar_mat = compute_unstructured_matrix()
+  outcome_covar_mat = us_cov_mat
 )
+csh_cov_mat <- compute_csh_matrix()
 no_miss_no_effect_csh_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
-  outcome_covar_mat = compute_csh_matrix()
+  outcome_covar_mat = csh_cov_mat
 )
+toep_cov_mat <- toeplitz(c(1, 0.5, 0.25, 0.125, rep(0, 6)))
 no_miss_no_effect_toeph_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
-  outcome_covar_mat = toeplitz(c(1, 0.75, 0.5, 0.25, rep(0, 6)))
+  outcome_covar_mat = toep_cov_mat
 )
 
 # specify the methods
@@ -75,7 +78,7 @@ experiment <- create_experiment(
     .dgp = c(
       "no_miss_no_effect_us", "no_miss_no_effect_csh", "no_miss_no_effect_toeph"
     ),
-    n_obs = c(100, 200)
+    n_obs = c(125, 250)
   ) %>%
   add_method(mmrm_us_meth, name = "mmrm_us") %>%
   add_method(mmrm_csh_meth, name = "mmrm_csh") %>%
