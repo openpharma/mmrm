@@ -7,6 +7,7 @@ library(nlme)
 library(sasr)
 library(stringr)
 library(dplyr)
+library(emmeans)
 
 # source the R scripts
 sim_functions_files = list.files(
