@@ -182,7 +182,7 @@ test_that("get_proc_mixed_convergence extracts convergence status", {
   )
 
   # extract convergence status
-  conv_status <- get_proc_mixed_convergence(proc_mixed_fit$fit)
+  conv_status <- get_proc_mixed_convergence(proc_mixed_fit$conv_status_df)
   expect_equal(conv_status, TRUE)
 
 })

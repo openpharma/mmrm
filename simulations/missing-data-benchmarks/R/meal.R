@@ -73,6 +73,7 @@ true_params <- list(
 )
 bias_eval <- create_evaluator(.eval_fun = bias_fun, true_params = true_params)
 variance_eval <- create_evaluator(.eval_fun = variance_fun)
+convergence_rate_eval <- create_evaluator(.eval_fun = convergence_rate_fun)
 
 # specify the resul summarizers
 
@@ -97,12 +98,13 @@ experiment <- create_experiment(
   add_method(glmmtmb_toeph_meth, name = "glmmtmb_toeph") %>%
   add_method(nlme_us_meth, name = "nlme_us") %>%
   add_method(nlme_csh_meth, name = "nlme_csh") %>%
-  ## add_method(proc_mixed_us_meth, name = "proc_mixed_us") %>%
-  ## add_method(proc_mixed_csh_meth, name = "proc_mixed_csh") %>%
-  ## add_method(proc_mixed_toeph_meth, name = "proc_mixed_toeph") %>%
+  add_method(proc_mixed_us_meth, name = "proc_mixed_us") %>%
+  add_method(proc_mixed_csh_meth, name = "proc_mixed_csh") %>%
+  add_method(proc_mixed_toeph_meth, name = "proc_mixed_toeph") %>%
   add_evaluator(mean_time_eval, name = "mean_fit_time") %>%
   add_evaluator(bias_eval, name = "bias") %>%
-  add_evaluator(variance_eval, name = "variance")
+  add_evaluator(variance_eval, name = "variance") %>%
+  add_evaluator(convergence_rate_eval, name = "convergence_rate")
 
 # run the experiment
 set.seed(72342)
