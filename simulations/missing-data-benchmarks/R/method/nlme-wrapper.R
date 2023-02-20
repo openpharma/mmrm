@@ -32,7 +32,9 @@ nlme_wrapper_fun <- function(
     base_bcva,
     strata,
     trt,
-    bcva_change
+    bcva_change,
+    participant_as_factor = TRUE,
+    visit_num_as_factor = TRUE
   )
 
   if (covar_type == "csh") {
@@ -61,6 +63,7 @@ nlme_wrapper_fun <- function(
 
   return(list(
     fit = fit,
+    data = df,
     fit_time = fit_time$time / 1e9 # NOTE: time in seconds
   ))
 

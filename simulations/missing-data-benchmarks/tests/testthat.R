@@ -7,6 +7,8 @@ library(nlme)
 library(sasr)
 library(stringr)
 library(dplyr)
+library(tidyr)
+library(stringr)
 library(emmeans)
 
 # source the R scripts

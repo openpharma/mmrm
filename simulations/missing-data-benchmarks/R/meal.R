@@ -6,6 +6,8 @@ library(nlme)
 library(sasr)
 library(stringr)
 library(dplyr)
+library(tidyr)
+library(emmeans)
 
 # source the R scripts
 sim_functions_files = list.files(
@@ -64,6 +66,12 @@ proc_mixed_toeph_meth <- create_method(
 
 # specify the evaluation metrics
 mean_time_eval <- create_evaluator(.eval_fun = mean_time_fun)
+true_params <- list(
+  "no_miss_no_effect_us" = rep(0, 10),
+  "no_miss_no_effect_csh" = rep(0, 10),
+  "no_miss_no_effect_toeph" = rep(0, 10)
+)
+bias_eval <- create_evaluator(.eval_fun = bias_fun, true_params = true_params)
 
 # specify the resul summarizers
 
@@ -82,7 +90,7 @@ experiment <- create_experiment(
   ) %>%
   add_method(mmrm_us_meth, name = "mmrm_us") %>%
   add_method(mmrm_csh_meth, name = "mmrm_csh") %>%
-  add_method(mmrm_toeph_meth, name = "mmrm_toeph")  %>% # NOTE: sometimes causes errors
+  add_method(mmrm_toeph_meth, name = "mmrm_toeph")  %>%
   add_method(glmmtmb_us_meth, name = "glmmtmb_us") %>%
   add_method(glmmtmb_csh_meth, name = "glmmtmb_csh") %>%
   add_method(glmmtmb_toeph_meth, name = "glmmtmb_toeph") %>%
@@ -91,7 +99,8 @@ experiment <- create_experiment(
   ## add_method(proc_mixed_us_meth, name = "proc_mixed_us") %>%
   ## add_method(proc_mixed_csh_meth, name = "proc_mixed_csh") %>%
   ## add_method(proc_mixed_toeph_meth, name = "proc_mixed_toeph") %>%
-  add_evaluator(mean_time_eval, name = "mean_fit_time")
+  add_evaluator(mean_time_eval, name = "mean_fit_time") %>%
+  add_evaluator(bias_eval, name = "bias")
 
 # run the experiment
 set.seed(72342)

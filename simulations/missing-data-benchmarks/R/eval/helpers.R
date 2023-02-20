@@ -31,12 +31,14 @@ get_proc_mixed_trt_visit_num_ests <- function(fit) {
   fit$Estimate
 }
 
-get_trt_visit_num_ests <- function(fit) {
+get_trt_visit_num_ests <- function(fit, dt) {
   fit_class <- class(fit)
-  dplyr::case_when(
-    fit_class[1] == "mmrm" ~ get_mmrm_trt_visit_num_ests(fit),
-    fit_class[1] == "glmmTMB" ~ get_glmmtmb_trt_visit_num_ests(fit),
-    fit_class[1] == "gls" ~ get_nlme_trt_visit_num_ests(fit),
-    fit_class[1] == "data.frame" ~ get_proc_mixed_trt_visit_num_ests(fit)
-  )
+  if (fit_class[1] == "mmrm")
+    get_mmrm_trt_visit_num_ests(fit)
+  else if (fit_class[1] == "glmmTMB")
+    get_glmmtmb_trt_visit_num_ests(fit)
+  else if (fit_class[1] == "gls")
+    get_nlme_trt_visit_num_ests(fit, dt)
+  else if (fit_class[1] == "data.frame")
+    get_proc_mixed_trt_visit_num_ests(fit)
 }
