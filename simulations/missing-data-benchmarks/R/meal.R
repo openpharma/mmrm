@@ -72,6 +72,7 @@ true_params <- list(
   "no_miss_no_effect_toeph" = rep(0, 10)
 )
 bias_eval <- create_evaluator(.eval_fun = bias_fun, true_params = true_params)
+variance_eval <- create_evaluator(.eval_fun = variance_fun)
 
 # specify the resul summarizers
 
@@ -100,7 +101,8 @@ experiment <- create_experiment(
   ## add_method(proc_mixed_csh_meth, name = "proc_mixed_csh") %>%
   ## add_method(proc_mixed_toeph_meth, name = "proc_mixed_toeph") %>%
   add_evaluator(mean_time_eval, name = "mean_fit_time") %>%
-  add_evaluator(bias_eval, name = "bias")
+  add_evaluator(bias_eval, name = "bias") %>%
+  add_evaluator(variance_eval, name = "variance")
 
 # run the experiment
 set.seed(72342)
