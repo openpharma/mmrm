@@ -51,19 +51,23 @@ get_glmmtmb_convergence <- function(fit) {
   fit$fit$convergence == 0
 }
 
-get_proc_mixed_convergence <- function(conv_status_df) {
-  conv_status_df$Reason == "Convergence criteria met."
+get_nlme_convergence <- function(converged) {
+  converged
+}
+
+get_proc_mixed_convergence <- function(converged) {
+  converged
 }
 
 
-get_convergence <- function(fit, conv_status_df) {
+get_convergence <- function(fit, converged) {
   fit_class <- class(fit)
   if (fit_class[1] == "mmrm")
     get_mmrm_convergence(fit)
   else if (fit_class[1] == "glmmTMB")
     get_glmmtmb_convergence(fit)
-  else if (fit_class[1] == "gls")
-    NA # NOTE: There is no built-in convergence status indicator
+  else if (fit_class[1] == "gls" || fit_class[1] == "NULL")
+    get_nlme_convergence(converged)
   else if (fit_class[1] == "data.frame")
-    get_proc_mixed_convergence(conv_status_df)
+    get_proc_mixed_convergence(converged)
 }

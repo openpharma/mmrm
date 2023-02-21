@@ -3,11 +3,11 @@ test_that("coconvergence_rate_rate_fun computes DGP-specific convergence rate", 
   ## generate some data from two different DGPs
   set.seed(510)
   no_eff_us <- rct_dgp_fun(
-    n_obs = 1000,
+    n_obs = 50,
     outcome_covar_mat= compute_unstructured_matrix()
   )
   eff_us <- rct_dgp_fun(
-    n_obs = 1000,
+    n_obs = 50,
     outcome_covar_mat = compute_unstructured_matrix(),
     trt_visit_coef = 0.25
   )
@@ -110,12 +110,14 @@ test_that("coconvergence_rate_rate_fun computes DGP-specific convergence rate", 
   fit_results <- tibble(
     .dgp_name = rep(c("no_eff", "eff"), each = 4),
     .method_name = rep(c("mmrm", "glmmtmb", "nlme", "proc_mixed"), 2),
-    n_obs = 100,
+    n_obs = 50,
     fit = list(mmrm_no_eff$fit, glmmtmb_no_eff$fit, nlme_no_eff$fit,
                proc_mixed_no_eff$fit, mmrm_eff$fit, glmmtmb_eff$fit,
                nlme_eff$fit, proc_mixed_eff$fit),
-    conv_status_df = list(NULL, NULL, NULL, proc_mixed_no_eff$conv_status_df,
-                          NULL, NULL, NULL, proc_mixed_eff$conv_status_df),
+    converged = list(NULL, NULL, nlme_no_eff$converged,
+                     proc_mixed_no_eff$converged,
+                     NULL, NULL, nlme_eff$converged,
+                     proc_mixed_eff$converged),
     fit_time = rep(1, 8)
   )
 

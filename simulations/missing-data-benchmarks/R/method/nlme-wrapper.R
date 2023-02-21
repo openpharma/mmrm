@@ -37,22 +37,29 @@ nlme_wrapper_fun <- function(
     visit_num_as_factor = TRUE
   )
 
+  # NOTE: nlme produces an error when the model fails to converge. This function
+  # safely returns an error message, and allows us to check if the model
+  # converged.
+  safe_gls <- purrr::safely(nlme::gls)
+
   if (covar_type == "csh") {
     fit_time <- microbenchmark::microbenchmark(
-      fit <- nlme::gls(
+      fit <- safe_gls(
         bcva_change ~ base_bcva + strata + trt * visit_num,
         correlation = nlme::corCompSymm(form = ~ 1 | participant),
-        weights = nlme::varIdent(form = ~ 1 | visit_num), data = df
+        weights = nlme::varIdent(form = ~ 1 | visit_num), data = df,
+        control = list(returnObject = TRUE)
       ),
       times = 1L
     )
 
   } else if (covar_type == "us") {
     fit_time <- microbenchmark::microbenchmark(
-      fit <- nlme::gls(
+      fit <- safe_gls(
         bcva_change ~ base_bcva + strata + trt * visit_num,
         correlation = nlme::corSymm(form = ~ 1 | participant),
-        weights = nlme::varIdent(form = ~ 1 | visit_num), data = df
+        weights = nlme::varIdent(form = ~ 1 | visit_num), data = df,
+        control = list(returnObject = TRUE)
       ),
       times = 1L
     )
@@ -61,8 +68,15 @@ nlme_wrapper_fun <- function(
     stop("This covariance matrix is not supported by this wrapper function.")
   }
 
+  # extract convergence status
+  if (is.null(fit$error))
+    converged <- TRUE
+  else
+    converged <- FALSE
+
   return(list(
-    fit = fit,
+    fit = fit$result,
+    converged = converged,
     data = df,
     fit_time = fit_time$time / 1e9 # NOTE: time in seconds
   ))

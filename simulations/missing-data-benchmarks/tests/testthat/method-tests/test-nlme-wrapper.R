@@ -68,3 +68,26 @@ test_that(paste(
   fit_time <- nlme_fit$fit_time
   expect_equal(is.numeric(fit_time), TRUE)
 })
+
+
+test_that(paste(
+  "nlme_wrapper_fun handles convergence failures gracefully"
+), {
+
+  set.seed(61234)
+  dgp_output <- rct_dgp_fun(
+    n_obs = 5,
+    outcome_covar_mat = diag(10),
+  )
+  expect_silent(
+    nlme_wrapper_fun(
+      participant = dgp_output$participant,
+      visit_num = dgp_output$visit_num,
+      base_bcva = dgp_output$base_bcva,
+      strata = dgp_output$strata,
+      trt = dgp_output$trt,
+      bcva_change = dgp_output$bcva_change,
+      covar_type = "us"
+    )
+  )
+})

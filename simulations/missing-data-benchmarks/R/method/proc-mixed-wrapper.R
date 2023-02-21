@@ -98,12 +98,18 @@ proc_mixed_wrapper_fun <- function(
     stringr::str_extract("(?<=user cpu time)\\s*[0-9.]+") %>%
     as.numeric()
 
+  ## check convergence status
+  if (conv_status_df$Reason == "Convergence criteria met.")
+    converged <- TRUE
+  else
+    converged <- FALSE
+
   return(list(
     "fit" = ates_df,
     "fit_time" = fit_time,
     "output" = sas_result$LST,
     "lsmeans_df" = lsmeans_df,
-    "conv_status_df" = conv_status_df,
+    "converged" = converged,
     "mod_inf_df" = mod_inf_df,
     "log" = sas_result$LOG
   ))

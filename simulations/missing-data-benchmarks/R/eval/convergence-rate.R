@@ -4,7 +4,7 @@ convergence_rate_fun <- function(fit_results) {
   fit_results %>%
     dplyr::mutate(
       convergence = purrr::pmap_lgl(
-        .l = list(fit, conv_status_df),
+        .l = list(fit, converged),
         .f = function(f, conv_status) {
           get_convergence(f, conv_status)
         }
