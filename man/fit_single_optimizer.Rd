@@ -9,9 +9,9 @@ fit_single_optimizer(
   data,
   weights,
   reml = TRUE,
-  start = NULL,
-  optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb"),
-  accept_singular = TRUE
+  covariance = NULL,
+  ...,
+  control = mmrm_control(...)
 )
 }
 \arguments{
@@ -19,19 +19,20 @@ fit_single_optimizer(
 
 \item{data}{(\code{data})\cr the data to be used for the model.}
 
-\item{weights}{(\code{vector})\cr an optional vector of weights to be used in the fitting process.
-Should be NULL or a numeric vector.}
+\item{weights}{(\code{vector})\cr an optional vector of weights to be used in
+the fitting process. Should be \code{NULL} or a numeric vector.}
 
-\item{reml}{(\code{flag})\cr whether restricted maximum likelihood (REML) estimation is used,
-otherwise maximum likelihood (ML) is used.}
+\item{reml}{(\code{flag})\cr whether restricted maximum likelihood (REML)
+estimation is used, otherwise maximum likelihood (ML) is used.}
 
-\item{start}{(\code{numeric} or \code{NULL})\cr optional start values for variance
-parameters.}
+\item{covariance}{(\code{cov_struct})\cr a covariance structure type definition
+as produced with \code{\link[=cov_struct]{cov_struct()}}, or value that can be coerced to a
+covariance structure using \code{\link[=as.cov_struct]{as.cov_struct()}}. If no value is provided,
+a structure is derived from the provided formula.}
 
-\item{optimizer}{(\code{string})\cr optimizer to be used to generate the model.}
+\item{...}{Additional arguments to pass to \code{\link[=mmrm_control]{mmrm_control()}}.}
 
-\item{accept_singular}{(\code{flag})\cr whether singular design matrices are reduced
-to full rank automatically and additional coefficient estimates will be missing.}
+\item{control}{(\code{mmrm_control})\cr object.}
 }
 \value{
 The \code{mmrm_fit} object, with additional attributes containing warnings,
@@ -43,6 +44,11 @@ messages, optimizer used and convergence status in addition to the
 
 This function helps to fit an MMRM using \code{TMB} with a single optimizer,
 while capturing messages and warnings.
+}
+\details{
+\code{fit_single_optimizer} will fit the \code{mmrm} model using the \code{control} provided.
+If there are multiple optimizers provided in \code{control}, only the first optimizer
+will be used.
 }
 \examples{
 mod_fit <- fit_single_optimizer(

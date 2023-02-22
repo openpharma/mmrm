@@ -69,8 +69,10 @@ h_record_all_output <- function(expr, remove = list()) {
 #'
 #' @export
 free_cores <- function() {
-  lifecycle::deprecate_warn("0.1.6", "free_cores()",
-    "parallelly::availableCores(omit = 'number of cores to reserve, e.g. 1')")
+  lifecycle::deprecate_warn(
+    "0.1.6", "free_cores()",
+    "parallelly::availableCores(omit = 'number of cores to reserve, e.g. 1')"
+  )
   all_cores <- parallel::detectCores(all.tests = TRUE)
   busy_cores <-
     if (.Platform$OS.type == "windows") {
@@ -99,50 +101,198 @@ free_cores <- function() {
   as.integer(max(1, all_cores - busy_cores - 1))
 }
 
-# covariance types ----
 
-# nolint start
 
-#' covariance type
+#' Trace of a Matrix
 #'
-#' @format vector of supported covariance structures. `cov_type` for common time points covariance structures,
-#' `cov_type_spatial` for spatial covariance structures.
+#' @description Obtain the trace of a matrix if the matrix is diagonal, otherwise raise an error.
+#'
+#' @param x (`matrix`)\cr square matrix input.
+#'
+#' @return The trace of the square matrix.
+#'
+#' @keywords internal
+h_tr <- function(x) {
+  if (nrow(x) != ncol(x)) {
+    stop("x must be square matrix")
+  }
+  sum(Matrix::diag(x))
+}
+
+#' Split Control List
+#'
+#' @description Split the [mmrm_control()] object according to its optimizers and use additional arguments
+#' to replace the elements in the original object.
+#'
+#' @param control (`mmrm_control`)\cr object.
+#' @param ... additional parameters to update the `control` object.
+#'
+#' @return A `list` of `mmrm_control` entries.
+#' @keywords internal
+h_split_control <- function(control, ...) {
+  assert_class(control, "mmrm_control")
+  l <- length(control$optimizers)
+  lapply(seq_len(l), function(i) {
+    ret <- modifyList(control, list(...))
+    ret$optimizers <- control$optimizers[i]
+    ret
+  })
+}
+
+#' Obtain Optimizer according to Optimizer String Value
+#'
+#' @description This function creates optimizer functions with arguments.
+#'
+#' @param optimizer (`character`)\cr names of built-in optimizers to try, subset
+#'   of "L-BFGS-B", "BFGS", "CG" and "nlminb".
+#' @param optimizer_fun (`function` or `list` of `function`)\cr alternatively to `optimizer`,
+#'   an optimizer function or a list of optimizer functions can be passed directly here.
+#' @param optimizer_args (`list`)\cr additional arguments for `optimizer_fun`.
+#' @param optimizer_control (`list`)\cr passed to argument `control` in `optimizer_fun`.
+#'
 #' @details
-#' abbreviation for covariance structures
-#' ## Common Covariance Structures
+#' If you want to use only the built-in optimizers:
+#' - `optimizer` is a shortcut to create a list of built-in optimizer functions
+#'   passed to `optimizer_fun`.
+#' - Allowed are "L-BFGS-B", "BFGS", "CG" (using [stats::optim()] with corresponding method)
+#'   and "nlminb" (using [stats::nlminb()]).
+#' - Other arguments should go into `optimizer_args`.
 #'
-#' | **Structure**     | **Description**                       | **Parameters**      | **\eqn{(i, j)} element**         |
-#' | ------------- |-------------------------------------------|:---------------|----------------------------------|
-#' | ad            | Ante-dependence                           | \eqn{m}        | \eqn{\sigma^{2}\prod_{k=i}^{j-1}\rho_{k}} |
-#' | adh           | Heterogeneous ante-dependence             | \eqn{2m-1}     | \eqn{\sigma_{i}\sigma_{j}\prod_{k=i}^{j-1}\rho_{k}} |
-#' | ar1           | First-order auto-regressive               | \eqn{2}        | \eqn{\sigma^{2}\rho^{\left \vert {i-j} \right \vert}} |
-#' | ar1h          | Heterogeneous first-order auto-regressive | \eqn{m+1}      | \eqn{\sigma_{i}\sigma_{j}\rho^{\left \vert {i-j} \right \vert}} |
-#' | cs            | Compound symmetry                         | \eqn{2}        | \eqn{\sigma^{2}\left[ \rho I(i \neq j)+I(i=j) \right]} |
-#' | csh           | Heterogeneous compound symmetry           | \eqn{m+1}      | \eqn{\sigma_{i}\sigma_{j}\left[ \rho I(i \neq j)+I(i=j) \right]} |
-#' | toep          | Toeplitz                                  | \eqn{m}        | \eqn{\sigma_{\left \vert {i-j} \right \vert +1}} |
-#' | toeph         | Heterogeneous Toeplitz                    | \eqn{2m-1}     | \eqn{\sigma_{i}\sigma_{j}\rho_{\left \vert {i-j} \right \vert}} |
-#' | us            | Unstructured                              | \eqn{m(m+1)/2} | \eqn{\sigma_{ij}} |
+#' If you want to use your own optimizer function:
+#' - Make sure that there are three arguments: parameter (start value), objective function
+#'   and gradient function are sequentially in the function arguments.
+#' - If there are other named arguments in front of these, make sure they are correctly
+#'   specified through `optimizer_args`.
+#' - If the hessian can be used, please make sure its argument name is `hessian` and
+#'   please add attribute `use_hessian = TRUE` to the function,
+#'   using `attr(fun, "use_hessian) <- TRUE`.
 #'
-#' where \eqn{i} and \eqn{j} denote \eqn{i}-th and \eqn{j}-th time points, respectively, out of total \eqn{m} time points, \eqn{1 \leq i, j \leq m}.
+#' @return Named `list` of optimizers created by [h_partial_fun_args()].
 #'
-#' Note the **ante-dependence** covariance structure in this package refers to homogeneous ante-dependence, while the ante-dependence covariance structure from SAS `PROC MIXED` refers to heterogeneous ante-dependence and the homogeneous version is not available in SAS.
-#'
-#' ## Spatial Covariance structures
-#'
-#' | **Structure**     | **Description**                       | **Parameters**      | **\eqn{(i, j)} element**         |
-#' | ------------- |-------------------------------------------|:---------------|----------------------------------|
-#' | sp_exp        | spatial exponential                       | \eqn{2}        | \eqn{\sigma^{2}\rho^{-d_{ij}}} |
-#'
-#' where \eqn{d_{ij}} denotes the Euclidean distance between time points \eqn{i} and \eqn{j}.
-#' @md
-#' @name covariance_types
-NULL
+#' @keywords internal
+h_get_optimizers <- function(optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb"),
+                             optimizer_fun = h_optimizer_fun(optimizer),
+                             optimizer_args = list(),
+                             optimizer_control = list()) {
+  if ("automatic" %in% optimizer) {
+    lifecycle::deprecate_warn(
+      when = "0.2.0",
+      what = I("\"automatic\" optimizer"),
+      details = "please just omit optimizer argument"
+    )
+    optimizer_fun <- h_optimizer_fun()
+  }
+  assert(
+    test_function(optimizer_fun),
+    test_list(optimizer_fun, types = "function", names = "unique")
+  )
+  if (is.function(optimizer_fun)) {
+    optimizer_fun <- list(custom_optimizer = optimizer_fun)
+  }
+  lapply(optimizer_fun, function(x) {
+    do.call(h_partial_fun_args, c(list(fun = x, control = optimizer_control), optimizer_args))
+  })
+}
 
-# nolint end
+#' Obtain Optimizer Function with Character
+#' @description Obtain the optimizer function through the character provided.
+#' @param optimizer (`character`)\cr vector of optimizers.
+#'
+#' @return A (`list`)\cr of optimizer functions generated from [h_partial_fun_args()].
+#' @keywords internal
+h_optimizer_fun <- function(optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb")) {
+  optimizer <- match.arg(optimizer, several.ok = TRUE)
+  lapply(stats::setNames(optimizer, optimizer), function(x) {
+    switch(x,
+      "L-BFGS-B" = h_partial_fun_args(fun = stats::optim, method = x),
+      "BFGS" = h_partial_fun_args(fun = stats::optim, method = x),
+      "CG" = h_partial_fun_args(fun = stats::optim, method = x),
+      "nlminb" = h_partial_fun_args(fun = stats::nlminb, additional_attr = list(use_hessian = TRUE))
+    )
+  })
+}
 
-#' @describeIn covariance_types non-spatial covariance structure
-#' @format NULL
-cov_type <- c("us", "toep", "toeph", "ar1", "ar1h", "ad", "adh", "cs", "csh")
-#' @describeIn covariance_types spatial covariance structure
-#' @format NULL
-cov_type_spatial <- c("sp_exp")
+#' Create Partial Functions
+#' @description Creates partial functions with arguments.
+#'
+#' @param fun (`function`)\cr to be wrapped.
+#' @param ... Additional arguments for `fun`.
+#' @param additional_attr (`list`)\cr of additional attributes to apply to the result.
+#'
+#' @details This function add `args` attribute to the original function,
+#' and add an extra class `partial` to the function.
+#' `args` is the argument for the function, and elements in `...` will override the existing
+#' arguments in attribute `args`. `additional_attr` will override the existing attributes.
+#'
+#' @return Object with S3 class `"partial"`, a `function` with `args` attribute (and possibly more
+#' attributes from `additional_attr`).
+#' @keywords internal
+h_partial_fun_args <- function(fun, ..., additional_attr = list()) {
+  assert_function(fun)
+  assert_list(additional_attr, names = "unique")
+  a_args <- list(...)
+  assert_list(a_args, names = "unique")
+  args <- attr(fun, "args")
+  if (is.null(args)) {
+    args <- list()
+  }
+  do.call(
+    structure,
+    args = modifyList(list(
+      .Data = fun, args = modifyList(args, a_args),
+      class = c("partial", "function")
+    ), additional_attr)
+  )
+}
+
+#' Obtain Default Covariance Method
+#'
+#' @description Obtain the default covariance method depending on
+#' the degrees of freedom method used.
+#'
+#' @param method (`string`)\cr degrees of freedom method.
+#'
+#' @details The default covariance method is different for different degrees of freedom method.
+#' If degrees of freedom is "Satterthwaite", "Asymptotic" is returned.
+#' If degrees of freedom is "Kenward-Roger", then "Kenward-Roger" is returned.
+#'
+#' @keywords internal
+h_get_cov_default <- function(method = c("Satterthwaite", "Kenward-Roger", "Residual")) {
+  assert_string(method)
+  method <- match.arg(method)
+  switch(method,
+    "Residual" = "Empirical",
+    "Satterthwaite" = "Asymptotic",
+    "Kenward-Roger" = "Kenward-Roger"
+  )
+}
+
+#' Complete `character` Vector Names From Values
+#'
+#' @param x (`character` or `list`)\cr value whose names should be completed
+#'   from element values.
+#'
+#' @return A named vector or list.
+#'
+#' @keywords internal
+fill_names <- function(x) {
+  n <- names(x)
+  is_unnamed <- if (is.null(n)) rep_len(TRUE, length(x)) else n == ""
+  names(x)[is_unnamed] <- x[is_unnamed]
+  x
+}
+
+#' Drop Items from an Indexible
+#'
+#' Drop elements from an indexible object (`vector`, `list`, etc.).
+#'
+#' @param x Any object that can be consumed by [seq_along()] and indexed by a
+#'   logical vector of the same length.
+#' @param n (`integer`)\cr the number of terms to drop.
+#'
+#' @return A subset of `x`.
+#'
+#' @keywords internal
+drop_elements <- function(x, n) {
+  x[seq_along(x) > n]
+}

@@ -5,6 +5,7 @@
 .Rhistory
 .Rproj.user
 .Ruserdata
+*.tar.gz
 .settings/**
 *.html
 *.Rcheck
@@ -36,3 +37,5 @@ src/*.so
 src/*.dll
 testthat-problems.rds
 README.md
+**/sascfg_personal.py
+.Rprofile

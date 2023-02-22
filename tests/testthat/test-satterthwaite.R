@@ -89,20 +89,20 @@ test_that("h_df_1d_list works as expected", {
     se = 2,
     df = 1 / 2,
     t_stat = 5 / 2,
-    p_val = 2 * pt(q = 5 / 2, df = 1 / 2, lower.tail = FALSE)
+    p_val = 2 * stats::pt(q = 5 / 2, df = 1 / 2, lower.tail = FALSE)
   )
   expect_equal(result, expected)
 })
 
-# df_1d ----
+# h_df_1d_sat ----
 
-test_that("df_1d works as expected", {
+test_that("h_df_1d_sat works as expected", {
   object <- mmrm(
     formula = FEV1 ~ us(AVISIT | USUBJID),
     data = fev_data
   )
   # See design/SAS/sas_log_simple_reml.txt for the source of numbers.
-  result <- expect_silent(df_1d(object, 1))
+  result <- expect_silent(h_df_1d_sat(object, 1))
   expect_list(result)
   expect_equal(result$est, 42.8338, tolerance = 1e-4)
   expect_equal(result$se, 0.3509, tolerance = 1e-4)
@@ -111,7 +111,7 @@ test_that("df_1d works as expected", {
   expect_true(result$p_val < 0.0001)
 })
 
-test_that("df_1d works as expected for singular fits", {
+test_that("h_df_1d_sat works as expected for singular fits", {
   dat <- fev_data
   dat$ones <- 1
   object <- mmrm(
@@ -122,8 +122,8 @@ test_that("df_1d works as expected for singular fits", {
     formula = FEV1 ~ us(AVISIT | USUBJID),
     data = fev_data
   )
-  result <- expect_silent(df_1d(object, 1))
-  expected <- expect_silent(df_1d(object2, 1))
+  result <- expect_silent(h_df_1d_sat(object, 1))
+  expected <- expect_silent(h_df_1d_sat(object2, 1))
   expect_identical(result, expected)
 })
 
@@ -183,14 +183,14 @@ test_that("h_df_md_from_1d works as expected", {
   expect_named(result, c("num_df", "denom_df", "f_stat", "p_val"))
 })
 
-# df_md ----
+# h_df_md_sat ----
 
-test_that("df_md works as expected", {
+test_that("h_df_md_sat works as expected", {
   object <- get_mmrm()
   contrast <- matrix(data = 0, nrow = 2, ncol = length(component(object, "beta_est")))
   contrast[1, 2] <- contrast[2, 3] <- 1
   # See design/SAS/sas_log_simple_reml.txt for the source of numbers.
-  result <- expect_silent(df_md(object, contrast))
+  result <- expect_silent(h_df_md_sat(object, contrast))
   expect_list(result)
   expect_identical(result$num_df, 2L)
   expect_identical(round(result$denom_df), 166)
@@ -198,21 +198,21 @@ test_that("df_md works as expected", {
   expect_true(result$p_val < 0.0001)
 })
 
-test_that("df_md works as expected with a non-full rank contrast matrix", {
+test_that("h_df_md_sat works as expected with a non-full rank contrast matrix", {
   object <- get_mmrm()
   contrast <- matrix(data = 0, nrow = 2, ncol = length(component(object, "beta_est")))
   contrast[2, 5] <- 1 # So the first row is all 0s still.
-  result <- expect_silent(df_md(object, contrast))
-  expected <- df_md(object, contrast[2L, , drop = FALSE])
+  result <- expect_silent(h_df_md_sat(object, contrast))
+  expected <- h_df_md_sat(object, contrast[2L, , drop = FALSE])
   expect_equal(result, expected)
 })
 
-test_that("df_md works as expected for rank deficient model", {
+test_that("h_df_md_sat works as expected for rank deficient model", {
   object <- get_mmrm_rank_deficient()
   contrast <- matrix(data = 0, nrow = 2, ncol = length(component(object, "beta_est")))
   contrast[1, 2] <- contrast[2, 3] <- 1
-  result <- expect_silent(df_md(object, contrast))
+  result <- expect_silent(h_df_md_sat(object, contrast))
   object2 <- get_mmrm()
-  expected <- expect_silent(df_md(object2, contrast))
+  expected <- expect_silent(h_df_md_sat(object2, contrast))
   expect_identical(result, expected)
 })

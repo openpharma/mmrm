@@ -4,23 +4,14 @@
 \alias{refit_multiple_optimizers}
 \title{Refitting MMRM with Multiple Optimizers}
 \usage{
-refit_multiple_optimizers(
-  fit,
-  n_cores = 1L,
-  optimizers = c("L-BFGS-B", "BFGS", "CG", "nlminb"),
-  accept_singular = TRUE
-)
+refit_multiple_optimizers(fit, ..., control = mmrm_control(...))
 }
 \arguments{
 \item{fit}{(\code{mmrm_fit})\cr original model fit from \code{\link[=fit_single_optimizer]{fit_single_optimizer()}}.}
 
-\item{n_cores}{(\code{count})\cr number of cores which could in principle be used for
-parallel computations on Linux or Mac machines.}
+\item{...}{Additional arguments passed to \code{\link[=mmrm_control]{mmrm_control()}}.}
 
-\item{optimizers}{(\code{character})\cr all possible optimizers to be used for fitting.}
-
-\item{accept_singular}{(\code{flag})\cr whether singular design matrices are reduced
-to full rank automatically and additional coefficient estimates will be missing.}
+\item{control}{(\code{mmrm_control})\cr object.}
 }
 \value{
 The best (in terms of log likelihood) fit which converged.

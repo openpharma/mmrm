@@ -6,13 +6,15 @@
 "_PACKAGE"
 
 #' @useDynLib mmrm, .registration = TRUE
-#'
+#' @importFrom Rcpp evalCpp
 #' @import checkmate
 #' @importFrom lifecycle deprecated
+#' @importFrom Matrix .bdiag
 #' @importFrom methods is
 #' @importFrom numDeriv genD
 #' @importFrom stats acf
 #' @importFrom stringr boundary
 #' @importFrom parallel clusterApply
 #' @importFrom Rdpack reprompt
+#' @importFrom utils modifyList
 NULL

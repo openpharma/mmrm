@@ -4,22 +4,34 @@
 \alias{fit_mmrm}
 \title{Low-Level Fitting Function for MMRM}
 \usage{
-fit_mmrm(formula, data, weights, reml = TRUE, control = mmrm_control())
+fit_mmrm(
+  formula,
+  data,
+  weights,
+  reml = TRUE,
+  covariance = NULL,
+  control = mmrm_control()
+)
 }
 \arguments{
 \item{formula}{(\code{formula})\cr model formula with exactly one special term
 specifying the visits within subjects, see details.}
 
-\item{data}{(\code{data.frame})\cr input data containing the variables used
-in \code{formula}.}
+\item{data}{(\code{data.frame})\cr input data containing the variables used in
+\code{formula}.}
 
 \item{weights}{(\code{vector})\cr input vector containing the weights.}
 
 \item{reml}{(\code{flag})\cr whether restricted maximum likelihood (REML) estimation is used,
 otherwise maximum likelihood (ML) is used.}
 
-\item{control}{(\code{mmrm_control})\cr list of control options produced
-by \code{\link[=mmrm_control]{mmrm_control()}}.}
+\item{covariance}{(\code{cov_struct})\cr A covariance structure type definition,
+or value that can be coerced to a covariance structure using
+\code{\link[=as.cov_struct]{as.cov_struct()}}. If no value is provided, a structure is derived from
+the provided formula.}
+
+\item{control}{(\code{mmrm_control})\cr list of control options produced by
+\code{\link[=mmrm_control]{mmrm_control()}}.}
 }
 \value{
 List of class \code{mmrm_tmb}, see \code{\link[=h_mmrm_tmb_fit]{h_mmrm_tmb_fit()}} for details.
@@ -33,10 +45,14 @@ try different optimizers or adds Jacobian information etc. in contrast to
 }
 \details{
 The \code{formula} typically looks like:
+
 \code{FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)}
-so specifies response and covariates as usual, and exactly one special term
+
+which specifies response and covariates as usual, and exactly one special term
 defines which covariance structure is used and what are the visit and
 subject variables.
+
+Always use only the first optimizer if multiple optimizers are provided.
 }
 \examples{
 formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)

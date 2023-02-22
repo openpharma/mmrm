@@ -13,3 +13,21 @@ jobs:
     uses: insightsengineering/r.pkg.template/.github/workflows/release.yaml@main
     permissions:
       contents: write
+  build:
+    name: Build package 🎁
+    needs: release
+    uses: insightsengineering/r.pkg.template/.github/workflows/build-check-install.yaml@main
+    secrets:
+      REPO_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    with:
+      skip-r-cmd-check: true
+      skip-r-cmd-install: true
+  docs:
+    name: Pkgdown Docs 📚
+    needs: release
+    uses: insightsengineering/r.pkg.template/.github/workflows/pkgdown.yaml@main
+    with:
+      refs-order: c("latest-tag", "main")
+      default-landing-page: latest-tag
+    secrets:
+      REPO_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
