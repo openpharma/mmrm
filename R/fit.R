@@ -218,7 +218,7 @@ refit_multiple_optimizers <- function(fit,
 #'   optimizer_args = list(method = "L-BFGS-B")
 #' )
 mmrm_control <- function(n_cores = 1L,
-                         method = c("Satterthwaite", "Kenward-Roger", "Residual"),
+                         method = c("Satterthwaite", "Kenward-Roger", "Residual", "Between-within"),
                          vcov = NULL,
                          start = NULL,
                          accept_singular = TRUE,

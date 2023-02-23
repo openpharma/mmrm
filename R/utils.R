@@ -257,14 +257,15 @@ h_partial_fun_args <- function(fun, ..., additional_attr = list()) {
 #' If degrees of freedom is "Kenward-Roger", then "Kenward-Roger" is returned.
 #'
 #' @keywords internal
-h_get_cov_default <- function(method = c("Satterthwaite", "Kenward-Roger", "Residual")) {
+h_get_cov_default <- function(method = c("Satterthwaite", "Kenward-Roger", "Residual", "Between-within")) {
   assert_string(method)
   method <- match.arg(method)
   switch(
     method,
     "Residual" = "Empirical",
     "Satterthwaite" = "Asymptotic",
-    "Kenward-Roger" = "Kenward-Roger"
+    "Kenward-Roger" = "Kenward-Roger",
+    "Between-within" = "Asymptotic"
   )
 }
 

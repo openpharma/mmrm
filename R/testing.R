@@ -28,6 +28,7 @@ df_1d <- function(object, contrast) {
     "Satterthwaite" = h_df_1d_sat(object, contrast),
     "Kenward-Roger" = h_df_1d_kr(object, contrast),
     "Residual" = h_df_1d_res(object, contrast),
+    "Between-within" = h_df_1d_bw(object, contrast),
     stop("Unrecognized degrees of freedom method: ", object$method)
   )
 }
@@ -69,6 +70,7 @@ df_md <- function(object, contrast) {
     "Satterthwaite" = h_df_md_sat(object, contrast),
     "Kenward-Roger" = h_df_md_kr(object, contrast),
     "Residual" = h_df_md_res(object, contrast),
+    "Between-within" = h_df_md_bw(object, contrast),
     stop("Unrecognized degrees of freedom method: ", object$method)
   )
 }
