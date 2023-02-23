@@ -2,7 +2,7 @@
 title: "Details of the Kenward-Roger calculations"
 package: mmrm
 bibliography: '`r system.file("REFERENCES.bib", package = "mmrm")`'
-csl: '`r system.file("jss.cls", package = "mmrm")`'
+csl: '`r system.file("jss.csl", package = "mmrm")`'
 output:
   rmarkdown::html_document:
           theme: "spacelab"
