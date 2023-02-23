@@ -55,7 +55,8 @@ The time points have to be unique for each subject. That is,
 there cannot be time points with multiple observations for any subject.
 The rationale is that these observations would need to be correlated, but it
 is not possible within the currently implemented covariance structure framework
-to do that correctly.
+to do that correctly. Moreover, for non-spatial covariance structures, the time
+variable must be a factor variable.
 
 When optimizer is not set, first the default optimizer
 (\code{L-BFGS-B}) is used to fit the model. If that converges, this is returned.
@@ -84,6 +85,8 @@ matrix.
 }
 
 Use of the package \code{emmeans} is supported, see \code{\link{emmeans_support}}.
+
+NA values are always omitted regardless of \code{na.action} setting.
 }
 \examples{
 fit <- mmrm(

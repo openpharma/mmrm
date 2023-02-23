@@ -431,6 +431,38 @@ test_that("mmrm fails when using formula covariance with covariance argument", {
   )
 })
 
+test_that("mmrm works for different na.actions", {
+  na_action <- options("na.action")
+  options(na.action = "na.omit")
+  formula <- FEV1 ~ ARMCD + us(AVISIT | USUBJID)
+
+  res1 <- expect_silent(mmrm(formula, fev_data))
+  expect_class(res1, "mmrm")
+
+  options(na.action = "na.pass")
+  expect_message(
+    res2 <- mmrm(formula, fev_data),
+    "NA values will always be removed regardless of na.action in options."
+  )
+  expect_class(res2, "mmrm")
+
+  options(na.action = "na.fail")
+  expect_message(
+    res3 <- mmrm(formula, fev_data),
+    "NA values will always be removed regardless of na.action in options."
+  )
+  expect_class(res3, "mmrm")
+
+  options(na.action = "na.exclude")
+  expect_message(
+    res4 <- mmrm(formula, fev_data),
+    "NA values will always be removed regardless of na.action in options."
+  )
+  expect_class(res4, "mmrm")
+
+  options(na.action = na_action$na.action)
+})
+
 ## vcov and method combination ----
 
 test_that("mmrm works for vcov: Asymptotic and method: Sattherthwaite", {
@@ -505,6 +537,38 @@ test_that("mmrm works for vcov: Jackknife and method: Residual", {
   expect_matrix(result$beta_vcov_adj)
 })
 
+test_that("mmrm works for vcov: Empirical and method: Satterthwaite", {
+  result <- expect_silent(
+    mmrm(
+      formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+      data = fev_data,
+      method = "Satterthwaite",
+      vcov = "Empirical"
+    )
+  )
+  expect_class(result, c("mmrm", "mmrm_fit", "mmrm_tmb"))
+  expect_true(attr(result, "converged"))
+  expect_class(result$call, "call")
+  expect_true(result$reml)
+  expect_matrix(result$beta_vcov_adj)
+})
+
+test_that("mmrm works for vcov: Jackknife and method: Satterthwaite", {
+  result <- expect_silent(
+    mmrm(
+      formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+      data = fev_data,
+      method = "Satterthwaite",
+      vcov = "Empirical-Jackknife"
+    )
+  )
+  expect_class(result, c("mmrm", "mmrm_fit", "mmrm_tmb"))
+  expect_true(attr(result, "converged"))
+  expect_class(result$call, "call")
+  expect_true(result$reml)
+  expect_matrix(result$beta_vcov_adj)
+})
+
 test_that("mmrm fails for vcov: Asymptotic and method: Kenward-Roger", {
   expect_error(
     mmrm(
@@ -559,7 +623,7 @@ test_that("mmrm fails for vcov: Empirical and method: Kenward-Roger", {
       method = "Kenward-Roger",
       vcov = "Empirical"
     ),
-    "Empirical and Empirical-Jackknife only works for Residual degrees of freedom currently!"
+    "Kenward-Roger degrees of freedom must work together with Kenward-Roger or Kenward-Roger-Linear covariance!"
   )
 })
 
@@ -571,6 +635,6 @@ test_that("mmrm fails for vcov: Jackknife and method: Kenward-Roger", {
       method = "Kenward-Roger",
       vcov = "Empirical-Jackknife"
     ),
-    "Empirical and Empirical-Jackknife only works for Residual degrees of freedom currently!"
+    "Kenward-Roger degrees of freedom must work together with Kenward-Roger or Kenward-Roger-Linear covariance!"
   )
 })

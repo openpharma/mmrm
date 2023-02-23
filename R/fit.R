@@ -50,7 +50,7 @@ fit_single_optimizer <- function(formula,
       control = control
     ),
     remove = list(
-      warning = c("NA/NaN function evaluation") # Transient visit to invalid parameters.
+      warnings = c("NA/NaN function evaluation") # Transient visit to invalid parameters.
     )
   )
   if (length(quiet_fit$errors)) {
@@ -240,9 +240,7 @@ mmrm_control <- function(n_cores = 1L,
     vcov,
     c("Asymptotic", "Empirical", "Empirical-Jackknife", "Kenward-Roger", "Kenward-Roger-Linear")
   )
-  if (vcov %in% c("Empirical", "Empirical-Jackknife") &&  !identical(method, "Residual")) {
-    stop("Empirical and Empirical-Jackknife only works for Residual degrees of freedom currently!")
-  }
+
   if (xor(identical(method, "Kenward-Roger"), vcov %in% c("Kenward-Roger", "Kenward-Roger-Linear"))) {
     stop("Kenward-Roger degrees of freedom must work together with Kenward-Roger or Kenward-Roger-Linear covariance!")
   }
@@ -293,7 +291,8 @@ mmrm_control <- function(n_cores = 1L,
 #' there cannot be time points with multiple observations for any subject.
 #' The rationale is that these observations would need to be correlated, but it
 #' is not possible within the currently implemented covariance structure framework
-#' to do that correctly.
+#' to do that correctly. Moreover, for non-spatial covariance structures, the time
+#' variable must be a factor variable.
 #'
 #' When optimizer is not set, first the default optimizer
 #' (`L-BFGS-B`) is used to fit the model. If that converges, this is returned.
@@ -321,6 +320,8 @@ mmrm_control <- function(n_cores = 1L,
 #' matrix.
 #'
 #' Use of the package `emmeans` is supported, see [`emmeans_support`].
+#'
+#' NA values are always omitted regardless of `na.action` setting.
 #'
 #' @export
 #'
@@ -359,6 +360,7 @@ mmrm <- function(formula,
   if (control$method %in% c("Kenward-Roger", "Kenward-Roger-Linear") && !reml) {
     stop("Kenward-Roger only works for REML")
   }
+
   attr(data, which = "dataname") <- toString(match.call()$data)
 
   if (is.null(weights)) {
@@ -403,7 +405,7 @@ mmrm <- function(formula,
   }
   fit$method <- control$method
   fit$vcov <- control$vcov
-  if (identical(fit$method, "Satterthwaite")) {
+  if (identical(fit$method, "Satterthwaite") && identical(fit$vcov, "Asymptotic")) {
     covbeta_fun <- h_covbeta_fun(fit)
     fit$jac_list <- h_jac_list(covbeta_fun, fit$theta_est)
   }
@@ -419,9 +421,11 @@ mmrm <- function(formula,
       linear = (control$vcov == "Kenward-Roger-Linear")
     )
   } else if (control$vcov %in% c("Empirical", "Empirical-Jackknife")) {
-    fit$beta_vcov_adj <- h_get_empirical(
+    empirical_comp <- h_get_empirical(
       fit$tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov, control$vcov == "Empirical-Jackknife"
     )
+    fit$beta_vcov_adj <- empirical_comp$cov
+    fit$empirical_df_mat <- empirical_comp$df_mat
     dimnames(fit$beta_vcov_adj) <- dimnames(fit$beta_vcov)
   } else if (identical(control$vcov, "Asymptotic")) {
   } else {

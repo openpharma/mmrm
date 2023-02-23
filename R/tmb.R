@@ -20,9 +20,9 @@
 #'   this element is `NULL`.
 #'
 #' @keywords internal
-h_mmrm_tmb_formula_parts <- function(formula,
+h_mmrm_tmb_formula_parts <- function(
+    formula,
     covariance = as.cov_struct(formula, warn_partial = FALSE)) {
-
   assert_formula(formula)
   assert_true(identical(length(formula), 3L))
 
@@ -128,8 +128,18 @@ h_mmrm_tmb_data <- function(formula_parts,
   data <- data.frame(data, weights)
   # weights is always the last column
   weights_name <- colnames(data)[ncol(data)]
+  if (!identical(getOption("na.action"), "na.omit")) {
+    message(
+      "NA values will always be removed regardless of na.action in options."
+    )
+  }
   full_frame <- eval(
-    bquote(stats::model.frame(formula_parts$full_formula, data = data, weights = .(as.symbol(weights_name))))
+    bquote(stats::model.frame(
+      formula_parts$full_formula,
+      data = data,
+      weights = .(as.symbol(weights_name)),
+      na.action = stats::na.omit
+    ))
   )
   full_frame <- droplevels(full_frame, except = formula_parts$visit_var)
   if (drop_visit_levels && !formula_parts$is_spatial && is.factor(full_frame[[formula_parts$visit_var]])) {
@@ -461,6 +471,10 @@ fit_mmrm <- function(formula,
                      control = mmrm_control()) {
   covariance <- reconcile_cov_struct(formula, covariance)
   formula_parts <- h_mmrm_tmb_formula_parts(formula, covariance)
+
+  if (!formula_parts$is_spatial && !is.factor(data[[formula_parts$visit_var]])) {
+    stop("Time variable must be a factor for non-spatial covariance structures")
+  }
 
   assert_class(control, "mmrm_control")
   assert_list(control$optimizers, min.len = 1)
