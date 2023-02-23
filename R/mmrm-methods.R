@@ -226,3 +226,14 @@ print.summary.mmrm <- function(x,
   cat("\n")
   invisible(x)
 }
+
+
+#' Simulates from an mmrm model object
+#'
+#' @return TODO
+#' @export TODO
+#'
+#' @examples TODO
+simulate.mmrm <- function(){
+
+}
