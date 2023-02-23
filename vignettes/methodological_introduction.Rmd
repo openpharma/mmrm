@@ -2,7 +2,7 @@
 title: "What are MMRMs? A brief introduction"
 package: mmrm
 bibliography: '`r system.file("REFERENCES.bib", package = "mmrm")`'
-csl: jss.csl
+csl: '`r system.file("jss.csl", package = "mmrm")`'
 output:
   rmarkdown::html_document:
           theme: "spacelab"
