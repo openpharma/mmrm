@@ -19,16 +19,21 @@ h_df_1d_bw <- function(object, contrast) {
   se <- sqrt(var)
 
   n_subjects <- component(object, "n_subjects")
-  n_pars <- ncol(object$tmb_data$x_matrix)
   n_obs  <- component(object, "n_obs")
-  ddf_within <- n_subjects - n_pars
-  ddf_between <- n_obs - n_subjects - n_pars
 
-  df <- apply(X = object$tmb_data$x_matrix[, as.logical(contrast), drop = FALSE], MARGIN = 2, FUN = function(x) {
+  bw_pars <- apply(X = object$tmb_data$x_matrix, MARGIN = 2, FUN = function(x) {
     n_unique <- nrow(unique(cbind(x, as.numeric(object$tmb_data$full_frame[[object$formula_parts$subject_var]]))))
-    if (n_unique > n_subjects) ddf_within
-    else ddf_between
+    if (n_unique > n_subjects) "within"
+    else "between"
   })
+
+  n_pars_between <- sum(bw_pars == "between")
+  n_pars_within  <- sum(bw_pars == "within")
+
+  ddf_between <- n_subjects - n_pars_between
+  ddf_within <- n_obs - n_subjects - n_pars_within
+
+  df <- if (bw_pars[as.logical(contrast)] == "within") ddf_within else ddf_between
   df <- unname(df)
 
   t_stat <- est / se
@@ -58,13 +63,22 @@ h_df_md_bw <- function(object, contrast) {
   assert_matrix(contrast, mode = "numeric", any.missing = FALSE, ncols = length(component(object, "beta_est")))
   prec_contrast <- solve(h_quad_form_mat(contrast, component(object, "beta_vcov")))
   contrast_est <- component(object, "beta_est") %*% t(contrast)
-  f_statistic <- 1 / nrow(contrast) * h_quad_form_mat(contrast_est, prec_contrast)
+  f_statistic <- as.numeric(1 / nrow(contrast) * h_quad_form_mat(contrast_est, prec_contrast))
 
   n_subjects <- component(object, "n_subjects")
-  n_pars <- ncol(object$tmb_data$x_matrix)
   n_obs  <- component(object, "n_obs")
-  ddf_within <- n_subjects - n_pars
-  ddf_between <- n_obs - n_subjects - n_pars
+
+  bw_pars <- apply(X = object$tmb_data$x_matrix, MARGIN = 2, FUN = function(x) {
+    n_unique <- nrow(unique(cbind(x, as.numeric(object$tmb_data$full_frame[[object$formula_parts$subject_var]]))))
+    if (n_unique > n_subjects) "within"
+    else "between"
+  })
+
+  n_pars_between <- sum(bw_pars == "between")
+  n_pars_within  <- sum(bw_pars == "within")
+
+  ddf_between <- n_subjects - n_pars_between
+  ddf_within <- n_obs - n_subjects - n_pars_within
 
   df <- apply(X = object$tmb_data$x_matrix[, as.logical(colSums(contrast)), drop = FALSE], MARGIN = 2, FUN = function(x) {
     n_unique <- nrow(unique(cbind(x, as.numeric(object$tmb_data$full_frame[[object$formula_parts$subject_var]]))))
