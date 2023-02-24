@@ -8,6 +8,8 @@ ansi
 aoms
 ar
 ARMCD
+ast
+AstraZeneca
 aut
 AVISIT
 bilinearen
@@ -46,6 +48,7 @@ csh
 customizations
 daniel
 ddots
+de
 DeclareMathOperator
 dedic
 Dedic
@@ -94,6 +97,7 @@ ijk
 ik
 im
 incollection
+indexible
 infty
 Ingelheim
 init
@@ -102,6 +106,7 @@ io
 issn
 jac
 jh
+ji
 jj
 jk
 jstor
@@ -136,6 +141,7 @@ md
 mmrm
 MMRM
 MMRMs
+na
 nabla
 navbar
 newcommand
@@ -152,7 +158,9 @@ parametrized
 params
 Parm
 PBO
+pearson
 pkgdown
+plc
 pmatrix
 Polymorphism
 pre

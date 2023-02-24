@@ -132,7 +132,8 @@ The time points have to be unique for each subject. That is,
 there cannot be time points with multiple observations for any subject.
 The rationale is that these observations would need to be correlated, but it
 is not possible within the currently implemented covariance structure framework
-to do that correctly.
+to do that correctly. Moreover, for non-spatial covariance structures, the time 
+variable must be coded as a factor.
 
 ## Weighting
 
@@ -168,8 +169,8 @@ We can see that the estimated covariance matrices are different in different `AR
 
 ## Adjustment Method
 
-Both Satterthwaite and Kenward-Roger adjustment methods are available. The default
-is Satterthwaite adjustment of the degrees of freedom. To use Kenward-Roger
+In additional to the residual degrees of freedom, both Satterthwaite and Kenward-Roger adjustment methods
+are available. The default is Satterthwaite adjustment of the degrees of freedom. To use Kenward-Roger
 adjustment of the degrees of freedom as well as the coefficients covariance
 matrix, use the `method` argument:
 
@@ -204,7 +205,8 @@ covariance model, you can use the linear Kenward-Roger approximation:
 fit_kr_lin <- mmrm(
   formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data,
-  method = "Kenward-Roger-Linear"
+  method = "Kenward-Roger",
+  vcov = "Kenward-Roger-Linear"
 )
 ```
 
@@ -212,6 +214,23 @@ This is due to the different parametrization of the unstructured covariance
 matrix, see the
 [Kenward-Roger vignette](kenward.html#parameterization-methods-and-kenward-roger)
 for details.
+
+## Variance-covariance for Coefficients
+
+There are multiple variance-covariance estimator available for the coefficients, including:
+
+1. Asymptotic
+1. Empirical (Cluster Robust Sandwich)
+1. Empirical-Jackknife
+1. Kenward-Roger
+1. Kenward-Roger-Linear
+
+Please note that, not all combinations of variance-covariance for coefficients and method of
+degrees of freedom are possible, e.g. "Kenward-Roger" and "Kenward-Roger-Linear" are available only
+when the degrees of freedom method is "Kenward-Roger", while "Empirical" and "Empirical-Jackknife"
+only works for "Residual" degrees of freedom currently.
+
+Details can be found in [Coefficients Covariance Matrix Adjustment vignette](coef_vcov.html).
 
 ## Keeping Unobserved Visits
 
@@ -286,6 +305,32 @@ Other model parameters and metadata available in the summary object is as follow
 
 ```{r extraction-summary-fit-str}
 str(fit_summary)
+```
+
+## Residuals
+
+The `residuals` method for `mmrm` objects can be used to provide three different types of residuals:
+
+1. Response or raw residuals - the difference between the observed and fitted or predicted value. MMRMs can allow for heteroscedasticity, so these residuals should be interpreted with caution.
+
+```{r residuals-response}
+fit <- mmrm(
+  formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data
+)
+residuals_resp <- residuals(fit, type = "response")
+```
+
+2. Pearson residuals - the raw residuals scaled by the estimated standard deviation of the response. This residual type is better suited to identifying outlying observations and the appropriateness of the covariance structure, compared to the raw residuals.
+
+```{r residuals-pearson}
+residuals_pearson <- residuals(fit, type = "pearson")
+```
+
+3. Normalized or scaled residuals - the raw residuals are 'de-correlated' based on the Cholesky decomposition of the variance-covariance matrix. These residuals should approximately follow the standard normal distribution, and therefore can be used to check for normality (@galecki2013linear).
+
+```{r residuals-norm}
+residuals_norm <- residuals(fit, type = "normalized")
 ```
 
 ## Other components
@@ -424,3 +469,5 @@ We would like to thank Ben Bolker from the `glmmTMB` team for multiple
 discussions when we tried to get the Satterthwaite degrees of freedom
 implemented with `glmmTMB` (see https://github.com/glmmTMB/glmmTMB/blob/satterthwaite_df/glmmTMB/vignettes/satterthwaite_unstructured_example2.Rmd). Also Ben helped us significantly with
 an example showing how to use `TMB` for a random effect vector (https://github.com/bbolker/tmb-case-studies/tree/master/vectorMixed).
+
+# References

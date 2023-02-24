@@ -19,7 +19,7 @@ List with \code{num_df}, \code{denom_df}, \code{f_stat} and \code{p_val} (2-side
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
-Calculates the estimate, standard error, degree of freedom,
+Calculates the estimate, standard error, degrees of freedom,
 t statistic and p-value for one-dimensional contrast, depending on the method
 used in \code{\link[=mmrm]{mmrm()}}.
 }

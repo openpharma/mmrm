@@ -7,7 +7,7 @@ test_that("emmeans emits a message about mmrm registration on load", {
 
   # Detach emmeans in case it was loaded in session or previous test run
   if (isNamespaceLoaded("emmeans")) {
-    detach("package:emmeans", unload = TRUE)
+    unloadNamespace("emmeans")
   }
 
   expect_message(library(emmeans), "mmrm")

@@ -14,5 +14,8 @@ jobs:
   docs:
     name: Pkgdown Docs 📚
     uses: insightsengineering/r.pkg.template/.github/workflows/pkgdown.yaml@main
+    with:
+      refs-order: c("latest-tag", "main")
+      default-landing-page: latest-tag
     secrets:
       REPO_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

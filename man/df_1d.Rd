@@ -18,8 +18,8 @@ List with \code{est}, \code{se}, \code{df}, \code{t_stat} and \code{p_val}.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
-Calculates the degree of freedom, F statistic and p value for multi-dimensional contrast, depending on
-the method used in \code{\link[=mmrm]{mmrm()}}.
+Calculates the estimate, adjusted standard error, degrees of freedom,
+t statistic and p-value for one-dimensional contrast.
 }
 \examples{
 object <- mmrm(

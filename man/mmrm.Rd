@@ -8,6 +8,7 @@ mmrm(
   formula,
   data,
   weights = NULL,
+  covariance = NULL,
   reml = TRUE,
   control = mmrm_control(...),
   ...
@@ -18,11 +19,16 @@ mmrm(
 
 \item{data}{(\code{data})\cr the data to be used for the model.}
 
-\item{weights}{(\code{vector})\cr an optional vector of weights to be used in the fitting process.
-Should be NULL or a numeric vector.}
+\item{weights}{(\code{vector})\cr an optional vector of weights to be used in
+the fitting process. Should be \code{NULL} or a numeric vector.}
 
-\item{reml}{(\code{flag})\cr whether restricted maximum likelihood (REML) estimation is used,
-otherwise maximum likelihood (ML) is used.}
+\item{covariance}{(\code{cov_struct})\cr a covariance structure type definition
+as produced with \code{\link[=cov_struct]{cov_struct()}}, or value that can be coerced to a
+covariance structure using \code{\link[=as.cov_struct]{as.cov_struct()}}. If no value is provided,
+a structure is derived from the provided formula.}
+
+\item{reml}{(\code{flag})\cr whether restricted maximum likelihood (REML)
+estimation is used, otherwise maximum likelihood (ML) is used.}
 
 \item{control}{(\code{mmrm_control})\cr fine-grained fitting specifications list
 created with \code{\link[=mmrm_control]{mmrm_control()}}.}
@@ -49,7 +55,8 @@ The time points have to be unique for each subject. That is,
 there cannot be time points with multiple observations for any subject.
 The rationale is that these observations would need to be correlated, but it
 is not possible within the currently implemented covariance structure framework
-to do that correctly.
+to do that correctly. Moreover, for non-spatial covariance structures, the time
+variable must be a factor variable.
 
 When optimizer is not set, first the default optimizer
 (\code{L-BFGS-B}) is used to fit the model. If that converges, this is returned.
@@ -78,6 +85,8 @@ matrix.
 }
 
 Use of the package \code{emmeans} is supported, see \code{\link{emmeans_support}}.
+
+NA values are always omitted regardless of \code{na.action} setting.
 }
 \examples{
 fit <- mmrm(

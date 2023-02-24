@@ -31,6 +31,10 @@ reference:
       - mmrm_tmb_methods
   - title: Covariance Structures
     contents:
+      - cov_struct
+      - as.cov_struct
+      - format.cov_struct
+      - print.cov_struct
       - covariance_types
   - title: Estimate Marginal Means
     contents:

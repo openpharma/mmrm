@@ -68,6 +68,7 @@ std::map<std::string, matrix<Type>> derivatives(int n_visits, std::string cov_ty
 template <class Type>
 struct derivatives_base {
   virtual matrix<Type> get_inverse(std::vector<int> visits, matrix<Type> dist) = 0;
+  virtual matrix<Type> get_inverse_chol(std::vector<int> visits, matrix<Type> dist) = 0;
   virtual matrix<Type> get_sigma_derivative1(std::vector<int> visits, matrix<Type> dist) = 0;
   virtual matrix<Type> get_sigma_derivative2(std::vector<int> visits, matrix<Type> dist) = 0;
   virtual matrix<Type> get_sigma(std::vector<int> visits, matrix<Type> dist) = 0;
@@ -81,6 +82,7 @@ struct derivatives_base {
 template <class Type>
 struct derivatives_nonspatial: public derivatives_base<Type> {
   std::map<std::vector<int>, matrix<Type>> inverse_cache;
+  std::map<std::vector<int>, matrix<Type>> inverse_chol_cache;
   std::map<std::vector<int>, matrix<Type>> sigmad1_cache;
   std::map<std::vector<int>, matrix<Type>> sigmad2_cache;
   std::map<std::vector<int>, matrix<Type>> sigma_cache;
@@ -164,6 +166,21 @@ struct derivatives_nonspatial: public derivatives_base<Type> {
       return ret;
     }
   }
+  // Cache and return the lower cholesky factor of inverse of sigma using select matrix.
+  matrix<Type> get_inverse_chol(std::vector<int> visits, matrix<Type> dist) override {
+    if (this->inverse_chol_cache.count(visits) > 0) {
+      return this->inverse_chol_cache[visits];
+    } else {
+      Eigen::SparseMatrix<Type> sel_mat = this->get_sel_mat(visits);
+      matrix<Type> Ltildei = sel_mat * this->chol_full;
+      matrix<Type> cov_i = tcrossprod(Ltildei, true);
+      auto sigmainv = cov_i.inverse();
+      Eigen::LLT<Eigen::Matrix<Type,Eigen::Dynamic,Eigen::Dynamic> > sigma_inv_chol(sigmainv);
+      matrix<Type> Li = sigma_inv_chol.matrixL();
+      this->inverse_chol_cache[visits] = Li;
+      return Li;
+    }
+  }
   // Cache and return the inverse of sigma using select matrix.
   matrix<Type> get_inverse(std::vector<int> visits, matrix<Type> dist) override {
     if (this->inverse_cache.count(visits) > 0) {
@@ -244,6 +261,13 @@ struct derivatives_sp_exp: public derivatives_base<Type> {
   // Obtain inverse of sigma.
   matrix<Type> get_inverse(std::vector<int> visits, matrix<Type> dist) override {
     return this->get_sigma(visits, dist).inverse();
+  }
+  // Obtain the lower cholesky factor of inverse of sigma using select matrix.
+  matrix<Type> get_inverse_chol(std::vector<int> visits, matrix<Type> dist) override {
+    auto sigmainv = this->get_inverse(visits, dist);
+    Eigen::LLT<Eigen::Matrix<Type,Eigen::Dynamic,Eigen::Dynamic> > sigma_inv_chol(sigmainv);
+    matrix<Type> Li = sigma_inv_chol.matrixL();
+    return Li;
   }
   // Obtain first order derivatives for inverse of sigma.
   matrix<Type> get_inverse_derivative(std::vector<int> visits, matrix<Type> dist) override {

@@ -136,3 +136,11 @@ test_that("fill_names completes names of input values", {
     list(a = "a", b = "b")
   )
 })
+
+# h_get_cov_default ----
+
+test_that("h_get_cov_default works correctly", {
+  expect_identical(h_get_cov_default("Satterthwaite"), "Asymptotic")
+  expect_identical(h_get_cov_default("Kenward-Roger"), "Kenward-Roger")
+  expect_error(h_get_cov_default("UNKNOWN"), "'arg' should be one of \"Satterthwaite\", \"Kenward-Roger\"")
+})

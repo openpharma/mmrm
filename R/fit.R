@@ -31,6 +31,7 @@ fit_single_optimizer <- function(formula,
                                  data,
                                  weights,
                                  reml = TRUE,
+                                 covariance = NULL,
                                  ...,
                                  control = mmrm_control(...)) {
   assert_formula(formula)
@@ -45,10 +46,11 @@ fit_single_optimizer <- function(formula,
       data = data,
       weights = weights,
       reml = reml,
+      covariance = covariance,
       control = control
     ),
     remove = list(
-      warning = c("NA/NaN function evaluation") # Transient visit to invalid parameters.
+      warnings = c("NA/NaN function evaluation") # Transient visit to invalid parameters.
     )
   )
   if (length(quiet_fit$errors)) {
@@ -176,6 +178,7 @@ refit_multiple_optimizers <- function(fit,
 #' @param n_cores (`int`)\cr number of cores to be used.
 #' @param method (`string`)\cr adjustment method for degrees of freedom and
 #'   coefficients covariance matrix.
+#' @param vcov (`string`)\cr coefficients covariance matrix adjustment method.
 #' @param start (`numeric` or `NULL`)\cr optional start values for variance
 #'   parameters.
 #' @param accept_singular (`flag`)\cr whether singular design matrices are reduced
@@ -195,6 +198,16 @@ refit_multiple_optimizers <- function(fit,
 #' However, please be cautious because this can lead to convergence failure
 #' when using an unstructured covariance matrix and there are no observations
 #' at the missing visits.
+#' The `method` and `vcov` arguments specify the degrees of freedom and coefficients covariance matrix
+#' adjustment methods, respectively.
+#' If `method` is "Kenward-Roger" then only "Kenward-Roger" or "Kenward-Roger-Linear" are allowed for `vcov`.
+#' The `vcov` argument can be `NULL` to use the default covariance method depending on the `method`
+#' used for degrees of freedom, see the following table:
+#' | `method`  |  Default `vcov`|
+#' |-----------|----------|
+#' |Satterthwaite| Asymptotic|
+#' |Kenward-Roger| Kenward-Roger|
+#' |Residual| Empirical|
 #'
 #' @return List of class `mmrm_control` with the control parameters.
 #' @export
@@ -205,7 +218,8 @@ refit_multiple_optimizers <- function(fit,
 #'   optimizer_args = list(method = "L-BFGS-B")
 #' )
 mmrm_control <- function(n_cores = 1L,
-                         method = c("Satterthwaite", "Kenward-Roger", "Kenward-Roger-Linear"),
+                         method = c("Satterthwaite", "Kenward-Roger", "Residual"),
+                         vcov = NULL,
                          start = NULL,
                          accept_singular = TRUE,
                          drop_visit_levels = TRUE,
@@ -217,13 +231,26 @@ mmrm_control <- function(n_cores = 1L,
   assert_flag(accept_singular)
   assert_flag(drop_visit_levels)
   assert_list(optimizers, names = "unique", types = c("function", "partial"))
+  assert_string(vcov, null.ok = TRUE)
   method <- match.arg(method)
+  if (is.null(vcov)) {
+    vcov <- h_get_cov_default(method)
+  }
+  assert_subset(
+    vcov,
+    c("Asymptotic", "Empirical", "Empirical-Jackknife", "Kenward-Roger", "Kenward-Roger-Linear")
+  )
+
+  if (xor(identical(method, "Kenward-Roger"), vcov %in% c("Kenward-Roger", "Kenward-Roger-Linear"))) {
+    stop("Kenward-Roger degrees of freedom must work together with Kenward-Roger or Kenward-Roger-Linear covariance!")
+  }
   structure(
     list(
       optimizers = optimizers,
       start = start,
       accept_singular = accept_singular,
       method = method,
+      vcov = vcov,
       n_cores = as.integer(n_cores),
       drop_visit_levels = drop_visit_levels
     ),
@@ -240,10 +267,14 @@ mmrm_control <- function(n_cores = 1L,
 #'
 #' @param formula (`formula`)\cr the model formula, see details.
 #' @param data (`data`)\cr the data to be used for the model.
-#' @param weights (`vector`)\cr an optional vector of weights to be used in the fitting process.
-#'   Should be NULL or a numeric vector.
-#' @param reml (`flag`)\cr whether restricted maximum likelihood (REML) estimation is used,
-#'   otherwise maximum likelihood (ML) is used.
+#' @param weights (`vector`)\cr an optional vector of weights to be used in
+#'   the fitting process. Should be `NULL` or a numeric vector.
+#' @param reml (`flag`)\cr whether restricted maximum likelihood (REML)
+#'   estimation is used, otherwise maximum likelihood (ML) is used.
+#' @param covariance (`cov_struct`)\cr a covariance structure type definition
+#'   as produced with [cov_struct()], or value that can be coerced to a
+#'   covariance structure using [as.cov_struct()]. If no value is provided,
+#'   a structure is derived from the provided formula.
 #' @param control (`mmrm_control`)\cr fine-grained fitting specifications list
 #'   created with [mmrm_control()].
 #' @param ... arguments passed to [mmrm_control()].
@@ -260,7 +291,8 @@ mmrm_control <- function(n_cores = 1L,
 #' there cannot be time points with multiple observations for any subject.
 #' The rationale is that these observations would need to be correlated, but it
 #' is not possible within the currently implemented covariance structure framework
-#' to do that correctly.
+#' to do that correctly. Moreover, for non-spatial covariance structures, the time
+#' variable must be a factor variable.
 #'
 #' When optimizer is not set, first the default optimizer
 #' (`L-BFGS-B`) is used to fit the model. If that converges, this is returned.
@@ -289,6 +321,8 @@ mmrm_control <- function(n_cores = 1L,
 #'
 #' Use of the package `emmeans` is supported, see [`emmeans_support`].
 #'
+#' NA values are always omitted regardless of `na.action` setting.
+#'
 #' @export
 #'
 #' @examples
@@ -315,15 +349,18 @@ mmrm_control <- function(n_cores = 1L,
 mmrm <- function(formula,
                  data,
                  weights = NULL,
+                 covariance = NULL,
                  reml = TRUE,
                  control = mmrm_control(...),
                  ...) {
   assert_false(!missing(control) && !missing(...))
   assert_class(control, "mmrm_control")
   assert_list(control$optimizers, min.len = 1)
+
   if (control$method %in% c("Kenward-Roger", "Kenward-Roger-Linear") && !reml) {
     stop("Kenward-Roger only works for REML")
   }
+
   attr(data, which = "dataname") <- toString(match.call()$data)
 
   if (is.null(weights)) {
@@ -336,9 +373,11 @@ mmrm <- function(formula,
     formula = formula,
     data = data,
     weights = weights,
+    covariance = covariance,
     reml = reml,
     control = control
   )
+
   if (!attr(fit, "converged")) {
     use_multiple <- length(control$optimizers) > 1L
     if (use_multiple) {
@@ -365,10 +404,13 @@ mmrm <- function(formula,
     message(paste(fit_msg, collapse = "\n"))
   }
   fit$method <- control$method
-  if (control$method == "Satterthwaite") {
+  fit$vcov <- control$vcov
+  if (identical(fit$method, "Satterthwaite") && identical(fit$vcov, "Asymptotic")) {
     covbeta_fun <- h_covbeta_fun(fit)
     fit$jac_list <- h_jac_list(covbeta_fun, fit$theta_est)
-  } else {
+  }
+
+  if (control$vcov %in% c("Kenward-Roger", "Kenward-Roger-Linear")) {
     fit$kr_comp <- h_get_kr_comp(fit$tmb_data, fit$theta_est)
     fit$beta_vcov_adj <- h_var_adj(
       v = fit$beta_vcov,
@@ -376,8 +418,18 @@ mmrm <- function(formula,
       p = fit$kr_comp$P,
       q = fit$kr_comp$Q,
       r = fit$kr_comp$R,
-      linear = (control$method == "Kenward-Roger-Linear")
+      linear = (control$vcov == "Kenward-Roger-Linear")
     )
+  } else if (control$vcov %in% c("Empirical", "Empirical-Jackknife")) {
+    empirical_comp <- h_get_empirical(
+      fit$tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov, control$vcov == "Empirical-Jackknife"
+    )
+    fit$beta_vcov_adj <- empirical_comp$cov
+    fit$empirical_df_mat <- empirical_comp$df_mat
+    dimnames(fit$beta_vcov_adj) <- dimnames(fit$beta_vcov)
+  } else if (identical(control$vcov, "Asymptotic")) {
+  } else {
+    stop("Unrecognized coefficent variance-covariance method!")
   }
   class(fit) <- c("mmrm", class(fit))
   fit

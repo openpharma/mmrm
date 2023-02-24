@@ -11,91 +11,13 @@ test_that("mmrm_control works as expected", {
       start = NULL,
       accept_singular = TRUE,
       method = "Satterthwaite",
+      vcov = "Asymptotic",
       n_cores = 1L,
       drop_visit_levels = TRUE
     ),
     class = "mmrm_control"
   )
   expect_identical(result, expected)
-})
-
-# h_mmrm_tmb_exract_terms ---
-test_that("h_mmrm_tmb_extract_terms works for covariance terms as expected", {
-  expect_identical(
-    h_mmrm_tmb_extract_terms(quote(a | b)),
-    list(subject_var = "b", visit_var = "a", group_var = NULL)
-  )
-  expect_error(
-    h_mmrm_tmb_extract_terms(quote(a + b | b)),
-    "`time` in `time|\\(group/\\)subject` must be specified as one single variable."
-  )
-  expect_error(
-    h_mmrm_tmb_extract_terms(quote(a | (b + c))),
-    "Covariance structure must be of the form `time|\\(group/\\)subject`."
-  )
-  expect_identical(
-    h_mmrm_tmb_extract_terms(quote(a | b / c)),
-    list(subject_var = "c", visit_var = "a", group_var = "b")
-  )
-  expect_error(
-    h_mmrm_tmb_extract_terms(quote(a | (b + d) / c)),
-    "`group` in `time|\\(group/\\)subject` must be specified as one single variable."
-  )
-  expect_error(
-    h_mmrm_tmb_extract_terms(quote(a | b / (c + d))),
-    "`subject` in `time|\\(group/\\)subject` must be specified as one single variable."
-  )
-})
-
-# h_mmrm_tmb_extract_vars ----
-test_that("h_mmrm_tmb_extract_vars works for non-grouped formula as expected", {
-  expect_identical(
-    h_mmrm_tmb_extract_vars(quote(cs(a | b))),
-    list(subject_var = "b", visit_var = "a", group_var = NULL, is_spatial = FALSE)
-  )
-  expect_identical(
-    h_mmrm_tmb_extract_vars(quote(sp_exp(a1, a2 | b))),
-    list(subject_var = "b", visit_var = c("a1", "a2"), group_var = NULL, is_spatial = TRUE)
-  )
-  expect_error(
-    h_mmrm_tmb_extract_vars(quote(cs(a + b))),
-    "Covariance structure must be of the form `time|\\(group/\\)subject`."
-  )
-})
-
-test_that("h_mmrm_tmb_extract_vars works for grouped formula as expected", {
-  expect_identical(
-    h_mmrm_tmb_extract_vars(quote(cs(a | b / c))),
-    list(subject_var = "c", visit_var = "a", group_var = "b", is_spatial = FALSE)
-  )
-  expect_error(
-    h_mmrm_tmb_extract_vars(quote(cs((a + b) | c / d))),
-    "`time` in `time|\\(group/\\)subject` must be specified as one single variable."
-  )
-  expect_error(
-    h_mmrm_tmb_extract_vars(quote(cs(a | b / (c + d)))),
-    "`subject` in `time|\\(group/\\)subject` must be specified as one single variable."
-  )
-  expect_error(
-    h_mmrm_tmb_extract_vars(quote(cs(a | (b + c) / d))),
-    "`group` in `time|\\(group/\\)subject` must be specified as one single variable."
-  )
-})
-
-
-test_that("h_mmrm_tmb_extract_vars works for multiple coordinates as expected", {
-  expect_identical(
-    h_mmrm_tmb_extract_vars(quote(sp_exp(a1, a2, a3 | b))),
-    list(subject_var = "b", visit_var = c("a1", "a2", "a3"), group_var = NULL, is_spatial = TRUE)
-  )
-  expect_error(
-    h_mmrm_tmb_extract_vars(quote(us(a1, a2, a3 | b))),
-    "Non-spatial covariance term should not include multiple `time` variables."
-  )
-  expect_warning(
-    h_mmrm_tmb_extract_vars(quote(sp_exp(a1, a1 | b))),
-    "Duplicated `time` variable spotted: a1. This may indicate input errors in the formula."
-  )
 })
 
 # h_mmrm_tmb_formula_parts ----
@@ -141,31 +63,42 @@ test_that("h_mmrm_tmb_formula_parts works as expected", {
     h_mmrm_tmb_formula_parts(FEV1 ~ RACE + AVISIT + USUBJID),
     paste(
       "Covariance structure must be specified in formula.",
-      "Possible covariance structures include: us, toep, toeph, ar1, ar1h, ad, adh, cs, csh"
-    )
+      "Possible covariance structures include:",
+      "us, toep, toeph, ar1, ar1h, ad, adh, cs, csh"
+    ),
+    fixed = TRUE
   )
   expect_error(
     h_mmrm_tmb_formula_parts(FEV1 ~ RACE + arh1(AVISIT | USUBJID)),
     paste(
       "Covariance structure must be specified in formula.",
-      "Possible covariance structures include: us, toep, toeph, ar1, ar1h, ad, adh, cs, csh"
-    )
+      "Possible covariance structures include:",
+      "us, toep, toeph, ar1, ar1h, ad, adh, cs, csh"
+    ),
+    fixed = TRUE
   )
   expect_error(
     h_mmrm_tmb_formula_parts(FEV1 ~ RACE + ar1h(AVISIT | USUBJID) + cs(AVISIT | USUBJID)),
-    "Only one covariance structure can be specified. Currently specified covariance structures are: ar1h, cs"
+    paste0(
+      "Only one covariance structure can be specified. ",
+      "Currently specified covariance structures are: ar1h, cs"
+    ),
+    fixed = TRUE
   )
   expect_error(
     h_mmrm_tmb_formula_parts(FEV1 ~ RACE + cs(AVISIT)),
-    "Covariance structure must be of the form `time\\|\\(group/\\)subject`"
+    "Covariance structure must be of the form `time | (group /) subject`",
+    fixed = TRUE
   )
   expect_error(
     h_mmrm_tmb_formula_parts(FEV1 ~ RACE + cs(AVISIT | RACE + ARMCD / USUBJID)),
-    "Covariance structure must be of the form `time\\|\\(group/\\)subject`"
+    "Covariance structure must be of the form `time | (group /) subject`",
+    fixed = TRUE
   )
   expect_error(
     h_mmrm_tmb_formula_parts(FEV1 ~ RACE + cs(AVISIT, AVISIT | RACE + ARMCD / USUBJID)),
-    "Covariance structure must be of the form `time\\|\\(group/\\)subject`"
+    "Covariance structure must be of the form `time | (group /) subject`",
+    fixed = TRUE
   )
 })
 
@@ -437,6 +370,55 @@ test_that("h_mmrm_tmb_data will not be affecte by `weights` in data", {
   )
   expect_identical(res$weights_vector, rep_len(1, nrow(res$x_matrix)))
   expect_identical(fev_data$weights, weights)
+})
+
+test_that("h_mmrm_tmb_data works even if na.action is not na.omit", {
+  na_action <- options("na.action")
+  options(na.action = "na.omit")
+  formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula)
+  res1 <- h_mmrm_tmb_data(
+    formula_parts,
+    data = fev_data,
+    weights = rep_len(1, nrow(fev_data)),
+    reml = TRUE,
+    accept_singular = TRUE,
+    drop_visit_levels = TRUE
+  )
+  options(na.action = "na.pass")
+  res2 <- h_mmrm_tmb_data(
+    formula_parts,
+    data = fev_data,
+    weights = rep_len(1, nrow(fev_data)),
+    reml = TRUE,
+    accept_singular = TRUE,
+    drop_visit_levels = TRUE
+  )
+  expect_identical(res1, res2)
+
+  options(na.action = "na.fail")
+  res3 <- h_mmrm_tmb_data(
+    formula_parts,
+    data = fev_data,
+    weights = rep_len(1, nrow(fev_data)),
+    reml = TRUE,
+    accept_singular = TRUE,
+    drop_visit_levels = TRUE
+  )
+  expect_identical(res1, res3)
+
+  options(na.action = "na.exclude")
+  res4 <- h_mmrm_tmb_data(
+    formula_parts,
+    data = fev_data,
+    weights = rep_len(1, nrow(fev_data)),
+    reml = TRUE,
+    accept_singular = TRUE,
+    drop_visit_levels = TRUE
+  )
+  expect_identical(res1, res4)
+
+  options(na.action = na_action$na.action)
 })
 
 # h_mmrm_tmb_parameters ----
@@ -1749,4 +1731,20 @@ test_that("fit_mmrm works with below full rank original design matrix by default
   dat$SEX2 <- dat$SEX # nolint
   result <- expect_silent(fit_mmrm(formula, dat, weights = rep(1, nrow(dat))))
   expect_match(names(which(result$tmb_data$x_cols_aliased)), "SEX2")
+})
+
+test_that("fit_mmrm throws informative error when covariance structure is not
+          spatial and time variable is not a factor", {
+  tmp_data <- fev_data
+  levels(tmp_data$AVISIT) <- c(1, 2, 3, 4)
+  tmp_data$AVISIT <- as.numeric(tmp_data$AVISIT)
+
+  expect_error(
+    fit_mmrm(
+      FEV1 ~ FEV1_BL + RACE + us(AVISIT | USUBJID),
+      data = tmp_data,
+      weights = rep(1, nrow(tmp_data))
+    ),
+    "Time variable must be a factor for non-spatial covariance structures"
+  )
 })

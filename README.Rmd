@@ -58,6 +58,7 @@ square means estimates by using `emmeans`.
     adjusted degrees of freedom.
   * [Kenward-Roger](https://openpharma.github.io/mmrm/main/articles/kenward.html)
     adjusted degrees of freedom and coefficients covariance matrix.
+  * [Coefficient Covariance](https://openpharma.github.io/mmrm/main/articles/coef_vcov.html)
 * Model inference:
   * Supports REML and ML.
   * Supports weights.
