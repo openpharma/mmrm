@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9009</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9010</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,14 +43,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.2.2">v0.2.2</a> </div></li>
-<!-- end dropdown for versions -->
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -138,7 +130,7 @@ searching for a covariance definition.</p></li>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># provide a covariance structure as a right-sided formula</span></span></span>
-<span class="r-in"><span><span class="fu">as.cov_struct</span><span class="op">(</span> <span class="op">~</span> <span class="fu">csh</span><span class="op">(</span><span class="va">visit</span> <span class="op">|</span> <span class="va">group</span> <span class="op">/</span> <span class="va">subject</span><span class="op">)</span> <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">as.cov_struct</span><span class="op">(</span><span class="op">~</span> <span class="fu">csh</span><span class="op">(</span><span class="va">visit</span> <span class="op">|</span> <span class="va">group</span> <span class="op">/</span> <span class="va">subject</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;covariance structure&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> heterogeneous compound symmetry:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -146,7 +138,7 @@ searching for a covariance definition.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># when part of a full formula, suppress warnings using `warn_partial = FALSE`</span></span></span>
-<span class="r-in"><span><span class="fu">as.cov_struct</span><span class="op">(</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="fu">csh</span><span class="op">(</span><span class="va">visit</span> <span class="op">|</span> <span class="va">group</span> <span class="op">/</span> <span class="va">subject</span><span class="op">)</span>, warn_partial <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">as.cov_struct</span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">x</span> <span class="op">+</span> <span class="fu">csh</span><span class="op">(</span><span class="va">visit</span> <span class="op">|</span> <span class="va">group</span> <span class="op">/</span> <span class="va">subject</span><span class="op">)</span>, warn_partial <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;covariance structure&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> heterogeneous compound symmetry:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>

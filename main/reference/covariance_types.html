@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9009</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9010</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,14 +43,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.2.2">v0.2.2</a> </div></li>
-<!-- end dropdown for versions -->
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -105,6 +97,22 @@ more of <code>"heterogeneous"</code> or <code>"spatial"</code>.</p></dd>
 abbreviations.</p>
     </div>
     <div class="section level2">
+    <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
+    <p>The <strong>ante-dependence</strong> covariance structure in this package refers to
+homogeneous ante-dependence, while the ante-dependence covariance structure
+from SAS <code>PROC MIXED</code> refers to heterogeneous ante-dependence and the
+homogeneous version is not available in SAS.</p>
+<p>For all non-spatial covariance structures, the time variable must
+be coded as a factor.</p><div class="section">
+<h3 id="spatial-covariance-structures-">Spatial Covariance structures:<a class="anchor" aria-label="anchor" href="#spatial-covariance-structures-"></a></h3>
+
+
+<table class="table table"><tr><td><strong>Structure</strong></td><td><strong>Description</strong></td><td><strong>Parameters</strong></td><td><strong>\((i, j)\) element</strong></td></tr><tr><td>sp_exp</td><td>spatial exponential</td><td>\(2\)</td><td>\(\sigma^{2}\rho^{-d_{ij}}\)</td></tr></table><p>where \(d_{ij}\) denotes the Euclidean distance between time points
+\(i\) and \(j\).</p>
+</div>
+
+    </div>
+    <div class="section level2">
     <h2 id="abbreviations-for-covariance-structures">Abbreviations for Covariance Structures<a class="anchor" aria-label="anchor" href="#abbreviations-for-covariance-structures"></a></h2>
     
 
@@ -114,18 +122,6 @@ abbreviations.</p>
 
 <table class="table table"><tr><td><strong>Structure</strong></td><td><strong>Description</strong></td><td><strong>Parameters</strong></td><td><strong>\((i, j)\) element</strong></td></tr><tr><td>ad</td><td>Ante-dependence</td><td>\(m\)</td><td>\(\sigma^{2}\prod_{k=i}^{j-1}\rho_{k}\)</td></tr><tr><td>adh</td><td>Heterogeneous ante-dependence</td><td>\(2m-1\)</td><td>\(\sigma_{i}\sigma_{j}\prod_{k=i}^{j-1}\rho_{k}\)</td></tr><tr><td>ar1</td><td>First-order auto-regressive</td><td>\(2\)</td><td>\(\sigma^{2}\rho^{\left \vert {i-j} \right \vert}\)</td></tr><tr><td>ar1h</td><td>Heterogeneous first-order auto-regressive</td><td>\(m+1\)</td><td>\(\sigma_{i}\sigma_{j}\rho^{\left \vert {i-j} \right \vert}\)</td></tr><tr><td>cs</td><td>Compound symmetry</td><td>\(2\)</td><td>\(\sigma^{2}\left[ \rho I(i \neq j)+I(i=j) \right]\)</td></tr><tr><td>csh</td><td>Heterogeneous compound symmetry</td><td>\(m+1\)</td><td>\(\sigma_{i}\sigma_{j}\left[ \rho I(i \neq j)+I(i=j) \right]\)</td></tr><tr><td>toep</td><td>Toeplitz</td><td>\(m\)</td><td>\(\sigma_{\left \vert {i-j} \right \vert +1}\)</td></tr><tr><td>toeph</td><td>Heterogeneous Toeplitz</td><td>\(2m-1\)</td><td>\(\sigma_{i}\sigma_{j}\rho_{\left \vert {i-j} \right \vert}\)</td></tr><tr><td>us</td><td>Unstructured</td><td>\(m(m+1)/2\)</td><td>\(\sigma_{ij}\)</td></tr></table><p>where \(i\) and \(j\) denote \(i\)-th and \(j\)-th time points,
 respectively, out of total \(m\) time points, \(1 \leq i, j \leq m\).</p>
-<p>Note the <strong>ante-dependence</strong> covariance structure in this package refers to
-homogeneous ante-dependence, while the ante-dependence covariance structure
-from SAS <code>PROC MIXED</code> refers to heterogeneous ante-dependence and the
-homogeneous version is not available in SAS.</p>
-</div>
-
-<div class="section">
-<h3 id="spatial-covariance-structures-">Spatial Covariance structures:<a class="anchor" aria-label="anchor" href="#spatial-covariance-structures-"></a></h3>
-
-
-<table class="table table"><tr><td><strong>Structure</strong></td><td><strong>Description</strong></td><td><strong>Parameters</strong></td><td><strong>\((i, j)\) element</strong></td></tr><tr><td>sp_exp</td><td>spatial exponential</td><td>\(2\)</td><td>\(\sigma^{2}\rho^{-d_{ij}}\)</td></tr></table><p>where \(d_{ij}\) denotes the Euclidean distance between time points
-\(i\) and \(j\).</p>
 </div>
 
     </div>
