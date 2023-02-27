@@ -20,19 +20,23 @@ h_df_1d_bw <- function(object, contrast) {
 
   n_subjects <- component(object, "n_subjects")
   n_obs  <- component(object, "n_obs")
+  x_mat <- object$tmb_data$x_matrix
+  n_intercept <- if (any(colnames(x_mat) == "(Intercept)")) 1 else 0
+  x_mat_names <- colnames(x_mat)
 
-  bw_pars <- apply(X = object$tmb_data$x_matrix, MARGIN = 2, FUN = function(x) {
-    n_unique <- nrow(unique(cbind(x, as.numeric(object$tmb_data$full_frame[[object$formula_parts$subject_var]]))))
-    if (n_unique > n_subjects) "within"
-    else "between"
+  bw_pars <- sapply(X = x_mat_names, function(x) {
+    if (x == "(Intercept)") {"within"}
+    else {
+      n_unique <- nrow(unique(cbind(x_mat[, x], as.numeric(object$tmb_data$full_frame[[object$formula_parts$subject_var]]))))
+      if (n_unique > n_subjects) "within"
+      else "between"
+    }
   })
 
   n_pars_between <- sum(bw_pars == "between")
-  n_pars_within  <- sum(bw_pars == "within")
-
-  ddf_between <- n_subjects - n_pars_between
+  n_pars_within  <- sum(bw_pars == "within") - n_intercept
+  ddf_between <- n_subjects - n_pars_between - n_intercept
   ddf_within <- n_obs - n_subjects - n_pars_within
-
   df <- if (bw_pars[as.logical(contrast)] == "within") ddf_within else ddf_between
   df <- unname(df)
 
@@ -67,17 +71,22 @@ h_df_md_bw <- function(object, contrast) {
 
   n_subjects <- component(object, "n_subjects")
   n_obs  <- component(object, "n_obs")
+  x_mat <- object$tmb_data$x_matrix
+  n_intercept <- if (any(colnames(x_mat) == "(Intercept)")) 1 else 0
+  x_mat_names <- colnames(x_mat)
 
-  bw_pars <- apply(X = object$tmb_data$x_matrix, MARGIN = 2, FUN = function(x) {
-    n_unique <- nrow(unique(cbind(x, as.numeric(object$tmb_data$full_frame[[object$formula_parts$subject_var]]))))
-    if (n_unique > n_subjects) "within"
-    else "between"
+  bw_pars <- sapply(X = x_mat_names, function(x) {
+    if (x == "(Intercept)") {"within"}
+    else {
+      n_unique <- nrow(unique(cbind(x_mat[, x], as.numeric(object$tmb_data$full_frame[[object$formula_parts$subject_var]]))))
+      if (n_unique > n_subjects) "within"
+      else "between"
+    }
   })
 
   n_pars_between <- sum(bw_pars == "between")
-  n_pars_within  <- sum(bw_pars == "within")
-
-  ddf_between <- n_subjects - n_pars_between
+  n_pars_within  <- sum(bw_pars == "within") - n_intercept
+  ddf_between <- n_subjects - n_pars_between - n_intercept
   ddf_within <- n_obs - n_subjects - n_pars_within
 
   df <- apply(X = object$tmb_data$x_matrix[, as.logical(colSums(contrast)), drop = FALSE], MARGIN = 2, FUN = function(x) {
