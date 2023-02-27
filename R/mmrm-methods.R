@@ -234,6 +234,7 @@ print.summary.mmrm <- function(x,
 #' @export TODO
 #'
 #' @examples TODO
-simulate.mmrm <- function(){
+simulate.mmrm <- function(object, nsim = 1,
+                          seed = NULL, newdata = NULL){
 
 }
