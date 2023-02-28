@@ -10,6 +10,8 @@ fit_single_optimizer(
   weights,
   reml = TRUE,
   covariance = NULL,
+  tmb_data,
+  formula_parts,
   ...,
   control = mmrm_control(...)
 )

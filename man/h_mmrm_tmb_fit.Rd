@@ -4,22 +4,22 @@
 \alias{h_mmrm_tmb_fit}
 \title{Build \code{TMB} Fit Result List}
 \usage{
-h_mmrm_tmb_fit(tmb_object, tmb_opt, data, weights, formula_parts, tmb_data)
+h_mmrm_tmb_fit(tmb_object, tmb_opt, formula_parts, tmb_data)
 }
 \arguments{
 \item{tmb_object}{(\code{list})\cr created with \code{\link[TMB:MakeADFun]{TMB::MakeADFun()}}.}
 
 \item{tmb_opt}{(\code{list})\cr optimization result.}
 
-\item{data}{(\code{data.frame})\cr input data containing the variables used
-in \code{formula}.}
-
-\item{weights}{(\code{vector})\cr weights to be used in the fitting process.}
-
 \item{formula_parts}{(\code{mmrm_tmb_formula_parts})\cr produced by
 \code{\link[=h_mmrm_tmb_formula_parts]{h_mmrm_tmb_formula_parts()}}.}
 
 \item{tmb_data}{(\code{mmrm_tmb_data})\cr produced by \code{\link[=h_mmrm_tmb_data]{h_mmrm_tmb_data()}}.}
+
+\item{data}{(\code{data.frame})\cr input data containing the variables used
+in \code{formula}.}
+
+\item{weights}{(\code{vector})\cr weights to be used in the fitting process.}
 }
 \value{
 List of class \code{mmrm_tmb} with:
