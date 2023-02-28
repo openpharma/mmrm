@@ -61,8 +61,8 @@ fit_single_optimizer <- function(formula,
       )
     )
   } else {
-    checkmate::assert_class(tmb_data, "mmrm_tmb_data")
-    checkmate::assert_class(formula_parts, "mmrm_tmb_formula_parts")
+    assert_class(tmb_data, "mmrm_tmb_data")
+    assert_class(formula_parts, "mmrm_tmb_formula_parts")
     quiet_fit <- h_record_all_output(
       fit_mmrm(
         formula_parts = formula_parts,
