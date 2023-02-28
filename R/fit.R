@@ -423,6 +423,8 @@ mmrm <- function(formula,
   if (!is.null(fit_msg)) {
     message(paste(fit_msg, collapse = "\n"))
   }
+  fit$call <- match.call()
+  fit$call$formula <- formula
   fit$method <- control$method
   fit$vcov <- control$vcov
   if (identical(fit$method, "Satterthwaite") && identical(fit$vcov, "Asymptotic")) {

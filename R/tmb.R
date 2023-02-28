@@ -58,6 +58,7 @@ h_mmrm_tmb_formula_parts <- function(
 #'
 #' @return List of class `mmrm_tmb_data` with elements:
 #' - `full_frame`: `data.frame` with `n` rows containing all variables needed in the model.
+#' - `data`: `data.frame` of input dataset.
 #' - `x_matrix`: `matrix` with `n` rows and `p` columns specifying the overall design matrix.
 #' - `x_cols_aliased`: `logical` with potentially more than `p` elements indicating which
 #'      columns in the original design matrix have been left out to obtain a full rank
@@ -524,9 +525,7 @@ fit_mmrm <- function(formula,
   }
   fit <- h_mmrm_tmb_fit(tmb_object, tmb_opt, formula_parts, tmb_data)
   h_mmrm_tmb_check_conv(tmb_opt, fit)
-
-  fun_call <- match.call()
-  fun_call$formula <- eval(formula_parts$formula)
-  fit$call <- fun_call
+  fit$call <- match.call()
+  fit$call$formula <- formula_parts$formula
   fit
 }

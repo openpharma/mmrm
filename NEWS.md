@@ -15,6 +15,9 @@
   method used to adjust the coefficients covariance matrix. Empirical and empirical-Jackknife
   covariance support residual and Satterthwaite degrees of freedom.
 - Add optional `tidymodels` framework support.
+- Add confirmation if the number of visit levels is too large. Use `options(mmrm.max_visits = )`
+  to specify the maximum number of visits allowed in non-interactive mode, or asked in interactive
+  sessions.
 
 ### Bug Fixes
 
