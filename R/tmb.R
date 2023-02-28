@@ -125,7 +125,7 @@ h_mmrm_tmb_data <- function(formula_parts,
     order(data[[formula_parts$subject_var]], data[[formula_parts$visit_var]])
   }
   if (identical(formula_parts$is_spatial, FALSE)) {
-    h_confirm_large_levels(length(levels(data[[formula_parts$visit_var]])))   
+    h_confirm_large_levels(length(levels(data[[formula_parts$visit_var]])))
   }
   data <- data[data_order, ]
   weights <- weights[data_order]

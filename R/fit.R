@@ -70,8 +70,8 @@ fit_single_optimizer <- function(formula,
       )
     )
   }
-  
-  
+
+
   if (length(quiet_fit$errors)) {
     stop(quiet_fit$errors)
   }
