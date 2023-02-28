@@ -7,12 +7,16 @@
 #'
 #' @inheritParams mmrm
 #' @param control (`mmrm_control`)\cr object.
+#' @param tmb_data (`mmrm_tmb_data`)\cr object.
+#' @param formula_parts (`mmrm_tmb_formula_parts`)\cr object.
 #' @param ... Additional arguments to pass to [mmrm_control()].
 #'
 #' @details
 #' `fit_single_optimizer` will fit the `mmrm` model using the `control` provided.
 #' If there are multiple optimizers provided in `control`, only the first optimizer
 #' will be used.
+#' If `tmb_data` and `formula_parts` are both provided, `formula`, `data`, `weights`,
+#' `reml`, and `covariance` are ignored.
 #'
 #' @return The `mmrm_fit` object, with additional attributes containing warnings,
 #'   messages, optimizer used and convergence status in addition to the
@@ -32,27 +36,46 @@ fit_single_optimizer <- function(formula,
                                  weights,
                                  reml = TRUE,
                                  covariance = NULL,
+                                 tmb_data,
+                                 formula_parts,
                                  ...,
                                  control = mmrm_control(...)) {
-  assert_formula(formula)
-  assert_data_frame(data)
-  assert_vector(weights)
-  assert_flag(reml)
-  assert_class(control, "mmrm_control")
-  assert_list(control$optimizers, names = "unique", types = c("function", "partial"))
-  quiet_fit <- h_record_all_output(
-    fit_mmrm(
-      formula = formula,
-      data = data,
-      weights = weights,
-      reml = reml,
-      covariance = covariance,
-      control = control
-    ),
-    remove = list(
-      warnings = c("NA/NaN function evaluation") # Transient visit to invalid parameters.
+  if (missing(tmb_data) || missing(formula_parts)) {
+    assert_formula(formula)
+    assert_data_frame(data)
+    assert_numeric(weights, any.missing = FALSE, lower = .Machine$double.xmin)
+    assert_flag(reml)
+    assert_class(control, "mmrm_control")
+    assert_list(control$optimizers, names = "unique", types = c("function", "partial"))
+    quiet_fit <- h_record_all_output(
+      fit_mmrm(
+        formula,
+        data,
+        weights,
+        reml,
+        covariance,
+        control = control
+      ),
+      remove = list(
+        warnings = c("NA/NaN function evaluation") # Transient visit to invalid parameters.
+      )
     )
-  )
+  } else {
+    checkmate::assert_class(tmb_data, "mmrm_tmb_data")
+    checkmate::assert_class(formula_parts, "mmrm_tmb_formula_parts")
+    quiet_fit <- h_record_all_output(
+      fit_mmrm(
+        formula_parts = formula_parts,
+        tmb_data = tmb_data,
+        control = control
+      ),
+      remove = list(
+        warnings = c("NA/NaN function evaluation") # Transient visit to invalid parameters.
+      )
+    )
+  }
+
+
   if (length(quiet_fit$errors)) {
     stop(quiet_fit$errors)
   }
@@ -145,9 +168,8 @@ refit_multiple_optimizers <- function(fit,
     FUN = fit_single_optimizer,
     control = controls,
     MoreArgs = list(
-      formula = old_formula,
-      data = old_data,
-      weights = old_weights,
+      tmb_data = fit$tmb_data,
+      formula_parts = fit$formula_parts,
       reml = fit$reml
     ),
     mc.cores = n_cores_used,
@@ -368,13 +390,15 @@ mmrm <- function(formula,
   } else {
     attr(weights, which = "dataname") <- deparse(match.call()$weights)
   }
-
+  covariance <- reconcile_cov_struct(formula, covariance)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula, covariance)
+  tmb_data <- h_mmrm_tmb_data(
+    formula_parts, data, weights, reml,
+    accept_singular = control$accept_singular, drop_visit_levels = control$drop_visit_levels
+  )
   fit <- fit_single_optimizer(
-    formula = formula,
-    data = data,
-    weights = weights,
-    covariance = covariance,
-    reml = reml,
+    tmb_data = tmb_data,
+    formula_parts = formula_parts,
     control = control
   )
 
@@ -403,6 +427,8 @@ mmrm <- function(formula,
   if (!is.null(fit_msg)) {
     message(paste(fit_msg, collapse = "\n"))
   }
+  fit$call <- match.call()
+  fit$call$formula <- formula
   fit$method <- control$method
   fit$vcov <- control$vcov
   if (identical(fit$method, "Satterthwaite") && identical(fit$vcov, "Asymptotic")) {
