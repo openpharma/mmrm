@@ -491,8 +491,8 @@ fit_mmrm <- function(formula,
       accept_singular = control$accept_singular, drop_visit_levels = control$drop_visit_levels
     )
   } else {
-    checkmate::assert_class(tmb_data, "mmrm_tmb_data")
-    checkmate::assert_class(formula_parts, "mmrm_tmb_formula_parts")
+    assert_class(tmb_data, "mmrm_tmb_data")
+    assert_class(formula_parts, "mmrm_tmb_formula_parts")
   }
   tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = control$start, n_groups = tmb_data$n_groups)
 
