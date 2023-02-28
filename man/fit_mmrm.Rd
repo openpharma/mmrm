@@ -32,6 +32,8 @@ or value that can be coerced to a covariance structure using
 \code{\link[=as.cov_struct]{as.cov_struct()}}. If no value is provided, a structure is derived from
 the provided formula.}
 
+\item{tmb_data}{(\code{mmrm_tmb_data})\cr object.}
+
 \item{formula_parts}{(\code{mmrm_tmb_formula_parts})\cr list with formula parts
 from \code{\link[=h_mmrm_tmb_formula_parts]{h_mmrm_tmb_formula_parts()}}.}
 

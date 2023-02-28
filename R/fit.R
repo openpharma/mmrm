@@ -7,12 +7,16 @@
 #'
 #' @inheritParams mmrm
 #' @param control (`mmrm_control`)\cr object.
+#' @param tmb_data (`mmrm_tmb_data`)\cr object.
+#' @param formula_parts (`mmrm_tmb_formula_parts`)\cr object.
 #' @param ... Additional arguments to pass to [mmrm_control()].
 #'
 #' @details
 #' `fit_single_optimizer` will fit the `mmrm` model using the `control` provided.
 #' If there are multiple optimizers provided in `control`, only the first optimizer
 #' will be used.
+#' If `tmb_data` and `formula_parts` are both provided, `formula`, `data`, `weights`,
+#' `reml`, and `covariance` are ignored.
 #'
 #' @return The `mmrm_fit` object, with additional attributes containing warnings,
 #'   messages, optimizer used and convergence status in addition to the
@@ -70,8 +74,8 @@ fit_single_optimizer <- function(formula,
       )
     )
   }
-  
-  
+
+
   if (length(quiet_fit$errors)) {
     stop(quiet_fit$errors)
   }

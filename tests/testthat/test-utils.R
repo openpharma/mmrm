@@ -144,3 +144,13 @@ test_that("h_get_cov_default works correctly", {
   expect_identical(h_get_cov_default("Kenward-Roger"), "Kenward-Roger")
   expect_error(h_get_cov_default("UNKNOWN"), "'arg' should be one of \"Satterthwaite\", \"Kenward-Roger\"")
 })
+
+# h_confirm_large_levels ----
+
+test_that("h_confirm_large_levels errors for large number", {
+  expect_error(h_confirm_large_levels(120), "Visit levels too large")
+})
+
+test_that("h_confirm_large_levels errors for large number", {
+  expect_silent(h_confirm_large_levels(10))
+})
