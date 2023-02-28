@@ -296,3 +296,19 @@ fill_names <- function(x) {
 drop_elements <- function(x, n) {
   x[seq_along(x) > n]
 }
+
+h_confirm_large_levels <- function(x) {
+  checkmate::assert_numeric(x)
+  allowed_lvls <- x <= getOption("mmrm.max_visits", 100)
+  if (allowed_lvls) {
+    return(TRUE)
+  }
+  if (!interactive()) {
+    stop("Visit Level larger than 100.")
+  }
+  proceed <- utils::askYesNo("Visit levels is larger than 100. This requires large memory. Are you sure to continue?")
+  if (!proceed) {
+    stop("Visit Level larger than 100.")
+  }
+  return(TRUE)
+}
