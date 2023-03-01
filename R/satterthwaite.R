@@ -225,7 +225,7 @@ h_df_1d_sat <- function(object, contrast) {
       se = se,
       df = df,
       t_stat = est / se,
-      p_val = 2 * pt(abs(est / se), df = df, lower.tail = FALSE)
+      p_val = 2 * stats::pt(abs(est / se), df = df, lower.tail = FALSE)
     )
   }
 }

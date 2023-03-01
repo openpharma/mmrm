@@ -34,6 +34,7 @@ to full rank \code{x_matrix} and remaining coefficients will be missing as per
 List of class \code{mmrm_tmb_data} with elements:
 \itemize{
 \item \code{full_frame}: \code{data.frame} with \code{n} rows containing all variables needed in the model.
+\item \code{data}: \code{data.frame} of input dataset.
 \item \code{x_matrix}: \code{matrix} with \code{n} rows and \code{p} columns specifying the overall design matrix.
 \item \code{x_cols_aliased}: \code{logical} with potentially more than \code{p} elements indicating which
 columns in the original design matrix have been left out to obtain a full rank
