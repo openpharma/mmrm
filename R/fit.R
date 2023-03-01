@@ -169,7 +169,7 @@ refit_multiple_optimizers <- function(fit,
     control = controls,
     MoreArgs = list(
       tmb_data = fit$tmb_data,
-      formula_parts = fit$formula_parts,
+      formula_parts = fit$formula_parts
     ),
     mc.cores = n_cores_used,
     mc.silent = TRUE,
