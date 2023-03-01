@@ -350,7 +350,7 @@ mmrm_control <- function(n_cores = 1L,
 #' You can use `options(mmrm.max_visits = <target>)` to increase the maximum allowed number of visit
 #' levels. In non-interactive sessions the confirmation is not raised and will directly give you error if
 #' that number of visit levels exceed the maximum.
-#' 
+#'
 #' @export
 #'
 #' @examples
