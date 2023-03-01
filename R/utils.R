@@ -306,7 +306,7 @@ drop_elements <- function(x, n) {
 #'
 #' @keywords internal
 h_confirm_large_levels <- function(x) {
-  checkmate::assert_numeric(x)
+  assert_count(x)
   allowed_lvls <- x <= getOption("mmrm.max_visits", 100)
   if (allowed_lvls) {
     return(TRUE)
