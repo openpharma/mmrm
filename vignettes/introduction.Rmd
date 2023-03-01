@@ -273,16 +273,6 @@ and `VIS4` the same as the correlation between `VIS1` and `VIS2`. Hence we get a
 correlation estimate here compared to the first result, which includes `VIS3`
 explicitly.
 
-## Large Number of Visit Levels for non-spatial Covariance
-
-When the number of visit levels is large, it usually require large memory to create the
-covariance matrix. By default, the maximum allowed visit levels is 100, and if there are more
-visit levels, a confirmation is needed if run interactively.
-You can use `options(mmrm.max_visits = <target>)` to increase the maximum allowed number of visit
-levels.
-In non-interactive sessions the confirmation is not raised and will directly give you error if
-that number of visit levels exceed the maximum.
-
 # Extraction of model features
 
 Similar to model objects created in other packages, components of `mmrm` and

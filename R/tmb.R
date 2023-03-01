@@ -475,7 +475,7 @@ fit_mmrm <- function(formula,
                      formula_parts,
                      control = mmrm_control()) {
   if (missing(formula_parts) || missing(tmb_data)) {
-    covariance <- reconcile_cov_struct(formula, covariance)
+    covariance <- h_reconcile_cov_struct(formula, covariance)
     formula_parts <- h_mmrm_tmb_formula_parts(formula, covariance)
 
     if (!formula_parts$is_spatial && !is.factor(data[[formula_parts$visit_var]])) {

@@ -49,11 +49,11 @@ fit_single_optimizer <- function(formula,
     assert_list(control$optimizers, names = "unique", types = c("function", "partial"))
     quiet_fit <- h_record_all_output(
       fit_mmrm(
-        formula,
-        data,
-        weights,
-        reml,
-        covariance,
+        formula = formula,
+        data = data,
+        weights = weights,
+        reml = reml,
+        covariance = covariance,
         control = control
       ),
       remove = list(
@@ -170,7 +170,6 @@ refit_multiple_optimizers <- function(fit,
     MoreArgs = list(
       tmb_data = fit$tmb_data,
       formula_parts = fit$formula_parts,
-      reml = fit$reml
     ),
     mc.cores = n_cores_used,
     mc.silent = TRUE,
@@ -345,6 +344,13 @@ mmrm_control <- function(n_cores = 1L,
 #'
 #' NA values are always omitted regardless of `na.action` setting.
 #'
+#' When the number of visit levels is large, it usually require large memory to create the
+#' covariance matrix. By default, the maximum allowed visit levels is 100, and if there are more
+#' visit levels, a confirmation is needed if run interactively.
+#' You can use `options(mmrm.max_visits = <target>)` to increase the maximum allowed number of visit
+#' levels. In non-interactive sessions the confirmation is not raised and will directly give you error if
+#' that number of visit levels exceed the maximum.
+#' 
 #' @export
 #'
 #' @examples
@@ -390,7 +396,7 @@ mmrm <- function(formula,
   } else {
     attr(weights, which = "dataname") <- deparse(match.call()$weights)
   }
-  covariance <- reconcile_cov_struct(formula, covariance)
+  covariance <- h_reconcile_cov_struct(formula, covariance)
   formula_parts <- h_mmrm_tmb_formula_parts(formula, covariance)
   tmb_data <- h_mmrm_tmb_data(
     formula_parts, data, weights, reml,
