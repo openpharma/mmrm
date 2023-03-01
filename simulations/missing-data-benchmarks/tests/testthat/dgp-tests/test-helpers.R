@@ -81,3 +81,49 @@ test_that(paste(
   bcva_out <- generate_outcomes(covars_df, cov_mat)
   expect_equal(length(bcva_out), 50)
 })
+
+test_that(paste(
+  "missing_at_random() removes observations at random based on their baseline",
+  "bcva values, strata, and the treatment-by-visit-number interacton"
+), {
+
+  library(dplyr)
+
+  # generate some covariates data
+  set.seed(78234)
+  covars_df <- generate_covariates(n_obs = 10000, n_visits = 10)
+
+  # compute the expected probability that a patient is missing at time 8 given
+  # they are in the treatment group, they have a baseline bcva value of 80, and
+  # they are in strata 2
+  true_prob_miss <- plogis(-(5 - 0.01 * 80 + 0.5 - 0.25 * 8))
+
+  # delete patient visits at random
+  missing_covars_df <- missing_at_random(covars_df = covars_df, type = "low")
+  missing_covars_df <- missing_at_random(covars_df = covars_df, type = "high")
+
+  # label missing visits
+  covars_df <- covars_df %>%
+    left_join(
+      missing_covars_df %>% mutate(missing = FALSE),
+      by = c("participant", "base_bcva", "strata", "trt", "visit_num")
+    ) %>%
+    mutate(missing = is.na(missing))
+
+  # fit glm for missingness indicator
+  glm_fit <- glm(
+    missing ~ base_bcva + strata + trt * visit_num,
+    data = covars_df
+  )
+
+  # predict the missingness probability for the specified patient and visit num
+  patient_obs <- data.frame(
+    base_bcva = 80, strata = factor(2, levels = 1:3), trt = 1, visit_num = 8
+  )
+
+  expect_equal(
+    predict.glm(glm_fit, newdata = patient_obs) - true_prob_miss, 0,
+    tolerance = 0.01, ignore_attr = TRUE
+  )
+
+})

@@ -76,3 +76,26 @@ generate_outcomes <- function(
     as.vector(t(MASS::mvrnorm(n_obs, rep(0, n_visits), cov_mat))))
 
 }
+
+missing_at_random <- function(covars_df, type) {
+
+  # compute missingess probabilities
+  if (type == "low") {
+    prob_miss <- plogis(
+      -(5 - 0.01 * covars_df$base_bcva + 0.5 * (covars_df$strata == 2) +
+          1 * (covars_df$strata == 3) - 0.25 * covars_df$visit_num)
+    )
+  } else if (type == "high") {
+    prob_miss <- plogis(
+      -(5 - 0.01 * covars_df$base_bcva + 0.5 * (covars_df$strata == 2) +
+          1 * (covars_df$strata == 3) + 0.4 * covars_df$visit_num)
+    )
+  }
+
+  # generate vector of missingness indicators
+  missing_ind <- rbinom(nrow(covars_df), 1, prob_miss)
+
+  # remove indicated visits
+  covars_df[missing_ind == 0, ]
+
+}
