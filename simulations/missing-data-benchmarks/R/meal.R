@@ -17,21 +17,42 @@ sim_functions_files = list.files(
 )
 sapply(sim_functions_files, source)
 
-# specify the DGPs
+# generate the possible covariance matrices
 us_cov_mat <- compute_unstructured_matrix()
+csh_cov_mat <- compute_csh_matrix()
+toep_cov_mat <- toeplitz(c(1, 0.5, 0.25, 0.125, rep(0, 6)))
+
+# dgps with no treatment effect and no missingness
 no_miss_no_effect_us_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
   outcome_covar_mat = us_cov_mat
 )
-csh_cov_mat <- compute_csh_matrix()
 no_miss_no_effect_csh_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
   outcome_covar_mat = csh_cov_mat
 )
-toep_cov_mat <- toeplitz(c(1, 0.5, 0.25, 0.125, rep(0, 6)))
 no_miss_no_effect_toeph_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
   outcome_covar_mat = toep_cov_mat
+)
+
+# dgps with no treatment effect and some missingness
+low_miss_no_effect_us_dgp <- create_dgp(
+  .dgp_fun = rct_dgp_fun,
+  outcome_covar_mat = us_cov_mat,
+  missingness = "low"
+)
+low_miss_no_effect_csh_dgp <- create_dgp(
+  .dgp_fun = rct_dgp_fun,
+  outcome_covar_mat = csh_cov_mat,
+  missingness = "low"
+
+)
+low_miss_no_effect_toeph_dgp <- create_dgp(
+  .dgp_fun = rct_dgp_fun,
+  outcome_covar_mat = toep_cov_mat,
+  missingness = "low"
+
 )
 
 # specify the methods
@@ -70,7 +91,10 @@ mean_time_eval <- create_evaluator(.eval_fun = mean_time_fun)
 true_params <- list(
   "no_miss_no_effect_us" = rep(0, 10),
   "no_miss_no_effect_csh" = rep(0, 10),
-  "no_miss_no_effect_toeph" = rep(0, 10)
+  "no_miss_no_effect_toeph" = rep(0, 10),
+  "low_miss_no_effect_us" = rep(0, 10),
+  "low_miss_no_effect_csh" = rep(0, 10),
+  "low_miss_no_effect_toeph" = rep(0, 10)
 )
 bias_eval <- create_evaluator(.eval_fun = bias_fun, true_params = true_params)
 variance_eval <- create_evaluator(.eval_fun = variance_fun)
@@ -85,13 +109,18 @@ experiment <- create_experiment(
   add_dgp(no_miss_no_effect_us_dgp, name = "no_miss_no_effect_us") %>%
   add_dgp(no_miss_no_effect_csh_dgp, name = "no_miss_no_effect_csh") %>%
   add_dgp(no_miss_no_effect_toeph_dgp, name = "no_miss_no_effect_toeph") %>%
+  add_dgp(low_miss_no_effect_us_dgp, name = "low_miss_no_effect_us") %>%
+  add_dgp(low_miss_no_effect_csh_dgp, name = "low_miss_no_effect_csh") %>%
+  add_dgp(low_miss_no_effect_toeph_dgp, name = "low_miss_no_effect_toeph") %>%
   add_vary_across(
     .dgp = c(
-      "no_miss_no_effect_us", "no_miss_no_effect_csh", "no_miss_no_effect_toeph"
+      "no_miss_no_effect_us", "no_miss_no_effect_csh",
+      "no_miss_no_effect_toeph", "low_miss_no_effect_us",
+      "low_miss_no_effect_csh", "low_miss_no_effect_toeph"
     ),
     n_obs = c(125, 250)
   ) %>%
-  add_method(mmrm_us_meth, name = "mmrm_us") %>%
+  add_method(mmrm_us_meth, name = "mmrm_us")  %>%
   add_method(mmrm_csh_meth, name = "mmrm_csh") %>%
   add_method(mmrm_toeph_meth, name = "mmrm_toeph")  %>%
   add_method(glmmtmb_us_meth, name = "glmmtmb_us") %>%

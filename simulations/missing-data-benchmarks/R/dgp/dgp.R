@@ -3,7 +3,8 @@ rct_dgp_fun <- function(
   outcome_covar_mat,
   trt_coef = 0,
   visit_coef = 0.25,
-  trt_visit_coef = 0
+  trt_visit_coef = 0,
+  missingness = NULL
 ) {
   # generate the covariates
   covars_df <- generate_covariates(
@@ -22,15 +23,21 @@ rct_dgp_fun <- function(
   # compute the change in BCVA
   bcva_change <- bcva_out - covars_df$base_bcva
 
-  # return the list
-  return(
-    list(
-      participant = covars_df$participant,
-      bcva_change = bcva_change,
-      base_bcva = covars_df$base_bcva,
-      strata = covars_df$strata,
-      trt = covars_df$trt,
-      visit_num = covars_df$visit_num
-    )
+  # assemble into a data.frame
+  df <- data.frame(
+    participant = covars_df$participant,
+    bcva_change = bcva_change,
+    base_bcva = covars_df$base_bcva,
+    strata = covars_df$strata,
+    trt = covars_df$trt,
+    visit_num = covars_df$visit_num
   )
+
+  # delete observations at random if asked
+  if (!is.null(missingness)) {
+    df <- missing_at_random(df, type = missingness)
+  }
+
+  # return the list
+  return(as.list(df))
 }

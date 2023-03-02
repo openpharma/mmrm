@@ -100,7 +100,6 @@ test_that(paste(
 
   # delete patient visits at random
   missing_covars_df <- missing_at_random(covars_df = covars_df, type = "low")
-  missing_covars_df <- missing_at_random(covars_df = covars_df, type = "high")
 
   # label missing visits
   covars_df <- covars_df %>%

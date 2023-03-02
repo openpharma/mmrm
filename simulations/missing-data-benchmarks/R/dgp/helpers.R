@@ -79,7 +79,7 @@ generate_outcomes <- function(
 
 missing_at_random <- function(covars_df, type) {
 
-  # compute missingess probabilities
+  # compute missingness probabilities
   if (type == "low") {
     prob_miss <- plogis(
       -(5 - 0.01 * covars_df$base_bcva + 0.5 * (covars_df$strata == 2) +
@@ -88,7 +88,7 @@ missing_at_random <- function(covars_df, type) {
   } else if (type == "high") {
     prob_miss <- plogis(
       -(5 - 0.01 * covars_df$base_bcva + 0.5 * (covars_df$strata == 2) +
-          1 * (covars_df$strata == 3) + 0.4 * covars_df$visit_num)
+          1 * (covars_df$strata == 3) - 0.4 * covars_df$visit_num)
     )
   }
 
