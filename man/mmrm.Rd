@@ -88,12 +88,12 @@ Use of the package \code{emmeans} is supported, see \code{\link{emmeans_support}
 
 NA values are always omitted regardless of \code{na.action} setting.
 
-When the number of visit levels is large, it usually require large memory to create the
+When the number of visit levels is large, it usually requires large memory to create the
 covariance matrix. By default, the maximum allowed visit levels is 100, and if there are more
 visit levels, a confirmation is needed if run interactively.
 You can use \verb{options(mmrm.max_visits = <target>)} to increase the maximum allowed number of visit
-levels. In non-interactive sessions the confirmation is not raised and will directly give you error if
-that number of visit levels exceed the maximum.
+levels. In non-interactive sessions the confirmation is not raised and will directly give you an error if
+the number of visit levels exceeds the maximum.
 }
 \examples{
 fit <- mmrm(
