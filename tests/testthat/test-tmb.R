@@ -159,7 +159,7 @@ test_that("h_mmrm_tmb_data works as expected", {
   expect_named(
     result,
     c(
-      "full_frame", "x_matrix", "x_cols_aliased", "coordinates", "y_vector",
+      "full_frame", "data", "x_matrix", "x_cols_aliased", "coordinates", "y_vector",
       "weights_vector", "visits_zero_inds", "n_visits", "n_subjects",
       "subject_zero_inds", "subject_n_visits", "cov_type", "is_spatial_int", "reml",
       "subject_groups", "n_groups"
@@ -191,7 +191,7 @@ test_that("h_mmrm_tmb_data works as expected for grouped covariance", {
   expect_named(
     result,
     c(
-      "full_frame", "x_matrix", "x_cols_aliased", "coordinates", "y_vector",
+      "full_frame", "data", "x_matrix", "x_cols_aliased", "coordinates", "y_vector",
       "weights_vector", "visits_zero_inds", "n_visits", "n_subjects", "subject_zero_inds",
       "subject_n_visits", "cov_type", "is_spatial_int", "reml", "subject_groups", "n_groups"
     )
@@ -222,7 +222,7 @@ test_that("h_mmrm_tmb_data works as expected for mutli-dimensional spatial expon
   expect_named(
     result,
     c(
-      "full_frame", "x_matrix", "x_cols_aliased", "coordinates", "y_vector",
+      "full_frame", "data", "x_matrix", "x_cols_aliased", "coordinates", "y_vector",
       "weights_vector", "visits_zero_inds", "n_visits", "n_subjects", "subject_zero_inds",
       "subject_n_visits", "cov_type", "is_spatial_int", "reml", "subject_groups", "n_groups"
     )
@@ -420,6 +420,22 @@ test_that("h_mmrm_tmb_data works even if na.action is not na.omit", {
 
   options(na.action = na_action$na.action)
 })
+
+test_that("h_mmrm_tmb_data errors if too many visit levels", {
+  formula <- FEV1 ~ RACE + us(AVISIT | USUBJID)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula)
+  options("mmrm.max_visits" = 2)
+  result <- expect_error(h_mmrm_tmb_data(
+    formula_parts,
+    fev_data,
+    fev_data$WEIGHT,
+    reml = FALSE,
+    accept_singular = FALSE,
+    drop_visit_levels = TRUE
+  ), "Visit levels too large!")
+  options("mmrm.max_visits" = NULL)
+})
+
 
 # h_mmrm_tmb_parameters ----
 
@@ -801,8 +817,6 @@ test_that("h_mmrm_tmb_fit works as expected", {
   result <- expect_silent(h_mmrm_tmb_fit(
     tmb_object,
     tmb_opt,
-    fev_data,
-    weights,
     formula_parts,
     tmb_data
   ))
@@ -855,7 +869,7 @@ test_that("h_mmrm_tmb_fit works as expected for grouped covariance", {
     )
   )
   result <- expect_silent(h_mmrm_tmb_fit(
-    tmb_object, tmb_opt, fev_data, weights, formula_parts, tmb_data
+    tmb_object, tmb_opt, formula_parts, tmb_data
   ))
   expect_class(result, "mmrm_tmb")
   expect_named(result, c(
@@ -1667,7 +1681,7 @@ test_that("fit_mmrm saves data name in call element as expected", {
   fit <- fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)))
   saved_call <- fit$call
   expect_class(saved_call, "call")
-  expect_identical(saved_call$data, "fev_data")
+  expect_identical(saved_call$data, as.name("fev_data"))
 })
 
 test_that("fit_mmrm works even when time point variable has unused factor levels", {

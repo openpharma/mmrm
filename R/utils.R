@@ -296,3 +296,33 @@ fill_names <- function(x) {
 drop_elements <- function(x, n) {
   x[seq_along(x) > n]
 }
+
+#' Ask for Confirmation on Large Visit Levels
+#'
+#' @description Ask the user for confirmation if there are too many visit levels
+#' for non-spatial covariance structure in interactive sessions.
+#'
+#' @param x (`numeric`)\cr number of visit levels.
+#'
+#' @keywords internal
+h_confirm_large_levels <- function(x) {
+  assert_count(x)
+  allowed_lvls <- x <= getOption("mmrm.max_visits", 100)
+  if (allowed_lvls) {
+    return(TRUE)
+  }
+  if (!interactive()) {
+    stop("Visit levels too large!", call. = FALSE)
+  }
+  proceed <- utils::askYesNo(
+    paste(
+      "Visit levels is larger possibly too large.",
+      "This requires large memory. Are you sure to continue?",
+      collapse = " "
+    )
+  )
+  if (!identical(proceed, TRUE)) {
+    stop("Visit levels too large!", call. = FALSE)
+  }
+  return(TRUE)
+}
