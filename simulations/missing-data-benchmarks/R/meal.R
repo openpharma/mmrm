@@ -1,3 +1,4 @@
+
 # load required libraries
 library(simChef)
 library(mmrm)
@@ -46,13 +47,31 @@ low_miss_no_effect_csh_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
   outcome_covar_mat = csh_cov_mat,
   missingness = "low"
-
 )
 low_miss_no_effect_toeph_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
   outcome_covar_mat = toep_cov_mat,
   missingness = "low"
+)
 
+# dgps with small treatment effect and some missingness
+low_miss_small_effect_us_dgp <- create_dgp(
+  .dgp_fun = rct_dgp_fun,
+  outcome_covar_mat = us_cov_mat,
+  missingness = "low",
+  trt_visit_coef = 0.25
+)
+low_miss_small_effect_csh_dgp <- create_dgp(
+  .dgp_fun = rct_dgp_fun,
+  outcome_covar_mat = csh_cov_mat,
+  missingness = "low",
+  trt_visit_coef = 0.25
+)
+low_miss_small_effect_toeph_dgp <- create_dgp(
+  .dgp_fun = rct_dgp_fun,
+  outcome_covar_mat = toep_cov_mat,
+  missingness = "low",
+  trt_visit_coef = 0.25
 )
 
 # specify the methods
@@ -94,11 +113,23 @@ true_params <- list(
   "no_miss_no_effect_toeph" = rep(0, 10),
   "low_miss_no_effect_us" = rep(0, 10),
   "low_miss_no_effect_csh" = rep(0, 10),
-  "low_miss_no_effect_toeph" = rep(0, 10)
+  "low_miss_no_effect_toeph" = rep(0, 10),
+  "low_miss_small_effect_us" = seq(from = 0.25, by = 0.25, length.out = 10),
+  "low_miss_small_effect_csh" = seq(from = 0.25, by = 0.25, length.out = 10),
+  "low_miss_small_effect_toeph" = seq(from = 0.25, by = 0.25, length.out = 10)
 )
 bias_eval <- create_evaluator(.eval_fun = bias_fun, true_params = true_params)
 variance_eval <- create_evaluator(.eval_fun = variance_fun)
 convergence_rate_eval <- create_evaluator(.eval_fun = convergence_rate_fun)
+coverage_eval <- create_evaluator(
+  .eval_fun = coverage_fun, true_params = true_params
+)
+type_1_error_rate_eval <- create_evaluator(
+  .eval_fun = type_1_error_rate_fun, true_params = true_params
+)
+type_2_error_rate_eval <- create_evaluator(
+  .eval_fun = type_2_error_rate_fun, true_params = true_params
+)
 
 # specify the resul summarizers
 
@@ -112,11 +143,18 @@ experiment <- create_experiment(
   add_dgp(low_miss_no_effect_us_dgp, name = "low_miss_no_effect_us") %>%
   add_dgp(low_miss_no_effect_csh_dgp, name = "low_miss_no_effect_csh") %>%
   add_dgp(low_miss_no_effect_toeph_dgp, name = "low_miss_no_effect_toeph") %>%
+  add_dgp(low_miss_small_effect_us_dgp, name = "low_miss_small_effect_us") %>%
+  add_dgp(low_miss_small_effect_csh_dgp, name = "low_miss_small_effect_csh") %>%
+  add_dgp(
+    low_miss_small_effect_toeph_dgp, name = "low_miss_small_effect_toeph"
+  ) %>%
   add_vary_across(
     .dgp = c(
       "no_miss_no_effect_us", "no_miss_no_effect_csh",
       "no_miss_no_effect_toeph", "low_miss_no_effect_us",
-      "low_miss_no_effect_csh", "low_miss_no_effect_toeph"
+      "low_miss_no_effect_csh", "low_miss_no_effect_toeph",
+      "low_miss_small_effect_us", "low_miss_small_effect_csh",
+      "low_miss_small_effect_toeph"
     ),
     n_obs = c(125, 250)
   ) %>%
@@ -134,7 +172,10 @@ experiment <- create_experiment(
   add_evaluator(mean_time_eval, name = "mean_fit_time") %>%
   add_evaluator(bias_eval, name = "bias") %>%
   add_evaluator(variance_eval, name = "variance") %>%
-  add_evaluator(convergence_rate_eval, name = "convergence_rate")
+  add_evaluator(convergence_rate_eval, name = "convergence_rate") %>%
+  add_evaluator(coverage_eval, name = "coverage_rate") %>%
+  add_evaluator(type_1_error_rate_eval, name = "type_1_error_rate") %>%
+  add_evaluator(type_2_error_rate_eval, name = "type_2_error_rate")
 
 # run the experiment
 set.seed(72342)

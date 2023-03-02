@@ -1,4 +1,4 @@
-test_that("type_1_error_rate_fun computes DGP-specific bias", {
+test_that("type_1_error_rate_fun computes DGP-specific type 1 error rates", {
 
   ## generate some data from two different DGPs
   set.seed(510)
@@ -131,6 +131,9 @@ test_that("type_1_error_rate_fun computes DGP-specific bias", {
     colnames(type_1_error_rate_tbl),
     c(".dgp_name", ".method_name", "n_obs", "coefficient", "type_1_error_rate")
   )
+
+  # only DGPs with no effects are present
+  expect_equal(all(type_1_error_rate_tbl$.dgp_name == "no_eff"), TRUE)
 
   # make sure that all of the coefficients represented
   expect_equal(
