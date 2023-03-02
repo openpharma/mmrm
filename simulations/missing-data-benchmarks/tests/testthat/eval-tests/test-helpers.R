@@ -186,3 +186,115 @@ test_that("get_proc_mixed_convergence extracts convergence status", {
   expect_equal(conv_status, TRUE)
 
 })
+
+test_that("get_mmrm_trt_visit_num_ses extracts standard errors", {
+
+  # generate data
+  set.seed(51235)
+  dgp_output <- rct_dgp_fun(
+    n_obs = 100,
+    outcome_covar_mat = diag(3),
+    trt_visit_coef = 0.5
+  )
+
+  # fit the mmrm with mmrm
+  mmrm_fit <- mmrm_wrapper_fun(
+    participant = dgp_output$participant,
+    visit_num = dgp_output$visit_num,
+    base_bcva = dgp_output$base_bcva,
+    strata = dgp_output$strata,
+    trt = dgp_output$trt,
+    bcva_change = dgp_output$bcva_change,
+    covar_type = "us"
+  )
+
+  # extract estimates
+  ses <- get_mmrm_trt_visit_num_ses(mmrm_fit$fit)
+  expect_equal(is.numeric(ses), TRUE)
+  expect_equal(length(ses), 3)
+
+})
+
+test_that("get_glmmtmb_trt_visit_num_ses extracts standard errors", {
+
+  # generate data
+  set.seed(51235)
+  dgp_output <- rct_dgp_fun(
+    n_obs = 100,
+    outcome_covar_mat = diag(3),
+    trt_visit_coef = 0.5
+  )
+
+  # fit the mmrm with mmrm
+  glmmtmb_fit <- glmmtmb_wrapper_fun(
+    participant = dgp_output$participant,
+    visit_num = dgp_output$visit_num,
+    base_bcva = dgp_output$base_bcva,
+    strata = dgp_output$strata,
+    trt = dgp_output$trt,
+    bcva_change = dgp_output$bcva_change,
+    covar_type = "us"
+  )
+
+  # extract estimates
+  ses <- get_glmmtmb_trt_visit_num_ses(glmmtmb_fit$fit)
+  expect_equal(is.numeric(ses), TRUE)
+  expect_equal(length(ses), 3)
+
+})
+
+test_that("get_nlme_trt_visit_num_ses extracts standard errors", {
+
+  # generate data
+  set.seed(51235)
+  dgp_output <- rct_dgp_fun(
+    n_obs = 100,
+    outcome_covar_mat = diag(3),
+    trt_visit_coef = 0.5
+  )
+
+  # fit the mmrm with mmrm
+  nlme_fit <- nlme_wrapper_fun(
+    participant = dgp_output$participant,
+    visit_num = dgp_output$visit_num,
+    base_bcva = dgp_output$base_bcva,
+    strata = dgp_output$strata,
+    trt = dgp_output$trt,
+    bcva_change = dgp_output$bcva_change,
+    covar_type = "us"
+  )
+
+  # extract estimates
+  ses <- get_nlme_trt_visit_num_ses(nlme_fit$fit, nlme_fit$data)
+  expect_equal(is.numeric(ses), TRUE)
+  expect_equal(length(ses), 3)
+
+})
+
+test_that("get_proc_mixed_trt_visit_num_ses extracts standard errors", {
+
+  # generate data
+  set.seed(51235)
+  dgp_output <- rct_dgp_fun(
+    n_obs = 100,
+    outcome_covar_mat = diag(3),
+    trt_visit_coef = 0.5
+  )
+
+  # fit the mmrm with mmrm
+  proc_mixed_fit <- proc_mixed_wrapper_fun(
+    participant = dgp_output$participant,
+    visit_num = dgp_output$visit_num,
+    base_bcva = dgp_output$base_bcva,
+    strata = dgp_output$strata,
+    trt = dgp_output$trt,
+    bcva_change = dgp_output$bcva_change,
+    covar_type = "us"
+  )
+
+  # extract estimates
+  ses <- get_proc_mixed_trt_visit_num_ses(proc_mixed_fit$fit)
+  expect_equal(is.numeric(ses), TRUE)
+  expect_equal(length(ses), 3)
+
+})
