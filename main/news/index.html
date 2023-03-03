@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9010</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9011</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,14 +43,13 @@
 <li class="active nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.2.2">v0.2.2</a> </div></li>
-<!-- end dropdown for versions -->
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-reports">Reports</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-reports">
+    <a class="dropdown-item" href="../coverage-report/">Coverage report</a>
+    <a class="dropdown-item" href="../unit-test-report/">Unit test report</a>
+  </div>
+</li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -72,17 +71,18 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.2.2.9010" id="mmrm-0229010">mmrm 0.2.2.9010<a class="anchor" aria-label="anchor" href="#mmrm-0229010"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.2.2.9011" id="mmrm-0229011">mmrm 0.2.2.9011<a class="anchor" aria-label="anchor" href="#mmrm-0229011"></a></h2>
 <div class="section level4">
-<h4 id="new-features-0-2-2-9010">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-2-2-9010"></a></h4>
+<h4 id="new-features-0-2-2-9011">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-2-2-9011"></a></h4>
 <ul><li>Add argument <code>covariance</code> to <code><a href="../reference/mmrm.html">mmrm()</a></code> to allow for easier programmatic access to specifying the model’s covariance structure and to expose covariance customization through the <code>tidymodels</code> interface.</li>
 <li>Add Kenward-Roger support for spatial covariance structures.</li>
 <li>Add support for <code>residuals</code> method with a <code>type</code> argument allowing for raw (the default, and only option for models with a spatial covariance structure), Pearson and normalized residuals to be calculated from an <code>mmrm</code> fit.</li>
 <li>Add empirical and empirical Jackknife adjusted coefficients covariance matrix. In addition, the argument <code>method</code> now only specifies the method used for the degrees of freedom, another argument <code>vcov</code> is added to specify the method used to adjust the coefficients covariance matrix. Empirical and empirical-Jackknife covariance support residual and Satterthwaite degrees of freedom.</li>
 <li>Add optional <code>tidymodels</code> framework support.</li>
+<li>Add confirmation if the number of visit levels is too large. Use <code>options(mmrm.max_visits = )</code> to specify the maximum number of visits allowed in non-interactive mode, or asked in interactive sessions.</li>
 </ul></div>
 <div class="section level4">
-<h4 id="bug-fixes-0-2-2-9010">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-2-2-9010"></a></h4>
+<h4 id="bug-fixes-0-2-2-9011">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-2-2-9011"></a></h4>
 <ul><li>Previously <code>mmrm</code> fit follows the global option <code>na.action</code> and if it is set other than “na.omit” error will happen. This is now fixed and <code>NA</code> values are always removed prior to model fitting.</li>
 </ul></div>
 </div>

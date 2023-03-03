@@ -20,7 +20,7 @@ while capturing messages and warnings."><meta property="og:image" content="https
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9010</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9011</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,14 +47,13 @@ while capturing messages and warnings."><meta property="og:image" content="https
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.2.2">v0.2.2</a> </div></li>
-<!-- end dropdown for versions -->
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-reports">Reports</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-reports">
+    <a class="dropdown-item" href="../coverage-report/">Coverage report</a>
+    <a class="dropdown-item" href="../unit-test-report/">Unit test report</a>
+  </div>
+</li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -90,6 +89,8 @@ while capturing messages and warnings.</p>
 <span>  <span class="va">weights</span>,</span>
 <span>  reml <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  covariance <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">tmb_data</span>,</span>
+<span>  <span class="va">formula_parts</span>,</span>
 <span>  <span class="va">...</span>,</span>
 <span>  control <span class="op">=</span> <span class="fu"><a href="mmrm_control.html">mmrm_control</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -122,6 +123,14 @@ covariance structure using <code><a href="as.cov_struct.html">as.cov_struct()</a
 a structure is derived from the provided formula.</p></dd>
 
 
+<dt>tmb_data</dt>
+<dd><p>(<code>mmrm_tmb_data</code>)<br> object.</p></dd>
+
+
+<dt>formula_parts</dt>
+<dd><p>(<code>mmrm_tmb_formula_parts</code>)<br> object.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments to pass to <code><a href="mmrm_control.html">mmrm_control()</a></code>.</p></dd>
 
@@ -142,7 +151,9 @@ messages, optimizer used and convergence status in addition to the
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p><code>fit_single_optimizer</code> will fit the <code>mmrm</code> model using the <code>control</code> provided.
 If there are multiple optimizers provided in <code>control</code>, only the first optimizer
-will be used.</p>
+will be used.
+If <code>tmb_data</code> and <code>formula_parts</code> are both provided, <code>formula</code>, <code>data</code>, <code>weights</code>,
+<code>reml</code>, and <code>covariance</code> are ignored.</p>
     </div>
 
     <div class="section level2">
