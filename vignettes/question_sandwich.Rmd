@@ -1,0 +1,193 @@
+---
+title: "question about sandwich"
+package: mmrm
+bibliography: '`r system.file("REFERENCES.bib", package = "mmrm")`'
+csl: '`r system.file("jss.csl", package = "mmrm")`'
+output:
+  rmarkdown::html_document:
+          theme: "spacelab"
+          highlight: "kate"
+          toc: true
+          toc_float: true
+vignette: |
+  %\VignetteIndexEntry{question about sandwich}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options:
+  chunk_output_type: console
+  markdown:
+    wrap: 72
+---
+
+# Sandwich estimator in OLS
+
+In @mccaffrey2003bias the sandwich estimator is proposed with the following form
+\[
+  v^\ast = c l (X^\top X)^{-1} \sum_{i}{X_i^\top A_i r_i r_i^\top A_i X_i} (X^\top X)^{-1} l^\top
+\]
+
+where $A_i$ takes the form $I_i$, $(I_i - H_{ii})^{-1/2}$ or $(I_i - H_{ii})^{-1}$,
+and $H$ takes the form $X(X^\top X)^{-1} X^\top$, $H_{ii}$ is $X_i(X^\top X)^{-1} X_i^\top$,
+$r_i = y_i - X_i \beta$
+
+the degrees of freedom is calculated through the sum of eigen values of $G$, where
+\[
+  G_{ij} = g_i^\top V g_j
+\]
+
+\[
+  g_i = c^{1/2} (I - H)_i^\top A_i X_i (X^\top X)^{-1} l
+\]
+
+and 
+\[
+  V = I
+\]
+
+$(I- H)_i$ stands for the corresponding rows of $I-H$ of subject $i$, can be further expressed as
+
+$S_i (I - H)$ where $S_i$ is the selection matrix of $n_i \times n$ matrix.
+
+So
+
+\[
+  g_i = c^{1/2} (I - H)^\top S_i^\top A_i X_i (X^\top X)^{-1} l
+\]
+
+# Sandwich estimator in WLS for mmrm
+
+When we have weighted least square (which is used in our [mmrm package](https://github.com/openpharma/mmrm)), we choose to
+transform the $X$ and $y$ so that it became OLS
+
+\[
+  \tilde{X} = L X
+\]
+
+\[
+  \tilde{Y} = L Y
+\]
+
+where $W = L^\top L$ is block diagonal weight matrix, $L$ is block diagonal Cholesky decomposition.
+
+So the sandwich estimator can be represented with
+
+\[
+  v^\ast = c l (X^\top W X)^{-1} \sum_{i}{X_i^\top L_i^\top A_i L_i r_i r_i^\top L_i^\top A_i L_i X_i} (X^\top W X)^{-1}
+\]
+
+\[
+  G_{ij} = g_i^\top g_j
+\]
+
+
+\[
+  g_i = c^{1/2} (I - L X (X^\top W X)^{-1} X^\top L^\top )^\top S_i^\top A_i L_i X_i (X^\top W X)^{-1} l
+\]
+
+where $A_i$ still has the same form but $H$ is changed to
+\[
+  H_{mmrm} = L X (X^\top W X)^{-1} X^\top L^\top
+\]
+
+# Sandwich estimator in Paper
+
+In @pustejovsky2018small the proposed sandwich estimator for WLS is
+
+\[
+  v^\ast = c l (X^\top W X)^{-1} \sum_{i}{X_i^\top W_i A_i r_i r_i^\top A_i W_i X_i} (X^\top W X)^{-1}
+\]
+
+where $W_i$ is the weight matrix for subject i, $A_i$ has the same definition but $H$ changes
+
+\[
+  H_{paper} = X (X^\top W X)^{-1} X^\top W
+\]
+
+also $g_i$ changes to
+
+\[
+  g_i = c^{1/2} (I - X (X^\top W X)^{-1} X^\top W)^\top S_i^\top A_i W_i X_i (X^\top X)^{-1} l
+\]
+
+# Comparison between transformation and paper suggest method
+
+# Empirical (CR0)
+
+For empirical sandwich estimator, $A_i$ is chosen to be identity matrix, so for
+the estimator they are identical because the meat part are the same
+
+\[
+  X_i^\top L_i^\top L_i r_i = X_i^\top W_i r_i
+\]
+
+for $g_i$ they are already different, but with the changes in $V$, $g_i^\top V g_j$ is still the same
+
+After removing the $l$, $c$, $(X^\top W X)^{-1}$ , $X_i$, $X_j$ (which are identical in two forms) we have
+
+\[
+  G^\ast_{ij} = W_i S_i (I - X (X^\top W X)^{-1} X^\top W) W^{-1} (I - X (X^\top W X)^{-1} X^\top W)_j^\top S_j^\top W_j
+\]
+is equal to
+
+\[
+  G^\ast_{ij} = L_i^\top S_i (I - L X (X^\top W X)^{-1} X^\top L^\top ) (I - L X (X^\top W X)^{-1} X^\top L^\top )^\top S_j^\top L_j
+\]
+
+because
+
+\[
+  W^{-1} = (L^\top L)^{-1} = L^{-1} (L^\top)^{-1}
+\]
+
+and
+
+\[
+  W_i S_i L^{-1} = L_i^\top S_i
+\]
+
+
+# Jackknife (CR3)
+
+For Jackknife estimator, $A_i$ is chosen to be $(I_i - H_{ii})^{-1}$.
+Then we have
+\[
+  X_i^\top L_i^\top (I - L_i X_i (X^\top W X)^{-1} X_i^\top L_i^\top )^{-1} L_i r_i \\
+  = X_i^\top ((L_i^\top)^{-1})^{-1} (I - L_i X_i (X^\top W X)^{-1} X_i^\top L_i^\top )^{-1} (L_i^{-1})^{-1} r_i \\
+  = X_i^\top [L_i^{-1} (I - L_i X_i (X^\top W X)^{-1} X_i^\top L_i^\top) (L_i^\top)^{-1} ]^{-1} r_i \\
+  = X_i^\top (W_i^{-1} - X_i (X^\top W X)^{-1} X_i^\top)^{-1} r_i \\
+  = X_i^\top [(I - X_i (X^\top W X)^{-1} X_i^\top W_i)  W_i^{-1}]^{-1} r_i \\
+  = X_i^\top W_i (I - X_i (X^\top W X)^{-1} X_i^\top W_i)^{-1} r_i
+\]
+
+So in Jackknife scenario they are the same.
+
+For $g_i$, similar to the CR0 result, are still identical.
+
+# BRL estimator
+
+For BRL estimator, the $A_i$ is chosen to be $(I - H_{ii})^{-1/2}$.
+
+The different part to compare is
+
+\[
+  B_1 = L_i^\top (I - L_i X_i (X^\top W X)^{-1} X_i^\top L_i^\top)^{-1/2} L_i
+\]
+and
+
+\[
+  B_2 = W_i^\top (I - X_i (X^\top W X)^{-1} X_i^\top W_i)^{-1/2}
+\]
+
+and we also have
+
+\[
+  B_1 W_i^{-1} B_1 = L_i^\top (I - L_i X_i (X^\top W X)^{-1} X_i^\top L_i^\top )^{-1} L_i
+\]
+\[
+  B_2 W_i^{-1} B_2 = W_i^\top (I - X_i (X^\top W X)^{-1} X_i^\top W_i)^{-1}
+\]
+
+but we can't get a direct $B_1 = B_2$
+
+# Reference
+
