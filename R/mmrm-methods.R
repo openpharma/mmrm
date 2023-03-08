@@ -239,8 +239,8 @@ print.summary.mmrm <- function(x,
 #' @param newdata
 #' @param ...
 #'
-#' @return A list of length \code{nsim} of simulated responses.
-#' @export TODO
+#' @return A \code{data.frame} of dimension [n, m] where n is the number of observations
+#' fitted in the model, and m is the number \code{nsim} of simulated responses.
 #'
 #' @examples TODO
 simulate.mmrm <- function(object, nsim = 1,
