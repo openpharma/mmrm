@@ -228,13 +228,23 @@ print.summary.mmrm <- function(x,
 }
 
 
-#' Simulates from an mmrm model object
+#' @describeIn mmrm_methods Simulates from an mmrm model object
+#' @importFrom stats simulate
+#' @exportS3Method
+#' @keywords internal
 #'
-#' @return TODO
+#' @param object
+#' @param nsim
+#' @param seed
+#' @param newdata
+#' @param ...
+#'
+#' @return A list of length \code{nsim} of simulated responses.
 #' @export TODO
 #'
 #' @examples TODO
 simulate.mmrm <- function(object, nsim = 1,
-                          seed = NULL, newdata = NULL){
+                          seed = NULL, newdata = NULL, ...){
+
 
 }
