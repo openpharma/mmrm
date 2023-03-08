@@ -122,16 +122,16 @@ h_print_call <- function(call, n_obs, n_subjects, n_timepoints) {
     rhs <- tmp[[2]]
     pass <- nchar(deparse(rhs))
   }
-  if (!is.null(tmp <- call$data)) {
+  if (!is.null(call$data)) {
     cat(
-      "Data:       ", tmp, "(used", n_obs, "observations from",
+      "Data:       ", deparse(call$data), "(used", n_obs, "observations from",
       n_subjects, "subjects with maximum", n_timepoints, "timepoints)",
       fill = TRUE
     )
   }
-  # Only if call$weights is a string then it was explicitly given by the user.
-  if (test_string(tmp <- call$weights)) {
-    cat("Weights:    ", tmp, fill = TRUE)
+  # Display the expression of weights
+  if (!is.null(call$weights)) {
+    cat("Weights:    ", deparse(call$weights), fill = TRUE)
   }
 }
 

@@ -271,7 +271,7 @@ cov_struct <- function(
 #'   are provided.
 #'
 #' @keywords internal
-reconcile_cov_struct <- function(formula = NULL, covariance = NULL) {
+h_reconcile_cov_struct <- function(formula = NULL, covariance = NULL) {
   if (!is.null(covariance) && length(extract_covariance_terms(formula)) > 0) {
     stop(paste0(
       "Redundant covariance structure definition in `formula` and ",
