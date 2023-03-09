@@ -170,24 +170,43 @@ For BRL estimator, the $A_i$ is chosen to be $(I - H_{ii})^{-1/2}$.
 The different part to compare is
 
 \[
-  B_1 = L_i^\top (I - L_i X_i (X^\top W X)^{-1} X_i^\top L_i^\top)^{-1/2} L_i
+  B_1 = L_i^\top M_1^{1/2} L_i
 \]
 and
 
 \[
-  B_2 = W_i^\top (I - X_i (X^\top W X)^{-1} X_i^\top W_i)^{-1/2}
+  B_2 = W_i^\top M_2^{1/2}
 \]
 
+\[
+  M_1 = (I - L_i X_i (X^\top W X)^{-1} X_i^\top L_i^\top)^{-1}
+\]
+\[
+  M_2 = (I - X_i (X^\top W X)^{-1} X_i^\top W_i)^{-1}
+\]
 and we also have
-
 \[
-  B_1 W_i^{-1} B_1 = L_i^\top (I - L_i X_i (X^\top W X)^{-1} X_i^\top L_i^\top )^{-1} L_i
-\]
-\[
-  B_2 W_i^{-1} B_2 = W_i^\top (I - X_i (X^\top W X)^{-1} X_i^\top W_i)^{-1}
+  L_i^\top M_1 L_i = W_i M_2
 \]
 
-but we can't get a direct $B_1 = B_2$
+Use $M_1$ to represent $M_2$, we have
 
+\[
+  M_2 = W_i^{-1} L_i^\top M_1 L_i = L_i^{-1} M_1 L_i
+\]
+
+Assume $M_2^{1/2} \ne L_i^{-1} M_1^{1/2} L_i$, then
+
+\[
+  M_2 = M_2^{1/2} M_2^{1/2} \ne L_i^{-1} M_1^{1/2} L_i L_i^{-1} M_1^{1/2} L_i = L_i^{-1} M_1 L_i
+\]
+
+Contradicts with previous formula.
+
+Thus
+
+\[M_2^{1/2} = L_i^{-1} M_1^{1/2} L_i\]
+
+So for BRL estimator they are the same.
 # Reference
 

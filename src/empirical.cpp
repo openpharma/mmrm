@@ -30,10 +30,10 @@ List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, Nume
   matrix<double> y_matrix = as_vector(y).matrix();
   matrix<double> residual = y_matrix - fitted;
   vector<double> G_sqrt = as_vector(sqrt(weights_vector));
+  vector<double> G_sqrt_inv = 1 / G_sqrt;
   int n_theta = theta.size();
   int theta_size_per_group = n_theta / n_groups;
   int p = x.cols();
-  std::chrono::steady_clock::time_point s1 = std::chrono::steady_clock::now();
   // Use map to hold these base class pointers (can also work for child class objects).
   std::map<int, derivatives_base<double>*> derivatives_by_group;
   for (int r = 0; r < n_groups; r++) {
@@ -45,13 +45,12 @@ List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, Nume
       derivatives_by_group[r] = new derivatives_nonspatial<double>(vector<double>(theta_v.segment(r * theta_size_per_group, theta_size_per_group)), n_visits, cov_type);
     }
   }
-  std::chrono::steady_clock::time_point s2 = std::chrono::steady_clock::now();
   matrix<double> meat = matrix<double>::Zero(p, p);
   matrix<double> hx = x_matrix * beta_vcov_matrix * x_matrix.transpose();
   matrix<double> w = matrix<double>::Zero(n_observations, n_observations);
   matrix<double> chols = matrix<double>::Zero(n_observations, n_observations);
   matrix<double> phi = matrix<double>::Zero(n_observations, n_observations);
-  std::chrono::steady_clock::time_point s3 = std::chrono::steady_clock::now();
+  matrix<double> weighted_phi = matrix<double>::Zero(n_observations, n_observations);
   for (int i = 0; i < n_subjects; i++) {
     int start_i = subject_zero_inds[i];
     int n_visits_i = subject_n_visits[i];
@@ -67,24 +66,27 @@ List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, Nume
     int subject_group_i = subject_groups[i] - 1;
     matrix<double> sigma_inv = derivatives_by_group[subject_group_i]->get_inverse(visit_i, dist_i);
     matrix<double> gi_sqrt_root = G_sqrt.segment(start_i, n_visits_i).matrix().asDiagonal();
+    matrix<double> gi_sqrt_root_inv = G_sqrt_inv.segment(start_i, n_visits_i).matrix().asDiagonal();
     w.block(start_i, start_i, n_visits_i, n_visits_i) = gi_sqrt_root * sigma_inv * gi_sqrt_root;
     chols.block(start_i, start_i, n_visits_i, n_visits_i) = derivatives_by_group[subject_group_i]->get_inverse_chol(visit_i, dist_i);
     phi.block(start_i, start_i, n_visits_i, n_visits_i) = derivatives_by_group[subject_group_i]->get_sigma(visit_i, dist_i);
+    weighted_phi.block(start_i, start_i, n_visits_i, n_visits_i) = gi_sqrt_root_inv * phi.block(start_i, start_i, n_visits_i, n_visits_i) * gi_sqrt_root_inv;
   }
-  std::chrono::steady_clock::time_point s4 = std::chrono::steady_clock::now();
-  matrix<double> weighted_phi = matrix<double>::Zero(n_observations, n_observations);
-  weighted_phi = (1 / G_sqrt).matrix().asDiagonal() * phi * (1 / G_sqrt).matrix().asDiagonal();
-  matrix<double> hxw = hx * w; // probably slow. use block calculation!
+  matrix<double> hxw = matrix<double>::Zero(n_observations, n_observations);
+  for (int i = 0; i < n_subjects; i++) {
+    int start_i = subject_zero_inds[i];
+    int n_visits_i = subject_n_visits[i];
+    hxw.block(0, start_i, n_observations, n_visits_i) = hx.block(0, start_i, n_observations, n_visits_i) * w.block(start_i, start_i, n_visits_i, n_visits_i);
+  }
   matrix<double> i_hxw = matrix<double>::Identity(n_observations, n_observations) - hxw;
   matrix<double> g = matrix<double>::Zero(n_observations, p * n_subjects);
-  std::chrono::steady_clock::time_point s5 = std::chrono::steady_clock::now();
   for (int i = 0; i < n_subjects; i++) {
     int start_i = subject_zero_inds[i];
     int n_visits_i = subject_n_visits[i];
     matrix<double> ai = matrix<double>::Identity(n_visits_i, n_visits_i);
     if (type == 1) { // 1 for jackknife
       ai = (ai - hxw.block(start_i, start_i, n_visits_i, n_visits_i)).inverse();
-    } else if (type == 2) {
+    } else if (type == 2) { // 2 for BRL
       matrix<double> di = chols.block(start_i, start_i, n_visits_i, n_visits_i);
       matrix<double> bi1 = di * i_hxw.block(start_i, 0, n_visits_i, n_observations);
       matrix<double> bi = bi1 * phi * bi1.transpose();
@@ -99,9 +101,13 @@ List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, Nume
     meat = meat + z * z.transpose();
     g.block(0, i * p, n_observations, p) = i_hxw.block(start_i, 0, n_visits_i, n_observations).transpose() * xtwa.transpose() * beta_vcov_matrix;
   }
-  std::chrono::steady_clock::time_point s6 = std::chrono::steady_clock::now();
-  matrix<double> gtvg = g.transpose() * weighted_phi * g; // very large matrix calculation? also use block?
-  std::chrono::steady_clock::time_point s7 = std::chrono::steady_clock::now();
+  matrix<double> gtv = matrix<double>::Zero(n_subjects * p, n_observations);
+  for (int i = 0; i < n_subjects; i++) {
+    int start_i = subject_zero_inds[i];
+    int n_visits_i = subject_n_visits[i];
+    gtv.block(0, start_i, n_subjects * p, n_visits_i) = g.block(start_i, 0, n_visits_i, n_subjects * p).transpose() * weighted_phi.block(start_i, start_i, n_visits_i, n_visits_i);
+  }
+  matrix<double> gtvg = gtv * g; // very large matrix calculation so slow but needed for different contrast
   for (int r = 0; r < n_groups; r++) {
     delete derivatives_by_group[r];
   }
@@ -112,16 +118,6 @@ List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, Nume
   //if (jackknife) {
   //  ret = ret * (n_subjects - 1) / n_subjects;
   //}
-  std::chrono::steady_clock::time_point s8 = std::chrono::steady_clock::now();
-
-  std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(s2 - s1).count() << "[µs]" << std::endl;
-  std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(s3 - s2).count() << "[µs]" << std::endl;
-  std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(s4 - s3).count() << "[µs]" << std::endl;
-  std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(s5 - s4).count() << "[µs]" << std::endl;
-  std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(s6 - s5).count() << "[µs]" << std::endl;
-  std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(s7 - s6).count() << "[µs]" << std::endl;
-  std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(s8 - s7).count() << "[µs]" << std::endl;
-
   return List::create(
     Named("cov") = as_mv(ret),
     Named("df_mat") = as_mv(gtvg)
