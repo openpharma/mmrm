@@ -48,7 +48,7 @@ List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, Nume
   matrix<double> meat = matrix<double>::Zero(p, p);
   matrix<double> hx = x_matrix * beta_vcov_matrix * x_matrix.transpose();
   matrix<double> w = matrix<double>::Zero(n_observations, n_observations);
-  matrix<double> chols = matrix<double>::Zero(n_observations, n_observations);
+  matrix<double> weighted_chols = matrix<double>::Zero(n_observations, n_observations);
   matrix<double> phi = matrix<double>::Zero(n_observations, n_observations);
   matrix<double> weighted_phi = matrix<double>::Zero(n_observations, n_observations);
   for (int i = 0; i < n_subjects; i++) {
@@ -68,11 +68,12 @@ List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, Nume
     matrix<double> gi_sqrt_root = G_sqrt.segment(start_i, n_visits_i).matrix().asDiagonal();
     matrix<double> gi_sqrt_root_inv = G_sqrt_inv.segment(start_i, n_visits_i).matrix().asDiagonal();
     w.block(start_i, start_i, n_visits_i, n_visits_i) = gi_sqrt_root * sigma_inv * gi_sqrt_root;
-    chols.block(start_i, start_i, n_visits_i, n_visits_i) = derivatives_by_group[subject_group_i]->get_inverse_chol(visit_i, dist_i);
+    weighted_chols.block(start_i, start_i, n_visits_i, n_visits_i) = gi_sqrt_root * derivatives_by_group[subject_group_i]->get_chol(visit_i, dist_i);
     phi.block(start_i, start_i, n_visits_i, n_visits_i) = derivatives_by_group[subject_group_i]->get_sigma(visit_i, dist_i);
     weighted_phi.block(start_i, start_i, n_visits_i, n_visits_i) = gi_sqrt_root_inv * phi.block(start_i, start_i, n_visits_i, n_visits_i) * gi_sqrt_root_inv;
   }
   matrix<double> hxw = matrix<double>::Zero(n_observations, n_observations);
+  matrix<double> phi_hx = weighted_phi - hx;
   for (int i = 0; i < n_subjects; i++) {
     int start_i = subject_zero_inds[i];
     int n_visits_i = subject_n_visits[i];
@@ -87,11 +88,11 @@ List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, Nume
     if (type == 1) { // 1 for jackknife
       ai = (ai - hxw.block(start_i, start_i, n_visits_i, n_visits_i)).inverse();
     } else if (type == 2) { // 2 for BRL
-      matrix<double> di = chols.block(start_i, start_i, n_visits_i, n_visits_i);
-      matrix<double> bi1 = di * i_hxw.block(start_i, 0, n_visits_i, n_observations);
-      matrix<double> bi = bi1 * phi * bi1.transpose();
-      matrix<double> bisq = matrix<double>(bi.completeOrthogonalDecomposition().pseudoInverse()).sqrt();
-      ai = di.transpose() * bisq * di;
+      matrix<double> chol_it = weighted_chols.block(start_i, start_i, n_visits_i, n_visits_i);
+      matrix<double> bi1 = chol_it.transpose() * i_hxw.block(start_i, 0, n_visits_i, n_observations);
+      matrix<double> bi = chol_it.transpose() * phi_hx.block(start_i, 0, n_visits_i, n_observations) * i_hxw.block(start_i, 0, n_visits_i, n_observations).transpose() * chol_it;
+      matrix<double> b_ginv_sqrt = pseudoInverseSqrt(bi);
+      ai = chol_it * b_ginv_sqrt * chol_it.transpose();
     }
     matrix<double> Xi = x_matrix.block(start_i, 0, n_visits_i, x_matrix.cols());
     matrix<double> wi = w.block(start_i, start_i, n_visits_i, n_visits_i);
