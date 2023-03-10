@@ -3,7 +3,7 @@
 using namespace Rcpp;
 using std::string;
 // Obtain the empirical given beta, beta_vcov, theta.
-List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, NumericMatrix beta_vcov, bool jackknife) {
+List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, NumericMatrix beta_vcov, int type) {
   NumericMatrix x = mmrm_data["x_matrix"];
   matrix<double> x_matrix = as_matrix(x);
   NumericVector y = mmrm_data["y_vector"];
@@ -65,10 +65,14 @@ List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, Nume
     matrix<double> gi_simga_inv_chol = gi_sqrt_root * sigma_inv_chol;
     matrix<double> xt_gi_simga_inv_chol = Xi.transpose() * gi_simga_inv_chol;
     matrix<double> identity = matrix<double>::Identity(n_visits_i, n_visits_i);
-    if (jackknife) {
+    if (type == 1) {
       identity = identity - xt_gi_simga_inv_chol.transpose() * beta_vcov_matrix * xt_gi_simga_inv_chol;
+      identity = identity.inverse();
+    } else if(type == 2) {
+      identity = identity - xt_gi_simga_inv_chol.transpose() * beta_vcov_matrix * xt_gi_simga_inv_chol;
+      identity = pseudoInverseSqrt(identity);
     }
-    matrix<double> xta = xt_gi_simga_inv_chol * identity.inverse();
+    matrix<double> xta = xt_gi_simga_inv_chol * identity;
     matrix<double> z = xta * gi_simga_inv_chol.transpose() * residual_i;
     meat = meat + z * z.transpose();
     xt_g_simga_inv_chol.block(0, start_i, p, n_visits_i) = xt_gi_simga_inv_chol;
