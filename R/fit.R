@@ -454,7 +454,11 @@ mmrm <- function(formula,
     )
   } else if (control$vcov %in% c("Empirical", "Empirical-BRL", "Empirical-Jackknife")) {
     empirical_comp <- h_get_empirical(
-      fit$tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov, switch(control$vcov, "Empirical" = 0, "Empirical-Jackknife" = 1, "Empirical-BRL" = 2)
+      fit$tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov, switch(control$vcov,
+        "Empirical" = 0,
+        "Empirical-Jackknife" = 1,
+        "Empirical-BRL" = 2
+      )
     )
     fit$beta_vcov_adj <- empirical_comp$cov
     fit$empirical_df_mat <- empirical_comp$df_mat
