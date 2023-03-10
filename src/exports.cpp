@@ -20,7 +20,7 @@ BEGIN_RCPP
 END_RCPP
 }
 
-List get_empirical(List mmrm_fit, NumericVector theta, NumericVector beta, NumericMatrix beta_vcov, int type);
+List get_empirical(List mmrm_fit, NumericVector theta, NumericVector beta, NumericMatrix beta_vcov, std::string type);
 RcppExport SEXP _mmrm_get_empirical(SEXP mmrm_fit_SEXP, SEXP theta_SEXP, SEXP beta_SEXP, SEXP beta_vcov_SEXP, SEXP type_SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -29,7 +29,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type theta(theta_SEXP);
     Rcpp::traits::input_parameter< NumericVector >::type beta(beta_SEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type beta_vcov(beta_vcov_SEXP);
-    Rcpp::traits::input_parameter< int >::type type(type_SEXP);
+    Rcpp::traits::input_parameter< std::string >::type type(type_SEXP);
     rcpp_result_gen = Rcpp::wrap(get_empirical(mmrm_fit, theta, beta, beta_vcov, type));
     return rcpp_result_gen;
 END_RCPP

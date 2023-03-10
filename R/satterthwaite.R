@@ -214,7 +214,7 @@ h_df_1d_sat <- function(object, contrast) {
       v_num = v_num,
       v_denom = v_denom
     )
-  } else if (object$vcov %in% c("Empirical", "Empirical-Jackknife", "Empirical-BRL")) {
+  } else if (object$vcov %in% c("Empirical", "Empirical-Jackknife", "Empirical-Bias-Reduced")) {
     contrast_matrix <- Matrix::.bdiag(rep(list(matrix(contrast, nrow = 1)), component(object, "n_subjects")))
     contrast_matrix <- as.matrix(contrast_matrix)
     g_matrix <- h_quad_form_mat(contrast_matrix, object$empirical_df_mat)
