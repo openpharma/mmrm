@@ -158,7 +158,7 @@ experiment <- create_experiment(
     .dgp = c("no_effect_us", "no_effect_csh", "no_effect_toeph",
              "small_effect_us", "small_effect_csh", "small_effect_toeph",
              "mod_effect_us", "mod_effect_csh", "mod_effect_toeph"),
-    n_obs = c(250, 500, 1000)
+    n_obs = c(400, 600, 800)
   ) %>%
   add_method(mmrm_us_meth, name = "mmrm_us")  %>%
   add_method(mmrm_csh_meth, name = "mmrm_csh") %>%
@@ -180,9 +180,9 @@ experiment <- create_experiment(
   add_evaluator(type_2_error_rate_eval, name = "type_2_error_rate")
 
 # run the experiment
-set.seed(62342)
+set.seed(713452)
 results <- experiment$run(
-  n_reps = 500,
+  n_reps = 100,
   save = TRUE,
   verbose = 2
 )
