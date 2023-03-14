@@ -71,6 +71,11 @@ get_mmrm_jack <- function() {
   .mmrm_jackknife
 }
 
+.mmrm_brl <- mmrm(.mmrm_kr_formula, data = fev_data, vcov = "Empirical-Bias-Reduced", method = "Residual")
+get_mmrm_brl <- function() {
+  .mmrm_brl
+}
+
 square_matrix <- function(values_by_row) {
   n <- length(values_by_row)
   size <- sqrt(n)

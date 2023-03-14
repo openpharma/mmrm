@@ -9,11 +9,11 @@
 - Add support for `residuals` method with a `type` argument allowing for 
   raw (the default, and only option for models with a spatial covariance structure),
   Pearson and normalized residuals to be calculated from an `mmrm` fit.
-- Add empirical and empirical Jackknife adjusted coefficients covariance matrix.
+- Add empirical, empirical Jackknife and empirical bias-reduced adjusted coefficients covariance matrix.
   In addition, the argument `method` now only specifies the method used
   for the degrees of freedom, another argument `vcov` is added to specify the
-  method used to adjust the coefficients covariance matrix. Empirical and empirical-Jackknife
-  covariance support residual and Satterthwaite degrees of freedom.
+  method used to adjust the coefficients covariance matrix. Empirical, empirical Jackknife
+  and empirical bias-reduced covariance support residual and Satterthwaite degrees of freedom.
 - Add optional `tidymodels` framework support.
 - Add confirmation if the number of visit levels is too large. Use `options(mmrm.max_visits = )`
   to specify the maximum number of visits allowed in non-interactive mode, or asked in interactive

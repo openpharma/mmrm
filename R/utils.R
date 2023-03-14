@@ -316,7 +316,7 @@ h_confirm_large_levels <- function(x) {
   }
   proceed <- utils::askYesNo(
     paste(
-      "Visit levels is larger possibly too large.",
+      "Visit levels is possibly too large.",
       "This requires large memory. Are you sure to continue?",
       collapse = " "
     )

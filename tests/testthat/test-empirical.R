@@ -2,13 +2,19 @@
 
 test_that("h_get_empirical obtain empirical covariance", {
   fit <- get_mmrm_emp()
-  result <- h_get_empirical(fit$tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov, FALSE)
+  result <- h_get_empirical(fit$tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov, "Empirical")
   expect_snapshot_tolerance(result$cov)
 })
 
 test_that("h_get_empirical obtain jackknife covariance", {
   fit <- get_mmrm_jack()
-  result <- h_get_empirical(fit$tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov, TRUE)
+  result <- h_get_empirical(fit$tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov, "Empirical-Jackknife")
+  expect_snapshot_tolerance(result$cov)
+})
+
+test_that("h_get_empirical obtain jackknife covariance", {
+  fit <- get_mmrm_brl()
+  result <- h_get_empirical(fit$tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov, "Empirical-Bias-Reduced")
   expect_snapshot_tolerance(result$cov)
 })
 
