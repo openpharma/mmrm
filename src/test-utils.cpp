@@ -150,7 +150,7 @@ context("convert_eigen and convert_tmb") {
 }
 
 context("cpow works") {
-  test_that("cpow gives correct power by element") {
+  test_that("cpow gives correct power by element for power 0.5") {
     matrix<double> tmb_mat(4, 2);
     tmb_mat << 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0;
     matrix<double> expected(4, 2);
