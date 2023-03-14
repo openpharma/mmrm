@@ -61,9 +61,9 @@ covariance matrix.
 \]
 
 Where $W_i$ is the block diagonal part for subject $i$ of $W$ matrix, $\hat\epsilon_i$ is the observed residuals for subject i,
-$L_i$ is the Cholesky factor of $\Sigma_i$ ($W_i = L_i L_i^\top$), so we have
+$L_i$ is the Cholesky factor of $\Sigma_i^{-1}$ ($W_i = L_i L_i^\top$).
 
-
+See more in [Weighted Least Square Empirical Covariance](empirical_wls.html).
 
 ## Jackknife Covariance
 

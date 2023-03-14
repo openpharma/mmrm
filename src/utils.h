@@ -117,7 +117,7 @@ matrix<T> euclidean(const matrix<T>& coordinates) {
   return result;
 }
 
-// matrix power by element
+// Element wise power function of a matrix
 template <class T>
 Eigen::Matrix<T, -1, -1> cpow(const Eigen::Matrix<T, -1, -1> & input, double p) {
   Eigen::Matrix<T, -1, -1> ret = Eigen::Matrix<T, -1, -1>(input.rows(), input.cols());
@@ -129,6 +129,7 @@ Eigen::Matrix<T, -1, -1> cpow(const Eigen::Matrix<T, -1, -1> & input, double p) 
   return ret;
 }
 
+// Convert Eigen matrix to tmb matrix
 template<typename T>
 matrix<T> convert_eigen(const Eigen::Matrix<T, -1, -1> &input) {
   matrix<T> ret = matrix<T>::Zero(input.rows(), input.cols());
@@ -139,6 +140,7 @@ matrix<T> convert_eigen(const Eigen::Matrix<T, -1, -1> &input) {
   }
   return(ret);
 }
+// Convert tmb matrix to Eigen matrix
 template<typename T>
 Eigen::Matrix<T, -1, -1> convert_tmb(const matrix<T> &input) {
   Eigen::Matrix<T, -1, -1> eigen_mat(input.rows(), input.cols());
@@ -150,6 +152,7 @@ Eigen::Matrix<T, -1, -1> convert_tmb(const matrix<T> &input) {
   return eigen_mat;
 }
 
+// Calculate the square root of the pseudo inverse of a matrix
 // adapt from method for calculating the pseudo-Inverse as recommended by Eigen developers
 template<typename T>
 matrix<T> pseudoInverseSqrt(const matrix<T> &input, double epsilon = std::numeric_limits<double>::epsilon()) {
