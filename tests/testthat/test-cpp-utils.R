@@ -29,6 +29,7 @@ test_that("prepare numbers for pseudoInverseSqrt", {
 })
 
 test_that("prepare numbers for pseudoInverseSqrt rank deficient", {
+  skip_if_not_installed("MASS")
   input <- matrix(c(
     5.483417, 2.861011, 0,
     2.861011, 3.169936, 0,
