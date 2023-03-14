@@ -117,4 +117,51 @@ matrix<T> euclidean(const matrix<T>& coordinates) {
   return result;
 }
 
+// Element wise power function of a matrix
+template <class T>
+Eigen::Matrix<T, -1, -1> cpow(const Eigen::Matrix<T, -1, -1> & input, double p) {
+  Eigen::Matrix<T, -1, -1> ret = Eigen::Matrix<T, -1, -1>(input.rows(), input.cols());
+  for (int i = 0; i < ret.rows(); i ++) {
+    for (int j = 0; j < ret.cols(); j++) {
+      ret(i, j) = std::pow(input(i, j), p);
+    }
+  }
+  return ret;
+}
+
+// Convert Eigen matrix to tmb matrix
+template<typename T>
+matrix<T> convert_eigen(const Eigen::Matrix<T, -1, -1> &input) {
+  matrix<T> ret = matrix<T>::Zero(input.rows(), input.cols());
+  for (int i = 0; i < input.rows(); i++) {
+    for (int j = 0; j < input.cols(); j++) {
+      ret(i, j) = input(i, j);
+    }
+  }
+  return(ret);
+}
+// Convert tmb matrix to Eigen matrix
+template<typename T>
+Eigen::Matrix<T, -1, -1> convert_tmb(const matrix<T> &input) {
+  Eigen::Matrix<T, -1, -1> eigen_mat(input.rows(), input.cols());
+  for (int i = 0; i < input.rows(); i++) {
+    for (int j = 0; j < input.cols(); j++) {
+      eigen_mat(i, j) = input(i, j);
+    }
+  }
+  return eigen_mat;
+}
+
+// Calculate the square root of the pseudo inverse of a matrix
+// adapt from method for calculating the pseudo-Inverse as recommended by Eigen developers
+template<typename T>
+matrix<T> pseudoInverseSqrt(const matrix<T> &input, double epsilon = std::numeric_limits<double>::epsilon()) {
+  Eigen::Matrix<T, -1, -1> eigen_mat = convert_tmb(input);
+	Eigen::JacobiSVD< Eigen::Matrix<T, -1, -1> > svd(eigen_mat ,Eigen::ComputeFullU | Eigen::ComputeFullV);
+	double tolerance = epsilon * std::max(input.cols(), input.rows()) *svd.singularValues().array().abs()(0);
+  auto singular_vals = Matrix<T,-1,-1>((svd.singularValues().array() > tolerance).select(svd.singularValues().array().inverse(), 0).matrix());
+	Eigen::Matrix<T, -1, -1> ret_eigen = svd.matrixV() *  cpow(singular_vals, 0.5).asDiagonal() * svd.matrixU().adjoint();
+  return convert_eigen(ret_eigen);
+}
+
 #endif
