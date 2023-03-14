@@ -24,7 +24,7 @@ editor_options:
 As stated in [Satterthwaite degrees of freedom for sandwich estimators](satterthwaite.html#Satterthwaite-degrees-of-freedom-for-empirical-covariance),
 we transform $X$ and use the derivations under OLS scenario.
 This is different from the suggested method by @bell2002bias and @pustejovsky2018small.
-Here we will illustrate that they are actually identical/
+Here we will illustrate that they are actually identical.
 
 # Ordinary Least Square(OLS) Empirical Covariance
 
