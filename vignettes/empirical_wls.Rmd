@@ -187,18 +187,18 @@ where $\Phi = W^{-1}$ according to our previous expression.
 We first expand $L^{-1} g_{wls, i}$ and $g_{mmrm_i}$
 
 \[
-  L^{-1} g_{wls, i} = L^{-1} (I - X(X^\top W X)^{-1}X^\top W) S_i^\top A_{wls, i} W_i X_i (X^\top W X)^{-1} C
+  L^{-1} g_{wls, i} = L^{-1} (I - X(X^\top W X)^{-1}X^\top W) S_i^\top A_{wls, i}^d W_i X_i (X^\top W X)^{-1} C
 \]
 
 \[
-  g_{mmrm, i} = (I - L_i^\top X(X^\top W X)^{-1}X^\top L_i) S_i^\top A_{mmrm, i} L_i^\top X_i (X^\top W X)^{-1} C
+  g_{mmrm, i} = (I - L_i^\top X(X^\top W X)^{-1}X^\top L_i) S_i^\top A_{mmrm, i}^d L_i^\top X_i (X^\top W X)^{-1} C
 \]
 
 where $S_i$ is the row selection matrix.
 
 We will prove the inner part equal
 \[
-  L^{-1} (I - X(X^\top W X)^{-1}X^\top W) S_i^\top A_{wls, i} W_i = (I - L^\top X(X^\top W X)^{-1}X^\top L) S_i^\top A_{mmrm, i} L_i^\top
+  L^{-1} (I - X(X^\top W X)^{-1}X^\top W) S_i^\top A_{wls, i}^d W_i = (I - L^\top X(X^\top W X)^{-1}X^\top L) S_i^\top A_{mmrm, i}^d L_i^\top
 \]
 
 With the previous proof of covariance estimators, we already have
