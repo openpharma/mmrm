@@ -167,7 +167,7 @@ context("cpow works") {
 }
 
 context("pseudoInverseSqrt works") {
-  test_that("pseudoInverseSqrt gives correct result(compare to R)") {
+  test_that("pseudoInverseSqrt gives correct result") {
     matrix<double> tmb_mat(3, 3);
     tmb_mat << 5.483417,  2.861011,  3.478399,
       2.861011,  3.169936, -1.075550,
