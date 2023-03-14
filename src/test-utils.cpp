@@ -157,7 +157,7 @@ context("cpow works") {
     expected << 1.0, sqrt(2.0), sqrt(3.0), 2.0, sqrt(5.0), sqrt(6.0), sqrt(7.0), sqrt(8.0);
     expect_equal_matrix(convert_eigen(cpow(convert_tmb(tmb_mat), 0.5)), expected);
   }
-  test_that("cpow gives correct power by element") {
+  test_that("cpow gives correct power by element for power 2") {
     matrix<double> tmb_mat(4, 2);
     tmb_mat << 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0;
     matrix<double> expected(4, 2);
