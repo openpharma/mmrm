@@ -61,9 +61,9 @@ where
 # Difference of Implementations
 
 Comparing the previous section with our implementation, we can find out the differences.
-Since they have nearlly the same symbols, to differentiate the different part, we use
+Since they have nearly the same symbols, to differentiate the different part, we use
 subscript $wls$ to denote the implementation suggested by @bell2002bias and @pustejovsky2018small,
-and use $vmmrm$ to denote the our implementation of covariance estimator in `mmrm`, we have
+and use $mmrm$ to denote the our implementation of covariance estimator in `mmrm`, we have
 
 \[
   v_{wls} = s C^\top(X^\top W X)^{-1}\sum_{i}{X_i^\top W_i (I_i - H_{wls,ii})^d \epsilon_i \epsilon_i^\top (I_i - H_{wls,ii})^d W_i X_i} (X^\top W X)^{-1} C
@@ -102,7 +102,7 @@ Substitute $H_{wls}$ and $H_{mmrm}$ with its expression, we have
   M_{mmrm, d, i} = L_i (I_i - L_i^\top X_i (X^\top W X)^{-1} X_i^\top L_i)^d L_i^\top
 \]
 
-apprarently, if $d=0$, these two are identical because $W_i = L_i L_i^\top$.
+Apparently, if $d=0$, these two are identical because $W_i = L_i L_i^\top$.
 
 When $d = -1$, we have
 
@@ -151,7 +151,7 @@ When $d = -1/2$, we have the following
   = W_i B_{wls, i}^{1/2}
 \]
 
-Apprarently, if $B_{wls, i}^{1/2} \ne (L_i^\top)^{-1} B_{mmrm, i}^{1/2} L_i^\top$,
+Apparently if $B_{wls, i}^{1/2} \ne (L_i^\top)^{-1} B_{mmrm, i}^{1/2} L_i^\top$,
 we should also have
 \[
   B_{wls, i}^{1/2} B_{wls, i}^{1/2} \ne (L_i^\top)^{-1} B_{mmrm, i}^{1/2} L_i^\top (L_i^\top)^{-1} B_{mmrm, i}^{1/2} L_i^\top
@@ -218,7 +218,7 @@ has already been proved in covariance estimator section, we only need to prove
   L^{-1} (I - X(X^\top W X)^{-1}X^\top W) S_i^\top = (I - L^\top X(X^\top W X)^{-1}X^\top L) S_i^\top L_i^{-1}
 \]
 
-Apprarently
+Apparently
 
 \[
   L^{-1} (I - X(X^\top W X)^{-1}X^\top W) S_i^\top = L^{-1} S_i^\top - L^{-1} X(X^\top W X)^{-1}X_i^\top W_i

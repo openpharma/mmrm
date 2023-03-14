@@ -259,7 +259,10 @@ mmrm_control <- function(n_cores = 1L,
   }
   assert_subset(
     vcov,
-    c("Asymptotic", "Empirical", "Empirical-Bias-Reduced", "Empirical-Jackknife", "Kenward-Roger", "Kenward-Roger-Linear")
+    c(
+      "Asymptotic", "Empirical", "Empirical-Bias-Reduced",
+      "Empirical-Jackknife", "Kenward-Roger", "Kenward-Roger-Linear"
+    )
   )
 
   if (xor(identical(method, "Kenward-Roger"), vcov %in% c("Kenward-Roger", "Kenward-Roger-Linear"))) {
