@@ -142,7 +142,7 @@ context("euclidean distance") {
 }
 
 context("convert_eigen and convert_tmb") {
-  test_that("convert_eigen and convert_tmb are reversible") {
+  test_that("convert_eigen and convert_tmb are inverse functions") {
     matrix<double> tmb_mat(4, 2);
     tmb_mat << 1, 2, 3, 4, 5, 6, 7, 8;
     expect_equal_matrix(convert_eigen(convert_tmb(tmb_mat)), tmb_mat);
