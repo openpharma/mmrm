@@ -242,7 +242,7 @@ To calculate this, we usually requires that the matrix is positive-definite.
 However, @young2016improved suggest that this is not always assured in practice.
 
 Thus, following @pustejovsky2018small, we use the pseudo inverse to avoid this.
-We follow the following logic(cpp code in `pseudoInverseSqrt`) to obtain the pseudo inverse:
+We follow the following logic (see the corresponding `C++` function `pseudoInverseSqrt`) to obtain the pseudo inverse:
 
 1. Conduct singular value decomposition.
 2. Use `cpow` to obtain the square root of the reciprocals of singular values, if the value is larger than a computational threshold;
