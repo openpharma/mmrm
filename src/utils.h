@@ -153,7 +153,7 @@ Eigen::Matrix<T, -1, -1> convert_tmb(const matrix<T> &input) {
 }
 
 // Calculate the square root of the pseudo inverse of a matrix
-// adapt from method for calculating the pseudo-Inverse as recommended by Eigen developers
+// adapted from the method for calculating the pseudo-Inverse as recommended by the Eigen developers
 template<typename T>
 matrix<T> pseudoInverseSqrt(const matrix<T> &input, double epsilon = std::numeric_limits<double>::epsilon()) {
   Eigen::Matrix<T, -1, -1> eigen_mat = convert_tmb(input);
