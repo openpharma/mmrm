@@ -222,15 +222,16 @@ There are multiple variance-covariance estimator available for the coefficients,
 1. Asymptotic
 1. Empirical (Cluster Robust Sandwich)
 1. Empirical-Jackknife
+1. Empirical-Bias-Reduced
 1. Kenward-Roger
 1. Kenward-Roger-Linear
 
 Please note that, not all combinations of variance-covariance for coefficients and method of
 degrees of freedom are possible, e.g. "Kenward-Roger" and "Kenward-Roger-Linear" are available only
-when the degrees of freedom method is "Kenward-Roger", while "Empirical" and "Empirical-Jackknife"
-only works for "Residual" degrees of freedom currently.
+when the degrees of freedom method is "Kenward-Roger".
 
-Details can be found in [Coefficients Covariance Matrix Adjustment vignette](coef_vcov.html).
+Details can be found in [Coefficients Covariance Matrix Adjustment vignette](coef_vcov.html) and
+[Weighted Least Square Empirical Covariance](empirical_wls.html).
 
 ## Keeping Unobserved Visits
 

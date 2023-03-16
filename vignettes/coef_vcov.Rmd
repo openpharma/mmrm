@@ -60,9 +60,10 @@ covariance matrix.
   = (X^\top W X)^{-1}(\sum_{i}{X_i^\top L_{i} L_{i}^\top \hat\epsilon_i\hat\epsilon_i^\top L_{i} L_{i}^\top X_i})(X^\top W X)^{-1}
 \]
 
-Where $W_i$ is the block diagonal part for subject $i$ of $W$ matrix, $\hat\epsilon_i$ is the observed residuals for subject i, $L_i$
-is the Cholesky factor of $W_i$.
+Where $W_i$ is the block diagonal part for subject $i$ of $W$ matrix, $\hat\epsilon_i$ is the observed residuals for subject i,
+$L_i$ is the Cholesky factor of $\Sigma_i^{-1}$ ($W_i = L_i L_i^\top$).
 
+See the detailed explanation of these formulas in the [Weighted Least Square Empirical Covariance](empirical_wls.html) vignette.
 
 ## Jackknife Covariance
 

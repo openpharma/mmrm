@@ -57,6 +57,7 @@ Suggests:
     emmeans (>= 1.6),
     estimability,
     knitr,
+    MASS,
     mockery,
     parallelly (>= 1.32.0),
     parsnip,

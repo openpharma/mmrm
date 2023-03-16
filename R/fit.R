@@ -259,7 +259,10 @@ mmrm_control <- function(n_cores = 1L,
   }
   assert_subset(
     vcov,
-    c("Asymptotic", "Empirical", "Empirical-Jackknife", "Kenward-Roger", "Kenward-Roger-Linear")
+    c(
+      "Asymptotic", "Empirical", "Empirical-Bias-Reduced",
+      "Empirical-Jackknife", "Kenward-Roger", "Kenward-Roger-Linear"
+    )
   )
 
   if (xor(identical(method, "Kenward-Roger"), vcov %in% c("Kenward-Roger", "Kenward-Roger-Linear"))) {
@@ -452,9 +455,9 @@ mmrm <- function(formula,
       r = fit$kr_comp$R,
       linear = (control$vcov == "Kenward-Roger-Linear")
     )
-  } else if (control$vcov %in% c("Empirical", "Empirical-Jackknife")) {
+  } else if (control$vcov %in% c("Empirical", "Empirical-Bias-Reduced", "Empirical-Jackknife")) {
     empirical_comp <- h_get_empirical(
-      fit$tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov, control$vcov == "Empirical-Jackknife"
+      fit$tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov, control$vcov
     )
     fit$beta_vcov_adj <- empirical_comp$cov
     fit$empirical_df_mat <- empirical_comp$df_mat
