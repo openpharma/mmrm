@@ -144,16 +144,15 @@ type_2_error_rate_eval <- create_evaluator(
 experiment <- create_experiment(
   name = "mmrm-benchmark-low-missingness", save_dir = "results"
 ) %>%
-  add_dgp(no_miss_no_effect_us_dgp, name = "no_effect_us") %>%
-  add_dgp(no_miss_no_effect_csh_dgp, name = "no_effect_csh") %>%
-  add_dgp(no_miss_no_effect_toeph_dgp, name = "no_effect_toeph") %>%
-  add_dgp(no_miss_no_effect_us_dgp, name = "small_effect_us") %>%
-  add_dgp(no_miss_no_effect_csh_dgp, name = "small_effect_csh") %>%
-  add_dgp(no_miss_no_effect_toeph_dgp, name = "small_effect_toeph") %>%
-  add_dgp(no_miss_no_effect_us_dgp, name = "mod_effect_us") %>%
-  add_dgp(no_miss_no_effect_csh_dgp, name = "mod_effect_csh") %>%
-  add_dgp(no_miss_no_effect_toeph_dgp, name = "mod_effect_toeph") %>%
-  ) %>%
+  add_dgp(no_effect_us_dgp, name = "no_effect_us") %>%
+  add_dgp(no_effect_csh_dgp, name = "no_effect_csh") %>%
+  add_dgp(no_effect_toeph_dgp, name = "no_effect_toeph") %>%
+  add_dgp(small_effect_us_dgp, name = "small_effect_us") %>%
+  add_dgp(small_effect_csh_dgp, name = "small_effect_csh") %>%
+  add_dgp(small_effect_toeph_dgp, name = "small_effect_toeph") %>%
+  add_dgp(mod_effect_us_dgp, name = "mod_effect_us") %>%
+  add_dgp(mod_effect_csh_dgp, name = "mod_effect_csh") %>%
+  add_dgp(mod_effect_toeph_dgp, name = "mod_effect_toeph") %>%
   add_vary_across(
     .dgp = c("no_effect_us", "no_effect_csh", "no_effect_toeph",
              "small_effect_us", "small_effect_csh", "small_effect_toeph",
