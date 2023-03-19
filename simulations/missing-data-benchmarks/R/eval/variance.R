@@ -1,6 +1,6 @@
 variance_fun <- function(fit_results) {
 
-  group_vars <- c(".dgp_name", ".method_name", "n_obs")
+  group_vars <- c(".dgp_name", ".method_name")
   fit_results %>%
     dplyr::mutate(
       estimates = purrr::pmap(
@@ -22,7 +22,7 @@ variance_fun <- function(fit_results) {
     tidyr::unnest_wider(col = estimates) %>%
     dplyr::group_by(dplyr::across({{group_vars}})) %>%
     dplyr::summarise(
-      dplyr::across(dplyr::contains("trt_visit_num"), var),
+      dplyr::across(dplyr::contains("trt_visit_num"), var, na.rm = TRUE),
       .groups = "drop"
     ) %>%
     tidyr::pivot_longer(

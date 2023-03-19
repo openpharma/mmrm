@@ -1,6 +1,6 @@
 coverage_fun <- function(fit_results, true_params) {
 
-  group_vars <- c(".dgp_name", ".method_name", "n_obs")
+  group_vars <- c(".dgp_name", ".method_name")
   fit_results %>%
     dplyr::mutate(
       covered = purrr::pmap(
@@ -34,7 +34,7 @@ coverage_fun <- function(fit_results, true_params) {
     tidyr::unnest_wider(col = covered) %>%
     dplyr::group_by(dplyr::across({{group_vars}})) %>%
     dplyr::summarise(
-      dplyr::across(dplyr::contains("trt_visit_num"), mean),
+      dplyr::across(dplyr::contains("trt_visit_num"), mean, na.rm = TRUE),
       .groups = "drop"
     ) %>%
     tidyr::pivot_longer(

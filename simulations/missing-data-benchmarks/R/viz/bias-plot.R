@@ -1,4 +1,4 @@
-bias_fun <- function(eval_results) {
+bias_plot_fun <- function(eval_results) {
 
   ## extract the bias tibble, fix variable names for exposition
   bias_tbl <- eval_results$bias %>%

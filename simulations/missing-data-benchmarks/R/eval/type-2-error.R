@@ -6,7 +6,7 @@ type_2_error_rate_fun <- function(fit_results, true_params) {
   null_dgps <- dgp_names[null_dgp_idx]
 
   # compute type 1 error rate
-  group_vars <- c(".dgp_name", ".method_name", "n_obs")
+  group_vars <- c(".dgp_name", ".method_name")
   fit_results %>%
     dplyr::filter(!(.dgp_name %in% null_dgps)) %>%
     dplyr::mutate(
@@ -31,7 +31,7 @@ type_2_error_rate_fun <- function(fit_results, true_params) {
     tidyr::unnest_wider(col = error) %>%
     dplyr::group_by(dplyr::across({{group_vars}})) %>%
     dplyr::summarise(
-      dplyr::across(dplyr::contains("trt_visit_num"), mean),
+      dplyr::across(dplyr::contains("trt_visit_num"), mean, na.rm = TRUE),
       .groups = "drop"
     ) %>%
     tidyr::pivot_longer(

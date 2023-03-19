@@ -29,14 +29,17 @@ toep_cov_mat <- toeplitz(c(1, 0.5, 0.25, 0.125, rep(0, 6)))
 # dgps with no treatment effect
 no_effect_us_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
+  n_obs = 400,
   outcome_covar_mat = us_cov_mat
 )
 no_effect_csh_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
+  n_obs = 400,
   outcome_covar_mat = csh_cov_mat
 )
 no_effect_toeph_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
+  n_obs = 400,
   outcome_covar_mat = toep_cov_mat
 )
 
@@ -44,16 +47,19 @@ no_effect_toeph_dgp <- create_dgp(
 small_effect_us_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
   outcome_covar_mat = us_cov_mat,
+  n_obs = 400,
   trt_visit_coef = 0.25
 )
 small_effect_csh_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
   outcome_covar_mat = csh_cov_mat,
+  n_obs = 400,
   trt_visit_coef = 0.25
 )
 small_effect_toeph_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
   outcome_covar_mat = toep_cov_mat,
+  n_obs = 400,
   trt_visit_coef = 0.25
 )
 
@@ -61,16 +67,19 @@ small_effect_toeph_dgp <- create_dgp(
 mod_effect_us_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
   outcome_covar_mat = us_cov_mat,
+  n_obs = 400,
   trt_visit_coef = 0.5
 )
 mod_effect_csh_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
   outcome_covar_mat = csh_cov_mat,
+  n_obs = 400,
   trt_visit_coef = 0.5
 )
 mod_effect_toeph_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
   outcome_covar_mat = toep_cov_mat,
+  n_obs = 400,
   trt_visit_coef = 0.5
 )
 
@@ -145,12 +154,6 @@ experiment <- create_experiment(
   add_dgp(mod_effect_us_dgp, name = "mod_effect_us") %>%
   add_dgp(mod_effect_csh_dgp, name = "mod_effect_csh") %>%
   add_dgp(mod_effect_toeph_dgp, name = "mod_effect_toeph") %>%
-  add_vary_across(
-    .dgp = c("no_effect_us", "no_effect_csh", "no_effect_toeph",
-             "small_effect_us", "small_effect_csh", "small_effect_toeph",
-             "mod_effect_us", "mod_effect_csh", "mod_effect_toeph"),
-    n_obs = c(400)
-  ) %>%
   add_method(mmrm_us_meth, name = "mmrm_us")  %>%
   add_method(mmrm_csh_meth, name = "mmrm_csh") %>%
   add_method(mmrm_toeph_meth, name = "mmrm_toeph")  %>%
@@ -176,6 +179,5 @@ results <- experiment$run(
   n_reps = 100,
   save = TRUE,
   verbose = 2,
-  checkpoint_n_reps = 20,
-  use_cached = TRUE
+  checkpoint_n_reps = 25
 )

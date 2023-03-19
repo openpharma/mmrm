@@ -1,6 +1,6 @@
 convergence_rate_fun <- function(fit_results) {
 
-  group_vars <- c(".dgp_name", ".method_name", "n_obs")
+  group_vars <- c(".dgp_name", ".method_name")
   fit_results %>%
     dplyr::mutate(
       convergence = purrr::pmap_lgl(
@@ -12,5 +12,8 @@ convergence_rate_fun <- function(fit_results) {
     ) %>%
     dplyr::select(dplyr::all_of(group_vars), convergence) %>%
     dplyr::group_by(dplyr::across({{group_vars}})) %>%
-    dplyr::summarise(convergence_rate = mean(convergence), .groups = "drop")
+    dplyr::summarise(
+      convergence_rate = mean(convergence),
+      .groups = "drop"
+    )
 }
