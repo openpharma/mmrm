@@ -316,7 +316,6 @@ h_residuals_normalized <- function(object, resids_unscaled) {
 
   lower_chol_list <- if (component(object, "n_groups") == 1) {
     lapply(seq_along(subject_list), function(x) {
-
       weighted_cov <- object$cov[subject_list[[x]]$time, subject_list[[x]]$time] /
         sqrt(tcrossprod(matrix(subject_list[[x]]$weights, ncol = 1)))
 
