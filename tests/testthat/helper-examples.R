@@ -4,7 +4,7 @@ get_mmrm_tmb <- function() {
   .mmrm_tmb_example
 }
 
-.mmrm_tmb_trans <- fit_mmrm(FEV1 ~ log(FEV1_BL) + ar1(AVISIT|USUBJID), data = fev_data, weights = rep(1, nrow(fev_data)))
+.mmrm_tmb_trans <- fit_mmrm(FEV1 ~ log(FEV1_BL) + ar1(AVISIT | USUBJID), data = fev_data, weights = rep(1, nrow(fev_data)))
 
 get_mmrm_transformed <- function() {
   .mmrm_tmb_trans
