@@ -336,6 +336,16 @@ test_that("mmrm works for rank deficient original design matrix by default", {
   expect_true(attr(result, "converged"))
 })
 
+test_that("mmrm works if data is not provided as argument", {
+  result <- expect_silent(
+    with(
+      fev_data,
+      mmrm(FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID))
+    )
+  )
+  expect_true(attr(result, "converged"))
+})
+
 test_that("mmrm works for specific small data example", {
   small_dat <- data.frame(
     FEV1 = c(1, 2, 3, 4, 5, 6),

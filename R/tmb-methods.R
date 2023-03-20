@@ -50,12 +50,34 @@ fitted.mmrm_tmb <- function(object, ...) {
 #' model.frame(object, full = TRUE)
 model.frame.mmrm_tmb <- function(formula, full = FALSE, ...) {
   assert_flag(full)
-  if (full) {
+  dots <- list(...)
+  if (!identical(dots$na.action %||% getOption("na.action"), "na.omit")) {
+    warning("na.action is always set to `na.omit` for `mmrm`!")
+  }
+  if (is.null(dots$data)) {
+    if (full) {
+      formula$tmb_data$full_frame
+    } else {
+      model.frame(
+        formula = formula$formula_parts$model_formula,
+        data = formula$tmb_data$data,
+        na.action = "na.omit"
+      )
+    }
+  } else {
+    model.frame(
+      formula = if (full) formula$formula_parts$full_formula else formula$formula_parts$model_formula,
+      data = dots$data,
+      na.action = "na.omit"
+    )
+  }
+  if (full && is.null(dots$data)) {
     formula$tmb_data$full_frame
   } else {
     model.frame(
       formula = formula$formula_parts$model_formula,
-      data = formula$tmb_data$full_frame
+      data = dots$data %||% formula$tmb_data$data,
+      na.action = "na.omit"
     )
   }
 }

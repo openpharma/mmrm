@@ -391,16 +391,20 @@ mmrm <- function(formula,
   if (control$method %in% c("Kenward-Roger", "Kenward-Roger-Linear") && !reml) {
     stop("Kenward-Roger only works for REML")
   }
+  covariance <- h_reconcile_cov_struct(formula, covariance)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula, covariance)
 
-  attr(data, which = "dataname") <- toString(match.call()$data)
+  if (!missing(data)) {
+    attr(data, which = "dataname") <- toString(match.call()$data)
+  } else {
+    data <- model.frame(formula_parts$full_formula)
+  }
 
   if (is.null(weights)) {
     weights <- rep(1, nrow(data))
   } else {
     attr(weights, which = "dataname") <- deparse(match.call()$weights)
   }
-  covariance <- h_reconcile_cov_struct(formula, covariance)
-  formula_parts <- h_mmrm_tmb_formula_parts(formula, covariance)
   tmb_data <- h_mmrm_tmb_data(
     formula_parts, data, weights, reml,
     accept_singular = control$accept_singular, drop_visit_levels = control$drop_visit_levels
