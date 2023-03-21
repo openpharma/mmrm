@@ -19,7 +19,7 @@ Drop Formula Terms with Character
 }
 \details{
 Elements in \code{drops} will be removed from the formula, while the environment
-of the formula is unchaged. If \code{drops} is \code{NULL} or \code{character(0)}, the formula is
+of the formula is unchanged. If \code{drops} is \code{NULL} or \code{character(0)}, the formula is
 unchanged.
 }
 \keyword{internal}

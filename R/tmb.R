@@ -32,7 +32,7 @@ h_mmrm_tmb_formula_parts <- function(
     list(
       formula = formula,
       model_formula = model_formula,
-      full_formula = h_add_covariance_variable_terms(model_formula, covariance),
+      full_formula = h_add_covariance_terms(model_formula, covariance),
       cov_type = tmb_cov_type(covariance),
       is_spatial = covariance$type == "sp_exp",
       visit_var = covariance$visits,

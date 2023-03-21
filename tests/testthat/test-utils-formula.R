@@ -52,14 +52,14 @@ test_that("h_drop_covariance_terms identifies covariance terms specifically", {
   )
 })
 
-# h_add_covariance_variable_terms ----
+# h_add_covariance_terms ----
 
-test_that("h_add_covariance_variable_terms adds covariance variables as terms", {
+test_that("h_add_covariance_terms adds covariance variables as terms", {
   cs <- cov_struct("us", "AVISITN", "USUBJID")
   f <- a ~ b + c
 
   expect_identical(
-    h_add_covariance_variable_terms(f, cs),
+    h_add_covariance_terms(f, cs),
     a ~ b + c + USUBJID + AVISITN
   )
 
@@ -67,7 +67,7 @@ test_that("h_add_covariance_variable_terms adds covariance variables as terms", 
   f <- a ~ b + c
 
   expect_identical(
-    h_add_covariance_variable_terms(f, cs),
+    h_add_covariance_terms(f, cs),
     a ~ b + c + USUBJID + COORDA + COORDB + GRP
   )
 })

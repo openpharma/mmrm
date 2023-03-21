@@ -57,7 +57,7 @@ h_drop_covariance_terms <- function(f) {
 #' have the same environment.
 #'
 #' @keywords internal
-h_add_covariance_variable_terms <- function(f, covariance) {
+h_add_covariance_terms <- function(f, covariance) {
   cov_terms <- with(covariance, c(subject, visits, group))
   cov_terms <- paste(cov_terms, collapse = " + ")
   stats::update(f, stats::as.formula(paste(". ~ . + ", cov_terms)))
@@ -68,7 +68,7 @@ h_add_covariance_variable_terms <- function(f, covariance) {
 #' @param drops (`character`)\cr representation of elements to be removed.
 #'
 #' @details Elements in `drops` will be removed from the formula, while the environment
-#' of the formula is unchaged. If `drops` is `NULL` or `character(0)`, the formula is
+#' of the formula is unchanged. If `drops` is `NULL` or `character(0)`, the formula is
 #' unchanged.
 #' @return A new formula with elements in `drops` removed.
 #'
