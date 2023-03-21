@@ -397,7 +397,8 @@ mmrm <- function(formula,
   if (!missing(data)) {
     attr(data, which = "dataname") <- toString(match.call()$data)
   } else {
-    data <- model.frame(formula_parts$full_formula)
+    # na.action set to na.pass to allow data to be full; will be futher trimmed later
+    data <- model.frame(formula_parts$full_formula, na.action = "na.pass")
   }
 
   if (is.null(weights)) {
