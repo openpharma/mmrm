@@ -38,7 +38,7 @@ test_that("h_drop_covariance_terms identifies covariance terms specifically", {
 
   expect_identical(
     h_drop_covariance_terms(~ b + us(a | g / s)),
-    ~ b
+    ~b
   )
 
   expect_identical(

@@ -32,7 +32,9 @@ h_drop_covariance_terms <- function(f) {
   covariance_terms <- Filter(Negate(is.null), attr(terms, "specials"))
 
   # if no covariance terms were found, return original formula
-  if (length(covariance_terms) == 0) return(f)
+  if (length(covariance_terms) == 0) {
+    return(f)
+  }
 
   # drop covariance terms (position - 1 to account for response term)
   covariance_term_indices <- as.numeric(covariance_terms) - (length(f) > 2)

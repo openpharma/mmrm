@@ -470,7 +470,6 @@ test_that("mmrm works for different na.actions", {
     "NA values will always be removed regardless of na.action in options."
   )
   expect_class(res4, "mmrm")
-
 })
 
 ## vcov and method combination ----
