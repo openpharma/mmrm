@@ -346,6 +346,16 @@ test_that("mmrm works if data is not provided as argument", {
   expect_true(attr(result, "converged"))
 })
 
+test_that("mmrm works if formula contains variables not in data", {
+  set.seed(123L)
+  y <- rnorm(800)
+  wt <- exp(rnorm(800))
+  result <- expect_silent(
+    mmrm(y ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID), weights = wt, data = fev_data)
+  )
+  expect_true(attr(result, "converged"))
+})
+
 test_that("mmrm works for specific small data example", {
   small_dat <- data.frame(
     FEV1 = c(1, 2, 3, 4, 5, 6),
