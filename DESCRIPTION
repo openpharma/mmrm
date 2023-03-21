@@ -47,7 +47,6 @@ Imports:
     parallel,
     Rcpp,
     Rdpack,
-    rlang,
     stats,
     stringr,
     TMB (>= 1.9.1),
