@@ -29,16 +29,19 @@ toep_cov_mat <- toeplitz(c(1, 0.5, 0.25, 0.125, rep(0, 6)))
 # dgps with no treatment effect
 no_effect_us_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
+  n_obs = 400,
   outcome_covar_mat = us_cov_mat,
   missingness = "low"
 )
 no_effect_csh_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
+  n_obs = 400,
   outcome_covar_mat = csh_cov_mat,
   missingness = "low"
 )
 no_effect_toeph_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
+  n_obs = 400,
   outcome_covar_mat = toep_cov_mat,
   missingness = "low"
 )
@@ -46,18 +49,21 @@ no_effect_toeph_dgp <- create_dgp(
 # dgps with small treatment effect
 small_effect_us_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
+  n_obs = 400,
   outcome_covar_mat = us_cov_mat,
   trt_visit_coef = 0.25,
   missingness = "low"
 )
 small_effect_csh_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
+  n_obs = 400,
   outcome_covar_mat = csh_cov_mat,
   trt_visit_coef = 0.25,
   missingness = "low"
 )
 small_effect_toeph_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
+  n_obs = 400,
   outcome_covar_mat = toep_cov_mat,
   trt_visit_coef = 0.25,
   missingness = "low"
@@ -66,18 +72,21 @@ small_effect_toeph_dgp <- create_dgp(
 # dgps with moderate treatment effect
 mod_effect_us_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
+  n_obs = 400,
   outcome_covar_mat = us_cov_mat,
   trt_visit_coef = 0.5,
   missingness = "low"
 )
 mod_effect_csh_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
+  n_obs = 400,
   outcome_covar_mat = csh_cov_mat,
   trt_visit_coef = 0.5,
   missingness = "low"
 )
 mod_effect_toeph_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
+  n_obs = 400,
   outcome_covar_mat = toep_cov_mat,
   trt_visit_coef = 0.5,
   missingness = "low"
@@ -142,7 +151,8 @@ type_2_error_rate_eval <- create_evaluator(
 
 # create the experiment
 experiment <- create_experiment(
-  name = "mmrm-benchmark-low-missingness", save_dir = "results"
+  name = "mmrm-benchmark-low-missingness-n-400",
+  save_dir = "results/low-miss/n-400"
 ) %>%
   add_dgp(no_effect_us_dgp, name = "no_effect_us") %>%
   add_dgp(no_effect_csh_dgp, name = "no_effect_csh") %>%
@@ -153,12 +163,6 @@ experiment <- create_experiment(
   add_dgp(mod_effect_us_dgp, name = "mod_effect_us") %>%
   add_dgp(mod_effect_csh_dgp, name = "mod_effect_csh") %>%
   add_dgp(mod_effect_toeph_dgp, name = "mod_effect_toeph") %>%
-  add_vary_across(
-    .dgp = c("no_effect_us", "no_effect_csh", "no_effect_toeph",
-             "small_effect_us", "small_effect_csh", "small_effect_toeph",
-             "mod_effect_us", "mod_effect_csh", "mod_effect_toeph"),
-    n_obs = c(400, 600, 800)
-  ) %>%
   add_method(mmrm_us_meth, name = "mmrm_us")  %>%
   add_method(mmrm_csh_meth, name = "mmrm_csh") %>%
   add_method(mmrm_toeph_meth, name = "mmrm_toeph")  %>%
@@ -179,9 +183,10 @@ experiment <- create_experiment(
   add_evaluator(type_2_error_rate_eval, name = "type_2_error_rate")
 
 # run the experiment
-set.seed(12056129)
+set.seed(56129)
 results <- experiment$run(
   n_reps = 100,
   save = TRUE,
-  verbose = 2
+  verbose = 2,
+  checkpoint_n_reps = 25
 )
