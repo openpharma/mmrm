@@ -26,13 +26,13 @@ h_mmrm_tmb_formula_parts <- function(
   assert_formula(formula)
   assert_true(identical(length(formula), 3L))
 
-  model_formula <- drop_covariance_terms(formula)
+  model_formula <- h_drop_covariance_terms(formula)
 
   structure(
     list(
       formula = formula,
       model_formula = model_formula,
-      full_formula = add_covariance_variable_terms(model_formula, covariance),
+      full_formula = h_add_covariance_variable_terms(model_formula, covariance),
       cov_type = tmb_cov_type(covariance),
       is_spatial = covariance$type == "sp_exp",
       visit_var = covariance$visits,
@@ -55,6 +55,7 @@ h_mmrm_tmb_formula_parts <- function(
 #'   to full rank `x_matrix` and remaining coefficients will be missing as per
 #'   `x_cols_aliased`. Otherwise the function fails for rank deficient design matrices.
 #' @param drop_visit_levels (`flag`)\cr whether to drop levels for visit variable, if visit variable is a factor.
+#' @param full_frame (`data.frame`)\cr which contains all used variables in `formula_parts`.
 #'
 #' @return List of class `mmrm_tmb_data` with elements:
 #' - `full_frame`: `data.frame` with `n` rows containing all variables needed in the model.
@@ -91,7 +92,8 @@ h_mmrm_tmb_data <- function(formula_parts,
                             weights,
                             reml,
                             accept_singular,
-                            drop_visit_levels) {
+                            drop_visit_levels,
+                            full_frame) {
   assert_class(formula_parts, "mmrm_tmb_formula_parts")
   assert_data_frame(data)
   varname <- formula_parts[grepl("_var", names(formula_parts))]
@@ -133,7 +135,7 @@ h_mmrm_tmb_data <- function(formula_parts,
   # weights is always the last column
   weights_name <- colnames(data)[ncol(data)]
   if (!identical(getOption("na.action"), "na.omit")) {
-    message(
+    warning(
       "NA values will always be removed regardless of na.action in options."
     )
   }

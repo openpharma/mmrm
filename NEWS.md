@@ -20,8 +20,7 @@
   sessions.
 - Previously `model.frame` does not work with new given `data`. It now works with new `data`.
   In addition, it always use "na.omit" regardless of options or arguments in `model.frame`.
-- Enable fitting `mmrm` using environment variables, instead of requiring `data` argument.
-  `fit_mmrm` is not affected.
+  `subset` argument is always ignored.
 
 ### Bug Fixes
 
@@ -31,6 +30,10 @@
 - Previously `model.frame` call on `mmrm` object with transformed terms, e.g.
   `mmrm(Y ~ log(X) + ar1(VISIT|ID))`, will cause errors. This is now fixed and
   `model.frame` returns the data correctly.
+- Previously `mmrm` always requires `data` argument. Now fitting `mmrm` can use
+  environment variables, instead of requiring `data` argument. `fit_mmrm` is not affected.
+- Previously `emmeans` does not work if fixed effect does not contain visit variable.
+  This is now fixed.
 # mmrm 0.2.2
 
 ### New Features

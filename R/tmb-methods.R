@@ -41,42 +41,35 @@ fitted.mmrm_tmb <- function(object, ...) {
 }
 
 #' @describeIn mmrm_tmb_methods obtains the model frame.
-#' @param full (`flag`)\cr whether to include subject, visit and weight variables.
+#' @param exclude (`character`)\cr names of variable to exclude.
 #' @importFrom stats model.frame
 #' @exportS3Method
 #' @examples
 #' # Model frame:
 #' model.frame(object)
-#' model.frame(object, full = TRUE)
-model.frame.mmrm_tmb <- function(formula, full = FALSE, ...) {
-  assert_flag(full)
+#' model.frame(object, exclude = "subject_var")
+model.frame.mmrm_tmb <- function(formula, exclude = "subject_var", ...) {
+  assert_subset(exclude, c("subject_var", "visit_var", "group_var"))
   dots <- list(...)
-  if (!identical(dots$na.action %||% getOption("na.action"), "na.omit")) {
+  if (!identical(h_default_value(dots$na.action, getOption("na.action")), "na.omit")) {
     warning("na.action is always set to `na.omit` for `mmrm`!")
   }
-  if (is.null(dots$data)) {
-    if (full) {
-      formula$tmb_data$full_frame
-    } else {
-      model.frame(
-        formula = formula$formula_parts$model_formula,
-        data = formula$tmb_data$data,
-        na.action = "na.omit"
-      )
-    }
-  } else {
-    model.frame(
-      formula = if (full) formula$formula_parts$full_formula else formula$formula_parts$model_formula,
-      data = dots$data,
-      na.action = "na.omit"
-    )
+  if (!is.null(dots$subset) || !is.null(dots$weights)) {
+    warning("subset and weights are not valid arguments for `mmrm` models.")
   }
-  if (full && is.null(dots$data)) {
+  if (is.null(dots$data) && length(exclude) == 0L) {
     formula$tmb_data$full_frame
   } else {
+    drop_vars <- unlist(
+      lapply(
+        exclude,
+        function(i) formula$formula_parts[[i]]
+      )
+    )
+    new_formula <- h_drop_terms(formula$formula_parts$full_formula, drop_vars)
     model.frame(
-      formula = formula$formula_parts$model_formula,
-      data = dots$data %||% formula$tmb_data$data,
+      formula = new_formula,
+      data = h_default_value(dots$data, formula$data),
       na.action = "na.omit"
     )
   }

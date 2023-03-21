@@ -16,6 +16,5 @@
 #' @importFrom stringr boundary
 #' @importFrom parallel clusterApply
 #' @importFrom Rdpack reprompt
-#' @importFrom rlang %||%
 #' @importFrom utils modifyList
 NULL
