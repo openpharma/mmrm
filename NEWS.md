@@ -30,7 +30,7 @@
   always removed prior to model fitting.
 - Previously `model.frame` call on `mmrm` object with transformed terms, e.g.
   `mmrm(Y ~ log(X) + ar1(VISIT|ID))`, will cause errors. This is now fixed and
-  `model.frame` returns the date correctly.
+  `model.frame` returns the data correctly.
 # mmrm 0.2.2
 
 ### New Features
