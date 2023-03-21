@@ -1,7 +1,7 @@
-bias_plot_fun <- function(eval_results) {
+type_1_error_rate_plot_fun <- function(eval_results) {
 
   ## extract the bias tibble, fix variable names for exposition
-  bias_tbl <- eval_results$bias %>%
+  coverage_tbl <- eval_results$type_1_error_rate %>%
     mutate(
       coefficient_num = as.numeric(stringr::str_extract(coefficient, "[0-9].")),
       parameter = paste("Treatment x Visit", coefficient_num),
@@ -10,15 +10,18 @@ bias_plot_fun <- function(eval_results) {
     )
 
   ## plot the biases
-  bias_tbl %>%
+  coverage_tbl %>%
     ggplot2::ggplot(ggplot2::aes(
-      x = parameter, y = bias, colour = .method_name
+      x = parameter, y = type_1_error_rate, colour = .method_name
     )) +
-    ggplot2::facet_grid(rows = ggplot2::vars(.dgp_name), scales = "free_y") +
+    ggplot2::facet_grid(rows = ggplot2::vars(.dgp_name)) +
     ggplot2::geom_point(position = position_dodge(width = 0.7)) +
-    ggplot2::geom_hline(yintercept = 0, linetype = 2, alpha = 0.3) +
+    ggplot2::geom_hline(yintercept = 0.05, linetype = 2, alpha = 0.3) +
     ggplot2::xlab("Interaction Coefficient") +
-    ggplot2::ylab("Empirical Bias (100 Replicates)") +
+    ggplot2::ylab(
+      "Empirical Type 1 Error Rate (100 Replicates, Bonferroni Adjusted)"
+    ) +
+    ggplot2::scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
     ggplot2::scale_colour_discrete(name = "Method") +
     ggplot2::theme_bw() +
     ggplot2::theme(
