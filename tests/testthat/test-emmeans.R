@@ -92,6 +92,28 @@ test_that("emmeans works as expected", {
   expect_equal(result_emmeans, expected_emmeans, tolerance = 1e-3)
 })
 
+test_that("emmeans works as expected for transformed variables", {
+  skip_if_not_installed("emmeans", minimum_version = "1.6")
+
+  fit <- mmrm(FEV1 ~ log(FEV1_BL) + AVISIT + ar1(AVISIT | USUBJID), data = fev_data)
+  result <- expect_silent(emmeans::emmeans(fit, ~ AVISIT))
+  expect_class(result, "emmGrid")
+  result_emmeans <- as.data.frame(result)$emmean
+  expected_emmeans <- c(34.99641, 39.86572, 44.54411, 50.53663)
+  expect_equal(result_emmeans, expected_emmeans, tolerance = 1e-3)
+})
+
+test_that("emmeans works as expected for transformed variables and fixed effect is not visit", {
+  skip_if_not_installed("emmeans", minimum_version = "1.6")
+
+  fit <- mmrm(FEV1 ~ log(FEV1_BL) + ARMCD + ar1(AVISIT | USUBJID), data = fev_data)
+  result <- expect_silent(emmeans::emmeans(fit, ~ ARMCD | AVISIT))
+  expect_class(result, "emmGrid")
+  result_emmeans <- as.data.frame(result)$emmean
+  expected_emmeans <- c(40.41980, 44.78855, 40.41980, 44.78855, 40.41980, 44.78855, 40.41980, 44.78855)
+  expect_equal(result_emmeans, expected_emmeans, tolerance = 1e-3)
+})
+
 test_that("emmeans gives values close to what is expected", {
   skip_if_not_installed("emmeans", minimum_version = "1.6")
 

@@ -21,7 +21,7 @@
 
 \method{fitted}{mmrm_tmb}(object, ...)
 
-\method{model.frame}{mmrm_tmb}(formula, full = FALSE, ...)
+\method{model.frame}{mmrm_tmb}(formula, exclude = "subject_var", ...)
 
 \method{logLik}{mmrm_tmb}(object, ...)
 
@@ -51,7 +51,7 @@ coefficients.}
 
 \item{formula}{(\code{mmrm_tmb})\cr same as \code{object}.}
 
-\item{full}{(\code{flag})\cr whether to include subject, visit and weight variables.}
+\item{exclude}{(\code{character})\cr names of variable to exclude.}
 
 \item{x}{(\code{mmrm_tmb})\cr same as \code{object}.}
 
@@ -117,7 +117,7 @@ coef(object)
 fitted(object)
 # Model frame:
 model.frame(object)
-model.frame(object, full = TRUE)
+model.frame(object, exclude = "subject_var")
 # Log likelihood given the estimated parameters:
 logLik(object)
 # Formula which was used:

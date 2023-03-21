@@ -336,6 +336,16 @@ test_that("mmrm works for rank deficient original design matrix by default", {
   expect_true(attr(result, "converged"))
 })
 
+test_that("mmrm works if data is not provided as argument", {
+  result <- expect_silent(
+    with(
+      fev_data,
+      mmrm(FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID))
+    )
+  )
+  expect_true(attr(result, "converged"))
+})
+
 test_that("mmrm works for specific small data example", {
   small_dat <- data.frame(
     FEV1 = c(1, 2, 3, 4, 5, 6),
@@ -432,7 +442,8 @@ test_that("mmrm fails when using formula covariance with covariance argument", {
 })
 
 test_that("mmrm works for different na.actions", {
-  na_action <- options("na.action")
+  na_action <- getOption("na.action")
+  on.exit(options(na.action = na_action))
   options(na.action = "na.omit")
   formula <- FEV1 ~ ARMCD + us(AVISIT | USUBJID)
 
@@ -440,27 +451,26 @@ test_that("mmrm works for different na.actions", {
   expect_class(res1, "mmrm")
 
   options(na.action = "na.pass")
-  expect_message(
+  expect_warning(
     res2 <- mmrm(formula, fev_data),
     "NA values will always be removed regardless of na.action in options."
   )
   expect_class(res2, "mmrm")
 
   options(na.action = "na.fail")
-  expect_message(
+  expect_warning(
     res3 <- mmrm(formula, fev_data),
     "NA values will always be removed regardless of na.action in options."
   )
   expect_class(res3, "mmrm")
 
   options(na.action = "na.exclude")
-  expect_message(
+  expect_warning(
     res4 <- mmrm(formula, fev_data),
     "NA values will always be removed regardless of na.action in options."
   )
   expect_class(res4, "mmrm")
 
-  options(na.action = na_action$na.action)
 })
 
 ## vcov and method combination ----
