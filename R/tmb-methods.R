@@ -60,12 +60,7 @@ model.frame.mmrm_tmb <- function(formula, exclude = "subject_var", ...) {
   if (is.null(dots$data) && length(exclude) == 0L) {
     formula$tmb_data$full_frame
   } else {
-    drop_vars <- unlist(
-      lapply(
-        exclude,
-        function(i) formula$formula_parts[[i]]
-      )
-    )
+    drop_vars <- unlist(formula$formula_parts[exclude])
     new_formula <- h_drop_terms(formula$formula_parts$full_formula, drop_vars)
     model.frame(
       formula = new_formula,

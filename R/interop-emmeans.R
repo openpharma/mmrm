@@ -55,7 +55,7 @@ emm_basis.mmrm <- function(object, # nolint
     beta_hat[kept] <- component(object, "beta_est")
     orig_model_mat <- stats::model.matrix(
       trms,
-      stats::model.frame(object, full = TRUE),
+      stats::model.frame(object, exclude = "subject_var"),
       contrasts.arg = contrasts
     )
     estimability::nonest.basis(orig_model_mat)

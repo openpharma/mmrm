@@ -38,6 +38,14 @@ test_that("fitted works as expected", {
 
 test_that("model.frame works as expected with defaults", {
   object <- get_mmrm_tmb()
+  result <- expect_silent(model.frame(object))
+  expect_data_frame(result, nrows = length(object$tmb_data$y_vector))
+  expect_named(result, c("FEV1", "RACE", "AVISIT"))
+  expect_class(attr(result, "terms"), "terms")
+})
+
+test_that("model.frame works as expected with excludes", {
+  object <- get_mmrm_tmb()
   result <- expect_silent(model.frame(object, exclude = c("subject_var", "visit_var")))
   expect_data_frame(result, nrows = length(object$tmb_data$y_vector))
   expect_named(result, c("FEV1", "RACE"))
