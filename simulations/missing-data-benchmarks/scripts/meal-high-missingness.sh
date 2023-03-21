@@ -9,7 +9,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
-#SBATCH --mem-per-cpu=40G
+#SBATCH --mem-per-cpu=200G
 #
 # Mail type:
 #SBATCH --mail-type=all

@@ -26,20 +26,23 @@ us_cov_mat <- compute_unstructured_matrix()
 csh_cov_mat <- compute_csh_matrix()
 toep_cov_mat <- toeplitz(c(1, 0.5, 0.25, 0.125, rep(0, 6)))
 
+# set the sample size
+n_obs <- 400
+
 # dgps with no treatment effect
 no_effect_us_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
-  n_obs = 400,
+  n_obs = n_obs,
   outcome_covar_mat = us_cov_mat
 )
 no_effect_csh_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
-  n_obs = 400,
+  n_obs = n_obs,
   outcome_covar_mat = csh_cov_mat
 )
 no_effect_toeph_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
-  n_obs = 400,
+  n_obs = n_obs,
   outcome_covar_mat = toep_cov_mat
 )
 
@@ -47,19 +50,19 @@ no_effect_toeph_dgp <- create_dgp(
 small_effect_us_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
   outcome_covar_mat = us_cov_mat,
-  n_obs = 400,
+  n_obs = n_obs,
   trt_visit_coef = 0.25
 )
 small_effect_csh_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
   outcome_covar_mat = csh_cov_mat,
-  n_obs = 400,
+  n_obs = n_obs,
   trt_visit_coef = 0.25
 )
 small_effect_toeph_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
   outcome_covar_mat = toep_cov_mat,
-  n_obs = 400,
+  n_obs = n_obs,
   trt_visit_coef = 0.25
 )
 
@@ -67,19 +70,19 @@ small_effect_toeph_dgp <- create_dgp(
 mod_effect_us_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
   outcome_covar_mat = us_cov_mat,
-  n_obs = 400,
+  n_obs = n_obs,
   trt_visit_coef = 0.5
 )
 mod_effect_csh_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
   outcome_covar_mat = csh_cov_mat,
-  n_obs = 400,
+  n_obs = n_obs,
   trt_visit_coef = 0.5
 )
 mod_effect_toeph_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
   outcome_covar_mat = toep_cov_mat,
-  n_obs = 400,
+  n_obs = n_obs,
   trt_visit_coef = 0.5
 )
 
