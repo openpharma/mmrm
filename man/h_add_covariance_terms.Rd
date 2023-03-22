@@ -20,7 +20,7 @@ A new formula with included covariance terms.
 Add Individual Covariance Variables As Terms to Formula
 }
 \details{
-\code{update} is used to append the covariance structure and the environment
+\code{\link[stats:update]{stats::update()}} is used to append the covariance structure and the environment
 attribute will not be changed. This ensures the returned formula and the input formula
 have the same environment.
 }

@@ -2,7 +2,8 @@
 % Please edit documentation in R/utils.R
 \name{h_default_value}
 \alias{h_default_value}
-\title{Default Value on NULL}
+\title{Default Value on NULL
+Return default value when first argument is NULL.}
 \usage{
 h_default_value(x, y)
 }
@@ -12,7 +13,7 @@ h_default_value(x, y)
 \item{y}{Object.}
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+Default Value on NULL
 Return default value when first argument is NULL.
 }
 \details{
