@@ -21,7 +21,7 @@
 
 \method{fitted}{mmrm_tmb}(object, ...)
 
-\method{model.frame}{mmrm_tmb}(formula, exclude = "subject_var", ...)
+\method{model.frame}{mmrm_tmb}(formula, exclude = "subject_var", full, ...)
 
 \method{logLik}{mmrm_tmb}(object, ...)
 
@@ -70,6 +70,11 @@ Depends on the method, see Functions.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+}
+\details{
+\code{exclude} argument controls the variables the returned model frame will exclude.
+Possible options are "subject_var", "visit_var" and "group_var", representing the
+subject variable, visit variable or group variable.
 }
 \section{Functions}{
 \itemize{

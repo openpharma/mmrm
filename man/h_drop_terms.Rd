@@ -15,7 +15,8 @@ h_drop_terms(f, drops)
 A new formula with elements in \code{drops} removed.
 }
 \description{
-Drop Formula Terms with Character
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+Drop formula terms from the original formula with character representation.
 }
 \details{
 Elements in \code{drops} will be removed from the formula, while the environment
