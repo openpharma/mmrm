@@ -52,7 +52,7 @@ h_drop_covariance_terms <- function(f) {
 #'
 #' @return A new formula with included covariance terms.
 #'
-#' @details `update` is used to append the covariance structure and the environment
+#' @details [stats::update()] is used to append the covariance structure and the environment
 #' attribute will not be changed. This ensures the returned formula and the input formula
 #' have the same environment.
 #'
