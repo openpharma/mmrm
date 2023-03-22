@@ -24,13 +24,12 @@ NULL
 #' @noRd
 recover_data.mmrm <- function(object, ...) { # nolint
   fun_call <- stats::getCall(object)
-  model_frame <- stats::model.frame(object)
+  model_frame <- stats::model.frame(object, exclude = "subject_var")
   model_terms <- stats::delete.response(stats::terms(model_frame))
-  na_action <- attr(model_frame, "na.action")
   emmeans::recover_data(
     fun_call,
     trms = model_terms,
-    na.action = na_action,
+    na.action = "na.omit",
     frame = model_frame,
     ...
   )
@@ -56,7 +55,7 @@ emm_basis.mmrm <- function(object, # nolint
     beta_hat[kept] <- component(object, "beta_est")
     orig_model_mat <- stats::model.matrix(
       trms,
-      stats::model.frame(object),
+      stats::model.frame(object, exclude = "subject_var"),
       contrasts.arg = contrasts
     )
     estimability::nonest.basis(orig_model_mat)
@@ -67,7 +66,6 @@ emm_basis.mmrm <- function(object, # nolint
   dffun <- function(k, dfargs) {
     mmrm::df_md(dfargs$object, contrast = k)$denom_df
   }
-
   list(
     X = model_mat,
     bhat = beta_hat,

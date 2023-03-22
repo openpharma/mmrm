@@ -326,3 +326,21 @@ h_confirm_large_levels <- function(x) {
   }
   return(TRUE)
 }
+
+#' Default Value on NULL
+#' @description `r lifecycle::badge("experimental")`
+#' Return default value when first argument is NULL.
+#'
+#' @param x Object.
+#' @param y Object.
+#'
+#' @details If `x` is NULL, returns `y`. Otherwise return `x`.
+#'
+#' @keywords internal
+h_default_value <- function(x, y) {
+  if (is.null(x)) {
+    y
+  } else {
+    x
+  }
+}

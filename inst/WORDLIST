@@ -12,6 +12,7 @@ ast
 AstraZeneca
 aut
 AVISIT
+bbolker
 bilinearen
 biocViews
 Biometric
@@ -172,6 +173,7 @@ referece
 reml
 rightarrow
 Rmarkdown
+Rmd
 roche
 Roxygen
 roxygen
@@ -223,6 +225,7 @@ varepsilon
 varphi
 vcov
 vdots
+vectorMixed
 Veränderlichen
 VignetteBuilder
 VIS
