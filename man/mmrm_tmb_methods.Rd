@@ -53,6 +53,8 @@ coefficients.}
 
 \item{exclude}{(\code{character})\cr names of variable to exclude.}
 
+\item{full}{(\code{flag}) indicator whether to return full model frame (deprecated).}
+
 \item{x}{(\code{mmrm_tmb})\cr same as \code{object}.}
 
 \item{sigma}{cannot be used (this parameter does not exist in MMRM).}

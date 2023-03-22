@@ -82,7 +82,7 @@ h_drop_terms <- function(f, drops) {
   if (length(drops) == 0L) {
     return(f)
   }
-  drop_terms <- as.formula(sprintf(". ~ . - %s", paste(drops, collapse = " - ")))
+  drop_terms <- stats::as.formula(sprintf(". ~ . - %s", paste(drops, collapse = " - ")))
   assert_subset(setdiff(all.vars(drop_terms), "."), all.vars(f))
   stats::update(f, drop_terms)
 }

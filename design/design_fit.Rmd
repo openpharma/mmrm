@@ -105,7 +105,7 @@ Again let's brake it down into manageable pieces.
 ```{r}
 h_assert_one_rec_pt_visit <- function(vars, data) {
   # Check there is no more than one record per patient and visit.
-  form <- as.formula(paste("~", vars$visit, "+", vars$id))
+  form <- stats::as.formula(paste("~", vars$visit, "+", vars$id))
   grouped_data <- split(data, f = form)
   n_per_group <- vapply(grouped_data, nrow, integer(1))
 

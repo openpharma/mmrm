@@ -42,6 +42,7 @@ fitted.mmrm_tmb <- function(object, ...) {
 
 #' @describeIn mmrm_tmb_methods obtains the model frame.
 #' @param exclude (`character`)\cr names of variable to exclude.
+#' @param full (`flag`) indicator whether to return full model frame (deprecated).
 #' @importFrom stats model.frame
 #' @exportS3Method
 #'
