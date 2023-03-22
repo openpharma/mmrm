@@ -24,6 +24,9 @@ NULL
 #' @noRd
 recover_data.mmrm <- function(object, ...) { # nolint
   fun_call <- stats::getCall(object)
+  # subject_var is excluded because it should not contain fixed effect.
+  # visit_var is not excluded because emmeans can provide marginal mean
+  # by each visit.
   model_frame <- stats::model.frame(object, exclude = "subject_var")
   model_terms <- stats::delete.response(stats::terms(model_frame))
   emmeans::recover_data(
