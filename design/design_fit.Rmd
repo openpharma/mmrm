@@ -187,12 +187,12 @@ per group yet, we can do this in a second pass later on (backlog).
 
 ```{r}
 h_build_formula <- function(vars,
-                          cor_struct = c(
-                            "unstructured",
-                            "toeplitz",
-                            "auto-regressive",
-                            "compound-symmetry"
-                          )) {
+                            cor_struct = c(
+                              "unstructured",
+                              "toeplitz",
+                              "auto-regressive",
+                              "compound-symmetry"
+                            )) {
   assert_list(vars)
   cor_struct <- match.arg(cor_struct)
 
@@ -209,8 +209,7 @@ h_build_formula <- function(vars,
       vars$visit
     )
   }
-  random_effects_fun <- switch(
-    cor_struct,
+  random_effects_fun <- switch(cor_struct,
     "unstructured" = "us",
     "toeplitz" = "toep",
     "auto-regressive" = "ar1",
@@ -357,14 +356,17 @@ h_record_all_output <- function(expr, remove = list()) {
   )
 }
 
-h_record_all_output({
-  x <- 1
-  y <- 2
-  warning("something went wrong")
-  message("O nearly done")
-  message("Almost done")
-  x + y
-}, remove = list(messages = c("Almost done", "bla")))
+h_record_all_output(
+  {
+    x <- 1
+    y <- 2
+    warning("something went wrong")
+    message("O nearly done")
+    message("Almost done")
+    x + y
+  },
+  remove = list(messages = c("Almost done", "bla"))
+)
 ```
 
 
@@ -546,7 +548,7 @@ refit_multiple_optimizers <- function(fit,
     FUN = fit_single_optimizer,
     formula = old_formula,
     data = old_data,
-    start = list(theta = fit$fit$par),  # Take the results from old fit as starting values.
+    start = list(theta = fit$fit$par), # Take the results from old fit as starting values.
     mc.cores = n_cores_used,
     mc.silent = TRUE
   )
@@ -600,7 +602,7 @@ fit_model <- function(formula,
                       optimizer = "automatic",
                       n_cores = 1L) {
   assert_string(optimizer)
-  use_automatic = identical(optimizer, "automatic")
+  use_automatic <- identical(optimizer, "automatic")
 
   fit <- fit_single_optimizer(
     formula = formula,
@@ -717,7 +719,7 @@ h_num_vcov_theta <- function(model) {
   devfun_theta <- model$obj$fn
   hess_theta <- numDeriv::hessian(func = devfun_theta, x = theta_est)
   eig_hess_theta <- eigen(hess_theta, symmetric = TRUE)
-  with(eig_hess_theta, vectors %*% diag(1/values) %*% t(vectors))
+  with(eig_hess_theta, vectors %*% diag(1 / values) %*% t(vectors))
 }
 
 num_vcov_theta <- h_num_vcov_theta(mod_refit)
@@ -776,7 +778,7 @@ as well as `x_opt` which is the variance parameter estimate.
 ```{r}
 h_general_jac_list <- function(covbeta_fun,
                                x_opt,
-                               ...){
+                               ...) {
   assert_function(covbeta_fun, nargs = 1L)
   assert_numeric(x_opt, any.missing = FALSE, min.len = 1L)
 
@@ -991,7 +993,7 @@ df_1d <- function(object, L) {
   contrast_var <- h_quad_form_vec(L, object$vcov_beta)
   contrast_grad <- h_gradient(object$jac_list, L)
 
-  v_numerator <- 2 * contrast_var ^ 2
+  v_numerator <- 2 * contrast_var^2
   v_denominator <- h_quad_form_vec(contrast_grad, object$vcov_theta)
 
   h_df_1d_list(
@@ -1096,7 +1098,7 @@ wrong. We can e.g. have another comparison via simplified degrees of freedom:
 
 ```{r}
 simple_df <- length(unique(result$model$frame$USUBJID)) -
-  Matrix::rankMatrix(model.matrix(FEV1 ~ RACE + SEX + ARMCD * AVISIT , data = dat))[1]
+  Matrix::rankMatrix(model.matrix(FEV1 ~ RACE + SEX + ARMCD * AVISIT, data = dat))[1]
 simple_df
 ```
 
@@ -1158,7 +1160,7 @@ h_md_denom_df <- function(t_stat_df) {
   if (all(abs(diff(t_stat_df)) < 1e-8)) {
     return(mean(t_stat_df))
   }
-  if(any(t_stat_df <= 2)) {
+  if (any(t_stat_df <= 2)) {
     2
   } else {
     E <- sum(t_stat_df / (t_stat_df - 2))
@@ -1178,7 +1180,6 @@ the multi-dimensional case. It takes the `mmrm` object and the contrast matrix
 
 ```{r}
 df_md <- function(object, L) {
-
   assert_class(object, "mmrm")
   assert_numeric(L, any.missing = FALSE)
 
