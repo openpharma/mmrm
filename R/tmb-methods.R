@@ -44,11 +44,21 @@ fitted.mmrm_tmb <- function(object, ...) {
 #' @param exclude (`character`)\cr names of variable to exclude.
 #' @importFrom stats model.frame
 #' @exportS3Method
+#'
+#' @details
+#' `exclude` argument controls the variables the returned model frame will exclude.
+#' Possible options are "subject_var", "visit_var" and "group_var", representing the
+#' subject variable, visit variable or group variable.
+#'
 #' @examples
 #' # Model frame:
 #' model.frame(object)
 #' model.frame(object, exclude = "subject_var")
-model.frame.mmrm_tmb <- function(formula, exclude = "subject_var", ...) {
+model.frame.mmrm_tmb <- function(formula, exclude = "subject_var", full, ...) {
+  if (!missing(full) && identical(full, TRUE)) {
+    lifecycle::deprecate_warn("0.3", "model.frame.mmrm_tmb(full)")
+    exclude <- NULL
+  }
   assert_subset(exclude, c("subject_var", "visit_var", "group_var"))
   dots <- list(...)
   if (!identical(h_default_value(dots$na.action, getOption("na.action")), "na.omit")) {

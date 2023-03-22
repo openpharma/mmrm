@@ -20,7 +20,8 @@
   sessions.
 - Previously `model.frame` does not work with new given `data`. It now works with new `data`.
   In addition, it always use "na.omit" regardless of options or arguments in `model.frame`.
-  `subset` argument is always ignored.
+  `subset` argument is always ignored. Argument `full` is deprecated and please use `exclude`
+  instead.
 
 ### Bug Fixes
 

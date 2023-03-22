@@ -64,6 +64,10 @@ h_add_covariance_terms <- function(f, covariance) {
 }
 
 #' Drop Formula Terms with Character
+#'
+#' @description `r lifecycle::badge("experimental")`
+#' Drop formula terms from the original formula with character representation.
+#'
 #' @param f (`formula`)\cr a formula to be updated.
 #' @param drops (`character`)\cr representation of elements to be removed.
 #'
