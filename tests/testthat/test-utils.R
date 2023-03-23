@@ -153,9 +153,19 @@ test_that("h_get_cov_default works correctly", {
 # h_confirm_large_levels ----
 
 test_that("h_confirm_large_levels errors for large number", {
+  skip_if(interactive())
   expect_error(h_confirm_large_levels(120), "Visit levels too large")
 })
 
 test_that("h_confirm_large_levels errors for large number", {
   expect_silent(h_confirm_large_levels(10))
+})
+
+# h_default_value ----
+
+test_that("h_default_value works", {
+  x <- 123
+  expect_identical(h_default_value(x), x)
+  expect_identical(h_default_value(x, "test"), x)
+  expect_identical(h_default_value(NULL, x), x)
 })

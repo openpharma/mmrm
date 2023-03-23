@@ -40,17 +40,57 @@ test_that("model.frame works as expected with defaults", {
   object <- get_mmrm_tmb()
   result <- expect_silent(model.frame(object))
   expect_data_frame(result, nrows = length(object$tmb_data$y_vector))
+  expect_named(result, c("FEV1", "RACE", "AVISIT"))
+  expect_class(attr(result, "terms"), "terms")
+})
+
+test_that("model.frame works as expected with excludes", {
+  object <- get_mmrm_tmb()
+  result <- expect_silent(model.frame(object, exclude = c("subject_var", "visit_var")))
+  expect_data_frame(result, nrows = length(object$tmb_data$y_vector))
   expect_named(result, c("FEV1", "RACE"))
   expect_class(attr(result, "terms"), "terms")
 })
 
 test_that("model.frame returns full model frame if requested", {
   object <- get_mmrm_tmb()
-  result <- expect_silent(model.frame(object, full = TRUE))
+  result <- expect_silent(model.frame(object, exclude = NULL))
   expect_data_frame(result, nrows = length(object$tmb_data$y_vector))
   expect_named(result, c("FEV1", "RACE", "USUBJID", "AVISIT", "(weights)"))
   expect_class(attr(result, "terms"), "terms")
 })
+
+test_that("model.frame works if variable transformed", {
+  fit1 <- get_mmrm_transformed()
+  result <- expect_silent(model.frame(fit1))
+  expect_data_frame(result, nrows = length(fit1$tmb_data$y_vector))
+  expect_named(result, c("FEV1", "log(FEV1_BL)", "AVISIT"))
+  expect_class(attr(result, "terms"), "terms")
+})
+
+test_that("model.frame works for new data", {
+  fit1 <- get_mmrm_transformed()
+  result <- expect_silent(model.frame(fit1, data = fev_data[complete.cases(fev_data), ][1:20, ]))
+  expect_data_frame(result, nrows = 20L)
+  expect_named(result, c("FEV1", "log(FEV1_BL)", "AVISIT"))
+  expect_class(attr(result, "terms"), "terms")
+})
+
+test_that("model.frame works regardless of na.action settings", {
+  na_action <- getOption("na.action")
+  fit1 <- get_mmrm_transformed()
+  expect_warning(
+    model.frame(fit1, na.action = "na.fail"),
+    "na.action is always set to `na.omit` for `mmrm`!"
+  )
+  options(na.action = "na.fail")
+  expect_warning(
+    model.frame(fit1),
+    "na.action is always set to `na.omit` for `mmrm`!"
+  )
+  on.exit(options(na.action = na_action))
+})
+
 
 # logLik ----
 

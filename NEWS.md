@@ -19,12 +19,21 @@
   to specify the maximum number of visits allowed in non-interactive mode, or asked in interactive
   sessions.
 
+
 ### Bug Fixes
 
 - Previously `mmrm` fit follows the global option `na.action` and if it is set
   other than "na.omit" error will happen. This is now fixed and `NA` values are
   always removed prior to model fitting.
-
+- Previously `model.frame` call on `mmrm` object with transformed terms, or new
+  given data, e.g. `model.frame(mmrm(Y ~ log(X) + ar1(VISIT|ID), data = <new data>)`,
+  will cause errors. This is now fixed and `model.frame` returns the data correctly.
+  Now `na.action` argument always use "na.omit", `subset` argument is not used.
+  `full` argument is deprecated and use `exclude` instead.
+- Previously `mmrm` always requires `data` argument. Now fitting `mmrm` can use
+  environment variables, instead of requiring `data` argument. `fit_mmrm` is not affected.
+- Previously `emmeans` does not work if fixed effect does not contain visit variable.
+  This is now fixed.
 # mmrm 0.2.2
 
 ### New Features
