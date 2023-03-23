@@ -52,9 +52,6 @@
     <loc>https://openpharma.github.io/mmrm/main/reference/COV_TYPES.html</loc>
   </url>
   <url>
-    <loc>https://openpharma.github.io/mmrm/main/reference/add_covariance_variable_terms.html</loc>
-  </url>
-  <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/as.cov_struct.html</loc>
   </url>
   <url>
@@ -82,9 +79,6 @@
     <loc>https://openpharma.github.io/mmrm/main/reference/df_md.html</loc>
   </url>
   <url>
-    <loc>https://openpharma.github.io/mmrm/main/reference/drop_covariance_terms.html</loc>
-  </url>
-  <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/drop_elements.html</loc>
   </url>
   <url>
@@ -92,9 +86,6 @@
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/emmeans_support.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/main/reference/extract_covariance_terms.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/fev_data.html</loc>
@@ -124,6 +115,9 @@
     <loc>https://openpharma.github.io/mmrm/main/reference/free_cores.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/h_add_covariance_terms.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/h_coef_table.html</loc>
   </url>
   <url>
@@ -131,6 +125,9 @@
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/h_covbeta_fun.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/h_default_value.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/h_df_1d_kr.html</loc>
@@ -158,6 +155,15 @@
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/h_df_md_sat.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/h_drop_covariance_terms.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/h_drop_terms.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/h_extract_covariance_terms.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/h_get_cov_default.html</loc>
