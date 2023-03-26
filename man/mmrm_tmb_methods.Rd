@@ -4,6 +4,7 @@
 \alias{mmrm_tmb_methods}
 \alias{coef.mmrm_tmb}
 \alias{fitted.mmrm_tmb}
+\alias{predict.mmrm_tmb}
 \alias{model.frame.mmrm_tmb}
 \alias{logLik.mmrm_tmb}
 \alias{formula.mmrm_tmb}
@@ -20,6 +21,16 @@
 \method{coef}{mmrm_tmb}(object, complete = TRUE, ...)
 
 \method{fitted}{mmrm_tmb}(object, ...)
+
+\method{predict}{mmrm_tmb}(
+  object,
+  newdata,
+  se.fit = FALSE,
+  interval = c("none", "confidence", "prediction"),
+  level = 0.95,
+  na.action = na.pass,
+  ...
+)
 
 \method{model.frame}{mmrm_tmb}(formula, exclude = "subject_var", full, ...)
 
@@ -84,6 +95,12 @@ subject variable, visit variable or group variable.
 
 \item \code{fitted(mmrm_tmb)}: obtains the fitted values.
 
+\item \code{predict(mmrm_tmb)}: predict conditional means for new data;
+optionally with standard errors and confidence or prediction intervals.
+Returns a vector of predictions if \code{se.fit == FALSE} and
+\code{interval == "none"}; otherwise it returns a data.frame with multiple
+columns and one row per input data row.
+
 \item \code{model.frame(mmrm_tmb)}: obtains the model frame.
 
 \item \code{logLik(mmrm_tmb)}: obtains the attained log likelihood value.
@@ -122,6 +139,7 @@ object <- fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)))
 coef(object)
 # Fitted values:
 fitted(object)
+stop("implement example")
 # Model frame:
 model.frame(object)
 model.frame(object, exclude = "subject_var")

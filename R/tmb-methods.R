@@ -40,6 +40,38 @@ fitted.mmrm_tmb <- function(object, ...) {
   fitted_col[, 1L, drop = TRUE]
 }
 
+#' @describeIn mmrm_tmb_methods predict conditional means for new data;
+#'  optionally with standard errors and confidence or prediction intervals.
+#'  Returns a vector of predictions if `se.fit == FALSE` and
+#'  `interval == "none"`; otherwise it returns a data.frame with multiple
+#'  columns and one row per input data row.
+#' @importFrom stats predict
+#' @exportS3Method
+#' @examples
+#' stop("implement example")
+predict.mmrm_tmb <- function(object, newdata, se.fit = FALSE,
+    interval = c("none", "confidence", "prediction"), level = 0.95,
+    na.action = na.pass, ...
+  ) {
+  if (se.fit) stop("not implemented yet")
+  interval <- match.arg(interval)
+  if (interval != "none") stop("not implemented yet")
+  # 1. compute X_new times beta_hat for newdata X (conditional mean predictions)
+  # similar to fitted(), might need to use h_mmrm_tmb_data() to get 'x_matrix'
+
+  # problem, how do we get X_new in a safe and consistent way?
+  # can take inspiration form predict.lm but we lack a lot of
+  # functionality like terms() drop.response() and do fancier stuff in
+  # 'h_mmrm_tmb_data()' - need to modularize that first
+
+  # 2. for "confidence" we need vcov for the betas for "prediction" we need
+  # both vcov and varCorr - do we want to be super precise and use the
+  # dependence between beta and variance parameters as well? not right away!
+
+  res <- stop("not implemented")
+  return(res)
+}
+
 #' @describeIn mmrm_tmb_methods obtains the model frame.
 #' @param exclude (`character`)\cr names of variable to exclude.
 #' @param full (`flag`) indicator whether to return full model frame (deprecated).
