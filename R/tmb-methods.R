@@ -49,10 +49,10 @@ fitted.mmrm_tmb <- function(object, ...) {
 #' @exportS3Method
 #' @examples
 #' stop("implement example")
-predict.mmrm_tmb <- function(object, newdata, se.fit = FALSE,
+predict.mmrm_tmb <- function(
+    object, newdata, se.fit = FALSE,
     interval = c("none", "confidence", "prediction"), level = 0.95,
-    na.action = na.pass, ...
-  ) {
+    na.action = na.pass, ...) {
   if (se.fit) stop("not implemented yet")
   interval <- match.arg(interval)
   if (interval != "none") stop("not implemented yet")
