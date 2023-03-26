@@ -109,9 +109,11 @@ h_mmrm_tmb_data <- function(formula_parts,
   data <- h_prepare_data(formula_parts, data, weights)
   weights_name <- colnames(data)[ncol(data)] # weights is always the last column
   full_frame <- h_construct_full_frame(formula_parts, data, drop_visit_levels,
-     ignore_response =  FALSE)
+    ignore_response = FALSE
+  )
   x_matrix <- h_construct_x_matrix(formula_parts, full_frame, accept_singular,
-    check_singular = TRUE, ignore_response = FALSE)
+    check_singular = TRUE, ignore_response = FALSE
+  )
   y_vector <- as.numeric(stats::model.response(full_frame))
   weights_vector <- as.numeric(stats::model.weights(full_frame))
   n_subjects <- nlevels(full_frame[[formula_parts$subject_var]])
