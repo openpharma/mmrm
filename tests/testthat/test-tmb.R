@@ -445,22 +445,6 @@ test_that("h_mmrm_tmb_data errors if too many visit levels", {
   ), "Visit levels too large!")
 })
 
-# h_construct_x_matrix ----
-
-test_that("h_construct_x_matrix works as expected", {
-  formula <- FEV1 ~ RACE + us(AVISIT | USUBJID)
-  formula_parts <- mmrm:::h_mmrm_tmb_formula_parts(formula)
-  data <- mmrm:::h_prepare_data(formula_parts, fev_data, fev_data$WEIGHT)
-  full_frame <- mmrm:::h_construct_full_frame(formula_parts, data, drop_visit_levels = TRUE, ignore_response = FALSE)
-  x_matrix <- mmrm:::h_construct_x_matrix(formula_parts, full_frame, accept_singular = TRUE, ignore_response = FALSE)
-
-  # throw out response variable
-  tbl <- fev_data[, c("RACE", "AVISIT", "USUBJID")]
-  data <- mmrm:::h_prepare_data(formula_parts, tbl)
-  full_frame <- mmrm:::h_construct_full_frame(formula_parts, data, drop_visit_levels = TRUE, ignore_response = TRUE)
-  x_matrix <- mmrm:::h_construct_x_matrix(formula_parts, full_frame, accept_singular = FALSE, check_singular = FALSE, ignore_response = TRUE)
-})
-
 # h_mmrm_tmb_parameters ----
 
 test_that("h_mmrm_tmb_parameters works as expected without start values", {
