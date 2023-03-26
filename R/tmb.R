@@ -153,6 +153,16 @@ h_mmrm_tmb_data <- function(formula_parts,
   )
 }
 
+#' Preprocess input data for MMRM fit
+#'
+#' @param formula_parts (`mmrm_tmb_formula_parts`)\cr list with formula parts
+#'   from [h_mmrm_tmb_formula_parts()].
+#' @param data (`data.frame`)\cr which contains variables used in `formula_parts`.
+#' @param weights (`vector`)\cr weights to be used in the fitting process.
+#'
+#' @return data.frame
+#'
+#' @keywords internal
 h_prepare_data <- function(formula_parts, data, weights = NULL) {
   assert_class(formula_parts, "mmrm_tmb_formula_parts")
   assert_data_frame(data)
@@ -196,6 +206,18 @@ h_prepare_data <- function(formula_parts, data, weights = NULL) {
   return(data)
 }
 
+#' Create model data frame for MMRM fit
+#'
+#' @param formula_parts (`mmrm_tmb_formula_parts`)\cr list with formula parts
+#'   from [h_mmrm_tmb_formula_parts()].
+#' @param data (`data.frame`)\cr as returned bu [`h_prepare_data()`].
+#' @param drop_visit_levels (`flag`)\cr whether to drop levels for visit variable, if visit variable is a factor.
+#' @param ignore_response (`flag`)\cr ignoring the response variable is required when predicting new data where
+#'   the response is unknown
+#'
+#' @return data.frame
+#'
+#' @keywords internal
 h_construct_full_frame <- function(formula_parts, data, drop_visit_levels, ignore_response) {
   assert_flag(drop_visit_levels)
   # weights is always the last column
@@ -231,6 +253,22 @@ h_construct_full_frame <- function(formula_parts, data, drop_visit_levels, ignor
   return(full_frame)
 }
 
+#' Create X matrix for MMRM fit or prediction
+#'
+#' @param formula_parts (`mmrm_tmb_formula_parts`)\cr list with formula parts
+#'   from [h_mmrm_tmb_formula_parts()].
+#' @param full_frame (`data.frame`)\cr as returned bu [`h_construct_full_frame()`].
+#' @param accept_singular (`flag`)\cr whether below full rank design matrices are reduced
+#'   to full rank `x_matrix` and remaining coefficients will be missing as per
+#'   `x_cols_aliased`. Otherwise the function fails for rank deficient design matrices.
+#' @param check_singular (`flag`)\cr whether to check for singular model matrix;
+#'   set to `FALSE` when constructing X matrix for prediction
+#' @param ignore_response (`flag`)\cr ignoring the response variable is required
+#'   when predicting new data where the response is unknown
+#'
+#' @return data.frame
+#'
+#' @keywords internal
 h_construct_x_matrix <- function(formula_parts, full_frame, accept_singular,
     check_singular, ignore_response
   ) {
