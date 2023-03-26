@@ -94,90 +94,10 @@ h_mmrm_tmb_data <- function(formula_parts,
                             accept_singular,
                             drop_visit_levels,
                             full_frame) {
-  assert_class(formula_parts, "mmrm_tmb_formula_parts")
-  assert_data_frame(data)
-  varname <- formula_parts[grepl("_var", names(formula_parts))]
-  assert_names(
-    names(data),
-    must.include = unlist(varname, use.names = FALSE)
-  )
-  assert_true(is.factor(data[[formula_parts$subject_var]]) || is.character(data[[formula_parts$subject_var]]))
-  assert_numeric(weights, len = nrow(data))
   assert_flag(reml)
-  assert_flag(accept_singular)
-  assert_flag(drop_visit_levels)
-
-  if (is.character(data[[formula_parts$subject_var]])) {
-    data[[formula_parts$subject_var]] <- factor(
-      data[[formula_parts$subject_var]],
-      levels = stringr::str_sort(unique(data[[formula_parts$subject_var]]), numeric = TRUE)
-    )
-  }
-  data_order <- if (formula_parts$is_spatial) {
-    order(data[[formula_parts$subject_var]])
-  } else {
-    subject_visit_data <- data[, c(formula_parts$subject_var, formula_parts$visit_var)]
-    is_duplicated <- duplicated(subject_visit_data)
-    if (any(is_duplicated)) {
-      stop(
-        "time points have to be unique for each subject, detected following duplicates in data:\n",
-        paste(utils::capture.output(print(subject_visit_data[is_duplicated, ])), collapse = "\n")
-      )
-    }
-    order(data[[formula_parts$subject_var]], data[[formula_parts$visit_var]])
-  }
-  if (identical(formula_parts$is_spatial, FALSE)) {
-    h_confirm_large_levels(length(levels(data[[formula_parts$visit_var]])))
-  }
-  data <- data[data_order, ]
-  weights <- weights[data_order]
-  data <- data.frame(data, weights)
-  # weights is always the last column
-  weights_name <- colnames(data)[ncol(data)]
-  if (!identical(getOption("na.action"), "na.omit")) {
-    warning(
-      "NA values will always be removed regardless of na.action in options."
-    )
-  }
-  full_frame <- eval(
-    bquote(stats::model.frame(
-      formula_parts$full_formula,
-      data = data,
-      weights = .(as.symbol(weights_name)),
-      na.action = stats::na.omit
-    ))
-  )
-  full_frame <- droplevels(full_frame, except = formula_parts$visit_var)
-  if (drop_visit_levels && !formula_parts$is_spatial && is.factor(full_frame[[formula_parts$visit_var]])) {
-    old_levels <- levels(full_frame[[formula_parts$visit_var]])
-    full_frame[[formula_parts$visit_var]] <- droplevels(full_frame[[formula_parts$visit_var]])
-    new_levels <- levels(full_frame[[formula_parts$visit_var]])
-    dropped <- setdiff(old_levels, new_levels)
-    if (length(dropped) > 0) {
-      message("In ", formula_parts$visit_var, " there are dropped visits: ", toString(dropped))
-    }
-  }
-
-  x_matrix <- stats::model.matrix(formula_parts$model_formula, data = full_frame)
-  x_cols_aliased <- stats::setNames(rep(FALSE, ncol(x_matrix)), nm = colnames(x_matrix))
-  qr_x_mat <- qr(x_matrix)
-  if (qr_x_mat$rank < ncol(x_matrix)) {
-    cols_to_drop <- utils::tail(qr_x_mat$pivot, ncol(x_matrix) - qr_x_mat$rank)
-    if (!accept_singular) {
-      stop(
-        "design matrix only has rank ", qr_x_mat$rank, " and ", length(cols_to_drop),
-        " columns (", toString(colnames(x_matrix)[cols_to_drop]), ") could be dropped",
-        " to achieve full rank ", ncol(x_matrix), " by using `accept_singular = TRUE`"
-      )
-    }
-    assign_attr <- attr(x_matrix, "assign")
-    contrasts_attr <- attr(x_matrix, "contrasts")
-    x_matrix <- x_matrix[, -cols_to_drop, drop = FALSE]
-    x_cols_aliased[cols_to_drop] <- TRUE
-    attr(x_matrix, "assign") <- assign_attr[-cols_to_drop]
-    attr(x_matrix, "contrasts") <- contrasts_attr
-  }
-
+  data <- h_prepare_data(formula_parts, data, weights = weights)
+  full_frame <- h_construct_full_frame(formula_parts, data, drop_visit_levels)
+  x_matrix <- h_construct_x_matrix(formula_parts, full_frame, accept_singular)
   y_vector <- as.numeric(stats::model.response(full_frame))
   weights_vector <- as.numeric(stats::model.weights(full_frame))
   n_subjects <- nlevels(full_frame[[formula_parts$subject_var]])
@@ -212,7 +132,7 @@ h_mmrm_tmb_data <- function(formula_parts,
       full_frame = full_frame,
       data = data,
       x_matrix = x_matrix,
-      x_cols_aliased = x_cols_aliased,
+      x_cols_aliased = attr(x_matrix, "cols_aliased"),
       coordinates = coordinates_matrix,
       y_vector = y_vector,
       weights_vector = weights_vector,
@@ -229,6 +149,105 @@ h_mmrm_tmb_data <- function(formula_parts,
     ),
     class = "mmrm_tmb_data"
   )
+}
+
+h_prepare_data <- function(formula_parts, data, weights = NULL) {
+  assert_class(formula_parts, "mmrm_tmb_formula_parts")
+  assert_data_frame(data)
+  varname <- formula_parts[grepl("_var", names(formula_parts))]
+  assert_names(
+    names(data),
+    must.include = unlist(varname, use.names = FALSE)
+  )
+  assert_true(is.factor(data[[formula_parts$subject_var]]) || is.character(data[[formula_parts$subject_var]]))
+  if (is.null(weights)) {
+    weights <- rep(1, nrow(data))
+  }
+  assert_numeric(weights, len = nrow(data))
+
+  if (is.character(data[[formula_parts$subject_var]])) {
+    data[[formula_parts$subject_var]] <- factor(
+      data[[formula_parts$subject_var]],
+      levels = stringr::str_sort(unique(data[[formula_parts$subject_var]]), numeric = TRUE)
+    )
+  }
+  data_order <- if (formula_parts$is_spatial) {
+    order(data[[formula_parts$subject_var]])
+  } else {
+    subject_visit_data <- data[, c(formula_parts$subject_var, formula_parts$visit_var)]
+    is_duplicated <- duplicated(subject_visit_data)
+    if (any(is_duplicated)) {
+      stop(
+        "time points have to be unique for each subject, detected following duplicates in data:\n",
+        paste(utils::capture.output(print(subject_visit_data[is_duplicated, ])), collapse = "\n")
+      )
+    }
+    order(data[[formula_parts$subject_var]], data[[formula_parts$visit_var]])
+  }
+  if (identical(formula_parts$is_spatial, FALSE)) {
+    h_confirm_large_levels(length(levels(data[[formula_parts$visit_var]])))
+  }
+  data <- data[data_order, ]
+  # TODO: need to preserve back-transform of order() for fitted() and predict()
+  weights <- weights[data_order]
+  data <- data.frame(data, weights)
+  return(data)
+}
+
+h_construct_full_frame <- function(formula_parts, data, drop_visit_levels) {
+  assert_flag(drop_visit_levels)
+  # weights is always the last column
+  weights_name <- colnames(data)[ncol(data)]
+  if (!identical(getOption("na.action"), "na.omit")) {
+    warning(
+      "NA values will always be removed regardless of na.action in options."
+    )
+  }
+  full_frame <- eval(
+    bquote(stats::model.frame(
+      formula_parts$full_formula,
+      data = data,
+      weights = .(as.symbol(weights_name)),
+      na.action = stats::na.omit
+    ))
+  )
+  full_frame <- droplevels(full_frame, except = formula_parts$visit_var)
+  if (drop_visit_levels && !formula_parts$is_spatial && is.factor(full_frame[[formula_parts$visit_var]])) {
+    old_levels <- levels(full_frame[[formula_parts$visit_var]])
+    full_frame[[formula_parts$visit_var]] <- droplevels(full_frame[[formula_parts$visit_var]])
+    new_levels <- levels(full_frame[[formula_parts$visit_var]])
+    dropped <- setdiff(old_levels, new_levels)
+    if (length(dropped) > 0) {
+      message("In ", formula_parts$visit_var, " there are dropped visits: ", toString(dropped))
+    }
+  }
+  return(full_frame)
+}
+
+h_construct_x_matrix <- function(formula_parts, full_frame, accept_singular) {
+  assert_flag(accept_singular)
+  x_matrix <- stats::model.matrix(formula_parts$model_formula, data = full_frame)
+  # TODO: aliasing could do with some documentation...
+  x_cols_aliased <- stats::setNames(rep(FALSE, ncol(x_matrix)), nm = colnames(x_matrix))
+  qr_x_mat <- qr(x_matrix)
+  if (qr_x_mat$rank < ncol(x_matrix)) {
+    cols_to_drop <- utils::tail(qr_x_mat$pivot, ncol(x_matrix) - qr_x_mat$rank)
+    if (!accept_singular) {
+      stop(
+        "design matrix only has rank ", qr_x_mat$rank, " and ", length(cols_to_drop),
+        " columns (", toString(colnames(x_matrix)[cols_to_drop]), ") could be dropped",
+        " to achieve full rank ", ncol(x_matrix), " by using `accept_singular = TRUE`"
+      )
+    }
+    assign_attr <- attr(x_matrix, "assign")
+    contrasts_attr <- attr(x_matrix, "contrasts")
+    x_matrix <- x_matrix[, -cols_to_drop, drop = FALSE]
+    x_cols_aliased[cols_to_drop] <- TRUE
+    attr(x_matrix, "assign") <- assign_attr[-cols_to_drop]
+    attr(x_matrix, "contrasts") <- contrasts_attr
+  }
+  attr(x_matrix, "cols_aliased") <- x_cols_aliased
+  return(x_matrix)
 }
 
 #' Start Parameters for `TMB` Fit
