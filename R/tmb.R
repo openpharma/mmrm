@@ -188,7 +188,7 @@ h_prepare_data <- function(formula_parts, data, weights = NULL) {
     h_confirm_large_levels(length(levels(data[[formula_parts$visit_var]])))
   }
   data <- data[data_order, ]
-  # TODO: need to preserve back-transform of order() for fitted() and predict()
+  attr(data, "order") <- data_order # store order to be able to reverse to original order
   weights <- weights[data_order]
   data <- data.frame(data, weights)
   return(data)
