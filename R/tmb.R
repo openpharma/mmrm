@@ -34,7 +34,7 @@ h_mmrm_tmb_formula_parts <- function(
       model_formula = model_formula,
       full_formula = h_add_covariance_terms(model_formula, covariance),
       cov_type = tmb_cov_type(covariance),
-      is_spatial = covariance$type == "sp_exp", # TODO: this will not generalize well
+      is_spatial = covariance$type == "sp_exp",
       visit_var = covariance$visits,
       subject_var = covariance$subject,
       group_var = if (length(covariance$group) < 1) NULL else covariance$group
@@ -94,12 +94,26 @@ h_mmrm_tmb_data <- function(formula_parts,
                             accept_singular,
                             drop_visit_levels,
                             full_frame) {
+  assert_class(formula_parts, "mmrm_tmb_formula_parts")
+  assert_data_frame(data)
+  varname <- formula_parts[grepl("_var", names(formula_parts))]
+  assert_names(
+    names(data),
+    must.include = unlist(varname, use.names = FALSE)
+  )
+  assert_true(is.factor(data[[formula_parts$subject_var]]) || is.character(data[[formula_parts$subject_var]]))
+  assert_numeric(weights, len = nrow(data))
   assert_flag(reml)
-  data <- h_prepare_data(formula_parts, data, weights = weights)
+  assert_flag(accept_singular)
+  assert_flag(drop_visit_levels)
+
+  data <- h_prepare_data(formula_parts, data, weights)
+  weights_name <- colnames(data)[ncol(data)] # weights is always the last column
   full_frame <- h_construct_full_frame(formula_parts, data, drop_visit_levels,
-    ignore_response = FALSE)
+     ignore_response =  FALSE)
   x_matrix <- h_construct_x_matrix(formula_parts, full_frame, accept_singular,
-    check_singular = FALSE, ignore_response = FALSE)
+    check_singular = TRUE, ignore_response = FALSE)
+
   y_vector <- as.numeric(stats::model.response(full_frame))
   weights_vector <- as.numeric(stats::model.weights(full_frame))
   n_subjects <- nlevels(full_frame[[formula_parts$subject_var]])
@@ -200,9 +214,9 @@ h_prepare_data <- function(formula_parts, data, weights = NULL) {
     h_confirm_large_levels(length(levels(data[[formula_parts$visit_var]])))
   }
   data <- data[data_order, ]
-  attr(data, "order") <- data_order # store order to be able to reverse to original order
   weights <- weights[data_order]
   data <- data.frame(data, weights)
+  attr(data, "order") <- data_order # store order to be able to reverse to original order
   return(data)
 }
 
@@ -220,17 +234,16 @@ h_prepare_data <- function(formula_parts, data, weights = NULL) {
 #' @keywords internal
 h_construct_full_frame <- function(formula_parts, data, drop_visit_levels, ignore_response) {
   assert_flag(drop_visit_levels)
-  # weights is always the last column
-  weights_name <- colnames(data)[ncol(data)]
-  if (!identical(getOption("na.action"), "na.omit")) {
-    warning(
-      "NA values will always be removed regardless of na.action in options."
-    )
-  }
+  weights_name <- colnames(data)[ncol(data)] # weights is always the last column
   formula <- if (ignore_response) {
     as.formula(delete.response(terms(formula_parts$full_formula)))
   } else {
     formula_parts$full_formula
+  }
+  if (!identical(getOption("na.action"), "na.omit")) {
+    warning(
+      "NA values will always be removed regardless of na.action in options."
+    )
   }
   full_frame <- eval(
     bquote(stats::model.frame(
@@ -274,16 +287,15 @@ h_construct_x_matrix <- function(formula_parts, full_frame, accept_singular,
   ) {
   assert_flag(accept_singular)
   assert_flag(check_singular)
+  assert_flag(ignore_response)
   formula <- if (ignore_response) {
-    as.formula(delete.response(terms(formula_parts$full_formula)))
+    as.formula(delete.response(terms(formula_parts$model_formula)))
   } else {
-    formula_parts$full_formula
+    formula_parts$model_formula
   }
   x_matrix <- stats::model.matrix(formula, data = full_frame)
-  # TODO: aliasing could do with some documentation...
   x_cols_aliased <- stats::setNames(rep(FALSE, ncol(x_matrix)), nm = colnames(x_matrix))
-  # do not want to modify model matrix when predicting, hence make optional
-  if (check_singular) {
+  if (check_singular) { # do not want to modify model matrix when predicting, make optional
     qr_x_mat <- qr(x_matrix)
     if (qr_x_mat$rank < ncol(x_matrix)) {
       cols_to_drop <- utils::tail(qr_x_mat$pivot, ncol(x_matrix) - qr_x_mat$rank)
