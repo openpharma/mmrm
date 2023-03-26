@@ -34,7 +34,7 @@ h_mmrm_tmb_formula_parts <- function(
       model_formula = model_formula,
       full_formula = h_add_covariance_terms(model_formula, covariance),
       cov_type = tmb_cov_type(covariance),
-      is_spatial = covariance$type == "sp_exp",
+      is_spatial = covariance$type == "sp_exp", # TODO: this will not generalize well
       visit_var = covariance$visits,
       subject_var = covariance$subject,
       group_var = if (length(covariance$group) < 1) NULL else covariance$group
@@ -96,8 +96,10 @@ h_mmrm_tmb_data <- function(formula_parts,
                             full_frame) {
   assert_flag(reml)
   data <- h_prepare_data(formula_parts, data, weights = weights)
-  full_frame <- h_construct_full_frame(formula_parts, data, drop_visit_levels)
-  x_matrix <- h_construct_x_matrix(formula_parts, full_frame, accept_singular)
+  full_frame <- h_construct_full_frame(formula_parts, data, drop_visit_levels,
+    ignore_response = FALSE)
+  x_matrix <- h_construct_x_matrix(formula_parts, full_frame, accept_singular,
+    check_singular = FALSE, ignore_response = FALSE)
   y_vector <- as.numeric(stats::model.response(full_frame))
   weights_vector <- as.numeric(stats::model.weights(full_frame))
   n_subjects <- nlevels(full_frame[[formula_parts$subject_var]])
@@ -194,7 +196,7 @@ h_prepare_data <- function(formula_parts, data, weights = NULL) {
   return(data)
 }
 
-h_construct_full_frame <- function(formula_parts, data, drop_visit_levels) {
+h_construct_full_frame <- function(formula_parts, data, drop_visit_levels, ignore_response) {
   assert_flag(drop_visit_levels)
   # weights is always the last column
   weights_name <- colnames(data)[ncol(data)]
@@ -203,9 +205,14 @@ h_construct_full_frame <- function(formula_parts, data, drop_visit_levels) {
       "NA values will always be removed regardless of na.action in options."
     )
   }
+  formula <- if (ignore_response) {
+    as.formula(delete.response(terms(formula_parts$full_formula)))
+  } else {
+    formula_parts$full_formula
+  }
   full_frame <- eval(
     bquote(stats::model.frame(
-      formula_parts$full_formula,
+      formula,
       data = data,
       weights = .(as.symbol(weights_name)),
       na.action = stats::na.omit
@@ -224,27 +231,38 @@ h_construct_full_frame <- function(formula_parts, data, drop_visit_levels) {
   return(full_frame)
 }
 
-h_construct_x_matrix <- function(formula_parts, full_frame, accept_singular) {
+h_construct_x_matrix <- function(formula_parts, full_frame, accept_singular,
+    check_singular, ignore_response
+  ) {
   assert_flag(accept_singular)
-  x_matrix <- stats::model.matrix(formula_parts$model_formula, data = full_frame)
+  assert_flag(check_singular)
+  formula <- if (ignore_response) {
+    as.formula(delete.response(terms(formula_parts$full_formula)))
+  } else {
+    formula_parts$full_formula
+  }
+  x_matrix <- stats::model.matrix(formula, data = full_frame)
   # TODO: aliasing could do with some documentation...
   x_cols_aliased <- stats::setNames(rep(FALSE, ncol(x_matrix)), nm = colnames(x_matrix))
-  qr_x_mat <- qr(x_matrix)
-  if (qr_x_mat$rank < ncol(x_matrix)) {
-    cols_to_drop <- utils::tail(qr_x_mat$pivot, ncol(x_matrix) - qr_x_mat$rank)
-    if (!accept_singular) {
-      stop(
-        "design matrix only has rank ", qr_x_mat$rank, " and ", length(cols_to_drop),
-        " columns (", toString(colnames(x_matrix)[cols_to_drop]), ") could be dropped",
-        " to achieve full rank ", ncol(x_matrix), " by using `accept_singular = TRUE`"
-      )
+  # do not want to modify model matrix when predicting, hence make optional
+  if (check_singular) {
+    qr_x_mat <- qr(x_matrix)
+    if (qr_x_mat$rank < ncol(x_matrix)) {
+      cols_to_drop <- utils::tail(qr_x_mat$pivot, ncol(x_matrix) - qr_x_mat$rank)
+      if (!accept_singular) {
+        stop(
+          "design matrix only has rank ", qr_x_mat$rank, " and ", length(cols_to_drop),
+          " columns (", toString(colnames(x_matrix)[cols_to_drop]), ") could be dropped",
+          " to achieve full rank ", ncol(x_matrix), " by using `accept_singular = TRUE`"
+        )
+      }
+      assign_attr <- attr(x_matrix, "assign")
+      contrasts_attr <- attr(x_matrix, "contrasts")
+      x_matrix <- x_matrix[, -cols_to_drop, drop = FALSE]
+      x_cols_aliased[cols_to_drop] <- TRUE
+      attr(x_matrix, "assign") <- assign_attr[-cols_to_drop]
+      attr(x_matrix, "contrasts") <- contrasts_attr
     }
-    assign_attr <- attr(x_matrix, "assign")
-    contrasts_attr <- attr(x_matrix, "contrasts")
-    x_matrix <- x_matrix[, -cols_to_drop, drop = FALSE]
-    x_cols_aliased[cols_to_drop] <- TRUE
-    attr(x_matrix, "assign") <- assign_attr[-cols_to_drop]
-    attr(x_matrix, "contrasts") <- contrasts_attr
   }
   attr(x_matrix, "cols_aliased") <- x_cols_aliased
   return(x_matrix)
