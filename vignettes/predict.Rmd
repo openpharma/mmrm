@@ -27,17 +27,22 @@ Generating some data
 ```{r}
 rho <- 0.9
 planned_visits <- c(0, 1, 3, 6, 12, 18)
+sigma <- c(5, 7, 10, 12, 15, 20)
 n <- 100L
-vcov <- as.matrix(0.8^dist(planned_visits)) + diag(length(planned_visits)) # 'spatial' exponential
+cor <- as.matrix(0.8^dist(planned_visits)) + diag(length(planned_visits)) # 'spatial' exponential
+vcov <- diag(sigma^2) %*% cor
 tbl_data <- expand.grid(
     id = factor(1:n),
     month = planned_visits
   )
-tbl_data$y <- as.vector(t(matrix(rnorm(n * length(planned_visits)), nrow = n) %*% chol(vcov)))
+tbl_data <- tbl_data[order(tbl_data$id, tbl_data$month), ]
+tmp <- matrix(rnorm(n * length(planned_visits)), nrow = n) %*% chol(vcov) +
+  matrix(rep(3*planned_visits, n), nrow = n, byrow = TRUE)
+tbl_data$y <- as.vector(t(tmp)) 
 ```
 
 ```{r}
-fit <- fit_mmrm(y ~ sp_exp(month | id), data = tbl_data, weights = rep(1, nrow(tbl_data)))
-
+fit <- fit_mmrm(y ~ month + sp_exp(month | id), data = tbl_data, weights = rep(1, nrow(tbl_data)))
+fit
 predict(fit, tbl_data)
 ```
