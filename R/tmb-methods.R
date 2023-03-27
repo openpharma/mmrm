@@ -56,20 +56,16 @@ predict.mmrm_tmb <- function(
   if (se.fit) stop("not implemented yet")
   interval <- match.arg(interval)
   if (interval != "none") stop("not implemented yet")
-  # 1. compute X_new times beta_hat for newdata X (conditional mean predictions)
+  # compute X_new times beta_hat for newdata X (conditional mean predictions)
   # similar to fitted(), might need to use h_mmrm_tmb_data() to get 'x_matrix'
-
-  # problem, how do we get X_new in a safe and consistent way?
-  # can take inspiration form predict.lm but we lack a lot of
-  # functionality like terms() drop.response() and do fancier stuff in
-  # 'h_mmrm_tmb_data()' - need to modularize that first
-
-  # 2. for "confidence" we need vcov for the betas for "prediction" we need
+  x_matrix <- h_get_x_matrix(object, newdata)
+  pred <- x_matrix %*% component(object, "beta_est")
+  pred <- pred[, 1L, drop = TRUE]
+  # for "confidence" we need vcov for the betas for "prediction" we need
   # both vcov and varCorr - do we want to be super precise and use the
   # dependence between beta and variance parameters as well? not right away!
-
-  res <- stop("not implemented")
-  return(res)
+  se <- sqrt(diag(x_matrix %*% component(object, "beta_vcov") %*% t(x_matrix)))
+  return(list(pred = pred, se = se))
 }
 
 #' @describeIn mmrm_tmb_methods obtains the model frame.

@@ -427,6 +427,24 @@ h_mmrm_tmb_fit <- function(tmb_object,
   )
 }
 
+h_get_x_matrix <- function(object, newdata) {
+  # get model frame used for fitting and extract factor levels
+  full_frame <- object$tmb_data$full_frame
+  xlevels <- list()
+  for (i in seq_along(full_frame)) {
+    name <- names(full_frame)[i]
+    if (is.factor(full_frame[[i]]) & name %in% names(newdata)) {
+      xlevels[[name]] <- levels(full_frame[[i]])
+    }
+  }
+  # get terms object without response variable
+  fterms <- delete.response(terms(object$formula_parts$model_formula))
+  # first construcct model frame, then the x_matrix
+  mframe <- model.frame(fterms, data = newdata)
+  x_matrix <- stats::model.matrix(fterms, data = mframe, xlev = xlevels)
+  return(x_matrix)
+}
+
 #' Low-Level Fitting Function for MMRM
 #'
 #' @description `r lifecycle::badge("experimental")`
