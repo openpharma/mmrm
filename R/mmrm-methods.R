@@ -245,6 +245,28 @@ print.summary.mmrm <- function(x,
 #' @examples TODO
 simulate.mmrm <- function(object, nsim = 1,
                           seed = NULL, newdata = NULL, ...){
+  ftd <- fitted(object) # FIXME when predict.mmrm method is available, use predict(object, ...) instead of fitted(object)
+  sig <- VarCorr(object)
+  weighted <- any(object$tmb_data$weights_vector != 1)
+  ret <- replicate(nsim, ftd)
 
+  for(i in 1:object$tmb_data$n_subjects){
+
+    group <- object$tmb_data$subject_groups[i]
+    num_vis <- object$tmb_data$subject_n_visits[i]
+    inds <- (object$tmb_data$subject_zero_inds[i] + 1) : (object$tmb_data$subject_zero_inds[i] + num_vis)
+    visits <- object$tmb_data$visits_zero_inds[inds] + 1
+
+    sig_i <- if(object$tmb_data$n_groups > 1) sig[[group]] else sig
+    sig_i <- sig_i[visits, visits] # subset covariance mat
+    if(weighted){
+      inv_wts <- solve(sqrt(object$tmb_data$weights_vector[inds]))
+      sig_i <- inv_wts %*% sig_i %*% inv_wts # account for weights
+    }
+    ret[inds,] <- ret[inds,] + t(MASS::mvrnorm(nsim, rep.int(0, num_vis), sig_i))
+  }
+
+  ret
 
 }
+
