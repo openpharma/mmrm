@@ -373,7 +373,8 @@ test_that("h_mmrm_tmb_data will not be affecte by `weights` in data", {
 })
 
 test_that("h_mmrm_tmb_data works even if na.action is not na.omit", {
-  na_action <- options("na.action")
+  na_action <- getOption("na.action")
+  on.exit(options(na.action = na_action))
   options(na.action = "na.omit")
   formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
@@ -386,45 +387,54 @@ test_that("h_mmrm_tmb_data works even if na.action is not na.omit", {
     drop_visit_levels = TRUE
   )
   options(na.action = "na.pass")
-  res2 <- h_mmrm_tmb_data(
-    formula_parts,
-    data = fev_data,
-    weights = rep_len(1, nrow(fev_data)),
-    reml = TRUE,
-    accept_singular = TRUE,
-    drop_visit_levels = TRUE
+  expect_warning(
+    res2 <- h_mmrm_tmb_data(
+      formula_parts,
+      data = fev_data,
+      weights = rep_len(1, nrow(fev_data)),
+      reml = TRUE,
+      accept_singular = TRUE,
+      drop_visit_levels = TRUE
+    ),
+    "NA values will always be removed regardless of na.action in options."
   )
   expect_identical(res1, res2)
 
   options(na.action = "na.fail")
-  res3 <- h_mmrm_tmb_data(
-    formula_parts,
-    data = fev_data,
-    weights = rep_len(1, nrow(fev_data)),
-    reml = TRUE,
-    accept_singular = TRUE,
-    drop_visit_levels = TRUE
+  expect_warning(
+    res3 <- h_mmrm_tmb_data(
+      formula_parts,
+      data = fev_data,
+      weights = rep_len(1, nrow(fev_data)),
+      reml = TRUE,
+      accept_singular = TRUE,
+      drop_visit_levels = TRUE
+    ),
+    "NA values will always be removed regardless of na.action in options."
   )
   expect_identical(res1, res3)
 
   options(na.action = "na.exclude")
-  res4 <- h_mmrm_tmb_data(
-    formula_parts,
-    data = fev_data,
-    weights = rep_len(1, nrow(fev_data)),
-    reml = TRUE,
-    accept_singular = TRUE,
-    drop_visit_levels = TRUE
+  expect_warning(
+    res4 <- h_mmrm_tmb_data(
+      formula_parts,
+      data = fev_data,
+      weights = rep_len(1, nrow(fev_data)),
+      reml = TRUE,
+      accept_singular = TRUE,
+      drop_visit_levels = TRUE
+    ),
+    "NA values will always be removed regardless of na.action in options."
   )
   expect_identical(res1, res4)
-
-  options(na.action = na_action$na.action)
 })
 
 test_that("h_mmrm_tmb_data errors if too many visit levels", {
+  skip_if(interactive())
   formula <- FEV1 ~ RACE + us(AVISIT | USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   options("mmrm.max_visits" = 2)
+  on.exit(options("mmrm.max_visits" = NULL))
   result <- expect_error(h_mmrm_tmb_data(
     formula_parts,
     fev_data,
@@ -433,9 +443,7 @@ test_that("h_mmrm_tmb_data errors if too many visit levels", {
     accept_singular = FALSE,
     drop_visit_levels = TRUE
   ), "Visit levels too large!")
-  options("mmrm.max_visits" = NULL)
 })
-
 
 # h_mmrm_tmb_parameters ----
 

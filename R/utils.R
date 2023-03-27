@@ -316,7 +316,7 @@ h_confirm_large_levels <- function(x) {
   }
   proceed <- utils::askYesNo(
     paste(
-      "Visit levels is larger possibly too large.",
+      "Visit levels is possibly too large.",
       "This requires large memory. Are you sure to continue?",
       collapse = " "
     )
@@ -325,4 +325,21 @@ h_confirm_large_levels <- function(x) {
     stop("Visit levels too large!", call. = FALSE)
   }
   return(TRUE)
+}
+
+#' Default Value on NULL
+#' Return default value when first argument is NULL.
+#'
+#' @param x Object.
+#' @param y Object.
+#'
+#' @details If `x` is NULL, returns `y`. Otherwise return `x`.
+#'
+#' @keywords internal
+h_default_value <- function(x, y) {
+  if (is.null(x)) {
+    y
+  } else {
+    x
+  }
 }

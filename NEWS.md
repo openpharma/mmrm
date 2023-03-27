@@ -1,4 +1,4 @@
-# mmrm 0.2.2.9012
+# mmrm 0.2.2.9014
 
 ### New Features
 
@@ -9,22 +9,31 @@
 - Add support for `residuals` method with a `type` argument allowing for 
   raw (the default, and only option for models with a spatial covariance structure),
   Pearson and normalized residuals to be calculated from an `mmrm` fit.
-- Add empirical and empirical Jackknife adjusted coefficients covariance matrix.
+- Add empirical, empirical Jackknife and empirical bias-reduced adjusted coefficients covariance matrix.
   In addition, the argument `method` now only specifies the method used
   for the degrees of freedom, another argument `vcov` is added to specify the
-  method used to adjust the coefficients covariance matrix. Empirical and empirical-Jackknife
-  covariance support residual and Satterthwaite degrees of freedom.
+  method used to adjust the coefficients covariance matrix. Empirical, empirical Jackknife
+  and empirical bias-reduced covariance support residual and Satterthwaite degrees of freedom.
 - Add optional `tidymodels` framework support.
 - Add confirmation if the number of visit levels is too large. Use `options(mmrm.max_visits = )`
   to specify the maximum number of visits allowed in non-interactive mode, or asked in interactive
   sessions.
+
 
 ### Bug Fixes
 
 - Previously `mmrm` fit follows the global option `na.action` and if it is set
   other than "na.omit" error will happen. This is now fixed and `NA` values are
   always removed prior to model fitting.
-
+- Previously `model.frame` call on `mmrm` object with transformed terms, or new
+  given data, e.g. `model.frame(mmrm(Y ~ log(X) + ar1(VISIT|ID), data = <new data>)`,
+  will cause errors. This is now fixed and `model.frame` returns the data correctly.
+  Now `na.action` argument always use "na.omit", `subset` argument is not used.
+  `full` argument is deprecated and use `exclude` instead.
+- Previously `mmrm` always requires `data` argument. Now fitting `mmrm` can use
+  environment variables, instead of requiring `data` argument. `fit_mmrm` is not affected.
+- Previously `emmeans` does not work if fixed effect does not contain visit variable.
+  This is now fixed.
 # mmrm 0.2.2
 
 ### New Features
