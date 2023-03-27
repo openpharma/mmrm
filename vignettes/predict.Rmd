@@ -20,6 +20,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+library(mmrm)
 ```
 
 Generating some data
@@ -36,13 +37,17 @@ tbl_data <- expand.grid(
     month = planned_visits
   )
 tbl_data <- tbl_data[order(tbl_data$id, tbl_data$month), ]
+rownames(tbl_data) <- 1:nrow(tbl_data)
 tmp <- matrix(rnorm(n * length(planned_visits)), nrow = n) %*% chol(vcov) +
   matrix(rep(3*planned_visits, n), nrow = n, byrow = TRUE)
 tbl_data$y <- as.vector(t(tmp)) 
 ```
 
 ```{r}
-fit <- fit_mmrm(y ~ month + sp_exp(month | id), data = tbl_data, weights = rep(1, nrow(tbl_data)))
+fit <- mmrm(y ~ month + sp_exp(month | id), data = tbl_data, weights = rep(1, nrow(tbl_data)))
 fit
 predict(fit, tbl_data)
+predict(fit, tbl_data, se.fit = TRUE)
+predict(fit, tbl_data, se.fit = TRUE, interval = "confidence")
+predict(fit, tbl_data, interval = "confidence")
 ```

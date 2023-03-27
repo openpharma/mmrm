@@ -51,21 +51,33 @@ fitted.mmrm_tmb <- function(object, ...) {
 #' stop("implement example")
 predict.mmrm_tmb <- function(
     object, newdata, se.fit = FALSE,
-    interval = c("none", "confidence", "prediction"), level = 0.95,
+    interval = c("none", "confidence"), level = 0.95,
     na.action = na.pass, ...) {
-  if (se.fit) stop("not implemented yet")
   interval <- match.arg(interval)
-  if (interval != "none") stop("not implemented yet")
-  # compute X_new times beta_hat for newdata X (conditional mean predictions)
-  # similar to fitted(), might need to use h_mmrm_tmb_data() to get 'x_matrix'
+  # compute X_new times beta_hat for new data X (conditional mean predictions)
   x_matrix <- h_get_x_matrix(object, newdata)
-  pred <- x_matrix %*% component(object, "beta_est")
-  pred <- pred[, 1L, drop = TRUE]
-  # for "confidence" we need vcov for the betas for "prediction" we need
-  # both vcov and varCorr - do we want to be super precise and use the
-  # dependence between beta and variance parameters as well? not right away!
-  se <- sqrt(diag(x_matrix %*% component(object, "beta_vcov") %*% t(x_matrix)))
-  return(list(pred = pred, se = se))
+  res <- x_matrix %*% component(object, "beta_est")
+  colnames(res) <- "fit"
+  if (interval != "none" || se.fit) { # compute standard errors of fit
+    se <- sqrt(diag(x_matrix %*% component(object, "beta_vcov") %*% t(x_matrix)))
+    if (se.fit) { # save?
+      res <- cbind(res, se = se)
+    }
+  }
+  if (interval != "none") { # compute confidence interval
+    alpha <- 1 - level
+    # TODO: need to determine df, work with normal for now
+    if (interval == "confidence") {
+      res <- cbind(res,
+          lwr = res[, "fit"] - qnorm(1 - alpha/2) * se,
+          upr = res[, "fit"] + qnorm(1 - alpha/2) * se
+        )
+    }
+  }
+  if (ncol(res) == 1) { # return vector if only fit is computed
+    res <- res[, "fit"]
+  }
+  return(res)
 }
 
 #' @describeIn mmrm_tmb_methods obtains the model frame.
