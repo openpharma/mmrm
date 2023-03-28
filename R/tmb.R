@@ -428,6 +428,7 @@ h_mmrm_tmb_fit <- function(tmb_object,
 }
 
 h_get_x_matrix <- function(object, newdata) {
+  # TODO: double check that this is even necessary -> emmeans integration
   # get model frame used for fitting and extract factor levels
   full_frame <- object$tmb_data$full_frame
   xlevels <- list()
@@ -438,8 +439,8 @@ h_get_x_matrix <- function(object, newdata) {
     }
   }
   # get terms object without response variable
-  fterms <- delete.response(terms(object$formula_parts$model_formula))
-  # first construcct model frame, then the x_matrix
+  fterms <- stats::delete.response(stats::terms(object$formula_parts$model_formula))
+  # first construct model frame, then the x_matrix
   mframe <- model.frame(fterms, data = newdata)
   x_matrix <- stats::model.matrix(fterms, data = mframe, xlev = xlevels)
   return(x_matrix)
