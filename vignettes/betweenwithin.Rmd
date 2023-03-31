@@ -1,0 +1,87 @@
+---
+title: "Between-within degrees of freedom"
+package: mmrm
+output:
+  rmarkdown::html_document:
+          theme: "spacelab"
+          highlight: "kate"
+          toc: true
+          toc_float: true
+vignette: |
+  %\VignetteIndexEntry{Between-within degrees of freedom}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options:
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(mmrm)
+```
+
+For determining the denominator degrees of freedom (DDF) required for the testing of fixed effects, one option is to use the 'between-within' method.
+
+Using this method, the DDF are determined by the grouping level at which the term is estimated. In the case of an MMRM model with only fixed effect terms, this method simplifies to including 3 potential 'levels' of parameters:
+
+* Level 0: the intercept term, assuming the model has been fitted with one
+* Level 1: effects that change between subjects, but not across observations within subjects
+* Level 2: effects that change within subjects
+
+More generally, assuming $G$ levels of grouping:
+
+$DDF_g=N_g-(N_{g-1}+p_g)$
+
+$g=1, ..., G+1$
+
+Where $N_g$ is the number of groups at the $g$-th grouping level and $p_g$ is the number of parameters estimated at that level.
+
+$N_0=1$ if the model includes an intercept term, but note that the DDF for the intercept term are calculated at the $G+1$ level.
+
+With an MMRM with only fixed terms we have a single grouping level (e.g. subject), $G=1$. Therefore:
+
+* 'Between' DDF = 'number of subjects' - (1 [if intercept in model] + 'number of between parameters')
+* 'Within' DDF = 'number of observations' - ('number of subjects' + 'number of within parameters')
+
+```{r}
+
+fit <- mmrm(
+formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+data = fev_data
+)
+
+```
+
+In the model above, RACE, SEX and ARMCD are between-subjects effects; they do not vary within subject across the repeated observations. AVISIT is a within-subject effect; it represents study visit, so naturally its value changes over repeated observations for each subject.
+
+In `fev_data` there are 197 subjects with at least one non-missing `FEV1` observation, and 537 non-missing observations in total.
+
+```{r}
+
+head(fit$tmb_data$x_matrix)
+
+```
+
+Leaving the intercept term aside:
+
+* for the RACE effect we estimate 2 parameters
+* for the SEX effect we estimate 1 parameter
+* for the ARMCD effect we estimate 1 parameter
+* for the AVISIT effect we estimate 3 parameters
+* for the interaction of ARMCD and AVISIT we estimate 3 parameters
+
+Therefore:
+
+* $N_0=1$ since we have an intercept term
+* $N_1=2+1+1=4$
+* $N_2=3+3=6$
+
+And:
+
+* Between- DDF, $DDF_1=197-(1+4)=192$
+* Within- DDF, $DDF_2=537-(197+6)=334$
+
+* Intercept DDF, $DDF_0=DDF_2=334$
