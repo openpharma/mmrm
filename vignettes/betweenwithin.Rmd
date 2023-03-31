@@ -25,7 +25,7 @@ library(mmrm)
 
 For determining the denominator degrees of freedom (DDF) required for the testing of fixed effects, one option is to use the 'between-within' method.
 
-Using this method, the DDF are determined by the grouping level at which the term is estimated. In the case of an MMRM model with only fixed effect terms, this method simplifies to including 3 potential 'levels' of parameters:
+Using this method, the DDF are determined by the grouping level at which the term is estimated. In the case of an MMRM model with only fixed effect terms, this method simplifies to including 3 potential 'levels' of parameters (@galecki2013linear):
 
 * Level 0: the intercept term, assuming the model has been fitted with one
 * Level 1: effects that change between subjects, but not across observations within subjects
