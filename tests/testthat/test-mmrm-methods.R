@@ -103,3 +103,17 @@ test_that("print.summary.mmrm works as expected for spatial fits", {
   result <- summary(object)
   expect_snapshot_output(print(result, digits = 1), cran = FALSE)
 })
+
+
+set.seed(555)
+n <- 1000
+
+#TODO make data
+
+model_fit <- mmrm() # TODO set params
+
+test_that("simulation works with large sample size", {
+  expect_equal(mean(simulate(model_fit)[[1]]), 0.1, # TODO what should it be equal to?
+               tolerance = 1e-5)
+
+})
