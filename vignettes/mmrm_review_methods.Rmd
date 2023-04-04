@@ -414,3 +414,103 @@ other functions. Though not demonstrated here, this is generally true regardless
 of the sample size and covariance structure used.
 
 **NOTE: Still need to generate PROC MIXED results using `sasr`**
+
+
+## Marginal Estimates Comparison
+
+```{r, warning=FALSE, message=FALSE, include=FALSE, echo=FALSE, eval=FALSE}
+library(dplyr)
+library(mmrm)
+library(lme4)
+library(nlme)
+library(glmmTMB)
+library(emmeans)
+library(sasr)
+library(ggplot2)
+
+# compute marginal estimates for mmrm
+mmrm_fit <- mmrm(
+    formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
+    data = fev_data
+  )
+mmrm_ests <- as.data.frame(
+  emmeans(
+    mmrm_fit,
+    spec = trt.vs.ctrl ~ ARMCD | AVISIT,
+    weights = "proportional"
+  )$contrasts
+)$estimate
+
+# compute marginal estimates for lmer
+lmer_fit <- lmer(
+  FEV1 ~ RACE + ARMCD * AVISIT + (0 + AVISIT | USUBJID),
+  data = fev_data[complete.cases(fev_data), ],
+  control = lmerControl(check.nobs.vs.nRE = "ignore")
+)
+lmer_ests <- as.data.frame(
+  emmeans(
+    lmer_fit,
+    spec = trt.vs.ctrl ~ ARMCD | AVISIT,
+    data = fev_data[complete.cases(fev_data), ],
+    weights = "proportional"
+  )$contrasts
+)$estimate
+
+# compute marginal estimates for gls
+gls_fit <- gls(
+  FEV1 ~ RACE + ARMCD * AVISIT, data = fev_data[complete.cases(fev_data), ],
+  correlation = nlme::corSymm(form = ~ VISITN | USUBJID),
+  weights = nlme::varIdent(form = ~ 1|VISITN)
+)
+gls_ests <- as.data.frame(
+  emmeans(
+    gls_fit,
+    spec = trt.vs.ctrl ~ ARMCD | AVISIT,
+    data = fev_data[complete.cases(fev_data), ],
+    weights = "proportional",
+    mode = "df.error"
+  )$contrasts
+)$estimate
+
+# compute marginal estimates for glmmTMB
+glmmTMB_fit <- glmmTMB(
+  FEV1 ~ RACE + ARMCD * AVISIT + us(0 + AVISIT | USUBJID),
+  data = fev_data,
+  dispformula = ~ 0
+)
+glmmTMB_ests <- as.data.frame(
+  emmeans(
+    glmmTMB_fit,
+    spec = trt.vs.ctrl ~ ARMCD | AVISIT,
+    weights = "proportional"
+  )$contrasts
+)$estimate
+
+# compute marginal estimates from PROC MIXED
+# NOTE: estimates to be identical to mmrm for now while waiting to run sasr
+proc_mixed_ests <- mmrm_ests
+
+# compute the relative differences
+rel_diff <- function(ests) (ests - proc_mixed_ests) / proc_mixed_ests
+
+# construct table for plotting
+rel_diff_ests_tbl <- tibble(
+  parameter = factor(rep(c("Visit 1", "Visit 2", "Visit 3", "Visit 4"), 4)),
+  estimator = rep(c("mmrm", "lmer", "gls", "glmmTMB"), each = 4),
+  rel_diff = c(
+    rel_diff(mmrm_ests), rel_diff(lmer_ests), rel_diff(gls_ests),
+    rel_diff(glmmTMB_ests)
+  )
+)
+
+# plot estimates
+rel_diff_ests_tbl %>%
+  ggplot(aes(x = parameter, y = rel_diff, color = estimator)) +
+    geom_point(position = position_dodge(width = 0.5)) +
+    geom_hline(yintercept = 0, linetype = 2, alpha = 0.5) +
+    scale_color_discrete(name = "Procedure") +
+    ylab("Relative Difference") +
+    ggtitle("Average Treatment Effect Estimates Relative to SAS Estimates") +
+    theme_classic()
+
+```
