@@ -1,4 +1,3 @@
-#include "init.h"
 #include "covariance.h"
 
 // Definition:

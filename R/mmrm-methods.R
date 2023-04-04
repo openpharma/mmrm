@@ -89,6 +89,8 @@ summary.mmrm <- function(object, ...) {
     "beta_vcov", "varcor"
   ))
 
+  components$method <- object$method
+  components$vcov <- object$vcov
   structure(
     c(
       components,
@@ -139,7 +141,7 @@ h_print_call <- function(call, n_obs, n_subjects, n_timepoints) {
 #'
 #' @param cov_type (`string`)\cr covariance structure abbreviation.
 #' @param n_theta (`int`)\cr number of variance parameters.
-#' @param n_groups (`int`)\cr number of groups
+#' @param n_groups (`int`)\cr number of groups.
 #' @keywords internal
 h_print_cov <- function(cov_type, n_theta, n_groups) {
   assert_string(cov_type)
@@ -192,7 +194,9 @@ print.summary.mmrm <- function(x,
   cat("mmrm fit\n\n")
   h_print_call(x$call, x$n_obs, x$n_subjects, x$n_timepoints)
   h_print_cov(x$cov_type, x$n_theta, x$n_groups)
-  cat("Method:      ")
+  cat("Method:      ", x$method, "\n", sep = "")
+  cat("Vcov Method: ", x$vcov, "\n", sep = "")
+  cat("Inference:   ")
   cat(ifelse(x$reml, "REML", "ML"))
   cat("\n\n")
   cat("Model selection criteria:\n")

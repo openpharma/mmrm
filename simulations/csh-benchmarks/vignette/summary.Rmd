@@ -1,0 +1,136 @@
+---
+title: "Benchmarking Heterogeneous Compound Symmetry Covariance Matrix Estimation"
+author: "Philippe Boileau and Daniel Sabanes Bove"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, message=FALSE, echo=FALSE}
+## load required libraries
+library(here)
+library(rtables)
+library(ggplot2)
+
+## set global knitr options
+knitr::opts_chunk$set(
+  echo = FALSE, fig.width = 10, fig.height = 6, comment = ""
+)
+```
+```{css, echo=FALSE}
+.reveal .r code {
+    white-space: pre;
+}
+```
+
+# Description
+
+It's been noted that models fit using `mmrm`, `glmmTMB` and `nlme` differ from
+those produced by SAS's `PROC MIXED` procedure when the data-generating
+processe's repeated measures' covariance matrix is assumed to be a heterogeneous
+compound symmetry (CSH) matrix. This directory contains a simulation study,
+relying on the [`simChef`](https://github.com/Yu-Group/simChef) simulation
+framework, investigating whether this issue is due to the repeated measures'
+covariance matrix estimation procedure implemented in SAS.
+
+## Simulation Details
+
+Two data-generating processes mimicking 1:1 randomized control trials with 10
+repeated measures are considered: one in which the true covariance matrix is
+homoscedastic CSH, and one in which it is heteroscedastic CSH. No other
+covariates are considered. The former's variances are one at all time points.
+The latter's variances increase from 0.5 at time 1 to 2.75 at time 10. The
+outcome data is Gaussian conditional on treatment in both settings. One hundred
+replicates are produced at sample sizes of 250, 500 and 1000 for each
+data-generating process.
+
+## Methods
+
+Mixed models for repeated measures are fit with the `mmrm`, `glmmTMB` and `nlme`
+packages' `mmrm()`, `glmmTMB()` and `gsl()` functions respectively. SAS's `PROC
+MIXED` procedure is fit using the `sasr` package's SAS-R interface. All models
+are fit by specifying a sole fixed effect for the treatment indicator and a
+compound symmetry matrix for the repeated measures' covariance matrix.
+
+## Benchmark Summary
+
+Empirical risks based on the Frobenius and spectral norms are computed for each
+estimator. Recall that the Frobenius norm is analogous to the squared error:
+it's the square root of the sum of squared matrix elements. The spectral norm is
+the square root of the largest absolute eigenvalue. The empirical mean squared
+errors and biases are also computed for each of the CSH covariance matrix
+parameters.
+
+## Navigating the Directory
+
+The main R script is `R/meal.R`. This file assembles the simulation study
+components using the `simChef` framework and performs the experiment. The
+data-generating function is in `R/dgp-functions.R`, and the `mmrm`,
+`glmmTMB`,`nlme` and `PROC MIXED` wrapper functions are in
+`R/method-functions.R`. Functions for evaluating estimator performance and
+tabulating or plotting these results are contained in `R/eval-functions.R` and
+`R/visualizer-functions.R` respectively. `R/tests/` contains files for testing
+the wrapper functions and evaluator functions using the `testthat` framework.
+`slurm/` contains a bash script for running this simulation on a SLURM HPC. The
+logs produced by running this bash script are saved in `logs/`. Simulation study
+results are stored in `results/`. Finally, the configuration file for
+[`sasr`](https://github.com/insightsengineering/sasr), required for benchmarking
+`PROC MIXED`, must be named `sascfg_personal.py`.
+
+
+# Results
+
+Simulation study results are stored in
+`simulations/csh-benchmarks/results/hom_rct-het_rct/Varying
+num_part-num_part/viz_results.rds`. 
+
+```{r load-results}
+## load the results
+results <- readRDS(here(
+  "simulations/csh-benchmarks/results/hom_rct-het_rct/Varying num_part-num_part/viz_results.rds")
+)
+```
+
+## Frobenius and Spectral Risks
+
+```{r risk-tibble}
+results$risk_tibble
+```
+
+## Frobenius and Spectral Loss Distributions
+
+```{r loss-dist-plot}
+results$loss_dist_plot
+```
+
+## CSH Estimator Bias
+
+```{r bias-plot}
+results$bias_plot
+```
+
+## CSH Estimator MSE
+
+```{r mse-plot}
+results$mse_plot
+```
+
+
+# Discussion
+
+The covariance matrix estimates produced by `glmmTMB`, `mmrm`, `nlme` and `PROC
+MIXED` are virtually identical with respect to their Frobenius and spectral
+risks, as well as in terms of the CSH covariance matrix parameter estimates. The
+estimates output by the `glmmTMB` procedure are, in general, marginally more biased 
+than the other procedures. This bias is neglible at larger sample sizes.
+
+The results suggest that the discrepencies previously observed between mixed
+models for repeated measures fit with R and SAS cannot be explained by errors in
+the repeated measures' covariance matrix estimation.
+
+# Session Information
+
+```{r session-information}
+sessionInfo()
+```

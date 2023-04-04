@@ -16,6 +16,6 @@ The one-dimensional results are calculated and then returned as per
 \code{\link[=h_df_md_list]{h_df_md_list()}}.
 }
 \description{
-Creating F-Statistic Results from One-Dimensional Contrast
+Creates multi-dimensional result from one-dimensional contrast from \code{\link[=df_1d]{df_1d()}}.
 }
 \keyword{internal}

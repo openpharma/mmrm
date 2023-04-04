@@ -70,7 +70,3 @@ jobs:
     uses: insightsengineering/r.pkg.template/.github/workflows/style.yaml@main
     with:
       auto-update: true
-  grammar:
-    if: github.event_name == 'pull_request'
-    name: Grammar Check 🔤
-    uses: insightsengineering/r.pkg.template/.github/workflows/grammar.yaml@main

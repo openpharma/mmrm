@@ -3,8 +3,8 @@
 
 context("get_select_matrix") {
   test_that("get_select_matrix works as expected") {
-    vector<int> visits_i {{0, 3, 5}};
-    Eigen::SparseMatrix<double> result = get_select_matrix<double>(visits_i, 7);
+    vector<int> visits_i1 {{0, 3, 5}};
+    Eigen::SparseMatrix<double> result = get_select_matrix<double>(visits_i1, 7);
     matrix<double> expected(3, 7);
     expected <<
       1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
@@ -12,6 +12,10 @@ context("get_select_matrix") {
       0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0;
     matrix<double> result_dense(result);
     expect_equal_matrix(result_dense, expected);
+    std::vector<int> visits_i2 {{0, 3, 5}};
+    Eigen::SparseMatrix<double> result2 = get_select_matrix<double>(visits_i2, 7);
+    matrix<double> result_dense2(result2);
+    expect_equal_matrix(result_dense2, expected);
   }
 }
 

@@ -8,10 +8,10 @@ mmrm(
   formula,
   data,
   weights = NULL,
+  covariance = NULL,
   reml = TRUE,
-  optimizer = "automatic",
-  n_cores = 1L,
-  accept_singular = TRUE
+  control = mmrm_control(...),
+  ...
 )
 }
 \arguments{
@@ -19,19 +19,21 @@ mmrm(
 
 \item{data}{(\code{data})\cr the data to be used for the model.}
 
-\item{weights}{(\code{vector})\cr an optional vector of weights to be used in the fitting process.
-Should be NULL or a numeric vector.}
+\item{weights}{(\code{vector})\cr an optional vector of weights to be used in
+the fitting process. Should be \code{NULL} or a numeric vector.}
 
-\item{reml}{(\code{flag})\cr whether restricted maximum likelihood (REML) estimation is used,
-otherwise maximum likelihood (ML) is used.}
+\item{covariance}{(\code{cov_struct})\cr a covariance structure type definition
+as produced with \code{\link[=cov_struct]{cov_struct()}}, or value that can be coerced to a
+covariance structure using \code{\link[=as.cov_struct]{as.cov_struct()}}. If no value is provided,
+a structure is derived from the provided formula.}
 
-\item{optimizer}{(\code{string})\cr optimizer to be used to generate the model.}
+\item{reml}{(\code{flag})\cr whether restricted maximum likelihood (REML)
+estimation is used, otherwise maximum likelihood (ML) is used.}
 
-\item{n_cores}{(\code{count})\cr number of cores which could in principle be used for
-parallel computations on Linux or Mac machines.}
+\item{control}{(\code{mmrm_control})\cr fine-grained fitting specifications list
+created with \code{\link[=mmrm_control]{mmrm_control()}}.}
 
-\item{accept_singular}{(\code{flag})\cr whether singular design matrices are reduced
-to full rank automatically and additional coefficient estimates will be missing.}
+\item{...}{arguments passed to \code{\link[=mmrm_control]{mmrm_control()}}.}
 }
 \value{
 An \code{mmrm} object.
@@ -53,24 +55,58 @@ The time points have to be unique for each subject. That is,
 there cannot be time points with multiple observations for any subject.
 The rationale is that these observations would need to be correlated, but it
 is not possible within the currently implemented covariance structure framework
-to do that correctly.
+to do that correctly. Moreover, for non-spatial covariance structures, the time
+variable must be a factor variable.
 
-When setting \code{optimizer = "automatic"}, first the default optimizer
+When optimizer is not set, first the default optimizer
 (\code{L-BFGS-B}) is used to fit the model. If that converges, this is returned.
-If not, the other available optimizers from \code{\link[=refit_multiple_optimizers]{refit_multiple_optimizers()}} are
+If not, the other available optimizers from \code{\link[=h_get_optimizers]{h_get_optimizers()}},
+including \code{BFGS}, \code{CG} and \code{nlminb} are
 tried (in parallel if \code{n_cores} is set and not on Windows).
 If none of the optimizers converge, then the function fails. Otherwise
 the best fit is returned.
+
+Note that fine-grained control specifications can either be passed directly
+to the \code{mmrm} function, or via the \code{control} argument for bundling together
+with the \code{\link[=mmrm_control]{mmrm_control()}} function. Both cannot be used together, since
+this would delete the arguments passed via \code{mmrm}.
 }
 \note{
 The \code{mmrm} object is also an \code{mmrm_fit} and an \code{mmrm_tmb} object,
 therefore corresponding methods also work (see \code{\link{mmrm_tmb_methods}}).
-In addition it contains the Jacobian information \code{jac_list} and the \code{call}.
+
+Additional contents depend on the choice of the adjustment \code{method}:
+\itemize{
+\item If Satterthwaite adjustment is used, the Jacobian information \code{jac_list}
+is included.
+\item If Kenward-Roger adjustment is used, \code{kr_comp} contains necessary
+components and \code{beta_vcov_adj} includes the adjusted coefficients covariance
+matrix.
+}
+
 Use of the package \code{emmeans} is supported, see \code{\link{emmeans_support}}.
+
+NA values are always omitted regardless of \code{na.action} setting.
 }
 \examples{
 fit <- mmrm(
   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data
+)
+
+# Direct specification of control details:
+fit <- mmrm(
+  formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data,
+  weights = fev_data$WEIGHTS,
+  method = "Kenward-Roger"
+)
+
+# Alternative specification via control argument (but you cannot mix the
+# two approaches):
+fit <- mmrm(
+  formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data,
+  control = mmrm_control(method = "Kenward-Roger")
 )
 }

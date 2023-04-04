@@ -32,7 +32,9 @@
     Data:        fev_data (used 537 observations from 197 subjects with maximum 4 
     timepoints)
     Covariance:  unstructured (10 variance parameters)
-    Method:      REML
+    Method:      Satterthwaite
+    Vcov Method: Asymptotic
+    Inference:   REML
     
     Model selection criteria:
          AIC      BIC   logLik deviance 
@@ -71,7 +73,9 @@
     timepoints)
     Weights:     .mmrm_weights
     Covariance:  unstructured (10 variance parameters)
-    Method:      REML
+    Method:      Satterthwaite
+    Vcov Method: Asymptotic
+    Inference:   REML
     
     Model selection criteria:
          AIC      BIC   logLik deviance 
@@ -109,7 +113,9 @@
     Data:        .mmrm_dat_rank_deficient (used 537 observations from 197 
     subjects with maximum 4 timepoints)
     Covariance:  unstructured (10 variance parameters)
-    Method:      REML
+    Method:      Satterthwaite
+    Vcov Method: Asymptotic
+    Inference:   REML
     
     Model selection criteria:
          AIC      BIC   logLik deviance 
@@ -148,7 +154,9 @@
     Data:        fev_data (used 537 observations from 197 subjects with maximum 4 
     timepoints)
     Covariance:  unstructured (20 variance parameters of 2 groups)
-    Method:      REML
+    Method:      Satterthwaite
+    Vcov Method: Asymptotic
+    Inference:   REML
     
     Model selection criteria:
          AIC      BIC   logLik deviance 
@@ -184,7 +192,9 @@
     Data:        fev_data (used 537 observations from 197 subjects with maximum 4 
     timepoints)
     Covariance:  spatial exponential (2 variance parameters)
-    Method:      REML
+    Method:      Satterthwaite
+    Vcov Method: Asymptotic
+    Inference:   REML
     
     Model selection criteria:
          AIC      BIC   logLik deviance 

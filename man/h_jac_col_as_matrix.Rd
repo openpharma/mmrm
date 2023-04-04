@@ -17,6 +17,6 @@ Here the values in the column are used to fill the result column
 by column.
 }
 \description{
-Formatting a Column from Jacobian Matrix as Matrix
+Convert a column of Jacobian matrix into square matrix.
 }
 \keyword{internal}
