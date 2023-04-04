@@ -21,21 +21,20 @@ editor_options:
 
 # Introduction
 
-In this vignette we will show comparisons between `mmrm::mmrm`, `SAS PROC
-MIXED`, `nlme::gls`, `lme4::lmer`, and `glmmTMB::glmmTMB` implementations and
-capabilities. A primary difference lies in what is supported in terms of
-covariance structures. In particular, `SAS PROC MIXED` and `mmrm` are the only
-implementations which provide support for many of the most common covariance
-structures. `gls`, `lmer` and `glmmtmb` are more limited. `mmmrm` generally
-converges more quickly than other procedures regardless of the specified
-covariance structure.
+In this vignette we briefly compare the `mmrm::mmrm`, `SAS PROC MIXED`,
+`nlme::gls`, `lme4::lmer`, and `glmmTMB::glmmTMB` methods' capabilities. A
+primary difference lies in what is supported in terms of covariance structures.
+In particular, `SAS PROC MIXED` and `mmrm` are the only implementations which
+provide support for many of the most common covariance structures. `gls`, `lmer`
+and `glmmTMB` are more limited. `mmmrm` also generally converges more quickly
+than other procedures regardless of the specified covariance structure.
 
 # Dataset
 
 The FEV data set is contains measurements of FEV1 (forced expired volume in one
 second), a measure of how quickly the lungs can be emptied. Low levels of FEV1
 may indicate chronic obstructive pulmonary disease (COPD). This data set is used
-to illustrate model fitting with the `mmrm`, `lme4`, `nlme`, `glmmtmb` R
+to illustrate model fitting with the `mmrm`, `lme4`, `nlme`, `glmmTMB` R
 packages as well as `SAS`. It is summarized below.
 
 ```
@@ -69,7 +68,7 @@ fitting mixed models for repeated measures. We emphasize that this table is not
 exhaustive; `SAS PROC MIXED` and `glmmTMB` support additional spatial covariance
 structures.
 
-| Covariance structures             | mmrm | PROC MIXED | gls | lmer | glmmtmb |
+| Covariance structures             | mmrm | PROC MIXED | gls | lmer | glmmTMB |
 |:---------------------------------:|:----:|:----------:|:---:|:----:|:-------:|
 | Ante-dependence (heterogeneous)   | X    | X          |     |      |         |
 | Ante-dependence (homogeneous)     | X    |            |     |      |         |
@@ -305,42 +304,113 @@ MODEL FEV1 = ARMCD AVISIT ARMCD*AVISIT SEX / ddfm=satterthwaite solution chisq;
 
 # Benchmarking
 
+Next, the mixed models for repeated measures procedures are compared. Their
+convergence times are evaluated first, followed by a comparison of their
+estimates.
+
 ## Convergence Times
 
 ```{r, warning=FALSE, message=FALSE, include=FALSE, echo=FALSE, eval=FALSE}
+library(microbenchmark)
+library(dplyr)
 library(mmrm)
 library(lme4)
 library(nlme)
 library(glmmTMB)
+library(sasr)
 
-mb <- microbenchmark::microbenchmark(times = 10,
-  gls = nlme::gls(FEV1 ~ RACE + ARMCD * AVISIT, data = fev_data, 
+# set the number of replicates
+n_reps <- 10
+
+# assess convergence times for R-based MMRM procedures
+mb <- microbenchmark(times = n_reps,
+  gls = gls(
+    FEV1 ~ RACE + ARMCD * AVISIT, data = fev_data,
     na.action = na.omit,
     correlation = nlme::corSymm(form = ~ VISITN | USUBJID),
-    weights = nlme::varIdent(form = ~ 1|VISITN)),
-  mmrm = mmrm::mmrm(
+    weights = nlme::varIdent(form = ~ 1|VISITN)
+  ),
+  mmrm = mmrm(
     formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
     data = fev_data
   ),
-  lmer = lme4::lmer(
+  lmer = lmer(
     FEV1 ~ RACE + ARMCD * AVISIT + (0 + AVISIT | USUBJID),
-    data = fev_data, control = lmerControl(check.nobs.vs.nRE = "ignore"),
-    na.action = na.omit),
-  glmmtmb = glmmTMB::glmmTMB(
+    data = fev_data,
+    control = lmerControl(check.nobs.vs.nRE = "ignore"),
+    na.action = na.omit
+  ),
+  glmmTMB = glmmTMB(
     FEV1 ~ RACE + ARMCD * AVISIT + us(0 + AVISIT | USUBJID),
-    data = fev_data, dispformula = ~ 0, REML = TRUE)
+    data = fev_data,
+    dispformula = ~ 0,
+    REML = TRUE
+  )
  )
-mb %>% summary() %>% dplyr::arrange(median) %>% 
-  dplyr::select(expression = expr, median, 
-    lower = lq, upper = uq, evaluations = neval) %>%
+
+# construct the partial results table based on R-based MMRM procedures
+partial_conv_time_tbl <- mb %>%
+  summary() %>%
+  arrange(median) %>%
+  select(expression = expr, median, lower = lq, upper = uq, evaluations = neval)
+
+# fit PROC MIXED 10 times, extract convergence times
+fit_times <- sapply(
+  seq_len(n_reps),
+  function(x) {
+    # load the data into SAS
+    df2sd(fev_data, "sas_df")
+
+    sas_code <- "
+      PROC MIXED DATA = fev_data cl method=reml;
+        CLASS AVISIT(ref = 'VIS1') SEX(ref = 'Male') ARMCD(ref = 'PBO') USUBJID;
+        MODEL FEV1 = ARMCD AVISIT ARMCD*AVISIT SEX / ddfm=satterthwaite solution chisq;
+        REPEATED AVISIT / subject=USUBJID type=un r rcorr;
+     RUN;
+    "
+
+    # generate the SAS output
+    sas_result <- sasr::run_sas(sas_code)
+
+    # extract the fit time
+    fit_time <- sas_result$LOG %>%
+      stringr::str_extract("(?<=user cpu time)\\s*[0-9.]+") %>%
+      as.numeric()
+  }
+)
+
+# add PROC MIXED results to convergence results table
+proc_mixed_row <- tibble(
+  expression = "PROC MIXED",
+  median = median(fit_time),
+  lower = quantile(fit_time, probs = 0.25),
+  upper = quantile(fit_time, probs = 0.75),
+  evaluations = n_reps
+)
+conv_time_tbl <- bind_rows(partial_conv_time_tbl, proc_mixed_row)
+
+# format the table in markdown
+conv_time_tbl %>%
   knitr::kable(caption = "Comparison of convergence times: milliseconds", digits = 2)
 ```
 
+The `mmrm`, `PROC MIXED`, `gls`, `lmer`, and `glmmTMB` functions, all using
+unstructured covariance matrices, are applied to the FEV data 10 times. The
+convergence times are recorded for each replicate and are reported in the table
+below.
+
 Table: Comparison of convergence times: milliseconds
 
-|expression | median|  lower|  upper| evaluations|
-|:----------|------:|------:|------:|-----------:|
-|mmrm       |  34.05|  33.39|  34.22|          10|
-|lmer       |  70.33|  68.13|  70.81|          10|
-|gls        | 226.98| 211.81| 232.41|          10|
-|glmmtmb    | 321.83| 300.88| 343.68|          10|
+| expression | median |  lower |  upper | evaluations |
+|:-----------|-------:|-------:|-------:|------------:|
+| mmrm       |  34.05 |  33.39 |  34.22 |          10 |
+| PROC MIXED |      ? |      ? |      ? |           ? |
+| lmer       |  70.33 |  68.13 |  70.81 |          10 |
+| gls        | 226.98 | 211.81 | 232.41 |          10 |
+| glmmTMB    | 321.83 | 300.88 | 343.68 |          10 |
+
+It is clear from these results that `mmrm` converges significantly faster than
+other functions. Though not demonstrated here, this is generally true regardless
+of the sample size and covariance structure used.
+
+**NOTE: Still need to generate PROC MIXED results using `sasr`**
