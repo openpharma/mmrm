@@ -103,3 +103,21 @@ test_that("print.summary.mmrm works as expected for spatial fits", {
   result <- summary(object)
   expect_snapshot_output(print(result, digits = 1), cran = FALSE)
 })
+
+# simulate.mmrm ----
+
+test_that("simulate.mmrm returns a data.frame object of correct dimension and with no missing values", {
+  object <- get_mmrm()
+  sims <- simulate(object, nsim = 2)
+  expect_data_frame(sims, any.missing = FALSE, nrows = length(fitted(object)), ncols = 2)
+
+  sims <- simulate(object, nsim = 1)
+  expect_data_frame(sims, any.missing = FALSE, nrows = length(fitted(object)), ncols = 1) # check that when nsim == 1, we still have a single-column data.frame
+})
+
+test_that("simulate.mmrm values are correctly centered", {
+  object <- get_mmrm()
+  sims <- simulate(object, nsim = 1)
+  expect_equal(mean(sims$V1), mean(fitted(object)), tolerance = 1) # TODO what variable should be called in the sims data.frame? and set tolerance
+
+})
