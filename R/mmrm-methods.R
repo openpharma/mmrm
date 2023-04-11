@@ -233,10 +233,10 @@ print.summary.mmrm <- function(x,
 #' @exportS3Method
 #' @keywords internal
 #'
-#' @param object
-#' @param nsim
-#' @param seed
-#' @param newdata
+#' @param object an object of class 'mmrm'
+#' @param nsim number of datasets to simulate
+#' @param seed a random seed
+#' @param newdata a new covariate dataframe from which to simulate responses
 #' @param ...
 #'
 #' @return A \code{data.frame} of dimension [n, m] where n is the number of observations
@@ -244,7 +244,8 @@ print.summary.mmrm <- function(x,
 #'
 #' @examples TODO
 simulate.mmrm <- function(object, nsim = 1,
-                          seed = NULL, newdata = NULL, ...){
+                          seed = NULL, #FIXME {newdata = NULL,} add parameter for newdata once predict.mmrm is ready
+                          ...){
   ftd <- fitted(object) # FIXME when predict.mmrm method is available, use predict(object, ...) instead of fitted(object)
   sig <- VarCorr(object)
   weighted <- any(object$tmb_data$weights_vector != 1)
@@ -266,7 +267,7 @@ simulate.mmrm <- function(object, nsim = 1,
     ret[inds,] <- ret[inds,] + t(MASS::mvrnorm(nsim, rep.int(0, num_vis), sig_i))
   }
 
-  ret
+  as.data.frame(ret)
 
 }
 
