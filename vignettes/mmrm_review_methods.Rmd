@@ -414,12 +414,16 @@ Table: Comparison of convergence times (milliseconds)
 | `gls`          | 342.08 |         340.57 |         344.04 |
 
 It is clear from these results that `mmrm` converges significantly faster than
-other R functions. Though not demonstrated here, this is generally true
+other `R` functions. Though not demonstrated here, this is generally true
 regardless of the sample size and covariance structure used. `PROC MIXED` is the
 fastest procedure, however.
 
 
-## Marginal Estimates Comparison
+## Marginal Treatment Effect Estimates Comparison
+
+We next estimate the marginal mean treatment effects for each visit number using
+the considered mixed model for repeated measures implementations. All `R`
+implementations' estimates are reported relative to `PROC MIXED`'s estimates.
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
 library(dplyr)
@@ -539,7 +543,11 @@ rel_diff_ests_tbl %>%
     geom_hline(yintercept = 0, linetype = 2, alpha = 0.5) +
     scale_color_discrete(name = "Procedure") +
     ylab("Relative Difference") +
+    xlab("Marginal Treatment Effect") +
     ggtitle("Average Treatment Effect Estimates Relative to SAS Estimates") +
     theme_classic()
-
 ```
+
+All `R` procedures produces estimates that are very similar to those output by
+`PROC MIXED`, though `mmrm` and `gls` generate the estimates that are closest to
+`PROC MIXED`.
