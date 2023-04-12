@@ -21,7 +21,7 @@
 
 \method{fitted}{mmrm_tmb}(object, ...)
 
-\method{model.frame}{mmrm_tmb}(formula, full = FALSE, ...)
+\method{model.frame}{mmrm_tmb}(formula, exclude = "subject_var", full, ...)
 
 \method{logLik}{mmrm_tmb}(object, ...)
 
@@ -51,7 +51,9 @@ coefficients.}
 
 \item{formula}{(\code{mmrm_tmb})\cr same as \code{object}.}
 
-\item{full}{(\code{flag})\cr whether to include subject, visit and weight variables.}
+\item{exclude}{(\code{character})\cr names of variable to exclude.}
+
+\item{full}{(\code{flag}) indicator whether to return full model frame (deprecated).}
 
 \item{x}{(\code{mmrm_tmb})\cr same as \code{object}.}
 
@@ -70,6 +72,11 @@ Depends on the method, see Functions.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+}
+\details{
+\code{exclude} argument controls the variables the returned model frame will exclude.
+Possible options are "subject_var", "visit_var" and "group_var", representing the
+subject variable, visit variable or group variable.
 }
 \section{Functions}{
 \itemize{
@@ -117,7 +124,7 @@ coef(object)
 fitted(object)
 # Model frame:
 model.frame(object)
-model.frame(object, full = TRUE)
+model.frame(object, exclude = "subject_var")
 # Log likelihood given the estimated parameters:
 logLik(object)
 # Formula which was used:

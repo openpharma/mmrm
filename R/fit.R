@@ -7,12 +7,16 @@
 #'
 #' @inheritParams mmrm
 #' @param control (`mmrm_control`)\cr object.
+#' @param tmb_data (`mmrm_tmb_data`)\cr object.
+#' @param formula_parts (`mmrm_tmb_formula_parts`)\cr object.
 #' @param ... Additional arguments to pass to [mmrm_control()].
 #'
 #' @details
 #' `fit_single_optimizer` will fit the `mmrm` model using the `control` provided.
 #' If there are multiple optimizers provided in `control`, only the first optimizer
 #' will be used.
+#' If `tmb_data` and `formula_parts` are both provided, `formula`, `data`, `weights`,
+#' `reml`, and `covariance` are ignored.
 #'
 #' @return The `mmrm_fit` object, with additional attributes containing warnings,
 #'   messages, optimizer used and convergence status in addition to the
@@ -32,27 +36,46 @@ fit_single_optimizer <- function(formula,
                                  weights,
                                  reml = TRUE,
                                  covariance = NULL,
+                                 tmb_data,
+                                 formula_parts,
                                  ...,
                                  control = mmrm_control(...)) {
-  assert_formula(formula)
-  assert_data_frame(data)
-  assert_vector(weights)
-  assert_flag(reml)
-  assert_class(control, "mmrm_control")
-  assert_list(control$optimizers, names = "unique", types = c("function", "partial"))
-  quiet_fit <- h_record_all_output(
-    fit_mmrm(
-      formula = formula,
-      data = data,
-      weights = weights,
-      reml = reml,
-      covariance = covariance,
-      control = control
-    ),
-    remove = list(
-      warnings = c("NA/NaN function evaluation") # Transient visit to invalid parameters.
+  if (missing(tmb_data) || missing(formula_parts)) {
+    assert_formula(formula)
+    assert_data_frame(data)
+    assert_numeric(weights, any.missing = FALSE, lower = .Machine$double.xmin)
+    assert_flag(reml)
+    assert_class(control, "mmrm_control")
+    assert_list(control$optimizers, names = "unique", types = c("function", "partial"))
+    quiet_fit <- h_record_all_output(
+      fit_mmrm(
+        formula = formula,
+        data = data,
+        weights = weights,
+        reml = reml,
+        covariance = covariance,
+        control = control
+      ),
+      remove = list(
+        warnings = c("NA/NaN function evaluation") # Transient visit to invalid parameters.
+      )
     )
-  )
+  } else {
+    assert_class(tmb_data, "mmrm_tmb_data")
+    assert_class(formula_parts, "mmrm_tmb_formula_parts")
+    quiet_fit <- h_record_all_output(
+      fit_mmrm(
+        formula_parts = formula_parts,
+        tmb_data = tmb_data,
+        control = control
+      ),
+      remove = list(
+        warnings = c("NA/NaN function evaluation") # Transient visit to invalid parameters.
+      )
+    )
+  }
+
+
   if (length(quiet_fit$errors)) {
     stop(quiet_fit$errors)
   }
@@ -145,10 +168,8 @@ refit_multiple_optimizers <- function(fit,
     FUN = fit_single_optimizer,
     control = controls,
     MoreArgs = list(
-      formula = old_formula,
-      data = old_data,
-      weights = old_weights,
-      reml = fit$reml
+      tmb_data = fit$tmb_data,
+      formula_parts = fit$formula_parts
     ),
     mc.cores = n_cores_used,
     mc.silent = TRUE,
@@ -238,7 +259,10 @@ mmrm_control <- function(n_cores = 1L,
   }
   assert_subset(
     vcov,
-    c("Asymptotic", "Empirical", "Empirical-Jackknife", "Kenward-Roger", "Kenward-Roger-Linear")
+    c(
+      "Asymptotic", "Empirical", "Empirical-Bias-Reduced",
+      "Empirical-Jackknife", "Kenward-Roger", "Kenward-Roger-Linear"
+    )
   )
 
   if (xor(identical(method, "Kenward-Roger"), vcov %in% c("Kenward-Roger", "Kenward-Roger-Linear"))) {
@@ -323,6 +347,13 @@ mmrm_control <- function(n_cores = 1L,
 #'
 #' NA values are always omitted regardless of `na.action` setting.
 #'
+#' When the number of visit levels is large, it usually requires large memory to create the
+#' covariance matrix. By default, the maximum allowed visit levels is 100, and if there are more
+#' visit levels, a confirmation is needed if run interactively.
+#' You can use `options(mmrm.max_visits = <target>)` to increase the maximum allowed number of visit
+#' levels. In non-interactive sessions the confirmation is not raised and will directly give you an error if
+#' the number of visit levels exceeds the maximum.
+#'
 #' @export
 #'
 #' @examples
@@ -360,21 +391,28 @@ mmrm <- function(formula,
   if (control$method %in% c("Kenward-Roger", "Kenward-Roger-Linear") && !reml) {
     stop("Kenward-Roger only works for REML")
   }
+  covariance <- h_reconcile_cov_struct(formula, covariance)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula, covariance)
 
-  attr(data, which = "dataname") <- toString(match.call()$data)
+  if (!missing(data)) {
+    attr(data, which = "dataname") <- toString(match.call()$data)
+  } else {
+    # na.action set to na.pass to allow data to be full; will be futher trimmed later
+    data <- model.frame(formula_parts$full_formula, na.action = "na.pass")
+  }
 
   if (is.null(weights)) {
     weights <- rep(1, nrow(data))
   } else {
     attr(weights, which = "dataname") <- deparse(match.call()$weights)
   }
-
+  tmb_data <- h_mmrm_tmb_data(
+    formula_parts, data, weights, reml,
+    accept_singular = control$accept_singular, drop_visit_levels = control$drop_visit_levels
+  )
   fit <- fit_single_optimizer(
-    formula = formula,
-    data = data,
-    weights = weights,
-    covariance = covariance,
-    reml = reml,
+    tmb_data = tmb_data,
+    formula_parts = formula_parts,
     control = control
   )
 
@@ -403,6 +441,8 @@ mmrm <- function(formula,
   if (!is.null(fit_msg)) {
     message(paste(fit_msg, collapse = "\n"))
   }
+  fit$call <- match.call()
+  fit$call$formula <- formula
   fit$method <- control$method
   fit$vcov <- control$vcov
   if (identical(fit$method, "Satterthwaite") && identical(fit$vcov, "Asymptotic")) {
@@ -420,9 +460,9 @@ mmrm <- function(formula,
       r = fit$kr_comp$R,
       linear = (control$vcov == "Kenward-Roger-Linear")
     )
-  } else if (control$vcov %in% c("Empirical", "Empirical-Jackknife")) {
+  } else if (control$vcov %in% c("Empirical", "Empirical-Bias-Reduced", "Empirical-Jackknife")) {
     empirical_comp <- h_get_empirical(
-      fit$tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov, control$vcov == "Empirical-Jackknife"
+      fit$tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov, control$vcov
     )
     fit$beta_vcov_adj <- empirical_comp$cov
     fit$empirical_df_mat <- empirical_comp$df_mat
