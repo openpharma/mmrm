@@ -577,6 +577,6 @@ rel_diff_ests_tbl %>%
     theme_classic()
 ```
 
-The `R` procedures' estimates are very similar to those output by `PROC MIXED`,
+The R procedures' estimates are very similar to those output by `PROC MIXED`,
 though `mmrm` and `gls` generate the estimates that are closest to those
 produced when using SAS.
