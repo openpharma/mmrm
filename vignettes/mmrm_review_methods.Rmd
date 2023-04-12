@@ -27,7 +27,7 @@ primary difference lies in what is supported in terms of covariance structures.
 In particular, `SAS PROC MIXED` and `mmrm` are the only implementations which
 provide support for many of the most common covariance structures. `gls`, `lmer`
 and `glmmTMB` are more limited. `mmmrm` also generally converges more quickly
-than other procedures regardless of the specified covariance structure.
+than other R implementations regardless of the specified covariance structure.
 
 # Dataset
 
@@ -313,6 +313,7 @@ estimates.
 ```{r, warning=FALSE, message=FALSE, include=FALSE, echo=FALSE, eval=FALSE}
 library(microbenchmark)
 library(dplyr)
+library(stringr)
 library(mmrm)
 library(lme4)
 library(nlme)
@@ -320,7 +321,7 @@ library(glmmTMB)
 library(sasr)
 
 # set the number of replicates
-n_reps <- 10
+n_reps <- 100
 
 # assess convergence times for R-based MMRM procedures
 mb <- microbenchmark(times = n_reps,
@@ -359,7 +360,7 @@ fit_times <- sapply(
   seq_len(n_reps),
   function(x) {
     # load the data into SAS
-    df2sd(fev_data, "sas_df")
+    df2sd(fev_data, "fev_data")
 
     sas_code <- "
       PROC MIXED DATA = fev_data cl method=reml;
@@ -372,53 +373,55 @@ fit_times <- sapply(
     # generate the SAS output
     sas_result <- sasr::run_sas(sas_code)
 
-    # extract the fit time
+    # extract the fit time (seconds)
     fit_time <- sas_result$LOG %>%
-      stringr::str_extract("(?<=user cpu time)\\s*[0-9.]+") %>%
+      str_extract("(?<=real time)\\s*[0-9.]+") %>%
       as.numeric()
+
+    # convert fit times from seconds to milliseconds
+    fit_time * 1000
   }
 )
 
 # add PROC MIXED results to convergence results table
 proc_mixed_row <- tibble(
   expression = "PROC MIXED",
-  median = median(fit_time),
-  lower = quantile(fit_time, probs = 0.25),
-  upper = quantile(fit_time, probs = 0.75),
+  median = median(fit_times),
+  lower = quantile(fit_times, probs = 0.25),
+  upper = quantile(fit_times, probs = 0.75),
   evaluations = n_reps
 )
 conv_time_tbl <- bind_rows(partial_conv_time_tbl, proc_mixed_row)
 
-# format the table in markdown
+# format table in markdown
 conv_time_tbl %>%
   knitr::kable(caption = "Comparison of convergence times: milliseconds", digits = 2)
 ```
 
 The `mmrm`, `PROC MIXED`, `gls`, `lmer`, and `glmmTMB` functions, all using
-unstructured covariance matrices, are applied to the FEV data 10 times. The
+unstructured covariance matrices, are applied to the FEV data 100 times. The
 convergence times are recorded for each replicate and are reported in the table
 below.
 
-Table: Comparison of convergence times: milliseconds
+Table: Comparison of convergence times (milliseconds)
 
-| expression   | median |  lower |  upper | evaluations |
-|:-------------|-------:|-------:|-------:|------------:|
-| `mmrm`       |  34.05 |  33.39 |  34.22 |          10 |
-| `PROC MIXED` |      ? |      ? |      ? |           ? |
-| `lmer`       |  70.33 |  68.13 |  70.81 |          10 |
-| `gls`        | 226.98 | 211.81 | 232.41 |          10 |
-| `glmmTMB`    | 321.83 | 300.88 | 343.68 |          10 |
+| Implementation | Median | Lower Quartile | Upper Quartile |
+|:---------------|-------:|---------------:|---------------:|
+| `PROC MIXED`   |  20.00 |          20.00 |          20.00 |
+| `mmrm`         |  50.80 |          50.48 |          51.45 |
+| `lmer`         |  97.35 |          96.81 |          97.83 |
+| `glmmTMB`      | 273.45 |         271.77 |         275.28 |
+| `gls`          | 342.08 |         340.57 |         344.04 |
 
 It is clear from these results that `mmrm` converges significantly faster than
-other functions. Though not demonstrated here, this is generally true regardless
-of the sample size and covariance structure used.
-
-**NOTE: Still need to generate PROC MIXED results using `sasr`**
+other R functions. Though not demonstrated here, this is generally true
+regardless of the sample size and covariance structure used. `PROC MIXED` is the
+fastest procedure, however.
 
 
 ## Marginal Estimates Comparison
 
-```{r, warning=FALSE, message=FALSE, include=FALSE, echo=FALSE, eval=FALSE}
+```{r, echo=FALSE, warning = FALSE, message = FALSE}
 library(dplyr)
 library(mmrm)
 library(lme4)
@@ -427,6 +430,8 @@ library(glmmTMB)
 library(emmeans)
 library(sasr)
 library(ggplot2)
+
+set.seed(612313)
 
 # compute marginal estimates for mmrm
 mmrm_fit <- mmrm(
@@ -487,7 +492,8 @@ glmmTMB_ests <- as.data.frame(
 )$estimate
 
 # compute marginal estimates from PROC MIXED
-# NOTE: estimates to be identical to mmrm for now while waiting to run sasr
+
+
 proc_mixed_ests <- mmrm_ests
 
 # compute the relative differences
