@@ -364,14 +364,14 @@ fit_times <- sapply(
 
     sas_code <- "
       PROC MIXED DATA = fev_data cl method=reml;
-        CLASS AVISIT(ref = 'VIS1') SEX(ref = 'Male') ARMCD(ref = 'PBO') USUBJID;
-        MODEL FEV1 = ARMCD AVISIT ARMCD*AVISIT SEX / ddfm=satterthwaite solution chisq;
+        CLASS AVISIT(ref = 'VIS1') RACE(ref = 'Asian') ARMCD(ref = 'PBO') USUBJID;
+        MODEL FEV1 = RACE ARMCD AVISIT ARMCD*AVISIT / ddfm=satterthwaite solution chisq;
         REPEATED AVISIT / subject=USUBJID type=un r rcorr;
      RUN;
     "
 
     # generate the SAS output
-    sas_result <- sasr::run_sas(sas_code)
+    sas_result <- run_sas(sas_code)
 
     # extract the fit time (seconds)
     fit_time <- sas_result$LOG %>%
@@ -421,7 +421,7 @@ fastest procedure, however.
 
 ## Marginal Estimates Comparison
 
-```{r, echo=FALSE, warning = FALSE, message = FALSE}
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
 library(dplyr)
 library(mmrm)
 library(lme4)
@@ -491,10 +491,33 @@ glmmTMB_ests <- as.data.frame(
   )$contrasts
 )$estimate
 
-# compute marginal estimates from PROC MIXED
+## # compute marginal estimates from PROC MIXED
+## # load the data into SAS
+## df2sd(fev_data, "fev_data")
 
+## sas_code <- "ODS OUTPUT LSMEANS = lsmeans_out DIFFS = diffs_out;
+##   PROC MIXED DATA = fev_data cl method=reml;
+##     CLASS AVISIT(ref = 'VIS1') RACE(ref = 'Asian') ARMCD(ref = 'PBO') USUBJID;
+##     MODEL FEV1 = ARMCD AVISIT ARMCD*AVISIT RACE / ddfm=satterthwaite solution chisq;
+##     REPEATED AVISIT / subject=USUBJID type=un r rcorr;
+##     LSMEANS ARMCD*AVISIT / pdiff slice=AVISIT cl alpha = 0.05 OBSMARGINS;
+##   RUN;
+## "
 
-proc_mixed_ests <- mmrm_ests
+## # generate the SAS output
+## sas_result <- run_sas(sas_code)
+
+## ## extract the ATEs across visits
+## ates_df <- sd2df("diffs_out") %>%
+##   filter(AVISIT == `_AVISIT`) %>%
+##   mutate(
+##       contrast = paste0(AVISIT, ": ", ARMCD, " - ", `_ARMCD`)
+##   ) %>%
+##   select(contrast, Estimate, StdErr, DF, tValue, Lower, Upper) %>%
+##   arrange(contrast)
+
+## proc_mixed_ests <- ates_df$Estimate
+proc_mixed_ests <- c(3.775614, 3.758119, 3.108027, 4.406510)
 
 # compute the relative differences
 rel_diff <- function(ests) (ests - proc_mixed_ests) / proc_mixed_ests
