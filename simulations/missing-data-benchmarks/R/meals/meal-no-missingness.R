@@ -27,7 +27,7 @@ csh_cov_mat <- compute_csh_matrix()
 toep_cov_mat <- toeplitz(c(1, 0.5, 0.25, 0.125, rep(0, 6)))
 
 # set the sample size
-n_obs <- 200
+n_obs <- 600
 
 # dgps with no treatment effect
 no_effect_us_dgp <- create_dgp(
@@ -145,8 +145,8 @@ type_2_error_rate_eval <- create_evaluator(
 
 # create the experiment
 experiment <- create_experiment(
-  name = "mmrm-benchmark-no-missingness-n-200",
-  save_dir = "results/no-miss/n-200"
+  name = "mmrm-benchmark-no-missingness-n-600",
+  save_dir = "results/no-miss/n-600"
 ) %>%
   add_dgp(no_effect_us_dgp, name = "no_effect_us") %>%
   add_dgp(no_effect_csh_dgp, name = "no_effect_csh") %>%
@@ -180,7 +180,5 @@ experiment <- create_experiment(
 set.seed(62342)
 results <- experiment$run(
   n_reps = 100,
-  save = TRUE,
-  verbose = 2,
-  checkpoint_n_reps = 25
+  save = TRUE
 )

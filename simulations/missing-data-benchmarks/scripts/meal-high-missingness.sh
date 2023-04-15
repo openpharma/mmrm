@@ -3,13 +3,13 @@
 #SBATCH --job-name=mmrm-high-missingness-sim
 #
 # Quality of Service:
-#SBATCH --qos=long
+#SBATCH -p himem --qos=long
 #
 # Processors (1 node = 28 cores):
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
-#SBATCH --mem-per-cpu=200G
+#SBATCH --mem-per-cpu=300G
 #
 # Mail type:
 #SBATCH --mail-type=all
