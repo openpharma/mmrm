@@ -429,6 +429,7 @@ h_mmrm_tmb_fit <- function(tmb_object,
 
 h_get_x_matrix <- function(object, newdata) {
   # TODO: double check that this is even necessary -> emmeans integration
+  # can we use existing model.frame.mmrm_tmb() ?
   # get model frame used for fitting and extract factor levels
   full_frame <- object$tmb_data$full_frame
   xlevels <- list()
