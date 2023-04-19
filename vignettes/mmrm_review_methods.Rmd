@@ -43,8 +43,8 @@ implementations lies in their supported covariance structures. In particular,
 `PROC MIXED` and `mmrm` are the only procedures which provide support for many
 of the most common MMRM covariance structures. `gls`, `lmer` and `glmmTMB` are
 more limited. We find that `mmmrm` converges more quickly than other R
-implementations. All implementations are also shown to produce similar marginal
-treatment effect estimates.
+implementations while also producing estimates that are virtually identical to
+`PROC MIXED`'s.
 
 # Datasets
 
@@ -893,7 +893,8 @@ rel_diff_ests_tbl %>%
 
 The R procedures' estimates are very similar to those output by `PROC MIXED`,
 though `mmrm` and `gls` generate the estimates that are closest to those
-produced when using SAS.
+produced when using SAS. All methods converge using their default optimization
+arguments.
 
 ### BCVA Data
 
@@ -1038,3 +1039,7 @@ rel_diff_ests_tbl %>%
     ) +
     theme_classic()
 ```
+
+`mmrm`, `gls` and `lmer` produce estimates that are virtually identical to `PROC
+MIXED`'s, while `glmmTMB` does not. This is likely explained by `glmmTMB`'s
+failure to converge. Note too that `lmer` fails to converge.
