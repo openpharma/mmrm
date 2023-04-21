@@ -16,3 +16,4 @@ sascfg_personal\.py
 simulations
 ^doc$
 ^Meta$
+^data-raw$
