@@ -1,4 +1,8 @@
+#ifndef CHOL_CACHE_INCLUDED_
+#define CHOL_CACHE_INCLUDED_
+
 #include "covariance.h"
+#include "utils.h"
 // Base class of spatial and non-spatial Cholesky.
 template <class Type>
 struct lower_chol_base {
@@ -20,9 +24,7 @@ struct lower_chol_nonspatial: public lower_chol_base<Type> {
   // Constructor from theta, n_visits and cov_type, and cache full_visits values.
   lower_chol_nonspatial(vector<Type> theta, int n_visits, std::string cov_type): cov_type(cov_type), n_visits(n_visits), full_visit(std::vector<int>(n_visits)) {
     this->theta = theta;
-    for (int i = 0; i < n_visits; i++) {
-      this->full_visit[i] = i;
-    }
+    std::iota(std::begin(this->full_visit), std::end(this->full_visit), 0);
     this->n_theta = theta.size();
     this->chol_full = get_cov_lower_chol_grouped(this->theta, this->n_visits, this->cov_type, 1, false);
     this->chols[full_visit]  = this->chol_full;
@@ -63,3 +65,5 @@ struct lower_chol_sp_exp: public lower_chol_base<Type> {
     return Li;
   }
 };
+
+#endif

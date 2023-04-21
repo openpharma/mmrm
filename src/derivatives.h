@@ -100,9 +100,7 @@ struct derivatives_nonspatial: public derivatives_base<Type> {
   // Constructor from theta, n_visits and cov_type, and cache full_visits values.
   derivatives_nonspatial(vector<Type> theta, int n_visits, std::string cov_type): cov_type(cov_type), n_visits(n_visits), full_visit(std::vector<int>(n_visits)) {
     this->theta = theta;
-    for (int i = 0; i < n_visits; i++) {
-      this->full_visit[i] = i;
-    }
+    std::iota(std::begin(this->full_visit), std::end(this->full_visit), 0);
     this->n_theta = theta.size();
     std::map<std::string, tmbutils::matrix<Type>> allret = derivatives<Type>(this->n_visits, this->cov_type, this->theta);
     matrix<Type> sigma_d1 = allret["derivative1"];

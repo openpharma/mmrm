@@ -148,9 +148,7 @@ Type objective_function<Type>::operator() ()
   REPORT(beta_vcov);
 
   std::vector<int> visit(n_visits);
-  for (int i = 0; i < n_visits; i++) {
-    visit[i] = i;
-  }
+  std::iota(std::begin(visit), std::end(visit), 0);
   matrix<Type> dist(2, 2);
   dist << 0, 1, 1, 0;
   int dim;
