@@ -39,4 +39,4 @@ testthat-problems.rds
 README.md
 **/sascfg_personal.py
 .Rprofile
-simulations/chols/*/library
+simulations/chols/*chols
