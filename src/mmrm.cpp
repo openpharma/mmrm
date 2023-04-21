@@ -1,5 +1,5 @@
 #include "covariance.h"
-
+#include "chol_cache.h"
 // Definition:
 //
 // Y_i = X_i * beta + epsilon_i, i = 1, ..., n_subjects
@@ -60,42 +60,33 @@ Type objective_function<Type>::operator() ()
   // Convert is_spatial_int to bool.
   bool is_spatial = (is_spatial_int == 1);
   // Create the lower triangular Cholesky factor of the visit x visit covariance matrix.
-  int dim_cov_mat;
-  if (is_spatial) {
-    dim_cov_mat = 2;
-  } else {
-    dim_cov_mat = n_visits;
+  std::map<int, lower_chol_base<Type>*> chols_by_group;
+  for (int r = 0; r < n_groups; r++) {
+    // in loops using new keyword is required so that the objects stays on the heap
+    // otherwise this will be destroyed and you will get unexpected result
+    if (is_spatial) {
+      chols_by_group[r] = new lower_chol_sp_exp<Type>(theta.segment(r * theta_one_group_size, theta_one_group_size));
+    } else {
+      chols_by_group[r] = new lower_chol_nonspatial<Type>(theta.segment(r * theta_one_group_size, theta_one_group_size), n_visits, cov_type);
+    }
   }
-  matrix<Type> covariance_lower_chol = get_cov_lower_chol_grouped(theta, dim_cov_mat, cov_type, n_groups, is_spatial);
   // Go through all subjects and calculate quantities initialized above.
   for (int i = 0; i < n_subjects; i++) {
     // Start index and number of visits for this subject.
     int start_i = subject_zero_inds(i);
     int n_visits_i = subject_n_visits(i);
-    // Obtain Cholesky factor Li.
-    matrix<Type> Li;
+    std::vector<int> visit_i(n_visits_i);
+    matrix<Type> dist_i(n_visits_i, n_visits_i);
     if (!is_spatial) {
-      matrix<Type> lower_chol = covariance_lower_chol.block(subject_groups(i) * n_visits, 0,  n_visits, n_visits);
-      if (n_visits_i < n_visits) {
-        // This subject has less visits, therefore we need to recalculate the Cholesky factor.
-        vector<int> visits_i = visits_zero_inds.segment(start_i, n_visits_i);
-        Eigen::SparseMatrix<Type> sel_mat = get_select_matrix<Type>(visits_i, n_visits);
-        // Note: We cannot use triangular view for covariance_lower_chol here because sel_mat is sparse.
-        matrix<Type> Ltildei = sel_mat * lower_chol;
-        matrix<Type> cov_i = tcrossprod(Ltildei);
-        Eigen::LLT<Eigen::Matrix<Type,Eigen::Dynamic,Eigen::Dynamic> > cov_i_chol(cov_i);
-        Li = cov_i_chol.matrixL();
-      } else {
-        // This subject has full number of visits, therefore we can just take the original factor.
-        Li = lower_chol;
+      for (int i = 0; i < n_visits_i; i++) {
+        visit_i[i] = visits_zero_inds[i + start_i];
       }
     } else {
-      matrix<Type> distance_i = euclidean(matrix<Type>(coordinates.block(start_i, 0, n_visits_i, coordinates.cols())));
-      // Obtain Cholesky factor Li.
-      vector<Type> theta_i = theta.segment(subject_groups(i) * theta_one_group_size, theta_one_group_size);
-      Li = get_spatial_covariance_lower_chol(theta_i, distance_i, cov_type);
+      dist_i = euclidean(matrix<Type>(coordinates.block(start_i, 0, n_visits_i, coordinates.cols())));
     }
-
+    
+    // Obtain Cholesky factor Li.
+    matrix<Type> Li = chols_by_group[subject_groups[i]]->get_chol(visit_i, dist_i);
 
     // Calculate weighted Cholesky factor for this subject.
     Eigen::DiagonalMatrix<Type,Eigen::Dynamic,Eigen::Dynamic> Gi_inv_sqrt = weights_vector.segment(start_i, n_visits_i).cwiseInverse().sqrt().matrix().asDiagonal();
@@ -156,6 +147,21 @@ Type objective_function<Type>::operator() ()
   matrix<Type> beta_vcov = XtWX_decomposition.solve(Identity);
   REPORT(beta_vcov);
 
+  std::vector<int> visit(n_visits);
+  std::iota(std::begin(visit), std::end(visit), 0);
+  matrix<Type> dist(2, 2);
+  dist << 0, 1, 1, 0;
+  int dim;
+  if (is_spatial) {
+    dim = 2;
+  } else {
+    dim = n_visits;
+  }
+  matrix<Type> covariance_lower_chol = matrix<Type>::Zero(dim * n_groups, dim);
+  for (int r = 0; r < n_groups; r++) {
+    covariance_lower_chol.block(r * dim, 0, dim, dim) = chols_by_group[r]->get_chol(visit, dist);
+    delete chols_by_group[r];
+  }
   REPORT(covariance_lower_chol);
 
   return neg_log_lik;
