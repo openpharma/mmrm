@@ -37,14 +37,15 @@ library(ggplot2)
 # Introduction
 
 In this vignette we briefly compare the `mmrm::mmrm`, SAS's `PROC MIXED`,
-`nlme::gls`, `lme4::lmer`, and `glmmTMB::glmmTMB` functions for for fitting
-mixed models for repeated measures (MMRMs). A primary difference in these
-implementations lies in their supported covariance structures. In particular,
-`PROC MIXED` and `mmrm` are the only procedures which provide support for many
-of the most common MMRM covariance structures. `gls`, `lmer` and `glmmTMB` are
-more limited. We find that `mmmrm` converges more quickly than other R
-implementations while also producing estimates that are virtually identical to
-`PROC MIXED`'s.
+`nlme::gls`, `lme4::lmer`, and `glmmTMB::glmmTMB` functions for fitting mixed
+models for repeated measures (MMRMs). A primary difference in these
+implementations lies in the covariance structures that are supported "out of the
+box". In particular, `PROC MIXED` and `mmrm` are the only procedures which
+provide support for many of the most common MMRM covariance structures. Most
+covariance structures can be implemented in `gls`, though users are required to
+define them manually. `lmer` and `glmmTMB` are more limited. We find that
+`mmmrm` converges more quickly than other R implementations while also producing
+estimates that are virtually identical to `PROC MIXED`'s.
 
 # Datasets
 
@@ -276,18 +277,19 @@ bcva_data <- rct_dgp_fun()
 # Model Implementations {.tabset}
 
 Listed below are some of the most commonly used covariance structures used when
-fitting MMRMs. We emphasize that this table is not exhaustive; `PROC MIXED` and
-`glmmTMB` support additional spatial covariance structures.
+fitting MMRMs. We indicate which matrices are available "out of the box" for
+each implementation considered in this vignette. Note that this table is not
+exhaustive; `PROC MIXED` and `glmmTMB` support additional spatial covariance
+structures.
 
 | Covariance structures             | `mmrm` | `PROC MIXED` | `gls` | `lmer` | `glmmTMB` |
 |:---------------------------------:|:------:|:------------:|:-----:|:------:|:---------:|
 | Ante-dependence (heterogeneous)   | X      | X            |       |        |           |
 | Ante-dependence (homogeneous)     | X      |              |       |        |           |
 | Auto-regressive (heterogeneous)   | X      | X            | X     |        |           |
-| Auto-regressive (homogeneous)     | X      | X            |       |        | X         |
-| Ante-dependence (homogeneous)     | X      |              |       |        |           |
+| Auto-regressive (homogeneous)     | X      | X            | X     |        | X         |
 | Compound symmetry (heterogeneous) | X      | X            | X     |        | X         |
-| Compound symmetry (homogeneous)   | X      | X            |       |        |           |
+| Compound symmetry (homogeneous)   | X      | X            | X     |        |           |
 | Spatial exponential               | X      | X            | X     |        | X         |
 | Toeplitz (heterogeneous)          | X      | X            |       |        | X         |
 | Toeplitz (homogeneous)            | X      | X            |       |        |           |
@@ -343,7 +345,7 @@ MODEL FEV1 = AVISIT|ARMCD / ddfm=satterthwaite solution chisq;
   formula = FEV1 ~ ARMCD * AVISIT,
   data = fev_data,
   correlation = <b>corCAR1(form = ~AVISIT | USUBJID)</b>,
-  weights = varIdent(form = ~1|AVISIT),
+  weights = <b>varIdent(form = ~1|AVISIT)</b>,
   na.action = na.omit
 )
 </code></pre>
@@ -361,6 +363,15 @@ MODEL FEV1 =  ARMCD|AVISIT / ddfm=satterthwaite solution chisq;
 <pre><code>mmrm(
   formula = FEV1 ~ ARMCD * AVISIT + <b>ar1(VISITN | USUBJID)</b>,
   data = fev_data
+)
+</code></pre>
+
+### `gls`
+<pre><code>gls(
+  formula = FEV1 ~ ARMCD * AVISIT,
+  data = fev_data,
+  correlation = <b>corCAR1(form = ~AVISIT | USUBJID)</b>,
+  na.action = na.omit
 )
 </code></pre>
 
@@ -393,7 +404,7 @@ MODEL FEV1 = AVISIT|ARMCD / ddfm=satterthwaite solution chisq;
   formula = FEV1 ~ ARMCD * AVISIT,
   data = fev_data,
   correlation = <b>corCompSymm(form = ~AVISIT | USUBJID)</b>,
-  weights = varIdent(form = ~1|AVISIT),
+  weights = <b>varIdent(form = ~1|AVISIT)</b>,
   na.action = na.omit
 )
 </code></pre>
@@ -421,6 +432,16 @@ MODEL FEV1 = AVISIT|ARMCD / ddfm=satterthwaite solution chisq;
   data = fev_data
 )
 </code></pre>
+
+### `gls`
+<pre><code>gls(
+  formula = FEV1 ~ ARMCD * AVISIT,
+  data = fev_data,
+  correlation = <b>corCompSymm(form = ~AVISIT | USUBJID)</b>,
+  na.action = na.omit
+)
+</code></pre>
+
 
 ## Spatial exponential
 
