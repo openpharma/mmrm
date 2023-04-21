@@ -54,7 +54,7 @@ struct lower_chol_sp_exp: public lower_chol_base<Type> {
   lower_chol_sp_exp() {
     // This default constructor is needed because the use of `[]` in map.
   }
-  // Constructor from theta, n_visits and cov_type, and cache full_visits values.
+  // Constructor from theta. For now the cholesky does not need to be cached.
   lower_chol_sp_exp(vector<Type> theta): const_sd(exp(theta(0))), rho(invlogit(theta(1))) {
     this->logrho = log(this->rho);
   }
