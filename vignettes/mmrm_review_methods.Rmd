@@ -23,6 +23,7 @@ editor_options:
 library(MASS)
 library(clusterGeneration)
 library(dplyr)
+library(purrr)
 library(microbenchmark)
 library(stringr)
 library(mmrm)
@@ -30,6 +31,7 @@ library(lme4)
 library(nlme)
 library(glmmTMB)
 library(sasr)
+library(knitr)
 library(emmeans)
 library(ggplot2)
 ```
@@ -88,162 +90,6 @@ The BCVA dataset contains data from a randomized longitudinal ophthalmology
 trial evaluating the change in baseline corrected visual acuity (BCVA) over the
 course of 10 visits. BCVA corresponds to the number of letters read from a
 visual acuity chart. A summary of the data is given below:
-
-```{r bcva-generation, echo = FALSE, message = FALSE}
-# helper function for generating covariates
-generate_covariates <- function(n_obs, n_visits = 10) {
-
-  # participant ID
-  participant <- seq_len(n_obs)
-
-  # baseline best corrected visual acuity score
-  base_bcva <- rnorm(n = n_obs, mean = 75, sd = 10)
-
-  # stratification factor
-  strata <- as.vector(
-    c(1, 2, 3) %*% rmultinom(n = n_obs, 1, prob = c(0.3, 0.3, 0.4))
-  )
-
-  # treatment indicator
-  trt <- rbinom(n = n_obs, size = 1, prob = 0.5)
-
-  # visit number
-  visit_num <- rep(seq_len(n_visits), n_obs)
-
-  # assemble into a covariates data.frame
-  data.frame(
-    participant = rep(participant, each = n_visits),
-    base_bcva = rep(base_bcva, each = n_visits),
-    strata = as.factor(rep(strata, each = n_visits)),
-    trt = rep(trt, each = n_visits),
-    visit_num
-  )
-}
-
-# helper function for randomly generating unstructured covariance matrix
-compute_unstructured_matrix <- function(
-  vars = seq(from = 1, by = 0.5, length.out = 10)
-) {
-  n_visits <- length(vars)
-  corr_mat <- abs(cov2cor(
-    clusterGeneration::genPositiveDefMat(dim = n_visits)$Sigma
-  ))
-  sd_mat <- diag(sqrt(vars))
-  us_mat <- sd_mat %*% corr_mat %*% sd_mat
-  return(us_mat)
-}
-
-# helper function for generating BCVA data
-generate_outcomes <- function(
-  covars_df,
-  cov_mat,
-  intercept = 5,
-  base_bcva_coef = 1,
-  strata_2_coef = -1,
-  strata_3_coef = 1,
-  trt_coef = 1,
-  visit_coef = 0.25,
-  trt_visit_coef = 0.25
-) {
-
-  # construct the model matrix
-  model_mat <- model.matrix(
-    ~ base_bcva + strata + trt * visit_num,
-    data = covars_df
-  )
-
-  # generate the bvca outcomes
-  n_visits <- nrow(cov_mat)
-  n_obs <- nrow(covars_df) / n_visits
-  effect_coefs <- c(
-    intercept, base_bcva_coef, strata_2_coef, strata_3_coef,
-    trt_coef, visit_coef, trt_visit_coef
-  )
-  as.vector(model_mat %*% effect_coefs +
-    as.vector(t(MASS::mvrnorm(n_obs, rep(0, n_visits), cov_mat))))
-
-}
-
-# MAR helper function
-missing_at_random <- function(covars_df, type) {
-
-  # compute missingness probabilities
-  prob_miss <- plogis(
-    -(5 - 0.01 * covars_df$base_bcva + 0.5 * (covars_df$strata == 2) +
-        1 * (covars_df$strata == 3) - 0.4 * covars_df$visit_num - 0.5 *
-          (covars_df$trt == 0))
-  )
-
-  # generate vector of missingness indicators
-  missing_ind <- rbinom(nrow(covars_df), 1, prob_miss)
-
-  # remove indicated visits
-  covars_df[missing_ind == 0, ]
-
-}
-
-# BCVA data-generating process
-rct_dgp_fun <- function(
-  n_obs = 1000,
-  outcome_covar_mat = compute_unstructured_matrix(),
-  trt_coef = 0.25,
-  visit_coef = 0.25,
-  trt_visit_coef = 0.25
-) {
-  # generate the covariates
-  covars_df <- generate_covariates(
-    n_obs = n_obs, n_visits = nrow(outcome_covar_mat)
-  )
-
-  # generate the outcomes
-  bcva_out <- generate_outcomes(
-    covars_df = covars_df,
-    cov_mat = outcome_covar_mat,
-    trt_coef = trt_coef,
-    visit_coef = visit_coef,
-    trt_visit_coef = trt_visit_coef
-  )
-
-  # compute the change in BCVA
-  bcva_change <- bcva_out - covars_df$base_bcva
-
-  # assemble into a data.frame
-  df <- data.frame(
-    participant = covars_df$participant,
-    bcva_change = bcva_change,
-    base_bcva = covars_df$base_bcva,
-    strata = covars_df$strata,
-    trt = covars_df$trt,
-    visit_num = covars_df$visit_num
-  )
-
-  # delete observations at random 
-  df <- missing_at_random(df)
-
-  # format to resemble FEV dataset
-  df <- df %>%
-    transmute(
-      USUBJID = factor(participant),
-      VISITN = visit_num,
-      AVISIT = paste0("VIS", str_pad(visit_num, width = 2, pad = "0")),
-      AVISIT = factor(
-        AVISIT,
-        levels = paste0("VIS", str_pad(seq_len(10), width = 2, pad = "0"))
-      ),
-      ARMCD = ifelse(trt == 1, "TRT", "CTL"),
-      RACE = ifelse(strata == 1, "Black",
-               ifelse(strata == 2, "Asian", "White")),
-      BCVA_BL = base_bcva,
-      BCVA_CHG = bcva_change
-    )
-
-  return(df)
-}
-
-# generate the BCVA dataset
-set.seed(510)
-bcva_data <- rct_dgp_fun()
-```
 
 ```
                                       Stratified by ARMCD
@@ -571,7 +417,8 @@ Change in BCVA is assumed to be a function of race, baseline BCVA, treatment
 arm, visit number, and the treatment--visit interaction. In both datasets,
 repeated measures are modeled using an unstructured covariance matrix. The
 implementations' convergence times are evaluated first, followed by a comparison
-of their estimates.
+of their estimates. Finally, we fit these procedures on simulated BCVA-like data
+to assess the impact of missingness on convergence rates.
 
 ## Convergence Times
 
@@ -1064,3 +911,177 @@ rel_diff_ests_tbl %>%
 `mmrm`, `gls` and `lmer` produce estimates that are virtually identical to `PROC
 MIXED`'s, while `glmmTMB` does not. This is likely explained by `glmmTMB`'s
 failure to converge. Note too that `lmer` fails to converge.
+
+
+## Impact of Missing Data on Convergence Rates
+
+The results of the previous benchmark suggest that the amount of patients
+missing from later time points affect certain implementations' capacity to
+converge. We investigate this further by simulating data using a data-generating
+process similar to that of the BCVA datasets, though with various rates of
+patient dropout.
+
+Ten datasets of 200 patients are generated each of the following levels of
+missingness: none, mild, moderate, and high. In all scenarios, observations are
+missing at random. The number patients observed at each visit is obtained for
+one replicated dataset at each level of missingness is presented in the table
+below.
+
+```{r missingness-table}
+## extract the number of patients at each visit
+source("data-raw/bcva_data.R")
+bcva_none <- rct_dgp_fun(n_obs = 200, missing_type = "none") %>%
+  pull(AVISIT) %>%
+  table
+bcva_mild <- rct_dgp_fun(n_obs = 200, missing_type = "mild") %>%
+  pull(AVISIT) %>%
+  table
+bcva_moderate <- rct_dgp_fun(n_obs = 200, missing_type = "moderate") %>%
+  pull(AVISIT) %>%
+  table
+bcva_high <- rct_dgp_fun(n_obs = 200, missing_type = "high") %>%
+  pull(AVISIT) %>%
+  table
+
+## construct the table
+bind_cols(
+  tibble(Missingness = c("none", "mild", "moderate", "heavy")),
+  bind_rows(bcva_none, bcva_mild, bcva_moderate, bcva_high)
+) %>%
+  kable(caption = "Number of patients per visit")
+```
+
+The convergence rates of all implementations for stratified by missingness level
+is presented in the plot below.
+
+```{r convergence-rate-missingness}
+get_convergence_rates <- function(n_replicates, missingness_level) {
+  purrr::map_df(
+    seq_len(n_replicates),
+    function(idx) {
+      ## simulate the data
+      miss_df <- rct_dgp_fun(n_obs = 200, missing_type = missingness_level)
+     
+      ## fit MMRM methods and extract convergence
+
+      ## mmrm
+      safe_mmrm <- safely(mmrm)
+      mmrm_fit <- safe_mmrm(
+        formula = BCVA_CHG ~ BCVA_BL + RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
+        data = miss_df
+      )
+      mmrm_converged <- is.null(mmrm_fit$error)
+      mmrm_converged
+
+      ## lme4
+      lmer_fit <- lmer(
+        BCVA_CHG ~ BCVA_BL + RACE + ARMCD * AVISIT + (0 + AVISIT | USUBJID),
+        data = miss_df[complete.cases(miss_df), ],
+        control = lmerControl(check.nobs.vs.nRE = "ignore")
+      )
+      lmer_converged <- all(!str_detect(
+        lmer_fit@optinfo$conv$lme4$messages,
+        "Model failed to converge"
+      ))
+
+      ## nlme
+      safe_gls <- safely(gls)
+      gls_fit <- safe_gls(
+        BCVA_CHG ~ BCVA_BL + RACE + ARMCD * AVISIT,
+        data = miss_df[complete.cases(miss_df), ],
+        correlation = nlme::corSymm(form = ~ VISITN | USUBJID),
+        weights = nlme::varIdent(form = ~ 1|VISITN)
+      )
+      gls_converged <- is.null(gls_fit$error)
+
+      ## glmmTMB
+      glmmTMB_fit <- glmmTMB(
+        BCVA_CHG ~ BCVA_BL + RACE + ARMCD * AVISIT + us(0 + AVISIT | USUBJID),
+        data = miss_df,
+        dispformula = ~ 0
+      )
+      glmmTMB_converged <- glmmTMB_fit$fit$convergence == 0
+      
+      ## SAS
+      if (file.exists("sascfg_personal.py")) {
+
+        # compute marginal estimates from PROC MIXED
+        # load the data into SAS
+        df2sd(miss_df, "miss_df")
+
+        sas_code <- "ODS OUTPUT ConvergenceStatus = conv_status;
+          PROC MIXED DATA = miss_df cl method=reml;
+            CLASS AVISIT(ref = 'VIS01') RACE(ref = 'Asian') ARMCD(ref = 'CTL') USUBJID;
+            MODEL BCVA_CHG = BCVA_BL ARMCD AVISIT ARMCD*AVISIT RACE / ddfm=satterthwaite solution chisq;
+            REPEATED AVISIT / subject=USUBJID type=un r rcorr;
+          RUN;
+        "
+
+        # generate the SAS output
+        sas_result <- run_sas(sas_code)
+
+        ## extract the convergence status
+        conv_status_df <- sasr::sd2df("conv_status")
+        sas_converged <- conv_status_df$Reason == "Convergence criteria met."
+
+        ## assemble tibble row
+        results <- tibble(
+          replicate = idx,
+          method = c("mmrm", "lmer", "gls", "glmmTMB", "PROC MIXED"),
+          converged = c(mmrm_converged, lmer_converged, gls_converged,
+                        glmmTMB_converged, sas_converged)
+        )
+        
+      } else {
+        results <- tibble(
+          replicate =  idx,
+          method = c("mmrm", "lmer", "gls", "glmmTMB"),
+          converged = c(mmrm_converged, lmer_converged, gls_converged,
+                        glmmTMB_converged)
+        )
+      }
+
+      return(results)
+    }
+  ) %>%
+  group_by(method) %>%
+  summarize(convergence_rate = mean(converged), .groups = "drop") %>%
+  mutate(missingness = missingness_level)
+}
+
+## get the convergence rates
+n_reps <- 10
+cr_no_missing <- get_convergence_rates(n_reps, "none")
+cr_mild_missing <- get_convergence_rates(n_reps, "mild")
+cr_moderate_missing <- get_convergence_rates(n_reps, "moderate")
+cr_high_missing <- get_convergence_rates(n_reps, "high")
+cr_all <- bind_rows(
+  cr_no_missing, cr_mild_missing, cr_moderate_missing, cr_high_missing
+)
+
+## plot the convergence rates
+cr_all %>%
+  mutate(
+    missingness = factor(
+      missingness,
+      levels = c("none", "mild", "moderate", "high")
+    )
+  ) %>%
+  ggplot(aes(x = method, y = convergence_rate)) +
+  geom_point() +
+  facet_grid(rows = vars(missingness)) +
+  xlab("Method") +
+  ylab("Convergence Rate (10 Replicates)") +
+  ggtitle("Convergence Rates by Missingness Levels") +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  theme_bw()
+```
+
+Note that the default optimization schemes are used for each method; these
+schemes can be modified to potentially improve convergence rates.
+
+# Session Information
+
+```{r session-info, echo=FALSE}
+sessionInfo()
+```
