@@ -11,7 +11,7 @@ struct chol {
   chol(int dim, string cov): dim_cov_mat(dim), cov_type(cov) {};
   template <class T>
     vector<T> operator() (vector<T> &theta) {
-      return get_cov_lower_chol_grouped(theta, this->dim_cov_mat, this->cov_type, 1, false).vec();
+      return get_covariance_lower_chol(theta, this->dim_cov_mat, this->cov_type).vec();
     }
 };
 // Struct chol_jacobian that has jacobian of the cholesky factor given theta.

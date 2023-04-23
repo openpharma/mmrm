@@ -26,7 +26,7 @@ struct lower_chol_nonspatial: public lower_chol_base<Type> {
     this->theta = theta;
     std::iota(std::begin(this->full_visit), std::end(this->full_visit), 0);
     this->n_theta = theta.size();
-    this->chol_full = get_cov_lower_chol_grouped(this->theta, this->n_visits, this->cov_type, 1, false);
+    this->chol_full = get_covariance_lower_chol(this->theta, this->n_visits, this->cov_type);
     this->chols[full_visit]  = this->chol_full;
   }
   matrix<Type> get_chol(std::vector<int> visits, matrix<Type> dist) {
@@ -47,22 +47,17 @@ struct lower_chol_nonspatial: public lower_chol_base<Type> {
 
 // Struct to obtain Cholesky for spatial exponential.
 template <class Type>
-struct lower_chol_sp_exp: public lower_chol_base<Type> {
-  Type const_sd;
-  Type rho;
-  Type logrho;
-  lower_chol_sp_exp() {
+struct lower_chol_spatial: public lower_chol_base<Type> {
+  vector<Type> theta;
+  std::string cov_type;
+  lower_chol_spatial() {
     // This default constructor is needed because the use of `[]` in map.
   }
   // Constructor from theta. For now the cholesky does not need to be cached.
-  lower_chol_sp_exp(vector<Type> theta): const_sd(exp(theta(0))), rho(invlogit(theta(1))) {
-    this->logrho = log(this->rho);
+  lower_chol_spatial(vector<Type> theta, std::string cov_type): theta(theta), cov_type(cov_type) {
   }
   matrix<Type> get_chol(std::vector<int> visits, matrix<Type> dist) {
-    matrix<Type> sigma = exp(dist.array() * this->logrho) * this->const_sd;
-    Eigen::LLT<Eigen::Matrix<Type,Eigen::Dynamic,Eigen::Dynamic> > sigma_chol(sigma);
-    matrix<Type> Li = sigma_chol.matrixL();
-    return Li;
+    return get_spatial_covariance_lower_chol(this->theta, dist, this->cov_type);
   }
 };
 

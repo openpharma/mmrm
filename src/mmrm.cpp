@@ -65,7 +65,7 @@ Type objective_function<Type>::operator() ()
     // in loops using new keyword is required so that the objects stays on the heap
     // otherwise this will be destroyed and you will get unexpected result
     if (is_spatial) {
-      chols_by_group[r] = new lower_chol_sp_exp<Type>(theta.segment(r * theta_one_group_size, theta_one_group_size));
+      chols_by_group[r] = new lower_chol_spatial<Type>(theta.segment(r * theta_one_group_size, theta_one_group_size), cov_type);
     } else {
       chols_by_group[r] = new lower_chol_nonspatial<Type>(theta.segment(r * theta_one_group_size, theta_one_group_size), n_visits, cov_type);
     }
