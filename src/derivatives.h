@@ -127,7 +127,7 @@ struct derivatives_nonspatial: public derivatives_base<Type> {
   matrix<Type> get_sigma_derivative1(std::vector<int> visits, matrix<Type> dist) override {
     auto target = this->sigmad1_cache.find(visits);
      if (target != this->sigmad1_cache.end()) {
-      return target;
+      return target->second;
     } else {
       Eigen::SparseMatrix<Type> sel_mat = this->get_sel_mat(visits);
       int n_visists_i = visits.size();
@@ -143,7 +143,7 @@ struct derivatives_nonspatial: public derivatives_base<Type> {
   matrix<Type> get_sigma_derivative2(std::vector<int> visits, matrix<Type> dist) override {
     auto target = this->sigmad2_cache.find(visits);
      if (target != this->sigmad2_cache.end()) {
-      return target;
+      return target->second;
     } else {
       Eigen::SparseMatrix<Type> sel_mat = this->get_sel_mat(visits);
       int n_visists_i = visits.size();
@@ -160,7 +160,7 @@ struct derivatives_nonspatial: public derivatives_base<Type> {
   matrix<Type> get_sigma(std::vector<int> visits, matrix<Type> dist) override {
     auto target = this->sigma_cache.find(visits);
      if (target != this->sigma_cache.end()) {
-      return target;
+      return target->second;
     } else {
       Eigen::SparseMatrix<Type> sel_mat = this->get_sel_mat(visits);
       matrix<Type> ret = sel_mat * this->sigma_cache[this->full_visit] * sel_mat.transpose();
@@ -172,7 +172,7 @@ struct derivatives_nonspatial: public derivatives_base<Type> {
   matrix<Type> get_inverse_chol(std::vector<int> visits, matrix<Type> dist) override {
     auto target = this->inverse_chol_cache.find(visits);
      if (target != this->inverse_chol_cache.end()) {
-      return target;
+      return target->second;
     } else {
       matrix<Type> sigmainv = this->get_inverse(visits, dist);
       Eigen::LLT<Eigen::Matrix<Type,Eigen::Dynamic,Eigen::Dynamic> > sigma_inv_chol(sigmainv);
@@ -185,7 +185,7 @@ struct derivatives_nonspatial: public derivatives_base<Type> {
   matrix<Type> get_inverse(std::vector<int> visits, matrix<Type> dist) override {
     auto target = this->inverse_cache.find(visits);
      if (target != this->inverse_cache.end()) {
-      return target;
+      return target->second;
     } else {
       matrix<Type> sigmainv = this->get_sigma(visits, dist).inverse();
       this->inverse_cache[visits] = sigmainv;
@@ -196,7 +196,7 @@ struct derivatives_nonspatial: public derivatives_base<Type> {
   matrix<Type> get_inverse_derivative(std::vector<int> visits, matrix<Type> dist) override {
     auto target = this->sigma_inverse_d1_cache.find(visits);
      if (target != this->sigma_inverse_d1_cache.end()) {
-      return target;
+      return target->second;
     } else {
       auto sigma_d1 = this->get_sigma_derivative1(visits, dist);
       matrix<Type> sigma_inv_d1(sigma_d1.rows(), sigma_d1.cols());

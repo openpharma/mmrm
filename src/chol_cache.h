@@ -30,8 +30,9 @@ struct lower_chol_nonspatial: public lower_chol_base<Type> {
     this->chols[full_visit]  = this->chol_full;
   }
   matrix<Type> get_chol(std::vector<int> visits, matrix<Type> dist) {
-    if (this->chols.count(visits) > 0) {
-      return this->chols[visits];
+    auto target = this->chols.find(visits);
+     if (target != this->chols.end()) {
+      return target->second;
     } else {
       matrix<Type> sel_mat = get_select_matrix<Type>(visits, this->n_visits);
       matrix<Type> Ltildei = sel_mat * this->chol_full;
@@ -61,6 +62,9 @@ struct lower_chol_spatial: public lower_chol_base<Type> {
   }
 };
 
+// Return covariante lower Cholesky factor from lower_chol_base objects.
+// For non-spatial return for full visits, for spatial return on two points that the distance is 1.
+// Finally clean up the map of `chols`.
 template <class Type>
 matrix<Type> get_chol_and_clean(std::map<int, lower_chol_base<Type>*>& chols, bool is_spatial, int n_visits) {
   std::vector<int> visit(n_visits);
@@ -69,9 +73,11 @@ matrix<Type> get_chol_and_clean(std::map<int, lower_chol_base<Type>*>& chols, bo
   dist << 0, 1, 1, 0;
   int dim = is_spatial?2:n_visits;
   matrix<Type> covariance_lower_chol = matrix<Type>::Zero(dim * chols.size(), dim);
-  for (int r = 0; r < chols.size(); r++) {
+  int n_groups = chols.size();
+  for (int r = 0; r < n_groups; r++) {
     covariance_lower_chol.block(r * dim, 0, dim, dim) = chols[r]->get_chol(visit, dist);
     delete chols[r];
+    chols.erase(r);
   }
   return covariance_lower_chol;
 }
