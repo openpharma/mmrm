@@ -147,16 +147,7 @@ Type objective_function<Type>::operator() ()
   matrix<Type> beta_vcov = XtWX_decomposition.solve(Identity);
   REPORT(beta_vcov);
 
-  std::vector<int> visit(n_visits);
-  std::iota(std::begin(visit), std::end(visit), 0);
-  matrix<Type> dist(2, 2);
-  dist << 0, 1, 1, 0;
-  int dim = is_spatial?2:n_visits;
-  matrix<Type> covariance_lower_chol = matrix<Type>::Zero(dim * n_groups, dim);
-  for (int r = 0; r < n_groups; r++) {
-    covariance_lower_chol.block(r * dim, 0, dim, dim) = chols_by_group[r]->get_chol(visit, dist);
-    delete chols_by_group[r];
-  }
+  matrix<Type> covariance_lower_chol = get_chol_and_clean(chols_by_group, is_spatial, n_visits);
   REPORT(covariance_lower_chol);
 
   return neg_log_lik;
