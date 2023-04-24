@@ -151,12 +151,7 @@ Type objective_function<Type>::operator() ()
   std::iota(std::begin(visit), std::end(visit), 0);
   matrix<Type> dist(2, 2);
   dist << 0, 1, 1, 0;
-  int dim;
-  if (is_spatial) {
-    dim = 2;
-  } else {
-    dim = n_visits;
-  }
+  int dim = is_spatial?2:n_visits;
   matrix<Type> covariance_lower_chol = matrix<Type>::Zero(dim * n_groups, dim);
   for (int r = 0; r < n_groups; r++) {
     covariance_lower_chol.block(r * dim, 0, dim, dim) = chols_by_group[r]->get_chol(visit, dist);

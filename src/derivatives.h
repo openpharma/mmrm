@@ -5,6 +5,7 @@ using std::string;
 // Struct chol to obtain the cholesky factor given theta.
 // The reason to have it is that we need a functor that need only theta to
 // obtain the derivatives from autodiff.
+// Only non-spatial covariance structure here.
 struct chol {
   int dim_cov_mat;
   string cov_type;
