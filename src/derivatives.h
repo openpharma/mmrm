@@ -110,7 +110,7 @@ struct derivatives_nonspatial: public derivatives_base<Type> {
     this->chol_full = l;
     this->sigmad1_cache[this->full_visit] = sigma_d1;
     this->sigmad2_cache[this->full_visit] = sigma_d2;
-    this->sigma_cache[this->full_visit] = allret["chol"] * allret["chol"].transpose();
+    this->sigma_cache[this->full_visit] = tcrossprod(l, true);
     this->inverse_cache[this->full_visit] = (this->sigma_cache[this->full_visit]).inverse();
     this->sel_mat_cache[this->full_visit] = get_select_matrix<Type>(this->full_visit, this->n_visits);
   }
@@ -170,10 +170,7 @@ struct derivatives_nonspatial: public derivatives_base<Type> {
     if (this->inverse_chol_cache.count(visits) > 0) {
       return this->inverse_chol_cache[visits];
     } else {
-      Eigen::SparseMatrix<Type> sel_mat = this->get_sel_mat(visits);
-      matrix<Type> Ltildei = sel_mat * this->chol_full;
-      matrix<Type> cov_i = tcrossprod(Ltildei, true);
-      auto sigmainv = cov_i.inverse();
+      matrix<Type> sigmainv = this->get_inverse(visits, dist);
       Eigen::LLT<Eigen::Matrix<Type,Eigen::Dynamic,Eigen::Dynamic> > sigma_inv_chol(sigmainv);
       matrix<Type> Li = sigma_inv_chol.matrixL();
       this->inverse_chol_cache[visits] = Li;
@@ -185,10 +182,7 @@ struct derivatives_nonspatial: public derivatives_base<Type> {
     if (this->inverse_cache.count(visits) > 0) {
       return this->inverse_cache[visits];
     } else {
-      Eigen::SparseMatrix<Type> sel_mat = this->get_sel_mat(visits);
-      matrix<Type> Ltildei = sel_mat * this->chol_full;
-      matrix<Type> cov_i = tcrossprod(Ltildei, true);
-      auto sigmainv = cov_i.inverse();
+      matrix<Type> sigmainv = this->get_sigma(visits, dist).inverse();
       this->inverse_cache[visits] = sigmainv;
       return sigmainv;
     }
@@ -198,7 +192,6 @@ struct derivatives_nonspatial: public derivatives_base<Type> {
     if (this->sigma_inverse_d1_cache.count(visits) > 0) {
       return this->sigma_inverse_d1_cache[visits];
     } else {
-      Eigen::SparseMatrix<Type> sel_mat = this->get_sel_mat(visits);
       auto sigma_d1 = this->get_sigma_derivative1(visits, dist);
       matrix<Type> sigma_inv_d1(sigma_d1.rows(), sigma_d1.cols());
       int n_visits_i = visits.size();
