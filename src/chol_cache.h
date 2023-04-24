@@ -15,7 +15,7 @@ struct lower_chol_nonspatial: public lower_chol_base<Type> {
   std::string cov_type;
   int n_visits;
   std::vector<int> full_visit;
-  int n_theta; // theta.size()
+  int n_theta;
   vector<Type> theta;
   matrix<Type> chol_full;
   lower_chol_nonspatial() {
