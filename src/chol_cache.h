@@ -39,7 +39,7 @@ struct lower_chol_nonspatial: public lower_chol_base<Type> {
       Eigen::LLT<Eigen::Matrix<Type,Eigen::Dynamic,Eigen::Dynamic> > cov_i_chol(cov_i);
       matrix<Type> Li = cov_i_chol.matrixL();
       this->chols[visits] = Li;
-      return this->chols[visits];
+      return Li;
     }
   }
 };
