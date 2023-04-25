@@ -34,6 +34,8 @@ library(sasr)
 library(knitr)
 library(emmeans)
 library(ggplot2)
+
+set.seed(5123)
 ```
 
 # Introduction
@@ -464,8 +466,8 @@ partial_conv_time_tbl <- mb %>%
   arrange(median) %>%
   select(expression = expr, median, lower = lq, upper = uq, evaluations = neval)
 
-# fit PROC MIXED 100 times if a sascfg file exists
-if (file.exists("sascfg_personal.py")) {
+# fit PROC MIXED 10 times if a sascfg file exists
+if (file.exists("../sascfg_personal.py")) {
   fit_times <- sapply(
     seq_len(n_reps),
     function(x) {
@@ -567,8 +569,8 @@ partial_conv_time_tbl <- mb %>%
   arrange(median) %>%
   select(expression = expr, median, lower = lq, upper = uq, evaluations = neval)
 
-# fit PROC MIXED 100 times if a sascfg file exists
-if (file.exists("sascfg_personal.py")) {
+# fit PROC MIXED 10 times if a sascfg file exists
+if (file.exists("../sascfg_personal.py")) {
   fit_times <- sapply(
     seq_len(n_reps),
     function(x) {
@@ -696,7 +698,7 @@ glmmTMB_ests <- as.data.frame(
   )$contrasts
 )$estimate
 
-if (file.exists("sascfg_personal.py")) {
+if (file.exists("../sascfg_personal.py")) {
   # compute marginal estimates from PROC MIXED
   # load the data into SAS
   df2sd(fev_data, "fev_data")
@@ -715,7 +717,7 @@ if (file.exists("sascfg_personal.py")) {
 
   ## extract the ATEs across visits
   ates_df <- sd2df("diffs_out") %>%
-    filter(AVISIT == `_AVISIT`) %>%
+    dplyr::filter(AVISIT == `_AVISIT`) %>%
     mutate(
       contrast = paste0(AVISIT, ": ", ARMCD, " - ", `_ARMCD`)
     ) %>%
@@ -825,7 +827,7 @@ glmmTMB_ests <- as.data.frame(
   )$contrasts
 )$estimate
 
-if (file.exists("sascfg_personal.py")) {
+if (file.exists("../sascfg_personal.py")) {
 
   # compute marginal estimates from PROC MIXED
   # load the data into SAS
@@ -845,7 +847,7 @@ if (file.exists("sascfg_personal.py")) {
 
   ## extract the ATEs across visits
   ates_df <- sd2df("diffs_out") %>%
-    filter(AVISIT == `_AVISIT`) %>%
+    dplyr::filter(AVISIT == `_AVISIT`) %>%
     mutate(
       contrast = paste0(AVISIT, ": ", ARMCD, " - ", `_ARMCD`)
     ) %>%
@@ -891,7 +893,7 @@ rel_diff_ests_tbl %>%
 
 # excluding glmmTMB
 rel_diff_ests_tbl %>%
-  filter(estimator != "glmmTMB") %>%
+  dplyr::filter(estimator != "glmmTMB") %>%
   ggplot(
     aes(x = parameter, y = rel_diff, color = estimator, shape = converged)
   ) +
@@ -927,9 +929,9 @@ missing at random. The number patients observed at each visit is obtained for
 one replicated dataset at each level of missingness is presented in the table
 below.
 
-```{r missingness-table}
+```{r missingness-table, warning=FALSE, message=FALSE, echo=FALSE}
 ## extract the number of patients at each visit
-source("data-raw/bcva_data.R")
+source("../data-raw/bcva_data.R")
 bcva_none <- rct_dgp_fun(n_obs = 200, missing_type = "none") %>%
   pull(AVISIT) %>%
   table
@@ -945,7 +947,7 @@ bcva_high <- rct_dgp_fun(n_obs = 200, missing_type = "high") %>%
 
 ## construct the table
 bind_cols(
-  tibble(Missingness = c("none", "mild", "moderate", "heavy")),
+  tibble(Missingness = c("none", "mild", "moderate", "high")),
   bind_rows(bcva_none, bcva_mild, bcva_moderate, bcva_high)
 ) %>%
   kable(caption = "Number of patients per visit")
@@ -954,7 +956,7 @@ bind_cols(
 The convergence rates of all implementations for stratified by missingness level
 is presented in the plot below.
 
-```{r convergence-rate-missingness}
+```{r convergence-rate-missingness, warning=FALSE, message=FALSE, echo=FALSE}
 get_convergence_rates <- function(n_replicates, missingness_level) {
   purrr::map_df(
     seq_len(n_replicates),
@@ -1003,7 +1005,7 @@ get_convergence_rates <- function(n_replicates, missingness_level) {
       glmmTMB_converged <- glmmTMB_fit$fit$convergence == 0
       
       ## SAS
-      if (file.exists("sascfg_personal.py")) {
+      if (file.exists("../sascfg_personal.py")) {
 
         # compute marginal estimates from PROC MIXED
         # load the data into SAS
@@ -1076,6 +1078,14 @@ cr_all %>%
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
   theme_bw()
 ```
+
+`mmrm`, `gls`, and `PROC MIXED` are resilient to missingness, only exhibiting
+some convergence problems in the scenarios with the most missingness. These
+implementations converged in all the other scenarios' replicates. `glmmTMB`, on
+the other hand, has convergence issues in the no-, mild-, and high-missingness
+datasets, with the worst convergence rate occurring in the datasets with the
+most dropout. Finally, `lmer` is unreliable in all scenarios, suggesting that
+it's convergence issues stem from something other than the missing observations.
 
 Note that the default optimization schemes are used for each method; these
 schemes can be modified to potentially improve convergence rates.
