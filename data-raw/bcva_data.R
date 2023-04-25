@@ -6,7 +6,6 @@ library(usethis)
 
 # helper function for generating covariates
 generate_covariates <- function(n_obs, n_visits = 10) {
-
   # participant ID
   participant <- seq_len(n_obs)
 
@@ -36,8 +35,7 @@ generate_covariates <- function(n_obs, n_visits = 10) {
 
 # helper function for randomly generating unstructured covariance matrix
 compute_unstructured_matrix <- function(
-  vars = seq(from = 1, by = 0.5, length.out = 10)
-) {
+    vars = seq(from = 1, by = 0.5, length.out = 10)) {
   n_visits <- length(vars)
   corr_mat <- abs(cov2cor(
     clusterGeneration::genPositiveDefMat(dim = n_visits)$Sigma
@@ -49,17 +47,15 @@ compute_unstructured_matrix <- function(
 
 # helper function for generating BCVA data
 generate_outcomes <- function(
-  covars_df,
-  cov_mat,
-  intercept = 5,
-  base_bcva_coef = 1,
-  strata_2_coef = -1,
-  strata_3_coef = 1,
-  trt_coef = 1,
-  visit_coef = 0.25,
-  trt_visit_coef = 0.25
-) {
-
+    covars_df,
+    cov_mat,
+    intercept = 5,
+    base_bcva_coef = 1,
+    strata_2_coef = -1,
+    strata_3_coef = 1,
+    trt_coef = 1,
+    visit_coef = 0.25,
+    trt_visit_coef = 0.25) {
   # construct the model matrix
   model_mat <- model.matrix(
     ~ base_bcva + strata + trt * visit_num,
@@ -75,32 +71,30 @@ generate_outcomes <- function(
   )
   as.vector(model_mat %*% effect_coefs +
     as.vector(t(MASS::mvrnorm(n_obs, rep(0, n_visits), cov_mat))))
-
 }
 
 # MAR helper function
 missing_at_random <- function(covars_df, type) {
-
   # compute missingness probabilities
   if (type == "none") {
     prob_miss <- 0
   } else if (type == "mild") {
     prob_miss <- plogis(
       -(5 - 0.01 * covars_df$base_bcva + 0.5 * (covars_df$strata == 2) +
-          1 * (covars_df$strata == 3) - 0.3 * covars_df$visit_num - 0.2 *
-            (covars_df$trt == 0))
+        1 * (covars_df$strata == 3) - 0.3 * covars_df$visit_num - 0.2 *
+          (covars_df$trt == 0))
     )
   } else if (type == "moderate") {
     prob_miss <- plogis(
       -(5 - 0.01 * covars_df$base_bcva + 0.5 * (covars_df$strata == 2) +
-          1 * (covars_df$strata == 3) - 0.4 * covars_df$visit_num - 0.5 *
-            (covars_df$trt == 0))
+        1 * (covars_df$strata == 3) - 0.4 * covars_df$visit_num - 0.5 *
+          (covars_df$trt == 0))
     )
   } else if (type == "high") {
     prob_miss <- plogis(
       -(5 - 0.02 * covars_df$base_bcva + 0.5 * (covars_df$strata == 2) +
-          1 * (covars_df$strata == 3) - 0.5 * covars_df$visit_num - 1 *
-            (covars_df$trt == 0))
+        1 * (covars_df$strata == 3) - 0.5 * covars_df$visit_num - 1 *
+          (covars_df$trt == 0))
     )
   }
 
@@ -109,18 +103,16 @@ missing_at_random <- function(covars_df, type) {
 
   # remove indicated visits
   covars_df[missing_ind == 0, ]
-
 }
 
 # BCVA data-generating process
 rct_dgp_fun <- function(
-  n_obs = 1000,
-  outcome_covar_mat = compute_unstructured_matrix(),
-  trt_coef = 0.25,
-  visit_coef = 0.25,
-  trt_visit_coef = 0.25,
-  missing_type = "moderate"
-) {
+    n_obs = 1000,
+    outcome_covar_mat = compute_unstructured_matrix(),
+    trt_coef = 0.25,
+    visit_coef = 0.25,
+    trt_visit_coef = 0.25,
+    missing_type = "moderate") {
   # generate the covariates
   covars_df <- generate_covariates(
     n_obs = n_obs, n_visits = nrow(outcome_covar_mat)
@@ -163,7 +155,8 @@ rct_dgp_fun <- function(
       ),
       ARMCD = ifelse(trt == 1, "TRT", "CTL"),
       RACE = ifelse(strata == 1, "Black",
-               ifelse(strata == 2, "Asian", "White")),
+        ifelse(strata == 2, "Asian", "White")
+      ),
       BCVA_BL = base_bcva,
       BCVA_CHG = bcva_change
     )

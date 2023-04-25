@@ -433,14 +433,16 @@ and are reported in the table below.
 ```{r, warning=FALSE, message=FALSE, echo=FALSE}
 # set the number of replicates
 n_reps <- 10
- 
+
 # assess convergence times for R-based MMRM procedures
-mb <- microbenchmark(times = n_reps,
+mb <- microbenchmark(
+  times = n_reps,
   gls = gls(
-    FEV1 ~ RACE + ARMCD * AVISIT, data = fev_data,
+    FEV1 ~ RACE + ARMCD * AVISIT,
+    data = fev_data,
     na.action = na.omit,
     correlation = nlme::corSymm(form = ~ VISITN | USUBJID),
-    weights = nlme::varIdent(form = ~ 1|VISITN)
+    weights = nlme::varIdent(form = ~ 1 | VISITN)
   ),
   mmrm = mmrm(
     formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
@@ -455,7 +457,7 @@ mb <- microbenchmark(times = n_reps,
   glmmTMB = glmmTMB(
     FEV1 ~ RACE + ARMCD * AVISIT + us(0 + AVISIT | USUBJID),
     data = fev_data,
-    dispformula = ~ 0,
+    dispformula = ~0,
     REML = TRUE
   )
 )
@@ -504,7 +506,6 @@ if (file.exists("../sascfg_personal.py")) {
     evaluations = n_reps
   )
   conv_time_tbl <- bind_rows(partial_conv_time_tbl, proc_mixed_row)
-
 } else {
   conv_time_tbl <- partial_conv_time_tbl
 }
@@ -538,12 +539,14 @@ convergence times are presented below.
 n_reps <- 10
 
 # assess convergence times for R-based MMRM procedures
-mb <- microbenchmark(times = n_reps,
+mb <- microbenchmark(
+  times = n_reps,
   gls = gls(
-    BCVA_CHG ~ BCVA_BL + RACE + ARMCD * AVISIT, data = bcva_data,
+    BCVA_CHG ~ BCVA_BL + RACE + ARMCD * AVISIT,
+    data = bcva_data,
     na.action = na.omit,
     correlation = nlme::corSymm(form = ~ VISITN | USUBJID),
-    weights = nlme::varIdent(form = ~ 1|VISITN)
+    weights = nlme::varIdent(form = ~ 1 | VISITN)
   ),
   mmrm = mmrm(
     formula = BCVA_CHG ~ BCVA_BL + RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
@@ -558,7 +561,7 @@ mb <- microbenchmark(times = n_reps,
   glmmTMB = glmmTMB(
     BCVA_CHG ~ BCVA_BL + RACE + ARMCD * AVISIT + us(0 + AVISIT | USUBJID),
     data = bcva_data,
-    dispformula = ~ 0,
+    dispformula = ~0,
     REML = TRUE
   )
 )
@@ -607,7 +610,6 @@ if (file.exists("../sascfg_personal.py")) {
     evaluations = n_reps
   )
   conv_time_tbl <- bind_rows(partial_conv_time_tbl, proc_mixed_row)
-
 } else {
   conv_time_tbl <- partial_conv_time_tbl
 }
@@ -642,9 +644,9 @@ is also reported.
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
 # compute marginal estimates for mmrm
 mmrm_fit <- mmrm(
-    formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
-    data = fev_data
-  )
+  formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data
+)
 mmrm_ests <- as.data.frame(
   emmeans(
     mmrm_fit,
@@ -670,9 +672,10 @@ lmer_ests <- as.data.frame(
 
 # compute marginal estimates for gls
 gls_fit <- gls(
-  FEV1 ~ RACE + ARMCD * AVISIT, data = fev_data[complete.cases(fev_data), ],
+  FEV1 ~ RACE + ARMCD * AVISIT,
+  data = fev_data[complete.cases(fev_data), ],
   correlation = nlme::corSymm(form = ~ VISITN | USUBJID),
-  weights = nlme::varIdent(form = ~ 1|VISITN)
+  weights = nlme::varIdent(form = ~ 1 | VISITN)
 )
 gls_ests <- as.data.frame(
   emmeans(
@@ -688,7 +691,7 @@ gls_ests <- as.data.frame(
 glmmTMB_fit <- glmmTMB(
   FEV1 ~ RACE + ARMCD * AVISIT + us(0 + AVISIT | USUBJID),
   data = fev_data,
-  dispformula = ~ 0
+  dispformula = ~0
 )
 glmmTMB_ests <- as.data.frame(
   emmeans(
@@ -725,7 +728,7 @@ if (file.exists("../sascfg_personal.py")) {
     arrange(contrast)
 
   proc_mixed_ests <- ates_df$Estimate
-} else { 
+} else {
   proc_mixed_ests <- c(3.775614, 3.758119, 3.108027, 4.406510)
 }
 
@@ -751,14 +754,14 @@ rel_diff_ests_tbl %>%
   ggplot(
     aes(x = parameter, y = rel_diff, color = estimator, shape = converged)
   ) +
-    geom_point(position = position_dodge(width = 0.5)) +
-    geom_hline(yintercept = 0, linetype = 2, alpha = 0.5) +
-    scale_color_discrete(name = "Procedure") +
-    scale_shape_discrete(name = "Convergence") +
-    ylab("Relative Difference") +
-    xlab("Marginal Treatment Effect") +
-    ggtitle("Average Treatment Effect Estimates Relative to SAS Estimates") +
-    theme_classic()
+  geom_point(position = position_dodge(width = 0.5)) +
+  geom_hline(yintercept = 0, linetype = 2, alpha = 0.5) +
+  scale_color_discrete(name = "Procedure") +
+  scale_shape_discrete(name = "Convergence") +
+  ylab("Relative Difference") +
+  xlab("Marginal Treatment Effect") +
+  ggtitle("Average Treatment Effect Estimates Relative to SAS Estimates") +
+  theme_classic()
 ```
 
 The R procedures' estimates are very similar to those output by `PROC MIXED`,
@@ -771,9 +774,9 @@ arguments.
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
 # compute marginal estimates for mmrm
 mmrm_fit <- mmrm(
-    formula = BCVA_CHG ~ BCVA_BL + RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
-    data = bcva_data
-  )
+  formula = BCVA_CHG ~ BCVA_BL + RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = bcva_data
+)
 mmrm_ests <- as.data.frame(
   emmeans(
     mmrm_fit,
@@ -799,9 +802,10 @@ lmer_ests <- as.data.frame(
 
 # compute marginal estimates for gls
 gls_fit <- gls(
-  BCVA_CHG ~ BCVA_BL + RACE + ARMCD * AVISIT, data = bcva_data[complete.cases(bcva_data), ],
+  BCVA_CHG ~ BCVA_BL + RACE + ARMCD * AVISIT,
+  data = bcva_data[complete.cases(bcva_data), ],
   correlation = nlme::corSymm(form = ~ VISITN | USUBJID),
-  weights = nlme::varIdent(form = ~ 1|VISITN)
+  weights = nlme::varIdent(form = ~ 1 | VISITN)
 )
 gls_ests <- as.data.frame(
   emmeans(
@@ -817,7 +821,7 @@ gls_ests <- as.data.frame(
 glmmTMB_fit <- glmmTMB(
   BCVA_CHG ~ BCVA_BL + RACE + ARMCD * AVISIT + us(0 + AVISIT | USUBJID),
   data = bcva_data,
-  dispformula = ~ 0
+  dispformula = ~0
 )
 glmmTMB_ests <- as.data.frame(
   emmeans(
@@ -828,7 +832,6 @@ glmmTMB_ests <- as.data.frame(
 )$estimate
 
 if (file.exists("../sascfg_personal.py")) {
-
   # compute marginal estimates from PROC MIXED
   # load the data into SAS
   df2sd(bcva_data, "bcva_data")
@@ -855,9 +858,11 @@ if (file.exists("../sascfg_personal.py")) {
     arrange(contrast)
 
   proc_mixed_ests <- ates_df$Estimate
-} else { 
-  proc_mixed_ests <- c(0.539107, 0.724779, 1.011511, 1.104181, 1.383358,
-                       1.630093, 2.015963, 2.346931, 2.658452, 3.072256)
+} else {
+  proc_mixed_ests <- c(
+    0.539107, 0.724779, 1.011511, 1.104181, 1.383358,
+    1.630093, 2.015963, 2.346931, 2.658452, 3.072256
+  )
 }
 
 # compute the relative differences
@@ -882,14 +887,14 @@ rel_diff_ests_tbl %>%
   ggplot(
     aes(x = parameter, y = rel_diff, color = estimator, shape = converged)
   ) +
-    geom_point(position = position_dodge(width = 0.5)) +
-    geom_hline(yintercept = 0, linetype = 2, alpha = 0.5) +
-    scale_color_discrete(name = "Procedure") +
-    scale_shape_discrete(name = "Convergence") +
-    ylab("Relative Difference") +
-    xlab("Marginal Treatment Effect") +
-    ggtitle("Average Treatment Effect Estimates Relative to SAS Estimates") +
-    theme_classic()
+  geom_point(position = position_dodge(width = 0.5)) +
+  geom_hline(yintercept = 0, linetype = 2, alpha = 0.5) +
+  scale_color_discrete(name = "Procedure") +
+  scale_shape_discrete(name = "Convergence") +
+  ylab("Relative Difference") +
+  xlab("Marginal Treatment Effect") +
+  ggtitle("Average Treatment Effect Estimates Relative to SAS Estimates") +
+  theme_classic()
 
 # excluding glmmTMB
 rel_diff_ests_tbl %>%
@@ -897,17 +902,17 @@ rel_diff_ests_tbl %>%
   ggplot(
     aes(x = parameter, y = rel_diff, color = estimator, shape = converged)
   ) +
-    geom_point(position = position_dodge(width = 0.5)) +
-    geom_hline(yintercept = 0, linetype = 2, alpha = 0.5) +
-    scale_color_discrete(name = "Procedure") +
-    scale_shape_discrete(name = "Convergence") +
-    ylab("Relative Difference") +
-    xlab("Marginal Treatment Effect") +
-    ggtitle(
-      "Average Treatment Effect Estimates Relative to SAS Estimates
+  geom_point(position = position_dodge(width = 0.5)) +
+  geom_hline(yintercept = 0, linetype = 2, alpha = 0.5) +
+  scale_color_discrete(name = "Procedure") +
+  scale_shape_discrete(name = "Convergence") +
+  ylab("Relative Difference") +
+  xlab("Marginal Treatment Effect") +
+  ggtitle(
+    "Average Treatment Effect Estimates Relative to SAS Estimates
       (Excluding glmmTMB)"
-    ) +
-    theme_classic()
+  ) +
+  theme_classic()
 ```
 
 `mmrm`, `gls` and `lmer` produce estimates that are virtually identical to `PROC
@@ -934,16 +939,16 @@ below.
 source("../data-raw/bcva_data.R")
 bcva_none <- rct_dgp_fun(n_obs = 200, missing_type = "none") %>%
   pull(AVISIT) %>%
-  table
+  table()
 bcva_mild <- rct_dgp_fun(n_obs = 200, missing_type = "mild") %>%
   pull(AVISIT) %>%
-  table
+  table()
 bcva_moderate <- rct_dgp_fun(n_obs = 200, missing_type = "moderate") %>%
   pull(AVISIT) %>%
-  table
+  table()
 bcva_high <- rct_dgp_fun(n_obs = 200, missing_type = "high") %>%
   pull(AVISIT) %>%
-  table
+  table()
 
 ## construct the table
 bind_cols(
@@ -963,7 +968,7 @@ get_convergence_rates <- function(n_replicates, missingness_level) {
     function(idx) {
       ## simulate the data
       miss_df <- rct_dgp_fun(n_obs = 200, missing_type = missingness_level)
-     
+
       ## fit MMRM methods and extract convergence
 
       ## mmrm
@@ -992,7 +997,7 @@ get_convergence_rates <- function(n_replicates, missingness_level) {
         BCVA_CHG ~ BCVA_BL + RACE + ARMCD * AVISIT,
         data = miss_df[complete.cases(miss_df), ],
         correlation = nlme::corSymm(form = ~ VISITN | USUBJID),
-        weights = nlme::varIdent(form = ~ 1|VISITN)
+        weights = nlme::varIdent(form = ~ 1 | VISITN)
       )
       gls_converged <- is.null(gls_fit$error)
 
@@ -1000,13 +1005,12 @@ get_convergence_rates <- function(n_replicates, missingness_level) {
       glmmTMB_fit <- glmmTMB(
         BCVA_CHG ~ BCVA_BL + RACE + ARMCD * AVISIT + us(0 + AVISIT | USUBJID),
         data = miss_df,
-        dispformula = ~ 0
+        dispformula = ~0
       )
       glmmTMB_converged <- glmmTMB_fit$fit$convergence == 0
-      
+
       ## SAS
       if (file.exists("../sascfg_personal.py")) {
-
         # compute marginal estimates from PROC MIXED
         # load the data into SAS
         df2sd(miss_df, "miss_df")
@@ -1030,25 +1034,28 @@ get_convergence_rates <- function(n_replicates, missingness_level) {
         results <- tibble(
           replicate = idx,
           method = c("mmrm", "lmer", "gls", "glmmTMB", "PROC MIXED"),
-          converged = c(mmrm_converged, lmer_converged, gls_converged,
-                        glmmTMB_converged, sas_converged)
+          converged = c(
+            mmrm_converged, lmer_converged, gls_converged,
+            glmmTMB_converged, sas_converged
+          )
         )
-        
       } else {
         results <- tibble(
-          replicate =  idx,
+          replicate = idx,
           method = c("mmrm", "lmer", "gls", "glmmTMB"),
-          converged = c(mmrm_converged, lmer_converged, gls_converged,
-                        glmmTMB_converged)
+          converged = c(
+            mmrm_converged, lmer_converged, gls_converged,
+            glmmTMB_converged
+          )
         )
       }
 
       return(results)
     }
   ) %>%
-  group_by(method) %>%
-  summarize(convergence_rate = mean(converged), .groups = "drop") %>%
-  mutate(missingness = missingness_level)
+    group_by(method) %>%
+    summarize(convergence_rate = mean(converged), .groups = "drop") %>%
+    mutate(missingness = missingness_level)
 }
 
 ## get the convergence rates
