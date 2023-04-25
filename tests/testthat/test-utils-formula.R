@@ -26,6 +26,18 @@ test_that("h_extract_covariance_terms returns a list of possible covariance term
     h_extract_covariance_terms(a ~ a + us(a | g / s)),
     list(us = quote(us(a | g / s)))
   )
+
+  expect_identical(
+    h_extract_covariance_terms(a ~ c:d + us(a | g / s)),
+    list(us = quote(us(a | g / s)))
+  )
+  expect_identical(
+    h_extract_covariance_terms(a ~ c:d + us(a | g / s) + csh(a2 | g2 / s2)),
+    list(
+      us = quote(us(a | g / s)),
+      csh = quote(csh(a2 | g2 / s2))
+    )
+  )
 })
 
 # h_drop_covariance_terms ----

@@ -11,7 +11,8 @@ h_extract_covariance_terms <- function(f) {
   specials <- cov_types(c("abbr", "habbr"))
   terms <- stats::terms(formula_rhs(f), specials = specials)
   covariance_terms <- Filter(length, attr(terms, "specials"))
-  lapply(covariance_terms, function(i) formula(terms[i])[[2]])
+  variables <- attr(terms, "variables")
+  lapply(covariance_terms, function(i) variables[[i + 1]])
 }
 
 #' Drop Formula Terms used for Covariance Structure Definition
