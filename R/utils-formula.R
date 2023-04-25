@@ -36,7 +36,6 @@ h_drop_covariance_terms <- function(f) {
   if (length(covariance_terms) == 0) {
     return(f)
   }
-  # drop covariance terms (position - 1 to account for response term)
   if (length(f) != 3) {
     update_str <- "~ . -"
   } else {
