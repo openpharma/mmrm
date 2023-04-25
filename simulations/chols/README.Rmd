@@ -1,0 +1,96 @@
+---
+title: "Simple Simulation of Cache"
+author: "Liming Li"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+## Background
+
+To evaluate whether cache would save computational time, a branch "232_cholesky" is created.
+
+## Implementation
+
+This implementation will cache the Cholesky for each visit structure.
+Each time a new visit structure is used, the Cholesky is stored and reused later.
+See `src/chol_cache.h`.
+
+## Installing programs
+
+```{r eval=F}
+withr::with_libpaths(
+  "simulations/chols/cached_chols",
+  remotes::install_github("openpharma/mmrm", ref = "232_cholesky")
+)
+
+withr::with_libpaths(
+  "simulations/chols/no_cached_chols",
+  remotes::install_github("openpharma/mmrm", ref = "232_cholesky")
+)
+```
+
+## Speed comparison
+
+Comparing branch `232_cholesky` and `main`, and using `fev_data` for comparison.
+`fev_data` has 197 valid subjects, and 39 of them have complete visits.
+86 subjects have 3 visits, 51 subjects have 2 visits, 21 subjects have 1 visit.
+
+Using microbenchmark to run 100 repetations, we have
+
+```{r eval=FALSE}
+formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + ad(AVISIT | USUBJID)
+microbenchmark::microbenchmark(
+  mmrm(formula, fev_data, reml = TRUE),
+  times = 100L
+)
+```
+
+|summary| cache | no cache|
+|-------|-------|---------|
+| mean | 67.8 | 72.1 |
+| median | 66.8 | 71.2 |
+
+
+When all subjects have full visits, we have
+
+```{r eval=FALSE}
+set.seed(1)
+fev_data2 <- fev_data
+fev_data2$FEV1 <- rnorm(800, mean(fev_data$FEV1, na.rm = TRUE), sd = 1)
+
+microbenchmark::microbenchmark(
+  mmrm(formula, fev_data2, reml = TRUE),
+  times = 100L
+)
+```
+
+|summary| cache | no cache|
+|-------|-------|---------|
+| mean | 79.7 | 79.5 |
+| median | 78.9 | 79.1 |
+
+
+When no subjects have full visits, we have
+
+```{r eval=FALSE}
+set.seed(1)
+fev_data2 <- fev_data
+fev_data2$FEV1 <- rnorm(800, mean(fev_data$FEV1, na.rm = TRUE), sd = 1)
+fev_data2$FEV1[seq(1, 400, 4)] <- NA
+fev_data2$FEV1[seq(402, 800, 4)] <- NA
+microbenchmark::microbenchmark(
+  mmrm(formula, fev_data2, reml = TRUE),
+  times = 100L
+)
+```
+
+|summary| cache | no cache|
+|-------|-------|---------|
+| mean | 82.3 | 91.2 |
+| median | 80.8 | 91.0 |
+
+
+Please note that the speed varies on different platforms.
+However, the computational cost should be less in general.
