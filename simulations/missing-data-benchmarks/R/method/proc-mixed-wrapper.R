@@ -99,10 +99,7 @@ proc_mixed_wrapper_fun <- function(
     as.numeric()
 
   ## check convergence status
-  if (conv_status_df$Reason == "Convergence criteria met.")
-    converged <- TRUE
-  else
-    converged <- FALSE
+  converged <- (conv_status_df$Reason == "Convergence criteria met.")
 
   return(list(
     "fit" = ates_df,

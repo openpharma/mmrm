@@ -37,32 +37,38 @@ mmrm_wrapper_fun <- function(
     visit_num_as_factor = TRUE
   )
 
+
+  # NOTE: nlme produces an error when the model fails to converge. This function
+  # safely returns an error message, and allows us to check if the model
+  # converged.
+  safe_mmrm <- purrr::safely(mmrm::mmrm)
+
   if (covar_type == "us") {
     fit_time <- microbenchmark::microbenchmark(
-      fit <- mmrm::mmrm(
+      fit <- safe_mmrm(
         formula = bcva_change ~ base_bcva + strata + trt * visit_num +
           us(visit_num | participant), data = df,
-        optimizer = c("BFGS", "L-BFGS-B") # NOTE: Errors when using L-BFGS-B
+        optimizer = c("BFGS", "L-BFGS-B") # NOTE: Errors when using L-BFGS-B first
       ),
       times = 1L
     )
 
   } else if (covar_type == "csh") {
     fit_time <- microbenchmark::microbenchmark(
-      fit <- mmrm::mmrm(
+      fit <- safe_mmrm(
         formula = bcva_change ~ base_bcva + strata + trt * visit_num +
           csh(visit_num | participant), data = df,
-        optimizer = c("BFGS", "L-BFGS-B") # NOTE: Errors when using L-BFGS-B
+        optimizer = c("BFGS", "L-BFGS-B") # NOTE: Errors when using L-BFGS-B first
       ),
       times = 1L
     )
 
   } else if (covar_type == "toeph") {
     fit_time <- microbenchmark::microbenchmark(
-      fit <- mmrm::mmrm(
+      fit <- safe_mmrm(
         formula = bcva_change ~ base_bcva + strata + trt * visit_num +
           toeph(visit_num | participant), data = df,
-        optimizer = c("BFGS", "L-BFGS-B") # NOTE: Errors when using L-BFGS-B
+        optimizer = c("BFGS", "L-BFGS-B") # NOTE: Errors when using L-BFGS-B first
       ),
       times = 1L
     )
@@ -71,8 +77,12 @@ mmrm_wrapper_fun <- function(
     stop("This covariance matrix is not supported by this wrapper function.")
   }
 
+  # extract convergence status
+  converged <- is.null(fit$error)
+
   return(list(
     fit = fit,
+    converged = converged,
     fit_time = fit_time$time / 1e9 # NOTE: time in seconds
   ))
 }

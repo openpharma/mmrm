@@ -90,6 +90,11 @@ missing_at_random <- function(covars_df, type) {
       -(5 - 0.01 * covars_df$base_bcva + 0.5 * (covars_df$strata == 2) +
           1 * (covars_df$strata == 3) - 0.4 * covars_df$visit_num)
     )
+  } else if (type == "extreme") {
+    prob_miss <- plogis(
+      -(5 - 0.01 * covars_df$base_bcva + 0.5 * (covars_df$strata == 2) +
+          1 * (covars_df$strata == 3) - 0.5 * covars_df$visit_num)
+    )
   }
 
   # generate vector of missingness indicators

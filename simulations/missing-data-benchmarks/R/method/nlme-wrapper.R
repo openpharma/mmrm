@@ -69,10 +69,7 @@ nlme_wrapper_fun <- function(
   }
 
   # extract convergence status
-  if (is.null(fit$error))
-    converged <- TRUE
-  else
-    converged <- FALSE
+  converged <- is.null(fit$error)
 
   return(list(
     fit = fit$result,

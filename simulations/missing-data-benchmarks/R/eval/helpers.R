@@ -43,8 +43,8 @@ get_trt_visit_num_ests <- function(fit, dt) {
     get_proc_mixed_trt_visit_num_ests(fit)
 }
 
-get_mmrm_convergence <- function(fit) {
-  fit$opt_details$convergence == 0
+get_mmrm_convergence <- function(converged) {
+  converged
 }
 
 get_glmmtmb_convergence <- function(fit) {
