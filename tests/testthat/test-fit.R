@@ -482,7 +482,7 @@ test_that("mmrm works for different na.actions", {
   expect_class(res4, "mmrm")
 })
 
-test_that("mmrm still works for model only contains interactions", {
+test_that("mmrm still works for a model that only contains an interaction term", {
   expect_silent(
     mmrm(
       FEV1 ~ ARMCD:SEX + ar1(AVISIT | SEX / USUBJID),
