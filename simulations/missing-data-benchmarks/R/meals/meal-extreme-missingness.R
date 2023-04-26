@@ -188,8 +188,8 @@ experiment <- create_experiment(
 # run the experiment
 set.seed(713452)
 results <- experiment$run(
-  n_reps = 2
-  ## save = TRUE,
-  ## verbose = 2,
-  ## checkpoint_n_reps = 25
+  n_reps = 100,
+  save = TRUE,
+  verbose = 2,
+  checkpoint_n_reps = 25
 )

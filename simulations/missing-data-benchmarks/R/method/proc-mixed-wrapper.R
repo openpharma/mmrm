@@ -79,16 +79,20 @@ proc_mixed_wrapper_fun <- function(
 
   if (all(is.null(sas_result$error))) {
 
-    ## extract the model information
-    mod_inf_df <- sasr::sd2df("model_info")
-
     ## extract the convergence status
     conv_status_df <- sasr::sd2df("conv_status")
-    converged <- (conv_status_df$Reason == "Convergence criteria met.")
+    if (!is.data.frame(conv_status_df)) {
+      converged <- FALSE
+    } else {
+      converged <- conv_status_df$Reason == "Convergence criteria met."
+    }
 
     if (converged) {
       ## extract the lsmeans
       lsmeans_df <- sasr::sd2df("lsmeans_out")
+
+      ## extract the model information
+      mod_inf_df <- sasr::sd2df("model_info")
 
       ## extract the ATEs across visits
       ates_df <- sasr::sd2df("diffs_out") %>%
@@ -98,14 +102,15 @@ proc_mixed_wrapper_fun <- function(
         ) %>%
         dplyr::select(contrast, Estimate, StdErr, DF, tValue, Lower, Upper)
     } else {
-      lsmeans_df <- data.frame()
-      ates_df <- data.frame()
+      mod_inf_df <- data.frame(NA)
+      lsmeans_df <- data.frame(NA)
+      ates_df <- data.frame(NA)
     }
 
   } else {
-    mod_inf_df <- data.frame()
-    lsmeans_df <- data.frame()
-    ates_df <- data.frame()
+    mod_inf_df <- data.frame(NA)
+    lsmeans_df <- data.frame(NA)
+    ates_df <- data.frame(NA)
     converged <- FALSE
   }
 

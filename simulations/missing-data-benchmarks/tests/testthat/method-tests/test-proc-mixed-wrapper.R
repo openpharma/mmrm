@@ -77,9 +77,8 @@ test_that(paste(
 
   set.seed(61234)
   dgp_output <- rct_dgp_fun(
-    n_obs = 200,
-    outcome_covar_mat = diag(10),
-    missingness = "extreme"
+    n_obs = 10000,
+    outcome_covar_mat = diag(3),
   )
   proc_mixed_fit <- proc_mixed_wrapper_fun(
     participant = dgp_output$participant,

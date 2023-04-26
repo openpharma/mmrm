@@ -93,7 +93,8 @@ missing_at_random <- function(covars_df, type) {
   } else if (type == "extreme") {
     prob_miss <- plogis(
       -(5 - 0.02 * covars_df$base_bcva + 0.5 * (covars_df$strata == 2) +
-          1 * (covars_df$strata == 3) - 0.6 * covars_df$visit_num)
+          1 * (covars_df$strata == 3) - 0.5 * covars_df$visit_num -
+            covars_df$trt)
     )
   }
 
