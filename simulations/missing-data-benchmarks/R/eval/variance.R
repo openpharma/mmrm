@@ -4,11 +4,11 @@ variance_fun <- function(fit_results) {
   fit_results %>%
     dplyr::mutate(
       estimates = purrr::pmap(
-        .l = list(fit, data),
-        .f = function(f, dt) {
+        .l = list(fit, .dgp_name, .method_name, data, converged),
+        .f = function(f, dgp_name, method_name, dt, conv_status) {
 
           # extract the trt:vist_num estimates
-          estimates <- get_trt_visit_num_ests(f, dt)
+          estimates <- get_trt_visit_num_ests(method_name, f, dt, conv_status)
 
           names(estimates) <- paste0(
             "trt_visit_num",

@@ -74,41 +74,54 @@ proc_mixed_wrapper_fun <- function(
   }
 
   ## run the SAS code, and capture the output
-  sas_result <- sasr::run_sas(sas_code)
+  safe_run_sas <- purrr::safely(sasr::run_sas)
+  sas_result <- safe_run_sas(sas_code)
 
-  ## extract the model information
-  mod_inf_df <- sasr::sd2df("model_info")
+  if (all(is.null(sas_result$error))) {
 
-  ## extract the convergence status
-  conv_status_df <- sasr::sd2df("conv_status")
+    ## extract the model information
+    mod_inf_df <- sasr::sd2df("model_info")
 
-  ## extract the lsmeans
-  lsmeans_df <- sasr::sd2df("lsmeans_out")
+    ## extract the convergence status
+    conv_status_df <- sasr::sd2df("conv_status")
+    converged <- (conv_status_df$Reason == "Convergence criteria met.")
 
-  ## extract the ATEs across visits
-  ates_df <- sasr::sd2df("diffs_out") %>%
-    dplyr::filter(visit_num == `_visit_num`) %>%
-    dplyr::mutate(
-      contrast = paste0(visit_num,": ", trt, " - ", `_trt`)
-    ) %>%
-    dplyr::select(contrast, Estimate, StdErr, DF, tValue, Lower, Upper)
+    if (converged) {
+      ## extract the lsmeans
+      lsmeans_df <- sasr::sd2df("lsmeans_out")
+
+      ## extract the ATEs across visits
+      ates_df <- sasr::sd2df("diffs_out") %>%
+        dplyr::filter(visit_num == `_visit_num`) %>%
+        dplyr::mutate(
+          contrast = paste0(visit_num,": ", trt, " - ", `_trt`)
+        ) %>%
+        dplyr::select(contrast, Estimate, StdErr, DF, tValue, Lower, Upper)
+    } else {
+      lsmeans_df <- data.frame()
+      ates_df <- data.frame()
+    }
+
+  } else {
+    mod_inf_df <- data.frame()
+    lsmeans_df <- data.frame()
+    ates_df <- data.frame()
+    converged <- FALSE
+  }
 
   ## extract the fit time
-  fit_time <- sas_result$LOG %>%
+  fit_time <- sas_result$result$LOG %>%
     stringr::str_extract("(?<=user cpu time)\\s*[0-9.]+") %>%
     as.numeric()
-
-  ## check convergence status
-  converged <- (conv_status_df$Reason == "Convergence criteria met.")
 
   return(list(
     "fit" = ates_df,
     "fit_time" = fit_time,
-    "output" = sas_result$LST,
+    "output" = sas_result$result$LST,
     "lsmeans_df" = lsmeans_df,
     "converged" = converged,
     "mod_inf_df" = mod_inf_df,
-    "log" = sas_result$LOG
+    "log" = sas_result$result$LOG
   ))
 
 }

@@ -4,11 +4,11 @@ bias_fun <- function(fit_results, true_params) {
   fit_results %>%
     dplyr::mutate(
       error = purrr::pmap(
-        .l = list(fit, .dgp_name, data),
-        .f = function(f, dgp_name, dt) {
+        .l = list(fit, .dgp_name, .method_name, data, converged),
+        .f = function(f, dgp_name, method_name, dt, conv_status) {
 
           # extract the trt:vist_num estimates
-          estimates <- get_trt_visit_num_ests(f, dt)
+          estimates <- get_trt_visit_num_ests(method_name, f, dt, conv_status)
 
           # extract the true parameter values
           true_values <- true_params[[dgp_name]]

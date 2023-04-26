@@ -31,16 +31,19 @@ get_proc_mixed_trt_visit_num_ests <- function(fit) {
   fit$Estimate
 }
 
-get_trt_visit_num_ests <- function(fit, dt) {
-  fit_class <- class(fit)
-  if (fit_class[1] == "mmrm")
-    get_mmrm_trt_visit_num_ests(fit)
-  else if (fit_class[1] == "glmmTMB")
-    get_glmmtmb_trt_visit_num_ests(fit)
-  else if (fit_class[1] == "gls")
-    get_nlme_trt_visit_num_ests(fit, dt)
-  else if (fit_class[1] == "data.frame")
-    get_proc_mixed_trt_visit_num_ests(fit)
+get_trt_visit_num_ests <- function(method, fit, dt, converged) {
+  if (get_convergence(method, fit, converged)) {
+    if (stringr::str_detect(method, "mmrm"))
+      get_mmrm_trt_visit_num_ests(fit)
+    else if (stringr::str_detect(method, "glmmtmb"))
+      get_glmmtmb_trt_visit_num_ests(fit)
+    else if (stringr::str_detect(method, "nlme"))
+      get_nlme_trt_visit_num_ests(fit, dt)
+    else if (stringr::str_detect(method, "proc_mixed"))
+      get_proc_mixed_trt_visit_num_ests(fit)
+  } else {
+    rep(NA, 10) # hard code 10, the number of visits in all simulations
+  }
 }
 
 get_mmrm_convergence <- function(converged) {
@@ -60,15 +63,14 @@ get_proc_mixed_convergence <- function(converged) {
 }
 
 
-get_convergence <- function(fit, converged) {
-  fit_class <- class(fit)
-  if (fit_class[1] == "mmrm")
-    get_mmrm_convergence(fit)
-  else if (fit_class[1] == "glmmTMB")
+get_convergence <- function(method, fit, converged) {
+  if (stringr::str_detect(method, "mmrm"))
+    get_mmrm_convergence(converged)
+  else if (stringr::str_detect(method, "glmmtmb"))
     get_glmmtmb_convergence(fit)
-  else if (fit_class[1] == "gls" || fit_class[1] == "NULL")
+  else if (stringr::str_detect(method, "nlme"))
     get_nlme_convergence(converged)
-  else if (fit_class[1] == "data.frame")
+  else if (stringr::str_detect(method, "proc_mixed"))
     get_proc_mixed_convergence(converged)
 }
 
@@ -105,16 +107,19 @@ get_proc_mixed_trt_visit_num_ses <- function(fit) {
   fit$StdErr
 }
 
-get_trt_visit_num_ses <- function(fit, dt) {
-  fit_class <- class(fit)
-  if (fit_class[1] == "mmrm")
-    get_mmrm_trt_visit_num_ses(fit)
-  else if (fit_class[1] == "glmmTMB")
-    get_glmmtmb_trt_visit_num_ses(fit)
-  else if (fit_class[1] == "gls")
-    get_nlme_trt_visit_num_ses(fit, dt)
-  else if (fit_class[1] == "data.frame")
-    get_proc_mixed_trt_visit_num_ses(fit)
+get_trt_visit_num_ses <- function(method, fit, dt, converged) {
+  if (get_convergence(method, fit, converged)) {
+    if (stringr::str_detect(method, "mmrm"))
+      get_mmrm_trt_visit_num_ses(fit)
+    else if (stringr::str_detect(method, "glmmtmb"))
+      get_glmmtmb_trt_visit_num_ses(fit)
+    else if (stringr::str_detect(method, "gls"))
+      get_nlme_trt_visit_num_ses(fit, dt)
+    else if (stringr::str_detect(method, "proc_mixed"))
+      get_proc_mixed_trt_visit_num_ses(fit)
+  } else {
+    rep(NA, 10) # hard code 10, the number of visits in all simulations
+  }
 }
 
 get_mmrm_trt_visit_num_pvals <- function(fit) {
@@ -151,14 +156,17 @@ get_proc_mixed_trt_visit_num_pvals <- function(fit) {
   sapply(quantiles, function(q) 2 * min(q, 1 - q))
 }
 
-get_trt_visit_num_pvals <- function(fit, dt) {
-  fit_class <- class(fit)
-  if (fit_class[1] == "mmrm")
-    get_mmrm_trt_visit_num_pvals(fit)
-  else if (fit_class[1] == "glmmTMB")
-    get_glmmtmb_trt_visit_num_pvals(fit)
-  else if (fit_class[1] == "gls")
-    get_nlme_trt_visit_num_pvals(fit, dt)
-  else if (fit_class[1] == "data.frame")
-    get_proc_mixed_trt_visit_num_pvals(fit)
+get_trt_visit_num_pvals <- function(method, fit, dt, converged) {
+  if (get_convergence(method, fit, converged)) {
+    if (stringr::str_detect(method, "mmrm"))
+      get_mmrm_trt_visit_num_pvals(fit)
+    else if (stringr::str_detect(method, "glmmtmb"))
+      get_glmmtmb_trt_visit_num_pvals(fit)
+    else if (stringr::str_detect(method, "gls"))
+      get_nlme_trt_visit_num_pvals(fit, dt)
+    else if (stringr::str_detect(method, "proc_mixed"))
+      get_proc_mixed_trt_visit_num_pvals(fit)
+  } else {
+    rep(NA, 10) # hard code 10, the number of visits in all simulations
+  }
 }

@@ -81,7 +81,7 @@ mmrm_wrapper_fun <- function(
   converged <- is.null(fit$error)
 
   return(list(
-    fit = fit,
+    fit = fit$result,
     converged = converged,
     fit_time = fit_time$time / 1e9 # NOTE: time in seconds
   ))

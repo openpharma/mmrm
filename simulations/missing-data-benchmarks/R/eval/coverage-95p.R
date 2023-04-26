@@ -4,12 +4,12 @@ coverage_fun <- function(fit_results, true_params) {
   fit_results %>%
     dplyr::mutate(
       covered = purrr::pmap(
-        .l = list(fit, .dgp_name, data),
-        .f = function(f, dgp_name, dt) {
+        .l = list(.method_name, fit, .dgp_name, data, converged),
+        .f = function(method_name, f, dgp_name, dt, conv_status) {
 
           # extract the trt:vist_num ses and estimates
-          ses <- get_trt_visit_num_ses(f, dt)
-          estimates <- get_trt_visit_num_ests(f, dt)
+          ses <- get_trt_visit_num_ses(method_name, f, dt, conv_status)
+          estimates <- get_trt_visit_num_ests(method_name, f, dt, conv_status)
 
           # extract the true parameter values
           true_values <- true_params[[dgp_name]]

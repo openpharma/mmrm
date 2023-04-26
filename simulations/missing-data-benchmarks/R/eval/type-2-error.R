@@ -11,11 +11,11 @@ type_2_error_rate_fun <- function(fit_results, true_params) {
     dplyr::filter(!(.dgp_name %in% null_dgps)) %>%
     dplyr::mutate(
       error = purrr::pmap(
-        .l = list(fit, .dgp_name, data),
-        .f = function(f, dgp_name, dt) {
+        .l = list(.method_name, fit, .dgp_name, data, converged),
+        .f = function(method_name, f, dgp_name, dt, conv_status) {
 
           # extract the trt:vist_num p-values
-          pvals <- get_trt_visit_num_pvals(f, dt)
+          pvals <- get_trt_visit_num_pvals(method_name, f, dt, conv_status)
 
           # compute the errors
           err <- p.adjust(pvals, method = "bonferroni") > 0.05

@@ -178,9 +178,9 @@ experiment <- create_experiment(
   add_method(proc_mixed_csh_meth, name = "proc_mixed_csh") %>%
   add_method(proc_mixed_toeph_meth, name = "proc_mixed_toeph") %>%
   add_evaluator(mean_time_eval, name = "mean_fit_time") %>%
+  add_evaluator(convergence_rate_eval, name = "convergence_rate") %>%
   add_evaluator(bias_eval, name = "bias") %>%
   add_evaluator(variance_eval, name = "variance") %>%
-  add_evaluator(convergence_rate_eval, name = "convergence_rate") %>%
   add_evaluator(coverage_eval, name = "coverage_rate") %>%
   add_evaluator(type_1_error_rate_eval, name = "type_1_error_rate") %>%
   add_evaluator(type_2_error_rate_eval, name = "type_2_error_rate")
@@ -188,8 +188,8 @@ experiment <- create_experiment(
 # run the experiment
 set.seed(713452)
 results <- experiment$run(
-  n_reps = 100,
-  save = TRUE,
-  verbose = 2,
-  checkpoint_n_reps = 25
+  n_reps = 2
+  ## save = TRUE,
+  ## verbose = 2,
+  ## checkpoint_n_reps = 25
 )
