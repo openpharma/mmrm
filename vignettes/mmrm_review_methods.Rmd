@@ -688,14 +688,14 @@ gls_ests <- as.data.frame(
 )$estimate
 
 # compute marginal estimates for glmmTMB
-glmmTMB_fit <- glmmTMB(
+glmmtmb_fit <- glmmTMB(
   FEV1 ~ RACE + ARMCD * AVISIT + us(0 + AVISIT | USUBJID),
   data = fev_data,
   dispformula = ~0
 )
-glmmTMB_ests <- as.data.frame(
+glmmtmb_ests <- as.data.frame(
   emmeans(
-    glmmTMB_fit,
+    glmmtmb_fit,
     spec = trt.vs.ctrl ~ ARMCD | AVISIT,
     weights = "proportional"
   )$contrasts
@@ -744,7 +744,7 @@ rel_diff_ests_tbl <- tibble(
   converged = rep(c(TRUE, TRUE, TRUE, TRUE), each = 4),
   rel_diff = c(
     rel_diff(mmrm_ests), rel_diff(lmer_ests), rel_diff(gls_ests),
-    rel_diff(glmmTMB_ests)
+    rel_diff(glmmtmb_ests)
   )
 ) %>%
   mutate(converged = factor(converged, levels = c(TRUE, FALSE)))
@@ -818,14 +818,14 @@ gls_ests <- as.data.frame(
 )$estimate
 
 # compute marginal estimates for glmmTMB
-glmmTMB_fit <- glmmTMB(
+glmmtmb_fit <- glmmTMB(
   BCVA_CHG ~ BCVA_BL + RACE + ARMCD * AVISIT + us(0 + AVISIT | USUBJID),
   data = bcva_data,
   dispformula = ~0
 )
-glmmTMB_ests <- as.data.frame(
+glmmtmb_ests <- as.data.frame(
   emmeans(
-    glmmTMB_fit,
+    glmmtmb_fit,
     spec = trt.vs.ctrl ~ ARMCD | AVISIT,
     weights = "proportional"
   )$contrasts
@@ -877,7 +877,7 @@ rel_diff_ests_tbl <- tibble(
   converged = rep(c(TRUE, FALSE, TRUE, FALSE), each = 10),
   rel_diff = c(
     rel_diff(mmrm_ests), rel_diff(lmer_ests), rel_diff(gls_ests),
-    rel_diff(glmmTMB_ests)
+    rel_diff(glmmtmb_ests)
   )
 ) %>%
   mutate(converged = factor(converged, levels = c(TRUE, FALSE)))
@@ -936,7 +936,7 @@ below.
 
 ```{r missingness-table, warning=FALSE, message=FALSE, echo=FALSE}
 ## extract the number of patients at each visit
-source("../data-raw/bcva_data.R")
+source("../data-raw/bcva-helpers.R")
 bcva_none <- rct_dgp_fun(n_obs = 200, missing_type = "none") %>%
   pull(AVISIT) %>%
   table()
@@ -1002,12 +1002,12 @@ get_convergence_rates <- function(n_replicates, missingness_level) {
       gls_converged <- is.null(gls_fit$error)
 
       ## glmmTMB
-      glmmTMB_fit <- glmmTMB(
+      glmmtmb_fit <- glmmTMB(
         BCVA_CHG ~ BCVA_BL + RACE + ARMCD * AVISIT + us(0 + AVISIT | USUBJID),
         data = miss_df,
         dispformula = ~0
       )
-      glmmTMB_converged <- glmmTMB_fit$fit$convergence == 0
+      glmmtmb_converged <- glmmtmb_fit$fit$convergence == 0
 
       ## SAS
       if (file.exists("../sascfg_personal.py")) {
@@ -1036,7 +1036,7 @@ get_convergence_rates <- function(n_replicates, missingness_level) {
           method = c("mmrm", "lmer", "gls", "glmmTMB", "PROC MIXED"),
           converged = c(
             mmrm_converged, lmer_converged, gls_converged,
-            glmmTMB_converged, sas_converged
+            glmmtmb_converged, sas_converged
           )
         )
       } else {
@@ -1045,7 +1045,7 @@ get_convergence_rates <- function(n_replicates, missingness_level) {
           method = c("mmrm", "lmer", "gls", "glmmTMB"),
           converged = c(
             mmrm_converged, lmer_converged, gls_converged,
-            glmmTMB_converged
+            glmmtmb_converged
           )
         )
       }
