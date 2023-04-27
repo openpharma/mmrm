@@ -54,14 +54,22 @@ Imports:
 Suggests:
     cli,
     clubSandwich,
+    clusterGeneration,
+    dplyr,
+    purrr,
     emmeans (>= 1.6),
     estimability,
+    ggplot2,
+    glmmTMB,
     knitr,
+    lme4,
     MASS,
+    microbenchmark,
     mockery,
     parallelly (>= 1.32.0),
     parsnip,
     rmarkdown,
+    sasr,
     testthat (>= 3.0.0),
     xml2
 LinkingTo:
@@ -79,6 +87,7 @@ Encoding: UTF-8
 Language: en-US
 LazyData: true
 NeedsCompilation: yes
+Remotes: github::insightsengineering/sasr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Collate:
