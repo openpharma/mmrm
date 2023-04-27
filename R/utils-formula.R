@@ -11,7 +11,8 @@ h_extract_covariance_terms <- function(f) {
   specials <- cov_types(c("abbr", "habbr"))
   terms <- stats::terms(formula_rhs(f), specials = specials)
   covariance_terms <- Filter(length, attr(terms, "specials"))
-  lapply(covariance_terms, function(i) formula(terms[i])[[2]])
+  variables <- attr(terms, "variables")
+  lapply(covariance_terms, function(i) variables[[i + 1]])
 }
 
 #' Drop Formula Terms used for Covariance Structure Definition
@@ -35,12 +36,15 @@ h_drop_covariance_terms <- function(f) {
   if (length(covariance_terms) == 0) {
     return(f)
   }
-
-  # drop covariance terms (position - 1 to account for response term)
-  covariance_term_indices <- as.numeric(covariance_terms) - (length(f) > 2)
-
-  terms <- terms[-covariance_term_indices]
-  formula(terms)
+  if (length(f) != 3) {
+    update_str <- "~ . -"
+  } else {
+    update_str <- ". ~ . -"
+  }
+  stats::update(
+    f,
+    stats::as.formula(paste(update_str, deparse(attr(terms, "variables")[[covariance_terms[[1]] + 1]])))
+  )
 }
 
 #' Add Individual Covariance Variables As Terms to Formula

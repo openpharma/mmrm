@@ -68,6 +68,10 @@ test_that("as.cov_struct can derive a covariance structure from a formula", {
     as.cov_struct(~ x + toeph(visit | group / subject) + z),
     cov_struct("toeph", "visit", "subject", "group")
   )
+  expect_identical(
+    as.cov_struct(~ x:z + toeph(visit | group / subject) + m:n),
+    cov_struct("toeph", "visit", "subject", "group")
+  )
 })
 
 # tmb_cov_type ----
