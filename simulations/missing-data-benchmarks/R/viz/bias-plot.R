@@ -10,7 +10,7 @@ bias_plot_fun <- function(eval_results) {
       true_covar = ifelse(stringr::str_detect(.dgp_name, "_us"),
                           "Unstructured",
                           ifelse(stringr::str_detect(.dgp_name, "_csh"),
-                                 "Comp. Sym. (Hom.)", "Toeplitz (Hom.)")),
+                                 "Comp. Sym. (Het.)", "Toeplitz (Hom.)")),
       effect_size = ifelse(stringr::str_detect(.dgp_name, "no_effect"),
                            "No Effect",
                            ifelse(stringr::str_detect(.dgp_name, "small_effect"),
@@ -38,7 +38,7 @@ bias_plot_fun <- function(eval_results) {
       axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust = 1)
     )
   csh_plot <- bias_tbl %>%
-    filter(true_covar == "Comp. Sym. (Hom.)") %>%
+    filter(true_covar == "Comp. Sym. (Het.)") %>%
     ggplot2::ggplot(ggplot2::aes(
       x = parameter, y = bias, colour = .method_name
     )) +
@@ -48,7 +48,7 @@ bias_plot_fun <- function(eval_results) {
     ggplot2::xlab("Treatment Effect") +
     ggplot2::ylab("Empirical Bias (100 Replicates)") +
     ggplot2::scale_colour_discrete(name = "Method") +
-    ggplot2::ggtitle("Homogeneous Compound Symmetry Covariance Matrix") +
+    ggplot2::ggtitle("Heterogeneous Compound Symmetry Covariance Matrix") +
     ggplot2::theme_bw() +
     ggplot2::theme(
       axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust = 1)

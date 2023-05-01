@@ -5,7 +5,7 @@ mean_fit_time_plot_fun <- function(eval_results) {
       true_covar = ifelse(stringr::str_detect(.dgp_name, "_us"),
                           "Unstructured",
                           ifelse(stringr::str_detect(.dgp_name, "_csh"),
-                                 "Comp. Sym. (Hom.)", "Toeplitz (Hom.)")),
+                                 "Comp. Sym. (Het.)", "Toeplitz (Hom.)")),
       effect_size = ifelse(stringr::str_detect(.dgp_name, "no_effect"),
                            "No Effect",
                            ifelse(stringr::str_detect(.dgp_name, "small_effect"),
@@ -30,7 +30,7 @@ mean_fit_time_plot_fun <- function(eval_results) {
       axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust = 1)
     )
   csh_plot <- fit_time_tbl %>%
-    dplyr::filter(true_covar == "Homp. Sym. (Hom.)") %>%
+    dplyr::filter(true_covar == "Comp. Sym. (Het.)") %>%
     ggplot2::ggplot(ggplot2::aes(
       x = .method_name, y = mean_time
     )) +
@@ -38,7 +38,7 @@ mean_fit_time_plot_fun <- function(eval_results) {
     ggplot2::geom_bar(stat = "identity") +
     ggplot2::xlab("Method") +
     ggplot2::ylab("Mean Fit Time in Seconds (100 Replicates)") +
-    ggplot2::ggtitle("Homogeneous Compound Symmetry Covariance Matrix") +
+    ggplot2::ggtitle("Heterogeneous Compound Symmetry Covariance Matrix") +
     ggplot2::theme_bw() +
     ggplot2::theme(
       axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust = 1)
