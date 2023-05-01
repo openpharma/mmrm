@@ -1,3 +1,4 @@
+# A function for plotting any given meal's convergence rate results.
 convergence_rate_plot_fun <- function(eval_results) {
 
   cr_tbl <- eval_results$convergence_rate %>%
@@ -5,7 +6,7 @@ convergence_rate_plot_fun <- function(eval_results) {
       true_covar = ifelse(stringr::str_detect(.dgp_name, "_us"),
                           "Unstructured",
                           ifelse(stringr::str_detect(.dgp_name, "_csh"),
-                                 "Comp. Sym. (Hom.)", "Toeplitz (Hom.)")),
+                                 "Comp. Sym. (Het.)", "Toeplitz (Hom.)")),
       effect_size = ifelse(stringr::str_detect(.dgp_name, "no_effect"),
                            "No Effect",
                            ifelse(stringr::str_detect(.dgp_name, "small_effect"),
@@ -31,7 +32,7 @@ convergence_rate_plot_fun <- function(eval_results) {
       axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust = 1)
     )
   csh_plot <- cr_tbl %>%
-    dplyr::filter(true_covar == "Comp. Sym (Hom.)") %>%
+    dplyr::filter(true_covar == "Comp. Sym. (Het.)") %>%
     ggplot2::ggplot(ggplot2::aes(
       x = .method_name, y = convergence_rate
     )) +
@@ -39,7 +40,7 @@ convergence_rate_plot_fun <- function(eval_results) {
     ggplot2::geom_point() +
     ggplot2::xlab("Method") +
     ggplot2::ylab("Convergence Rate (100 Replicates)") +
-    ggplot2::ggtitle("Homogeneous Compound Symmetry Covariance Matrix") +
+    ggplot2::ggtitle("Heterogeneous Compound Symmetry Covariance Matrix") +
     ggplot2::scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
     ggplot2::theme_bw() +
     ggplot2::theme(

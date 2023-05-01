@@ -14,7 +14,9 @@
 #' @param covar_type A character indicating the type of covariance matrix to
 #'   model the repeated measures with.
 #'
-#' @return A fitted gls model object.
+#' @return A fitted gls model object in a list. This list also contains an
+#'   indicator for the convergence status, the data on which gls was fit, and
+#'   the fit time in seconds.
 nlme_wrapper_fun <- function(
   participant,
   visit_num,

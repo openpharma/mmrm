@@ -15,7 +15,8 @@
 #' @param covar_type A character indicating the type of covariance matrix to
 #'   model the repeated measures with.
 #'
-#' @return A fitted glmmTMB model object.
+#' @return A fitted glmmTMB model object stored in a list. The fit time in
+#'   seconds in also included in this list
 glmmtmb_wrapper_fun <- function(
   participant,
   visit_num,

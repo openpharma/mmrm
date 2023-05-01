@@ -1,3 +1,4 @@
+# A function for plotting any given meal's empirical type 1 rate results.
 type_1_error_rate_plot_fun <- function(eval_results) {
 
   ## extract the bias tibble, fix variable names for exposition
@@ -10,7 +11,7 @@ type_1_error_rate_plot_fun <- function(eval_results) {
       true_covar = ifelse(stringr::str_detect(.dgp_name, "_us"),
                           "Unstructured",
                           ifelse(stringr::str_detect(.dgp_name, "_csh"),
-                                 "Comp. Sym. (Hom.)", "Toeplitz (Hom.)"))
+                                 "Comp. Sym. (Het.)", "Toeplitz (Hom.)"))
     )
 
   ## plot the type-1 error rates
@@ -33,7 +34,7 @@ type_1_error_rate_plot_fun <- function(eval_results) {
       axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust = 1)
     )
   csh_plot <- t1_err_tbl %>%
-    filter(true_covar == "Comp. Sym. (Hom.)") %>%
+    filter(true_covar == "Comp. Sym. (Het.)") %>%
     ggplot2::ggplot(ggplot2::aes(
       x = parameter, y = type_1_error_rate, colour = .method_name
     )) +
@@ -42,7 +43,7 @@ type_1_error_rate_plot_fun <- function(eval_results) {
     ggplot2::xlab("Treatment Effect") +
     ggplot2::ylab("Empirical Type-I Error Rate (100 Replicates, Bonf. Adj.)") +
     ggplot2::scale_colour_discrete(name = "Method") +
-    ggplot2::ggtitle("Homogeneous Compound Symmetry Covariance Matrix") +
+    ggplot2::ggtitle("Heterogeneous Compound Symmetry Covariance Matrix") +
     ggplot2::scale_y_continuous(
       labels = scales::label_percent(accuracy = 0.1)
     ) +

@@ -1,3 +1,6 @@
+# Given the the MMRM implmentations' fits, this function computes the 95%
+# coverage rate of the ATE estimators at each visit. The true ATEs must be
+# provided via the true_params functions argument.
 coverage_fun <- function(fit_results, true_params) {
 
   group_vars <- c(".dgp_name", ".method_name")

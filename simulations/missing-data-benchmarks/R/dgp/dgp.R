@@ -1,3 +1,12 @@
+# Simulate data from an ophthalmology randomized control trial. The number of
+# patients enrolled is specified by the n_obs argument, and the true repeated
+# measures covariance matrix must be specified. The effect of the treatment,
+# visit number, and treatment by visit interactions can also be specified,
+# Finally, the amount of dropout is dictated by the missingness argument. If
+# left at its default value, NULL, no dropout occurs. Other options include,
+# "low", "high", and "extreme". The ouput is a list, in long format, of the
+# simulated trial data. This is because simChef requires DGP functions to return
+# list objects.
 rct_dgp_fun <- function(
   n_obs,
   outcome_covar_mat,
