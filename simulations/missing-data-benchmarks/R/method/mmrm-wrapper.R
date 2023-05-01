@@ -14,7 +14,8 @@
 #' @param covar_type A character indicating the type of covariance matrix to
 #'   model the repeated measures with.
 #'
-#' @return A fitted mmrm model object stored in a list.
+#' @return A fitted mmrm model object stored in a list. This lists also includes
+#'   an indicator for convergence status, and the fit time in seconds.
 mmrm_wrapper_fun <- function(
   participant,
   visit_num,

@@ -1,3 +1,4 @@
+# A function for plotting any given meal's empirical bias results.
 bias_plot_fun <- function(eval_results) {
 
   ## extract the bias tibble, fix variable names for exposition

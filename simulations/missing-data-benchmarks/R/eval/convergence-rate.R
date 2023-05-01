@@ -1,3 +1,5 @@
+# Given the the MMRM implmentations' fits, this function computes the
+# convergence rate for each estimator across all replicates.
 convergence_rate_fun <- function(fit_results) {
 
   group_vars <- c(".dgp_name", ".method_name")

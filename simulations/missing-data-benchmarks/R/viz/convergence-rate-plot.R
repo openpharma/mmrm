@@ -1,3 +1,4 @@
+# A function for plotting any given meal's convergence rate results.
 convergence_rate_plot_fun <- function(eval_results) {
 
   cr_tbl <- eval_results$convergence_rate %>%

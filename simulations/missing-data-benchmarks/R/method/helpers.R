@@ -1,3 +1,6 @@
+# This is a convenience function assembling the list output by rct_dgp_fun into
+# a data.frame. This is because simChef can only return list objects from DGP
+# functions.
 assemble_df <- function(
   participant,
   visit_num,

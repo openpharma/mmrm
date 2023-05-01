@@ -1,3 +1,4 @@
+# A function for plotting any given meal's empirical type 2 rate results.
 type_2_error_rate_plot_fun <- function(eval_results) {
 
   ## extract the bias tibble, fix variable names for exposition

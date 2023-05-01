@@ -1,3 +1,4 @@
+# A function for plotting any given meal's mean fit time results.
 mean_fit_time_plot_fun <- function(eval_results) {
 
   fit_time_tbl <- eval_results$mean_fit_time %>%

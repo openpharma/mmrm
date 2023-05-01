@@ -1,3 +1,7 @@
+# Generates a data.frame of baseline covariates and treatment indicators for
+# n_obs distinct patients. The resulting data.frame is in a "long" format,
+# meaning these covariates are repeated n_visits times, where n_visits is the
+# number of visits.
 generate_covariates <- function(n_obs, n_visits = 10) {
 
   # participant ID
@@ -27,6 +31,9 @@ generate_covariates <- function(n_obs, n_visits = 10) {
   )
 }
 
+# Randomly generate a heterogeneous compound symmetry covariance matix. The
+# variances and correlation parameters are set using the vars and corr
+# arguments, respectively.
 compute_csh_matrix <- function(
   vars = seq(from = 1, by = 0.5, length.out = 10), corr = 0.25
 ) {
@@ -35,6 +42,8 @@ compute_csh_matrix <- function(
   return(csh_mat)
 }
 
+# Randomly generate a unstructured covariance matix. The variances are set using
+# the vars argument.
 compute_unstructured_matrix <- function(
   vars = seq(from = 1, by = 0.5, length.out = 10)
 ) {
@@ -47,6 +56,14 @@ compute_unstructured_matrix <- function(
   return(us_mat)
 }
 
+# Simulate repeated measures outcomes based on the provided covariates
+# data.frame and repeated measures covariance matrix. These outcomes are
+# simulated according to a linear model with Gaussian errors. The linear model
+# coefficients associated with each baseline covariate, visit, and visit x
+# treatment interaction are set through their respective arguments. For
+# generative modeling purposes, visit is treated as a discrete number,
+# permitting the specification of a single coefficient for all visit x treatment
+# interaction effects.
 generate_outcomes <- function(
   covars_df,
   cov_mat,
@@ -77,6 +94,11 @@ generate_outcomes <- function(
 
 }
 
+# Simulates intermittent dropout events as a function of measured baseline
+# covariates and visit number. This ensures that observations are missing at
+# random. The baseline covariates data.frame must be provided, as must the
+# desired level of missingness. A long data.frame with missing observations is
+# returned.
 missing_at_random <- function(covars_df, type) {
 
   # compute missingness probabilities

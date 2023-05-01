@@ -1,3 +1,4 @@
+# A function for plotting any given meal's empirical 95% coverage rate results.
 coverage_rate_plot_fun <- function(eval_results) {
 
   ## extract the coverage tibble, fix variable names for exposition

@@ -1,3 +1,5 @@
+# Given the the MMRM implmentations' fits, this function computes the variance
+# of the ATE estimators at each visit.
 variance_fun <- function(fit_results) {
 
   group_vars <- c(".dgp_name", ".method_name")
