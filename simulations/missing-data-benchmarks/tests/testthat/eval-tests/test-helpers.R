@@ -128,7 +128,7 @@ test_that("get_mmrm_convergence extracts convergence status", {
   )
 
   # extract convergence status
-  conv_status <- get_mmrm_convergence(mmrm_fit$fit)
+  conv_status <- get_mmrm_convergence(mmrm_fit$converged)
   expect_equal(conv_status, TRUE)
 
 })

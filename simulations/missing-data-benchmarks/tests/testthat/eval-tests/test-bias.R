@@ -4,7 +4,7 @@ test_that("bias_fun computes DGP-specific bias", {
   set.seed(510)
   no_eff_us <- rct_dgp_fun(
     n_obs = 1000,
-    outcome_covar_mat= compute_unstructured_matrix()
+    outcome_covar_mat = compute_unstructured_matrix()
   )
   eff_us <- rct_dgp_fun(
     n_obs = 1000,
