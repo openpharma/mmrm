@@ -469,7 +469,7 @@ partial_conv_time_tbl <- mb %>%
   select(expression = expr, median, lower = lq, upper = uq, evaluations = neval)
 
 # fit PROC MIXED 10 times if a sascfg file exists
-if (file.exists("../sascfg_personal.py")) {
+if (file.exists("sascfg_personal.py")) {
   fit_times <- sapply(
     seq_len(n_reps),
     function(x) {
@@ -573,7 +573,7 @@ partial_conv_time_tbl <- mb %>%
   select(expression = expr, median, lower = lq, upper = uq, evaluations = neval)
 
 # fit PROC MIXED 10 times if a sascfg file exists
-if (file.exists("../sascfg_personal.py")) {
+if (file.exists("sascfg_personal.py")) {
   fit_times <- sapply(
     seq_len(n_reps),
     function(x) {
@@ -701,7 +701,7 @@ glmmtmb_ests <- as.data.frame(
   )$contrasts
 )$estimate
 
-if (file.exists("../sascfg_personal.py")) {
+if (file.exists("sascfg_personal.py")) {
   # compute marginal estimates from PROC MIXED
   # load the data into SAS
   df2sd(fev_data, "fev_data")
@@ -831,7 +831,7 @@ glmmtmb_ests <- as.data.frame(
   )$contrasts
 )$estimate
 
-if (file.exists("../sascfg_personal.py")) {
+if (file.exists("sascfg_personal.py")) {
   # compute marginal estimates from PROC MIXED
   # load the data into SAS
   df2sd(bcva_data, "bcva_data")
@@ -935,8 +935,10 @@ one replicated dataset at each level of missingness is presented in the table
 below.
 
 ```{r missingness-table, warning=FALSE, message=FALSE, echo=FALSE}
-## extract the number of patients at each visit
-source("../data-raw/bcva-helpers.R")
+# contains data-generating process functions
+source(system.file("data-raw/bcva-helpers.R"), package = "mmrm")
+
+# extract the number of patients at each visit
 bcva_none <- rct_dgp_fun(n_obs = 200, missing_type = "none") %>%
   pull(AVISIT) %>%
   table()
@@ -1010,7 +1012,7 @@ get_convergence_rates <- function(n_replicates, missingness_level) {
       glmmtmb_converged <- glmmtmb_fit$fit$convergence == 0
 
       ## SAS
-      if (file.exists("../sascfg_personal.py")) {
+      if (file.exists("sascfg_personal.py")) {
         # compute marginal estimates from PROC MIXED
         # load the data into SAS
         df2sd(miss_df, "miss_df")
