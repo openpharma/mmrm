@@ -34,6 +34,9 @@
     <loc>https://openpharma.github.io/mmrm/main/articles/methodological_introduction.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/mmrm/main/articles/mmrm_review_methods.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/mmrm/main/articles/package_structure.html</loc>
   </url>
   <url>
@@ -53,6 +56,9 @@
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/as.cov_struct.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/bcva_data.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/check_package_version.html</loc>

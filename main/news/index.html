@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9014</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9015</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,6 +37,7 @@
     <a class="dropdown-item" href="../articles/introduction.html">Introduction to `mmrm`</a>
     <a class="dropdown-item" href="../articles/kenward.html">Details of the Kenward-Roger calculations</a>
     <a class="dropdown-item" href="../articles/methodological_introduction.html">What are MMRMs? A brief introduction</a>
+    <a class="dropdown-item" href="../articles/mmrm_review_methods.html">Implementations of MMRM: a comparison of what's available</a>
     <a class="dropdown-item" href="../articles/package_structure.html">Package Structure</a>
     <a class="dropdown-item" href="../articles/satterthwaite.html">Details of the Satterthwaite calculations</a>
   </div>
@@ -44,14 +45,6 @@
 <li class="active nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.2.2">v0.2.2</a> </div></li>
-<!-- end dropdown for versions -->
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-reports">Reports</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-reports">
@@ -80,9 +73,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.2.2.9014" id="mmrm-0229014">mmrm 0.2.2.9014<a class="anchor" aria-label="anchor" href="#mmrm-0229014"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.2.2.9015" id="mmrm-0229015">mmrm 0.2.2.9015<a class="anchor" aria-label="anchor" href="#mmrm-0229015"></a></h2>
 <div class="section level4">
-<h4 id="new-features-0-2-2-9014">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-2-2-9014"></a></h4>
+<h4 id="new-features-0-2-2-9015">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-2-2-9015"></a></h4>
 <ul><li>Add argument <code>covariance</code> to <code><a href="../reference/mmrm.html">mmrm()</a></code> to allow for easier programmatic access to specifying the model’s covariance structure and to expose covariance customization through the <code>tidymodels</code> interface.</li>
 <li>Add Kenward-Roger support for spatial covariance structures.</li>
 <li>Add support for <code>residuals</code> method with a <code>type</code> argument allowing for raw (the default, and only option for models with a spatial covariance structure), Pearson and normalized residuals to be calculated from an <code>mmrm</code> fit.</li>
@@ -91,25 +84,25 @@
 <li>Add confirmation if the number of visit levels is too large. Use <code>options(mmrm.max_visits = )</code> to specify the maximum number of visits allowed in non-interactive mode, or asked in interactive sessions.</li>
 </ul></div>
 <div class="section level4">
-<h4 id="bug-fixes-0-2-2-9014">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-2-2-9014"></a></h4>
+<h4 id="bug-fixes-0-2-2-9015">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-2-2-9015"></a></h4>
 <ul><li>Previously <code>mmrm</code> fit follows the global option <code>na.action</code> and if it is set other than “na.omit” error will happen. This is now fixed and <code>NA</code> values are always removed prior to model fitting.</li>
 <li>Previously <code>model.frame</code> call on <code>mmrm</code> object with transformed terms, or new given data, e.g. <code>model.frame(mmrm(Y ~ log(X) + ar1(VISIT|ID), data = &lt;new data&gt;)</code>, will cause errors. This is now fixed and <code>model.frame</code> returns the data correctly. Now <code>na.action</code> argument always use “na.omit”, <code>subset</code> argument is not used. <code>full</code> argument is deprecated and use <code>exclude</code> instead.</li>
 <li>Previously <code>mmrm</code> always requires <code>data</code> argument. Now fitting <code>mmrm</code> can use environment variables, instead of requiring <code>data</code> argument. <code>fit_mmrm</code> is not affected.</li>
 <li>Previously <code>emmeans</code> does not work if fixed effect does not contain visit variable. This is now fixed. # mmrm 0.2.2</li>
 </ul></div>
 <div class="section level4">
-<h4 id="new-features-0-2-2-9014-1">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-2-2-9014-1"></a></h4>
+<h4 id="new-features-0-2-2-9015-1">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-2-2-9015-1"></a></h4>
 <ul><li>Add support for Kenward-Roger adjusted coefficients covariance matrix and degrees of freedom in <code>mmrm</code> function call with argument <code>method</code>. Options are “Kenward-Roger”, “Kenward-Roger-Linear” and “Satterthwaite” (which is still the default). Subsequent methods calls will respect this initial choice, e.g. <code>vcov(fit)</code> will return the adjusted coefficients covariance matrix if a Kenward-Roger method has been used.</li>
 <li>Update the <code>mmrm</code> arguments to allow users more fine-grained control, e.g. <code>mmrm(..., start = start, optimizer = c("BFGS", "nlminb"))</code> to set the starting values for the variance estimates and to choose the available optimizers. These arguments will be passed to the new function <code>mmrm_control</code>.</li>
 <li>Add new argument <code>drop_visit_levels</code> to allow users to keep all levels in visits, even when they are not observed in the data. Dropping unobserved levels was done silently previously, and now a message will be given. See <code><a href="../reference/mmrm_control.html">?mmrm_control</a></code> for more details.</li>
 </ul></div>
 <div class="section level4">
-<h4 id="bug-fixes-0-2-2-9014-1">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-2-2-9014-1"></a></h4>
+<h4 id="bug-fixes-0-2-2-9015-1">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-2-2-9015-1"></a></h4>
 <ul><li>Previously duplicate time points could be present for a single subject, and this could lead to segmentation faults if more than the total number of unique time points were available for any subject. Now it is checked that there are no duplicate time points per subject, and this is explained also in the function documentation and the introduction vignette.</li>
 <li>Previously in <code>mmrm</code> calls, the <code>weights</code> object in the environment where the formula is defined was replaced by the <code>weights</code> used internally. Now this behavior is removed and your variable <code>weights</code> e.g. in the global environment will no longer be replaced.</li>
 </ul></div>
 <div class="section level4">
-<h4 id="miscellaneous-0-2-2-9014">Miscellaneous<a class="anchor" aria-label="anchor" href="#miscellaneous-0-2-2-9014"></a></h4>
+<h4 id="miscellaneous-0-2-2-9015">Miscellaneous<a class="anchor" aria-label="anchor" href="#miscellaneous-0-2-2-9015"></a></h4>
 <ul><li>Deprecated <code><a href="../reference/free_cores.html">free_cores()</a></code> in favor of <code>parallelly::availableCores(omit = 1)</code>.</li>
 <li>Deprecated <code>optimizer = "automatic"</code> in favor of not specifying the <code>optimizer</code>. By default, all remaining optimizers will be tried if the first optimizer fails to reach convergence.</li>
 </ul></div>
