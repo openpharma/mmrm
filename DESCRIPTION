@@ -1,7 +1,7 @@
 Type: Package
 Package: mmrm
 Title: Mixed Models for Repeated Measures
-Version: 0.2.2.9015
+Version: 0.2.2.9016
 Authors@R: c(
     person("Daniel", "Sabanes Bove", , "daniel.sabanes_bove@roche.com", role = c("aut", "cre")),
     person("Julia", "Dedic", , "julia.dedic@roche.com", role = "aut"),
@@ -56,7 +56,6 @@ Suggests:
     clubSandwich,
     clusterGeneration,
     dplyr,
-    purrr,
     emmeans (>= 1.6),
     estimability,
     ggplot2,
@@ -68,6 +67,7 @@ Suggests:
     mockery,
     parallelly (>= 1.32.0),
     parsnip,
+    purrr,
     rmarkdown,
     sasr,
     testthat (>= 3.0.0),
@@ -81,13 +81,14 @@ VignetteBuilder:
     knitr
 RdMacros:
     Rdpack
+Remotes: 
+    github::insightsengineering/sasr
 biocViews:
 Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-US
 LazyData: true
 NeedsCompilation: yes
-Remotes: github::insightsengineering/sasr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Collate:
