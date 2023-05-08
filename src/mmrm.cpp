@@ -59,6 +59,8 @@ Type objective_function<Type>::operator() ()
   int theta_one_group_size = theta.size() / n_groups;
   // Convert is_spatial_int to bool.
   bool is_spatial = (is_spatial_int == 1);
+  // Diagonal of weighted covariance
+  vector<Type> diag_cov_inv_sqrt(x_matrix.rows());
   // Create the lower triangular Cholesky factor of the visit x visit covariance matrix.
   std::map<int, lower_chol_base<Type>*> chols_by_group;
   for (int r = 0; r < n_groups; r++) {
@@ -101,7 +103,8 @@ Type objective_function<Type>::operator() ()
     XtWY += XiTilde.transpose() * YiTilde;
     vector<Type> LiDiag = Li.diagonal();
     sum_log_det += sum(log(LiDiag));
-
+    // Cache the reciprocal of square root of diagonal of covariance
+    diag_cov_inv_sqrt.segment(start_i, n_visits_i) = vector<Type>(tcrossprod(Li).diagonal()).rsqrt();
     // Save stuff.
     x_mat_tilde.block(start_i, 0, n_visits_i, x_matrix.cols()) = XiTilde;
     y_vec_tilde.segment(start_i, n_visits_i) = YiTilde.col(0);
@@ -145,6 +148,8 @@ Type objective_function<Type>::operator() ()
   REPORT(beta_vcov);
   // normalized residual
   REPORT(epsilonTilde);
+  // inverse square root of diagonal of covariance
+  REPORT(diag_cov_inv_sqrt);
   matrix<Type> covariance_lower_chol = get_chol_and_clean(chols_by_group, is_spatial, n_visits);
   REPORT(covariance_lower_chol);
 

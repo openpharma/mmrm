@@ -244,9 +244,6 @@ print.mmrm_tmb <- function(x,
 #' - \insertRef{galecki2013linear}{mmrm}
 residuals.mmrm_tmb <- function(object, type = c("response", "pearson", "normalized"), ...) {
   type <- match.arg(type)
-  if (identical(object$tmb_data$is_spatial, 1L) && identical(type, "pearson")) {
-    stop("'pearson' residuals is not available for models with spatial covariance structures.")
-  }
   switch(type,
     "response" = h_residuals_response(object),
     "pearson" = h_residuals_pearson(object),
@@ -265,18 +262,7 @@ residuals.mmrm_tmb <- function(object, type = c("response", "pearson", "normaliz
 h_residuals_pearson <- function(object) {
   assert_class(object, "mmrm_tmb")
   resids_unscaled <- h_residuals_response(object)
-  visit_sigmas <- if (component(object, "n_groups") == 1) {
-    sqrt(diag(unname(object$cov)))
-  } else {
-    sqrt(unlist(lapply(object$cov, diag), use.names = FALSE))
-  }
-
-  subject_grps <- rep(
-    as.integer(object$tmb_data$subject_groups) - 1,
-    object$tmb_data$subject_n_visits
-  )
-  index <- subject_grps * component(object, "n_timepoints") + object$tmb_data$visits_zero_inds + 1
-  resids_unscaled * sqrt(object$tmb_data$weights_vector) / visit_sigmas[index]
+  resids_unscaled * object$tmb_object$report()$diag_cov_inv_sqrt
 }
 
 #' Calculate normalized residuals
