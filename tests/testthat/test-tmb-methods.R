@@ -269,17 +269,22 @@ test_that("residuals works as expected with a model using spatial covariance str
 test_that("pearson residuals helper function works as expected", {
   object <- get_mmrm()
   resid_response <- residuals(object, type = "response")
-
-  result_pearson <- h_residuals_pearson(object, resid_response)
+  result_pearson <- h_residuals_pearson(object)
   expect_double(result_pearson, len = length(object$tmb_data$y_vector))
   expect_equal(tail(result_pearson, 5), c(2.22057, 1.79050, 0.53322, 0.87243, 0.70477), tolerance = 1e-4)
 })
 
 test_that("normalized residuals helper function works as expected", {
   object <- get_mmrm()
-  resid_response <- residuals(object, type = "response")
-
-  result_norm <- h_residuals_normalized(object, resid_response)
+  result_norm <- h_residuals_normalized(object)
   expect_double(result_norm, len = length(object$tmb_data$y_vector))
   expect_equal(tail(result_norm, 5), c(1.99092, 1.49689, 0.53322, 0.71055, 0.56152), tolerance = 1e-4)
+})
+
+test_that("response residuals helper function works as expected", {
+  object <- get_mmrm()
+  result_rsp <- h_residuals_response(object)
+  expect_double(result_rsp, len = length(object$tmb_data$y_vector))
+  expected <- as.vector(object$tmb_data$y_vector - object$tmb_data$x_matrix %*% object$beta_est)
+  expect_equal(result_rsp, expected)
 })
