@@ -285,6 +285,6 @@ test_that("response residuals helper function works as expected", {
   object <- get_mmrm()
   result_rsp <- h_residuals_response(object)
   expect_double(result_rsp, len = length(object$tmb_data$y_vector))
-  expected <- as.vector(object$tmb_data$y_vector - object$tmb_data$x_matrix %*% object$beta_est)
+  expected <- component(object, "y_vector") - as.vector(fitted(object))
   expect_equal(result_rsp, expected)
 })
