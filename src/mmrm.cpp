@@ -84,14 +84,11 @@ Type objective_function<Type>::operator() ()
     } else {
       dist_i = euclidean(matrix<Type>(coordinates.block(start_i, 0, n_visits_i, coordinates.cols())));
     }
-    
     // Obtain Cholesky factor Li.
-    matrix<Type> Li = chols_by_group[subject_groups[i]]->get_chol(visit_i, dist_i);
-
+    matrix<Type> Li = chols_by_group[subject_groups[i]]->get_chol(visit_i, dist_i);  
     // Calculate weighted Cholesky factor for this subject.
     Eigen::DiagonalMatrix<Type,Eigen::Dynamic,Eigen::Dynamic> Gi_inv_sqrt = weights_vector.segment(start_i, n_visits_i).cwiseInverse().sqrt().matrix().asDiagonal();
     Li = Gi_inv_sqrt * Li;
-
     // Calculate scaled design matrix and response vector for this subject.
     matrix<Type> Xi = x_matrix.block(start_i, 0, n_visits_i, x_matrix.cols());
     matrix<Type> XiTilde = Li.template triangularView<Eigen::Lower>().solve(Xi);
@@ -146,7 +143,8 @@ Type objective_function<Type>::operator() ()
   Identity.setIdentity();
   matrix<Type> beta_vcov = XtWX_decomposition.solve(Identity);
   REPORT(beta_vcov);
-
+  // normalized residual
+  REPORT(epsilonTilde);
   matrix<Type> covariance_lower_chol = get_chol_and_clean(chols_by_group, is_spatial, n_visits);
   REPORT(covariance_lower_chol);
 
