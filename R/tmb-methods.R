@@ -265,19 +265,17 @@ residuals.mmrm_tmb <- function(object, type = c("response", "pearson", "normaliz
 h_residuals_pearson <- function(object) {
   assert_class(object, "mmrm_tmb")
   resids_unscaled <- h_residuals_response(object)
-  cov_list <- if (component(object, "n_groups") == 1) {
-    list(object$cov)
+  visit_sigmas <- if (component(object, "n_groups") == 1) {
+    sqrt(diag(unname(object$cov)))
   } else {
-    object$cov
+    sqrt(unlist(lapply(object$cov, diag), use.names = FALSE))
   }
-  visit_sigmas <- sqrt(unlist(lapply(cov_list, function(x) diag(x, names = FALSE)), use.names = FALSE))
 
-  subject_grps <- if (component(object, "n_groups") == 1) {
-    rep(1, times = component(object, "n_obs"))
-  } else {
-    as.integer(object$tmb_data$full_frame[[object$formula_parts$group_var]])
-  }
-  index <- (subject_grps - 1) * object$tmb_data$n_visits + object$tmb_data$visits_zero_inds + 1
+  subject_grps <- rep(
+    as.integer(object$tmb_data$subject_groups) - 1,
+    object$tmb_data$subject_n_visits
+  )
+  index <- subject_grps * component(object, "n_timepoints") + object$tmb_data$visits_zero_inds + 1
   resids_unscaled * sqrt(object$tmb_data$weights_vector) / visit_sigmas[index]
 }
 
