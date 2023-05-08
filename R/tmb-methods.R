@@ -244,8 +244,8 @@ print.mmrm_tmb <- function(x,
 #' - \insertRef{galecki2013linear}{mmrm}
 residuals.mmrm_tmb <- function(object, type = c("response", "pearson", "normalized"), ...) {
   type <- match.arg(type)
-  if (identical(object$tmb_data$is_spatial, 1L) && !identical(type, "response")) {
-    stop("Only 'respons'residuals are available for models with spatial covariance structures.")
+  if (identical(object$tmb_data$is_spatial, 1L) && identical(type, "pearson")) {
+    stop("'pearson' residuals is not available for models with spatial covariance structures.")
   }
   switch(type,
     "response" = h_residuals_response(object),

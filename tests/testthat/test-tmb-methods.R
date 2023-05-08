@@ -261,9 +261,9 @@ test_that("residuals works as expected with a model using spatial covariance str
   result_resp <- expect_silent(residuals(object, type = "response"))
   expect_double(result_resp, len = length(object$tmb_data$y_vector))
   expect_equal(head(result_resp, 5), c(-4.5428, -24.0301, -8.8329, -3.4092, 8.5200), tolerance = 1e-4)
-
+  result_normal <- residuals(object, type = "normalized")
+  expect_equal(head(result_normal, 5), c(-0.4943, -2.5698, -0.9613, 0.0046, 1.1645), tolerance = 1e-4)
   expect_error(residuals(object, type = "pearson"))
-  expect_error(residuals(object, type = "normalized"))
 })
 
 test_that("pearson residuals helper function works as expected", {
