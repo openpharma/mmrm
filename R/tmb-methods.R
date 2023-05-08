@@ -261,8 +261,7 @@ residuals.mmrm_tmb <- function(object, type = c("response", "pearson", "normaliz
 #' @keywords internal
 h_residuals_pearson <- function(object) {
   assert_class(object, "mmrm_tmb")
-  resids_unscaled <- h_residuals_response(object)
-  resids_unscaled * object$tmb_object$report()$diag_cov_inv_sqrt
+  h_residuals_response(object) * object$tmb_object$report()$diag_cov_inv_sqrt
 }
 
 #' Calculate normalized residuals
