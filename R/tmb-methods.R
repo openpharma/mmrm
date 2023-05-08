@@ -247,8 +247,7 @@ residuals.mmrm_tmb <- function(object, type = c("response", "pearson", "normaliz
   if (identical(object$tmb_data$is_spatial, 1L) && !identical(type, "response")) {
     stop("Only 'respons'residuals are available for models with spatial covariance structures.")
   }
-  switch(
-    type,
+  switch(type,
     "response" = h_residuals_response(object),
     "pearson" = h_residuals_pearson(object),
     "normalized" = h_residuals_normalized(object)
