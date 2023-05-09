@@ -41,14 +41,15 @@ get_proc_mixed_trt_visit_num_ests <- function(fit) {
 # should reflect this.
 get_trt_visit_num_ests <- function(method, fit, dt, converged) {
   if (get_convergence(method, fit, converged)) {
-    if (stringr::str_detect(method, "mmrm"))
+    if (stringr::str_detect(method, "mmrm")) {
       get_mmrm_trt_visit_num_ests(fit)
-    else if (stringr::str_detect(method, "glmmtmb"))
+    } else if (stringr::str_detect(method, "glmmtmb")) {
       get_glmmtmb_trt_visit_num_ests(fit)
-    else if (stringr::str_detect(method, "nlme"))
+    } else if (stringr::str_detect(method, "nlme")) {
       get_nlme_trt_visit_num_ests(fit, dt)
-    else if (stringr::str_detect(method, "proc_mixed"))
+    } else if (stringr::str_detect(method, "proc_mixed")) {
       get_proc_mixed_trt_visit_num_ests(fit)
+    }
   } else {
     rep(NA, 10) # hard code 10, the number of visits in all simulations
   }
@@ -76,14 +77,15 @@ get_proc_mixed_convergence <- function(converged) {
 
 # general function for extracting convergence status from fits
 get_convergence <- function(method, fit, converged) {
-  if (stringr::str_detect(method, "mmrm"))
+  if (stringr::str_detect(method, "mmrm")) {
     get_mmrm_convergence(converged)
-  else if (stringr::str_detect(method, "glmmtmb"))
+  } else if (stringr::str_detect(method, "glmmtmb")) {
     get_glmmtmb_convergence(fit)
-  else if (stringr::str_detect(method, "nlme"))
+  } else if (stringr::str_detect(method, "nlme")) {
     get_nlme_convergence(converged)
-  else if (stringr::str_detect(method, "proc_mixed"))
+  } else if (stringr::str_detect(method, "proc_mixed")) {
     get_proc_mixed_convergence(converged)
+  }
 }
 
 
@@ -130,14 +132,15 @@ get_proc_mixed_trt_visit_num_ses <- function(fit) {
 # failed convergences should reflect this.
 get_trt_visit_num_ses <- function(method, fit, dt, converged) {
   if (get_convergence(method, fit, converged)) {
-    if (stringr::str_detect(method, "mmrm"))
+    if (stringr::str_detect(method, "mmrm")) {
       get_mmrm_trt_visit_num_ses(fit)
-    else if (stringr::str_detect(method, "glmmtmb"))
+    } else if (stringr::str_detect(method, "glmmtmb")) {
       get_glmmtmb_trt_visit_num_ses(fit)
-    else if (stringr::str_detect(method, "nlme"))
+    } else if (stringr::str_detect(method, "nlme")) {
       get_nlme_trt_visit_num_ses(fit, dt)
-    else if (stringr::str_detect(method, "proc_mixed"))
+    } else if (stringr::str_detect(method, "proc_mixed")) {
       get_proc_mixed_trt_visit_num_ses(fit)
+    }
   } else {
     rep(NA, 10) # hard code 10, the number of visits in all simulations
   }
@@ -191,14 +194,15 @@ get_proc_mixed_trt_visit_num_pvals <- function(fit) {
 # returned for failed convergences should reflect this.
 get_trt_visit_num_pvals <- function(method, fit, dt, converged) {
   if (get_convergence(method, fit, converged)) {
-    if (stringr::str_detect(method, "mmrm"))
+    if (stringr::str_detect(method, "mmrm")) {
       get_mmrm_trt_visit_num_pvals(fit)
-    else if (stringr::str_detect(method, "glmmtmb"))
+    } else if (stringr::str_detect(method, "glmmtmb")) {
       get_glmmtmb_trt_visit_num_pvals(fit)
-    else if (stringr::str_detect(method, "nlme"))
+    } else if (stringr::str_detect(method, "nlme")) {
       get_nlme_trt_visit_num_pvals(fit, dt)
-    else if (stringr::str_detect(method, "proc_mixed"))
+    } else if (stringr::str_detect(method, "proc_mixed")) {
       get_proc_mixed_trt_visit_num_pvals(fit)
+    }
   } else {
     rep(NA, 10) # hard code 10, the number of visits in all simulations
   }

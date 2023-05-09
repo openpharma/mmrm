@@ -1,10 +1,9 @@
 test_that("coconvergence_rate_rate_fun computes DGP-specific convergence rate", {
-
   ## generate some data from two different DGPs
   set.seed(510)
   no_eff_us <- rct_dgp_fun(
     n_obs = 50,
-    outcome_covar_mat= compute_unstructured_matrix()
+    outcome_covar_mat = compute_unstructured_matrix()
   )
   eff_us <- rct_dgp_fun(
     n_obs = 50,
@@ -111,13 +110,17 @@ test_that("coconvergence_rate_rate_fun computes DGP-specific convergence rate", 
     .dgp_name = rep(c("no_eff", "eff"), each = 4),
     .method_name = rep(c("mmrm", "glmmtmb", "nlme", "proc_mixed"), 2),
     n_obs = 50,
-    fit = list(mmrm_no_eff$fit, glmmtmb_no_eff$fit, nlme_no_eff$fit,
-               proc_mixed_no_eff$fit, mmrm_eff$fit, glmmtmb_eff$fit,
-               nlme_eff$fit, proc_mixed_eff$fit),
-    converged = list(NULL, NULL, nlme_no_eff$converged,
-                     proc_mixed_no_eff$converged,
-                     NULL, NULL, nlme_eff$converged,
-                     proc_mixed_eff$converged),
+    fit = list(
+      mmrm_no_eff$fit, glmmtmb_no_eff$fit, nlme_no_eff$fit,
+      proc_mixed_no_eff$fit, mmrm_eff$fit, glmmtmb_eff$fit,
+      nlme_eff$fit, proc_mixed_eff$fit
+    ),
+    converged = list(
+      NULL, NULL, nlme_no_eff$converged,
+      proc_mixed_no_eff$converged,
+      NULL, NULL, nlme_eff$converged,
+      proc_mixed_eff$converged
+    ),
     fit_time = rep(1, 8)
   )
 
@@ -132,5 +135,4 @@ test_that("coconvergence_rate_rate_fun computes DGP-specific convergence rate", 
 
   # ensure that the convergence_rate column is numeric
   expect_equal(is.numeric(convergence_rate_tbl$convergence_rate), TRUE)
-
 })

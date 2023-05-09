@@ -18,15 +18,13 @@
 #' @return A fitted glmmTMB model object stored in a list. The fit time in
 #'   seconds in also included in this list
 glmmtmb_wrapper_fun <- function(
-  participant,
-  visit_num,
-  base_bcva,
-  strata,
-  trt,
-  bcva_change,
-  covar_type
-) {
-
+    participant,
+    visit_num,
+    base_bcva,
+    strata,
+    trt,
+    bcva_change,
+    covar_type) {
   ## assemble the vectors into a data.frame
   df <- assemble_df(
     participant,
@@ -44,7 +42,7 @@ glmmtmb_wrapper_fun <- function(
       fit <- glmmTMB::glmmTMB(
         formula = bcva_change ~ base_bcva + strata + trt * visit_num +
           cs(visit_num + 0 | participant),
-        dispformula = ~ 0,
+        dispformula = ~0,
         data = df
       ),
       times = 1L
@@ -54,23 +52,21 @@ glmmtmb_wrapper_fun <- function(
       fit <- glmmTMB::glmmTMB(
         formula = bcva_change ~ base_bcva + strata + trt * visit_num +
           us(visit_num + 0 | participant),
-        dispformula = ~ 0,
+        dispformula = ~0,
         data = df
       ),
       times = 1L
     )
-
-  } else if (covar_type == "toeph"){
+  } else if (covar_type == "toeph") {
     fit_time <- microbenchmark::microbenchmark(
       fit <- glmmTMB::glmmTMB(
         formula = bcva_change ~ base_bcva + strata + trt * visit_num +
           toep(visit_num + 0 | participant),
-        dispformula = ~ 0,
+        dispformula = ~0,
         data = df
       ),
       times = 1L
     )
-
   } else {
     stop("This covariance matrix is not supported by this wrapper function.")
   }
@@ -78,6 +74,5 @@ glmmtmb_wrapper_fun <- function(
   return(list(
     fit = fit,
     fit_time = fit_time$time / 1e9 # NOTE: time in seconds
-    ))
-
+  ))
 }

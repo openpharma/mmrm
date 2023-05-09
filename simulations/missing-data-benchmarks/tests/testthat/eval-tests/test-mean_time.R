@@ -11,5 +11,4 @@ test_that("mean_time_fun computes the mean fit time", {
   mean_times_tbl <- mean_time_fun(fit_results)
 
   expect_equal(mean_times_tbl$mean_time, c(10, 2, 10))
-
 })

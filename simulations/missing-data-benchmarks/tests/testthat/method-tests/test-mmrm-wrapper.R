@@ -2,7 +2,6 @@ test_that(paste(
   "mmrm_wrapper_fun produces treatment effect estimates close to ground truth",
   "in large samples with unstructured covariance matrix"
 ), {
-
   set.seed(61234)
   dgp_output <- rct_dgp_fun(
     n_obs = 10000,
@@ -26,7 +25,6 @@ test_that(paste(
   "mmrm_wrapper_fun produces treatment effect estimates close to ground truth",
   "in large samples with heterogeneous Toeplitz covariance matrix"
 ), {
-
   set.seed(61234)
   dgp_output <- rct_dgp_fun(
     n_obs = 10000,
@@ -50,7 +48,6 @@ test_that(paste(
   "mmrm_wrapper_fun produces treatment effect estimates close to ground truth",
   "in large samples with heterogeneous compound symmetry covariance matrix"
 ), {
-
   set.seed(61234)
   dgp_output <- rct_dgp_fun(
     n_obs = 10000,
@@ -74,7 +71,6 @@ test_that(paste(
 test_that(paste(
   "mmrm_wrapper_fun produces a fit time estimate"
 ), {
-
   set.seed(61234)
   dgp_output <- rct_dgp_fun(
     n_obs = 10000,
