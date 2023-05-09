@@ -20,19 +20,19 @@
 #'   this element is `NULL`.
 #'
 #' @keywords internal
-h_mmrm_tmb_formula_parts <- function(formula,
+h_mmrm_tmb_formula_parts <- function(
+    formula,
     covariance = as.cov_struct(formula, warn_partial = FALSE)) {
-
   assert_formula(formula)
   assert_true(identical(length(formula), 3L))
 
-  model_formula <- drop_covariance_terms(formula)
+  model_formula <- h_drop_covariance_terms(formula)
 
   structure(
     list(
       formula = formula,
       model_formula = model_formula,
-      full_formula = add_covariance_variable_terms(model_formula, covariance),
+      full_formula = h_add_covariance_terms(model_formula, covariance),
       cov_type = tmb_cov_type(covariance),
       is_spatial = covariance$type == "sp_exp",
       visit_var = covariance$visits,
@@ -55,9 +55,11 @@ h_mmrm_tmb_formula_parts <- function(formula,
 #'   to full rank `x_matrix` and remaining coefficients will be missing as per
 #'   `x_cols_aliased`. Otherwise the function fails for rank deficient design matrices.
 #' @param drop_visit_levels (`flag`)\cr whether to drop levels for visit variable, if visit variable is a factor.
+#' @param full_frame (`data.frame`)\cr which contains all used variables in `formula_parts`.
 #'
 #' @return List of class `mmrm_tmb_data` with elements:
 #' - `full_frame`: `data.frame` with `n` rows containing all variables needed in the model.
+#' - `data`: `data.frame` of input dataset.
 #' - `x_matrix`: `matrix` with `n` rows and `p` columns specifying the overall design matrix.
 #' - `x_cols_aliased`: `logical` with potentially more than `p` elements indicating which
 #'      columns in the original design matrix have been left out to obtain a full rank
@@ -90,7 +92,8 @@ h_mmrm_tmb_data <- function(formula_parts,
                             weights,
                             reml,
                             accept_singular,
-                            drop_visit_levels) {
+                            drop_visit_levels,
+                            full_frame) {
   assert_class(formula_parts, "mmrm_tmb_formula_parts")
   assert_data_frame(data)
   varname <- formula_parts[grepl("_var", names(formula_parts))]
@@ -123,13 +126,26 @@ h_mmrm_tmb_data <- function(formula_parts,
     }
     order(data[[formula_parts$subject_var]], data[[formula_parts$visit_var]])
   }
+  if (identical(formula_parts$is_spatial, FALSE)) {
+    h_confirm_large_levels(length(levels(data[[formula_parts$visit_var]])))
+  }
   data <- data[data_order, ]
   weights <- weights[data_order]
   data <- data.frame(data, weights)
   # weights is always the last column
   weights_name <- colnames(data)[ncol(data)]
+  if (!identical(getOption("na.action"), "na.omit")) {
+    warning(
+      "NA values will always be removed regardless of na.action in options."
+    )
+  }
   full_frame <- eval(
-    bquote(stats::model.frame(formula_parts$full_formula, data = data, weights = .(as.symbol(weights_name))))
+    bquote(stats::model.frame(
+      formula_parts$full_formula,
+      data = data,
+      weights = .(as.symbol(weights_name)),
+      na.action = stats::na.omit
+    ))
   )
   full_frame <- droplevels(full_frame, except = formula_parts$visit_var)
   if (drop_visit_levels && !formula_parts$is_spatial && is.factor(full_frame[[formula_parts$visit_var]])) {
@@ -194,6 +210,7 @@ h_mmrm_tmb_data <- function(formula_parts,
   structure(
     list(
       full_frame = full_frame,
+      data = data,
       x_matrix = x_matrix,
       x_cols_aliased = x_cols_aliased,
       coordinates = coordinates_matrix,
@@ -367,15 +384,12 @@ h_mmrm_tmb_extract_cov <- function(tmb_report, tmb_data, visit_var, is_spatial) 
 #' @keywords internal
 h_mmrm_tmb_fit <- function(tmb_object,
                            tmb_opt,
-                           data,
-                           weights,
                            formula_parts,
                            tmb_data) {
   assert_list(tmb_object)
   assert_subset(c("fn", "gr", "par", "he"), names(tmb_object))
   assert_list(tmb_opt)
   assert_subset(c("par", "objective", "convergence", "message"), names(tmb_opt))
-  assert_data_frame(data)
   assert_class(formula_parts, "mmrm_tmb_formula_parts")
   assert_class(tmb_data, "mmrm_tmb_data")
 
@@ -402,8 +416,8 @@ h_mmrm_tmb_fit <- function(tmb_object,
       theta_vcov = theta_vcov,
       neg_log_lik = tmb_opt$objective,
       formula_parts = formula_parts,
-      data = data,
-      weights = weights,
+      data = tmb_data$data,
+      weights = tmb_data$weights_vector,
       reml = as.logical(tmb_data$reml),
       opt_details = tmb_opt[opt_details_names],
       tmb_object = tmb_object,
@@ -433,6 +447,7 @@ h_mmrm_tmb_fit <- function(tmb_object,
 #'   the provided formula.
 #' @param control (`mmrm_control`)\cr list of control options produced by
 #'   [mmrm_control()].
+#' @inheritParams fit_single_optimizer
 #'
 #' @return List of class `mmrm_tmb`, see [h_mmrm_tmb_fit()] for details.
 #'
@@ -458,18 +473,29 @@ fit_mmrm <- function(formula,
                      weights,
                      reml = TRUE,
                      covariance = NULL,
+                     tmb_data,
+                     formula_parts,
                      control = mmrm_control()) {
-  covariance <- reconcile_cov_struct(formula, covariance)
-  formula_parts <- h_mmrm_tmb_formula_parts(formula, covariance)
+  if (missing(formula_parts) || missing(tmb_data)) {
+    covariance <- h_reconcile_cov_struct(formula, covariance)
+    formula_parts <- h_mmrm_tmb_formula_parts(formula, covariance)
 
-  assert_class(control, "mmrm_control")
-  assert_list(control$optimizers, min.len = 1)
-  assert_numeric(weights, any.missing = FALSE)
-  assert_true(all(weights > 0))
-  tmb_data <- h_mmrm_tmb_data(
-    formula_parts, data, weights, reml,
-    accept_singular = control$accept_singular, drop_visit_levels = control$drop_visit_levels
-  )
+    if (!formula_parts$is_spatial && !is.factor(data[[formula_parts$visit_var]])) {
+      stop("Time variable must be a factor for non-spatial covariance structures")
+    }
+
+    assert_class(control, "mmrm_control")
+    assert_list(control$optimizers, min.len = 1)
+    assert_numeric(weights, any.missing = FALSE)
+    assert_true(all(weights > 0))
+    tmb_data <- h_mmrm_tmb_data(
+      formula_parts, data, weights, reml,
+      accept_singular = control$accept_singular, drop_visit_levels = control$drop_visit_levels
+    )
+  } else {
+    assert_class(tmb_data, "mmrm_tmb_data")
+    assert_class(formula_parts, "mmrm_tmb_formula_parts")
+  }
   tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = control$start, n_groups = tmb_data$n_groups)
 
   tmb_object <- TMB::MakeADFun(
@@ -500,20 +526,9 @@ fit_mmrm <- function(formula,
     tmb_opt$objective <- tmb_opt$value
     tmb_opt$value <- NULL
   }
-  fit <- h_mmrm_tmb_fit(tmb_object, tmb_opt, data, weights, formula_parts, tmb_data)
+  fit <- h_mmrm_tmb_fit(tmb_object, tmb_opt, formula_parts, tmb_data)
   h_mmrm_tmb_check_conv(tmb_opt, fit)
-
-  fun_call <- match.call()
-  fun_call$formula <- eval(formula_parts$formula)
-  fun_call$data <- ifelse(
-    !is.null(attr(data, which = "dataname")),
-    attr(data, which = "dataname"),
-    toString(match.call()$data)
-  )
-  weights_str <- attr(weights, which = "dataname")
-  if (!is.null(weights_str)) {
-    fun_call$weights <- weights_str
-  }
-  fit$call <- fun_call
+  fit$call <- match.call()
+  fit$call$formula <- formula_parts$formula
   fit
 }

@@ -1,5 +1,6 @@
 adh
 aic
+al
 alessandro
 Alessandro
 Annalen
@@ -11,6 +12,7 @@ ast
 AstraZeneca
 aut
 AVISIT
+bbolker
 bilinearen
 biocViews
 Biometric
@@ -65,6 +67,7 @@ Eigen
 eigen
 emmeans
 eprint
+et
 expiratory
 fev
 FEV
@@ -139,8 +142,10 @@ md
 mmrm
 MMRM
 MMRMs
+na
 nabla
 navbar
+ne
 newcommand
 nlminb
 noci
@@ -168,6 +173,7 @@ referece
 reml
 rightarrow
 Rmarkdown
+Rmd
 roche
 Roxygen
 roxygen
@@ -219,12 +225,14 @@ varepsilon
 varphi
 vcov
 vdots
+vectorMixed
 Veränderlichen
 VignetteBuilder
 VIS
 VISITN
 von
 WIP
+wls
 WLS
 www
 yaml

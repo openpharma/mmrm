@@ -41,21 +41,42 @@ fitted.mmrm_tmb <- function(object, ...) {
 }
 
 #' @describeIn mmrm_tmb_methods obtains the model frame.
-#' @param full (`flag`)\cr whether to include subject, visit and weight variables.
+#' @param exclude (`character`)\cr names of variable to exclude.
+#' @param full (`flag`) indicator whether to return full model frame (deprecated).
 #' @importFrom stats model.frame
 #' @exportS3Method
+#'
+#' @details
+#' `exclude` argument controls the variables the returned model frame will exclude.
+#' Possible options are "subject_var", "visit_var" and "group_var", representing the
+#' subject variable, visit variable or group variable.
+#'
 #' @examples
 #' # Model frame:
 #' model.frame(object)
-#' model.frame(object, full = TRUE)
-model.frame.mmrm_tmb <- function(formula, full = FALSE, ...) {
-  assert_flag(full)
-  if (full) {
+#' model.frame(object, exclude = "subject_var")
+model.frame.mmrm_tmb <- function(formula, exclude = "subject_var", full, ...) {
+  if (!missing(full) && identical(full, TRUE)) {
+    lifecycle::deprecate_warn("0.3", "model.frame.mmrm_tmb(full)")
+    exclude <- NULL
+  }
+  assert_subset(exclude, c("subject_var", "visit_var", "group_var"))
+  dots <- list(...)
+  if (!identical(h_default_value(dots$na.action, getOption("na.action")), "na.omit")) {
+    warning("na.action is always set to `na.omit` for `mmrm`!")
+  }
+  if (!is.null(dots$subset) || !is.null(dots$weights)) {
+    warning("subset and weights are not valid arguments for `mmrm` models.")
+  }
+  if (is.null(dots$data) && length(exclude) == 0L) {
     formula$tmb_data$full_frame
   } else {
+    drop_vars <- unlist(formula$formula_parts[exclude])
+    new_formula <- h_drop_terms(formula$formula_parts$full_formula, drop_vars)
     model.frame(
-      formula = formula$formula_parts$model_formula,
-      data = formula$tmb_data$full_frame
+      formula = new_formula,
+      data = h_default_value(dots$data, formula$data),
+      na.action = "na.omit"
     )
   }
 }
@@ -294,7 +315,6 @@ h_residuals_normalized <- function(object, resids_unscaled) {
 
   lower_chol_list <- if (component(object, "n_groups") == 1) {
     lapply(seq_along(subject_list), function(x) {
-
       weighted_cov <- object$cov[subject_list[[x]]$time, subject_list[[x]]$time] /
         sqrt(tcrossprod(matrix(subject_list[[x]]$weights, ncol = 1)))
 
