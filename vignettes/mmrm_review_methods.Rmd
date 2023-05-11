@@ -1258,7 +1258,8 @@ it's convergence issues stem from something other than the missing observations.
 Note that the default optimization schemes are used for each method; these
 schemes can be modified to potentially improve convergence rates.
 
-A more comprehensive simulation study using similar DGPs is outlined in the
+A more comprehensive simulation study using data-generating processes similar to
+the one used here is outlined in the
 [`simulations/missing-data-benchmarks`](https://github.com/openpharma/mmrm/tree/main/simulations/missing-data-benchmarks)
 subdirectory. In addition to assessing the effect of missing data on software
 convergence rates, we also evaluate these methods' fit times and empirical bias,

@@ -26,6 +26,7 @@ of 36 DGPs are considered.
 One hundred replicates of 200, 400 and 600 observations, evenly split across
 treatment arms, were drawn from each of these DGPs. The following MMRM estimators
 were then applied:
+
 - `mmrm::mmrm()` with heterogeneous compound symmetry, heterogeneous Toeplitz or
   unstructured repeated measures covariance.
 - `glmmTMB::glmmTMB()` with heterogeneous compound symmetry, heterogeneous
@@ -38,6 +39,7 @@ were then applied:
 
 The following empirical metrics and operating characteristics were then
 evaluated:
+
 - Bias: The empirical bias of the treatment effect estimators at each visit.
 - Variance: The empirical variance of the treatment effect estimators at each
   visit.
