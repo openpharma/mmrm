@@ -1,4 +1,3 @@
-
 # load required libraries
 library(simChef)
 library(mmrm)
@@ -12,7 +11,7 @@ library(tidyr)
 library(emmeans)
 
 # source the R scripts
-sim_functions_files = list.files(
+sim_functions_files <- list.files(
   c("R/dgp", "R/method", "R/eval", "R/viz"),
   pattern = "*.R$", full.names = TRUE, ignore.case = TRUE
 )
@@ -146,7 +145,8 @@ experiment <- create_experiment(
   add_dgp(low_miss_small_effect_us_dgp, name = "low_miss_small_effect_us") %>%
   add_dgp(low_miss_small_effect_csh_dgp, name = "low_miss_small_effect_csh") %>%
   add_dgp(
-    low_miss_small_effect_toeph_dgp, name = "low_miss_small_effect_toeph"
+    low_miss_small_effect_toeph_dgp,
+    name = "low_miss_small_effect_toeph"
   ) %>%
   add_vary_across(
     .dgp = c(
@@ -158,9 +158,9 @@ experiment <- create_experiment(
     ),
     n_obs = c(125, 250)
   ) %>%
-  add_method(mmrm_us_meth, name = "mmrm_us")  %>%
+  add_method(mmrm_us_meth, name = "mmrm_us") %>%
   add_method(mmrm_csh_meth, name = "mmrm_csh") %>%
-  add_method(mmrm_toeph_meth, name = "mmrm_toeph")  %>%
+  add_method(mmrm_toeph_meth, name = "mmrm_toeph") %>%
   add_method(glmmtmb_us_meth, name = "glmmtmb_us") %>%
   add_method(glmmtmb_csh_meth, name = "glmmtmb_csh") %>%
   add_method(glmmtmb_toeph_meth, name = "glmmtmb_toeph") %>%

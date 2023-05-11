@@ -1,17 +1,19 @@
 # A function for plotting any given meal's empirical type 1 rate results.
 type_1_error_rate_plot_fun <- function(eval_results) {
-
   ## extract the bias tibble, fix variable names for exposition
   t1_err_tbl <- eval_results$type_1_error_rate %>%
     mutate(
       coefficient_num = as.numeric(stringr::str_extract(coefficient, "[0-9].")),
       parameter = paste("Visit", coefficient_num),
       parameter = factor(parameter,
-                         levels = paste("Visit", seq_len(10))),
+        levels = paste("Visit", seq_len(10))
+      ),
       true_covar = ifelse(stringr::str_detect(.dgp_name, "_us"),
-                          "Unstructured",
-                          ifelse(stringr::str_detect(.dgp_name, "_csh"),
-                                 "Comp. Sym. (Het.)", "Toeplitz (Hom.)"))
+        "Unstructured",
+        ifelse(stringr::str_detect(.dgp_name, "_csh"),
+          "Comp. Sym. (Het.)", "Toeplitz (Hom.)"
+        )
+      )
     )
 
   ## plot the type-1 error rates

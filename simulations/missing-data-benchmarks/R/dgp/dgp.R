@@ -8,13 +8,12 @@
 # simulated trial data. This is because simChef requires DGP functions to return
 # list objects.
 rct_dgp_fun <- function(
-  n_obs,
-  outcome_covar_mat,
-  trt_coef = 0,
-  visit_coef = 0.25,
-  trt_visit_coef = 0,
-  missingness = NULL
-) {
+    n_obs,
+    outcome_covar_mat,
+    trt_coef = 0,
+    visit_coef = 0.25,
+    trt_visit_coef = 0,
+    missingness = NULL) {
   # generate the covariates
   covars_df <- generate_covariates(
     n_obs = n_obs, n_visits = nrow(outcome_covar_mat)

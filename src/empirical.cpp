@@ -91,6 +91,7 @@ List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, Nume
   matrix<double> gtvg = g.transpose() * g;
   for (int r = 0; r < n_groups; r++) {
     delete derivatives_by_group[r];
+    derivatives_by_group.erase(r);
   }
   // beta_vcov already take gi into consideration;
   matrix<double> ret = beta_vcov_matrix * meat * beta_vcov_matrix;

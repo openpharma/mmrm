@@ -17,15 +17,13 @@
 #' @return A fitted mmrm model object stored in a list. This lists also includes
 #'   an indicator for convergence status, and the fit time in seconds.
 mmrm_wrapper_fun <- function(
-  participant,
-  visit_num,
-  base_bcva,
-  strata,
-  trt,
-  bcva_change,
-  covar_type
-) {
-
+    participant,
+    visit_num,
+    base_bcva,
+    strata,
+    trt,
+    bcva_change,
+    covar_type) {
   ## assemble the vectors into a data.frame
   df <- assemble_df(
     participant,
@@ -53,7 +51,6 @@ mmrm_wrapper_fun <- function(
       ),
       times = 1L
     )
-
   } else if (covar_type == "csh") {
     fit_time <- microbenchmark::microbenchmark(
       fit <- safe_mmrm(
@@ -63,7 +60,6 @@ mmrm_wrapper_fun <- function(
       ),
       times = 1L
     )
-
   } else if (covar_type == "toeph") {
     fit_time <- microbenchmark::microbenchmark(
       fit <- safe_mmrm(
@@ -73,7 +69,6 @@ mmrm_wrapper_fun <- function(
       ),
       times = 1L
     )
-
   } else {
     stop("This covariance matrix is not supported by this wrapper function.")
   }

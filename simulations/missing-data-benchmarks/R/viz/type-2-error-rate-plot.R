@@ -1,23 +1,28 @@
 # A function for plotting any given meal's empirical type 2 rate results.
 type_2_error_rate_plot_fun <- function(eval_results) {
-
   ## extract the bias tibble, fix variable names for exposition
   t2_err_tbl <- eval_results$type_2_error_rate %>%
     mutate(
       coefficient_num = as.numeric(stringr::str_extract(coefficient, "[0-9].")),
       parameter = paste("Visit", coefficient_num),
       parameter = factor(parameter,
-                         levels = paste("Visit", seq_len(10))),
+        levels = paste("Visit", seq_len(10))
+      ),
       true_covar = ifelse(stringr::str_detect(.dgp_name, "_us"),
-                          "Unstructured",
-                          ifelse(stringr::str_detect(.dgp_name, "_csh"),
-                                 "Comp. Sym. (Het.)", "Toeplitz (Hom.)")),
+        "Unstructured",
+        ifelse(stringr::str_detect(.dgp_name, "_csh"),
+          "Comp. Sym. (Het.)", "Toeplitz (Hom.)"
+        )
+      ),
       effect_size = ifelse(stringr::str_detect(.dgp_name, "no_effect"),
-                           "No Effect",
-                           ifelse(stringr::str_detect(.dgp_name, "small_effect"),
-                                  "Small Effect", "Moderate Effect")),
+        "No Effect",
+        ifelse(stringr::str_detect(.dgp_name, "small_effect"),
+          "Small Effect", "Moderate Effect"
+        )
+      ),
       effect_size = factor(
-        effect_size, levels = c("No Effect", "Small Effect", "Moderate Effect")
+        effect_size,
+        levels = c("No Effect", "Small Effect", "Moderate Effect")
       )
     )
 

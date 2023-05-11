@@ -1,5 +1,5 @@
 #include "covariance.h"
-
+#include "chol_cache.h"
 // Definition:
 //
 // Y_i = X_i * beta + epsilon_i, i = 1, ..., n_subjects
@@ -59,48 +59,38 @@ Type objective_function<Type>::operator() ()
   int theta_one_group_size = theta.size() / n_groups;
   // Convert is_spatial_int to bool.
   bool is_spatial = (is_spatial_int == 1);
+  // Diagonal of weighted covariance
+  vector<Type> diag_cov_inv_sqrt(x_matrix.rows());
   // Create the lower triangular Cholesky factor of the visit x visit covariance matrix.
-  int dim_cov_mat;
-  if (is_spatial) {
-    dim_cov_mat = 2;
-  } else {
-    dim_cov_mat = n_visits;
+  std::map<int, lower_chol_base<Type>*> chols_by_group;
+  for (int r = 0; r < n_groups; r++) {
+    // in loops using new keyword is required so that the objects stays on the heap
+    // otherwise this will be destroyed and you will get unexpected result
+    if (is_spatial) {
+      chols_by_group[r] = new lower_chol_spatial<Type>(theta.segment(r * theta_one_group_size, theta_one_group_size), cov_type);
+    } else {
+      chols_by_group[r] = new lower_chol_nonspatial<Type>(theta.segment(r * theta_one_group_size, theta_one_group_size), n_visits, cov_type);
+    }
   }
-  matrix<Type> covariance_lower_chol = get_cov_lower_chol_grouped(theta, dim_cov_mat, cov_type, n_groups, is_spatial);
   // Go through all subjects and calculate quantities initialized above.
   for (int i = 0; i < n_subjects; i++) {
     // Start index and number of visits for this subject.
     int start_i = subject_zero_inds(i);
     int n_visits_i = subject_n_visits(i);
-    // Obtain Cholesky factor Li.
-    matrix<Type> Li;
+    std::vector<int> visit_i(n_visits_i);
+    matrix<Type> dist_i(n_visits_i, n_visits_i);
     if (!is_spatial) {
-      matrix<Type> lower_chol = covariance_lower_chol.block(subject_groups(i) * n_visits, 0,  n_visits, n_visits);
-      if (n_visits_i < n_visits) {
-        // This subject has less visits, therefore we need to recalculate the Cholesky factor.
-        vector<int> visits_i = visits_zero_inds.segment(start_i, n_visits_i);
-        Eigen::SparseMatrix<Type> sel_mat = get_select_matrix<Type>(visits_i, n_visits);
-        // Note: We cannot use triangular view for covariance_lower_chol here because sel_mat is sparse.
-        matrix<Type> Ltildei = sel_mat * lower_chol;
-        matrix<Type> cov_i = tcrossprod(Ltildei);
-        Eigen::LLT<Eigen::Matrix<Type,Eigen::Dynamic,Eigen::Dynamic> > cov_i_chol(cov_i);
-        Li = cov_i_chol.matrixL();
-      } else {
-        // This subject has full number of visits, therefore we can just take the original factor.
-        Li = lower_chol;
+      for (int i = 0; i < n_visits_i; i++) {
+        visit_i[i] = visits_zero_inds[i + start_i];
       }
     } else {
-      matrix<Type> distance_i = euclidean(matrix<Type>(coordinates.block(start_i, 0, n_visits_i, coordinates.cols())));
-      // Obtain Cholesky factor Li.
-      vector<Type> theta_i = theta.segment(subject_groups(i) * theta_one_group_size, theta_one_group_size);
-      Li = get_spatial_covariance_lower_chol(theta_i, distance_i, cov_type);
+      dist_i = euclidean(matrix<Type>(coordinates.block(start_i, 0, n_visits_i, coordinates.cols())));
     }
-
-
+    // Obtain Cholesky factor Li.
+    matrix<Type> Li = chols_by_group[subject_groups[i]]->get_chol(visit_i, dist_i);  
     // Calculate weighted Cholesky factor for this subject.
     Eigen::DiagonalMatrix<Type,Eigen::Dynamic,Eigen::Dynamic> Gi_inv_sqrt = weights_vector.segment(start_i, n_visits_i).cwiseInverse().sqrt().matrix().asDiagonal();
     Li = Gi_inv_sqrt * Li;
-
     // Calculate scaled design matrix and response vector for this subject.
     matrix<Type> Xi = x_matrix.block(start_i, 0, n_visits_i, x_matrix.cols());
     matrix<Type> XiTilde = Li.template triangularView<Eigen::Lower>().solve(Xi);
@@ -113,7 +103,8 @@ Type objective_function<Type>::operator() ()
     XtWY += XiTilde.transpose() * YiTilde;
     vector<Type> LiDiag = Li.diagonal();
     sum_log_det += sum(log(LiDiag));
-
+    // Cache the reciprocal of square root of diagonal of covariance
+    diag_cov_inv_sqrt.segment(start_i, n_visits_i) = vector<Type>(tcrossprod(Li).diagonal()).rsqrt();
     // Save stuff.
     x_mat_tilde.block(start_i, 0, n_visits_i, x_matrix.cols()) = XiTilde;
     y_vec_tilde.segment(start_i, n_visits_i) = YiTilde.col(0);
@@ -155,7 +146,11 @@ Type objective_function<Type>::operator() ()
   Identity.setIdentity();
   matrix<Type> beta_vcov = XtWX_decomposition.solve(Identity);
   REPORT(beta_vcov);
-
+  // normalized residual
+  REPORT(epsilonTilde);
+  // inverse square root of diagonal of covariance
+  REPORT(diag_cov_inv_sqrt);
+  matrix<Type> covariance_lower_chol = get_chol_and_clean(chols_by_group, is_spatial, n_visits);
   REPORT(covariance_lower_chol);
 
   return neg_log_lik;

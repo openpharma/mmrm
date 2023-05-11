@@ -4,12 +4,10 @@
 \alias{h_residuals_normalized}
 \title{Calculate normalized residuals}
 \usage{
-h_residuals_normalized(object, resids_unscaled)
+h_residuals_normalized(object)
 }
 \arguments{
 \item{object}{(\code{mmrm_tmb})\cr the fitted MMRM.}
-
-\item{resids_unscaled}{(\code{numeric})\cr the raw/response residuals.}
 }
 \value{
 Vector of residuals

@@ -88,17 +88,15 @@ data-generating function:
 #' @return A list containing the simulated participants' IDs, time point
 #'   indicators, outcomes, treatment assignments and baseline covariates.
 rct_dgp_fun <- function(
-  num_part = 1000,
-  num_rep_meas = 10,
-  fixed_int = 1,
-  fixed_trt = 1,
-  outcome_vars = seq_len(num_rep_meas),
-  outcome_cor = 0.5,
-  time_as_integer = FALSE,
-  pad_zeroes = FALSE,
-  explicit_time_levels = FALSE
-) {
-
+    num_part = 1000,
+    num_rep_meas = 10,
+    fixed_int = 1,
+    fixed_trt = 1,
+    outcome_vars = seq_len(num_rep_meas),
+    outcome_cor = 0.5,
+    time_as_integer = FALSE,
+    pad_zeroes = FALSE,
+    explicit_time_levels = FALSE) {
   ## form a balanced data.frame
   cov_df <- data.frame(
     participant = seq_len(num_part),
@@ -111,7 +109,7 @@ rct_dgp_fun <- function(
   df <- cov_df %>% dplyr::left_join(time_point_df, by = "participant")
 
   ## produce the model matrix for the fixed effects
-  fixed_model_mat <- model.matrix(~ trt, data = df)
+  fixed_model_mat <- model.matrix(~trt, data = df)
 
   ## define the repeated measures correlation structure, assuming
   ## heterogeneous compound symmetry
@@ -161,12 +159,10 @@ Next, we define a wrapper function for `PROC MIXED` relying on `sasr`:
 #' @return Estimated parameters of the repeated measures' covariance matrix.
 #'   These parameters are stored in a data.frame object.
 proc_mixed_fun <- function(
-  participant,
-  time,
-  y,
-  trt
-) {
-
+    participant,
+    time,
+    y,
+    trt) {
   ## assemble the vectors into a data.frame
   df <- data.frame(
     "participant" = participant,
@@ -194,7 +190,6 @@ proc_mixed_fun <- function(
 
   ## prepare the fit object
   return(list(fit = cov_mat_df))
-
 }
 ```
 

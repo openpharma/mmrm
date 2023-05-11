@@ -12,7 +12,7 @@ library(stringr)
 library(emmeans)
 
 # source the R scripts
-sim_functions_files = list.files(
+sim_functions_files <- list.files(
   c("R/dgp", "R/method", "R/eval", "R/viz"),
   pattern = "*.R$", full.names = TRUE, ignore.case = TRUE
 )

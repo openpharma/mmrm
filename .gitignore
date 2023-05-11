@@ -41,3 +41,5 @@ README.md
 .Rprofile
 /doc/
 /Meta/
+/vignettes/sascgf_personal.py
+simulations/chols/*chols

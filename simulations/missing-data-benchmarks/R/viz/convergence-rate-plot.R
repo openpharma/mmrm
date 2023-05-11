@@ -1,18 +1,22 @@
 # A function for plotting any given meal's convergence rate results.
 convergence_rate_plot_fun <- function(eval_results) {
-
   cr_tbl <- eval_results$convergence_rate %>%
     mutate(
       true_covar = ifelse(stringr::str_detect(.dgp_name, "_us"),
-                          "Unstructured",
-                          ifelse(stringr::str_detect(.dgp_name, "_csh"),
-                                 "Comp. Sym. (Het.)", "Toeplitz (Hom.)")),
+        "Unstructured",
+        ifelse(stringr::str_detect(.dgp_name, "_csh"),
+          "Comp. Sym. (Het.)", "Toeplitz (Hom.)"
+        )
+      ),
       effect_size = ifelse(stringr::str_detect(.dgp_name, "no_effect"),
-                           "No Effect",
-                           ifelse(stringr::str_detect(.dgp_name, "small_effect"),
-                                  "Small Effect", "Moderate Effect")),
+        "No Effect",
+        ifelse(stringr::str_detect(.dgp_name, "small_effect"),
+          "Small Effect", "Moderate Effect"
+        )
+      ),
       effect_size = factor(
-        effect_size, levels = c("No Effect", "Small Effect", "Moderate Effect")
+        effect_size,
+        levels = c("No Effect", "Small Effect", "Moderate Effect")
       )
     )
 
@@ -68,5 +72,4 @@ convergence_rate_plot_fun <- function(eval_results) {
     common.legend = TRUE,
     legend = "right"
   )
-
 }

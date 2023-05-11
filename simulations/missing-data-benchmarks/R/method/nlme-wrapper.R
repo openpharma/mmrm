@@ -18,15 +18,13 @@
 #'   indicator for the convergence status, the data on which gls was fit, and
 #'   the fit time in seconds.
 nlme_wrapper_fun <- function(
-  participant,
-  visit_num,
-  base_bcva,
-  strata,
-  trt,
-  bcva_change,
-  covar_type
-) {
-
+    participant,
+    visit_num,
+    base_bcva,
+    strata,
+    trt,
+    bcva_change,
+    covar_type) {
   ## assemble the vectors into a data.frame
   df <- assemble_df(
     participant,
@@ -54,7 +52,6 @@ nlme_wrapper_fun <- function(
       ),
       times = 1L
     )
-
   } else if (covar_type == "us") {
     fit_time <- microbenchmark::microbenchmark(
       fit <- safe_gls(
@@ -65,7 +62,6 @@ nlme_wrapper_fun <- function(
       ),
       times = 1L
     )
-
   } else {
     stop("This covariance matrix is not supported by this wrapper function.")
   }
@@ -79,5 +75,4 @@ nlme_wrapper_fun <- function(
     data = df,
     fit_time = fit_time$time / 1e9 # NOTE: time in seconds
   ))
-
 }

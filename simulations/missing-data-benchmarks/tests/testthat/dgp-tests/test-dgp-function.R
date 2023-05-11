@@ -22,22 +22,27 @@ test_that(paste(
   )
 
   expect_equal(
-    mmrm_fit$beta_est["trt1"], 0, tolerance = 0.05, ignore_attr = TRUE
+    mmrm_fit$beta_est["trt1"], 0,
+    tolerance = 0.05, ignore_attr = TRUE
   )
   expect_equal(
-    mmrm_fit$beta_est["trt1:visit_num2"], 0, tolerance = 0.05,
+    mmrm_fit$beta_est["trt1:visit_num2"], 0,
+    tolerance = 0.05,
     ignore_attr = TRUE
   )
   expect_equal(
-    mmrm_fit$beta_est["trt1:visit_num3"], 0, tolerance = 0.05,
+    mmrm_fit$beta_est["trt1:visit_num3"], 0,
+    tolerance = 0.05,
     ignore_attr = TRUE
   )
   expect_equal(
-    mmrm_fit$beta_est["trt1:visit_num4"], 0, tolerance = 0.05,
+    mmrm_fit$beta_est["trt1:visit_num4"], 0,
+    tolerance = 0.05,
     ignore_attr = TRUE
   )
   expect_equal(
-    mmrm_fit$beta_est["trt1:visit_num5"], 0, tolerance = 0.05,
+    mmrm_fit$beta_est["trt1:visit_num5"], 0,
+    tolerance = 0.05,
     ignore_attr = TRUE
   )
 })
@@ -69,22 +74,27 @@ test_that(paste(
   )
 
   expect_equal(
-    mmrm_fit$beta_est["trt1"] - 1.25, 0, tolerance = 0.1, ignore_attr = TRUE
+    mmrm_fit$beta_est["trt1"] - 1.25, 0,
+    tolerance = 0.1, ignore_attr = TRUE
   )
   expect_equal(
-    mmrm_fit$beta_est["trt1:visit_num2"] - 0.25, 0, tolerance = 0.1,
+    mmrm_fit$beta_est["trt1:visit_num2"] - 0.25, 0,
+    tolerance = 0.1,
     ignore_attr = TRUE
   )
   expect_equal(
-    mmrm_fit$beta_est["trt1:visit_num3"] - 0.50, 0, tolerance = 0.1,
+    mmrm_fit$beta_est["trt1:visit_num3"] - 0.50, 0,
+    tolerance = 0.1,
     ignore_attr = TRUE
   )
   expect_equal(
-    mmrm_fit$beta_est["trt1:visit_num4"] - 0.75, 0, tolerance = 0.1,
+    mmrm_fit$beta_est["trt1:visit_num4"] - 0.75, 0,
+    tolerance = 0.1,
     ignore_attr = TRUE
   )
   expect_equal(
-    mmrm_fit$beta_est["trt1:visit_num5"] - 1, 0, tolerance = 0.1,
+    mmrm_fit$beta_est["trt1:visit_num5"] - 1, 0,
+    tolerance = 0.1,
     ignore_attr = TRUE
   )
 })

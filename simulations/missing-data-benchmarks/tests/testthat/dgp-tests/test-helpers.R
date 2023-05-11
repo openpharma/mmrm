@@ -51,9 +51,11 @@ test_that(paste(
   "1, 4 and 9, and a correlation coefficient equal to 0.2"
 ), {
   true_matrix <- matrix(
-    c(1, 0.4, 0.6,
+    c(
+      1, 0.4, 0.6,
       0.4, 4, 1.2,
-      0.6, 1.2, 9),
+      0.6, 1.2, 9
+    ),
     nrow = 3, ncol = 3
   )
   csh_matrix <- compute_csh_matrix(vars = c(1, 4, 9), corr = 0.2)
@@ -86,7 +88,6 @@ test_that(paste(
   "missing_at_random() removes observations at random based on their baseline",
   "bcva values, strata, and the treatment-by-visit-number interacton"
 ), {
-
   library(dplyr)
 
   # generate some covariates data
@@ -124,5 +125,4 @@ test_that(paste(
     predict.glm(glm_fit, newdata = patient_obs) - true_prob_miss, 0,
     tolerance = 0.01, ignore_attr = TRUE
   )
-
 })
