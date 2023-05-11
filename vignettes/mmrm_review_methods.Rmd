@@ -1258,6 +1258,18 @@ it's convergence issues stem from something other than the missing observations.
 Note that the default optimization schemes are used for each method; these
 schemes can be modified to potentially improve convergence rates.
 
+A more comprehensive simulation study using data-generating processes similar to
+the one used here is outlined in the
+[`simulations/missing-data-benchmarks`](https://github.com/openpharma/mmrm/tree/main/simulations/missing-data-benchmarks)
+subdirectory. In addition to assessing the effect of missing data on software
+convergence rates, we also evaluate these methods' fit times and empirical bias,
+variance, 95% coverage rates, type I error rates and type II error rates. `mmrm`
+is found to be the most most robust software for fitting MMRMs in scenarios
+where a large proportion of patients are missing from the last time points.
+Additionally, `mmrm` has the fastest average fit times regardless of the amount
+of missingness. All implementations considered produce similar empirical biases,
+variances, 95% coverage rates, type I error rates and type II error rates.
+
 # Session Information
 
 ```{r session-info, echo=FALSE}
