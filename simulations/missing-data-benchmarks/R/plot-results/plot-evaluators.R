@@ -11,7 +11,8 @@ library(ggpubr)
 
 # source the R plotting scripts
 sim_functions_files <- list.files(
-  c("R/viz"), pattern = "*.R$", full.names = TRUE, ignore.case = TRUE
+  c("R/viz"),
+  pattern = "*.R$", full.names = TRUE, ignore.case = TRUE
 )
 sapply(sim_functions_files, source)
 source("R/plot-results/helpers.R")
