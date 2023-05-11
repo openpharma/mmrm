@@ -39,3 +39,5 @@ testthat-problems.rds
 README.md
 **/sascfg_personal.py
 .Rprofile
+/doc/
+/Meta/
