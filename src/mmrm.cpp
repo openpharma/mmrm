@@ -61,6 +61,7 @@ Type objective_function<Type>::operator() ()
   bool is_spatial = (is_spatial_int == 1);
   // Diagonal of weighted covariance
   vector<Type> diag_cov_inv_sqrt(x_matrix.rows());
+  // Cache of all Cholesky factors
   vector<matrix<Type>> cholesky_all(n_subjects);
   // Create the lower triangular Cholesky factor of the visit x visit covariance matrix.
   std::map<int, lower_chol_base<Type>*> chols_by_group;
@@ -150,8 +151,9 @@ Type objective_function<Type>::operator() ()
   REPORT(beta_vcov);
   // normalized residual
   REPORT(epsilonTilde);
-  // inverse square root of diagonal of covariance
+  // all Cholesky factors
   REPORT(cholesky_all);
+  // inverse square root of diagonal of covariance
   REPORT(diag_cov_inv_sqrt);
   matrix<Type> covariance_lower_chol = get_chol_and_clean(chols_by_group, is_spatial, n_visits);
   REPORT(covariance_lower_chol);
