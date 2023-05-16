@@ -61,6 +61,7 @@ Type objective_function<Type>::operator() ()
   bool is_spatial = (is_spatial_int == 1);
   // Diagonal of weighted covariance
   vector<Type> diag_cov_inv_sqrt(x_matrix.rows());
+  vector<matrix<Type>> cholesky_all(n_subjects);
   // Create the lower triangular Cholesky factor of the visit x visit covariance matrix.
   std::map<int, lower_chol_base<Type>*> chols_by_group;
   for (int r = 0; r < n_groups; r++) {
@@ -91,6 +92,7 @@ Type objective_function<Type>::operator() ()
     // Calculate weighted Cholesky factor for this subject.
     Eigen::DiagonalMatrix<Type,Eigen::Dynamic,Eigen::Dynamic> Gi_inv_sqrt = weights_vector.segment(start_i, n_visits_i).cwiseInverse().sqrt().matrix().asDiagonal();
     Li = Gi_inv_sqrt * Li;
+    cholesky_all(i) = Li;
     // Calculate scaled design matrix and response vector for this subject.
     matrix<Type> Xi = x_matrix.block(start_i, 0, n_visits_i, x_matrix.cols());
     matrix<Type> XiTilde = Li.template triangularView<Eigen::Lower>().solve(Xi);
@@ -149,6 +151,7 @@ Type objective_function<Type>::operator() ()
   // normalized residual
   REPORT(epsilonTilde);
   // inverse square root of diagonal of covariance
+  REPORT(cholesky_all);
   REPORT(diag_cov_inv_sqrt);
   matrix<Type> covariance_lower_chol = get_chol_and_clean(chols_by_group, is_spatial, n_visits);
   REPORT(covariance_lower_chol);
