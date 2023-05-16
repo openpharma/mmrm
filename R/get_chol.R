@@ -43,7 +43,8 @@ get_chol <- function(fit, data, weights, theta) {
     checkmate::assert_factor(data[[fit$formula_parts$group_var]], levels = fit_levels, .var.name = vn)
   }
   tmb_data <- h_mmrm_tmb_data(
-    fit$formula_parts, data = data, weights, identical(fit$tmb_data$reml, 1L),
+    fit$formula_parts,
+    data = data, weights, identical(fit$tmb_data$reml, 1L),
     accept_singular = TRUE, drop_visit_levels = FALSE
   )
   tmb_parameters <- h_mmrm_tmb_parameters(fit$formula_parts, tmb_data, start = theta, n_groups = tmb_data$n_groups)
