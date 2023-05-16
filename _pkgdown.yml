@@ -36,6 +36,7 @@ reference:
       - df_1d
       - df_md
       - component
+      - get_chol
   - title: Methods
     contents:
       - mmrm_methods
