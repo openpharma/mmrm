@@ -98,7 +98,6 @@ Collate:
     'data.R'
     'empirical.R'
     'fit.R'
-    'get_chol.R'
     'kenwardroger.R'
     'mmrm-methods.R'
     'mmrm-package.R'
