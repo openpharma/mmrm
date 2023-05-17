@@ -346,7 +346,7 @@ h_default_value <- function(x, y) {
 
 #' Convert Character to Factor Following Reference
 #'
-#' @param x (`character`)\cr or (`factor`) input.
+#' @param x (`character` or `factor`)\cr  input.
 #' @param ref (`factor`)\cr reference.
 #' @param var_name (`string`)\cr variable name of input `x`.
 #'
