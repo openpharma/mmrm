@@ -32,7 +32,7 @@ with new data, weights and theta.
 }
 \details{
 In \code{mmrm} call, missing values (in response or covariates) will be removed prior to model fitting.
-However, if we only requrire the Choleksy factors for each subject, it is
+However, if we only require the Cholesky factors for each subject, it is
 not necessary to remove NA values. The flag, \code{complete_case}, is used to decide whether the
 input data should follow a similar approach of removing NA values rows.
 }
