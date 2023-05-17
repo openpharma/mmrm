@@ -7,7 +7,7 @@
 h_factor_ref(x, ref, var_name = vname(x))
 }
 \arguments{
-\item{x}{(\code{character})\cr or (\code{factor}) input.}
+\item{x}{(\code{character} or \code{factor})\cr  input.}
 
 \item{ref}{(\code{factor})\cr reference.}
 
@@ -17,6 +17,6 @@ h_factor_ref(x, ref, var_name = vname(x))
 Convert Character to Factor Following Reference
 }
 \details{
-Use \code{ref} to convert x into factor with the same level.
+Use \code{ref} to convert \code{x} into factor with the same levels.
 }
 \keyword{internal}
