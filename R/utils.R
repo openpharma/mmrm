@@ -350,7 +350,7 @@ h_default_value <- function(x, y) {
 #' @param ref (`factor`)\cr reference.
 #' @param var_name (`string`)\cr variable name of input `x`.
 #'
-#' @details Use `ref` to convert x into factor with the same level.
+#' @details Use `ref` to convert `x` into factor with the same levels.
 #'
 #' @keywords internal
 h_factor_ref <- function(x, ref, var_name = vname(x)) {
