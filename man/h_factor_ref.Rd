@@ -16,3 +16,7 @@ h_factor_ref(x, ref, var_name = vname(x))
 \description{
 Convert Character to Factor Following Reference
 }
+\details{
+Use \code{ref} to convert x into factor with the same level.
+}
+\keyword{internal}
