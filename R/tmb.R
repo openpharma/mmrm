@@ -587,7 +587,7 @@ h_get_chol <- function(fit, theta = NULL, data = NULL, weights = NULL, complete_
     accept_singular = TRUE, drop_visit_levels = FALSE
   )
   tmb_data$n_groups <- fit$tmb_data$n_groups
-  tmb_data$subject_groups <- h_factor_ref(tmb_data$subject_groups, fit$tmb_data$full_frame[[group_var]])
+  tmb_data$subject_groups <- h_factor_ref(tmb_data$subject_groups, fit$tmb_data$subject_groups)
   tmb_parameters <- h_mmrm_tmb_parameters(fit$formula_parts, tmb_data, start = theta, n_groups = tmb_data$n_groups)
   tmb_object <- TMB::MakeADFun(
     data = tmb_data,

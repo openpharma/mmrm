@@ -355,7 +355,7 @@ h_default_value <- function(x, y) {
 #' @keywords internal
 h_factor_ref <- function(x, ref, var_name = vname(x)) {
   assert_factor(ref)
-  assert_class(x, c("character", "factor"))
+  assert_multi_class(x, c("character", "factor"))
   uni_values <- as.character(unique(x))
   assert_character(uni_values, .var.name = var_name)
   assert_subset(uni_values, levels(ref), .var.name = var_name)
