@@ -1786,7 +1786,7 @@ test_that("h_get_chol works correctly", {
   )
 })
 
-test_that("h_get_chol works correctly to provide cholesky on all visits(subjects have full visits)", {
+test_that("h_get_chol works correctly to provide cholesky on all visits (subjects have full visits)", {
   fit <- get_mmrm()
   new_theta <- seq_len(length(fit$theta_est)) / length(fit$theta_est)
   chols <- expect_silent(
