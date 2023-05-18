@@ -547,8 +547,8 @@ fit_mmrm <- function(formula,
 #' @details
 #' In `mmrm` call, missing values (in response or covariates) will be removed prior to model fitting.
 #' However, if we only require the Cholesky factors for each subject, it is
-#' not necessary to remove NA values. The flag, `complete_case`, is used to decide whether the
-#' input data should follow a similar approach of removing NA values rows.
+#' not necessary to remove `NA` values. The flag, `complete_case`, is used to decide whether the
+#' input data should follow a similar approach of removing `NA` values rows.
 #' @return  The `list` of Cholesky factors for all individuals and time points in the new `data`.
 #'
 #' @keywords internal
