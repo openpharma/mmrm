@@ -2,7 +2,7 @@
 % Please edit documentation in R/tmb.R
 \name{h_get_chol}
 \alias{h_get_chol}
-\title{Obtain Cholesky for new data and theta.}
+\title{Cholesky Factors for New Data and Variance Parameters}
 \usage{
 h_get_chol(
   fit,
@@ -15,7 +15,7 @@ h_get_chol(
 \arguments{
 \item{fit}{(\code{mmrm_fit})\cr produced by \code{\link[=mmrm]{mmrm()}}.}
 
-\item{theta}{(\code{numeric})\cr new theta estimates.}
+\item{theta}{(\code{numeric})\cr new variance parameter estimates.}
 
 \item{data}{(\code{data.frame})\cr input data frame.}
 
@@ -24,16 +24,16 @@ h_get_chol(
 \item{complete_case}{(\code{flag})\cr whether to use complete input \code{data}.}
 }
 \value{
-\code{list} of Cholesky factors.
+The \code{list} of Cholesky factors for all individuals and time points in the new \code{data}.
 }
 \description{
 Use a fitted model to obtain (weighted) Cholesky factors
-with new data, weights and theta.
+with new data, weights and \code{theta}.
 }
 \details{
 In \code{mmrm} call, missing values (in response or covariates) will be removed prior to model fitting.
 However, if we only require the Cholesky factors for each subject, it is
-not necessary to remove NA values. The flag, \code{complete_case}, is used to decide whether the
-input data should follow a similar approach of removing NA values rows.
+not necessary to remove \code{NA} values. The flag, \code{complete_case}, is used to decide whether the
+input data should follow a similar approach of removing \code{NA} values rows.
 }
 \keyword{internal}
