@@ -549,7 +549,7 @@ fit_mmrm <- function(formula,
 #' However, if we only require the Cholesky factors for each subject, it is
 #' not necessary to remove NA values. The flag, `complete_case`, is used to decide whether the
 #' input data should follow a similar approach of removing NA values rows.
-#' @return `list` of Cholesky factors.
+#' @return  The `list` of Cholesky factors for all individuals and time points in the new `data`.
 #'
 #' @keywords internal
 h_get_chol <- function(fit, theta = NULL, data = NULL, weights = NULL, complete_case = TRUE) {
