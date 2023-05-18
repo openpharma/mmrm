@@ -541,7 +541,7 @@ fit_mmrm <- function(formula,
 #' @param fit (`mmrm_fit`)\cr produced by [mmrm()].
 #' @param data (`data.frame`)\cr input data frame.
 #' @param weights (`numeric`)\cr vector of weights.
-#' @param theta (`numeric`)\cr new theta estimates.
+#' @param theta (`numeric`)\cr new variance parameter estimates.
 #' @param complete_case (`flag`)\cr whether to use complete input `data`.
 #'
 #' @details
