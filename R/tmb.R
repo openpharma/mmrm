@@ -579,8 +579,8 @@ h_get_chol <- function(fit, theta = NULL, data = NULL, weights = NULL, complete_
     vn <- paste(vname(data), fit$formula_parts$group_var, sep = "$")
     data[[group_var]] <- h_factor_ref(data[[group_var]], fit$tmb_data$full_frame[[group_var]], vn)
   }
-  # h_mmrm_tmb_data drops levels for group var, leading to incorrect number of groups (and the group levels)
-  # so here we add the levels back
+  # `h_mmrm_tmb_data` drops levels for the group variable, leading to incorrect number of groups (and the group levels).
+  # Therefore, here we add the levels back.
   tmb_data <- h_mmrm_tmb_data(
     h_mmrm_tmb_formula_parts(as.formula("rep(1, nrow(data))~1"), as.cov_struct(fit$formula_parts$formula)),
     data = data, weights, identical(fit$tmb_data$reml, 1L),
