@@ -533,7 +533,7 @@ fit_mmrm <- function(formula,
   fit
 }
 
-#' Obtain Cholesky for new data and theta.
+#' Cholesky Factors for New Data and Variance Parameters
 #'
 #' @description Use a fitted model to obtain (weighted) Cholesky factors
 #' with new data, weights and theta.
