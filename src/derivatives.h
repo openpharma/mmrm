@@ -5,13 +5,14 @@ using std::string;
 // Struct chol to obtain the cholesky factor given theta.
 // The reason to have it is that we need a functor that need only theta to
 // obtain the derivatives from autodiff.
+// Only non-spatial covariance structure here.
 struct chol {
   int dim_cov_mat;
   string cov_type;
   chol(int dim, string cov): dim_cov_mat(dim), cov_type(cov) {};
   template <class T>
     vector<T> operator() (vector<T> &theta) {
-      return get_cov_lower_chol_grouped(theta, this->dim_cov_mat, this->cov_type, 1, false).vec();
+      return get_covariance_lower_chol(theta, this->dim_cov_mat, this->cov_type).vec();
     }
 };
 // Struct chol_jacobian that has jacobian of the cholesky factor given theta.
@@ -100,9 +101,7 @@ struct derivatives_nonspatial: public derivatives_base<Type> {
   // Constructor from theta, n_visits and cov_type, and cache full_visits values.
   derivatives_nonspatial(vector<Type> theta, int n_visits, std::string cov_type): cov_type(cov_type), n_visits(n_visits), full_visit(std::vector<int>(n_visits)) {
     this->theta = theta;
-    for (int i = 0; i < n_visits; i++) {
-      this->full_visit[i] = i;
-    }
+    std::iota(std::begin(this->full_visit), std::end(this->full_visit), 0);
     this->n_theta = theta.size();
     std::map<std::string, tmbutils::matrix<Type>> allret = derivatives<Type>(this->n_visits, this->cov_type, this->theta);
     matrix<Type> sigma_d1 = allret["derivative1"];
@@ -111,7 +110,7 @@ struct derivatives_nonspatial: public derivatives_base<Type> {
     this->chol_full = l;
     this->sigmad1_cache[this->full_visit] = sigma_d1;
     this->sigmad2_cache[this->full_visit] = sigma_d2;
-    this->sigma_cache[this->full_visit] = allret["chol"] * allret["chol"].transpose();
+    this->sigma_cache[this->full_visit] = tcrossprod(l, true);
     this->inverse_cache[this->full_visit] = (this->sigma_cache[this->full_visit]).inverse();
     this->sel_mat_cache[this->full_visit] = get_select_matrix<Type>(this->full_visit, this->n_visits);
   }
@@ -126,8 +125,9 @@ struct derivatives_nonspatial: public derivatives_base<Type> {
   }
   // Cache and return the first order derivatives using select matrix.
   matrix<Type> get_sigma_derivative1(std::vector<int> visits, matrix<Type> dist) override {
-     if (this->sigmad1_cache.count(visits) > 0) {
-      return this->sigmad1_cache[visits];
+    auto target = this->sigmad1_cache.find(visits);
+     if (target != this->sigmad1_cache.end()) {
+      return target->second;
     } else {
       Eigen::SparseMatrix<Type> sel_mat = this->get_sel_mat(visits);
       int n_visists_i = visits.size();
@@ -141,8 +141,9 @@ struct derivatives_nonspatial: public derivatives_base<Type> {
   }
   // Cache and return the second order derivatives using select matrix.
   matrix<Type> get_sigma_derivative2(std::vector<int> visits, matrix<Type> dist) override {
-     if (this->sigmad2_cache.count(visits) > 0) {
-      return this->sigmad2_cache[visits];
+    auto target = this->sigmad2_cache.find(visits);
+     if (target != this->sigmad2_cache.end()) {
+      return target->second;
     } else {
       Eigen::SparseMatrix<Type> sel_mat = this->get_sel_mat(visits);
       int n_visists_i = visits.size();
@@ -157,8 +158,9 @@ struct derivatives_nonspatial: public derivatives_base<Type> {
   }
   // Cache and return the sigma using select matrix.
   matrix<Type> get_sigma(std::vector<int> visits, matrix<Type> dist) override {
-     if (this->sigma_cache.count(visits) > 0) {
-      return this->sigma_cache[visits];
+    auto target = this->sigma_cache.find(visits);
+     if (target != this->sigma_cache.end()) {
+      return target->second;
     } else {
       Eigen::SparseMatrix<Type> sel_mat = this->get_sel_mat(visits);
       matrix<Type> ret = sel_mat * this->sigma_cache[this->full_visit] * sel_mat.transpose();
@@ -168,13 +170,11 @@ struct derivatives_nonspatial: public derivatives_base<Type> {
   }
   // Cache and return the lower cholesky factor of inverse of sigma using select matrix.
   matrix<Type> get_inverse_chol(std::vector<int> visits, matrix<Type> dist) override {
-    if (this->inverse_chol_cache.count(visits) > 0) {
-      return this->inverse_chol_cache[visits];
+    auto target = this->inverse_chol_cache.find(visits);
+     if (target != this->inverse_chol_cache.end()) {
+      return target->second;
     } else {
-      Eigen::SparseMatrix<Type> sel_mat = this->get_sel_mat(visits);
-      matrix<Type> Ltildei = sel_mat * this->chol_full;
-      matrix<Type> cov_i = tcrossprod(Ltildei, true);
-      auto sigmainv = cov_i.inverse();
+      matrix<Type> sigmainv = this->get_inverse(visits, dist);
       Eigen::LLT<Eigen::Matrix<Type,Eigen::Dynamic,Eigen::Dynamic> > sigma_inv_chol(sigmainv);
       matrix<Type> Li = sigma_inv_chol.matrixL();
       this->inverse_chol_cache[visits] = Li;
@@ -183,23 +183,21 @@ struct derivatives_nonspatial: public derivatives_base<Type> {
   }
   // Cache and return the inverse of sigma using select matrix.
   matrix<Type> get_inverse(std::vector<int> visits, matrix<Type> dist) override {
-    if (this->inverse_cache.count(visits) > 0) {
-      return this->inverse_cache[visits];
+    auto target = this->inverse_cache.find(visits);
+     if (target != this->inverse_cache.end()) {
+      return target->second;
     } else {
-      Eigen::SparseMatrix<Type> sel_mat = this->get_sel_mat(visits);
-      matrix<Type> Ltildei = sel_mat * this->chol_full;
-      matrix<Type> cov_i = tcrossprod(Ltildei, true);
-      auto sigmainv = cov_i.inverse();
+      matrix<Type> sigmainv = this->get_sigma(visits, dist).inverse();
       this->inverse_cache[visits] = sigmainv;
       return sigmainv;
     }
   }
   // Cache and return the first order derivatives of inverse of sigma using select matrix.
   matrix<Type> get_inverse_derivative(std::vector<int> visits, matrix<Type> dist) override {
-    if (this->sigma_inverse_d1_cache.count(visits) > 0) {
-      return this->sigma_inverse_d1_cache[visits];
+    auto target = this->sigma_inverse_d1_cache.find(visits);
+     if (target != this->sigma_inverse_d1_cache.end()) {
+      return target->second;
     } else {
-      Eigen::SparseMatrix<Type> sel_mat = this->get_sel_mat(visits);
       auto sigma_d1 = this->get_sigma_derivative1(visits, dist);
       matrix<Type> sigma_inv_d1(sigma_d1.rows(), sigma_d1.cols());
       int n_visits_i = visits.size();
