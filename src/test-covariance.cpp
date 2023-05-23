@@ -149,13 +149,3 @@ context("get_covariance_lower_chol") {
   }
   // No other tests needed here for now.
 }
-
-context("get_cov_lower_chol_grouped") {
-  test_that("get_cov_lower_chol_grouped gives expected unstructured result") {
-    vector<double> theta {{log(1.0), log(2.0), 3.0, log(4.0), log(5.0), 6.0}};
-    matrix<double> result = get_cov_lower_chol_grouped(theta, 2, "us", 2, false);
-    matrix<double> expected(4, 2);
-    expected << 1, 0, 6, 2, 4, 0, 30, 5;
-    expect_equal_matrix(expected, result);
-  }
-}

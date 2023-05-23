@@ -1,7 +1,7 @@
 Type: Package
 Package: mmrm
 Title: Mixed Models for Repeated Measures
-Version: 0.2.2.9014
+Version: 0.2.2.9017
 Authors@R: c(
     person("Daniel", "Sabanes Bove", , "daniel.sabanes_bove@roche.com", role = c("aut", "cre")),
     person("Julia", "Dedic", , "julia.dedic@roche.com", role = "aut"),
@@ -54,14 +54,22 @@ Imports:
 Suggests:
     cli,
     clubSandwich,
+    clusterGeneration,
+    dplyr,
     emmeans (>= 1.6),
     estimability,
+    ggplot2,
+    glmmTMB,
     knitr,
+    lme4,
     MASS,
+    microbenchmark,
     mockery,
     parallelly (>= 1.32.0),
     parsnip,
+    purrr,
     rmarkdown,
+    sasr,
     testthat (>= 3.0.0),
     xml2
 LinkingTo:
@@ -73,6 +81,8 @@ VignetteBuilder:
     knitr
 RdMacros:
     Rdpack
+Remotes: 
+    github::insightsengineering/sasr
 biocViews:
 Config/testthat/edition: 3
 Encoding: UTF-8
