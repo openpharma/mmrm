@@ -233,10 +233,17 @@ print.summary.mmrm <- function(x,
 #' @exportS3Method
 #' @keywords internal
 #'
+<<<<<<< HEAD
 #' @param object an object of class 'mmrm'
 #' @param nsim number of datasets to simulate
 #' @param seed a random seed
 #' @param newdata a new covariate dataframe from which to simulate responses
+=======
+#' @param object an mmrm object.
+#' @param nsim number of response vectors to simulate. Defaults to 1.
+#' @param seed an object specifying if and how the random number generator should be initialized (‘seeded’).
+#' @param newdata data frame for which to evaluate predictions.
+>>>>>>> ce584397d71f5a7f9192624785991e492289c1a6
 #' @param ...
 #'
 #' @return A \code{data.frame} of dimension [n, m] where n is the number of observations
