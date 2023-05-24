@@ -54,13 +54,13 @@ for prediction interval, we have
 where $\Sigma$ and $\beta$ are all function of $\theta$
 
 \[
-  E(y_new|\theta) = X_{new} \beta
+  E(y_{new}|\theta) = X_{new} \beta
 \]
 
 and
 
 \[
-  Var(y_new) = Var(E(y_new|\theta)) + E(Var(y_new|\theta))
+  Var(y_{new}) = Var(E(y_{new}|\theta)) + E(Var(y_{new}|\theta))
 \]
 
 ## Sampling approach
@@ -70,7 +70,7 @@ To obtain $Var(y_new)$, we need to integrate over $\theta$ to obtain the expecte
 However, if we use simulation based approach, we can:
 
 1. Sample $\theta$
-2. Obtain $Var(y_new|\theta)$ and $E(y_new|\theta)$
+2. Obtain $Var(y_{new}|\theta)$ and $E(y_{new}|\theta)$
 3. Summarize over $\theta$
 
 to obtain the variance.
