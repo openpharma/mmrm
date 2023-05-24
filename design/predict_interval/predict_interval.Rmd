@@ -65,7 +65,7 @@ and
 
 ## Sampling approach
 
-To obtain $Var(y_new)$, we need to integrate over $\theta$ to obtain the expected variance and vairance of expectation.
+To obtain $Var(y_{new})$, we need to integrate over $\theta$ to obtain the expected variance and vairance of expectation.
 
 However, if we use simulation based approach, we can:
 
