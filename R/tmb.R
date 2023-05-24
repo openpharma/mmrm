@@ -428,23 +428,12 @@ h_mmrm_tmb_fit <- function(tmb_object,
 }
 
 h_get_x_matrix <- function(object, newdata) {
-  # TODO: double check that this is even necessary -> emmeans integration
-  # can we use existing model.frame.mmrm_tmb() ?
-  # get model frame used for fitting and extract factor levels
-  full_frame <- object$tmb_data$full_frame
-  xlevels <- list()
-  for (i in seq_along(full_frame)) {
-    name <- names(full_frame)[i]
-    if (is.factor(full_frame[[i]]) & name %in% names(newdata)) {
-      xlevels[[name]] <- levels(full_frame[[i]])
-    }
-  }
-  # get terms object without response variable
-  fterms <- stats::delete.response(stats::terms(object$formula_parts$model_formula))
-  # first construct model frame, then the x_matrix
-  mframe <- model.frame(fterms, data = newdata)
-  x_matrix <- stats::model.matrix(fterms, data = mframe, xlev = xlevels)
-  return(x_matrix)
+  assert_data_frame(newdata)
+  assert_class(object, "mmrm")
+  stats::model.matrix(
+    object$formula_parts$model_formula,
+    model.frame(object, data = newdata, include = NULL)
+  )
 }
 
 #' Low-Level Fitting Function for MMRM
@@ -602,7 +591,7 @@ h_get_chol <- function(fit, theta = NULL, data = NULL, weights = NULL, complete_
   # `h_mmrm_tmb_data` drops levels for the group variable, leading to incorrect number of groups (and the group levels).
   # Therefore, here we add the levels back.
   tmb_data <- h_mmrm_tmb_data(
-    h_mmrm_tmb_formula_parts(as.formula("rep(1, nrow(data))~1"), as.cov_struct(fit$formula_parts$formula)),
+    h_mmrm_tmb_formula_parts(as.formula("rep(0, nrow(data))~1"), as.cov_struct(fit$formula_parts$formula)),
     data = data, weights, identical(fit$tmb_data$reml, 1L),
     accept_singular = TRUE, drop_visit_levels = FALSE
   )

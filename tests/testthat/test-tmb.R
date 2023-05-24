@@ -717,8 +717,8 @@ test_that("h_get_x_matrix(object, newdata) works", {
   formula <- FEV1 ~ SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
   result <- mmrm(formula, fev_data[1:100, ], reml = FALSE)
   newdata <- fev_data[101:nrow(fev_data), ]
-  mmrm:::h_get_x_matrix(result, newdata)
-  mmrm:::predict.mmrm_tmb(result, newdata)
+  h_get_x_matrix(result, newdata)
+  predict.mmrm_tmb(result, newdata)
 })
 
 # h_mmrm_tmb_extract_cov ----

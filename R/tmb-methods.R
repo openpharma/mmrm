@@ -51,28 +51,27 @@ fitted.mmrm_tmb <- function(object, ...) {
 #' stop("implement example")
 predict.mmrm_tmb <- function(
     object, newdata, se.fit = FALSE,
-    interval = c("none", "confidence"), level = 0.95,
-    na.action = na.pass, ...) {
+    interval = c("none", "confidence", "prediction"), level = 0.95,
+    na.action = na.pass, n_sim = 1000L, ...) {
   interval <- match.arg(interval)
   # compute X_new times beta_hat for new data X (conditional mean predictions)
   x_matrix <- h_get_x_matrix(object, newdata)
   res <- x_matrix %*% component(object, "beta_est")
   colnames(res) <- "fit"
-  if (interval != "none" || se.fit) { # compute standard errors of fit
-    se <- sqrt(diag(x_matrix %*% component(object, "beta_vcov") %*% t(x_matrix)))
-    if (se.fit) { # save?
-      res <- cbind(res, se = se)
-    }
+  se <- switch(interval,
+    confidence = sqrt(diag(x_matrix %*% component(object, "beta_vcov") %*% t(x_matrix))),
+    prediction = sqrt(h_get_prediction_variance(object, x_matrix, n_sim = n_sim)),
+    none = NULL
+  )
+  if (se.fit) { # save?
+    res <- cbind(res, se = se)
   }
   if (interval != "none") { # compute confidence interval
-    alpha <- 1 - level
-    # TODO: need to determine df, work with normal for now
-    if (interval == "confidence") {
-      res <- cbind(res,
-          lwr = res[, "fit"] - qnorm(1 - alpha/2) * se,
-          upr = res[, "fit"] + qnorm(1 - alpha/2) * se
-        )
-    }
+    z <- qnorm(1 - alpha / 2) * se
+    res <- cbind(res,
+        lwr = res[, "fit"] - z,
+        upr = res[, "fit"] + z
+      )
   }
   if (ncol(res) == 1) { # return vector if only fit is computed
     res <- res[, "fit"]
@@ -80,27 +79,58 @@ predict.mmrm_tmb <- function(
   return(res)
 }
 
+h_get_prediction_variance <- function(object, x_matrix, n_sim = 10L, ...) {
+  theta_chol <- chol(object$theta_vcov)
+  res <- replicate(
+    n_sim,
+    h_get_one_sample(object, x_matrix, theta_chol),
+    simplify = FALSE
+  )
+  v_mean <- rowMeans(do.call(cbind, lapply(res, `[[`, "v")))
+  e_m <- do.call(cbind, lapply(res, `[[`, "e"))
+  v_e <- rowMeans((e_m - rowMeans(e_m))^2)
+  v_mean + v_e
+}
+
+h_get_one_sample <- function(object, x_matrix, theta_chol = chol(object$theta_vcov)) {
+  n_theta <- length(object$theta_est)
+  z <- rnorm(n = n_theta)
+  theta_sample <- object$theta_est + theta_chol %*% z
+  cond_beta_results <- object$tmb_object$report(theta_sample)
+  beta_mean <- cond_beta_results$beta
+  beta_cov <- cond_beta_results$beta_vcov
+  diag_cov_inv_sqrt <- cond_beta_results$diag_cov_inv_sqrt
+  v_on_theta <- diag(x_matrix %*% beta_cov %*% t(x_matrix)) + 1 / diag_cov_inv_sqrt^2
+  e_on_theta <- x_matrix %*% beta_mean
+  list(
+    v = v_on_theta,
+    e = e_on_theta[, 1]
+  )
+}
+
+
 #' @describeIn mmrm_tmb_methods obtains the model frame.
-#' @param exclude (`character`)\cr names of variable to exclude.
+#' @param include (`character`)\cr names of variable to include.
 #' @param full (`flag`) indicator whether to return full model frame (deprecated).
 #' @importFrom stats model.frame
 #' @exportS3Method
 #'
 #' @details
-#' `exclude` argument controls the variables the returned model frame will exclude.
-#' Possible options are "subject_var", "visit_var" and "group_var", representing the
-#' subject variable, visit variable or group variable.
+#' `include` argument controls the variables the returned model frame will include.
+#' Possible options are "response_var", "subject_var", "visit_var" and "group_var", representing the
+#' response variable, subject variable, visit variable or group variable.
 #'
 #' @examples
 #' # Model frame:
 #' model.frame(object)
-#' model.frame(object, exclude = "subject_var")
-model.frame.mmrm_tmb <- function(formula, exclude = "subject_var", full, ...) {
+#' model.frame(object, include = "subject_var")
+model.frame.mmrm_tmb <- function(formula, include = NULL, full, ...) {
+  include_choice <- c("subject_var", "visit_var", "group_var", "response_var")
   if (!missing(full) && identical(full, TRUE)) {
     lifecycle::deprecate_warn("0.3", "model.frame.mmrm_tmb(full)")
-    exclude <- NULL
+    include <- include_choice
   }
-  assert_subset(exclude, c("subject_var", "visit_var", "group_var"))
+  assert_subset(include, include_choice)
   dots <- list(...)
   if (!identical(h_default_value(dots$na.action, getOption("na.action")), "na.omit")) {
     warning("na.action is always set to `na.omit` for `mmrm`!")
@@ -108,14 +138,22 @@ model.frame.mmrm_tmb <- function(formula, exclude = "subject_var", full, ...) {
   if (!is.null(dots$subset) || !is.null(dots$weights)) {
     warning("subset and weights are not valid arguments for `mmrm` models.")
   }
-  if (is.null(dots$data) && length(exclude) == 0L) {
+  if (is.null(dots$data) && identical(include, include_choice)) {
     formula$tmb_data$full_frame
   } else {
-    drop_vars <- unlist(formula$formula_parts[exclude])
-    new_formula <- h_drop_terms(formula$formula_parts$full_formula, drop_vars)
+    drop_response <- !"response_var" %in% include
+    add_vars <- unlist(formula$formula_parts[include])
+    new_formula <- h_add_terms(formula$formula_parts$model_formula, add_vars, drop_response)
+    new_data <- h_default_value(dots$data, formula$tmb_data$full_frame)
+    full_frame <- formula$tmb_data$full_frame
+    for (v in all.vars(new_formula)) {
+      if (is.factor(full_frame[[v]]) || is.character(full_frame[[v]])) {
+        new_data[[v]] <- h_factor_ref(new_data[[v]], full_frame[[v]])
+      }
+    }
     model.frame(
       formula = new_formula,
-      data = h_default_value(dots$data, formula$data),
+      data = new_data,
       na.action = "na.omit"
     )
   }
