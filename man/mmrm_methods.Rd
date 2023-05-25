@@ -16,21 +16,7 @@
   ...
 )
 
-<<<<<<< HEAD
 \method{simulate}{mmrm}(object, nsim = 1, seed = NULL, ...)
-}
-\arguments{
-\item{object}{an object of class 'mmrm'}
-
-\item{...}{}
-
-\item{nsim}{number of datasets to simulate}
-
-\item{seed}{a random seed}
-
-\item{newdata}{a new covariate dataframe from which to simulate responses}
-=======
-\method{simulate}{mmrm}(object, nsim = 1, seed = NULL, newdata = NULL, ...)
 }
 \arguments{
 \item{object}{an mmrm object.}
@@ -42,7 +28,6 @@
 \item{seed}{an object specifying if and how the random number generator should be initialized (‘seeded’).}
 
 \item{newdata}{data frame for which to evaluate predictions.}
->>>>>>> ce584397d71f5a7f9192624785991e492289c1a6
 }
 \value{
 Depends on the method, see Details and Functions.
