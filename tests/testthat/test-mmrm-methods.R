@@ -104,7 +104,6 @@ test_that("print.summary.mmrm works as expected for spatial fits", {
   expect_snapshot_output(print(result, digits = 1), cran = FALSE)
 })
 
-<<<<<<< HEAD
 # simulate.mmrm ----
 
 test_that("simulate.mmrm returns a data.frame object of correct dimension and with no missing values", {
@@ -120,7 +119,6 @@ test_that("simulate.mmrm values are correctly centered", {
   object <- get_mmrm()
   sims <- simulate(object, nsim = 1)
   expect_equal(mean(sims$V1), mean(fitted(object)), tolerance = 1) # TODO what variable should be called in the sims data.frame? and set tolerance
-=======
 
 set.seed(555)
 n <- 1000
@@ -128,10 +126,10 @@ n <- 1000
 #TODO make data
 
 model_fit <- mmrm() # TODO set params
+})
 
 test_that("simulation works with large sample size", {
   expect_equal(mean(simulate(model_fit)[[1]]), 0.1, # TODO what should it be equal to?
                tolerance = 1e-5)
->>>>>>> ce584397d71f5a7f9192624785991e492289c1a6
 
 })
