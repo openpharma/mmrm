@@ -35,36 +35,71 @@ means estimates by using `emmeans`.
 
 **Scope:**
 
-- Continuous responses with normal (but potentially heteroscedastic)
-  residuals.
-- Marginal linear models (no individual-level random effects).
+-   Continuous responses with normal (but potentially heteroscedastic)
+    residuals.
+-   Marginal linear models (no individual-level random effects).
 
 **Main Features:**
 
-- Flexible covariance specification:
-  - [Structures](https://openpharma.github.io/mmrm/main/articles/covariance.html):
-    unstructured, Toeplitz, AR1, compound symmetry, ante-dependence, and
-    spatial exponential.
-  - Groups: shared covariance structure for all subjects or
-    group-specific covariance estimates.
-  - Variances: homogeneous or heterogeneous across time points.
-- Hypothesis testing:
-  - [Least square
+<details>
+<summary>
+Modeling
+</summary>
+
+-   Flexible covariance specification:
+    -   [Structures](https://openpharma.github.io/mmrm/main/articles/covariance.html):
+        unstructured, Toeplitz, AR1, compound symmetry, ante-dependence,
+        and spatial exponential.
+    -   Groups: shared covariance structure for all subjects or
+        group-specific covariance estimates.
+    -   Variances: homogeneous or heterogeneous across time points.
+-   Inference:
+    -   Supports REML and ML.
+    -   Supports weights.
+
+</details>
+<details>
+<summary>
+Hypothesis testing
+</summary>
+
+-   [Least square
     means](https://openpharma.github.io/mmrm/main/reference/emmeans_support.html):
     can be obtained with the `emmeans` package
-  - One- and multi-dimensional linear contrasts of model parameters can
+-   One- and multi-dimensional linear contrasts of model parameters can
     be tested.
-  - [Satterthwaite](https://openpharma.github.io/mmrm/main/articles/satterthwaite.html)
+-   [Satterthwaite](https://openpharma.github.io/mmrm/main/articles/satterthwaite.html)
     adjusted degrees of freedom.
-  - [Kenward-Roger](https://openpharma.github.io/mmrm/main/articles/kenward.html)
+-   [Kenward-Roger](https://openpharma.github.io/mmrm/main/articles/kenward.html)
     adjusted degrees of freedom and coefficients covariance matrix.
-- Model inference:
-  - Supports REML and ML.
-  - Supports weights.
-- Fast implementation using C++ and automatic differentiation to obtain
-  precise gradient information for model fitting. See
-  [here](https://openpharma.github.io/mmrm/main/articles/algorithm.html)
-  for details of the model fitting algorithm used in `mmrm`.
+-   [Coefficient
+    Covariance](https://openpharma.github.io/mmrm/main/articles/coef_vcov.html)
+
+</details>
+<details>
+<summary>
+CPP Backend
+</summary>
+
+-   Fast implementation using C++ and automatic differentiation to
+    obtain precise gradient information for model fitting.
+-   Model fitting algorithm
+    [details](https://openpharma.github.io/mmrm/main/articles/algorithm.html)
+    used in `mmrm`.
+
+</details>
+<details>
+<summary>
+Package Ecosystems Integration
+</summary>
+
+-   Integration with [tidymodels](https://www.tidymodels.org/) package
+    ecosystem
+    -   Dedicated [parsnip](https://parsnip.tidymodels.org/) engine for
+        linear regression
+    -   Integration with [recipes](https://recipes.tidymodels.org/)
+
+</details>
 
 ## Installation
 
@@ -95,6 +130,7 @@ or get started by trying out the example:
 
 ``` r
 library(mmrm)
+#> Warning: package 'mmrm' was built under R version 4.2.3
 fit <- mmrm(
   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data
