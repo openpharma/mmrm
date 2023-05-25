@@ -1,0 +1,77 @@
+## Tidymodels
+
+`mmrm` is compatible to work in a `tidymodels` workflow. The following is an example of how such a workflow would be constructed.
+
+```{r}
+library(tidymodels)
+library(mmrm)
+```
+
+### Direct fit
+
+```{r}
+model <- linear_reg() |>
+  set_engine("mmrm", method = 'Satterthwaite') |>
+  fit(FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID), fev_data)
+```
+
+```{r}
+model
+```
+
+Using `mmrm_control`
+
+```{r}
+model_with_control <- linear_reg() |>
+  set_engine("mmrm", control = mmrm_control(method = 'Satterthwaite')) |>
+  fit(FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID), fev_data)
+```
+
+### Using mmrm in workflows
+
+```{r}
+mmrm_spec <- linear_reg() |>
+  set_engine("mmrm", method = 'Satterthwaite')
+
+mmrm_wflow <- workflow() |>
+  add_variables(outcomes = FEV1, predictors = c(RACE, ARMCD, AVISIT, USUBJID)) |> 
+  add_model(mmrm_spec, formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID))
+
+mmrm_wflow |> 
+  fit(data = fev_data)
+```
+
+```{r}
+mmrm_spec_with_cov <- linear_reg() |>
+  set_engine("mmrm", method = 'Satterthwaite', covariance = ~us(AVISIT | USUBJID))
+
+mmrm_recipe <- recipe(FEV1 ~ RACE + ARMCD + AVISIT, data = fev_data) |>
+  step_dummy(ARMCD) |>
+  step_interact(terms = ~starts_with('ARMCD'):AVISIT)
+```
+
+
+```{r}
+mmrm_recipe |> prep() |> juice()
+```
+
+```{r}
+mmrm_wflow_nocov <- workflow() |>
+  add_model(mmrm_spec_with_cov) |>
+  add_recipe(mmrm_recipe)
+```
+
+```{r}
+mmrm_wflow_nocov
+```
+
+Does not work
+```{r, eval = FALSE}
+fit(mmrm_wflow_nocov, data = fev_data)
+```
+
+```
+> fit(mmrm_wflow_nocov, data = fev_data)
+Error in terms.formula(formula_rhs(f), specials = specials) : 
+  '.' in formula and no 'data' argument
+```

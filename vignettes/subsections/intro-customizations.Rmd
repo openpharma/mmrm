@@ -152,7 +152,7 @@ covariance model, you can use the linear Kenward-Roger approximation:
 fit_kr_lin <- mmrm(
   formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data,
-  method = "Kenward-Roger-Linear"
+  method = "Kenward-Roger"
 )
 ```
 

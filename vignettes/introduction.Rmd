@@ -52,6 +52,12 @@ Here we fit a mmrm model with `us` (unstructured) covariance structure specified
 ```{r, child='subsections/intro-hypothesis_testing.Rmd'}
 ```
 
+# Tidymodels
+
+```{r, child='subsections/intro-tidymodels.Rmd'}
+```
+
+
 # Acknowledgments
 
 ```{r, child='subsections/intro-acknowledgments.Rmd'}
