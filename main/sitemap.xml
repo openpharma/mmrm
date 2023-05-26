@@ -172,6 +172,12 @@
     <loc>https://openpharma.github.io/mmrm/main/reference/h_extract_covariance_terms.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/h_factor_ref.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/main/reference/h_get_chol.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/h_get_cov_default.html</loc>
   </url>
   <url>
