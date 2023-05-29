@@ -7,17 +7,22 @@
 template <class Type>
 struct lower_chol_base {
   virtual matrix<Type> get_chol(std::vector<int> visits, matrix<Type> dist) = 0;
+  virtual matrix<Type> get_sigma(std::vector<int> visits, matrix<Type> dist) = 0;
+  virtual matrix<Type> get_sigma_inverse(std::vector<int> visits, matrix<Type> dist) = 0;
 };
 // Struct to obtain Cholesky for non-spatial.
 template <class Type>
 struct lower_chol_nonspatial: public lower_chol_base<Type> {
   std::map<std::vector<int>, matrix<Type>> chols;
+  std::map<std::vector<int>, matrix<Type>> sigmas;
+  std::map<std::vector<int>, matrix<Type>> simgas_inv;
   std::string cov_type;
   int n_visits;
   std::vector<int> full_visit;
   int n_theta;
   vector<Type> theta;
   matrix<Type> chol_full;
+  matrix<Type> sigma_full;
   lower_chol_nonspatial() {
     // This default constructor is needed because the use of `[]` in map.
   }
@@ -28,6 +33,7 @@ struct lower_chol_nonspatial: public lower_chol_base<Type> {
     this->n_theta = theta.size();
     this->chol_full = get_covariance_lower_chol(this->theta, this->n_visits, this->cov_type);
     this->chols[full_visit]  = this->chol_full;
+    this->sigma_full = tcrossprod(this->chol_full, true);
   }
   matrix<Type> get_chol(std::vector<int> visits, matrix<Type> dist) {
     auto target = this->chols.find(visits);
@@ -41,6 +47,27 @@ struct lower_chol_nonspatial: public lower_chol_base<Type> {
       matrix<Type> Li = cov_i_chol.matrixL();
       this->chols[visits] = Li;
       return Li;
+    }
+  }
+  matrix<Type> get_sigma(std::vector<int> visits, matrix<Type> dist) {
+    auto target = this->sigmas.find(visits);
+    if (target != this->sigmas.end()) {
+      return target->second;
+    } else {
+      matrix<Type> sel_mat = get_select_matrix<Type>(visits, this->n_visits);
+      matrix<Type> ret = sel_mat * sigma_full * sel_mat.transpose();
+      this->sigmas[visits] = ret;
+      return ret;
+    }
+  }
+  matrix<Type> get_sigma_inverse(std::vector<int> visits, matrix<Type> dist) {
+    auto target = this->simgas_inv.find(visits);
+    if (target != this->simgas_inv.end()) {
+      return target->second;
+    } else {
+      matrix<Type> ret = this->get_sigma(visits, dist).inverse();
+      this->simgas_inv[visits] = ret;
+      return ret;
     }
   }
 };
@@ -59,6 +86,12 @@ struct lower_chol_spatial: public lower_chol_base<Type> {
   }
   matrix<Type> get_chol(std::vector<int> visits, matrix<Type> dist) {
     return get_spatial_covariance_lower_chol(this->theta, dist, this->cov_type);
+  }
+  matrix<Type> get_sigma(std::vector<int> visits, matrix<Type> dist) {
+    return tcrossprod(this->get_chol(visits, dist), true);
+  }
+  matrix<Type> get_sigma_inverse(std::vector<int> visits, matrix<Type> dist) {
+    return this->get_sigma(visits, dist).inverse();
   }
 };
 

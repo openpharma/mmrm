@@ -93,7 +93,8 @@ h_mmrm_tmb_data <- function(formula_parts,
                             reml,
                             accept_singular,
                             drop_visit_levels,
-                            full_frame) {
+                            full_frame,
+                            include_na = FALSE) {
   assert_class(formula_parts, "mmrm_tmb_formula_parts")
   assert_data_frame(data)
   varname <- formula_parts[grepl("_var", names(formula_parts))]
@@ -139,12 +140,17 @@ h_mmrm_tmb_data <- function(formula_parts,
       "NA values will always be removed regardless of na.action in options."
     )
   }
+  if (include_na) {
+    na_action <- stats::na.pass
+  } else {
+    na_action <- stats::na.omit
+  }
   full_frame <- eval(
     bquote(stats::model.frame(
       formula_parts$full_formula,
       data = data,
       weights = .(as.symbol(weights_name)),
-      na.action = stats::na.omit
+      na.action = na_action
     ))
   )
   full_frame <- droplevels(full_frame, except = formula_parts$visit_var)
