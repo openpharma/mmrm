@@ -54,19 +54,29 @@ predict.mmrm_tmb <- function(
     interval = c("none", "confidence", "prediction"), level = 0.95,
     na.action = na.pass, n_sim = 1000L, ...) {
   interval <- match.arg(interval)
-  # compute X_new times beta_hat for new data X (conditional mean predictions)
-  x_matrix <- h_get_x_matrix(object, newdata)
-  res <- x_matrix %*% component(object, "beta_est")
-  colnames(res) <- "fit"
-  se <- switch(interval,
-    confidence = sqrt(diag(x_matrix %*% component(object, "beta_vcov") %*% t(x_matrix))),
-    prediction = sqrt(h_get_prediction_variance(object, x_matrix, n_sim = n_sim)),
-    none = NULL
+  # make sure new data has the same levels as original data
+  full_frame <- model.frame(
+    object, data = newdata,
+    include = c("subject_var", "visit_var", "group_var", "response_var"),
+    na_action = "na.pass"
   )
-  if (se.fit) { # save?
+  tmb_data <- h_mmrm_tmb_data(
+    object$formula_parts, full_frame, weights = rep(1, nrow(full_frame)), reml = TRUE,
+    accept_singular = TRUE, drop_visit_levels = FALSE, allow_na_response = TRUE
+  )
+  
+  predictions <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
+  res <- data.frame(fit = predictions$y)
+  se <- switch(interval,
+    "confidence" = sqrt(predictions$conf_var),
+    "prediction" = sqrt(h_get_prediction_variance(object, n_sim, tmb_data)),
+    "none" = NULL
+  )
+  if (se.fit && interval != "none") { # save se
     res <- cbind(res, se = se)
   }
   if (interval != "none") { # compute confidence interval
+    alpha <- 1 - level
     z <- qnorm(1 - alpha / 2) * se
     res <- cbind(res,
         lwr = res[, "fit"] - z,
@@ -79,39 +89,41 @@ predict.mmrm_tmb <- function(
   return(res)
 }
 
-h_get_prediction_variance <- function(object, x_matrix, n_sim = 10L, ...) {
-  theta_chol <- chol(object$theta_vcov)
-  res <- replicate(
-    n_sim,
-    h_get_one_sample(object, x_matrix, theta_chol),
-    simplify = FALSE
-  )
-  v_mean <- rowMeans(do.call(cbind, lapply(res, `[[`, "v")))
-  e_m <- do.call(cbind, lapply(res, `[[`, "e"))
-  v_e <- rowMeans((e_m - rowMeans(e_m))^2)
-  v_mean + v_e
+h_get_prediction <- function(tmb_data, theta, beta, beta_vcov) {
+  assert_class(tmb_data, "mmrm_tmb_data")
+  assert_numeric(theta)
+  n_beta <- ncol(tmb_data$x_matrix)
+  assert_numeric(beta, finite = TRUE, any.missing = FALSE, len = n_beta)
+  assert_matrix(beta_vcov, mode = "numeric", any.missing = FALSE, nrows = n_beta, ncols = n_beta)
+  .Call(`_mmrm_predict`, PACKAGE = "mmrm", tmb_data, theta, beta, beta_vcov)
 }
 
-h_get_one_sample <- function(object, x_matrix, theta_chol = chol(object$theta_vcov)) {
+h_get_prediction_variance <- function(object, n_sim, tmb_data) {
+  assert_class(object, "mmrm_tmb")
+  assert_class(tmb_data, "mmrm_tmb_data")
+  assert_int(n_sim)
+  theta_chol <- chol(object$theta_vcov)
   n_theta <- length(object$theta_est)
-  z <- rnorm(n = n_theta)
-  theta_sample <- object$theta_est + theta_chol %*% z
-  cond_beta_results <- object$tmb_object$report(theta_sample)
-  beta_mean <- cond_beta_results$beta
-  beta_cov <- cond_beta_results$beta_vcov
-  diag_cov_inv_sqrt <- cond_beta_results$diag_cov_inv_sqrt
-  v_on_theta <- diag(x_matrix %*% beta_cov %*% t(x_matrix)) + 1 / diag_cov_inv_sqrt^2
-  e_on_theta <- x_matrix %*% beta_mean
-  list(
-    v = v_on_theta,
-    e = e_on_theta[, 1]
-  )
+  res <- replicate(n_sim, {
+    z <- rnorm(n = n_theta)
+    theta_sample <- object$theta_est + theta_chol %*% z
+    cond_beta_results <- object$tmb_object$report(theta_sample)
+    beta_mean <- cond_beta_results$beta
+    beta_cov <- cond_beta_results$beta_vcov
+    h_get_prediction(tmb_data, theta_sample, beta_mean, beta_cov)
+  })
+  vars_matrix <- do.call(cbind, res["var", ])
+  means_matrix <- do.call(cbind, res["y", ])
+  mean_of_var <- rowMeans(vars_matrix)
+  var_of_mean <- apply(means_matrix, 1, var)
+  mean_of_var + var_of_mean
 }
 
 
 #' @describeIn mmrm_tmb_methods obtains the model frame.
 #' @param include (`character`)\cr names of variable to include.
 #' @param full (`flag`) indicator whether to return full model frame (deprecated).
+#' @param na_action (`string`) na action.
 #' @importFrom stats model.frame
 #' @exportS3Method
 #'
@@ -124,7 +136,8 @@ h_get_one_sample <- function(object, x_matrix, theta_chol = chol(object$theta_vc
 #' # Model frame:
 #' model.frame(object)
 #' model.frame(object, include = "subject_var")
-model.frame.mmrm_tmb <- function(formula, include = NULL, full, ...) {
+model.frame.mmrm_tmb <- function(formula, include = NULL, full, na_action = "na.omit", ...) {
+  assert_subset(na_action, c("na.omit", "na.pass"))
   include_choice <- c("subject_var", "visit_var", "group_var", "response_var")
   if (!missing(full) && identical(full, TRUE)) {
     lifecycle::deprecate_warn("0.3", "model.frame.mmrm_tmb(full)")
@@ -146,7 +159,7 @@ model.frame.mmrm_tmb <- function(formula, include = NULL, full, ...) {
     new_formula <- h_add_terms(formula$formula_parts$model_formula, add_vars, drop_response)
     new_data <- h_default_value(dots$data, formula$tmb_data$full_frame)
     full_frame <- formula$tmb_data$full_frame
-    for (v in all.vars(new_formula)) {
+    for (v in all.vars(formula$formula_parts$model_formula)) {
       if (is.factor(full_frame[[v]]) || is.character(full_frame[[v]])) {
         new_data[[v]] <- h_factor_ref(new_data[[v]], full_frame[[v]])
       }
@@ -154,7 +167,7 @@ model.frame.mmrm_tmb <- function(formula, include = NULL, full, ...) {
     model.frame(
       formula = new_formula,
       data = new_data,
-      na.action = "na.omit"
+      na.action = na_action
     )
   }
 }

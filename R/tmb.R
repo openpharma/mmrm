@@ -55,7 +55,7 @@ h_mmrm_tmb_formula_parts <- function(
 #'   to full rank `x_matrix` and remaining coefficients will be missing as per
 #'   `x_cols_aliased`. Otherwise the function fails for rank deficient design matrices.
 #' @param drop_visit_levels (`flag`)\cr whether to drop levels for visit variable, if visit variable is a factor.
-#' @param full_frame (`data.frame`)\cr which contains all used variables in `formula_parts`.
+#' @param allow_na_response (`flag`)\cr whether NA in response is allowed.
 #'
 #' @return List of class `mmrm_tmb_data` with elements:
 #' - `full_frame`: `data.frame` with `n` rows containing all variables needed in the model.
@@ -93,8 +93,7 @@ h_mmrm_tmb_data <- function(formula_parts,
                             reml,
                             accept_singular,
                             drop_visit_levels,
-                            full_frame,
-                            include_na = FALSE) {
+                            allow_na_response = FALSE) {
   assert_class(formula_parts, "mmrm_tmb_formula_parts")
   assert_data_frame(data)
   varname <- formula_parts[grepl("_var", names(formula_parts))]
@@ -135,25 +134,25 @@ h_mmrm_tmb_data <- function(formula_parts,
   data <- data.frame(data, weights)
   # weights is always the last column
   weights_name <- colnames(data)[ncol(data)]
-  if (!identical(getOption("na.action"), "na.omit")) {
-    warning(
-      "NA values will always be removed regardless of na.action in options."
-    )
-  }
-  if (include_na) {
-    na_action <- stats::na.pass
-  } else {
-    na_action <- stats::na.omit
+  # if y allow to be NA, then first replace y with 1:n, then replace it with original y
+  if (allow_na_response) {
+    y_original <- eval(formula_parts$full_formula[[2]], envir = data)
+    vn <- deparse(formula_parts$full_formula[[2]])
+    data[[vn]] <- seq_len(nrow(data))
   }
   full_frame <- eval(
     bquote(stats::model.frame(
       formula_parts$full_formula,
       data = data,
       weights = .(as.symbol(weights_name)),
-      na.action = na_action
+      na.action = stats::na.omit
     ))
   )
   full_frame <- droplevels(full_frame, except = formula_parts$visit_var)
+  # if y allow to be NA, replace it with original y
+  if (allow_na_response) {
+    full_frame[[vn]] <- y_original[full_frame[[vn]]]
+  }
   if (drop_visit_levels && !formula_parts$is_spatial && is.factor(full_frame[[formula_parts$visit_var]])) {
     old_levels <- levels(full_frame[[formula_parts$visit_var]])
     full_frame[[formula_parts$visit_var]] <- droplevels(full_frame[[formula_parts$visit_var]])
