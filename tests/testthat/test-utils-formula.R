@@ -113,4 +113,3 @@ test_that("h_add_terms works on adds is length 0", {
     formula
   )
 })
-

@@ -56,12 +56,14 @@ predict.mmrm_tmb <- function(
   interval <- match.arg(interval)
   # make sure new data has the same levels as original data
   full_frame <- model.frame(
-    object, data = newdata,
+    object,
+    data = newdata,
     include = c("subject_var", "visit_var", "group_var", "response_var"),
     na.action = "na.pass"
   )
   tmb_data <- h_mmrm_tmb_data(
-    object$formula_parts, full_frame, weights = rep(1, nrow(full_frame)), reml = TRUE,
+    object$formula_parts, full_frame,
+    weights = rep(1, nrow(full_frame)), reml = TRUE,
     singular = "keep", drop_visit_levels = FALSE, allow_na_response = TRUE, drop_levels = FALSE
   )
   predictions <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
@@ -78,9 +80,9 @@ predict.mmrm_tmb <- function(
     alpha <- 1 - level
     z <- qnorm(1 - alpha / 2) * se
     res <- cbind(res,
-        lwr = res[, "fit"] - z,
-        upr = res[, "fit"] + z
-      )
+      lwr = res[, "fit"] - z,
+      upr = res[, "fit"] + z
+    )
   }
   if (ncol(res) == 1) { # return vector if only fit is computed
     res <- res[, "fit"]

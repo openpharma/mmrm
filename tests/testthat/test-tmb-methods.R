@@ -100,7 +100,8 @@ test_that("model.frame works if variable transformed", {
 test_that("model.frame works for new data", {
   fit1 <- get_mmrm_transformed()
   result <- expect_silent(model.frame(
-    fit1, data = fev_data[complete.cases(fev_data), ][1:20, ],
+    fit1,
+    data = fev_data[complete.cases(fev_data), ][1:20, ],
     include = c("response_var", "visit_var")
   ))
   expect_data_frame(result, nrows = 20L)
