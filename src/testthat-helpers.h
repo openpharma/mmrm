@@ -28,7 +28,7 @@
 }
 
 template <class T>
-void expect_equal_matrix(const matrix<T>& target, const matrix<T>& current)
+void expect_equal_matrix(const T& target, const T& current)
 {
   int nrow = target.rows();
   int ncol = target.cols();
@@ -44,7 +44,7 @@ void expect_equal_matrix(const matrix<T>& target, const matrix<T>& current)
 }
 
 template <class T>
-void expect_equal_vector(const vector<T>& target, const vector<T>& current)
+void expect_equal_vector(const T& target, const T& current)
 {
   int n = target.size();
   expect_true(n == current.size());

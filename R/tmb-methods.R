@@ -58,17 +58,17 @@ predict.mmrm_tmb <- function(
   full_frame <- model.frame(
     object, data = newdata,
     include = c("subject_var", "visit_var", "group_var", "response_var"),
-    na_action = "na.pass"
+    na.action = "na.pass"
   )
   tmb_data <- h_mmrm_tmb_data(
     object$formula_parts, full_frame, weights = rep(1, nrow(full_frame)), reml = TRUE,
-    accept_singular = TRUE, drop_visit_levels = FALSE, allow_na_response = TRUE
+    singular = "keep", drop_visit_levels = FALSE, allow_na_response = TRUE, drop_levels = FALSE
   )
-  
+  browser()
   predictions <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
-  res <- data.frame(fit = predictions$y)
+  res <- data.frame(fit = predictions[, 1])
   se <- switch(interval,
-    "confidence" = sqrt(predictions$conf_var),
+    "confidence" = sqrt(predictions[, 2]),
     "prediction" = sqrt(h_get_prediction_variance(object, n_sim, tmb_data)),
     "none" = NULL
   )
@@ -112,10 +112,8 @@ h_get_prediction_variance <- function(object, n_sim, tmb_data) {
     beta_cov <- cond_beta_results$beta_vcov
     h_get_prediction(tmb_data, theta_sample, beta_mean, beta_cov)
   })
-  vars_matrix <- do.call(cbind, res["var", ])
-  means_matrix <- do.call(cbind, res["y", ])
-  mean_of_var <- rowMeans(vars_matrix)
-  var_of_mean <- apply(means_matrix, 1, var)
+  mean_of_var <- rowMeans(res[, 1, ])
+  var_of_mean <- apply(res[, 3, ], 1, var)
   mean_of_var + var_of_mean
 }
 
@@ -123,7 +121,7 @@ h_get_prediction_variance <- function(object, n_sim, tmb_data) {
 #' @describeIn mmrm_tmb_methods obtains the model frame.
 #' @param include (`character`)\cr names of variable to include.
 #' @param full (`flag`) indicator whether to return full model frame (deprecated).
-#' @param na_action (`string`) na action.
+#' @param na.action (`string`) na action.
 #' @importFrom stats model.frame
 #' @exportS3Method
 #'
@@ -136,8 +134,7 @@ h_get_prediction_variance <- function(object, n_sim, tmb_data) {
 #' # Model frame:
 #' model.frame(object)
 #' model.frame(object, include = "subject_var")
-model.frame.mmrm_tmb <- function(formula, include = NULL, full, na_action = "na.omit", ...) {
-  assert_subset(na_action, c("na.omit", "na.pass"))
+model.frame.mmrm_tmb <- function(formula, include = NULL, full, na.action = "na.omit", ...) {
   include_choice <- c("subject_var", "visit_var", "group_var", "response_var")
   if (!missing(full) && identical(full, TRUE)) {
     lifecycle::deprecate_warn("0.3", "model.frame.mmrm_tmb(full)")
@@ -145,9 +142,6 @@ model.frame.mmrm_tmb <- function(formula, include = NULL, full, na_action = "na.
   }
   assert_subset(include, include_choice)
   dots <- list(...)
-  if (!identical(h_default_value(dots$na.action, getOption("na.action")), "na.omit")) {
-    warning("na.action is always set to `na.omit` for `mmrm`!")
-  }
   if (!is.null(dots$subset) || !is.null(dots$weights)) {
     warning("subset and weights are not valid arguments for `mmrm` models.")
   }
@@ -157,7 +151,7 @@ model.frame.mmrm_tmb <- function(formula, include = NULL, full, na_action = "na.
     drop_response <- !"response_var" %in% include
     add_vars <- unlist(formula$formula_parts[include])
     new_formula <- h_add_terms(formula$formula_parts$model_formula, add_vars, drop_response)
-    new_data <- h_default_value(dots$data, formula$tmb_data$full_frame)
+    new_data <- h_default_value(dots$data, formula$tmb_data$data)
     full_frame <- formula$tmb_data$full_frame
     for (v in all.vars(formula$formula_parts$model_formula)) {
       if (is.factor(full_frame[[v]]) || is.character(full_frame[[v]])) {
@@ -167,7 +161,7 @@ model.frame.mmrm_tmb <- function(formula, include = NULL, full, na_action = "na.
     model.frame(
       formula = new_formula,
       data = new_data,
-      na.action = na_action
+      na.action = na.action
     )
   }
 }

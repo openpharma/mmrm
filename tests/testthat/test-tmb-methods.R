@@ -48,19 +48,45 @@ test_that("predict works for old patient, new visit", {
   result <- expect_silent(predict(fit, newdata))
 })
 
+h_get_x_matrix <- function(object, newdata) {
+  assert_data_frame(newdata)
+  assert_class(object, "mmrm")
+  stats::model.matrix(
+    object$formula_parts$model_formula,
+    model.frame(object, data = newdata, include = NULL)
+  )
+}
+
+test_that("predict works for only fit values without response", {
+  object <- get_mmrm()
+  m <- stats::model.matrix(object$formula_parts$model_formula, model.frame(object, data = fev_data, include = "response_var", na.action = "na.pass"))
+  fev_data_no_y <- fev_data
+  fev_data_no_y$FEV1 <- NA_real_
+  y_pred <- expect_silent(predict(object, fev_data_no_y))
+  y_hat <- as.vector(m %*% object$beta_est)
+  expect_equal(y_pred, y_hat)
+})
+
+test_that("predict works for only fit values with response", {
+  object <- get_mmrm()
+  y_pred <- expect_silent(predict(object, fev_data))
+  expect_equal(y_pred[!is.na(fev_data$FEV1)], object$tmb_data$y_vector)
+  expect_numeric(y_pred[is.na(fev_data$FEV1)])
+})
+
 # model.frame ----
 
 test_that("model.frame works as expected with defaults", {
   object <- get_mmrm_tmb()
-  result <- expect_silent(model.frame(object))
+  result <- expect_silent(model.frame(object, include = c("response_var", "visit_var")))
   expect_data_frame(result, nrows = length(object$tmb_data$y_vector))
   expect_named(result, c("FEV1", "RACE", "AVISIT"))
   expect_class(attr(result, "terms"), "terms")
 })
 
-test_that("model.frame works as expected with excludes", {
+test_that("model.frame works as expected with includes", {
   object <- get_mmrm_tmb()
-  result <- expect_silent(model.frame(object, exclude = c("subject_var", "visit_var")))
+  result <- expect_silent(model.frame(object, include = c("response_var")))
   expect_data_frame(result, nrows = length(object$tmb_data$y_vector))
   expect_named(result, c("FEV1", "RACE"))
   expect_class(attr(result, "terms"), "terms")
@@ -68,15 +94,15 @@ test_that("model.frame works as expected with excludes", {
 
 test_that("model.frame returns full model frame if requested", {
   object <- get_mmrm_tmb()
-  result <- expect_silent(model.frame(object, exclude = NULL))
+  result <- expect_silent(model.frame(object, include = c("response_var", "visit_var", "subject_var", "group_var")))
   expect_data_frame(result, nrows = length(object$tmb_data$y_vector))
-  expect_named(result, c("FEV1", "RACE", "USUBJID", "AVISIT", "(weights)"))
+  expect_named(result, c("FEV1", "RACE", "AVISIT", "USUBJID"))
   expect_class(attr(result, "terms"), "terms")
 })
 
 test_that("model.frame works if variable transformed", {
   fit1 <- get_mmrm_transformed()
-  result <- expect_silent(model.frame(fit1))
+  result <- expect_silent(model.frame(fit1, include = c("response_var", "visit_var")))
   expect_data_frame(result, nrows = length(fit1$tmb_data$y_vector))
   expect_named(result, c("FEV1", "log(FEV1_BL)", "AVISIT"))
   expect_class(attr(result, "terms"), "terms")
@@ -84,25 +110,17 @@ test_that("model.frame works if variable transformed", {
 
 test_that("model.frame works for new data", {
   fit1 <- get_mmrm_transformed()
-  result <- expect_silent(model.frame(fit1, data = fev_data[complete.cases(fev_data), ][1:20, ]))
+  result <- expect_silent(model.frame(fit1, data = fev_data[complete.cases(fev_data), ][1:20, ], include = c("response_var", "visit_var")))
   expect_data_frame(result, nrows = 20L)
   expect_named(result, c("FEV1", "log(FEV1_BL)", "AVISIT"))
   expect_class(attr(result, "terms"), "terms")
 })
 
-test_that("model.frame works regardless of na.action settings", {
-  na_action <- getOption("na.action")
+test_that("model.frame works regardless of na.action settings if x does not contain NA", {
   fit1 <- get_mmrm_transformed()
-  expect_warning(
-    model.frame(fit1, na.action = "na.fail"),
-    "na.action is always set to `na.omit` for `mmrm`!"
+  expect_silent(
+    model.frame(fit1, na.action = "na.fail")
   )
-  options(na.action = "na.fail")
-  expect_warning(
-    model.frame(fit1),
-    "na.action is always set to `na.omit` for `mmrm`!"
-  )
-  on.exit(options(na.action = na_action))
 })
 
 

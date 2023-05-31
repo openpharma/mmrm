@@ -47,15 +47,6 @@ T1 as_matrix(T2 input) {
 }
 
 template <typename T>
-std::vector<T> as_std_vector(vector<T> input) {
-  std::vector<T> ret(input.size());
-  for (int i = 0; i < input.size(); i++) {
-    ret[i] = input(i);
-  }
-  return ret;
-}
-
-template <typename T>
 T segment(T input, int start, int n) {
   T ret(n);
   for (int i = 0, j = start; i < n; i++, j++) {

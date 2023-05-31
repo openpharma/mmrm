@@ -361,3 +361,11 @@ h_factor_ref <- function(x, ref, var_name = vname(x)) {
   assert_subset(uni_values, levels(ref), .var.name = var_name)
   factor(x, levels = levels(ref))
 }
+
+#' Warn on na.action
+#' @keywords internal
+h_warn_na_action <- function() {
+  if (!identical(getOption("na.action"), "na.omit")) {
+    warning("na.action is always set to `na.omit` for `mmrm` fit!")
+  }
+}

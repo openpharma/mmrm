@@ -76,11 +76,22 @@ $$
 For `predict(interval = "prediction")` one would use the square root of the 
 diagonal elements of $A_i\big(\widehat{\beta},\widehat{\theta}\big)$ instead.
 The delta method could again be used to make upper and lower boundaries reflect
-parameter estimation uncertainty (how exactly?).
+parameter estimation uncertainty.
 
 Alternatively, both intervals can be derived using a parametric bootstrap sample
-of the unrestricted parameters $(\beta, \theta)$.
+of the unrestricted parameters $\theta$.
 This would probably also be easier for the `= "prediction"` case.
+
+### Parametric Sampling for prediction interval
+
+With the conditional variance formula
+
+\[
+  Var(Y_i) = Var(E(Y_i|\theta)) + E(Var(Y_i|\theta))
+\]
+
+the conditional expectation $E(Y_i|\theta)$ and the conditional variance $Var(Y_i|\theta)$ are already described
+so we can sample on $\theta$ and calculate the variance of conditional mean and the mean of conditional variance.
 
 ### Prediction of conditional mean for new subjects
 
@@ -89,35 +100,3 @@ If there are no observations for a subject, then the prediction is quite simple:
 \[
   Y_i = X_i \hat\beta
 \]
-
-
-
-## Example WIP (only for new individuals)
-
-```{r eval = FALSE}
-rho <- 0.9
-planned_visits <- c(0, 1, 3, 6, 12, 18)
-sigma <- c(5, 7, 10, 12, 15, 20)
-n <- 100L
-cor <- as.matrix(0.8^dist(planned_visits)) + diag(length(planned_visits)) # 'spatial' exponential
-vcov <- diag(sigma^2) %*% cor
-tbl_data <- expand.grid(
-    id = factor(1:n),
-    month = planned_visits
-  )
-tbl_data <- tbl_data[order(tbl_data$id, tbl_data$month), ]
-rownames(tbl_data) <- 1:nrow(tbl_data)
-tmp <- matrix(rnorm(n * length(planned_visits)), nrow = n) %*% chol(vcov) +
-  matrix(rep(3*planned_visits, n), nrow = n, byrow = TRUE)
-tbl_data$y <- as.vector(t(tmp)) 
-```
-
-```{r eval =FALSE}
-fit <- mmrm(y ~ month + sp_exp(month | id), data = tbl_data, weights = rep(1, nrow(tbl_data)))
-fit
-options(max.print = 50)
-predict(fit, tbl_data)
-predict(fit, tbl_data, se.fit = TRUE)
-predict(fit, tbl_data, se.fit = TRUE, interval = "confidence")
-predict(fit, tbl_data, interval = "confidence")
-```

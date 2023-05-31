@@ -4,7 +4,7 @@
 using namespace Rcpp;
 using std::string;
 // Obtain the empirical given beta, beta_vcov, theta.
-List predict(List mmrm_data, NumericVector theta, NumericVector beta, NumericMatrix beta_vcov) {
+NumericMatrix predict(List mmrm_data, NumericVector theta, NumericVector beta, NumericMatrix beta_vcov) {
   NumericMatrix x = mmrm_data["x_matrix"];
   NumericVector y = mmrm_data["y_vector"];
   LogicalVector y_na = is_na(y);
@@ -114,9 +114,5 @@ List predict(List mmrm_data, NumericVector theta, NumericVector beta, NumericMat
     }
     // Otherwise, the observation is full so no prediction is needed
   }
-  return List::create(
-    Named("y") = y_pred,
-    Named("var") = var,
-    Named("conf_var") = conf_var
-  );
+  return cbind(y_pred, conf_var, var);
 }
