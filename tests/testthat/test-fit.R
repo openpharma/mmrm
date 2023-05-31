@@ -463,21 +463,21 @@ test_that("mmrm works for different na.actions", {
   options(na.action = "na.pass")
   expect_warning(
     res2 <- mmrm(formula, fev_data),
-    "NA values will always be removed regardless of na.action in options."
+    "na.action is always set to `na.omit` for `mmrm` fit!"
   )
   expect_class(res2, "mmrm")
 
   options(na.action = "na.fail")
   expect_warning(
     res3 <- mmrm(formula, fev_data),
-    "NA values will always be removed regardless of na.action in options."
+    "na.action is always set to `na.omit` for `mmrm` fit!"
   )
   expect_class(res3, "mmrm")
 
   options(na.action = "na.exclude")
   expect_warning(
     res4 <- mmrm(formula, fev_data),
-    "NA values will always be removed regardless of na.action in options."
+    "na.action is always set to `na.omit` for `mmrm` fit!"
   )
   expect_class(res4, "mmrm")
 })

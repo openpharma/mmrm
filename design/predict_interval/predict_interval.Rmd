@@ -1,0 +1,76 @@
+---
+title: "predict intervals"
+author: "Liming Li"
+output: html_document
+editor_options:
+  chunk_output_type: console
+---
+
+# model
+
+we have the following model
+
+\[
+  y = X\beta + \epsilon
+\]
+
+and for prediction, we have
+
+\[
+  \hat{y_{new}} = X_{new}\hat\beta
+\]
+
+
+where
+\[
+  \epsilon \sim N(0, \Sigma)
+\]
+and
+\[
+  \hat\beta \sim N(\beta, cov(\beta))
+\]
+
+# confidence interval
+
+confidence interval is calculated as the variance of $\hat{y}$
+
+\[
+  Var(\hat{y_{new}}) = X_{new} cov(\beta) X_{new}^\top
+\]
+
+and we can use normal approximation (1.96 +- sd) to obtain the interval.
+
+# prediction interval
+
+for prediction interval, we have
+
+\[
+  y_{new} = X_{new}\hat\beta + \epsilon
+\]
+
+\[
+  Var(y_new|\theta) = X_{new} cov(\beta) X_{new}^\top + \Sigma
+\]
+where $\Sigma$ and $\beta$ are all function of $\theta$
+
+\[
+  E(y_{new}|\theta) = X_{new} \beta
+\]
+
+and
+
+\[
+  Var(y_{new}) = Var(E(y_{new}|\theta)) + E(Var(y_{new}|\theta))
+\]
+
+## Sampling approach
+
+To obtain $Var(y_{new})$, we need to integrate over $\theta$ to obtain the expected variance and vairance of expectation.
+
+However, if we use simulation based approach, we can:
+
+1. Sample $\theta$
+2. Obtain $Var(y_{new}|\theta)$ and $E(y_{new}|\theta)$
+3. Summarize over $\theta$
+
+to obtain the variance.

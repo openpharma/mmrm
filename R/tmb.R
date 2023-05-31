@@ -51,11 +51,11 @@ h_mmrm_tmb_formula_parts <- function(
 #' @param weights (`vector`)\cr weights to be used in the fitting process.
 #' @param reml (`flag`)\cr whether restricted maximum likelihood (REML) estimation is used,
 #'   otherwise maximum likelihood (ML) is used.
-#' @param accept_singular (`flag`)\cr whether below full rank design matrices are reduced
-#'   to full rank `x_matrix` and remaining coefficients will be missing as per
-#'   `x_cols_aliased`. Otherwise the function fails for rank deficient design matrices.
+#' @param singular (`string`)\cr choices of method deal with rank-deficient matrices. "error" to
+#'   stop the function return the error, "drop" to drop these columns, and "keep" to keep all the columns.
 #' @param drop_visit_levels (`flag`)\cr whether to drop levels for visit variable, if visit variable is a factor.
-#' @param full_frame (`data.frame`)\cr which contains all used variables in `formula_parts`.
+#' @param allow_na_response (`flag`)\cr whether NA in response is allowed.
+#' @param drop_levels (`flag`)\cr whether drop levels for covariates. If not dropped could lead to singular matrix.
 #'
 #' @return List of class `mmrm_tmb_data` with elements:
 #' - `full_frame`: `data.frame` with `n` rows containing all variables needed in the model.
@@ -91,9 +91,10 @@ h_mmrm_tmb_data <- function(formula_parts,
                             data,
                             weights,
                             reml,
-                            accept_singular,
+                            singular = c("drop", "error", "keep"),
                             drop_visit_levels,
-                            full_frame) {
+                            allow_na_response = FALSE,
+                            drop_levels = TRUE) {
   assert_class(formula_parts, "mmrm_tmb_formula_parts")
   assert_data_frame(data)
   varname <- formula_parts[grepl("_var", names(formula_parts))]
@@ -104,7 +105,7 @@ h_mmrm_tmb_data <- function(formula_parts,
   assert_true(is.factor(data[[formula_parts$subject_var]]) || is.character(data[[formula_parts$subject_var]]))
   assert_numeric(weights, len = nrow(data))
   assert_flag(reml)
-  assert_flag(accept_singular)
+  singular <- match.arg(singular)
   assert_flag(drop_visit_levels)
 
   if (is.character(data[[formula_parts$subject_var]])) {
@@ -134,10 +135,13 @@ h_mmrm_tmb_data <- function(formula_parts,
   data <- data.frame(data, weights)
   # weights is always the last column
   weights_name <- colnames(data)[ncol(data)]
-  if (!identical(getOption("na.action"), "na.omit")) {
-    warning(
-      "NA values will always be removed regardless of na.action in options."
-    )
+  # if y allow to be NA, then first replace y with 1:n, then replace it with original y
+  if (allow_na_response) {
+    y_original <- eval(formula_parts$full_formula[[2]], envir = data)
+    vn <- deparse(formula_parts$full_formula[[2]])
+    data[[vn]] <- seq_len(nrow(data))
+  } else {
+    h_warn_na_action()
   }
   full_frame <- eval(
     bquote(stats::model.frame(
@@ -147,7 +151,13 @@ h_mmrm_tmb_data <- function(formula_parts,
       na.action = stats::na.omit
     ))
   )
-  full_frame <- droplevels(full_frame, except = formula_parts$visit_var)
+  if (drop_levels) {
+    full_frame <- droplevels(full_frame, except = formula_parts$visit_var)
+  }
+  # if y allow to be NA, replace it with original y
+  if (allow_na_response) {
+    full_frame[[vn]] <- y_original[full_frame[[vn]]]
+  }
   if (drop_visit_levels && !formula_parts$is_spatial && is.factor(full_frame[[formula_parts$visit_var]])) {
     old_levels <- levels(full_frame[[formula_parts$visit_var]])
     full_frame[[formula_parts$visit_var]] <- droplevels(full_frame[[formula_parts$visit_var]])
@@ -157,33 +167,33 @@ h_mmrm_tmb_data <- function(formula_parts,
       message("In ", formula_parts$visit_var, " there are dropped visits: ", toString(dropped))
     }
   }
-
   x_matrix <- stats::model.matrix(formula_parts$model_formula, data = full_frame)
   x_cols_aliased <- stats::setNames(rep(FALSE, ncol(x_matrix)), nm = colnames(x_matrix))
   qr_x_mat <- qr(x_matrix)
   if (qr_x_mat$rank < ncol(x_matrix)) {
     cols_to_drop <- utils::tail(qr_x_mat$pivot, ncol(x_matrix) - qr_x_mat$rank)
-    if (!accept_singular) {
+    if (identical(singular, "error")) {
       stop(
         "design matrix only has rank ", qr_x_mat$rank, " and ", length(cols_to_drop),
         " columns (", toString(colnames(x_matrix)[cols_to_drop]), ") could be dropped",
         " to achieve full rank ", ncol(x_matrix), " by using `accept_singular = TRUE`"
       )
+    } else if (identical(singular, "drop")) {
+      assign_attr <- attr(x_matrix, "assign")
+      contrasts_attr <- attr(x_matrix, "contrasts")
+      x_matrix <- x_matrix[, -cols_to_drop, drop = FALSE]
+      x_cols_aliased[cols_to_drop] <- TRUE
+      attr(x_matrix, "assign") <- assign_attr[-cols_to_drop]
+      attr(x_matrix, "contrasts") <- contrasts_attr
     }
-    assign_attr <- attr(x_matrix, "assign")
-    contrasts_attr <- attr(x_matrix, "contrasts")
-    x_matrix <- x_matrix[, -cols_to_drop, drop = FALSE]
-    x_cols_aliased[cols_to_drop] <- TRUE
-    attr(x_matrix, "assign") <- assign_attr[-cols_to_drop]
-    attr(x_matrix, "contrasts") <- contrasts_attr
   }
 
   y_vector <- as.numeric(stats::model.response(full_frame))
   weights_vector <- as.numeric(stats::model.weights(full_frame))
-  n_subjects <- nlevels(full_frame[[formula_parts$subject_var]])
+  n_subjects <- length(unique(full_frame[[formula_parts$subject_var]]))
   subject_zero_inds <- which(!duplicated(full_frame[[formula_parts$subject_var]])) - 1L
   subject_n_visits <- c(utils::tail(subject_zero_inds, -1L), nrow(full_frame)) - subject_zero_inds
-  assert_true(identical(subject_n_visits, as.integer(table(full_frame[[formula_parts$subject_var]]))))
+  # possible that subject_var is factor (and this does not affect fit) so no check needed
   assert_true(all(subject_n_visits > 0))
   if (!is.null(formula_parts$group_var)) {
     assert_factor(data[[formula_parts$group_var]])
@@ -490,7 +500,7 @@ fit_mmrm <- function(formula,
     assert_true(all(weights > 0))
     tmb_data <- h_mmrm_tmb_data(
       formula_parts, data, weights, reml,
-      accept_singular = control$accept_singular, drop_visit_levels = control$drop_visit_levels
+      singular = if (control$accept_singular) "drop" else "error", drop_visit_levels = control$drop_visit_levels
     )
   } else {
     assert_class(tmb_data, "mmrm_tmb_data")
@@ -531,70 +541,4 @@ fit_mmrm <- function(formula,
   fit$call <- match.call()
   fit$call$formula <- formula_parts$formula
   fit
-}
-
-#' Cholesky Factors for New Data and Variance Parameters
-#'
-#' @description Use a fitted model to obtain (weighted) Cholesky factors
-#' with new data, weights and `theta`.
-#'
-#' @param fit (`mmrm_fit`)\cr produced by [mmrm()].
-#' @param data (`data.frame`)\cr input data frame.
-#' @param weights (`numeric`)\cr vector of weights.
-#' @param theta (`numeric`)\cr new variance parameter estimates.
-#' @param complete_case (`flag`)\cr whether to use complete input `data`.
-#'
-#' @details
-#' In `mmrm` call, missing values (in response or covariates) will be removed prior to model fitting.
-#' However, if we only require the Cholesky factors for each subject, it is
-#' not necessary to remove `NA` values. The flag, `complete_case`, is used to decide whether the
-#' input data should follow a similar approach of removing `NA` values rows.
-#' @return  The `list` of Cholesky factors for all individuals and time points in the new `data`.
-#'
-#' @keywords internal
-h_get_chol <- function(fit, theta = NULL, data = NULL, weights = NULL, complete_case = TRUE) {
-  assert_class(fit, "mmrm_fit")
-  assert_data_frame(data, null.ok = TRUE)
-  data <- h_default_value(data, fit$tmb_data$full_frame)
-  assert_flag(complete_case)
-  if (complete_case) {
-    data <- data[complete.cases(data), ]
-  }
-  assert_numeric(weights, len = nrow(data), null.ok = TRUE)
-  weights <- h_default_value(weights, rep(1, nrow(data)))
-  assert_numeric(theta, len = length(fit$theta_est), null.ok = TRUE)
-  theta <- h_default_value(theta, fit$theta_est)
-  visit_vars <- fit$formula_parts$visit_var
-  group_var <- fit$formula_parts$group_var
-  subject_var <- fit$formula_parts$subject_var
-  assert_names(names(data), must.include = c(visit_vars, subject_var, group_var))
-  if (fit$formula_parts$is_spatial) {
-    vn <- paste(vname(data), visit_vars, sep = "$")
-    assert_data_frame(data[visit_vars], types = "numeric", .var.name = toString(vn))
-  } else {
-    vn <- paste(vname(data), visit_vars, sep = "$")
-    data[[visit_vars]] <- h_factor_ref(data[[visit_vars]], fit$tmb_data$full_frame[[visit_vars]], vn)
-  }
-  if (!is.null(group_var)) {
-    vn <- paste(vname(data), fit$formula_parts$group_var, sep = "$")
-    data[[group_var]] <- h_factor_ref(data[[group_var]], fit$tmb_data$full_frame[[group_var]], vn)
-  }
-  # `h_mmrm_tmb_data` drops levels for the group variable, leading to incorrect number of groups (and the group levels).
-  # Therefore, here we add the levels back.
-  tmb_data <- h_mmrm_tmb_data(
-    h_mmrm_tmb_formula_parts(as.formula("rep(1, nrow(data))~1"), as.cov_struct(fit$formula_parts$formula)),
-    data = data, weights, identical(fit$tmb_data$reml, 1L),
-    accept_singular = TRUE, drop_visit_levels = FALSE
-  )
-  tmb_data$n_groups <- fit$tmb_data$n_groups
-  tmb_data$subject_groups <- h_factor_ref(tmb_data$subject_groups, fit$tmb_data$subject_groups)
-  tmb_parameters <- h_mmrm_tmb_parameters(fit$formula_parts, tmb_data, start = theta, n_groups = tmb_data$n_groups)
-  tmb_object <- TMB::MakeADFun(
-    data = tmb_data,
-    parameters = tmb_parameters,
-    hessian = TRUE,
-    DLL = "mmrm",
-    silent = TRUE
-  )
-  tmb_object$report()$cholesky_all
 }

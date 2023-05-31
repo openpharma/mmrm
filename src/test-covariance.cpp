@@ -9,7 +9,7 @@ context("unstructured") {
     expected <<
       1.0, 0.0,
       6.0, 2.0;
-    expect_equal_matrix(result, expected);
+    expect_equal_matrix<matrix<double>>(result, expected);
   }
 }
 
@@ -30,7 +30,7 @@ context("ante_dependence") {
       2.0, 0.0, 0.0,
       sqrt(2.0), sqrt(2.0), 0.0,
       1.264911, 1.264911, 0.8944272;
-    expect_equal_matrix(result, expected);
+    expect_equal_matrix<matrix<double>>(result, expected);
   }
 
   test_that("get_ante_dependence_heterogeneous produces expected result") {
@@ -41,7 +41,7 @@ context("ante_dependence") {
       1.0, 0.0, 0.0,
       sqrt(2.0), sqrt(2.0), 0.0,
       1.897367, 1.897367, 1.341641;
-    expect_equal_matrix(result, expected);
+    expect_equal_matrix<matrix<double>>(result, expected);
   }
 }
 
@@ -62,7 +62,7 @@ context("toeplitz") {
       2.0, 0.0, 0.0,
       sqrt(2.0), sqrt(2.0), 0.0,
       1.788854, 0.2111456, 0.8691476;
-    expect_equal_matrix(result, expected);
+    expect_equal_matrix<matrix<double>>(result, expected);
   }
 
   test_that("get_toeplitz_heterogeneous produces expected result") {
@@ -73,7 +73,7 @@ context("toeplitz") {
       1.0, 0.0, 0.0,
       sqrt(2.0), sqrt(2.0), 0.0,
       2.683282, 0.3167184, 1.303721;
-    expect_equal_matrix(result, expected);
+    expect_equal_matrix<matrix<double>>(result, expected);
   }
 }
 
@@ -93,7 +93,7 @@ context("autoregressive") {
       2, 0, 0,
       1.89736659610103, 0.632455532033676, 0,
       1.8, 0.6, 0.632455532033676;
-    expect_equal_matrix(result, expected);
+    expect_equal_matrix<matrix<double>>(result, expected);
   }
 
   test_that("get_auto_regressive_heterogeneous produces expected result") {
@@ -104,7 +104,7 @@ context("autoregressive") {
       1, 0, 0,
       1.78885438199983, 0.894427190999916, 0,
       2.4, 1.2, 1.34164078649987;
-    expect_equal_matrix(result, expected);
+    expect_equal_matrix<matrix<double>>(result, expected);
   }
 }
 
@@ -125,7 +125,7 @@ context("compound symmetry") {
       2, 0, 0,
       1.89736659610103, 0.632455532033676, 0,
       1.89736659610103, 0.307900211696917, 0.552446793489648;
-    expect_equal_matrix(result, expected);
+    expect_equal_matrix<matrix<double>>(result, expected);
   }
 
   test_that("get_compound_symmetry_heterogeneous produces expected result") {
@@ -136,7 +136,7 @@ context("compound symmetry") {
       1, 0, 0,
       1.78885438199983, 0.894427190999916, 0,
       2.68328157299975, 0.633436854000505, 1.18269089452568;
-    expect_equal_matrix(result, expected);
+    expect_equal_matrix<matrix<double>>(result, expected);
   }
 }
 
@@ -145,7 +145,7 @@ context("get_covariance_lower_chol") {
     vector<double> theta {{log(1.0), log(2.0), 3.0}};
     matrix<double> result = get_covariance_lower_chol(theta, 2, "us");
     matrix<double> expected = get_unstructured(theta, 2);
-    expect_equal_matrix(result, expected);
+    expect_equal_matrix<matrix<double>>(result, expected);
   }
   // No other tests needed here for now.
 }

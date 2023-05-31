@@ -5,7 +5,7 @@ using std::string;
 // Obtain P,Q,R element from a mmrm fit, given theta.
 List get_pqr(List mmrm_fit, NumericVector theta) {
   NumericMatrix x = mmrm_fit["x_matrix"];
-  auto x_matrix = as_matrix(x);
+  matrix<double> x_matrix = as_matrix<matrix<double>, NumericMatrix>(x);
   IntegerVector subject_zero_inds = mmrm_fit["subject_zero_inds"];
   IntegerVector visits_zero_inds = mmrm_fit["visits_zero_inds"];
   int n_subjects = mmrm_fit["n_subjects"];
@@ -18,9 +18,9 @@ List get_pqr(List mmrm_fit, NumericVector theta) {
   IntegerVector subject_groups = mmrm_fit["subject_groups"];
   NumericVector weights_vector = mmrm_fit["weights_vector"];
   NumericMatrix coordinates = mmrm_fit["coordinates"];
-  matrix<double> coords = as_matrix(coordinates);
-  auto theta_v = as_vector(theta);
-  auto G_sqrt = as_vector(sqrt(weights_vector));
+  matrix<double> coords = as_matrix<matrix<double>, NumericMatrix>(coordinates);
+  vector<double> theta_v = as_vector<vector<double>, NumericVector>(theta);
+  vector<double> G_sqrt = as_vector<vector<double>, NumericVector>(sqrt(weights_vector));
   int n_theta = theta.size();
   int theta_size_per_group = n_theta / n_groups;
   int p = x.cols();
@@ -77,8 +77,8 @@ List get_pqr(List mmrm_fit, NumericVector theta) {
     delete derivatives_by_group[r];
   }
   return List::create(
-    Named("P") = as_mv(P),
-    Named("Q") = as_mv(Q),
-    Named("R") = as_mv(R)
+    Named("P") = as_matrix<NumericMatrix, matrix<double>>(P),
+    Named("Q") = as_matrix<NumericMatrix, matrix<double>>(Q),
+    Named("R") = as_matrix<NumericMatrix, matrix<double>>(R)
   );
 }
