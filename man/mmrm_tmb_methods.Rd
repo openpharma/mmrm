@@ -29,10 +29,11 @@
   interval = c("none", "confidence", "prediction"),
   level = 0.95,
   na.action = na.pass,
+  n_sim = 1000L,
   ...
 )
 
-\method{model.frame}{mmrm_tmb}(formula, exclude = "subject_var", full, ...)
+\method{model.frame}{mmrm_tmb}(formula, include = NULL, full, na.action = "na.omit", ...)
 
 \method{logLik}{mmrm_tmb}(object, ...)
 
@@ -60,9 +61,11 @@ coefficients.}
 
 \item{...}{not used.}
 
+\item{na.action}{(\code{string}) na action.}
+
 \item{formula}{(\code{mmrm_tmb})\cr same as \code{object}.}
 
-\item{exclude}{(\code{character})\cr names of variable to exclude.}
+\item{include}{(\code{character})\cr names of variable to include.}
 
 \item{full}{(\code{flag}) indicator whether to return full model frame (deprecated).}
 
@@ -85,9 +88,9 @@ Depends on the method, see Functions.
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
 \details{
-\code{exclude} argument controls the variables the returned model frame will exclude.
-Possible options are "subject_var", "visit_var" and "group_var", representing the
-subject variable, visit variable or group variable.
+\code{include} argument controls the variables the returned model frame will include.
+Possible options are "response_var", "subject_var", "visit_var" and "group_var", representing the
+response variable, subject variable, visit variable or group variable.
 }
 \section{Functions}{
 \itemize{
@@ -142,7 +145,7 @@ fitted(object)
 stop("implement example")
 # Model frame:
 model.frame(object)
-model.frame(object, exclude = "subject_var")
+model.frame(object, include = "subject_var")
 # Log likelihood given the estimated parameters:
 logLik(object)
 # Formula which was used:

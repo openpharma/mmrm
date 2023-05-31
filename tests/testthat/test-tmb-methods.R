@@ -43,15 +43,6 @@ test_that("predict works for old patient, new visit", {
   expect_silent(predict(fit, fev_data[c(1:4), ]))
 })
 
-h_get_x_matrix <- function(object, newdata) {
-  assert_data_frame(newdata)
-  assert_class(object, "mmrm")
-  stats::model.matrix(
-    object$formula_parts$model_formula,
-    model.frame(object, data = newdata, include = NULL)
-  )
-}
-
 test_that("predict works for only fit values without response", {
   object <- get_mmrm()
   m <- stats::model.matrix(object$formula_parts$model_formula, model.frame(object, data = fev_data, include = "response_var", na.action = "na.pass"))

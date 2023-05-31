@@ -88,6 +88,15 @@ predict.mmrm_tmb <- function(
   return(res)
 }
 
+#' Get Prediction
+#' @description Get prediction with given data, theta, beta, beta_vcov
+#'
+#' @param tmb_data (`mmrm_tmb_data`)\cr object.
+#' @param theta (`numeric`)\cr theta value.
+#' @param beta (`numeric`)\cr beta value.
+#' @param beta_vcov (`matrix`)\cr beta_vcov matrix.
+#'
+#' @keywords internal
 h_get_prediction <- function(tmb_data, theta, beta, beta_vcov) {
   assert_class(tmb_data, "mmrm_tmb_data")
   assert_numeric(theta)
@@ -97,6 +106,14 @@ h_get_prediction <- function(tmb_data, theta, beta, beta_vcov) {
   .Call(`_mmrm_predict`, PACKAGE = "mmrm", tmb_data, theta, beta, beta_vcov)
 }
 
+#' Get Prediction Variance
+#' @description Get prediction variance with given fit, tmb_data with sampling method
+#'
+#' @param object (`mmrm_tmb`)\cr the fitted MMRM.
+#' @param n_sim (`integer`)\cr number of replication of sampling.
+#' @param tmb_data (`mmrm_tmb_data`)\cr object.
+#'
+#' @keywords internal
 h_get_prediction_variance <- function(object, n_sim, tmb_data) {
   assert_class(object, "mmrm_tmb")
   assert_class(tmb_data, "mmrm_tmb_data")

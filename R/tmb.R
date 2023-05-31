@@ -51,9 +51,8 @@ h_mmrm_tmb_formula_parts <- function(
 #' @param weights (`vector`)\cr weights to be used in the fitting process.
 #' @param reml (`flag`)\cr whether restricted maximum likelihood (REML) estimation is used,
 #'   otherwise maximum likelihood (ML) is used.
-#' @param accept_singular (`flag`)\cr whether below full rank design matrices are reduced
-#'   to full rank `x_matrix` and remaining coefficients will be missing as per
-#'   `x_cols_aliased`. Otherwise the function fails for rank deficient design matrices.
+#' @param singular (`string`)\cr choices of method deal with rank-deficient matrices. "error" to
+#'   stop the function return the error, "drop" to drop these columns, and "keep" to keep all the columns.
 #' @param drop_visit_levels (`flag`)\cr whether to drop levels for visit variable, if visit variable is a factor.
 #' @param allow_na_response (`flag`)\cr whether NA in response is allowed.
 #' @param drop_levels (`flag`)\cr whether drop levels for covariates. If not dropped could lead to singular matrix.
