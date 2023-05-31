@@ -23,7 +23,9 @@ knitr::opts_chunk$set(
 library(mmrm)
 ```
 
-For determining the denominator degrees of freedom (DDF) required for the testing of fixed effects, one option is to use the 'between-within' method.
+# Implementation
+
+For determining the denominator degrees of freedom (DDF) required for the testing of fixed effects, one option is to use the 'between-within' method, originally proposed by @schluchter1990small as a small-sample adjustment.
 
 Using this method, the DDF are determined by the grouping level at which the term is estimated. In the case of an MMRM model with only fixed effect terms, this method simplifies to including 3 potential 'levels' of parameters (@galecki2013linear):
 
@@ -41,7 +43,7 @@ Where $N_g$ is the number of groups at the $g$-th grouping level and $p_g$ is th
 
 $N_0=1$ if the model includes an intercept term, but note that the DDF for the intercept term are calculated at the $G+1$ level.
 
-With an MMRM with only fixed terms we have a single grouping level (e.g. subject), $G=1$. Therefore:
+With an MMRM with only fixed terms there is a single grouping level (e.g. subject), $G=1$. Therefore:
 
 * 'Between' DDF = 'number of subjects' - (1 [if intercept in model] + 'number of between parameters')
 * 'Within' DDF = 'number of observations' - ('number of subjects' + 'number of within parameters')
@@ -49,9 +51,12 @@ With an MMRM with only fixed terms we have a single grouping level (e.g. subject
 ```{r}
 
 fit <- mmrm(
-formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
-data = fev_data
+  formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data,
+  control = mmrm_control(method = "Between-within")
 )
+
+summary(fit)
 
 ```
 
@@ -67,15 +72,15 @@ head(fit$tmb_data$x_matrix)
 
 Leaving the intercept term aside:
 
-* for the RACE effect we estimate 2 parameters
-* for the SEX effect we estimate 1 parameter
-* for the ARMCD effect we estimate 1 parameter
-* for the AVISIT effect we estimate 3 parameters
-* for the interaction of ARMCD and AVISIT we estimate 3 parameters
+* for the RACE effect 2 parameters are estimated
+* for the SEX effect 1 parameter is estimated
+* for the ARMCD effect 1 parameter is estimated
+* for the AVISIT effect 3 parameters are estimated
+* for the interaction of ARMCD and AVISIT 3 parameters are estimated
 
 Therefore:
 
-* $N_0=1$ since we have an intercept term
+* $N_0=1$ since there is an intercept term
 * $N_1=2+1+1=4$
 * $N_2=3+3=6$
 
@@ -85,3 +90,10 @@ And:
 * Within- DDF, $DDF_2=537-(197+6)=334$
 
 * Intercept DDF, $DDF_0=DDF_2=334$
+
+# Differences compared to SAS
+
+The implementation described above is not identical to that of SAS. Differences include:
+
+* In SAS, when using an unstructured covariance matrix, all effects are assigned the between-subjects degrees of freedom.
+* The within-subjects degrees of freedom in SAS are affected by the number of subjects in which the effect takes different values.
