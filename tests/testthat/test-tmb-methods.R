@@ -37,16 +37,9 @@ test_that("fitted works as expected", {
 # predict -----
 
 test_that("predict works for old patient, new visit", {
-  # restrict patient one PT1 data to first visit
-  data <- fev_data[!(fev_data$USUBJID == "PT1" &
-    fev_data$AVISIT %in% c("VIS2", "VIS3", "VIS4")), ]
-  # fit model
-  fit <- fit_mmrm(.tmb_formula, fev_data, weights = rep(1, nrow(fev_data)))
-  # predict the hold out
-  newdata <- fev_data[fev_data$USUBJID == "PT1" &
-    fev_data$AVISIT %in% c("VIS2", "VIS3", "VIS4"), ]
+  fit <- get_mmrm()
   expect_silent(predict(fit, fev_data[c(1, 4), ]))
-  expect_silent(predict(fit, fev_data[c(1, 2), ]))
+  expect_silent(predict(fit, fev_data[c(2, 3), ]))
   expect_silent(predict(fit, fev_data[c(1:4), ]))
 })
 

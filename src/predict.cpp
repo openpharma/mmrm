@@ -54,25 +54,19 @@ NumericMatrix predict(List mmrm_data, NumericVector theta, NumericVector beta, N
     LogicalVector y_valid_i = segment(y_vd, start_i, n_visits_i);
     IntegerVector visit_i(n_visits_i);
     matrix<double> dist_i(n_visits_i, n_visits_i);
-    IntegerVector index_i = seq(start_i, start_i + n_visits_i - 1);
+    IntegerVector index_zero_i = seq(0, n_visits_i - 1);
     if (!is_spatial) {
       visit_i = segment(visits_zero_inds, start_i, n_visits_i);
     } else {
       visit_i = seq(start_i, start_i + n_visits_i - 1);
       dist_i = euclidean(matrix<double>(coordinates_m.block(start_i, 0, n_visits_i, coordinates_m.cols())));
     }
-    int n_vis;
-    // for spatial covariance, n_visits is not meaningless;
-    // use subject visits
-    if (is_spatial) {
-      n_vis = n_visits_i;
-    } else {
-      n_vis = n_visits;
-    }
     std::vector<int> visit_std = as<std::vector<int>>(visit_i);
-
     IntegerVector visit_na_vec = visit_i[y_na_i];
     IntegerVector visit_valid_vec = visit_i[y_valid_i];
+
+    IntegerVector index_zero_i_na = index_zero_i[y_na_i];
+    IntegerVector index_zero_i_valid = index_zero_i[y_valid_i];
 
     std::vector<int> visit_na = as<std::vector<int>>(visit_na_vec);
     std::vector<int> visit_non_na = as<std::vector<int>>(visit_valid_vec);
@@ -80,40 +74,38 @@ NumericMatrix predict(List mmrm_data, NumericVector theta, NumericVector beta, N
     // subject_group starts with 1.
     int subject_group_i = subject_groups(i) - 1;
     matrix<double> sigma_full = chols_by_group[subject_group_i]->get_sigma(visit_std, dist_i);
-    matrix<double> na_sel_matrix = get_select_matrix<double>(visit_na, n_vis);
-    matrix<double> valid_sel_matrix = get_select_matrix<double>(visit_non_na, n_vis);
+    matrix<double> na_sel_matrix = get_select_matrix<double>(as<std::vector<int>>(index_zero_i_na), n_visits_i); // select matrix based on already subsetted visits
+    matrix<double> valid_sel_matrix = get_select_matrix<double>(as<std::vector<int>>(index_zero_i_valid), n_visits_i);
     matrix<double> sigma_12 = na_sel_matrix * sigma_full * valid_sel_matrix.transpose();
-    matrix<double> sigma_11 = na_sel_matrix * sigma_full * na_sel_matrix.transpose();
+    matrix<double> sigma_11 = chols_by_group[subject_group_i]->get_sigma(visit_na, dist_i);
     matrix<double> x_na = na_sel_matrix * Xi;
     matrix<double> x_valid = valid_sel_matrix * Xi;
     vector<double> y_valid = as_vector<vector<double>, NumericVector>(y_i[y_valid_i]);
+    IntegerVector na_index = index_zero_i_na + start_i;
+    vector<double> y_hat, var_conf, var_y_on_theta;
     if (visit_valid_vec.size() == 0) {
       // no observations with valid y
-      vector<double> y_hat = x_na * beta_v;
-      y_pred[index_i] = as_vector<NumericVector, vector<double>>(y_hat);
-      vector<double> var_conf = (x_na * beta_vcov_matrix * x_na.transpose()).diagonal();
-      vector<double> var_y_on_theta = var_conf + vector<double>(sigma_full.diagonal());
-      conf_var[index_i] = as_vector<NumericVector, vector<double>>(var_conf);
-      var[index_i] = as_vector<NumericVector, vector<double>>(var_y_on_theta);
+      y_hat = x_na * beta_v;
+      var_conf = (x_na * beta_vcov_matrix * x_na.transpose()).diagonal();
+      var_y_on_theta = var_conf + vector<double>(sigma_full.diagonal());
+      
     } else if (visit_na_vec.size() > 0) {
       // there are observations with invalid y
       matrix<double> sigma_22_inv;
       if (is_spatial) {
-        sigma_22_inv = (valid_sel_matrix * sigma_full * valid_sel_matrix.transpose()).inverse();
+        sigma_22_inv = (valid_sel_matrix * sigma_full * valid_sel_matrix.transpose()).inverse(); // no cache available
       } else {
-        sigma_22_inv = chols_by_group[subject_group_i]->get_sigma_inverse(visit_non_na, dist_i);
+        sigma_22_inv = chols_by_group[subject_group_i]->get_sigma_inverse(visit_non_na, dist_i); // have the inverse in cache
       }
-      IntegerVector index_i_na = index_i[y_na_i];
       matrix<double> ss = sigma_12 * sigma_22_inv;
-      matrix<double> zz = x_na - sigma_12 * sigma_22_inv * x_valid;
-      vector<double> y_hat = zz * beta_v + ss * y_valid;
-      vector<double> var_conf = (zz * beta_vcov_matrix * zz.transpose()).diagonal();
-      vector<double> var_y_on_theta = var_conf + vector<double>((sigma_11 - ss * sigma_12.transpose()).diagonal());
-      y_pred[index_i_na] = as_vector<NumericVector, vector<double>>(y_hat);
-      var[index_i_na] = as_vector<NumericVector, vector<double>>(var_y_on_theta);
-      conf_var[index_i_na] = as_vector<NumericVector, vector<double>>(var_conf);
+      matrix<double> zz = x_na - ss * x_valid;
+      y_hat = zz * beta_v + ss * y_valid;
+      var_conf = (zz * beta_vcov_matrix * zz.transpose()).diagonal();
+      var_y_on_theta = var_conf + vector<double>((sigma_11 - ss * sigma_12.transpose()).diagonal());
     }
-    // Otherwise, the observation is full so no prediction is needed
+    y_pred[na_index] = as_vector<NumericVector, vector<double>>(y_hat);
+    conf_var[na_index] = as_vector<NumericVector, vector<double>>(var_conf);
+    var[na_index] = as_vector<NumericVector, vector<double>>(var_y_on_theta);
   }
   return cbind(y_pred, conf_var, var);
 }
