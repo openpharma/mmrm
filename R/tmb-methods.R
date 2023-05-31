@@ -50,9 +50,9 @@ fitted.mmrm_tmb <- function(object, ...) {
 #' @examples
 #' stop("implement example")
 predict.mmrm_tmb <- function(
-    object, newdata, se.fit = FALSE,
+    object, newdata, se.fit = FALSE, # nolint
     interval = c("none", "confidence", "prediction"), level = 0.95,
-    na.action = na.pass, n_sim = 1000L, ...) {
+    na.action = na.pass, n_sim = 1000L, ...) { # nolint
   interval <- match.arg(interval)
   # make sure new data has the same levels as original data
   full_frame <- model.frame(
@@ -150,7 +150,7 @@ h_get_prediction_variance <- function(object, n_sim, tmb_data) {
 #' # Model frame:
 #' model.frame(object)
 #' model.frame(object, include = "subject_var")
-model.frame.mmrm_tmb <- function(formula, include = NULL, full, na.action = "na.omit", ...) {
+model.frame.mmrm_tmb <- function(formula, include = NULL, full, na.action = "na.omit", ...) { # nolint
   include_choice <- c("subject_var", "visit_var", "group_var", "response_var")
   if (!missing(full) && identical(full, TRUE)) {
     lifecycle::deprecate_warn("0.3", "model.frame.mmrm_tmb(full)")

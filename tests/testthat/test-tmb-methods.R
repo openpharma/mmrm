@@ -45,7 +45,10 @@ test_that("predict works for old patient, new visit", {
 
 test_that("predict works for only fit values without response", {
   object <- get_mmrm()
-  m <- stats::model.matrix(object$formula_parts$model_formula, model.frame(object, data = fev_data, include = "response_var", na.action = "na.pass"))
+  m <- stats::model.matrix(
+    object$formula_parts$model_formula,
+    model.frame(object, data = fev_data, include = "response_var", na.action = "na.pass")
+  )
   fev_data_no_y <- fev_data
   fev_data_no_y$FEV1 <- NA_real_
   y_pred <- expect_silent(predict(object, fev_data_no_y))
@@ -96,7 +99,10 @@ test_that("model.frame works if variable transformed", {
 
 test_that("model.frame works for new data", {
   fit1 <- get_mmrm_transformed()
-  result <- expect_silent(model.frame(fit1, data = fev_data[complete.cases(fev_data), ][1:20, ], include = c("response_var", "visit_var")))
+  result <- expect_silent(model.frame(
+    fit1, data = fev_data[complete.cases(fev_data), ][1:20, ],
+    include = c("response_var", "visit_var")
+  ))
   expect_data_frame(result, nrows = 20L)
   expect_named(result, c("FEV1", "log(FEV1_BL)", "AVISIT"))
   expect_class(attr(result, "terms"), "terms")
