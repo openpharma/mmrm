@@ -45,7 +45,9 @@ test_that("predict works for old patient, new visit", {
   # predict the hold out
   newdata <- fev_data[fev_data$USUBJID == "PT1" &
     fev_data$AVISIT %in% c("VIS2", "VIS3", "VIS4"), ]
-  result <- expect_silent(predict(fit, newdata))
+  expect_silent(predict(fit, fev_data[c(1, 4), ]))
+  expect_silent(predict(fit, fev_data[c(1, 2), ]))
+  expect_silent(predict(fit, fev_data[c(1:4), ]))
 })
 
 h_get_x_matrix <- function(object, newdata) {

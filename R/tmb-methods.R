@@ -64,7 +64,6 @@ predict.mmrm_tmb <- function(
     object$formula_parts, full_frame, weights = rep(1, nrow(full_frame)), reml = TRUE,
     singular = "keep", drop_visit_levels = FALSE, allow_na_response = TRUE, drop_levels = FALSE
   )
-  browser()
   predictions <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
   res <- data.frame(fit = predictions[, 1])
   se <- switch(interval,

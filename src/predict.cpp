@@ -54,10 +54,11 @@ NumericMatrix predict(List mmrm_data, NumericVector theta, NumericVector beta, N
     LogicalVector y_valid_i = segment(y_vd, start_i, n_visits_i);
     IntegerVector visit_i(n_visits_i);
     matrix<double> dist_i(n_visits_i, n_visits_i);
+    IntegerVector index_i = seq(start_i, start_i + n_visits_i - 1);
     if (!is_spatial) {
       visit_i = segment(visits_zero_inds, start_i, n_visits_i);
     } else {
-      visit_i = seq_len(n_visits_i) - 1;
+      visit_i = seq(start_i, start_i + n_visits_i - 1);
       dist_i = euclidean(matrix<double>(coordinates_m.block(start_i, 0, n_visits_i, coordinates_m.cols())));
     }
     int n_vis;
@@ -85,15 +86,15 @@ NumericMatrix predict(List mmrm_data, NumericVector theta, NumericVector beta, N
     matrix<double> sigma_11 = na_sel_matrix * sigma_full * na_sel_matrix.transpose();
     matrix<double> x_na = na_sel_matrix * Xi;
     matrix<double> x_valid = valid_sel_matrix * Xi;
-    vector<double> y_valid = as_vector<vector<double>, NumericVector>(y_i[visit_valid_vec]);
+    vector<double> y_valid = as_vector<vector<double>, NumericVector>(y_i[y_valid_i]);
     if (visit_valid_vec.size() == 0) {
       // no observations with valid y
       vector<double> y_hat = x_na * beta_v;
-      y_pred[visit_i + start_i] = as_vector<NumericVector, vector<double>>(y_hat);
+      y_pred[index_i] = as_vector<NumericVector, vector<double>>(y_hat);
       vector<double> var_conf = (x_na * beta_vcov_matrix * x_na.transpose()).diagonal();
       vector<double> var_y_on_theta = var_conf + vector<double>(sigma_full.diagonal());
-      conf_var[visit_i + start_i] = as_vector<NumericVector, vector<double>>(var_conf);
-      var[visit_i + start_i] = as_vector<NumericVector, vector<double>>(var_y_on_theta);
+      conf_var[index_i] = as_vector<NumericVector, vector<double>>(var_conf);
+      var[index_i] = as_vector<NumericVector, vector<double>>(var_y_on_theta);
     } else if (visit_na_vec.size() > 0) {
       // there are observations with invalid y
       matrix<double> sigma_22_inv;
@@ -102,15 +103,15 @@ NumericMatrix predict(List mmrm_data, NumericVector theta, NumericVector beta, N
       } else {
         sigma_22_inv = chols_by_group[subject_group_i]->get_sigma_inverse(visit_non_na, dist_i);
       }
-      
+      IntegerVector index_i_na = index_i[y_na_i];
       matrix<double> ss = sigma_12 * sigma_22_inv;
       matrix<double> zz = x_na - sigma_12 * sigma_22_inv * x_valid;
       vector<double> y_hat = zz * beta_v + ss * y_valid;
       vector<double> var_conf = (zz * beta_vcov_matrix * zz.transpose()).diagonal();
       vector<double> var_y_on_theta = var_conf + vector<double>((sigma_11 - ss * sigma_12.transpose()).diagonal());
-      y_pred[visit_na_vec + start_i] = as_vector<NumericVector, vector<double>>(y_hat);
-      var[visit_na_vec + start_i] = as_vector<NumericVector, vector<double>>(var_y_on_theta);
-      conf_var[visit_na_vec + start_i] = as_vector<NumericVector, vector<double>>(var_conf);
+      y_pred[index_i_na] = as_vector<NumericVector, vector<double>>(y_hat);
+      var[index_i_na] = as_vector<NumericVector, vector<double>>(var_y_on_theta);
+      conf_var[index_i_na] = as_vector<NumericVector, vector<double>>(var_conf);
     }
     // Otherwise, the observation is full so no prediction is needed
   }
