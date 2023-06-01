@@ -109,7 +109,7 @@ h_get_prediction <- function(tmb_data, theta, beta, beta_vcov) {
 }
 
 #' Get Prediction Variance
-#' @description Get prediction variance with given fit, tmb_data with sampling method
+#' @description Get prediction variance with given fit, `tmb_data` with the Monte Carlo sampling method.
 #'
 #' @param object (`mmrm_tmb`)\cr the fitted MMRM.
 #' @param n_sim (`integer`)\cr number of replication of sampling.
