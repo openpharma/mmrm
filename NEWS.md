@@ -17,7 +17,7 @@
 - Add confirmation if the number of visit levels is too large. Use `options(mmrm.max_visits = )`
   to specify the maximum number of visits allowed in non-interactive mode, or asked in interactive
   sessions.
-- Add `predict` method to obtain conditional mean estimate with or without observations.
+- Add `predict` method to obtain conditional mean estimates and prediction intervals, both with or without previous observations.
 
 ### Bug Fixes
 
