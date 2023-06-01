@@ -109,11 +109,62 @@ test_that("model.frame works for new data", {
   expect_class(attr(result, "terms"), "terms")
 })
 
-test_that("model.frame works regardless of na.action settings if x does not contain NA", {
+test_that("model.frame works if input x does not contain NA, y contains but not included", {
   fit1 <- get_mmrm_transformed()
   expect_silent(
     model.frame(fit1, na.action = "na.fail")
   )
+})
+
+test_that("model.frame fails if y contains NA and is included", {
+  fit1 <- get_mmrm_transformed()
+  expect_error(
+    model.frame(fit1, na.action = "na.fail", include = "response_var")
+  )
+})
+
+test_that("model.frame makes the levels match", {
+  fit1 <- get_mmrm()
+  fev_data2 <- fev_data
+  # changes the levels
+  levels(fev_data2$AVISIT) <- c("VIS3", "VIS2", "VIS4", "VIS1")
+  out_frame <- expect_silent(
+    model.frame(fit1, na.action = "na.fail", data = fev_data2)
+  )
+  expect_identical(levels(fev_data$AVISIT), levels(out_frame$AVISIT))
+})
+
+test_that("model.frame do not care about subject levels", {
+  fit1 <- get_mmrm()
+  fev_data2 <- fev_data
+  fev_data2$USUBJID <- sprintf("%s_TEST", fev_data2$USUBJID)
+  out_frame <- expect_silent(
+    model.frame(fit1, na.action = "na.fail", data = fev_data2, include = "subject_var")
+  )
+  expect_identical(fev_data2$USUBJID, out_frame$USUBJID)
+})
+
+test_that("model.frame include all specified variables", {
+  fit1 <- get_mmrm_group()
+  out_frame <- expect_silent(
+    model.frame(fit1, na.action = "na.fail", data = fev_data, include = "group_var")
+  )
+  expect_identical(colnames(out_frame), "ARMCD") # formula already contains "ARMCD"
+
+  out_frame <- expect_silent(
+    model.frame(fit1, na.action = "na.fail", data = fev_data, include = "visit_var")
+  )
+  expect_identical(colnames(out_frame), c("ARMCD", "AVISIT"))
+
+  out_frame <- expect_silent(
+    model.frame(fit1, na.action = "na.fail", data = fev_data, include = "subject_var")
+  )
+  expect_identical(colnames(out_frame), c("ARMCD", "USUBJID"))
+
+  out_frame <- expect_silent(
+    model.frame(fit1, na.action = "na.pass", data = fev_data, include = "response_var")
+  )
+  expect_identical(colnames(out_frame), c("FEV1", "ARMCD"))
 })
 
 

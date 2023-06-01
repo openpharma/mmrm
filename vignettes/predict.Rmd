@@ -82,6 +82,9 @@ Alternatively, both intervals can be derived using a parametric bootstrap sample
 of the unrestricted parameters $\theta$.
 This would probably also be easier for the `= "prediction"` case.
 
+Please note that for these intervals, we assume that the distribution is normal: we use $estimate \pm Z_{\alpha} * se$
+to construct it.
+
 ### Parametric Sampling for prediction interval
 
 With the conditional variance formula
