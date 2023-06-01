@@ -4,6 +4,9 @@ using namespace Rcpp;
 using std::string;
 // Obtain the empirical given beta, beta_vcov, theta.
 List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, NumericMatrix beta_vcov, string type) {
+  auto as_num_matrix_tmb = as_matrix<matrix<double>, NumericMatrix>;
+  auto as_num_matrix_rcpp = as_matrix<NumericMatrix, matrix<double>>;
+  auto as_num_vector_tmb = as_vector<vector<double>, NumericVector>;
   NumericMatrix x = mmrm_data["x_matrix"];
   matrix<double> x_matrix = as_num_matrix_tmb(x);
   NumericVector y = mmrm_data["y_vector"];

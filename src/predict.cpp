@@ -9,6 +9,10 @@ using std::string;
 // and use `beta_vcov` to obtain the covariance matrix for the mean of the fit,
 // and use `beta` to obtain the estimate of the mean of the fit.
 NumericMatrix predict(List mmrm_data, NumericVector theta, NumericVector beta, NumericMatrix beta_vcov) {
+  auto as_num_matrix_tmb = as_matrix<matrix<double>, NumericMatrix>;
+  auto as_num_vector_tmb = as_vector<vector<double>, NumericVector>;
+  auto as_num_vector_rcpp = as_vector<NumericVector, vector<double>>;
+
   NumericMatrix x = mmrm_data["x_matrix"];
   NumericVector y = mmrm_data["y_vector"];
   LogicalVector y_na = is_na(y);
