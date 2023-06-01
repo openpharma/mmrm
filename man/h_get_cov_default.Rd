@@ -4,7 +4,9 @@
 \alias{h_get_cov_default}
 \title{Obtain Default Covariance Method}
 \usage{
-h_get_cov_default(method = c("Satterthwaite", "Kenward-Roger", "Residual"))
+h_get_cov_default(
+  method = c("Satterthwaite", "Kenward-Roger", "Residual", "Between-within")
+)
 }
 \arguments{
 \item{method}{(\code{string})\cr degrees of freedom method.}
