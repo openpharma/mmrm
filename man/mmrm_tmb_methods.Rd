@@ -142,7 +142,7 @@ object <- fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)))
 coef(object)
 # Fitted values:
 fitted(object)
-stop("implement example")
+predict(object, newdata = fev_data)
 # Model frame:
 model.frame(object)
 model.frame(object, include = "subject_var")
