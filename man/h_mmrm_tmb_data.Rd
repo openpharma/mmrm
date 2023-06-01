@@ -10,7 +10,8 @@ h_mmrm_tmb_data(
   weights,
   reml,
   accept_singular,
-  drop_visit_levels
+  drop_visit_levels,
+  full_frame
 )
 }
 \arguments{
@@ -29,11 +30,14 @@ to full rank \code{x_matrix} and remaining coefficients will be missing as per
 \code{x_cols_aliased}. Otherwise the function fails for rank deficient design matrices.}
 
 \item{drop_visit_levels}{(\code{flag})\cr whether to drop levels for visit variable, if visit variable is a factor.}
+
+\item{full_frame}{(\code{data.frame})\cr which contains all used variables in \code{formula_parts}.}
 }
 \value{
 List of class \code{mmrm_tmb_data} with elements:
 \itemize{
 \item \code{full_frame}: \code{data.frame} with \code{n} rows containing all variables needed in the model.
+\item \code{data}: \code{data.frame} of input dataset.
 \item \code{x_matrix}: \code{matrix} with \code{n} rows and \code{p} columns specifying the overall design matrix.
 \item \code{x_cols_aliased}: \code{logical} with potentially more than \code{p} elements indicating which
 columns in the original design matrix have been left out to obtain a full rank

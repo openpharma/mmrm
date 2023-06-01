@@ -2,9 +2,9 @@
 % Please edit documentation in R/empirical.R
 \name{h_get_empirical}
 \alias{h_get_empirical}
-\title{Obtain Empirical/Jackknife Covariance}
+\title{Obtain Empirical/Jackknife/Bias-Reduced Covariance}
 \usage{
-h_get_empirical(tmb_data, theta, beta, beta_vcov, jackknife)
+h_get_empirical(tmb_data, theta, beta, beta_vcov, type)
 }
 \arguments{
 \item{tmb_data}{(\code{mmrm_tmb_data})\cr produced by \code{\link[=h_mmrm_tmb_data]{h_mmrm_tmb_data()}}.}
@@ -15,7 +15,8 @@ h_get_empirical(tmb_data, theta, beta, beta_vcov, jackknife)
 
 \item{beta_vcov}{(\code{matrix})\cr covariance of beta estimate.}
 
-\item{jackknife}{(\code{flag})\cr indicator of whether Jackknife covariance is returned.}
+\item{type}{(\code{string})\cr type of empirical method, including "Empirical", "Empirical-Jackknife"
+and "Empirical-Bias-Reduced".}
 }
 \value{
 Named list with elements:
@@ -26,6 +27,7 @@ Named list with elements:
 }
 \description{
 Obtain the empirical or Jackknife covariance for \eqn{\beta}.
-Used in \code{mmrm} fitting if method is "Empirical" or "Empirical-Jackknife".
+Used in \code{mmrm} fitting if method is "Empirical", "Empirical-Jackknife" or
+"Empirical-Bias-Reduced".
 }
 \keyword{internal}

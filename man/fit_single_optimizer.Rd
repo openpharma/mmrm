@@ -10,6 +10,8 @@ fit_single_optimizer(
   weights,
   reml = TRUE,
   covariance = NULL,
+  tmb_data,
+  formula_parts,
   ...,
   control = mmrm_control(...)
 )
@@ -30,6 +32,10 @@ as produced with \code{\link[=cov_struct]{cov_struct()}}, or value that can be c
 covariance structure using \code{\link[=as.cov_struct]{as.cov_struct()}}. If no value is provided,
 a structure is derived from the provided formula.}
 
+\item{tmb_data}{(\code{mmrm_tmb_data})\cr object.}
+
+\item{formula_parts}{(\code{mmrm_tmb_formula_parts})\cr object.}
+
 \item{...}{Additional arguments to pass to \code{\link[=mmrm_control]{mmrm_control()}}.}
 
 \item{control}{(\code{mmrm_control})\cr object.}
@@ -49,6 +55,8 @@ while capturing messages and warnings.
 \code{fit_single_optimizer} will fit the \code{mmrm} model using the \code{control} provided.
 If there are multiple optimizers provided in \code{control}, only the first optimizer
 will be used.
+If \code{tmb_data} and \code{formula_parts} are both provided, \code{formula}, \code{data}, \code{weights},
+\code{reml}, and \code{covariance} are ignored.
 }
 \examples{
 mod_fit <- fit_single_optimizer(

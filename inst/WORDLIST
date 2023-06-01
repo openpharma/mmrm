@@ -1,5 +1,6 @@
 adh
 aic
+al
 alessandro
 Alessandro
 Annalen
@@ -11,6 +12,9 @@ ast
 AstraZeneca
 aut
 AVISIT
+bbolker
+BCVA
+Benchmarking
 bilinearen
 biocViews
 Biometric
@@ -65,6 +69,7 @@ Eigen
 eigen
 emmeans
 eprint
+et
 expiratory
 fev
 FEV
@@ -142,6 +147,7 @@ MMRMs
 na
 nabla
 navbar
+ne
 newcommand
 nlminb
 noci
@@ -169,6 +175,7 @@ referece
 reml
 rightarrow
 Rmarkdown
+Rmd
 roche
 Roxygen
 roxygen
@@ -177,6 +184,7 @@ rsp
 runehaubo
 sabanes
 Sabanes
+SAS's
 Satterthwaite
 satterthwaite
 Satterthwaite's
@@ -191,6 +199,7 @@ sp_exp
 Springer
 SPx
 src
+tabset
 testthat
 testthat's
 th
@@ -220,12 +229,14 @@ varepsilon
 varphi
 vcov
 vdots
+vectorMixed
 Veränderlichen
 VignetteBuilder
 VIS
 VISITN
 von
 WIP
+wls
 WLS
 www
 yaml

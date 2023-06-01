@@ -297,3 +297,68 @@ fill_names <- function(x) {
 drop_elements <- function(x, n) {
   x[seq_along(x) > n]
 }
+
+#' Ask for Confirmation on Large Visit Levels
+#'
+#' @description Ask the user for confirmation if there are too many visit levels
+#' for non-spatial covariance structure in interactive sessions.
+#'
+#' @param x (`numeric`)\cr number of visit levels.
+#'
+#' @keywords internal
+h_confirm_large_levels <- function(x) {
+  assert_count(x)
+  allowed_lvls <- x <= getOption("mmrm.max_visits", 100)
+  if (allowed_lvls) {
+    return(TRUE)
+  }
+  if (!interactive()) {
+    stop("Visit levels too large!", call. = FALSE)
+  }
+  proceed <- utils::askYesNo(
+    paste(
+      "Visit levels is possibly too large.",
+      "This requires large memory. Are you sure to continue?",
+      collapse = " "
+    )
+  )
+  if (!identical(proceed, TRUE)) {
+    stop("Visit levels too large!", call. = FALSE)
+  }
+  return(TRUE)
+}
+
+#' Default Value on NULL
+#' Return default value when first argument is NULL.
+#'
+#' @param x Object.
+#' @param y Object.
+#'
+#' @details If `x` is NULL, returns `y`. Otherwise return `x`.
+#'
+#' @keywords internal
+h_default_value <- function(x, y) {
+  if (is.null(x)) {
+    y
+  } else {
+    x
+  }
+}
+
+#' Convert Character to Factor Following Reference
+#'
+#' @param x (`character` or `factor`)\cr  input.
+#' @param ref (`factor`)\cr reference.
+#' @param var_name (`string`)\cr variable name of input `x`.
+#'
+#' @details Use `ref` to convert `x` into factor with the same levels.
+#'
+#' @keywords internal
+h_factor_ref <- function(x, ref, var_name = vname(x)) {
+  assert_factor(ref)
+  assert_multi_class(x, c("character", "factor"))
+  uni_values <- as.character(unique(x))
+  assert_character(uni_values, .var.name = var_name)
+  assert_subset(uni_values, levels(ref), .var.name = var_name)
+  factor(x, levels = levels(ref))
+}

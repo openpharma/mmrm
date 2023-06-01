@@ -159,7 +159,7 @@ test_that("h_mmrm_tmb_data works as expected", {
   expect_named(
     result,
     c(
-      "full_frame", "x_matrix", "x_cols_aliased", "coordinates", "y_vector",
+      "full_frame", "data", "x_matrix", "x_cols_aliased", "coordinates", "y_vector",
       "weights_vector", "visits_zero_inds", "n_visits", "n_subjects",
       "subject_zero_inds", "subject_n_visits", "cov_type", "is_spatial_int", "reml",
       "subject_groups", "n_groups"
@@ -191,7 +191,7 @@ test_that("h_mmrm_tmb_data works as expected for grouped covariance", {
   expect_named(
     result,
     c(
-      "full_frame", "x_matrix", "x_cols_aliased", "coordinates", "y_vector",
+      "full_frame", "data", "x_matrix", "x_cols_aliased", "coordinates", "y_vector",
       "weights_vector", "visits_zero_inds", "n_visits", "n_subjects", "subject_zero_inds",
       "subject_n_visits", "cov_type", "is_spatial_int", "reml", "subject_groups", "n_groups"
     )
@@ -222,7 +222,7 @@ test_that("h_mmrm_tmb_data works as expected for mutli-dimensional spatial expon
   expect_named(
     result,
     c(
-      "full_frame", "x_matrix", "x_cols_aliased", "coordinates", "y_vector",
+      "full_frame", "data", "x_matrix", "x_cols_aliased", "coordinates", "y_vector",
       "weights_vector", "visits_zero_inds", "n_visits", "n_subjects", "subject_zero_inds",
       "subject_n_visits", "cov_type", "is_spatial_int", "reml", "subject_groups", "n_groups"
     )
@@ -373,7 +373,8 @@ test_that("h_mmrm_tmb_data will not be affecte by `weights` in data", {
 })
 
 test_that("h_mmrm_tmb_data works even if na.action is not na.omit", {
-  na_action <- options("na.action")
+  na_action <- getOption("na.action")
+  on.exit(options(na.action = na_action))
   options(na.action = "na.omit")
   formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
@@ -386,39 +387,62 @@ test_that("h_mmrm_tmb_data works even if na.action is not na.omit", {
     drop_visit_levels = TRUE
   )
   options(na.action = "na.pass")
-  res2 <- h_mmrm_tmb_data(
-    formula_parts,
-    data = fev_data,
-    weights = rep_len(1, nrow(fev_data)),
-    reml = TRUE,
-    accept_singular = TRUE,
-    drop_visit_levels = TRUE
+  expect_warning(
+    res2 <- h_mmrm_tmb_data(
+      formula_parts,
+      data = fev_data,
+      weights = rep_len(1, nrow(fev_data)),
+      reml = TRUE,
+      accept_singular = TRUE,
+      drop_visit_levels = TRUE
+    ),
+    "NA values will always be removed regardless of na.action in options."
   )
   expect_identical(res1, res2)
 
   options(na.action = "na.fail")
-  res3 <- h_mmrm_tmb_data(
-    formula_parts,
-    data = fev_data,
-    weights = rep_len(1, nrow(fev_data)),
-    reml = TRUE,
-    accept_singular = TRUE,
-    drop_visit_levels = TRUE
+  expect_warning(
+    res3 <- h_mmrm_tmb_data(
+      formula_parts,
+      data = fev_data,
+      weights = rep_len(1, nrow(fev_data)),
+      reml = TRUE,
+      accept_singular = TRUE,
+      drop_visit_levels = TRUE
+    ),
+    "NA values will always be removed regardless of na.action in options."
   )
   expect_identical(res1, res3)
 
   options(na.action = "na.exclude")
-  res4 <- h_mmrm_tmb_data(
-    formula_parts,
-    data = fev_data,
-    weights = rep_len(1, nrow(fev_data)),
-    reml = TRUE,
-    accept_singular = TRUE,
-    drop_visit_levels = TRUE
+  expect_warning(
+    res4 <- h_mmrm_tmb_data(
+      formula_parts,
+      data = fev_data,
+      weights = rep_len(1, nrow(fev_data)),
+      reml = TRUE,
+      accept_singular = TRUE,
+      drop_visit_levels = TRUE
+    ),
+    "NA values will always be removed regardless of na.action in options."
   )
   expect_identical(res1, res4)
+})
 
-  options(na.action = na_action$na.action)
+test_that("h_mmrm_tmb_data errors if too many visit levels", {
+  skip_if(interactive())
+  formula <- FEV1 ~ RACE + us(AVISIT | USUBJID)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula)
+  options("mmrm.max_visits" = 2)
+  on.exit(options("mmrm.max_visits" = NULL))
+  result <- expect_error(h_mmrm_tmb_data(
+    formula_parts,
+    fev_data,
+    fev_data$WEIGHT,
+    reml = FALSE,
+    accept_singular = FALSE,
+    drop_visit_levels = TRUE
+  ), "Visit levels too large!")
 })
 
 # h_mmrm_tmb_parameters ----
@@ -801,8 +825,6 @@ test_that("h_mmrm_tmb_fit works as expected", {
   result <- expect_silent(h_mmrm_tmb_fit(
     tmb_object,
     tmb_opt,
-    fev_data,
-    weights,
     formula_parts,
     tmb_data
   ))
@@ -855,7 +877,7 @@ test_that("h_mmrm_tmb_fit works as expected for grouped covariance", {
     )
   )
   result <- expect_silent(h_mmrm_tmb_fit(
-    tmb_object, tmb_opt, fev_data, weights, formula_parts, tmb_data
+    tmb_object, tmb_opt, formula_parts, tmb_data
   ))
   expect_class(result, "mmrm_tmb")
   expect_named(result, c(
@@ -1667,7 +1689,7 @@ test_that("fit_mmrm saves data name in call element as expected", {
   fit <- fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)))
   saved_call <- fit$call
   expect_class(saved_call, "call")
-  expect_identical(saved_call$data, "fev_data")
+  expect_identical(saved_call$data, as.name("fev_data"))
 })
 
 test_that("fit_mmrm works even when time point variable has unused factor levels", {
@@ -1746,5 +1768,109 @@ test_that("fit_mmrm throws informative error when covariance structure is not
       weights = rep(1, nrow(tmp_data))
     ),
     "Time variable must be a factor for non-spatial covariance structures"
+  )
+})
+
+# h_get_chol ----
+
+test_that("h_get_chol works correctly", {
+  fit <- get_mmrm()
+  expect_identical(
+    fit$tmb_object$report()$cholesky_all,
+    h_get_chol(fit)
+  )
+  new_theta <- seq_len(length(fit$theta_est)) / length(fit$theta_est)
+  expect_identical(
+    fit$tmb_object$report(new_theta)$cholesky_all,
+    h_get_chol(fit, theta = new_theta, data = fev_data, weights = NULL)
+  )
+})
+
+test_that("h_get_chol works correctly to provide cholesky on all visits (subjects have full visits)", {
+  fit <- get_mmrm()
+  new_theta <- seq_len(length(fit$theta_est)) / length(fit$theta_est)
+  chols <- expect_silent(
+    h_get_chol(fit, theta = new_theta, data = fev_data, weights = NULL, complete_case = FALSE)
+  )
+  lapply(
+    chols,
+    expect_matrix,
+    ncols = 4,
+    nrows = 4
+  )
+})
+
+test_that("h_get_chol errors on non correct theta", {
+  fit <- get_mmrm()
+  expect_error(
+    h_get_chol(fit, theta = 1),
+    "Must have length 10"
+  )
+})
+
+test_that("h_get_chol errors on non correct data", {
+  fit <- get_mmrm()
+  expect_error(
+    h_get_chol(fit, data = iris),
+    "Names must include the elements"
+  )
+})
+
+test_that("h_get_chol works with as long as subject var is valid, and visit var as character subset of original fit", {
+  fit <- get_mmrm()
+  data <- data.frame(
+    USUBJID = rep(as.character(1:4), c(3, 2, 1, 3)),
+    AVISIT = sprintf("VIS%s", c(1, 2, 3, 2, 3, 3, 1, 2, 3))
+  )
+  expect_silent(
+    h_get_chol(fit, data = data)
+  )
+})
+
+test_that("h_get_chol errors with visit var as factor with different levels or more visit than fit", {
+  fit <- get_mmrm()
+  data <- data.frame(
+    USUBJID = rep(as.character(1:4), c(3, 2, 1, 3)),
+    AVISIT = factor(sprintf("VIS%s", c(1, 2, 5, 2, 3, 3, 1, 2, 3)))
+  )
+  expect_error(
+    h_get_chol(fit, data = data),
+    "but has additional elements {'VIS5'}",
+    fixed = TRUE
+  )
+})
+
+test_that("h_get_chol works with visit var, subject var and group var", {
+  fit <- get_mmrm_group()
+  data <- data.frame(
+    USUBJID = rep(as.character(1:4), c(3, 2, 1, 3)),
+    AVISIT = sprintf("VIS%s", c(1, 2, 3, 2, 3, 3, 1, 2, 3)),
+    ARMCD = factor(rep(c("TRT", "PBO", "PBO", "TRT"), c(3, 2, 1, 3)), levels = c("PBO", "TRT"))
+  )
+  expect_silent(
+    h_get_chol(fit, data = data)
+  )
+  data <- data.frame(
+    USUBJID = rep(as.character(1:4), c(3, 2, 1, 3)),
+    AVISIT = sprintf("VIS%s", c(1, 2, 3, 2, 3, 3, 1, 2, 3)),
+    ARMCD = "TRT"
+  )
+  expect_silent(
+    h_get_chol(fit, data = data)
+  )
+})
+
+test_that("h_get_chol works with grouped fit and theta even provided data has only one group", {
+  fit <- get_mmrm_group()
+  data <- data.frame(
+    USUBJID = rep(as.character(1:4), c(3, 2, 1, 3)),
+    AVISIT = sprintf("VIS%s", c(1, 2, 3, 2, 3, 3, 1, 2, 3)),
+    ARMCD = "TRT"
+  )
+  theta_new <- fit$theta_est
+  theta_new[1:10] <- 0
+  expect_identical(
+    h_get_chol(fit, data = data, theta = theta_new),
+    h_get_chol(fit, data = data, theta = fit$theta_est)
   )
 })

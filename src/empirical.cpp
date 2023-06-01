@@ -3,7 +3,7 @@
 using namespace Rcpp;
 using std::string;
 // Obtain the empirical given beta, beta_vcov, theta.
-List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, NumericMatrix beta_vcov, bool jackknife) {
+List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, NumericMatrix beta_vcov, string type) {
   NumericMatrix x = mmrm_data["x_matrix"];
   matrix<double> x_matrix = as_matrix(x);
   NumericVector y = mmrm_data["y_vector"];
@@ -64,11 +64,16 @@ List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, Nume
     matrix<double> gi_sqrt_root = G_sqrt.segment(start_i, n_visits_i).matrix().asDiagonal();
     matrix<double> gi_simga_inv_chol = gi_sqrt_root * sigma_inv_chol;
     matrix<double> xt_gi_simga_inv_chol = Xi.transpose() * gi_simga_inv_chol;
-    matrix<double> identity = matrix<double>::Identity(n_visits_i, n_visits_i);
-    if (jackknife) {
-      identity = identity - xt_gi_simga_inv_chol.transpose() * beta_vcov_matrix * xt_gi_simga_inv_chol;
+    matrix<double> ai = matrix<double>::Identity(n_visits_i, n_visits_i);
+    if (type != "Empirical") {
+      ai = ai - xt_gi_simga_inv_chol.transpose() * beta_vcov_matrix * xt_gi_simga_inv_chol;
     }
-    matrix<double> xta = xt_gi_simga_inv_chol * identity.inverse();
+    if (type == "Empirical-Jackknife") {
+      ai = ai.inverse();
+    } else if(type == "Empirical-Bias-Reduced") {
+      ai = pseudoInverseSqrt(ai);
+    }
+    matrix<double> xta = xt_gi_simga_inv_chol * ai;
     matrix<double> z = xta * gi_simga_inv_chol.transpose() * residual_i;
     meat = meat + z * z.transpose();
     xt_g_simga_inv_chol.block(0, start_i, p, n_visits_i) = xt_gi_simga_inv_chol;
@@ -86,6 +91,7 @@ List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, Nume
   matrix<double> gtvg = g.transpose() * g;
   for (int r = 0; r < n_groups; r++) {
     delete derivatives_by_group[r];
+    derivatives_by_group.erase(r);
   }
   // beta_vcov already take gi into consideration;
   matrix<double> ret = beta_vcov_matrix * meat * beta_vcov_matrix;

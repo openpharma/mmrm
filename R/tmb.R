@@ -26,13 +26,13 @@ h_mmrm_tmb_formula_parts <- function(
   assert_formula(formula)
   assert_true(identical(length(formula), 3L))
 
-  model_formula <- drop_covariance_terms(formula)
+  model_formula <- h_drop_covariance_terms(formula)
 
   structure(
     list(
       formula = formula,
       model_formula = model_formula,
-      full_formula = add_covariance_variable_terms(model_formula, covariance),
+      full_formula = h_add_covariance_terms(model_formula, covariance),
       cov_type = tmb_cov_type(covariance),
       is_spatial = covariance$type == "sp_exp",
       visit_var = covariance$visits,
@@ -55,9 +55,11 @@ h_mmrm_tmb_formula_parts <- function(
 #'   to full rank `x_matrix` and remaining coefficients will be missing as per
 #'   `x_cols_aliased`. Otherwise the function fails for rank deficient design matrices.
 #' @param drop_visit_levels (`flag`)\cr whether to drop levels for visit variable, if visit variable is a factor.
+#' @param full_frame (`data.frame`)\cr which contains all used variables in `formula_parts`.
 #'
 #' @return List of class `mmrm_tmb_data` with elements:
 #' - `full_frame`: `data.frame` with `n` rows containing all variables needed in the model.
+#' - `data`: `data.frame` of input dataset.
 #' - `x_matrix`: `matrix` with `n` rows and `p` columns specifying the overall design matrix.
 #' - `x_cols_aliased`: `logical` with potentially more than `p` elements indicating which
 #'      columns in the original design matrix have been left out to obtain a full rank
@@ -90,7 +92,8 @@ h_mmrm_tmb_data <- function(formula_parts,
                             weights,
                             reml,
                             accept_singular,
-                            drop_visit_levels) {
+                            drop_visit_levels,
+                            full_frame) {
   assert_class(formula_parts, "mmrm_tmb_formula_parts")
   assert_data_frame(data)
   varname <- formula_parts[grepl("_var", names(formula_parts))]
@@ -123,13 +126,16 @@ h_mmrm_tmb_data <- function(formula_parts,
     }
     order(data[[formula_parts$subject_var]], data[[formula_parts$visit_var]])
   }
+  if (identical(formula_parts$is_spatial, FALSE)) {
+    h_confirm_large_levels(length(levels(data[[formula_parts$visit_var]])))
+  }
   data <- data[data_order, ]
   weights <- weights[data_order]
   data <- data.frame(data, weights)
   # weights is always the last column
   weights_name <- colnames(data)[ncol(data)]
   if (!identical(getOption("na.action"), "na.omit")) {
-    message(
+    warning(
       "NA values will always be removed regardless of na.action in options."
     )
   }
@@ -204,6 +210,7 @@ h_mmrm_tmb_data <- function(formula_parts,
   structure(
     list(
       full_frame = full_frame,
+      data = data,
       x_matrix = x_matrix,
       x_cols_aliased = x_cols_aliased,
       coordinates = coordinates_matrix,
@@ -377,15 +384,12 @@ h_mmrm_tmb_extract_cov <- function(tmb_report, tmb_data, visit_var, is_spatial) 
 #' @keywords internal
 h_mmrm_tmb_fit <- function(tmb_object,
                            tmb_opt,
-                           data,
-                           weights,
                            formula_parts,
                            tmb_data) {
   assert_list(tmb_object)
   assert_subset(c("fn", "gr", "par", "he"), names(tmb_object))
   assert_list(tmb_opt)
   assert_subset(c("par", "objective", "convergence", "message"), names(tmb_opt))
-  assert_data_frame(data)
   assert_class(formula_parts, "mmrm_tmb_formula_parts")
   assert_class(tmb_data, "mmrm_tmb_data")
 
@@ -412,8 +416,8 @@ h_mmrm_tmb_fit <- function(tmb_object,
       theta_vcov = theta_vcov,
       neg_log_lik = tmb_opt$objective,
       formula_parts = formula_parts,
-      data = data,
-      weights = weights,
+      data = tmb_data$data,
+      weights = tmb_data$weights_vector,
       reml = as.logical(tmb_data$reml),
       opt_details = tmb_opt[opt_details_names],
       tmb_object = tmb_object,
@@ -443,6 +447,7 @@ h_mmrm_tmb_fit <- function(tmb_object,
 #'   the provided formula.
 #' @param control (`mmrm_control`)\cr list of control options produced by
 #'   [mmrm_control()].
+#' @inheritParams fit_single_optimizer
 #'
 #' @return List of class `mmrm_tmb`, see [h_mmrm_tmb_fit()] for details.
 #'
@@ -468,22 +473,29 @@ fit_mmrm <- function(formula,
                      weights,
                      reml = TRUE,
                      covariance = NULL,
+                     tmb_data,
+                     formula_parts,
                      control = mmrm_control()) {
-  covariance <- reconcile_cov_struct(formula, covariance)
-  formula_parts <- h_mmrm_tmb_formula_parts(formula, covariance)
+  if (missing(formula_parts) || missing(tmb_data)) {
+    covariance <- h_reconcile_cov_struct(formula, covariance)
+    formula_parts <- h_mmrm_tmb_formula_parts(formula, covariance)
 
-  if (!formula_parts$is_spatial && !is.factor(data[[formula_parts$visit_var]])) {
-    stop("Time variable must be a factor for non-spatial covariance structures")
+    if (!formula_parts$is_spatial && !is.factor(data[[formula_parts$visit_var]])) {
+      stop("Time variable must be a factor for non-spatial covariance structures")
+    }
+
+    assert_class(control, "mmrm_control")
+    assert_list(control$optimizers, min.len = 1)
+    assert_numeric(weights, any.missing = FALSE)
+    assert_true(all(weights > 0))
+    tmb_data <- h_mmrm_tmb_data(
+      formula_parts, data, weights, reml,
+      accept_singular = control$accept_singular, drop_visit_levels = control$drop_visit_levels
+    )
+  } else {
+    assert_class(tmb_data, "mmrm_tmb_data")
+    assert_class(formula_parts, "mmrm_tmb_formula_parts")
   }
-
-  assert_class(control, "mmrm_control")
-  assert_list(control$optimizers, min.len = 1)
-  assert_numeric(weights, any.missing = FALSE)
-  assert_true(all(weights > 0))
-  tmb_data <- h_mmrm_tmb_data(
-    formula_parts, data, weights, reml,
-    accept_singular = control$accept_singular, drop_visit_levels = control$drop_visit_levels
-  )
   tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = control$start, n_groups = tmb_data$n_groups)
 
   tmb_object <- TMB::MakeADFun(
@@ -514,20 +526,75 @@ fit_mmrm <- function(formula,
     tmb_opt$objective <- tmb_opt$value
     tmb_opt$value <- NULL
   }
-  fit <- h_mmrm_tmb_fit(tmb_object, tmb_opt, data, weights, formula_parts, tmb_data)
+  fit <- h_mmrm_tmb_fit(tmb_object, tmb_opt, formula_parts, tmb_data)
   h_mmrm_tmb_check_conv(tmb_opt, fit)
-
-  fun_call <- match.call()
-  fun_call$formula <- eval(formula_parts$formula)
-  fun_call$data <- ifelse(
-    !is.null(attr(data, which = "dataname")),
-    attr(data, which = "dataname"),
-    toString(match.call()$data)
-  )
-  weights_str <- attr(weights, which = "dataname")
-  if (!is.null(weights_str)) {
-    fun_call$weights <- weights_str
-  }
-  fit$call <- fun_call
+  fit$call <- match.call()
+  fit$call$formula <- formula_parts$formula
   fit
+}
+
+#' Cholesky Factors for New Data and Variance Parameters
+#'
+#' @description Use a fitted model to obtain (weighted) Cholesky factors
+#' with new data, weights and `theta`.
+#'
+#' @param fit (`mmrm_fit`)\cr produced by [mmrm()].
+#' @param data (`data.frame`)\cr input data frame.
+#' @param weights (`numeric`)\cr vector of weights.
+#' @param theta (`numeric`)\cr new variance parameter estimates.
+#' @param complete_case (`flag`)\cr whether to use complete input `data`.
+#'
+#' @details
+#' In `mmrm` call, missing values (in response or covariates) will be removed prior to model fitting.
+#' However, if we only require the Cholesky factors for each subject, it is
+#' not necessary to remove `NA` values. The flag, `complete_case`, is used to decide whether the
+#' input data should follow a similar approach of removing `NA` values rows.
+#' @return  The `list` of Cholesky factors for all individuals and time points in the new `data`.
+#'
+#' @keywords internal
+h_get_chol <- function(fit, theta = NULL, data = NULL, weights = NULL, complete_case = TRUE) {
+  assert_class(fit, "mmrm_fit")
+  assert_data_frame(data, null.ok = TRUE)
+  data <- h_default_value(data, fit$tmb_data$full_frame)
+  assert_flag(complete_case)
+  if (complete_case) {
+    data <- data[complete.cases(data), ]
+  }
+  assert_numeric(weights, len = nrow(data), null.ok = TRUE)
+  weights <- h_default_value(weights, rep(1, nrow(data)))
+  assert_numeric(theta, len = length(fit$theta_est), null.ok = TRUE)
+  theta <- h_default_value(theta, fit$theta_est)
+  visit_vars <- fit$formula_parts$visit_var
+  group_var <- fit$formula_parts$group_var
+  subject_var <- fit$formula_parts$subject_var
+  assert_names(names(data), must.include = c(visit_vars, subject_var, group_var))
+  if (fit$formula_parts$is_spatial) {
+    vn <- paste(vname(data), visit_vars, sep = "$")
+    assert_data_frame(data[visit_vars], types = "numeric", .var.name = toString(vn))
+  } else {
+    vn <- paste(vname(data), visit_vars, sep = "$")
+    data[[visit_vars]] <- h_factor_ref(data[[visit_vars]], fit$tmb_data$full_frame[[visit_vars]], vn)
+  }
+  if (!is.null(group_var)) {
+    vn <- paste(vname(data), fit$formula_parts$group_var, sep = "$")
+    data[[group_var]] <- h_factor_ref(data[[group_var]], fit$tmb_data$full_frame[[group_var]], vn)
+  }
+  # `h_mmrm_tmb_data` drops levels for the group variable, leading to incorrect number of groups (and the group levels).
+  # Therefore, here we add the levels back.
+  tmb_data <- h_mmrm_tmb_data(
+    h_mmrm_tmb_formula_parts(as.formula("rep(1, nrow(data))~1"), as.cov_struct(fit$formula_parts$formula)),
+    data = data, weights, identical(fit$tmb_data$reml, 1L),
+    accept_singular = TRUE, drop_visit_levels = FALSE
+  )
+  tmb_data$n_groups <- fit$tmb_data$n_groups
+  tmb_data$subject_groups <- h_factor_ref(tmb_data$subject_groups, fit$tmb_data$subject_groups)
+  tmb_parameters <- h_mmrm_tmb_parameters(fit$formula_parts, tmb_data, start = theta, n_groups = tmb_data$n_groups)
+  tmb_object <- TMB::MakeADFun(
+    data = tmb_data,
+    parameters = tmb_parameters,
+    hessian = TRUE,
+    DLL = "mmrm",
+    silent = TRUE
+  )
+  tmb_object$report()$cholesky_all
 }

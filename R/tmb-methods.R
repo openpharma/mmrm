@@ -41,21 +41,42 @@ fitted.mmrm_tmb <- function(object, ...) {
 }
 
 #' @describeIn mmrm_tmb_methods obtains the model frame.
-#' @param full (`flag`)\cr whether to include subject, visit and weight variables.
+#' @param exclude (`character`)\cr names of variable to exclude.
+#' @param full (`flag`) indicator whether to return full model frame (deprecated).
 #' @importFrom stats model.frame
 #' @exportS3Method
+#'
+#' @details
+#' `exclude` argument controls the variables the returned model frame will exclude.
+#' Possible options are "subject_var", "visit_var" and "group_var", representing the
+#' subject variable, visit variable or group variable.
+#'
 #' @examples
 #' # Model frame:
 #' model.frame(object)
-#' model.frame(object, full = TRUE)
-model.frame.mmrm_tmb <- function(formula, full = FALSE, ...) {
-  assert_flag(full)
-  if (full) {
+#' model.frame(object, exclude = "subject_var")
+model.frame.mmrm_tmb <- function(formula, exclude = "subject_var", full, ...) {
+  if (!missing(full) && identical(full, TRUE)) {
+    lifecycle::deprecate_warn("0.3", "model.frame.mmrm_tmb(full)")
+    exclude <- NULL
+  }
+  assert_subset(exclude, c("subject_var", "visit_var", "group_var"))
+  dots <- list(...)
+  if (!identical(h_default_value(dots$na.action, getOption("na.action")), "na.omit")) {
+    warning("na.action is always set to `na.omit` for `mmrm`!")
+  }
+  if (!is.null(dots$subset) || !is.null(dots$weights)) {
+    warning("subset and weights are not valid arguments for `mmrm` models.")
+  }
+  if (is.null(dots$data) && length(exclude) == 0L) {
     formula$tmb_data$full_frame
   } else {
+    drop_vars <- unlist(formula$formula_parts[exclude])
+    new_formula <- h_drop_terms(formula$formula_parts$full_formula, drop_vars)
     model.frame(
-      formula = formula$formula_parts$model_formula,
-      data = formula$tmb_data$full_frame
+      formula = new_formula,
+      data = h_default_value(dots$data, formula$data),
+      na.action = "na.omit"
     )
   }
 }
@@ -223,50 +244,24 @@ print.mmrm_tmb <- function(x,
 #' - \insertRef{galecki2013linear}{mmrm}
 residuals.mmrm_tmb <- function(object, type = c("response", "pearson", "normalized"), ...) {
   type <- match.arg(type)
-  resids_unscaled <- component(object, "y_vector") - unname(fitted(object))
-  if (type == "response") {
-    resids_unscaled
-  } else {
-    if (object$formula_parts$is_spatial) {
-      stop("Only 'response' residuals are available for models with spatial covariance structures.")
-    }
-    if (type == "pearson") {
-      h_residuals_pearson(object, resids_unscaled)
-    } else if (type == "normalized") {
-      h_residuals_normalized(object, resids_unscaled)
-    }
-  }
+  switch(type,
+    "response" = h_residuals_response(object),
+    "pearson" = h_residuals_pearson(object),
+    "normalized" = h_residuals_normalized(object)
+  )
 }
-
 #' Calculate Pearson Residuals
 #'
 #' This is used by [residuals.mmrm_tmb()] to calculate Pearson residuals.
 #'
 #' @param object (`mmrm_tmb`)\cr the fitted MMRM.
-#' @param resids_unscaled (`numeric`)\cr the response residuals.
 #'
 #' @return Vector of residuals.
 #'
 #' @keywords internal
-h_residuals_pearson <- function(object, resids_unscaled) {
+h_residuals_pearson <- function(object) {
   assert_class(object, "mmrm_tmb")
-  assert_numeric(resids_unscaled)
-  visits <- as.numeric(object$tmb_data$full_frame[[object$formula_parts$visit_var]])
-  cov_list <- if (component(object, "n_groups") == 1) {
-    list(object$cov)
-  } else {
-    object$cov
-  }
-  visit_sigmas <- lapply(cov_list, function(x) sqrt(diag(x, names = FALSE)))
-  nobs <- nrow(object$tmb_data$full_frame)
-  subject_grps <- if (component(object, "n_groups") == 1) {
-    rep(1, times = nobs)
-  } else {
-    object$tmb_data$full_frame[[object$formula_parts$group_var]]
-  }
-  sapply(1:nobs, function(x) {
-    resids_unscaled[x] / visit_sigmas[[subject_grps[x]]][visits[x]] * sqrt(object$tmb_data$weights_vector[x])
-  })
+  h_residuals_response(object) * object$tmb_object$report()$diag_cov_inv_sqrt
 }
 
 #' Calculate normalized residuals
@@ -274,48 +269,24 @@ h_residuals_pearson <- function(object, resids_unscaled) {
 #' This is used by [residuals.mmrm_tmb()] to calculate normalized / scaled residuals.
 #'
 #' @param object (`mmrm_tmb`)\cr the fitted MMRM.
-#' @param resids_unscaled (`numeric`)\cr the raw/response residuals.
 #'
 #' @return Vector of residuals
 #'
 #' @keywords internal
-h_residuals_normalized <- function(object, resids_unscaled) {
+h_residuals_normalized <- function(object) {
   assert_class(object, "mmrm_tmb")
-  assert_numeric(resids_unscaled)
-
-  resid_df <- data.frame(
-    subject = object$tmb_data$full_frame[[object$formula_parts$subject_var]],
-    time = as.numeric(object$tmb_data$full_frame[[object$formula_parts$visit_var]]),
-    residual = resids_unscaled,
-    weights = object$tmb_data$weights_vector
-  )
-
-  subject_list <- split(resid_df, resid_df$subject)
-
-  lower_chol_list <- if (component(object, "n_groups") == 1) {
-    lapply(seq_along(subject_list), function(x) {
-
-      weighted_cov <- object$cov[subject_list[[x]]$time, subject_list[[x]]$time] /
-        sqrt(tcrossprod(matrix(subject_list[[x]]$weights, ncol = 1)))
-
-      solve(t(chol(weighted_cov)))
-    })
-  } else {
-    groups <- data.frame(
-      subject = object$tmb_data$full_frame[[object$formula_parts$subject_var]],
-      group = object$tmb_data$full_frame[[object$formula_parts$group_var]]
-    )
-    groups <- groups[!duplicated(groups), ]
-    lapply(seq_along(subject_list), function(x) {
-      this_cov <- object$cov[[groups$group[x]]]
-
-      weighted_cov <- this_cov[subject_list[[x]]$time, subject_list[[x]]$time] /
-        sqrt(tcrossprod(matrix(subject_list[[x]]$weights, ncol = 1)))
-
-      solve(t(chol(weighted_cov)))
-    })
-  }
-  unlist(lapply(seq_along(subject_list), function(x) {
-    lower_chol_list[[x]] %*% matrix(subject_list[[x]]$residual, ncol = 1)
-  }))
+  object$tmb_object$report()$epsilonTilde
+}
+#' Calculate response residuals.
+#'
+#' This is used by [residuals.mmrm_tmb()] to calculate response residuals.
+#'
+#' @param object (`mmrm_tmb`)\cr the fitted MMRM.
+#'
+#' @return Vector of residuals
+#'
+#' @keywords internal
+h_residuals_response <- function(object) {
+  assert_class(object, "mmrm_tmb")
+  component(object, "y_vector") - unname(fitted(object))
 }
