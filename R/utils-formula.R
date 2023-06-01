@@ -90,5 +90,5 @@ h_add_terms <- function(f, adds, drop_response = FALSE) {
   if (drop_response && length(f) == 3L) {
     f[[2]] <- NULL
   }
-  return(f)
+  f
 }

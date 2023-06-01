@@ -187,4 +187,9 @@ matrix<T> pseudoInverseSqrt(const matrix<T> &input, double epsilon = std::numeri
   return convert_eigen(ret_eigen);
 }
 
+// Quick helpers of conversion
+matrix<double> as_num_matrix_tmb(Rcpp::NumericMatrix x);
+Rcpp::NumericMatrix as_num_matrix_rcpp(matrix<double> x);
+vector<double> as_num_vector_tmb(Rcpp::NumericVector x);
+Rcpp::NumericVector as_num_vector_rcpp(vector<double> x);
 #endif

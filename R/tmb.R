@@ -133,9 +133,9 @@ h_mmrm_tmb_data <- function(formula_parts,
   data <- data[data_order, ]
   weights <- weights[data_order]
   data <- data.frame(data, weights)
-  # weights is always the last column
+  # Weights is always the last column.
   weights_name <- colnames(data)[ncol(data)]
-  # if y allow to be NA, then first replace y with 1:n, then replace it with original y
+  # If `y` is allowed to be NA, then first replace y with 1:n, then replace it with original y.
   if (allow_na_response) {
     y_original <- eval(formula_parts$full_formula[[2]], envir = data)
     vn <- deparse(formula_parts$full_formula[[2]])
@@ -154,7 +154,7 @@ h_mmrm_tmb_data <- function(formula_parts,
   if (drop_levels) {
     full_frame <- droplevels(full_frame, except = formula_parts$visit_var)
   }
-  # if y allow to be NA, replace it with original y
+  # If `y` is allowed to be NA, replace it with original y.
   if (allow_na_response) {
     full_frame[[vn]] <- y_original[full_frame[[vn]]]
   }
@@ -193,7 +193,7 @@ h_mmrm_tmb_data <- function(formula_parts,
   n_subjects <- length(unique(full_frame[[formula_parts$subject_var]]))
   subject_zero_inds <- which(!duplicated(full_frame[[formula_parts$subject_var]])) - 1L
   subject_n_visits <- c(utils::tail(subject_zero_inds, -1L), nrow(full_frame)) - subject_zero_inds
-  # possible that subject_var is factor (and this does not affect fit) so no check needed
+  # It is possible that `subject_var` is factor (and this does not affect fit) so no check is needed for `subject_visits`.
   assert_true(all(subject_n_visits > 0))
   if (!is.null(formula_parts$group_var)) {
     assert_factor(data[[formula_parts$group_var]])

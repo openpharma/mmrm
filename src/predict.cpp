@@ -3,7 +3,11 @@
 
 using namespace Rcpp;
 using std::string;
-// Obtain the empirical given beta, beta_vcov, theta.
+// Obtain the conditional mean/variance of `y` given `beta`, `beta_vcov`, `theta`.
+// Given any `theta`, we can obtain `beta` and `beta_vcov` through the `mrmm` fit, and then
+// we can use the provided `theta` to obtain the covariance matrix for the residual,
+// and use `beta_vcov` to obtain the covariance matrix for the mean of the fit,
+// and use `beta` to obtain the estimate of the mean of the fit.
 NumericMatrix predict(List mmrm_data, NumericVector theta, NumericVector beta, NumericMatrix beta_vcov) {
   NumericMatrix x = mmrm_data["x_matrix"];
   NumericVector y = mmrm_data["y_vector"];
@@ -16,17 +20,17 @@ NumericMatrix predict(List mmrm_data, NumericVector theta, NumericVector beta, N
   IntegerVector subject_groups = mmrm_data["subject_groups"];
   NumericMatrix coordinates = mmrm_data["coordinates"];
 
-  matrix<double> x_matrix = as_matrix<matrix<double>, NumericMatrix>(x);
-  matrix<double> coordinates_m = as_matrix<matrix<double>, NumericMatrix>(coordinates);
-  matrix<double> beta_vcov_matrix = as_matrix<matrix<double>, NumericMatrix>(beta_vcov);
+  matrix<double> x_matrix = as_num_matrix_tmb(x);
+  matrix<double> coordinates_m = as_num_matrix_tmb(coordinates);
+  matrix<double> beta_vcov_matrix = as_num_matrix_tmb(beta_vcov);
   int n_subjects = mmrm_data["n_subjects"];
   int n_observations = x_matrix.rows();
   int n_visits = mmrm_data["n_visits"];
   int is_spatial_int = mmrm_data["is_spatial_int"];
   bool is_spatial = is_spatial_int == 1;
   int n_groups = mmrm_data["n_groups"];
-  vector<double> beta_v = as_vector<vector<double>, NumericVector>(beta);
-  vector<double> theta_v = as_vector<vector<double>, NumericVector>(theta);
+  vector<double> beta_v = as_num_vector_tmb(beta);
+  vector<double> theta_v = as_num_vector_tmb(theta);
   int n_theta = theta.size();
   int theta_one_group_size = n_theta / n_groups;
   int p = x.cols();
@@ -41,9 +45,9 @@ NumericMatrix predict(List mmrm_data, NumericVector theta, NumericVector beta, N
       chols_by_group[r] = new lower_chol_nonspatial<double>(theta_v.segment(r * theta_one_group_size, theta_one_group_size), n_visits, cov_type);
     }
   }
-  NumericVector y_pred = clone(y); // predict value of y; observed use the same value
-  NumericVector var(y.size()); // variance of y with 0 as default;
-  NumericVector conf_var(y.size()); // confidence interval variance
+  NumericVector y_pred = clone(y); // Predict value of y; observed use the same value.
+  NumericVector var(y.size()); // Variance of y with 0 as default.
+  NumericVector conf_var(y.size()); // Confidence interval variance.
   // Go through all subjects and calculate quantities initialized above.
   for (int i = 0; i < n_subjects; i++) {
     // Start index and number of visits for this subject.
@@ -71,7 +75,7 @@ NumericMatrix predict(List mmrm_data, NumericVector theta, NumericVector beta, N
     std::vector<int> visit_na = as<std::vector<int>>(visit_na_vec);
     std::vector<int> visit_non_na = as<std::vector<int>>(visit_valid_vec);
     matrix<double> Xi = x_matrix.block(start_i, 0, n_visits_i, x_matrix.cols());
-    // subject_group starts with 1.
+    // Subject_group starts with 1.
     int subject_group_i = subject_groups(i) - 1;
     matrix<double> sigma_full = chols_by_group[subject_group_i]->get_sigma(visit_std, dist_i);
     matrix<double> na_sel_matrix = get_select_matrix<double>(as<std::vector<int>>(index_zero_i_na), n_visits_i); // select matrix based on already subsetted visits
@@ -80,22 +84,22 @@ NumericMatrix predict(List mmrm_data, NumericVector theta, NumericVector beta, N
     matrix<double> sigma_11 = chols_by_group[subject_group_i]->get_sigma(visit_na, dist_i);
     matrix<double> x_na = na_sel_matrix * Xi;
     matrix<double> x_valid = valid_sel_matrix * Xi;
-    vector<double> y_valid = as_vector<vector<double>, NumericVector>(y_i[y_valid_i]);
+    vector<double> y_valid = as_num_vector_tmb(y_i[y_valid_i]);
     IntegerVector na_index = index_zero_i_na + start_i;
     vector<double> y_hat, var_conf, var_y_on_theta;
     if (visit_valid_vec.size() == 0) {
-      // no observations with valid y
+      // No observations with valid y.
       y_hat = x_na * beta_v;
       var_conf = (x_na * beta_vcov_matrix * x_na.transpose()).diagonal();
       var_y_on_theta = var_conf + vector<double>(sigma_full.diagonal());
       
     } else if (visit_na_vec.size() > 0) {
-      // there are observations with invalid y
+      // There are observations with invalid y.
       matrix<double> sigma_22_inv;
       if (is_spatial) {
-        sigma_22_inv = (valid_sel_matrix * sigma_full * valid_sel_matrix.transpose()).inverse(); // no cache available
+        sigma_22_inv = (valid_sel_matrix * sigma_full * valid_sel_matrix.transpose()).inverse(); // No cache available for spatial covariance.
       } else {
-        sigma_22_inv = chols_by_group[subject_group_i]->get_sigma_inverse(visit_non_na, dist_i); // have the inverse in cache
+        sigma_22_inv = chols_by_group[subject_group_i]->get_sigma_inverse(visit_non_na, dist_i); // We have the inverse in cache for non spatial covariance.
       }
       matrix<double> ss = sigma_12 * sigma_22_inv;
       matrix<double> zz = x_na - ss * x_valid;
@@ -103,9 +107,10 @@ NumericMatrix predict(List mmrm_data, NumericVector theta, NumericVector beta, N
       var_conf = (zz * beta_vcov_matrix * zz.transpose()).diagonal();
       var_y_on_theta = var_conf + vector<double>((sigma_11 - ss * sigma_12.transpose()).diagonal());
     }
-    y_pred[na_index] = as_vector<NumericVector, vector<double>>(y_hat);
-    conf_var[na_index] = as_vector<NumericVector, vector<double>>(var_conf);
-    var[na_index] = as_vector<NumericVector, vector<double>>(var_y_on_theta);
+    // Replace the values with fitted values. If no missing value there, the `na_index` will be length 0 so no harm here.
+    y_pred[na_index] = as_num_vector_rcpp(y_hat);
+    conf_var[na_index] = as_num_vector_rcpp(var_conf);
+    var[na_index] = as_num_vector_rcpp(var_y_on_theta);
   }
   return cbind(y_pred, conf_var, var);
 }

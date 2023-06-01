@@ -48,7 +48,7 @@ fitted.mmrm_tmb <- function(object, ...) {
 #' @importFrom stats predict
 #' @exportS3Method
 #' @examples
-#' stop("implement example")
+#' predict(object, newdata = fev_data)
 predict.mmrm_tmb <- function(
     object, newdata, se.fit = FALSE, # nolint
     interval = c("none", "confidence", "prediction"), level = 0.95,

@@ -13,11 +13,11 @@ context("get_select_matrix") {
       0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0,
       0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0;
     matrix<double> result_dense(result);
-    expect_equal_matrix<matrix<double>>(result_dense, expected);
+    expect_equal_matrix(result_dense, expected);
     std::vector<int> visits_i2 {{0, 3, 5}};
     Eigen::SparseMatrix<double> result2 = get_select_matrix<double>(visits_i2, 7);
     matrix<double> result_dense2(result2);
-    expect_equal_matrix<matrix<double>>(result_dense2, expected);
+    expect_equal_matrix(result_dense2, expected);
   }
 }
 
@@ -29,7 +29,7 @@ context("tcrossprod") {
       6.0, 2.0;
     matrix<double> result = tcrossprod(lower_chol, true);
     matrix<double> expected = lower_chol * lower_chol.transpose();
-    expect_equal_matrix<matrix<double>>(result, expected);
+    expect_equal_matrix(result, expected);
   }
 
   test_that("tcrossprod works as expected without complete (default)") {
@@ -40,7 +40,7 @@ context("tcrossprod") {
     matrix<double> result = tcrossprod(lower_chol); // default: no complete.
     matrix<double> full = lower_chol * lower_chol.transpose();
     matrix<double> expected = full.template triangularView<Eigen::Lower>();
-    expect_equal_matrix<matrix<double>>(result, expected);
+    expect_equal_matrix(result, expected);
   }
 }
 
@@ -53,7 +53,7 @@ context("crossprod") {
     matrix<double> result = crossprod(x);
     matrix<double> full = x.transpose() * x;
     matrix<double> expected = full.template triangularView<Eigen::Lower>();
-    expect_equal_matrix<matrix<double>>(result, expected);
+    expect_equal_matrix(result, expected);
   }
 }
 
@@ -65,7 +65,7 @@ context("map_to_cor") {
     // test <- c(-5, 2, 10, 0)
     // test / sqrt(1 + test^2)
     vector<double> expected {{-0.98058067569092, 0.894427190999916, 0.995037190209989, 0.0}};
-    expect_equal_vector<vector<double>>(result, expected);
+    expect_equal_vector(result, expected);
   }
 }
 
@@ -74,7 +74,7 @@ context("generic_corr_fun") {
     vector<double> theta {{-5., 2., 10., 0.}};
     generic_corr_fun<double> result(theta);
     vector<double> expected_corr_values = map_to_cor(theta);
-    expect_equal_vector<vector<double>>(result.corr_values, expected_corr_values);
+    expect_equal_vector(result.corr_values, expected_corr_values);
   }
 }
 
@@ -93,7 +93,7 @@ context("get_corr_mat_chol") {
       1, 0, 0,
       0.5, 0.866025403784439, 0,
       0.5, 0.288675134594813, 0.816496580927726;
-    expect_equal_matrix<matrix<double>>(result, expected);
+    expect_equal_matrix(result, expected);
   }
 }
 
@@ -113,7 +113,7 @@ context("get_heterogeneous_cov") {
       1.0, 0.0, 0.0,
       0.0, 2.0, 0.0,
       0.0, 0.0, 3.0;
-    expect_equal_matrix<matrix<double>>(result, expected);
+    expect_equal_matrix(result, expected);
   }
 }
 
@@ -127,7 +127,7 @@ context("euclidean distance") {
       1, 0, 1, 2,
       2, 1, 0, 1,
       3, 2, 1, 0;
-    expect_equal_matrix<matrix<double>>(euclidean(coord), expected);
+    expect_equal_matrix(euclidean(coord), expected);
   }
   test_that("euclidean works as expected for matrix") {
     matrix<double> coord(4, 2);
@@ -139,7 +139,7 @@ context("euclidean distance") {
       4, 2, 0, 2,
       6, 4, 2, 0;
     expected = expected * sqrt(2);
-    expect_equal_matrix<matrix<double>>(euclidean(coord), expected);
+    expect_equal_matrix(euclidean(coord), expected);
   }
 }
 
@@ -147,7 +147,7 @@ context("convert_eigen and convert_tmb") {
   test_that("convert_eigen and convert_tmb are inverse functions") {
     matrix<double> tmb_mat(4, 2);
     tmb_mat << 1, 2, 3, 4, 5, 6, 7, 8;
-    expect_equal_matrix<matrix<double>>(convert_eigen(convert_tmb(tmb_mat)), tmb_mat);
+    expect_equal_matrix(convert_eigen(convert_tmb(tmb_mat)), tmb_mat);
   }
 }
 
@@ -157,14 +157,14 @@ context("cpow works") {
     tmb_mat << 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0;
     matrix<double> expected(4, 2);
     expected << 1.0, sqrt(2.0), sqrt(3.0), 2.0, sqrt(5.0), sqrt(6.0), sqrt(7.0), sqrt(8.0);
-    expect_equal_matrix<matrix<double>>(convert_eigen(cpow(convert_tmb(tmb_mat), 0.5)), expected);
+    expect_equal_matrix(convert_eigen(cpow(convert_tmb(tmb_mat), 0.5)), expected);
   }
   test_that("cpow gives correct power by element for power 2") {
     matrix<double> tmb_mat(4, 2);
     tmb_mat << 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0;
     matrix<double> expected(4, 2);
     expected << 1.0, 4.0, 9.0, 16.0, 25.0, 36.0, 49.0, 64.0;
-    expect_equal_matrix<matrix<double>>(convert_eigen(cpow(convert_tmb(tmb_mat), 2.0)), expected);
+    expect_equal_matrix(convert_eigen(cpow(convert_tmb(tmb_mat), 2.0)), expected);
   }
 }
 
@@ -179,7 +179,7 @@ context("pseudoInverseSqrt works") {
     expected << 0.8235633, -0.5514385, -0.2586037,
       -0.5514385,  1.0568775,  0.2548210,
       -0.2586037,  0.2548210,  0.4095994;
-    expect_equal_matrix<matrix<double>>(pseudoInverseSqrt(tmb_mat), expected);
+    expect_equal_matrix(pseudoInverseSqrt(tmb_mat), expected);
   }
 
   test_that("pseudoInverseSqrt gives correct result for rank-deficient matrix") {
@@ -192,19 +192,19 @@ context("pseudoInverseSqrt works") {
     expected << 0.5331152, -0.2459070,    0.0,
       -0.2459070, 0.7319613,    0.0,
       0.0000000,  0.0000000,    0.0;
-    expect_equal_matrix<matrix<double>>(pseudoInverseSqrt(tmb_mat), expected);
+    expect_equal_matrix(pseudoInverseSqrt(tmb_mat), expected);
   }
 }
 
 context("Rcpp and eigen conversion") {
   test_that("conversions do not change values") {
     NumericVector v1 = NumericVector::create(1.0, 2.0, 3.0);
-    vector<double> v1_vec = as_vector<vector<double>, NumericVector>(v1);
-    NumericVector v2 = as_vector<NumericVector, vector<double>>(v1_vec);
+    vector<double> v1_vec = as_num_vector_tmb(v1);
+    NumericVector v2 = as_num_vector_rcpp(v1_vec);
     vector<double> v3(3);
     v3 << 1.0, 2.0, 3.0;
-    expect_equal_vector<vector<double>>(v1_vec, v3);
-    expect_equal_vector<NumericVector>(v1, v2);
+    expect_equal_vector(v1_vec, v3);
+    expect_equal_vector(v1, v2);
 
     IntegerVector v4 = IntegerVector::create(1, 2, 3);
     vector<int> v4_vec = as_vector<vector<int>, IntegerVector>(v4);
@@ -218,8 +218,8 @@ context("Rcpp and eigen conversion") {
     NumericMatrix m1(2, 2, v_m.begin());
     matrix<double> m2(2, 2);
     m2 << 1.0, 3.0, 2.0, 4.0;
-    expect_equal_matrix<matrix<double>>(m2, as_matrix<matrix<double>, NumericMatrix>(m1));
-    expect_equal_matrix<NumericMatrix>(m1, as_matrix<NumericMatrix, matrix<double>>(m2));
+    expect_equal_matrix(m2, as_matrix<matrix<double>, NumericMatrix>(m1));
+    expect_equal_matrix(m1, as_matrix<NumericMatrix, matrix<double>>(m2));
   }
 }
 
@@ -228,6 +228,6 @@ context("segment works for Rcpp Vector") {
     NumericVector v1 = NumericVector::create(1.0, 2.0, 3.0);
     NumericVector v2 = segment<NumericVector>(v1, 1, 1);
     NumericVector v3 = NumericVector::create(2.0);
-    expect_equal_vector<NumericVector>(v2, v3);
+    expect_equal_vector(v2, v3);
   }
 }
