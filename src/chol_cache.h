@@ -15,7 +15,7 @@ template <class Type>
 struct lower_chol_nonspatial: public lower_chol_base<Type> {
   std::map<std::vector<int>, matrix<Type>> chols;
   std::map<std::vector<int>, matrix<Type>> sigmas;
-  std::map<std::vector<int>, matrix<Type>> simgas_inv;
+  std::map<std::vector<int>, matrix<Type>> sigmas_inv;
   std::string cov_type;
   int n_visits;
   std::vector<int> full_visit;
@@ -61,12 +61,12 @@ struct lower_chol_nonspatial: public lower_chol_base<Type> {
     }
   }
   matrix<Type> get_sigma_inverse(std::vector<int> visits, matrix<Type> dist) {
-    auto target = this->simgas_inv.find(visits);
-    if (target != this->simgas_inv.end()) {
+    auto target = this->sigmas_inv.find(visits);
+    if (target != this->sigmas_inv.end()) {
       return target->second;
     } else {
       matrix<Type> ret = this->get_sigma(visits, dist).inverse();
-      this->simgas_inv[visits] = ret;
+      this->sigmas_inv[visits] = ret;
       return ret;
     }
   }

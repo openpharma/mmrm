@@ -63,8 +63,12 @@ predict.mmrm_tmb <- function(
   )
   tmb_data <- h_mmrm_tmb_data(
     object$formula_parts, full_frame,
-    weights = rep(1, nrow(full_frame)), reml = TRUE,
-    singular = "keep", drop_visit_levels = FALSE, allow_na_response = TRUE, drop_levels = FALSE
+    weights = rep(1, nrow(full_frame)),
+    reml = TRUE,
+    singular = "keep",
+    drop_visit_levels = FALSE,
+    allow_na_response = TRUE,
+    drop_levels = FALSE
   )
   predictions <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
   res <- data.frame(fit = predictions[, 1])
@@ -73,10 +77,10 @@ predict.mmrm_tmb <- function(
     "prediction" = sqrt(h_get_prediction_variance(object, n_sim, tmb_data)),
     "none" = NULL
   )
-  if (se.fit && interval != "none") { # save se
+  if (se.fit && interval != "none") {
     res <- cbind(res, se = se)
   }
-  if (interval != "none") { # compute confidence interval
+  if (interval != "none") {
     alpha <- 1 - level
     z <- qnorm(1 - alpha / 2) * se
     res <- cbind(res,
@@ -84,7 +88,7 @@ predict.mmrm_tmb <- function(
       upr = res[, "fit"] + z
     )
   }
-  if (ncol(res) == 1) { # return vector if only fit is computed
+  if (ncol(res) == 1) {
     res <- res[, "fit"]
   }
   return(res)
