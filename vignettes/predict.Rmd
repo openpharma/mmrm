@@ -91,7 +91,16 @@ With the conditional variance formula
 \]
 
 the conditional expectation $E(Y_i|\theta)$ and the conditional variance $Var(Y_i|\theta)$ are already described
-so we can sample on $\theta$ and calculate the variance of conditional mean and the mean of conditional variance.
+
+\[
+  E(Y_i|\theta) = \mu_i(\beta,\theta)
+\]
+
+\[
+  Var(Y_i|\theta) = A_i(\beta, \theta)
+\]
+
+so we can sample on $\theta$ and obtain $\beta$, then calculate the variance of conditional mean and the mean of conditional variance.
 
 ### Prediction of conditional mean for new subjects
 
