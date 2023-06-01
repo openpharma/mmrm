@@ -193,7 +193,8 @@ h_mmrm_tmb_data <- function(formula_parts,
   n_subjects <- length(unique(full_frame[[formula_parts$subject_var]]))
   subject_zero_inds <- which(!duplicated(full_frame[[formula_parts$subject_var]])) - 1L
   subject_n_visits <- c(utils::tail(subject_zero_inds, -1L), nrow(full_frame)) - subject_zero_inds
-  # It is possible that `subject_var` is factor (and this does not affect fit) so no check is needed for `subject_visits`.
+  # It is possible that `subject_var` is factor with more levels (and this does not affect fit)
+  # so no check is needed for `subject_visits`.
   assert_true(all(subject_n_visits > 0))
   if (!is.null(formula_parts$group_var)) {
     assert_factor(data[[formula_parts$group_var]])
