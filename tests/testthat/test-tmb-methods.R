@@ -167,6 +167,35 @@ test_that("model.frame include all specified variables", {
   expect_identical(colnames(out_frame), c("FEV1", "ARMCD"))
 })
 
+test_that("model.frame with character reference will return factors", {
+  fev_data2 <- fev_data
+  fev_data2$ARMCD <- as.character(fev_data2$ARMCD)
+  fit <- mmrm(FEV1 ~ ARMCD + ar1(AVISIT | USUBJID), data = fev_data2)
+  new_data <- subset(fev_data2, ARMCD == "TRT")
+  new_frame <- expect_silent(model.frame(fit, data = new_data, include = c("subject_var", "visit_var", "response_var")))
+  expect_identical(levels(new_frame$ARMCD), c("PBO", "TRT"))
+  expect_silent(h_mmrm_tmb_data(
+    fit$formula_parts, new_frame,
+    weights = rep(1, nrow(new_frame)),
+    reml = TRUE,
+    singular = "keep",
+    drop_visit_levels = FALSE,
+    allow_na_response = TRUE,
+    drop_levels = FALSE
+  ))
+  # If we don't have the factorization in model.frame
+  new_frame2 <- new_frame
+  new_frame2$ARMCD <- as.character(new_frame2$ARMCD)
+  expect_error(h_mmrm_tmb_data(
+    fit$formula_parts, new_frame2,
+    weights = rep(1, nrow(new_frame2)),
+    reml = TRUE,
+    singular = "keep",
+    drop_visit_levels = FALSE,
+    allow_na_response = TRUE,
+    drop_levels = FALSE
+  ), "contrasts can be applied only to factors")
+})
 
 # logLik ----
 

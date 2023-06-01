@@ -91,6 +91,8 @@ Depends on the method, see Functions.
 \code{include} argument controls the variables the returned model frame will include.
 Possible options are "response_var", "subject_var", "visit_var" and "group_var", representing the
 response variable, subject variable, visit variable or group variable.
+\code{character} values in new data will always be factorized according to the data in the fit
+to avoid mismatched in levels or issues in \code{model.matrix}.
 }
 \section{Functions}{
 \itemize{

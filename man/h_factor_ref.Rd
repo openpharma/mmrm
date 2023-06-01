@@ -18,5 +18,7 @@ Convert Character to Factor Following Reference
 }
 \details{
 Use \code{ref} to convert \code{x} into factor with the same levels.
+This is needed even if \code{x} and \code{ref} are both \code{character} because
+in \code{model.matrix} if \code{x} only has one level there could be errors.
 }
 \keyword{internal}
