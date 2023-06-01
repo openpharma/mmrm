@@ -91,7 +91,7 @@ predict.mmrm_tmb <- function(
 }
 
 #' Get Prediction
-#' @description Get prediction with given data, theta, beta, beta_vcov
+#' @description Get predictions with given `data`, `theta`, `beta`, `beta_vcov`.
 #'
 #' @param tmb_data (`mmrm_tmb_data`)\cr object.
 #' @param theta (`numeric`)\cr theta value.
