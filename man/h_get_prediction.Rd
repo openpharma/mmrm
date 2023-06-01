@@ -16,6 +16,6 @@ h_get_prediction(tmb_data, theta, beta, beta_vcov)
 \item{beta_vcov}{(\code{matrix})\cr beta_vcov matrix.}
 }
 \description{
-Get prediction with given data, theta, beta, beta_vcov
+Get predictions with given \code{data}, \code{theta}, \code{beta}, \code{beta_vcov}.
 }
 \keyword{internal}

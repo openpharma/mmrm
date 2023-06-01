@@ -9,11 +9,11 @@ h_get_prediction_variance(object, n_sim, tmb_data)
 \arguments{
 \item{object}{(\code{mmrm_tmb})\cr the fitted MMRM.}
 
-\item{n_sim}{(\code{integer})\cr number of replication of sampling.}
+\item{n_sim}{(\code{integer})\cr number of samples.}
 
 \item{tmb_data}{(\code{mmrm_tmb_data})\cr object.}
 }
 \description{
-Get prediction variance with given fit, tmb_data with sampling method
+Get prediction variance with given fit, \code{tmb_data} with the Monte Carlo sampling method.
 }
 \keyword{internal}
