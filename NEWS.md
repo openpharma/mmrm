@@ -28,7 +28,7 @@
   given data, e.g. `model.frame(mmrm(Y ~ log(X) + ar1(VISIT|ID), data = <new data>)`,
   will cause errors. This is now fixed and `model.frame` returns the data correctly.
   Now `na.action` argument can be "na.omit" or "na.pass", `subset` argument is not used.
-  `full` argument is deprecated and use `include` instead.
+  The `full` argument is deprecated and the `include` can be used instead.
 - Previously `mmrm` always requires `data` argument. Now fitting `mmrm` can use
   environment variables, instead of requiring `data` argument. `fit_mmrm` is not affected.
 - Previously `emmeans` does not work if fixed effect does not contain visit variable.
