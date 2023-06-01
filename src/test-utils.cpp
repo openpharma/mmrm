@@ -197,7 +197,7 @@ context("pseudoInverseSqrt works") {
 }
 
 context("Rcpp and eigen conversion") {
-  test_that("conversions does not change values") {
+  test_that("conversions do not change values") {
     NumericVector v1 = NumericVector::create(1.0, 2.0, 3.0);
     vector<double> v1_vec = as_vector<vector<double>, NumericVector>(v1);
     NumericVector v2 = as_vector<NumericVector, vector<double>>(v1_vec);
