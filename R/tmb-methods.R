@@ -46,13 +46,25 @@ fitted.mmrm_tmb <- function(object, ...) {
 #'  `interval == "none"`; otherwise it returns a data.frame with multiple
 #'  columns and one row per input data row.
 #' @importFrom stats predict
+#' @param newdata (`data.frame`)\cr object in which to look for variables with which to predict.
+#' @param se.fit (`flag`)\cr indicator if standard errors are required.
+#' @param interval (`string`)\cr type of interval calculation. Can be abbreviated.
+#' @param level (`number`)\cr tolerance/confidence level.
+#' @param n_sim (`integr`)\cr number of replications to calculate prediction interval.
 #' @exportS3Method
 #' @examples
 #' predict(object, newdata = fev_data)
 predict.mmrm_tmb <- function(
     object, newdata, se.fit = FALSE, # nolint
     interval = c("none", "confidence", "prediction"), level = 0.95,
-    na.action = na.pass, n_sim = 1000L, ...) { # nolint
+    n_sim = 1000L, ...) {
+  if (missing(newdata)) {
+    newdata <- object$tmb_data$data
+  }
+  assert_data_frame(newdata)
+  assert_flag(se.fit)
+  assert_number(level, lower = 0, upper = 1)
+  assert_integer(n_sim, lower = 1)
   interval <- match.arg(interval)
   # make sure new data has the same levels as original data
   full_frame <- model.frame(
@@ -82,7 +94,7 @@ predict.mmrm_tmb <- function(
   }
   if (interval != "none") {
     alpha <- 1 - level
-    z <- qnorm(1 - alpha / 2) * se
+    z <- stats::qnorm(1 - alpha / 2) * se
     res <- cbind(res,
       lwr = res[, "fit"] - z,
       upr = res[, "fit"] + z
@@ -127,7 +139,7 @@ h_get_prediction_variance <- function(object, n_sim, tmb_data) {
   theta_chol <- chol(object$theta_vcov)
   n_theta <- length(object$theta_est)
   res <- replicate(n_sim, {
-    z <- rnorm(n = n_theta)
+    z <- stats::rnorm(n = n_theta)
     theta_sample <- object$theta_est + theta_chol %*% z
     cond_beta_results <- object$tmb_object$report(theta_sample)
     beta_mean <- cond_beta_results$beta
@@ -135,15 +147,16 @@ h_get_prediction_variance <- function(object, n_sim, tmb_data) {
     h_get_prediction(tmb_data, theta_sample, beta_mean, beta_cov)
   })
   mean_of_var <- rowMeans(res[, 1, ])
-  var_of_mean <- apply(res[, 3, ], 1, var)
+  var_of_mean <- apply(res[, 3, ], 1, stats::var)
   mean_of_var + var_of_mean
 }
 
 
 #' @describeIn mmrm_tmb_methods obtains the model frame.
+#' @param data (`data.frame`)\cr object in which to construct the frame.
 #' @param include (`character`)\cr names of variable to include.
-#' @param full (`flag`) indicator whether to return full model frame (deprecated).
-#' @param na.action (`string`) na action.
+#' @param full (`flag`)\cr indicator whether to return full model frame (deprecated).
+#' @param na.action (`string`)\cr na action.
 #' @importFrom stats model.frame
 #' @exportS3Method
 #'
@@ -158,36 +171,33 @@ h_get_prediction_variance <- function(object, n_sim, tmb_data) {
 #' # Model frame:
 #' model.frame(object)
 #' model.frame(object, include = "subject_var")
-model.frame.mmrm_tmb <- function(formula, include = NULL, full, na.action = "na.omit", ...) { # nolint
+model.frame.mmrm_tmb <- function(formula, data, include = NULL, full, na.action = "na.omit", ...) { # nolint
   include_choice <- c("subject_var", "visit_var", "group_var", "response_var")
   if (!missing(full) && identical(full, TRUE)) {
     lifecycle::deprecate_warn("0.3", "model.frame.mmrm_tmb(full)")
     include <- include_choice
   }
   assert_subset(include, include_choice)
-  dots <- list(...)
-  if (!is.null(dots$subset) || !is.null(dots$weights)) {
-    warning("subset and weights are not valid arguments for `mmrm` models.")
+  if (missing(data)) {
+    data <- formula$tmb_data$data
   }
-  if (is.null(dots$data) && identical(include, include_choice)) {
-    formula$tmb_data$full_frame
-  } else {
-    drop_response <- !"response_var" %in% include
-    add_vars <- unlist(formula$formula_parts[include])
-    new_formula <- h_add_terms(formula$formula_parts$model_formula, add_vars, drop_response)
-    new_data <- h_default_value(dots$data, formula$tmb_data$data)
-    full_frame <- formula$tmb_data$full_frame
-    for (v in all.vars(formula$formula_parts$model_formula)) {
-      if (is.factor(full_frame[[v]]) || is.character(full_frame[[v]])) {
-        new_data[[v]] <- h_factor_ref(new_data[[v]], full_frame[[v]])
-      }
+  assert_data_frame(data)
+  drop_response <- !"response_var" %in% include
+  add_vars <- unlist(formula$formula_parts[include])
+  new_formula <- h_add_terms(formula$formula_parts$model_formula, add_vars, drop_response)
+  all_vars <- all.vars(new_formula)
+  assert_names(colnames(data), must.include = all_vars)
+  full_frame <- formula$tmb_data$full_frame
+  for (v in setdiff(all_vars, formula$formula_parts$subject_var)) {
+    if (is.factor(full_frame[[v]]) || is.character(full_frame[[v]])) {
+      data[[v]] <- h_factor_ref(data[[v]], full_frame[[v]])
     }
-    model.frame(
-      formula = new_formula,
-      data = new_data,
-      na.action = na.action
-    )
   }
+  model.frame(
+    formula = new_formula,
+    data = data,
+    na.action = na.action
+  )
 }
 
 #' @describeIn mmrm_tmb_methods obtains the attained log likelihood value.

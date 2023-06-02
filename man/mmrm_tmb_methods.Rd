@@ -28,12 +28,11 @@
   se.fit = FALSE,
   interval = c("none", "confidence", "prediction"),
   level = 0.95,
-  na.action = na.pass,
   n_sim = 1000L,
   ...
 )
 
-\method{model.frame}{mmrm_tmb}(formula, include = NULL, full, na.action = "na.omit", ...)
+\method{model.frame}{mmrm_tmb}(formula, data, include = NULL, full, na.action = "na.omit", ...)
 
 \method{logLik}{mmrm_tmb}(object, ...)
 
@@ -61,13 +60,25 @@ coefficients.}
 
 \item{...}{not used.}
 
-\item{na.action}{(\code{string}) na action.}
+\item{newdata}{(\code{data.frame})\cr object in which to look for variables with which to predict.}
+
+\item{se.fit}{(\code{flag})\cr indicator if standard errors are required.}
+
+\item{interval}{(\code{string})\cr type of interval calculation. Can be abbreviated.}
+
+\item{level}{(\code{number})\cr tolerance/confidence level.}
+
+\item{n_sim}{(\code{integr})\cr number of replications to calculate prediction interval.}
 
 \item{formula}{(\code{mmrm_tmb})\cr same as \code{object}.}
 
+\item{data}{(\code{data.frame})\cr object in which to construct the frame.}
+
 \item{include}{(\code{character})\cr names of variable to include.}
 
-\item{full}{(\code{flag}) indicator whether to return full model frame (deprecated).}
+\item{full}{(\code{flag})\cr indicator whether to return full model frame (deprecated).}
+
+\item{na.action}{(\code{string})\cr na action.}
 
 \item{x}{(\code{mmrm_tmb})\cr same as \code{object}.}
 
