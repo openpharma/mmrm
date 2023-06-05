@@ -223,11 +223,11 @@ test_that("refit_multiple_optimizers works as expected with default arguments", 
   attr(fit, "converged") <- FALSE
   fit$neg_log_lik <- fit$neg_log_lik + 10
 
-  result <- expect_silent(refit_multiple_optimizers(fit = fit))
+  result <- expect_silent(refit_multiple_optimizers(fit = fit, optimizer = "nlminb"))
   expect_class(result, "mmrm_fit")
 
   expect_true(attr(result, "converged"))
-  expect_false(identical("nlminb", attr(result, "optimizer")))
+  expect_identical("nlminb", attr(result, "optimizer"))
   expect_true(logLik(result) > logLik(fit))
 })
 
