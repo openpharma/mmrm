@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="fit" timestamp="2023-06-05T10:07:35Z" hostname="ccd94dc9e1bc" tests="3" skipped="1" failures="0" errors="0" time="0.264">
+    <testcase time="0.183" classname="fit" name="refit_multiple_optimizers_works_as_expected_with_default_arguments"/>
+    <testcase time="0.0170000000000003" classname="fit" name="refit_multiple_optimizers_works_as_expected_with_default_arguments"/>
+    <testcase time="0.0639999999999996" classname="fit" name="refit_multiple_optimizers_works_as_expected_with_default_arguments">
+      <skipped message="Reason: On CRAN ('test-fit.R:17:3')"/>
+    </testcase>
+  </testsuite>
+</testsuites>
