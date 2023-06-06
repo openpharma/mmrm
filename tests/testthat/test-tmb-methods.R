@@ -66,15 +66,15 @@ test_that("predict works for only fit values with response", {
 test_that("predict warns on aliased variables", {
   new_fev_data <- rbind(
     fev_data,
-    fev_data %>% 
-      filter(ARMCD == fev_data$ARMCD[1], AVISIT == "VIS1") %>% 
+    fev_data %>%
+      filter(ARMCD == fev_data$ARMCD[1], AVISIT == "VIS1") %>%
       mutate(AVISIT = "VIS5", FEV1 = rnorm(n(), mean = 45, sd = 5))
   )
   fit <- mmrm(
     formula = FEV1 ~ ARMCD * AVISIT + us(AVISIT | USUBJID),
     data = new_fev_data
   )
-  expect_warning(predict(fit), "In fitted object there are co-linear variables and dropped") 
+  expect_warning(predict(fit), "In fitted object there are co-linear variables and dropped")
 })
 
 # model.frame ----
