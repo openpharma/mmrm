@@ -84,39 +84,32 @@ test_that("h_add_covariance_terms adds covariance variables as terms", {
   )
 })
 
-# h_drop_terms ----
+# h_add_terms ----
 
 test_that("h_drop_terms works", {
   formula <- x ~ y + z
   expect_identical(
-    h_drop_terms(formula, "z"),
-    x ~ y
+    h_add_terms(formula, "a"),
+    x ~ y + z + a
   )
   expect_identical(
-    h_drop_terms(formula, c("y", "z")),
-    x ~ 1
+    h_add_terms(formula, c("y", "z")),
+    x ~ y + z
   )
   expect_identical(
-    h_drop_terms(formula, "y*z"),
-    x ~ 1
+    h_add_terms(formula, "y*z"),
+    x ~ y + z + y:z
   )
 })
 
-test_that("h_drop_terms works on drops is length 0", {
+test_that("h_add_terms works on adds is length 0", {
   formula <- x ~ y + z
   expect_identical(
-    h_drop_terms(formula, NULL),
+    h_add_terms(formula, NULL),
     formula
   )
   expect_identical(
-    h_drop_terms(formula, character(0)),
+    h_add_terms(formula, character(0)),
     formula
-  )
-})
-
-test_that("h_drop_terms fails if provided string contains variable not exists in formula", {
-  formula <- x ~ y + z
-  expect_error(
-    h_drop_terms(formula, "m"),
   )
 })

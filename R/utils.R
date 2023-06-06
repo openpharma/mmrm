@@ -351,13 +351,24 @@ h_default_value <- function(x, y) {
 #' @param var_name (`string`)\cr variable name of input `x`.
 #'
 #' @details Use `ref` to convert `x` into factor with the same levels.
+#' This is needed even if `x` and `ref` are both `character` because
+#' in `model.matrix` if `x` only has one level there could be errors.
 #'
 #' @keywords internal
 h_factor_ref <- function(x, ref, var_name = vname(x)) {
-  assert_factor(ref)
+  assert_multi_class(ref, c("character", "factor"))
   assert_multi_class(x, c("character", "factor"))
   uni_values <- as.character(unique(x))
+  uni_ref <- as.character(unique(ref))
   assert_character(uni_values, .var.name = var_name)
-  assert_subset(uni_values, levels(ref), .var.name = var_name)
-  factor(x, levels = levels(ref))
+  assert_subset(uni_values, uni_ref, .var.name = var_name)
+  factor(x, levels = h_default_value(levels(ref), sort(uni_ref)))
+}
+
+#' Warn on na.action
+#' @keywords internal
+h_warn_na_action <- function() {
+  if (!identical(getOption("na.action"), "na.omit")) {
+    warning("na.action is always set to `na.omit` for `mmrm` fit!")
+  }
 }

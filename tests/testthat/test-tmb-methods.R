@@ -34,19 +34,48 @@ test_that("fitted works as expected", {
   expect_numeric(result, names = "unique", len = length(object$tmb_data$y_vector))
 })
 
+# predict -----
+
+test_that("predict works for old patient, new visit", {
+  fit <- get_mmrm()
+  expect_silent(predict(fit, fev_data[c(1, 4), ]))
+  expect_silent(predict(fit, fev_data[c(2, 3), ]))
+  expect_silent(predict(fit, fev_data[c(1:4), ]))
+})
+
+test_that("predict works for only fit values without response", {
+  object <- get_mmrm()
+  m <- stats::model.matrix(
+    object$formula_parts$model_formula,
+    model.frame(object, data = fev_data, include = "response_var", na.action = "na.pass")
+  )
+  fev_data_no_y <- fev_data
+  fev_data_no_y$FEV1 <- NA_real_
+  y_pred <- expect_silent(predict(object, fev_data_no_y))
+  y_hat <- as.vector(m %*% object$beta_est)
+  expect_equal(y_pred, y_hat)
+})
+
+test_that("predict works for only fit values with response", {
+  object <- get_mmrm()
+  y_pred <- expect_silent(predict(object, fev_data))
+  expect_equal(y_pred[!is.na(fev_data$FEV1)], object$tmb_data$y_vector)
+  expect_numeric(y_pred[is.na(fev_data$FEV1)])
+})
+
 # model.frame ----
 
 test_that("model.frame works as expected with defaults", {
   object <- get_mmrm_tmb()
-  result <- expect_silent(model.frame(object))
+  result <- expect_silent(model.frame(object, include = c("response_var", "visit_var")))
   expect_data_frame(result, nrows = length(object$tmb_data$y_vector))
   expect_named(result, c("FEV1", "RACE", "AVISIT"))
   expect_class(attr(result, "terms"), "terms")
 })
 
-test_that("model.frame works as expected with excludes", {
+test_that("model.frame works as expected with includes", {
   object <- get_mmrm_tmb()
-  result <- expect_silent(model.frame(object, exclude = c("subject_var", "visit_var")))
+  result <- expect_silent(model.frame(object, include = c("response_var")))
   expect_data_frame(result, nrows = length(object$tmb_data$y_vector))
   expect_named(result, c("FEV1", "RACE"))
   expect_class(attr(result, "terms"), "terms")
@@ -54,15 +83,15 @@ test_that("model.frame works as expected with excludes", {
 
 test_that("model.frame returns full model frame if requested", {
   object <- get_mmrm_tmb()
-  result <- expect_silent(model.frame(object, exclude = NULL))
+  result <- expect_silent(model.frame(object, include = c("response_var", "visit_var", "subject_var", "group_var")))
   expect_data_frame(result, nrows = length(object$tmb_data$y_vector))
-  expect_named(result, c("FEV1", "RACE", "USUBJID", "AVISIT", "(weights)"))
+  expect_named(result, c("FEV1", "RACE", "AVISIT", "USUBJID"))
   expect_class(attr(result, "terms"), "terms")
 })
 
 test_that("model.frame works if variable transformed", {
   fit1 <- get_mmrm_transformed()
-  result <- expect_silent(model.frame(fit1))
+  result <- expect_silent(model.frame(fit1, include = c("response_var", "visit_var")))
   expect_data_frame(result, nrows = length(fit1$tmb_data$y_vector))
   expect_named(result, c("FEV1", "log(FEV1_BL)", "AVISIT"))
   expect_class(attr(result, "terms"), "terms")
@@ -70,27 +99,103 @@ test_that("model.frame works if variable transformed", {
 
 test_that("model.frame works for new data", {
   fit1 <- get_mmrm_transformed()
-  result <- expect_silent(model.frame(fit1, data = fev_data[complete.cases(fev_data), ][1:20, ]))
+  result <- expect_silent(model.frame(
+    fit1,
+    data = fev_data[complete.cases(fev_data), ][1:20, ],
+    include = c("response_var", "visit_var")
+  ))
   expect_data_frame(result, nrows = 20L)
   expect_named(result, c("FEV1", "log(FEV1_BL)", "AVISIT"))
   expect_class(attr(result, "terms"), "terms")
 })
 
-test_that("model.frame works regardless of na.action settings", {
-  na_action <- getOption("na.action")
+test_that("model.frame works if input x does not contain NA, y contains but not included", {
   fit1 <- get_mmrm_transformed()
-  expect_warning(
-    model.frame(fit1, na.action = "na.fail"),
-    "na.action is always set to `na.omit` for `mmrm`!"
+  expect_silent(
+    model.frame(fit1, na.action = "na.fail")
   )
-  options(na.action = "na.fail")
-  expect_warning(
-    model.frame(fit1),
-    "na.action is always set to `na.omit` for `mmrm`!"
-  )
-  on.exit(options(na.action = na_action))
 })
 
+test_that("model.frame fails if y contains NA and is included", {
+  fit1 <- get_mmrm_transformed()
+  expect_error(
+    model.frame(fit1, na.action = "na.fail", include = "response_var")
+  )
+})
+
+test_that("model.frame makes the levels match", {
+  fit1 <- get_mmrm()
+  fev_data2 <- fev_data
+  # changes the levels
+  levels(fev_data2$AVISIT) <- c("VIS3", "VIS2", "VIS4", "VIS1")
+  out_frame <- expect_silent(
+    model.frame(fit1, na.action = "na.fail", data = fev_data2)
+  )
+  expect_identical(levels(fev_data$AVISIT), levels(out_frame$AVISIT))
+})
+
+test_that("model.frame do not care about subject levels", {
+  fit1 <- get_mmrm()
+  fev_data2 <- fev_data
+  fev_data2$USUBJID <- sprintf("%s_TEST", fev_data2$USUBJID)
+  out_frame <- expect_silent(
+    model.frame(fit1, na.action = "na.fail", data = fev_data2, include = "subject_var")
+  )
+  expect_identical(fev_data2$USUBJID, out_frame$USUBJID)
+})
+
+test_that("model.frame include all specified variables", {
+  fit1 <- get_mmrm_group()
+  out_frame <- expect_silent(
+    model.frame(fit1, na.action = "na.fail", data = fev_data, include = "group_var")
+  )
+  expect_identical(colnames(out_frame), "ARMCD") # formula already contains "ARMCD"
+
+  out_frame <- expect_silent(
+    model.frame(fit1, na.action = "na.fail", data = fev_data, include = "visit_var")
+  )
+  expect_identical(colnames(out_frame), c("ARMCD", "AVISIT"))
+
+  out_frame <- expect_silent(
+    model.frame(fit1, na.action = "na.fail", data = fev_data, include = "subject_var")
+  )
+  expect_identical(colnames(out_frame), c("ARMCD", "USUBJID"))
+
+  out_frame <- expect_silent(
+    model.frame(fit1, na.action = "na.pass", data = fev_data, include = "response_var")
+  )
+  expect_identical(colnames(out_frame), c("FEV1", "ARMCD"))
+})
+
+test_that("model.frame with character reference will return factors", {
+  fev_data2 <- fev_data
+  fev_data2$ARMCD <- as.character(fev_data2$ARMCD)
+  fit <- mmrm(FEV1 ~ ARMCD + ar1(AVISIT | USUBJID), data = fev_data2)
+  new_data <- subset(fev_data2, ARMCD == "TRT")
+  new_frame <- expect_silent(model.frame(fit, data = new_data, include = c("subject_var", "visit_var", "response_var")))
+  expect_identical(levels(new_frame$ARMCD), c("PBO", "TRT"))
+  expect_silent(h_mmrm_tmb_data(
+    fit$formula_parts, new_frame,
+    weights = rep(1, nrow(new_frame)),
+    reml = TRUE,
+    singular = "keep",
+    drop_visit_levels = FALSE,
+    allow_na_response = TRUE,
+    drop_levels = FALSE
+  ))
+  # If we don't have the factorization in model.frame
+  new_frame2 <- new_frame
+  new_frame2$ARMCD <- as.character(new_frame2$ARMCD)
+  expect_error(h_mmrm_tmb_data(
+    fit$formula_parts, new_frame2,
+    weights = rep(1, nrow(new_frame2)),
+    reml = TRUE,
+    singular = "keep",
+    drop_visit_levels = FALSE,
+    allow_na_response = TRUE,
+    drop_levels = FALSE
+  ), "contrasts can be applied only to factors")
+})
 
 # logLik ----
 

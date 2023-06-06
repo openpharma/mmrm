@@ -223,11 +223,11 @@ test_that("refit_multiple_optimizers works as expected with default arguments", 
   attr(fit, "converged") <- FALSE
   fit$neg_log_lik <- fit$neg_log_lik + 10
 
-  result <- expect_silent(refit_multiple_optimizers(fit = fit))
+  result <- expect_silent(refit_multiple_optimizers(fit = fit, optimizer = "nlminb"))
   expect_class(result, "mmrm_fit")
 
   expect_true(attr(result, "converged"))
-  expect_false(identical("nlminb", attr(result, "optimizer")))
+  expect_identical("nlminb", attr(result, "optimizer"))
   expect_true(logLik(result) > logLik(fit))
 })
 
@@ -463,21 +463,21 @@ test_that("mmrm works for different na.actions", {
   options(na.action = "na.pass")
   expect_warning(
     res2 <- mmrm(formula, fev_data),
-    "NA values will always be removed regardless of na.action in options."
+    "na.action is always set to `na.omit` for `mmrm` fit!"
   )
   expect_class(res2, "mmrm")
 
   options(na.action = "na.fail")
   expect_warning(
     res3 <- mmrm(formula, fev_data),
-    "NA values will always be removed regardless of na.action in options."
+    "na.action is always set to `na.omit` for `mmrm` fit!"
   )
   expect_class(res3, "mmrm")
 
   options(na.action = "na.exclude")
   expect_warning(
     res4 <- mmrm(formula, fev_data),
-    "NA values will always be removed regardless of na.action in options."
+    "na.action is always set to `na.omit` for `mmrm` fit!"
   )
   expect_class(res4, "mmrm")
 })

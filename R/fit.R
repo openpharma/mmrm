@@ -408,7 +408,9 @@ mmrm <- function(formula,
   }
   tmb_data <- h_mmrm_tmb_data(
     formula_parts, data, weights, reml,
-    accept_singular = control$accept_singular, drop_visit_levels = control$drop_visit_levels
+    singular = if (control$accept_singular) "drop" else "error",
+    drop_visit_levels = control$drop_visit_levels,
+    allow_na_response = FALSE
   )
   fit <- fit_single_optimizer(
     tmb_data = tmb_data,

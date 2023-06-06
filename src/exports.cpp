@@ -35,11 +35,27 @@ BEGIN_RCPP
 END_RCPP
 }
 
+NumericMatrix predict(List mmrm_fit, NumericVector theta, NumericVector beta, NumericMatrix beta_vcov);
+RcppExport SEXP _mmrm_predict(SEXP mmrm_fit_SEXP, SEXP theta_SEXP, SEXP beta_SEXP, SEXP beta_vcov_SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type mmrm_fit(mmrm_fit_SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type theta(theta_SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type beta(beta_SEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type beta_vcov(beta_vcov_SEXP);
+    rcpp_result_gen = Rcpp::wrap(predict(mmrm_fit, theta, beta, beta_vcov));
+    return rcpp_result_gen;
+END_RCPP
+}
+
+
 RcppExport SEXP run_testthat_tests(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
     {"_mmrm_get_pqr", (DL_FUNC) &_mmrm_get_pqr, 2},
     {"_mmrm_get_empirical", (DL_FUNC) &_mmrm_get_empirical, 5},
+    {"_mmrm_predict", (DL_FUNC) &_mmrm_predict, 4},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     TMB_CALLDEFS,
     {NULL, NULL, 0}
