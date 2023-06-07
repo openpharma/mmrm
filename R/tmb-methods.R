@@ -82,13 +82,13 @@ predict.mmrm_tmb <- function(
     allow_na_response = TRUE,
     drop_levels = FALSE
   )
-  if (any(fit$tmb_data$x_cols_aliased)) {
+  if (any(object$tmb_data$x_cols_aliased)) {
     warning(
       "In fitted object there are co-linear variables and dropped, ",
       "and this could lead to incorrect prediction on new data."
     )
   }
-  colnames <- names(Filter(isFALSE, fit$tmb_data$x_cols_aliased))
+  colnames <- names(Filter(isFALSE, object$tmb_data$x_cols_aliased))
   tmb_data$x_matrix <- tmb_data$x_matrix[, colnames, drop = FALSE]
   predictions <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
   res <- data.frame(fit = predictions[, 1])
