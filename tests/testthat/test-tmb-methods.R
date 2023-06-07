@@ -74,7 +74,7 @@ test_that("predict warns on aliased variables", {
     formula = FEV1 ~ ARMCD * AVISIT + us(AVISIT | USUBJID),
     data = new_fev_data
   )
-  expect_warning(predict(fit), "In fitted object there are co-linear variables and dropped")
+  expect_warning(predict(fit), "In fitted object there are co-linear variables and therefore dropped terms")
 })
 
 # model.frame ----
