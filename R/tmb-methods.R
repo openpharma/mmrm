@@ -84,7 +84,7 @@ predict.mmrm_tmb <- function(
   )
   if (any(object$tmb_data$x_cols_aliased)) {
     warning(
-      "In fitted object there are co-linear variables and dropped, ",
+      "In fitted object there are co-linear variables and therefore dropped terms, ",
       "and this could lead to incorrect prediction on new data."
     )
   }
