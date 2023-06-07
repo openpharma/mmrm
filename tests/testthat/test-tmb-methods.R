@@ -67,8 +67,8 @@ test_that("predict warns on aliased variables", {
   new_fev_data <- rbind(
     fev_data,
     fev_data %>%
-      filter(ARMCD == fev_data$ARMCD[1], AVISIT == "VIS1") %>%
-      dplyr::mutate(AVISIT = "VIS5", FEV1 = rnorm(n(), mean = 45, sd = 5))
+      dplyr::filter(ARMCD == fev_data$ARMCD[1], AVISIT == "VIS1") %>%
+      dplyr::mutate(AVISIT = "VIS5", FEV1 = rnorm(dplyr::n(), mean = 45, sd = 5))
   )
   fit <- mmrm(
     formula = FEV1 ~ ARMCD * AVISIT + us(AVISIT | USUBJID),
