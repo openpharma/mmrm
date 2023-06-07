@@ -63,6 +63,20 @@ test_that("predict works for only fit values with response", {
   expect_numeric(y_pred[is.na(fev_data$FEV1)])
 })
 
+test_that("predict warns on aliased variables", {
+  new_fev_data <- rbind(
+    fev_data,
+    fev_data %>%
+      dplyr::filter(ARMCD == fev_data$ARMCD[1], AVISIT == "VIS1") %>%
+      dplyr::mutate(AVISIT = "VIS5", FEV1 = rnorm(dplyr::n(), mean = 45, sd = 5))
+  )
+  fit <- mmrm(
+    formula = FEV1 ~ ARMCD * AVISIT + us(AVISIT | USUBJID),
+    data = new_fev_data
+  )
+  expect_warning(predict(fit), "In fitted object there are co-linear variables and therefore dropped terms")
+})
+
 # model.frame ----
 
 test_that("model.frame works as expected with defaults", {
