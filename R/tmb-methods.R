@@ -62,7 +62,7 @@ predict.mmrm_tmb <- function(
     newdata <- object$tmb_data$data
   }
   assert_data_frame(newdata)
-  orig_names <- row.names(newdata)
+  orig_row_names <- row.names(newdata)
   assert_flag(se.fit)
   assert_number(level, lower = 0, upper = 1)
   assert_integer(n_sim, lower = 1)
