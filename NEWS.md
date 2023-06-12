@@ -18,6 +18,7 @@
   to specify the maximum number of visits allowed in non-interactive mode, or asked in interactive
   sessions.
 - Add `predict` method to obtain conditional mean estimates and prediction intervals, both with or without previous observations.
+- Add message about SAS and mmrm consistency using Kenward-Roger coefficient covariance and unstructured covariance structure.
 
 ### Bug Fixes
 
