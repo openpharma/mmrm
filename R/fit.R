@@ -229,6 +229,8 @@ refit_multiple_optimizers <- function(fit,
 #' |Satterthwaite| Asymptotic|
 #' |Kenward-Roger| Kenward-Roger|
 #' |Residual| Empirical|
+#' Please note that "Kenward-Roger" for "Unstructured" covariance gives different result compared to SAS.
+#' Use "Kenward-Roger-Linear" for `vcov` for better matching.
 #'
 #' @return List of class `mmrm_control` with the control parameters.
 #' @export
@@ -393,14 +395,6 @@ mmrm <- function(formula,
   }
   covariance <- h_reconcile_cov_struct(formula, covariance)
   formula_parts <- h_mmrm_tmb_formula_parts(formula, covariance)
-
-  if (identical(control$vcov, "Kenward-Roger") && identical(formula_parts$cov_type, "us")) {
-    message(
-      "Coefficients covariance matrix adjustment method `Kenward-Roger` for `unstructured` covariance structure ",
-      "gives different result compared to SAS. ",
-      "Use `vcov = Kenward-Roger-Linear` for better match."
-    )
-  }
 
   if (!missing(data)) {
     attr(data, which = "dataname") <- toString(match.call()$data)
