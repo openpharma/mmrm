@@ -1,0 +1,114 @@
+---
+title: "Predicting from a MMRM"
+package: mmrm
+output:
+  rmarkdown::html_document:
+          theme: "spacelab"
+          highlight: "kate"
+          toc: true
+          toc_float: true
+vignette: |
+  %\VignetteIndexEntry{Predicting from a MMRM}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options:
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(mmrm)
+```
+
+## Prediction of conditional mean
+
+Since residuals can be correlated, potentially existing observed outcomes
+of the same individual can be informative for predicting the unobserved 
+valued of the same individual.
+
+Assume that the data is sorted such that $Y_{ij} = y_{ij}, j = k+1, k+2, \dots, p$ are
+observed and $Y_{ij}, j = 1, 2, \dots, k$ are not.
+The special case of all outcomes being unobserved (new individual) is covered
+with $k=p$.
+
+Let further 
+$$
+\Sigma_i(X_i, \theta) = \begin{pmatrix} \Sigma_i^{new,new}(X_i,\theta) & \Sigma_i^{new,old}(X_i,\theta)\\ \Sigma_i^{old,new}(X_i,\theta) & \Sigma_i^{old,old}(X_i,\theta)\end{pmatrix}
+$$
+
+be a block decomposition where
+$\Sigma_i^{new,new}(X_i,\theta) = \Big(\big(\Sigma_i(X_i,\theta)\big)_{j,l}\Big)_{j = 1\dots k,\, l = 1\ldots k}$ and
+similarly for the other blocks.
+
+Predictions can then be made based on the conditional distribution
+$$
+Y_{i, 1\ldots k}\,|\,X_i,Y_{i,k+1\ldots p}=y_{i, k+1\ldots p}\sim\mathcal{N}(\mu_i, A_i)
+$$
+
+with 
+
+$$
+\mu_i(\beta,\theta) = (X_i \ \beta)_{1\ldots k} +  \Sigma_i^{new,old}(X_i,\theta) \, \Big(\big(\Sigma_i^{old,old}(X_i,\theta)\big)^{-1} \big(y_i^{k+1\ldots p} -  (X_i \ \beta)_{k+1\ldots p}\big)\Big)
+$$
+and
+
+$$
+A_i(\beta, \theta) = \Sigma_i^{new,new}(X_i,\theta) - \Sigma_i^{old,new}(X_i,\theta) \Big(\Sigma_i^{old,old}(X_i,\theta)\Big)^{-1} \Sigma_i^{new,old}(X_i,\theta) \ .
+$$
+Note that $A_i$ does not depend on $\beta$.
+For implementing `predict()`, only $\widehat{\mu}_i:=\mu_i(\widehat{\beta},\widehat{\theta})$
+is required.
+
+For `predict(interval = "confidence")` additionally standard errors are required.
+These could be derived using the delta methods since $\mu_i$ is a function of the
+estimated model parameters $\beta$ and $\theta$.
+This would require the Jacobian $\nabla\mu_i(\beta,\theta)|_{\big(\widehat{\beta},\widehat{\theta}\big)}$ 
+in addition to the estimated variance covariance matrix of the parameter estimate
+$\big(\widehat{\beta},\widehat{\theta}\big)$, $\widehat{S}$.
+Standard errors for $\widehat{\mu}^{\,(i)}$ are then given by the square root of 
+the diagonal elements of
+$$
+\Big(\nabla\mu_i(\beta,\theta)|_{\big(\widehat{\beta},\widehat{\theta}\big)}\Big)^\top\quad \widehat{S} \quad \Big(\nabla\mu_i(\beta,\theta)|_{\big(\widehat{\beta},\widehat{\theta}\big)}\Big)
+$$
+For `predict(interval = "prediction")` one would use the square root of the 
+diagonal elements of $A_i\big(\widehat{\beta},\widehat{\theta}\big)$ instead.
+The delta method could again be used to make upper and lower boundaries reflect
+parameter estimation uncertainty.
+
+Alternatively, both intervals can be derived using a parametric bootstrap sample
+of the unrestricted parameters $\theta$.
+This would probably also be easier for the `= "prediction"` case.
+
+Please note that for these intervals, we assume that the distribution is approximately normal: we use $\mu_{i,j}(\hat\beta, \hat\theta) \pm Z_{\alpha} * sqrt(A_{i, j, j}(\hat\beta, \hat\theta))$
+to construct it, where $\mu_{i,j}(\hat\beta, \hat\theta)$ is the $j$th element of $\mu_i(\hat\beta, \hat\theta)$, $A_{i, j, j}(\hat\beta, \hat\theta)$ is the $j,j$ element of $A_i(\hat\beta, \hat\theta)$.
+
+### Parametric Sampling for prediction interval
+
+With the conditional variance formula
+
+\[
+  Var(Y_i) = Var(E(Y_i|\theta)) + E(Var(Y_i|\theta))
+\]
+
+the conditional expectation $E(Y_i|\theta)$ and the conditional variance $Var(Y_i|\theta)$ are already described
+
+\[
+  E(Y_i|\theta) = \mu_i(\beta,\theta)
+\]
+
+\[
+  Var(Y_i|\theta) = A_i(\beta, \theta)
+\]
+
+so we can sample on $\theta$ and obtain $\beta$, then calculate the variance of conditional mean and the mean of conditional variance.
+
+### Prediction of conditional mean for new subjects
+
+If there are no observations for a subject, then the prediction is quite simple:
+
+\[
+  Y_i = X_i \hat\beta
+\]

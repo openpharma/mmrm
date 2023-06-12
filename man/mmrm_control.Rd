@@ -63,6 +63,8 @@ used for degrees of freedom, see the following table:\tabular{ll}{
    Satterthwaite \tab Asymptotic \cr
    Kenward-Roger \tab Kenward-Roger \cr
    Residual \tab Empirical \cr
+   Please note that "Kenward-Roger" for "Unstructured" covariance gives different result compared to SAS. \tab  \cr
+   Use "Kenward-Roger-Linear" for \code{vcov} for better matching. \tab  \cr
 }
 }
 \examples{

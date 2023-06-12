@@ -17,7 +17,7 @@
 - Add confirmation if the number of visit levels is too large. Use `options(mmrm.max_visits = )`
   to specify the maximum number of visits allowed in non-interactive mode, or asked in interactive
   sessions.
-
+- Add `predict` method to obtain conditional mean estimates and prediction intervals, both with or without previous observations.
 
 ### Bug Fixes
 
@@ -27,8 +27,8 @@
 - Previously `model.frame` call on `mmrm` object with transformed terms, or new
   given data, e.g. `model.frame(mmrm(Y ~ log(X) + ar1(VISIT|ID), data = <new data>)`,
   will cause errors. This is now fixed and `model.frame` returns the data correctly.
-  Now `na.action` argument always use "na.omit", `subset` argument is not used.
-  `full` argument is deprecated and use `exclude` instead.
+  Now `na.action` argument can be "na.omit" or "na.pass", `subset` argument is not used.
+  The `full` argument is deprecated and the `include` can be used instead.
 - Previously `mmrm` always requires `data` argument. Now fitting `mmrm` can use
   environment variables, instead of requiring `data` argument. `fit_mmrm` is not affected.
 - Previously `emmeans` does not work if fixed effect does not contain visit variable.

@@ -1,6 +1,8 @@
 #include "testthat-helpers.h"
 #include "utils.h"
 
+using namespace Rcpp;
+
 context("get_select_matrix") {
   test_that("get_select_matrix works as expected") {
     vector<int> visits_i1 {{0, 3, 5}};
@@ -191,5 +193,41 @@ context("pseudoInverseSqrt works") {
       -0.2459070, 0.7319613,    0.0,
       0.0000000,  0.0000000,    0.0;
     expect_equal_matrix(pseudoInverseSqrt(tmb_mat), expected);
+  }
+}
+
+context("Rcpp and eigen conversion") {
+  test_that("conversions do not change values") {
+    NumericVector v1 = NumericVector::create(1.0, 2.0, 3.0);
+    vector<double> v1_vec = as_vector< vector<double>, NumericVector>(v1);
+    NumericVector v2 = as_vector<NumericVector, vector<double>>(v1_vec);
+    vector<double> v3(3);
+    v3 << 1.0, 2.0, 3.0;
+    expect_equal_vector(v1_vec, v3);
+    expect_equal_vector(v1, v2);
+
+    IntegerVector v4 = IntegerVector::create(1, 2, 3);
+    vector<int> v4_vec = as_vector<vector<int>, IntegerVector>(v4);
+    IntegerVector v5 = as_vector<IntegerVector, vector<int>>(v4_vec);
+    vector<int> v6(3);
+    v6 << 1, 2, 3;
+    expect_equal_vector<vector<int>>(v4_vec, v6);
+    expect_equal_vector<IntegerVector>(v4, v5);
+    
+    NumericVector v_m = NumericVector::create(1.0, 2.0, 3.0, 4.0);
+    NumericMatrix m1(2, 2, v_m.begin());
+    matrix<double> m2(2, 2);
+    m2 << 1.0, 3.0, 2.0, 4.0;
+    expect_equal_matrix(m2, as_matrix<matrix<double>, NumericMatrix>(m1));
+    expect_equal_matrix(m1, as_matrix<NumericMatrix, matrix<double>>(m2));
+  }
+}
+
+context("segment works for Rcpp Vector") {
+  test_that("segment have correct values") {
+    NumericVector v1 = NumericVector::create(1.0, 2.0, 3.0);
+    NumericVector v2 = segment<NumericVector>(v1, 1, 1);
+    NumericVector v3 = NumericVector::create(2.0);
+    expect_equal_vector(v2, v3);
   }
 }
