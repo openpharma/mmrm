@@ -116,7 +116,7 @@ predict.mmrm_tmb <- function(
       upr = res[, "fit"] + z
     )
   }
-  # use original names
+  # Use original names.
   row.names(res) <- orig_names
   if (ncol(res) == 1) {
     res <- res[, "fit"]
