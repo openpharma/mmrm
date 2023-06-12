@@ -60,12 +60,16 @@ test_that("h_get_kr_comp works as expected on toeph grouped mmrm", {
 })
 
 test_that("h_get_kr_comp works as expected on us ungrouped mmrm", {
-  fit <- mmrm(FEV1 ~ ARMCD + us(AVISIT | USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+  expect_message(
+    fit <- mmrm(FEV1 ~ ARMCD + us(AVISIT | USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+  )
   expect_snapshot_tolerance(fit$kr_comp)
 })
 
 test_that("h_get_kr_comp works as expected on us grouped mmrm", {
-  fit <- mmrm(FEV1 ~ ARMCD + us(AVISIT | SEX / USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+  expect_message(
+    fit <- mmrm(FEV1 ~ ARMCD + us(AVISIT | SEX / USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+  )
   expect_snapshot_tolerance(fit$kr_comp)
 })
 
@@ -293,7 +297,9 @@ test_that("kr give similar results as SAS for unstructured", {
   # are identical because in their parameterization the second order derivatives are zero matrices.
   # In `mmrm`, we are using different parameterization so the second order derivatives are non-zero.
   # This will lead to differences in Kenward-Roger and Kenward-Roger-Linear.
-  fit <- mmrm(FEV1 ~ ARMCD + us(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger")
+  expect_message(
+    fit <- mmrm(FEV1 ~ ARMCD + us(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger")
+  )
   res <- df_1d(fit, contrast = c(0, 1))
   expected <- c(0.66124382270307, 160.733266403768)
   expect_equal(res$df, expected[2], tolerance = 1e-3)

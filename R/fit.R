@@ -394,6 +394,14 @@ mmrm <- function(formula,
   covariance <- h_reconcile_cov_struct(formula, covariance)
   formula_parts <- h_mmrm_tmb_formula_parts(formula, covariance)
 
+  if (identical(control$vcov, "Kenward-Roger") && identical(formula_parts$cov_type, "us")) {
+    message(
+      "Coefficients covariance matrix adjustment method `Kenward-Roger` for `unstructured` covariance structure ",
+      "gives different result compared to SAS. ",
+      "Use `vcov = Kenward-Roger-Linear` for better match."
+    )
+  }
+
   if (!missing(data)) {
     attr(data, which = "dataname") <- toString(match.call()$data)
   } else {
