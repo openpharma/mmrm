@@ -38,7 +38,8 @@ test_that("fitted give same result compared to nlme", {
   skip_if_not_installed("nlme")
   formula <- FEV1 ~ ARMCD + ar1(AVISIT | USUBJID)
   data_full <- fev_data[complete.cases(fev_data), ]
-  expect_true(all(diff(as.integer(data_full$USUBJID)) >= 0)) # the order of subjects has to be monotonous
+  # In this test, subject IDs are ordered.
+  expect_true(all(diff(as.integer(data_full$USUBJID)) >= 0)) 
   fit <- mmrm(formula = formula, data = data_full, method = "Satterthwaite")
   fit_gls <- nlme::gls(FEV1 ~ ARMCD, data_full, correlation = nlme::corAR1(form = ~ VISITN | USUBJID))
   expect_identical(fitted(fit_gls), fitted(fit), tolerance = 1e-4, ignore_attr = TRUE)
