@@ -93,7 +93,7 @@ predict.mmrm_tmb <- function(
   tmb_data$x_matrix <- tmb_data$x_matrix[, colnames, drop = FALSE]
   predictions <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
   res <- cbind(fit = rep(NA_real_, nrow(newdata)))
-  new_order <- match(row.names(tmb_data$full_frame), orig_names)
+  new_order <- match(row.names(tmb_data$full_frame), orig_row_names)
   res[new_order, "fit"] <- predictions[, 1]
   se <- switch(interval,
     "confidence" = sqrt(predictions[, 2]),
@@ -117,7 +117,7 @@ predict.mmrm_tmb <- function(
     )
   }
   # Use original names.
-  row.names(res) <- orig_names
+  row.names(res) <- orig_row_names
   if (ncol(res) == 1) {
     res <- res[, "fit"]
   }
