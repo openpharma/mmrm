@@ -358,7 +358,9 @@ h_default_value <- function(x, y) {
 h_factor_ref <- function(x, ref, var_name = vname(x)) {
   assert_multi_class(ref, c("character", "factor"))
   assert_multi_class(x, c("character", "factor"))
-  uni_values <- as.character(unique(x))
+  # NA can be possible values
+  uni_values <- as.character(na.omit(unique(x)))
+  # no NA in reference
   uni_ref <- as.character(unique(ref))
   assert_character(uni_values, .var.name = var_name)
   assert_subset(uni_values, uni_ref, .var.name = var_name)
