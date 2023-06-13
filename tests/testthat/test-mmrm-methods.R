@@ -111,14 +111,15 @@ test_that("simulate.mmrm returns a data.frame object of correct dimension and wi
   sims <- simulate(object, nsim = 2)
   expect_data_frame(sims, any.missing = FALSE, nrows = length(fitted(object)), ncols = 2)
 
+  # check that when nsim == 1, we still have a single-column data.frame
   sims <- simulate(object, nsim = 1)
-  expect_data_frame(sims, any.missing = FALSE, nrows = length(fitted(object)), ncols = 1) # check that when nsim == 1, we still have a single-column data.frame
+  expect_data_frame(sims, any.missing = FALSE, nrows = length(fitted(object)), ncols = 1)
 })
 
 test_that("simulate.mmrm values are correctly centered", {
   object <- get_mmrm()
-  sims <- simulate(object, nsim = 1)
-  expect_equal(mean(sims$V1), mean(fitted(object)), tolerance = 1) # TODO what variable should be called in the sims data.frame? and set tolerance
+  sims <- simulate(object, nsim = 10000)
+  expect_equal(rowMeans(sims), fitted(object), tolerance = 1e-1)
 
 set.seed(555)
 n <- 1000
