@@ -34,6 +34,27 @@ test_that("fitted works as expected", {
   expect_numeric(result, names = "unique", len = length(object$tmb_data$y_vector))
 })
 
+test_that("fitted give same result compared to nlme", {
+  skip_if_not_installed("nlme")
+  formula <- FEV1 ~ ARMCD + ar1(AVISIT | USUBJID)
+  data_full <- fev_data[complete.cases(fev_data), ]
+  # In this test, subject IDs are ordered.
+  expect_true(all(diff(as.integer(data_full$USUBJID)) >= 0))
+  fit <- mmrm(formula = formula, data = data_full, method = "Satterthwaite")
+  fit_gls <- nlme::gls(FEV1 ~ ARMCD, data_full, correlation = nlme::corAR1(form = ~ VISITN | USUBJID))
+  expect_identical(fitted(fit_gls), fitted(fit), tolerance = 1e-4, ignore_attr = TRUE)
+})
+
+test_that("fitted give same result compared to nlme if the order is changed", {
+  skip_if_not_installed("nlme")
+  formula <- FEV1 ~ ARMCD + ar1(AVISIT | USUBJID)
+  data_full <- fev_data[complete.cases(fev_data), ]
+  new_order <- sample(seq_len(nrow(data_full)))
+  fit <- mmrm(formula = formula, data = data_full[new_order, ], method = "Satterthwaite")
+  fit_gls <- nlme::gls(FEV1 ~ ARMCD, data_full[new_order, ], correlation = nlme::corAR1(form = ~ VISITN | USUBJID))
+  expect_identical(fitted(fit_gls), fitted(fit)[new_order], tolerance = 1e-4, ignore_attr = TRUE)
+})
+
 # predict -----
 
 test_that("predict works for old patient, new visit", {
