@@ -62,6 +62,7 @@ predict.mmrm_tmb <- function(
     newdata <- object$tmb_data$data
   }
   assert_data_frame(newdata)
+  orig_row_names <- row.names(newdata)
   assert_flag(se.fit)
   assert_number(level, lower = 0, upper = 1)
   assert_integer(n_sim, lower = 1)
@@ -91,23 +92,32 @@ predict.mmrm_tmb <- function(
   colnames <- names(Filter(isFALSE, object$tmb_data$x_cols_aliased))
   tmb_data$x_matrix <- tmb_data$x_matrix[, colnames, drop = FALSE]
   predictions <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
-  res <- data.frame(fit = predictions[, 1])
+  res <- cbind(fit = rep(NA_real_, nrow(newdata)))
+  new_order <- match(row.names(tmb_data$full_frame), orig_row_names)
+  res[new_order, "fit"] <- predictions[, 1]
   se <- switch(interval,
     "confidence" = sqrt(predictions[, 2]),
     "prediction" = sqrt(h_get_prediction_variance(object, n_sim, tmb_data)),
     "none" = NULL
   )
   if (se.fit && interval != "none") {
-    res <- cbind(res, se = se)
+    res <- cbind(
+      res,
+      se = NA_real_
+    )
+    res[new_order, "se"] <- se
   }
   if (interval != "none") {
     alpha <- 1 - level
-    z <- stats::qnorm(1 - alpha / 2) * se
-    res <- cbind(res,
+    z <- stats::qnorm(1 - alpha / 2) * res[, "se"]
+    res <- cbind(
+      res,
       lwr = res[, "fit"] - z,
       upr = res[, "fit"] + z
     )
   }
+  # Use original names.
+  row.names(res) <- orig_row_names
   if (ncol(res) == 1) {
     res <- res[, "fit"]
   }

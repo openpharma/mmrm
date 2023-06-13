@@ -194,3 +194,10 @@ test_that("h_factor_ref works with character", {
   f <- expect_silent(h_factor_ref(x, ref))
   expect_identical(levels(f), ref)
 })
+
+test_that("h_factor ref allows NA in x", {
+  ref <- c("a", "b", "c")
+  x <- c("a", "b", NA)
+  f <- expect_silent(h_factor_ref(x, ref))
+  expect_identical(levels(f), ref)
+})
