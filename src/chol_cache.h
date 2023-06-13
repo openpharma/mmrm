@@ -96,7 +96,7 @@ struct lower_chol_spatial: public lower_chol_base<Type> {
 };
 template <class Type>
 struct lower_chol_groups {
-  std::map<int, lower_chol_base<Type>*> chols_by_group;
+  std::map<int, std::unique_ptr<lower_chol_base<Type>>> chols_by_group;
   int n_groups;
   bool is_spatial;
   int n_visits;
@@ -107,19 +107,13 @@ struct lower_chol_groups {
       // In loops using new keyword is required so that the objects stays on the heap
       // otherwise this will be destroyed and you will get unexpected result.
       if (is_spatial) {
-        this->chols_by_group[r] = new lower_chol_spatial<Type>(theta.segment(r * theta_one_group_size, theta_one_group_size), cov_type);
+        this->chols_by_group[r] = std::make_unique<lower_chol_spatial<Type>>(theta.segment(r * theta_one_group_size, theta_one_group_size), cov_type);
       } else {
-        this->chols_by_group[r] = new lower_chol_nonspatial<Type>(theta.segment(r * theta_one_group_size, theta_one_group_size), n_visits, cov_type);
+        this->chols_by_group[r] = std::make_unique<lower_chol_nonspatial<Type>>(theta.segment(r * theta_one_group_size, theta_one_group_size), n_visits, cov_type);
       }
     }
   }
-  // Destructor release object from memory.
-  ~lower_chol_groups() {
-    for (int r = 0; r < this->n_groups; r++) {
-      delete this->chols_by_group[r];
-      this->chols_by_group.erase(r);
-    }
-  }
+
   // Return covariante lower Cholesky factor from lower_chol_base objects.
   // For non-spatial return for full visits, for spatial return on two points that the distance is 1.
   matrix<Type> get_default_chol() {
