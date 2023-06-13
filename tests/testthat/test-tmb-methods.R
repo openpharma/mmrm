@@ -53,13 +53,13 @@ test_that("predict works for only fit values without response", {
   fev_data_no_y$FEV1 <- NA_real_
   y_pred <- expect_silent(predict(object, fev_data_no_y))
   y_hat <- as.vector(m %*% object$beta_est)
-  expect_equal(y_pred, y_hat)
+  expect_equal(y_pred, y_hat, ignore_attr = TRUE)
 })
 
 test_that("predict works for only fit values with response", {
   object <- get_mmrm()
   y_pred <- expect_silent(predict(object, fev_data))
-  expect_equal(y_pred[!is.na(fev_data$FEV1)], object$tmb_data$y_vector)
+  expect_equal(y_pred[!is.na(fev_data$FEV1)], object$tmb_data$y_vector, ignore_attr = TRUE)
   expect_numeric(y_pred[is.na(fev_data$FEV1)])
 })
 
