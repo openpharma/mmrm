@@ -113,7 +113,7 @@ struct lower_chol_groups {
     }
   }
 
-  // Return covariante lower Cholesky factor from lower_chol_base objects.
+  // Return covariance lower Cholesky factor from lower_chol_base objects.
   // For non-spatial return for full visits, for spatial return on two points that the distance is 1.
   matrix<Type> get_default_chol() {
     std::vector<int> visit(this->n_visits);
