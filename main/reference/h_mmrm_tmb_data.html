@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9017</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9018</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,20 +39,13 @@
     <a class="dropdown-item" href="../articles/methodological_introduction.html">What are MMRMs? A brief introduction</a>
     <a class="dropdown-item" href="../articles/mmrm_review_methods.html">Implementations of MMRM: a comparison of what's available</a>
     <a class="dropdown-item" href="../articles/package_structure.html">Package Structure</a>
+    <a class="dropdown-item" href="../articles/predict.html">Predicting from a MMRM</a>
     <a class="dropdown-item" href="../articles/satterthwaite.html">Details of the Satterthwaite calculations</a>
   </div>
 </li>
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.2.2">v0.2.2</a> </div></li>
-<!-- end dropdown for versions -->
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-reports">Reports</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-reports">
@@ -92,9 +85,10 @@
 <span>  <span class="va">data</span>,</span>
 <span>  <span class="va">weights</span>,</span>
 <span>  <span class="va">reml</span>,</span>
-<span>  <span class="va">accept_singular</span>,</span>
+<span>  singular <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"drop"</span>, <span class="st">"error"</span>, <span class="st">"keep"</span><span class="op">)</span>,</span>
 <span>  <span class="va">drop_visit_levels</span>,</span>
-<span>  <span class="va">full_frame</span></span>
+<span>  allow_na_response <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  drop_levels <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -118,18 +112,21 @@ from <code><a href="h_mmrm_tmb_formula_parts.html">h_mmrm_tmb_formula_parts()</a
 otherwise maximum likelihood (ML) is used.</p></dd>
 
 
-<dt>accept_singular</dt>
-<dd><p>(<code>flag</code>)<br> whether below full rank design matrices are reduced
-to full rank <code>x_matrix</code> and remaining coefficients will be missing as per
-<code>x_cols_aliased</code>. Otherwise the function fails for rank deficient design matrices.</p></dd>
+<dt>singular</dt>
+<dd><p>(<code>string</code>)<br> choices of method deal with rank-deficient matrices. "error" to
+stop the function return the error, "drop" to drop these columns, and "keep" to keep all the columns.</p></dd>
 
 
 <dt>drop_visit_levels</dt>
 <dd><p>(<code>flag</code>)<br> whether to drop levels for visit variable, if visit variable is a factor.</p></dd>
 
 
-<dt>full_frame</dt>
-<dd><p>(<code>data.frame</code>)<br> which contains all used variables in <code>formula_parts</code>.</p></dd>
+<dt>allow_na_response</dt>
+<dd><p>(<code>flag</code>)<br> whether NA in response is allowed.</p></dd>
+
+
+<dt>drop_levels</dt>
+<dd><p>(<code>flag</code>)<br> whether drop levels for covariates. If not dropped could lead to singular matrix.</p></dd>
 
 </dl></div>
     <div class="section level2">

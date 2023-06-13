@@ -39,7 +39,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9017</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9018</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,20 +63,13 @@
     <a class="dropdown-item" href="../articles/methodological_introduction.html">What are MMRMs? A brief introduction</a>
     <a class="dropdown-item" href="../articles/mmrm_review_methods.html">Implementations of MMRM: a comparison of what's available</a>
     <a class="dropdown-item" href="../articles/package_structure.html">Package Structure</a>
+    <a class="dropdown-item" href="../articles/predict.html">Predicting from a MMRM</a>
     <a class="dropdown-item" href="../articles/satterthwaite.html">Details of the Satterthwaite calculations</a>
   </div>
 </li>
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.2.2">v0.2.2</a> </div></li>
-<!-- end dropdown for versions -->
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-reports">Reports</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-reports">
@@ -265,15 +258,15 @@ be switch off) for the optimization.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients: </span></span>
 <span><span class="co">#&gt;                   (Intercept) RACEBlack or African American </span></span>
-<span><span class="co">#&gt;                   30.96769004                    1.50467449 </span></span>
+<span><span class="co">#&gt;                    30.9676902                     1.5046744 </span></span>
 <span><span class="co">#&gt;                     RACEWhite                      ARMCDTRT </span></span>
-<span><span class="co">#&gt;                    5.61310489                    3.77554263 </span></span>
+<span><span class="co">#&gt;                     5.6131048                     3.7755423 </span></span>
 <span><span class="co">#&gt;                    AVISITVIS2                    AVISITVIS3 </span></span>
-<span><span class="co">#&gt;                    4.82858562                   10.33317692 </span></span>
+<span><span class="co">#&gt;                     4.8285855                    10.3331770 </span></span>
 <span><span class="co">#&gt;                    AVISITVIS4           ARMCDTRT:AVISITVIS2 </span></span>
-<span><span class="co">#&gt;                   15.05257072                   -0.01735093 </span></span>
+<span><span class="co">#&gt;                    15.0525706                    -0.0173504 </span></span>
 <span><span class="co">#&gt;           ARMCDTRT:AVISITVIS3           ARMCDTRT:AVISITVIS4 </span></span>
-<span><span class="co">#&gt;                   -0.66751927                    0.63095827 </span></span>
+<span><span class="co">#&gt;                    -0.6675190                     0.6309586 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Model Inference Optimization:</span></span>
 <span><span class="co">#&gt; Converged with code 0 and message:</span></span></code></pre></div>
@@ -586,7 +579,7 @@ table.</p>
 <span><span class="co">#&gt; ARMCDTRT:AVISITVIS3           -0.66753189  1.1865359 158.2106 -0.56258887</span></span>
 <span><span class="co">#&gt; ARMCDTRT:AVISITVIS4            0.63094392  1.8507884 129.6377  0.34090549</span></span>
 <span><span class="co">#&gt;                                   Pr(&gt;|t|)</span></span>
-<span><span class="co">#&gt; (Intercept)                   7.122411e-89</span></span>
+<span><span class="co">#&gt; (Intercept)                   7.122409e-89</span></span>
 <span><span class="co">#&gt; RACEBlack or African American 1.638725e-02</span></span>
 <span><span class="co">#&gt; RACEWhite                     1.605553e-14</span></span>
 <span><span class="co">#&gt; ARMCDTRT                      6.001485e-04</span></span>
