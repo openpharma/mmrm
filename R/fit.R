@@ -229,6 +229,8 @@ refit_multiple_optimizers <- function(fit,
 #' |Satterthwaite| Asymptotic|
 #' |Kenward-Roger| Kenward-Roger|
 #' |Residual| Empirical|
+#' Please note that "Kenward-Roger" for "Unstructured" covariance gives different result compared to SAS.
+#' Use "Kenward-Roger-Linear" for `vcov` for better matching.
 #'
 #' @return List of class `mmrm_control` with the control parameters.
 #' @export
