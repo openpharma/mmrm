@@ -34,6 +34,27 @@ test_that("fitted works as expected", {
   expect_numeric(result, names = "unique", len = length(object$tmb_data$y_vector))
 })
 
+test_that("fitted give same result compared to nlme", {
+  skip_if_not_installed("nlme")
+  formula <- FEV1 ~ ARMCD + ar1(AVISIT | USUBJID)
+  data_full <- fev_data[complete.cases(fev_data), ]
+  # In this test, subject IDs are ordered.
+  expect_true(all(diff(as.integer(data_full$USUBJID)) >= 0))
+  fit <- mmrm(formula = formula, data = data_full, method = "Satterthwaite")
+  fit_gls <- nlme::gls(FEV1 ~ ARMCD, data_full, correlation = nlme::corAR1(form = ~ VISITN | USUBJID))
+  expect_identical(fitted(fit_gls), fitted(fit), tolerance = 1e-4, ignore_attr = TRUE)
+})
+
+test_that("fitted give same result compared to nlme if the order is changed", {
+  skip_if_not_installed("nlme")
+  formula <- FEV1 ~ ARMCD + ar1(AVISIT | USUBJID)
+  data_full <- fev_data[complete.cases(fev_data), ]
+  new_order <- sample(seq_len(nrow(data_full)))
+  fit <- mmrm(formula = formula, data = data_full[new_order, ], method = "Satterthwaite")
+  fit_gls <- nlme::gls(FEV1 ~ ARMCD, data_full[new_order, ], correlation = nlme::corAR1(form = ~ VISITN | USUBJID))
+  expect_identical(fitted(fit_gls), fitted(fit)[new_order], tolerance = 1e-4, ignore_attr = TRUE)
+})
+
 # predict -----
 
 test_that("predict works for old patient, new visit", {
@@ -53,13 +74,13 @@ test_that("predict works for only fit values without response", {
   fev_data_no_y$FEV1 <- NA_real_
   y_pred <- expect_silent(predict(object, fev_data_no_y))
   y_hat <- as.vector(m %*% object$beta_est)
-  expect_equal(y_pred, y_hat)
+  expect_equal(y_pred, y_hat, ignore_attr = TRUE)
 })
 
 test_that("predict works for only fit values with response", {
   object <- get_mmrm()
   y_pred <- expect_silent(predict(object, fev_data))
-  expect_equal(y_pred[!is.na(fev_data$FEV1)], object$tmb_data$y_vector)
+  expect_equal(y_pred[!is.na(fev_data$FEV1)], object$tmb_data$y_vector, ignore_attr = TRUE)
   expect_numeric(y_pred[is.na(fev_data$FEV1)])
 })
 
@@ -75,6 +96,50 @@ test_that("predict warns on aliased variables", {
     data = new_fev_data
   )
   expect_warning(predict(fit), "In fitted object there are co-linear variables and therefore dropped terms")
+})
+
+test_that("predict will return on correct order", {
+  new_order <- sample(seq_len(nrow(fev_data)))
+  fit <- get_mmrm()
+  fev_data2 <- fev_data
+  fev_data2$FEV1 <- NA_real_
+  predicted <- predict(fit, newdata = fev_data2[new_order, ])
+
+  m <- stats::model.matrix(
+    fit$formula_parts$model_formula,
+    model.frame(fit, data = fev_data2[new_order, ], include = "response_var", na.action = "na.pass")
+  )
+
+  expect_identical(
+    predicted,
+    (m %*% fit$beta_est)[, 1],
+    tolerance = 1e-8
+  )
+})
+
+test_that("predict will return NA if data contains NA in covariates", {
+  new_order <- sample(seq_len(nrow(fev_data)))
+  fit <- get_mmrm()
+  fev_data2 <- fev_data
+  fev_data2$FEV1 <- NA_real_
+  fev_data2$SEX[1:20] <- NA
+  predicted <- predict(fit, newdata = fev_data2[new_order, ], se.fit = TRUE, interval = "confidence")
+
+  m <- stats::model.matrix(
+    fit$formula_parts$model_formula,
+    model.frame(fit, data = fev_data2[new_order, ], include = "response_var", na.action = "na.pass")
+  )
+
+  expect_identical(
+    predicted[, "fit"],
+    (m %*% fit$beta_est)[, 1],
+    tolerance = 1e-8
+  )
+  na_index <- which(new_order <= 20)
+  expect_identical(
+    predicted[na_index, ],
+    matrix(NA_real_, nrow = 20, ncol = 4, dimnames = list(row.names(m)[na_index], c("fit", "se", "lwr", "upr")))
+  )
 })
 
 # model.frame ----
