@@ -67,25 +67,28 @@ h_add_covariance_terms <- function(f, covariance) {
   stats::update(f, stats::as.formula(paste(". ~ . + ", cov_terms)))
 }
 
-#' Drop Formula Terms with Character
+#' Add Formula Terms with Character
 #'
-#' Drop formula terms from the original formula with character representation.
+#' Add formula terms from the original formula with character representation.
 #'
 #' @param f (`formula`)\cr a formula to be updated.
-#' @param drops (`character`)\cr representation of elements to be removed.
+#' @param adds (`character`)\cr representation of elements to be added.
+#' @param drop_response (`flag`)\cr whether response should be dropped.
 #'
-#' @details Elements in `drops` will be removed from the formula, while the environment
-#' of the formula is unchanged. If `drops` is `NULL` or `character(0)`, the formula is
+#' @details Elements in `adds` will be added from the formula, while the environment
+#' of the formula is unchanged. If `adds` is `NULL` or `character(0)`, the formula is
 #' unchanged.
 #' @return A new formula with elements in `drops` removed.
 #'
 #' @keywords internal
-h_drop_terms <- function(f, drops) {
-  assert_character(drops, null.ok = TRUE)
-  if (length(drops) == 0L) {
-    return(f)
+h_add_terms <- function(f, adds, drop_response = FALSE) {
+  assert_character(adds, null.ok = TRUE)
+  if (length(adds) > 0L) {
+    add_terms <- stats::as.formula(sprintf(". ~ . + %s", paste(adds, collapse = "+")))
+    f <- stats::update(f, add_terms)
   }
-  drop_terms <- stats::as.formula(sprintf(". ~ . - %s", paste(drops, collapse = " - ")))
-  assert_subset(setdiff(all.vars(drop_terms), "."), all.vars(f))
-  stats::update(f, drop_terms)
+  if (drop_response && length(f) == 3L) {
+    f[[2]] <- NULL
+  }
+  f
 }

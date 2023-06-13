@@ -4,10 +4,13 @@ using namespace Rcpp;
 using std::string;
 // Obtain the empirical given beta, beta_vcov, theta.
 List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, NumericMatrix beta_vcov, string type) {
+  auto as_num_matrix_tmb = as_matrix<matrix<double>, NumericMatrix>;
+  auto as_num_matrix_rcpp = as_matrix<NumericMatrix, matrix<double>>;
+  auto as_num_vector_tmb = as_vector<vector<double>, NumericVector>;
   NumericMatrix x = mmrm_data["x_matrix"];
-  matrix<double> x_matrix = as_matrix(x);
+  matrix<double> x_matrix = as_num_matrix_tmb(x);
   NumericVector y = mmrm_data["y_vector"];
-  matrix<double> beta_vcov_matrix = as_matrix(beta_vcov);
+  matrix<double> beta_vcov_matrix = as_num_matrix_tmb(beta_vcov);
   IntegerVector subject_zero_inds = mmrm_data["subject_zero_inds"];
   IntegerVector visits_zero_inds = mmrm_data["visits_zero_inds"];
   int n_subjects = mmrm_data["n_subjects"];
@@ -21,13 +24,13 @@ List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, Nume
   IntegerVector subject_groups = mmrm_data["subject_groups"];
   NumericVector weights_vector = mmrm_data["weights_vector"];
   NumericMatrix coordinates = mmrm_data["coordinates"];
-  matrix<double> coords = as_matrix(coordinates);
-  matrix<double> beta_m = as_vector(beta).matrix();
-  vector<double> theta_v = as_vector(theta);
+  matrix<double> coords = as_num_matrix_tmb(coordinates);
+  matrix<double> beta_m = as_num_vector_tmb(beta).matrix();
+  vector<double> theta_v = as_num_vector_tmb(theta);
   matrix<double> fitted = x_matrix * beta_m;
-  matrix<double> y_matrix = as_vector(y).matrix();
+  matrix<double> y_matrix = as_num_vector_tmb(y).matrix();
   matrix<double> residual = y_matrix - fitted;
-  vector<double> G_sqrt = as_vector(sqrt(weights_vector));
+  vector<double> G_sqrt = as_num_vector_tmb(sqrt(weights_vector));
   int n_theta = theta.size();
   int theta_size_per_group = n_theta / n_groups;
   int p = x.cols();
@@ -101,8 +104,8 @@ List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, Nume
   //  ret = ret * (n_subjects - 1) / n_subjects;
   //}
   return List::create(
-    Named("cov") = as_mv(ret),
-    Named("df_mat") = as_mv(gtvg)
+    Named("cov") = as_num_matrix_rcpp(ret),
+    Named("df_mat") = as_num_matrix_rcpp(gtvg)
   );
 }
 

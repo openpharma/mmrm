@@ -187,3 +187,17 @@ test_that("h_factor_ref fails on non existing level", {
   x <- c("a", "d")
   expect_error(h_factor_ref(x, ref), "has additional elements")
 })
+
+test_that("h_factor_ref works with character", {
+  ref <- c("a", "b", "c")
+  x <- c("a", "b")
+  f <- expect_silent(h_factor_ref(x, ref))
+  expect_identical(levels(f), ref)
+})
+
+test_that("h_factor ref allows NA in x", {
+  ref <- c("a", "b", "c")
+  x <- c("a", "b", NA)
+  f <- expect_silent(h_factor_ref(x, ref))
+  expect_identical(levels(f), ref)
+})

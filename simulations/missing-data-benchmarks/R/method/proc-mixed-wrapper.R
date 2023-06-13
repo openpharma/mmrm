@@ -50,7 +50,7 @@ proc_mixed_wrapper_fun <- function(
       ModelInfo = model_info ConvergenceStatus = conv_status;
     PROC MIXED DATA = sas_df METHOD = reml;
       CLASS trt(ref = '0') visit_num strata participant;
-      MODEL bcva_change = base_bcva strata trt|visit_num / DDFM = KR;
+      MODEL bcva_change = base_bcva strata trt|visit_num / DDFM = SAT;
       REPEATED visit_num / subject=participant type=CSH R RCorr;
       LSMEANS visit_num*trt / pdiff slice=visit_num cl alpha = 0.05 OBSMARGINS;
     RUN;"
@@ -59,7 +59,7 @@ proc_mixed_wrapper_fun <- function(
       ModelInfo = model_info ConvergenceStatus = conv_status;
     PROC MIXED DATA = sas_df METHOD = reml;
       CLASS trt(ref = '0') visit_num strata participant;
-      MODEL bcva_change = base_bcva strata trt|visit_num / DDFM = KR;
+      MODEL bcva_change = base_bcva strata trt|visit_num / DDFM = SAT;
       REPEATED visit_num / subject=participant type=TOEPH R RCorr;
       LSMEANS visit_num*trt / pdiff slice=visit_num cl alpha = 0.05 OBSMARGINS;
     RUN;"
@@ -68,7 +68,7 @@ proc_mixed_wrapper_fun <- function(
       ModelInfo = model_info ConvergenceStatus = conv_status;
     PROC MIXED DATA = sas_df METHOD = reml;
       CLASS trt(ref = '0') visit_num strata participant;
-      MODEL bcva_change = base_bcva strata trt|visit_num / DDFM = KR;
+      MODEL bcva_change = base_bcva strata trt|visit_num / DDFM = SAT;
       REPEATED visit_num / subject=participant type=UNR R RCorr;
       LSMEANS visit_num*trt / pdiff slice=visit_num cl alpha = 0.05 OBSMARGINS;
     RUN;"
