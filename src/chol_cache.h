@@ -104,8 +104,7 @@ struct lower_chol_groups {
     // Get number of variance parameters for one group.
     int theta_one_group_size = theta.size() / n_groups;
     for (int r = 0; r < n_groups; r++) {
-      // In loops using new keyword is required so that the objects stays on the heap
-      // otherwise this will be destroyed and you will get unexpected result.
+      // Use unique pointers here to better manage resource.
       if (is_spatial) {
         this->chols_by_group[r] = std::make_unique<lower_chol_spatial<Type>>(theta.segment(r * theta_one_group_size, theta_one_group_size), cov_type);
       } else {
