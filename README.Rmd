@@ -80,6 +80,8 @@ obtain precise gradient information for model fitting.
 * Integration with [tidymodels](https://www.tidymodels.org/) package ecosystem
   * Dedicated [parsnip](https://parsnip.tidymodels.org/) engine for linear regression
   * Integration with [recipes](https://recipes.tidymodels.org/)
+* Integration with [tern](https://insightsengineering.github.io/tern/) package ecosystems
+  * The [tern.mmrm](https://insightsengineering.github.io/tern.mmrm/) package can be used to run the `mmrm` fit and generate: tabulation and plots of least square means per visit and treatment arm, tabulation of model diagnostics, diagnostic graphs, and other standard model outputs.
 
 </details>
 
