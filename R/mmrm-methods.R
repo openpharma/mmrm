@@ -248,9 +248,10 @@ print.summary.mmrm <- function(x,
 #'
 #' @examples TODO
 simulate.mmrm <- function(object, nsim = 1,
-                          seed = NULL, #FIXME {newdata = NULL,} add parameter for newdata once predict.mmrm is ready
+                          seed = NULL, newdata = NULL,
                           ...){
-  ftd <- fitted(object) # FIXME when predict.mmrm method is available, use predict(object, ...) instead of fitted(object)
+  nd <- ifelse(is.null(newdata), object$data, newdata)
+  ftd <- predict(object, newdata = nd)
   sig <- VarCorr(object)
   weighted <- any(object$tmb_data$weights_vector != 1)
   ret <- replicate(nsim, ftd)
