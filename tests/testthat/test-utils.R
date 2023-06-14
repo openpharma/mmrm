@@ -169,3 +169,21 @@ test_that("h_default_value works", {
   expect_identical(h_default_value(x, "test"), x)
   expect_identical(h_default_value(NULL, x), x)
 })
+
+# h_h_factor_ref ----
+
+test_that("h_factor_ref works", {
+  ref <- factor(c("a", "b", "c"), levels = c("c", "b", "a"))
+  x <- c("a", "b")
+  f <- expect_silent(h_factor_ref(x, ref))
+  expect_identical(levels(f), levels(ref))
+  x <- factor(c("a", "b"))
+  f <- expect_silent(h_factor_ref(x, ref))
+  expect_identical(levels(f), levels(ref))
+})
+
+test_that("h_factor_ref fails on non existing level", {
+  ref <- factor(c("a", "b", "c"), levels = c("c", "b", "a"))
+  x <- c("a", "d")
+  expect_error(h_factor_ref(x, ref), "has additional elements")
+})
