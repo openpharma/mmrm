@@ -132,3 +132,21 @@ test_that("print.cov_struct pretty-formats covariance structure object", {
     "`VIS IT`, VISIT | GROUP / SUBJECT"
   )
 })
+
+# h_reconcile_cov_struct ----
+
+test_that("h_reconcile_cov_struct works if covariance is a formula", {
+  cov <- expect_silent(h_reconcile_cov_struct(a ~ b, ~ ar1(a | b)))
+  expected <- cov_struct("ar1", "a", "b")
+  expect_identical(cov, expected)
+})
+
+test_that("h_reconcile_cov_struct works if covariance is a cov_struct", {
+  expected <- cov_struct("ar1", "a", "b")
+  cov <- expect_silent(h_reconcile_cov_struct(a ~ b, expected))
+  expect_identical(cov, expected)
+})
+
+test_that("h_reconcile_cov_struct errors if multiple covarinace spotted", {
+  expect_error(h_reconcile_cov_struct(a ~ b + ar1(a | b), ar1(a | b)))
+})
