@@ -1,5 +1,6 @@
 test_that("mmrm works when using tidymodels", {
-  library(tidymodels)
+  library(parsnip)
+  library(generics)
   expect_silent(
     linear_reg() |>
       set_engine("mmrm", control = mmrm_control(method = "Satterthwaite"), covariance = ~ us(AVISIT | USUBJID)) |>
