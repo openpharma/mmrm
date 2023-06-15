@@ -248,13 +248,15 @@ print.summary.mmrm <- function(x,
 #'
 #' @examples TODO
 simulate.mmrm <- function(object, nsim = 1,
-                          seed = NULL, newdata = NULL,
+                          seed = NULL, newdata = object$data,
                           ...){
-  nd <- ifelse(is.null(newdata), object$data, newdata)
-  ftd <- predict(object, newdata = nd)
+  # assert(seed is numeric)
+  if(!is.null(seed)) set.seed(seed)
+
+  ret <- predict(object, newdata = newdata, se.fit = FALSE, interval = "none")
+  ret <- data.frame(replicate(nsim, ret))
   sig <- VarCorr(object)
-  weighted <- any(object$tmb_data$weights_vector != 1)
-  ret <- replicate(nsim, ftd)
+  grouped <- if(object$tmb_data$n_groups > 1) TRUE else FALSE
 
   for(i in 1:object$tmb_data$n_subjects){
 
@@ -263,16 +265,19 @@ simulate.mmrm <- function(object, nsim = 1,
     inds <- (object$tmb_data$subject_zero_inds[i] + 1) : (object$tmb_data$subject_zero_inds[i] + num_vis)
     visits <- object$tmb_data$visits_zero_inds[inds] + 1
 
-    sig_i <- if(object$tmb_data$n_groups > 1) sig[[group]] else sig
-    sig_i <- sig_i[visits, visits] # subset covariance mat
-    if(weighted){
-      inv_wts <- solve(sqrt(object$tmb_data$weights_vector[inds]))
-      sig_i <- inv_wts %*% sig_i %*% inv_wts # account for weights
-    }
-    ret[inds,] <- ret[inds,] + t(MASS::mvrnorm(nsim, rep.int(0, num_vis), sig_i))
+    sig_i <- if(grouped) sig[[group]] else sig
+    sig_i <- sig_i[visits, visits] # subset covariance matrix
+
+    ret[inds,] <- ret[inds, , drop=FALSE] + MASS::mvrnorm(nsim, rep.int(0, num_vis), sig_i)
   }
 
-  as.data.frame(ret)
-
+  ret
 }
 
+testfun <- function(object, newdata = object$data, nsim=1, interval = NULL){
+  ftd <- data.frame(lapply(1:nsim, function(x) predict(object, newdata = newdata)))
+  ftd
+}
+
+predict()
+se.fit; interval = c("none", "confidence")
