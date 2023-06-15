@@ -32,7 +32,7 @@ List get_pqr(List mmrm_fit, NumericVector theta) {
   matrix<double> Q = matrix<double>::Zero(p * theta_size_per_group * n_theta, p);
   matrix<double> R = matrix<double>::Zero(p * theta_size_per_group * n_theta, p);
   // Use map to hold these base class pointers (can also work for child class objects).
-  auto derivatives_by_group = derivative_cache_groups<double>(theta_v, n_groups, is_spatial, cov_type, n_visits);
+  auto derivatives_by_group = cache_obj<double, derivatives_base<double>, derivatives_sp_exp<double>, derivatives_nonspatial<double>>(theta_v, n_groups, is_spatial, cov_type, n_visits);
   for (int i = 0; i < n_subjects; i++) {
     int start_i = subject_zero_inds[i];
     int n_visits_i = subject_n_visits[i];

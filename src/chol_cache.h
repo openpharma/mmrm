@@ -94,25 +94,32 @@ struct lower_chol_spatial: virtual lower_chol_base<Type> {
     return this->get_sigma(visits, dist).inverse();
   }
 };
-template <class Type>
-struct chol_cache_groups {
-  std::map<int, std::unique_ptr<lower_chol_base<Type>>> cache;
+
+template <class T, class Base, class D1, class D2>
+struct cache_obj {
+  std::map<int, std::unique_ptr<Base>> cache;
   int n_groups;
   bool is_spatial;
   int n_visits;
-  chol_cache_groups(vector<Type> theta, int n_groups, bool is_spatial, std::string cov_type, int n_visits): n_groups(n_groups), is_spatial(is_spatial), n_visits(n_visits) {
+  cache_obj(vector<T> theta, int n_groups, bool is_spatial, std::string cov_type, int n_visits): n_groups(n_groups), is_spatial(is_spatial), n_visits(n_visits) {
     // Get number of variance parameters for one group.
     int theta_one_group_size = theta.size() / n_groups;
     for (int r = 0; r < n_groups; r++) {
       // Use unique pointers here to better manage resource.
       if (is_spatial) {
-        this->cache[r] = std::make_unique<lower_chol_spatial<Type>>(theta.segment(r * theta_one_group_size, theta_one_group_size), cov_type);
+        this->cache[r] = std::make_unique<D1>(theta.segment(r * theta_one_group_size, theta_one_group_size), cov_type);
       } else {
-        this->cache[r] = std::make_unique<lower_chol_nonspatial<Type>>(theta.segment(r * theta_one_group_size, theta_one_group_size), n_visits, cov_type);
+        this->cache[r] = std::make_unique<D2>(theta.segment(r * theta_one_group_size, theta_one_group_size), n_visits, cov_type);
       }
     }
   }
+};
 
+template <class Type>
+struct chol_cache_groups: cache_obj<Type, lower_chol_base<Type>, lower_chol_spatial<Type>, lower_chol_nonspatial<Type>> {
+  chol_cache_groups(vector<Type> theta, int n_groups, bool is_spatial, std::string cov_type, int n_visits): cache_obj<Type, lower_chol_base<Type>, lower_chol_spatial<Type>, lower_chol_nonspatial<Type>>(theta, n_groups, is_spatial, cov_type, n_visits) {
+
+  }
   // Return covariance lower Cholesky factor from lower_chol_base objects.
   // For non-spatial return for full visits, for spatial return on two points that the distance is 1.
   matrix<Type> get_default_chol() {

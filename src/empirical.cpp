@@ -33,7 +33,7 @@ List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, Nume
   vector<double> G_sqrt = as_num_vector_tmb(sqrt(weights_vector));
   int p = x.cols();
   // Use map to hold these base class pointers (can also work for child class objects).
-  auto derivatives_by_group = derivative_cache_groups<double>(theta_v, n_groups, is_spatial, cov_type, n_visits);
+  auto derivatives_by_group = cache_obj<double, derivatives_base<double>, derivatives_sp_exp<double>, derivatives_nonspatial<double>>(theta_v, n_groups, is_spatial, cov_type, n_visits);
   matrix<double> meat = matrix<double>::Zero(p, p);  
   matrix<double> xt_g_simga_inv_chol = matrix<double>::Zero(p, n_observations);
   matrix<double> ax = matrix<double>::Zero(n_observations, p);

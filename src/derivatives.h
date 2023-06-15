@@ -72,6 +72,7 @@ struct derivatives_base: virtual lower_chol_base<Type> {
   virtual matrix<Type> get_sigma_derivative1(std::vector<int> visits, matrix<Type> dist) = 0;
   virtual matrix<Type> get_sigma_derivative2(std::vector<int> visits, matrix<Type> dist) = 0;
   virtual matrix<Type> get_inverse_derivative(std::vector<int> visits, matrix<Type> dist) = 0;
+  virtual ~derivatives_base() {};
 };
 
 // Struct derivatives_nonspatial is created to get the derivatives with cache.
@@ -229,25 +230,5 @@ struct derivatives_sp_exp: public lower_chol_spatial<Type>, virtual derivatives_
       sigma_inv_d1.block(r * dist.rows(), 0, dist.rows(), dist.cols()) = - sigma_inv * sigma_d1.block(r * dist.rows(), 0, dist.rows(), dist.cols()) *sigma_inv;
     }
     return sigma_inv_d1;
-  }
-};
-
-template <class Type>
-struct derivative_cache_groups {
-  std::map<int, std::unique_ptr<derivatives_base<Type>>> cache;
-  int n_groups;
-  bool is_spatial;
-  int n_visits;
-  derivative_cache_groups(vector<Type> theta, int n_groups, bool is_spatial, std::string cov_type, int n_visits): n_groups(n_groups), is_spatial(is_spatial), n_visits(n_visits) {
-    // Get number of variance parameters for one group.
-    int theta_one_group_size = theta.size() / n_groups;
-    for (int r = 0; r < n_groups; r++) {
-      // Use unique pointers here to better manage resource.
-      if (is_spatial) {
-        this->cache[r] = std::make_unique<derivatives_sp_exp<Type>>(theta.segment(r * theta_one_group_size, theta_one_group_size), cov_type);
-      } else {
-        this->cache[r] = std::make_unique<derivatives_nonspatial<Type>>(theta.segment(r * theta_one_group_size, theta_one_group_size), n_visits, cov_type);
-      }
-    }
   }
 };

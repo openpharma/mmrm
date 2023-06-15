@@ -75,7 +75,7 @@ context("derivatives_nonspatial struct works as expected") {
 context("derivatives_sp_exp struct works as expected") {
   test_that("derivatives_sp_exp struct gives correct sigma, inverse and derivatives") {
     vector<double> theta {{1.0, 1.0}};
-    auto sp = derivatives_sp_exp<double>(theta);
+    auto sp = derivatives_sp_exp<double>(theta, "sp_exp");
     matrix<double> dist (3, 3);
     dist << 
       0, 0.5, 1,
