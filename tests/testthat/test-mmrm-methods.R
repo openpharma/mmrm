@@ -127,3 +127,27 @@ test_that("simulation works with large sample size", {
                tolerance = 1e-5)
 
 })
+
+test_that("simulate works as expected for weighted models", {
+  object <- get_mmrm_weighted()
+  result <- simulate(object)
+
+})
+
+test_that("simulate works as expected for rank deficient fits", {
+  object <- get_mmrm_rank_deficient()
+  result <- simulate(object)
+
+})
+
+test_that("simulate works as expected for grouped fits", {
+  object <- get_mmrm_group()
+  result <- simulate(object)
+
+})
+
+test_that("simulate works as expected for spatial fits", {
+  object <- get_mmrm_spatial()
+  result <- simulate(object)
+
+})
