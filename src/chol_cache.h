@@ -12,7 +12,7 @@ struct lower_chol_base {
 };
 // Struct to obtain Cholesky for non-spatial.
 template <class Type>
-struct lower_chol_nonspatial: public lower_chol_base<Type> {
+struct lower_chol_nonspatial: virtual lower_chol_base<Type> {
   std::map<std::vector<int>, matrix<Type>> chols;
   std::map<std::vector<int>, matrix<Type>> sigmas;
   std::map<std::vector<int>, matrix<Type>> sigmas_inv;
@@ -75,7 +75,7 @@ struct lower_chol_nonspatial: public lower_chol_base<Type> {
 
 // Struct to obtain Cholesky for spatial exponential.
 template <class Type>
-struct lower_chol_spatial: public lower_chol_base<Type> {
+struct lower_chol_spatial: virtual lower_chol_base<Type> {
   vector<Type> theta;
   std::string cov_type;
   lower_chol_spatial() {
@@ -95,20 +95,20 @@ struct lower_chol_spatial: public lower_chol_base<Type> {
   }
 };
 template <class Type>
-struct lower_chol_groups {
-  std::map<int, std::unique_ptr<lower_chol_base<Type>>> chols_by_group;
+struct chol_cache_groups {
+  std::map<int, std::unique_ptr<lower_chol_base<Type>>> cache;
   int n_groups;
   bool is_spatial;
   int n_visits;
-  lower_chol_groups(vector<Type> theta, int n_groups, bool is_spatial, std::string cov_type, int n_visits): n_groups(n_groups), is_spatial(is_spatial), n_visits(n_visits) {
+  chol_cache_groups(vector<Type> theta, int n_groups, bool is_spatial, std::string cov_type, int n_visits): n_groups(n_groups), is_spatial(is_spatial), n_visits(n_visits) {
     // Get number of variance parameters for one group.
     int theta_one_group_size = theta.size() / n_groups;
     for (int r = 0; r < n_groups; r++) {
       // Use unique pointers here to better manage resource.
       if (is_spatial) {
-        this->chols_by_group[r] = std::make_unique<lower_chol_spatial<Type>>(theta.segment(r * theta_one_group_size, theta_one_group_size), cov_type);
+        this->cache[r] = std::make_unique<lower_chol_spatial<Type>>(theta.segment(r * theta_one_group_size, theta_one_group_size), cov_type);
       } else {
-        this->chols_by_group[r] = std::make_unique<lower_chol_nonspatial<Type>>(theta.segment(r * theta_one_group_size, theta_one_group_size), n_visits, cov_type);
+        this->cache[r] = std::make_unique<lower_chol_nonspatial<Type>>(theta.segment(r * theta_one_group_size, theta_one_group_size), n_visits, cov_type);
       }
     }
   }
@@ -123,7 +123,7 @@ struct lower_chol_groups {
     int dim = this->is_spatial?2:this->n_visits;
     matrix<Type> covariance_lower_chol = matrix<Type>::Zero(dim * this->n_groups, dim);
     for (int r = 0; r < this->n_groups; r++) {
-      covariance_lower_chol.block(r * dim, 0, dim, dim) = this->chols_by_group[r]->get_chol(visit, dist);
+      covariance_lower_chol.block(r * dim, 0, dim, dim) = this->cache[r]->get_chol(visit, dist);
     }
     return covariance_lower_chol;
   }

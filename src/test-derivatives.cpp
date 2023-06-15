@@ -35,13 +35,13 @@ context("derivatives_nonspatial struct works as expected") {
     auto selmat = get_select_matrix<double>(v1, 4);
     expect_equal_matrix(matrix<double>(selmat), matrix<double>(mychol.get_sel_mat(v1)));
     expect_equal_matrix(matrix<double>(selmat * full_sigma.block(0,0,4,4) * selmat.transpose()), matrix<double>(part_sigma.block(0,0,3,3)));
-    auto full_inverse = matrix<double>(mychol.get_inverse(v_full, dist));
+    auto full_inverse = matrix<double>(mychol.get_sigma_inverse(v_full, dist));
     matrix<double> expected_inverse(4, 4);
     // expected values from R side solve
     expected_inverse << 0.2706706, -0.191393, 0, 0, -0.191393, 0.4060058, -0.191393, 0, 0, -0.191393, 0.4060058, -0.191393, 0,0,-0.191393, 0.2706706;
     expect_equal_matrix(expected_inverse, full_inverse);
 
-    auto v1_inverse = matrix<double>(mychol.get_inverse(v1, dist));
+    auto v1_inverse = matrix<double>(mychol.get_sigma_inverse(v1, dist));
     matrix<double> expected_v1_inverse(3, 3);
     // expected values from R side solve
     expected_v1_inverse <<
@@ -121,7 +121,7 @@ context("derivatives_sp_exp struct works as expected") {
       -0.246976228442905, -0.1864537925375, 0;
     expect_equal_matrix(sigma_d2, expected_sigma_d2);
 
-    auto sigma_inv = sp.get_inverse(v, dist);
+    auto sigma_inv = sp.get_sigma_inverse(v, dist);
     matrix<double> expected_sigma_inv(3, 3);
     // expected values from R side use solve
     expected_sigma_inv << 

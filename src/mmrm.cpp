@@ -61,7 +61,7 @@ Type objective_function<Type>::operator() ()
   // Diagonal of weighted covariance
   vector<Type> diag_cov_inv_sqrt(x_matrix.rows());
   // Cholesky group object
-  lower_chol_groups<Type> chols_group = lower_chol_groups<Type>(theta, n_groups, is_spatial, cov_type, n_visits);
+  auto chols_group = chol_cache_groups<Type>(theta, n_groups, is_spatial, cov_type, n_visits);
   // Go through all subjects and calculate quantities initialized above.
   for (int i = 0; i < n_subjects; i++) {
     // Start index and number of visits for this subject.
@@ -77,7 +77,7 @@ Type objective_function<Type>::operator() ()
       dist_i = euclidean(matrix<Type>(coordinates.block(start_i, 0, n_visits_i, coordinates.cols())));
     }
     // Obtain Cholesky factor Li.
-    matrix<Type> Li = chols_group.chols_by_group[subject_groups[i]]->get_chol(visit_i, dist_i);  
+    matrix<Type> Li = chols_group.cache[subject_groups[i]]->get_chol(visit_i, dist_i);  
     // Calculate weighted Cholesky factor for this subject.
     Eigen::DiagonalMatrix<Type,Eigen::Dynamic,Eigen::Dynamic> Gi_inv_sqrt = weights_vector.segment(start_i, n_visits_i).cwiseInverse().sqrt().matrix().asDiagonal();
     Li = Gi_inv_sqrt * Li;
