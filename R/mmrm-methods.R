@@ -231,13 +231,8 @@ print.summary.mmrm <- function(x,
 #' @describeIn mmrm_methods Simulates from an mmrm model object
 #' @importFrom stats simulate
 #' @exportS3Method
-#' @keywords internal
 #'
 #' @param object an object of class 'mmrm'
-#' @param nsim number of datasets to simulate
-#' @param seed a random seed
-#' @param newdata a new covariate dataframe from which to simulate responses
-#' @param object an mmrm object.
 #' @param nsim number of response vectors to simulate. Defaults to 1.
 #' @param seed an object specifying if and how the random number generator should be initialized (‘seeded’).
 #' @param newdata data frame for which to evaluate predictions.
@@ -250,34 +245,33 @@ print.summary.mmrm <- function(x,
 simulate.mmrm <- function(object, nsim = 1,
                           seed = NULL, newdata = object$data,
                           ...){
-  # assert(seed is numeric)
   if(!is.null(seed)) set.seed(seed)
 
+  # build data.frame of prediction vectors
   ret <- predict(object, newdata = newdata, se.fit = FALSE, interval = "none")
   ret <- data.frame(replicate(nsim, ret))
-  sig <- VarCorr(object)
+  covmat <- VarCorr(object)
   grouped <- if(object$tmb_data$n_groups > 1) TRUE else FALSE
 
   for(i in 1:object$tmb_data$n_subjects){
 
-    group <- object$tmb_data$subject_groups[i]
-    num_vis <- object$tmb_data$subject_n_visits[i]
-    inds <- (object$tmb_data$subject_zero_inds[i] + 1) : (object$tmb_data$subject_zero_inds[i] + num_vis)
+    # Obtain indices of data.frame belonging to subject i
+    num_visits <- object$tmb_data$subject_n_visits[i]
+    inds <- (object$tmb_data$subject_zero_inds[i] + 1) : (object$tmb_data$subject_zero_inds[i] + num_visits)
     visits <- object$tmb_data$visits_zero_inds[inds] + 1
 
-    sig_i <- if(grouped) sig[[group]] else sig
-    sig_i <- sig_i[visits, visits] # subset covariance matrix
+    # get relevant covariance matrix for subject i
+    covmat_i <- if(grouped){
+        covmat[[object$tmb_data$subject_groups[i]]]
+      }else{
+        covmat
+      }
+    # subset covariance matrix
+    covmat_i <- covmat_i[visits, visits]
 
-    ret[inds,] <- ret[inds, , drop=FALSE] + MASS::mvrnorm(nsim, rep.int(0, num_vis), sig_i)
+    # simulate from covariance matrix
+    ret[inds,] <- ret[inds, , drop=FALSE] + MASS::mvrnorm(nsim, rep.int(0, num_visits), covmat_i)
   }
 
   ret
 }
-
-testfun <- function(object, newdata = object$data, nsim=1, interval = NULL){
-  ftd <- data.frame(lapply(1:nsim, function(x) predict(object, newdata = newdata)))
-  ftd
-}
-
-predict()
-se.fit; interval = c("none", "confidence")
