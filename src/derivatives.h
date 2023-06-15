@@ -86,7 +86,6 @@ struct derivatives_nonspatial: public lower_chol_nonspatial<Type>, virtual deriv
   std::map<std::vector<int>, matrix<Type>> sigmad2_cache;
   std::map<std::vector<int>, matrix<Type>> sigma_inverse_d1_cache;
   std::map<std::vector<int>, Eigen::SparseMatrix<Type>> sel_mat_cache;
-  matrix<Type> get_chol(std::vector<int> visits, matrix<Type> dist) {}
   derivatives_nonspatial() {
     // This default constructor is needed because the use of `[]` in map.
   }
@@ -171,7 +170,6 @@ struct derivatives_nonspatial: public lower_chol_nonspatial<Type>, virtual deriv
       return sigma_inv_d1;
     }
   }
-
 };
 
 // derivatives_sp_exp struct is created to obtain the exact derivatives of spatial exponential
