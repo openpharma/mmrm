@@ -148,5 +148,5 @@ test_that("h_reconcile_cov_struct works if covariance is a cov_struct", {
 })
 
 test_that("h_reconcile_cov_struct errors if multiple covarinace spotted", {
-  expect_error(h_reconcile_cov_struct(a ~ b + ar1(a | b), ar1(a | b)))
+  expect_error(h_reconcile_cov_struct(a ~ b + ar1(a | b), ~ ar1(a | b)))
 })
