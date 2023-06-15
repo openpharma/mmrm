@@ -109,24 +109,17 @@ test_that("print.summary.mmrm works as expected for spatial fits", {
 test_that("simulate.mmrm returns a data.frame object of correct dimension and with no missing values", {
   object <- get_mmrm()
   sims <- simulate(object, nsim = 2)
-  expect_data_frame(sims, any.missing = FALSE, nrows = length(fitted(object)), ncols = 2)
+  expect_data_frame(sims, any.missing = FALSE, nrows = nrow(object$data), ncols = 2)
 
   # check that when nsim == 1, we still have a single-column data.frame
   sims <- simulate(object, nsim = 1)
-  expect_data_frame(sims, any.missing = FALSE, nrows = length(fitted(object)), ncols = 1)
+  expect_data_frame(sims, any.missing = FALSE, nrows = nrow(object$data), ncols = 1)
 })
 
 test_that("simulate.mmrm values are correctly centered", {
   object <- get_mmrm()
-  sims <- simulate(object, nsim = 10000)
-  expect_equal(rowMeans(sims), fitted(object), tolerance = 1e-1)
-
-set.seed(555)
-n <- 1000
-
-#TODO make data
-
-model_fit <- mmrm() # TODO set params
+  sims <- simulate(object, nsim = 1000)
+  expect_equal(rowMeans(sims), predict(object, object$data), tolerance = 1e-1)
 })
 
 test_that("simulation works with large sample size", {
