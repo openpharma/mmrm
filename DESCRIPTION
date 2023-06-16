@@ -84,6 +84,7 @@ RdMacros:
     Rdpack
 Remotes: 
     github::insightsengineering/sasr
+SystemRequirements: C++14
 biocViews:
 Config/testthat/edition: 3
 Encoding: UTF-8
