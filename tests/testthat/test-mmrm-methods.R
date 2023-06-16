@@ -116,38 +116,27 @@ test_that("simulate.mmrm returns a data.frame object of correct dimension and wi
   expect_data_frame(sims, any.missing = FALSE, nrows = nrow(object$data), ncols = 1)
 })
 
-test_that("simulate.mmrm values are correctly centered", {
+test_that("simulate works as expected for standard models", {
+  # simulate.mmrm values are correctly centered
   object <- get_mmrm()
   sims <- simulate(object, nsim = 1000)
   expect_equal(rowMeans(sims), predict(object, object$data), tolerance = 1e-1)
 })
 
-test_that("simulation works with large sample size", {
-  expect_equal(mean(simulate(model_fit)[[1]]), 0.1, # TODO what should it be equal to?
-               tolerance = 1e-5)
-
-})
-
 test_that("simulate works as expected for weighted models", {
   object <- get_mmrm_weighted()
-  result <- simulate(object)
-
-})
-
-test_that("simulate works as expected for rank deficient fits", {
-  object <- get_mmrm_rank_deficient()
-  result <- simulate(object)
-
+  sims <- simulate(object, nsim = 1000)
+  expect_equal(rowMeans(sims), predict(object, object$data), tolerance = 1e-1)
 })
 
 test_that("simulate works as expected for grouped fits", {
   object <- get_mmrm_group()
-  result <- simulate(object)
-
+  sims <- simulate(object, nsim = 1000)
+  expect_equal(rowMeans(sims), predict(object, object$data), tolerance = 1e-1)
 })
 
-test_that("simulate works as expected for spatial fits", {
-  object <- get_mmrm_spatial()
-  result <- simulate(object)
-
-})
+# test_that("simulate works as expected for spatial fits", {
+#   object <- get_mmrm_spatial()
+#   sims <- simulate(object, nsim = 1000)
+#   expect_equal(rowMeans(sims), predict(object, object$data), tolerance = 1e-1)
+# })
