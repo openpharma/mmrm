@@ -94,25 +94,39 @@ struct lower_chol_spatial: public lower_chol_base<Type> {
     return this->get_sigma(visits, dist).inverse();
   }
 };
-
-// Return covariante lower Cholesky factor from lower_chol_base objects.
-// For non-spatial return for full visits, for spatial return on two points that the distance is 1.
-// Finally clean up the map of `chols`.
 template <class Type>
-matrix<Type> get_chol_and_clean(std::map<int, lower_chol_base<Type>*>& chols, bool is_spatial, int n_visits) {
-  std::vector<int> visit(n_visits);
-  std::iota(std::begin(visit), std::end(visit), 0);
-  matrix<Type> dist(2, 2);
-  dist << 0, 1, 1, 0;
-  int dim = is_spatial?2:n_visits;
-  matrix<Type> covariance_lower_chol = matrix<Type>::Zero(dim * chols.size(), dim);
-  int n_groups = chols.size();
-  for (int r = 0; r < n_groups; r++) {
-    covariance_lower_chol.block(r * dim, 0, dim, dim) = chols[r]->get_chol(visit, dist);
-    delete chols[r];
-    chols.erase(r);
+struct lower_chol_groups {
+  std::map<int, std::unique_ptr<lower_chol_base<Type>>> chols_by_group;
+  int n_groups;
+  bool is_spatial;
+  int n_visits;
+  lower_chol_groups(vector<Type> theta, int n_groups, bool is_spatial, std::string cov_type, int n_visits): n_groups(n_groups), is_spatial(is_spatial), n_visits(n_visits) {
+    // Get number of variance parameters for one group.
+    int theta_one_group_size = theta.size() / n_groups;
+    for (int r = 0; r < n_groups; r++) {
+      // Use unique pointers here to better manage resource.
+      if (is_spatial) {
+        this->chols_by_group[r] = std::make_unique<lower_chol_spatial<Type>>(theta.segment(r * theta_one_group_size, theta_one_group_size), cov_type);
+      } else {
+        this->chols_by_group[r] = std::make_unique<lower_chol_nonspatial<Type>>(theta.segment(r * theta_one_group_size, theta_one_group_size), n_visits, cov_type);
+      }
+    }
   }
-  return covariance_lower_chol;
-}
+
+  // Return covariance lower Cholesky factor from lower_chol_base objects.
+  // For non-spatial return for full visits, for spatial return on two points that the distance is 1.
+  matrix<Type> get_default_chol() {
+    std::vector<int> visit(this->n_visits);
+    std::iota(std::begin(visit), std::end(visit), 0);
+    matrix<Type> dist(2, 2);
+    dist << 0, 1, 1, 0;
+    int dim = this->is_spatial?2:this->n_visits;
+    matrix<Type> covariance_lower_chol = matrix<Type>::Zero(dim * this->n_groups, dim);
+    for (int r = 0; r < this->n_groups; r++) {
+      covariance_lower_chol.block(r * dim, 0, dim, dim) = this->chols_by_group[r]->get_chol(visit, dist);
+    }
+    return covariance_lower_chol;
+  }
+};
 
 #endif
