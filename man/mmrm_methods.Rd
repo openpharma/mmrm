@@ -16,10 +16,10 @@
   ...
 )
 
-\method{simulate}{mmrm}(object, nsim = 1, seed = NULL, ...)
+\method{simulate}{mmrm}(object, nsim = 1, seed = NULL, newdata = object$data, ...)
 }
 \arguments{
-\item{object}{an mmrm object.}
+\item{object}{an object of class 'mmrm'}
 
 \item{...}{}
 
@@ -70,6 +70,5 @@ formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
 object <- mmrm(formula, fev_data)
 # Summary:
 summary(object)
-TODO
 }
 \keyword{internal}
