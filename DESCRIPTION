@@ -58,6 +58,7 @@ Suggests:
     dplyr,
     emmeans (>= 1.6),
     estimability,
+    generics,
     ggplot2,
     glmmTMB,
     knitr,

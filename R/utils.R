@@ -359,7 +359,7 @@ h_factor_ref <- function(x, ref, var_name = vname(x)) {
   assert_multi_class(ref, c("character", "factor"))
   assert_multi_class(x, c("character", "factor"))
   # NA can be possible values
-  uni_values <- as.character(na.omit(unique(x)))
+  uni_values <- as.character(stats::na.omit(unique(x)))
   # no NA in reference
   uni_ref <- as.character(unique(ref))
   assert_character(uni_values, .var.name = var_name)
