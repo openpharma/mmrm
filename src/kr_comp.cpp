@@ -32,16 +32,7 @@ List get_pqr(List mmrm_fit, NumericVector theta) {
   matrix<double> Q = matrix<double>::Zero(p * theta_size_per_group * n_theta, p);
   matrix<double> R = matrix<double>::Zero(p * theta_size_per_group * n_theta, p);
   // Use map to hold these base class pointers (can also work for child class objects).
-  std::map<int, derivatives_base<double>*> derivatives_by_group;
-  for (int r = 0; r < n_groups; r++) {
-    // in loops using new keyword is required so that the objects stays on the heap
-    // otherwise this will be destroyed and you will get unexpected result
-    if (is_spatial) {
-      derivatives_by_group[r] = new derivatives_sp_exp<double>(vector<double>(theta_v.segment(r * theta_size_per_group, theta_size_per_group)));
-    } else {
-      derivatives_by_group[r] = new derivatives_nonspatial<double>(vector<double>(theta_v.segment(r * theta_size_per_group, theta_size_per_group)), n_visits, cov_type);
-    }
-  }
+  auto derivatives_by_group = cache_obj<double, derivatives_base<double>, derivatives_sp_exp<double>, derivatives_nonspatial<double>>(theta_v, n_groups, is_spatial, cov_type, n_visits);
   for (int i = 0; i < n_subjects; i++) {
     int start_i = subject_zero_inds[i];
     int n_visits_i = subject_n_visits[i];
@@ -57,11 +48,11 @@ List get_pqr(List mmrm_fit, NumericVector theta) {
     int subject_group_i = subject_groups[i] - 1;
     matrix<double> sigma_inv, sigma_d1, sigma_d2, sigma, sigma_inv_d1;
     
-    sigma_inv = derivatives_by_group[subject_group_i]->get_inverse(visit_i, dist_i);
-    sigma_d1 = derivatives_by_group[subject_group_i]->get_sigma_derivative1(visit_i, dist_i);
-    sigma_d2 = derivatives_by_group[subject_group_i]->get_sigma_derivative2(visit_i, dist_i);
-    sigma = derivatives_by_group[subject_group_i]->get_sigma(visit_i, dist_i);
-    sigma_inv_d1 = derivatives_by_group[subject_group_i]->get_inverse_derivative(visit_i, dist_i);
+    sigma_inv = derivatives_by_group.cache[subject_group_i]->get_sigma_inverse(visit_i, dist_i);
+    sigma_d1 = derivatives_by_group.cache[subject_group_i]->get_sigma_derivative1(visit_i, dist_i);
+    sigma_d2 = derivatives_by_group.cache[subject_group_i]->get_sigma_derivative2(visit_i, dist_i);
+    sigma = derivatives_by_group.cache[subject_group_i]->get_sigma(visit_i, dist_i);
+    sigma_inv_d1 = derivatives_by_group.cache[subject_group_i]->get_inverse_derivative(visit_i, dist_i);
     
     matrix<double> Xi = x_matrix.block(start_i, 0, n_visits_i, x_matrix.cols());
     auto gi_sqrt_root = G_sqrt.segment(start_i, n_visits_i).matrix().asDiagonal();
@@ -76,9 +67,6 @@ List get_pqr(List mmrm_fit, NumericVector theta) {
         R.block((r * theta_size_per_group + j + theta_size_per_group * theta_size_per_group * subject_group_i) * p, 0, p, p) += Rij;
       }
     }
-  }
-  for (int r = 0; r < n_groups; r++) {
-    delete derivatives_by_group[r];
   }
   return List::create(
     Named("P") = as_num_matrix_rcpp(P),
