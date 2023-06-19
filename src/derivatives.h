@@ -38,7 +38,6 @@ std::map<std::string, matrix<Type>> derivatives(int n_visits, std::string cov_ty
   chol_jacobian chol_jac_obj(n_visits, cov_type);
   matrix<Type> l = chol_obj(theta).matrix();
   l.resize(n_visits, n_visits);
-  ret["chol"] = l;
   vector<Type> chol_d1_vec = autodiff::jacobian(chol_obj, theta).vec(); // chol_d1_vec is (dim * dim * l_theta)
   vector<Type> chol_d2_vec = autodiff::jacobian(chol_jac_obj, theta).vec(); // chol_d2_vec is (dim * dim * l_theta * l_theta)
   matrix<Type> ret_d1 = matrix<Type>(n_visits * theta.size(), n_visits);
@@ -72,6 +71,7 @@ struct derivatives_base: virtual lower_chol_base<Type> {
   virtual matrix<Type> get_sigma_derivative1(std::vector<int> visits, matrix<Type> dist) = 0;
   virtual matrix<Type> get_sigma_derivative2(std::vector<int> visits, matrix<Type> dist) = 0;
   virtual matrix<Type> get_inverse_derivative(std::vector<int> visits, matrix<Type> dist) = 0;
+  // Create virtual destructor to avoid the default desctructor being called.
   virtual ~derivatives_base() {};
 };
 
