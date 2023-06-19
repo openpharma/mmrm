@@ -1,7 +1,7 @@
 Type: Package
 Package: mmrm
 Title: Mixed Models for Repeated Measures
-Version: 0.2.2.9021
+Version: 0.2.2.9022
 Authors@R: c(
     person("Daniel", "Sabanes Bove", , "daniel.sabanes_bove@roche.com", role = c("aut", "cre")),
     person("Julia", "Dedic", , "julia.dedic@roche.com", role = "aut"),
@@ -85,7 +85,6 @@ RdMacros:
     Rdpack
 Remotes: 
     github::insightsengineering/sasr
-SystemRequirements: C++14
 biocViews:
 Config/testthat/edition: 3
 Encoding: UTF-8
@@ -94,6 +93,7 @@ LazyData: true
 NeedsCompilation: yes
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
+SystemRequirements: C++14
 Collate:
     'catch-routine-registration.R'
     'component.R'
