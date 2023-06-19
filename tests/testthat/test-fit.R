@@ -451,6 +451,17 @@ test_that("mmrm fails when using formula covariance with covariance argument", {
   )
 })
 
+test_that("mmrm works when using formula directly in covariance", {
+  expect_silent(
+    mmrm(
+      formula = FEV1 ~ ARMCD,
+      covariance = ~ us(AVISIT | USUBJID),
+      data = fev_data,
+    )
+  )
+})
+
+
 test_that("mmrm works for different na.actions", {
   na_action <- getOption("na.action")
   on.exit(options(na.action = na_action))

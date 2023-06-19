@@ -272,6 +272,11 @@ cov_struct <- function(
 #'
 #' @keywords internal
 h_reconcile_cov_struct <- function(formula = NULL, covariance = NULL) {
+  assert_multi_class(covariance, c("formula", "cov_struct"), null.ok = TRUE)
+  assert_formula(formula, null.ok = FALSE)
+  if (inherits(covariance, "formula")) {
+    covariance <- as.cov_struct(covariance)
+  }
   if (!is.null(covariance) && length(h_extract_covariance_terms(formula)) > 0) {
     stop(paste0(
       "Redundant covariance structure definition in `formula` and ",
