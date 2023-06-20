@@ -4,14 +4,14 @@
 \alias{h_jac_list}
 \title{Obtain List of Jacobian Matrix Entries for Covariance Matrix}
 \usage{
-h_jac_list(covbeta_fun, theta_est)
+h_jac_list(tmb_data, theta_est, beta_vcov)
 }
 \arguments{
-\item{covbeta_fun}{(\code{function})\cr function calculating the covariance
-matrix of coefficients given variance parameters (\code{theta}), see
-\code{\link[=h_covbeta_fun]{h_covbeta_fun()}} to obtain this from a \code{mmrm_tmb} object.}
+\item{tmb_data}{(\code{mmrm_tmb_data})\cr produced by \code{\link[=h_mmrm_tmb_data]{h_mmrm_tmb_data()}}.}
 
 \item{theta_est}{(\code{numeric})\cr variance parameters point estimate.}
+
+\item{beta_vcov}{(\code{matrix})\cr vairance covariance matrix of coefficients.}
 }
 \value{
 List with one element per variance parameter containing a matrix
