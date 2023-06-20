@@ -70,7 +70,9 @@ h_jac_numderiv <- function() {
 microbenchmark::microbenchmark(
   h_jac_rcpp(),
   h_jac_numderiv(),
-  check = function(x){all.equal(x[[1]], x[[2]], tolerance = 1e-6)},
+  check = function(x) {
+    all.equal(x[[1]], x[[2]], tolerance = 1e-6)
+  },
   times = 10L
 )
 ```
@@ -92,7 +94,9 @@ h_jac_numderiv <- function() {
 microbenchmark::microbenchmark(
   h_jac_rcpp(),
   h_jac_numderiv(),
-  check = function(x){all.equal(x[[1]], x[[2]], tolerance = 1e-6)},
+  check = function(x) {
+    all.equal(x[[1]], x[[2]], tolerance = 1e-6)
+  },
   times = 10L
 )
 ```
