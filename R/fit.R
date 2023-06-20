@@ -450,8 +450,7 @@ mmrm <- function(formula,
   fit$method <- control$method
   fit$vcov <- control$vcov
   if (identical(fit$method, "Satterthwaite") && identical(fit$vcov, "Asymptotic")) {
-    covbeta_fun <- h_covbeta_fun(fit)
-    fit$jac_list <- h_jac_list(covbeta_fun, fit$theta_est)
+    fit$jac_list <- h_jac_list(fit$tmb_data, fit$theta_est, fit$beta_vcov)
   }
 
   if (control$vcov %in% c("Kenward-Roger", "Kenward-Roger-Linear")) {
