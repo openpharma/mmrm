@@ -1,7 +1,7 @@
 # h_jac_list ----
 
 test_that("h_jac_list works as expected", {
-  # Take a spatial exponential because the number of paramters is small.
+  # Take a spatial exponential because the number of parameters is small.
   fit <- get_mmrm_spatial()
   theta_est <- c(4, 0)
   beta_vcov <- matrix(c(1, 0, 0, 1), ncol = 2)
