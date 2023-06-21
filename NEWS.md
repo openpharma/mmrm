@@ -6,7 +6,7 @@
   to specifying the model's covariance structure and to expose covariance
   customization through the `tidymodels` interface.
 - Add Kenward-Roger support for spatial covariance structures.
-- Add support for `residuals` method with a `type` argument allowing for 
+- Add support for `residuals` method with a `type` argument allowing for
   raw, Pearson and normalized residuals to be calculated from an `mmrm` fit.
 - Add empirical, empirical Jackknife and empirical bias-reduced adjusted coefficients covariance matrix.
   In addition, the argument `method` now only specifies the method used
@@ -18,6 +18,7 @@
   to specify the maximum number of visits allowed in non-interactive mode, or asked in interactive
   sessions.
 - Add `predict` method to obtain conditional mean estimates and prediction intervals, both with or without previous observations.
+- Use automatic differentiation to calculate Satterthwaite adjusted degrees of freedom calculation, resulting in 10-fold speed-up of the Satterthwaite calculations after the initial model fit.
 
 ### Bug Fixes
 
@@ -33,6 +34,7 @@
   environment variables, instead of requiring `data` argument. `fit_mmrm` is not affected.
 - Previously `emmeans` does not work if fixed effect does not contain visit variable.
   This is now fixed.
+
 # mmrm 0.2.2
 
 ### New Features

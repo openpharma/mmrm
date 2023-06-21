@@ -1,3 +1,6 @@
+#ifndef DERIVATIVE_INCLUDED_
+#define DERIVATIVE_INCLUDED_
+
 #include "chol_cache.h"
 
 using namespace Rcpp;
@@ -230,3 +233,5 @@ struct derivatives_sp_exp: public lower_chol_spatial<Type>, virtual derivatives_
     return sigma_inv_d1;
   }
 };
+
+#endif
