@@ -89,7 +89,17 @@ $\hat\nu(\hat\theta)$.
 #### Jacobian calculation
 
 Currently, we evaluate the gradient of $\Phi(\theta)$ through function `h_jac_list()`.
-It uses automatic differiention provided in `TMB`.
+It uses automatic differentiation provided in `TMB`.
+
+We first obtain the Jacobian of the inverse of the covariance matrix of coefficient ($\Phi(\theta)^{-1}$), following
+the [Kenward-Roger calculations](kenward.html#special-considerations-for-mmrm-models).
+Please note that we only need $P_h$ matrices.
+
+Then, to obtain the Jacobian of the covariance matrix of coefficient, following the [algorithm](kenward.html#derivative-of-the-sigma-1),
+we use $\Phi(\theta)$ estimated in the fit to obtain the Jacobian.
+
+The result is a list(of length $k$ where $k$ is the dimension of the variance parameter $\theta$) of matrices of $p \times p$,
+where $p$ is the dimension of $\beta$.
 
 ### Multi-dimensional contrast
 
