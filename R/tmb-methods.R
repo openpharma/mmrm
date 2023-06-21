@@ -427,3 +427,50 @@ h_residuals_response <- function(object) {
   assert_class(object, "mmrm_tmb")
   component(object, "y_vector") - unname(fitted(object))
 }
+
+
+#' @describeIn mmrm_tmb_methods Simulates from an mmrm model object
+#' @importFrom stats simulate
+#' @exportS3Method
+#'
+#' @param object an object of class 'mmrm'
+#' @param nsim number of response vectors to simulate. Defaults to 1.
+#' @param seed an object specifying if and how the random number generator should be initialized (‘seeded’).
+#' @param newdata data frame for which to evaluate predictions.
+#' @param ...
+#'
+#' @return A \code{data.frame} of dimension [n, m] where n is the number of observations
+#' fitted in the model, and m is the number \code{nsim} of simulated responses.
+simulate.mmrm_tmb <- function(object, nsim = 1,
+                          seed = NULL, newdata = object$data,
+                          ...){
+  if(!is.null(seed)) set.seed(seed)
+
+  # build data.frame of prediction vectors
+  ret <- predict(object, newdata = newdata, se.fit = FALSE, interval = "none")
+  ret <- data.frame(replicate(nsim, ret))
+  covmat <- VarCorr(object)
+  grouped <- if(object$tmb_data$n_groups > 1) TRUE else FALSE
+
+  for(i in 1:object$tmb_data$n_subjects){
+
+    # Obtain indices of data.frame belonging to subject i
+    num_visits <- object$tmb_data$subject_n_visits[i]
+    inds <- (object$tmb_data$subject_zero_inds[i] + 1) : (object$tmb_data$subject_zero_inds[i] + num_visits)
+    visits <- object$tmb_data$visits_zero_inds[inds] + 1
+
+    # get relevant covariance matrix for subject i
+    covmat_i <- if(grouped){
+      covmat[[object$tmb_data$subject_groups[i]]]
+    }else{
+      covmat
+    }
+    # subset covariance matrix
+    covmat_i <- covmat_i[visits, visits]
+
+    # simulate from covariance matrix
+    ret[inds,] <- ret[inds, , drop=FALSE] + MASS::mvrnorm(nsim, rep.int(0, num_visits), covmat_i)
+  }
+
+  ret
+}

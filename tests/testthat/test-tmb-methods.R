@@ -473,3 +473,40 @@ test_that("response residuals helper function works as expected", {
   expected <- component(object, "y_vector") - as.vector(fitted(object))
   expect_equal(result_rsp, expected)
 })
+
+# simulate.mmrm_tmb ----
+
+test_that("simulate.mmrm returns a data.frame object of correct dimension and with no missing values", {
+  object <- get_mmrm()
+  sims <- simulate(object, nsim = 2)
+  expect_data_frame(sims, any.missing = FALSE, nrows = nrow(object$data), ncols = 2)
+
+  # check that when nsim == 1, we still have a single-column data.frame
+  sims <- simulate(object, nsim = 1)
+  expect_data_frame(sims, any.missing = FALSE, nrows = nrow(object$data), ncols = 1)
+})
+
+test_that("simulate works as expected for standard models", {
+  # simulate.mmrm values are correctly centered
+  object <- get_mmrm()
+  sims <- simulate(object, nsim = 1000)
+  expect_equal(rowMeans(sims), predict(object, object$data), tolerance = 1e-1)
+})
+
+test_that("simulate works as expected for weighted models", {
+  object <- get_mmrm_weighted()
+  sims <- simulate(object, nsim = 1000)
+  expect_equal(rowMeans(sims), predict(object, object$data), tolerance = 1e-1)
+})
+
+test_that("simulate works as expected for grouped fits", {
+  object <- get_mmrm_group()
+  sims <- simulate(object, nsim = 1000)
+  expect_equal(rowMeans(sims), predict(object, object$data), tolerance = 1e-1)
+})
+
+# test_that("simulate works as expected for spatial fits", {
+#   object <- get_mmrm_spatial()
+#   sims <- simulate(object, nsim = 1000)
+#   expect_equal(rowMeans(sims), predict(object, object$data), tolerance = 1e-1)
+# })
