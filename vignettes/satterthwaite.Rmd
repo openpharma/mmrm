@@ -98,7 +98,7 @@ Please note that we only need $P_h$ matrices.
 Then, to obtain the Jacobian of the covariance matrix of coefficient, following the [algorithm](kenward.html#derivative-of-the-sigma-1),
 we use $\Phi(\theta)$ estimated in the fit to obtain the Jacobian.
 
-The result is a list(of length $k$ where $k$ is the dimension of the variance parameter $\theta$) of matrices of $p \times p$,
+The result is a list (of length $k$ where $k$ is the dimension of the variance parameter $\theta$) of matrices of $p \times p$,
 where $p$ is the dimension of $\beta$.
 
 ### Multi-dimensional contrast
