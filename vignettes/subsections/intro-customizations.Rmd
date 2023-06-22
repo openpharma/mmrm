@@ -1,3 +1,7 @@
+```{r}
+library(mmrm)
+```
+
 From the high-level [`mmrm()`](https://openpharma.github.io/mmrm/main/reference/mmrm.html)
 interface, common changes to the default function call can be specified.
 
@@ -44,8 +48,7 @@ fit_ml
 
 Users can specify which optimizer should be used, changing from the default of
 four optimizers, which starts with `L-BFGS-B` and proceeds through the
-other choices if optimization fails to converge. Other choices are `BFGS`, `CG`, and
-`nlminb`.
+other choices if optimization fails to converge. Other choices are `BFGS`, `CG`, `nlminb` and other user-defined custom optimizers.
 
 `L-BFGS-B`, `BFGS` and `CG` are all implemented with `stats::optim()` and the Hessian
 is not used, while `nlminb` is using `stats::nlminb()` which in turn uses both the
@@ -152,7 +155,8 @@ covariance model, you can use the linear Kenward-Roger approximation:
 fit_kr_lin <- mmrm(
   formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data,
-  method = "Kenward-Roger-Linear"
+  method = "Kenward-Roger",
+  vcov = "Kenward-Roger-Linear"
 )
 ```
 

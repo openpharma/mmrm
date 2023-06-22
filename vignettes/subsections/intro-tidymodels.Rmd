@@ -57,13 +57,7 @@ mmrm_wflow |>
   fit(data = fev_data)
 ```
 
-<<<<<<< HEAD
 We can separate out the data preparation step from the modeling step using the `recipes` package. Here we are converting the `ARMCD` variable into a dummy variable and creating an interaction term with the new dummy variable and each visit. 
-=======
-```{r}
-mmrm_spec_with_cov <- linear_reg() |>
-  set_engine("mmrm", method = "Satterthwaite", covariance = ~ us(AVISIT | USUBJID))
->>>>>>> 90502ed513cdf5894fe87f651e3a903728524314
 
 ```{r}
 mmrm_recipe <- recipe(FEV1 ~ RACE + ARMCD + AVISIT, data = fev_data) |>
@@ -83,24 +77,22 @@ We can pass the covariance structure as well in the `set_engine()` definition. T
 
 ```{r}
 mmrm_spec_with_cov <- linear_reg() |>
-  set_engine("mmrm", method = 'Satterthwaite', covariance = ~us(AVISIT | USUBJID))
+  set_engine(
+    "mmrm", 
+    method = 'Satterthwaite', 
+    covariance = as.cov_struct(~us(AVISIT | USUBJID))
+  )
 ```
 
 We combine these steps into a workflow:
 
 ```{r}
 (mmrm_wflow_nocov <- workflow() |>
-  add_model(mmrm_spec_with_cov) |>
+  add_model(mmrm_spec_with_cov, formula = FEV1 ~ SEX) |>
   add_recipe(mmrm_recipe))
 ```
 
-Does not work
 ```{r, eval = FALSE}
 fit(mmrm_wflow_nocov, data = fev_data)
 ```
 
-```
-> fit(mmrm_wflow_nocov, data = fev_data)
-Error in terms.formula(formula_rhs(f), specials = specials) : 
-  '.' in formula and no 'data' argument
-```
