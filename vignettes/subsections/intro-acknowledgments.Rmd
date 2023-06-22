@@ -1,0 +1,9 @@
+The `mmrm` package is based on previous work internal in Roche, namely
+the `tern` and `tern.mmrm` packages which were based on `lme4`.
+The work done in the `rbmi` package has been important since it used
+`glmmTMB` for fitting MMRMs.
+
+We would like to thank Ben Bolker from the `glmmTMB` team for multiple
+discussions when we tried to get the Satterthwaite degrees of freedom
+implemented with `glmmTMB` (see https://github.com/glmmTMB/glmmTMB/blob/satterthwaite_df/glmmTMB/vignettes/satterthwaite_unstructured_example2.Rmd). Also Ben helped us significantly with
+an example showing how to use `TMB` for a random effect vector (https://github.com/bbolker/tmb-case-studies/tree/master/vectorMixed).

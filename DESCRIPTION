@@ -72,7 +72,8 @@ Suggests:
     sasr,
     scales,
     testthat (>= 3.0.0),
-    xml2
+    xml2,
+    tidymodels
 LinkingTo:
     Rcpp,
     RcppEigen,

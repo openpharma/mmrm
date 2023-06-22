@@ -41,6 +41,11 @@ means estimates by using `emmeans`.
 
 **Main Features:**
 
+<details>
+<summary>
+Modeling
+</summary>
+
 - Flexible covariance specification:
   - [Structures](https://openpharma.github.io/mmrm/main/articles/covariance.html):
     unstructured, Toeplitz, AR1, compound symmetry, ante-dependence, and
@@ -48,23 +53,60 @@ means estimates by using `emmeans`.
   - Groups: shared covariance structure for all subjects or
     group-specific covariance estimates.
   - Variances: homogeneous or heterogeneous across time points.
-- Hypothesis testing:
-  - [Least square
-    means](https://openpharma.github.io/mmrm/main/reference/emmeans_support.html):
-    can be obtained with the `emmeans` package
-  - One- and multi-dimensional linear contrasts of model parameters can
-    be tested.
-  - [Satterthwaite](https://openpharma.github.io/mmrm/main/articles/satterthwaite.html)
-    adjusted degrees of freedom.
-  - [Kenward-Roger](https://openpharma.github.io/mmrm/main/articles/kenward.html)
-    adjusted degrees of freedom and coefficients covariance matrix.
-- Model inference:
+- Inference:
   - Supports REML and ML.
   - Supports weights.
+
+</details>
+<details>
+<summary>
+Hypothesis testing
+</summary>
+
+- [Least square
+  means](https://openpharma.github.io/mmrm/main/reference/emmeans_support.html):
+  can be obtained with the `emmeans` package
+- One- and multi-dimensional linear contrasts of model parameters can be
+  tested.
+- [Satterthwaite](https://openpharma.github.io/mmrm/main/articles/satterthwaite.html)
+  adjusted degrees of freedom.
+- [Kenward-Roger](https://openpharma.github.io/mmrm/main/articles/kenward.html)
+  adjusted degrees of freedom and coefficients covariance matrix.
+- [Coefficient
+  Covariance](https://openpharma.github.io/mmrm/main/articles/coef_vcov.html)
+
+</details>
+<details>
+<summary>
+CPP Backend
+</summary>
+
 - Fast implementation using C++ and automatic differentiation to obtain
-  precise gradient information for model fitting. See
-  [here](https://openpharma.github.io/mmrm/main/articles/algorithm.html)
-  for details of the model fitting algorithm used in `mmrm`.
+  precise gradient information for model fitting.
+- Model fitting algorithm
+  [details](https://openpharma.github.io/mmrm/main/articles/algorithm.html)
+  used in `mmrm`.
+
+</details>
+<details>
+<summary>
+Package Ecosystems Integration
+</summary>
+
+- Integration with [tidymodels](https://www.tidymodels.org/) package
+  ecosystem
+  - Dedicated [parsnip](https://parsnip.tidymodels.org/) engine for
+    linear regression
+  - Integration with [recipes](https://recipes.tidymodels.org/)
+- Integration with [tern](https://insightsengineering.github.io/tern/)
+  package ecosystems
+  - The [tern.mmrm](https://insightsengineering.github.io/tern.mmrm/)
+    package can be used to run the `mmrm` fit and generate: tabulation
+    and plots of least square means per visit and treatment arm,
+    tabulation of model diagnostics, diagnostic graphs, and other
+    standard model outputs.
+
+</details>
 
 ## Installation
 
@@ -117,7 +159,7 @@ fit
 #> Data:        fev_data (used 537 observations from 197 subjects with maximum 4 
 #> timepoints)
 #> Covariance:  unstructured (10 variance parameters)
-#> Method:      REML
+#> Inference:   REML
 #> Deviance:    3386.45
 #> 
 #> Coefficients: 
@@ -151,6 +193,7 @@ summary(fit)
 #> timepoints)
 #> Covariance:  unstructured (10 variance parameters)
 #> Method:      Satterthwaite
+#> Vcov Method: Asymptotic
 #> Inference:   REML
 #> 
 #> Model selection criteria:
@@ -192,6 +235,14 @@ summary(fit)
 #> VIS3  4.9747  2.7855 14.8979  0.9082
 #> VIS4 13.3867  7.4745  0.9082 95.5568
 ```
+
+<!-- Printing the object will show you output which should be familiar to anyone who -->
+<!-- has used any popular modeling functions such as `stats::lm()`, `stats::glm()`, -->
+<!-- `glmmTMB::glmmTMB()`, and `lme4::nlmer()`.  -->
+<!-- From this print out we see the function call, -->
+<!-- the data used, the covariance structure with number of variance parameters, as well -->
+<!-- as the likelihood method, and model deviance achieved. Additionally the user is -->
+<!-- provided a printout of the estimated coefficients and the model convergence information. -->
 
 ## Citing `mmrm`
 
