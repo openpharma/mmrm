@@ -78,9 +78,9 @@ We can pass the covariance structure as well in the `set_engine()` definition. T
 ```{r}
 mmrm_spec_with_cov <- linear_reg() |>
   set_engine(
-    "mmrm", 
-    method = 'Satterthwaite', 
-    covariance = as.cov_struct(~us(AVISIT | USUBJID))
+    "mmrm",
+    method = "Satterthwaite",
+    covariance = as.cov_struct(~ us(AVISIT | USUBJID))
   )
 ```
 
