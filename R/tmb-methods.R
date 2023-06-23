@@ -453,9 +453,9 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
   grouped <- if(object$tmb_data$n_groups > 1) TRUE else FALSE
   subjects <- unique(newdata$subject) # TODO
   n_subjects <- length(subjects) # TODO
-  subject_n_visits <- apply(1:n_sujbects, 1, function(x) sum(subjects[subjecs == x])) # TODO
-  subject_zero_inds <- # TODO get zero inds
-  visit_zero_inds <- # get visits
+  subject_n_visits <- apply(1:n_sujbects, 1, function(x) sum(subjects[subjects == x])) # TODO
+  subject_zero_inds <- apply(1:n_subjects, 1, function(x) first(subjects[subjects == x])) # TODO get zero inds
+  visit_zero_inds <- # TODO get visits
 
   for(i in 1:n_subjects){
 

@@ -505,6 +505,15 @@ test_that("simulate works as expected for grouped fits", {
   expect_equal(rowMeans(sims), predict(object, object$data), tolerance = 1e-1)
 })
 
+test_that("simulate works as expected differently ordered/numbered data", {
+  object <- get_mmrm()
+  # construct trivial data.frame
+  df <- dplyr::slice(object$data, 1:10)
+  # TODO reorder newdata
+  sims <- simulate(object, nsim = 1000, newdata = df)
+  expect_equal(rowMeans(sims), predict(object, df), tolerance = 1e-1)
+})
+
 # test_that("simulate works as expected for spatial fits", {
 #   object <- get_mmrm_spatial()
 #   sims <- simulate(object, nsim = 1000)
