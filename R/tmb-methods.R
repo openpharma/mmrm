@@ -451,13 +451,18 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
   ret <- data.frame(replicate(nsim, ret))
   covmat <- VarCorr(object)
   grouped <- if(object$tmb_data$n_groups > 1) TRUE else FALSE
+  subjects <- unique(newdata$subject) # TODO
+  n_subjects <- length(subjects) # TODO
+  subject_n_visits <- apply(1:n_sujbects, 1, function(x) sum(subjects[subjecs == x])) # TODO
+  subject_zero_inds <- # TODO get zero inds
+  visit_zero_inds <- # get visits
 
-  for(i in 1:object$tmb_data$n_subjects){
+  for(i in 1:n_subjects){
 
     # Obtain indices of data.frame belonging to subject i
-    num_visits <- object$tmb_data$subject_n_visits[i]
-    inds <- (object$tmb_data$subject_zero_inds[i] + 1) : (object$tmb_data$subject_zero_inds[i] + num_visits)
-    visits <- object$tmb_data$visits_zero_inds[inds] + 1
+    num_visits <- subject_n_visits[i]
+    inds <- (subject_zero_inds[i] + 1) : (subject_zero_inds[i] + num_visits)
+    visits <- visits_zero_inds[inds] + 1
 
     # get relevant covariance matrix for subject i
     covmat_i <- if(grouped){
