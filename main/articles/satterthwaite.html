@@ -39,7 +39,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9021</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9022</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,14 +70,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.2.2">v0.2.2</a> </div></li>
-<!-- end dropdown for versions -->
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-reports">Reports</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-reports">
@@ -183,12 +175,20 @@ estimate of the denominator degrees of freedom, <span class="math inline">\(\hat
 <div class="section level5">
 <h5 id="jacobian-calculation">Jacobian calculation<a class="anchor" aria-label="anchor" href="#jacobian-calculation"></a>
 </h5>
-<p>Currently, we evaluate the gradient of <span class="math inline">\(\Phi(\theta)\)</span> (which is created as an R
-function using <code><a href="../reference/h_covbeta_fun.html">h_covbeta_fun()</a></code>) with regards to <span class="math inline">\(\theta\)</span> evaluated at <span class="math inline">\(\hat\theta\)</span>, i.e. the Jacobian <span class="math inline">\(\mathcal{J}(\hat\theta)\)</span>, numerically
-using the <code>jacobian</code> function from the <code>numDeriv</code>
-package and organize it as a list (of length <span class="math inline">\(k\)</span> where <span class="math inline">\(k\)</span> is the dimension of the variance
-parameter vector <span class="math inline">\(\theta\)</span>) of <span class="math inline">\(c\times p\)</span> matrices where <span class="math inline">\(p\)</span> is the dimension of <span class="math inline">\(\beta\)</span>. This is implemented in function
-<code><a href="../reference/h_jac_list.html">h_jac_list()</a></code>.</p>
+<p>Currently, we evaluate the gradient of <span class="math inline">\(\Phi(\theta)\)</span> through function
+<code><a href="../reference/h_jac_list.html">h_jac_list()</a></code>. It uses automatic differentiation provided in
+<code>TMB</code>.</p>
+<p>We first obtain the Jacobian of the inverse of the covariance matrix
+of coefficient (<span class="math inline">\(\Phi(\theta)^{-1}\)</span>),
+following the <a href="kenward.html#special-considerations-for-mmrm-models">Kenward-Roger
+calculations</a>. Please note that we only need <span class="math inline">\(P_h\)</span> matrices.</p>
+<p>Then, to obtain the Jacobian of the covariance matrix of coefficient,
+following the <a href="kenward.html#derivative-of-the-sigma-1">algorithm</a>, we use
+<span class="math inline">\(\Phi(\theta)\)</span> estimated in the fit
+to obtain the Jacobian.</p>
+<p>The result is a list (of length <span class="math inline">\(k\)</span> where <span class="math inline">\(k\)</span> is the dimension of the variance
+parameter <span class="math inline">\(\theta\)</span>) of matrices of
+<span class="math inline">\(p \times p\)</span>, where <span class="math inline">\(p\)</span> is the dimension of <span class="math inline">\(\beta\)</span>.</p>
 </div>
 </div>
 <div class="section level4">

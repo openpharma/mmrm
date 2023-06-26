@@ -136,9 +136,6 @@
     <loc>https://openpharma.github.io/mmrm/main/reference/h_confirm_large_levels.html</loc>
   </url>
   <url>
-    <loc>https://openpharma.github.io/mmrm/main/reference/h_covbeta_fun.html</loc>
-  </url>
-  <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/h_default_value.html</loc>
   </url>
   <url>
@@ -197,9 +194,6 @@
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/h_gradient.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/main/reference/h_jac_col_as_matrix.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/main/reference/h_jac_list.html</loc>
