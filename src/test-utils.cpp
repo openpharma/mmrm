@@ -143,28 +143,20 @@ context("euclidean distance") {
   }
 }
 
-context("convert_eigen and convert_tmb") {
-  test_that("convert_eigen and convert_tmb are inverse functions") {
-    matrix<double> tmb_mat(4, 2);
-    tmb_mat << 1, 2, 3, 4, 5, 6, 7, 8;
-    expect_equal_matrix(convert_eigen(convert_tmb(tmb_mat)), tmb_mat);
-  }
-}
-
 context("cpow works") {
   test_that("cpow gives correct power by element for power 0.5") {
     matrix<double> tmb_mat(4, 2);
     tmb_mat << 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0;
     matrix<double> expected(4, 2);
     expected << 1.0, sqrt(2.0), sqrt(3.0), 2.0, sqrt(5.0), sqrt(6.0), sqrt(7.0), sqrt(8.0);
-    expect_equal_matrix(convert_eigen(cpow(convert_tmb(tmb_mat), 0.5)), expected);
+    expect_equal_matrix(as_matrix<matrix<double>, Eigen::Matrix<double, -1, -1>>(cpow(as_matrix<Eigen::Matrix<double, -1, -1>, matrix<double>>(tmb_mat), 0.5)), expected);
   }
   test_that("cpow gives correct power by element for power 2") {
     matrix<double> tmb_mat(4, 2);
     tmb_mat << 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0;
     matrix<double> expected(4, 2);
     expected << 1.0, 4.0, 9.0, 16.0, 25.0, 36.0, 49.0, 64.0;
-    expect_equal_matrix(convert_eigen(cpow(convert_tmb(tmb_mat), 2.0)), expected);
+    expect_equal_matrix(as_matrix<matrix<double>, Eigen::Matrix<double, -1, -1>>(cpow(as_matrix<Eigen::Matrix<double, -1, -1>, matrix<double>>(tmb_mat), 2.0)), expected);
   }
 }
 
@@ -174,7 +166,7 @@ context("pseudoInverseSqrt works") {
     tmb_mat << 5.483417,  2.861011,  3.478399,
       2.861011,  3.169936, -1.075550,
       3.478399, -1.075550, 10.525825;
-    
+
     matrix<double> expected(3, 3);
     expected << 0.8235633, -0.5514385, -0.2586037,
       -0.5514385,  1.0568775,  0.2548210,
@@ -187,7 +179,7 @@ context("pseudoInverseSqrt works") {
     tmb_mat << 5.483417,  2.861011,  0,
       2.861011,  3.169936, 0,
       0, 0, 0;
-    
+
     matrix<double> expected(3, 3);
     expected << 0.5331152, -0.2459070,    0.0,
       -0.2459070, 0.7319613,    0.0,
@@ -213,7 +205,7 @@ context("Rcpp and eigen conversion") {
     v6 << 1, 2, 3;
     expect_equal_vector<vector<int>>(v4_vec, v6);
     expect_equal_vector<IntegerVector>(v4, v5);
-    
+
     NumericVector v_m = NumericVector::create(1.0, 2.0, 3.0, 4.0);
     NumericMatrix m1(2, 2, v_m.begin());
     matrix<double> m2(2, 2);

@@ -4,6 +4,11 @@
 #define INCLUDE_RCPP
 #include "tmb_includes.h"
 
+#define as_num_matrix_tmb as_matrix<matrix<double>, NumericMatrix>
+#define as_num_matrix_rcpp as_matrix<NumericMatrix, matrix<double>>
+#define as_num_vector_tmb as_vector<vector<double>, NumericVector>
+#define as_num_vector_rcpp as_vector<NumericVector, vector<double>>
+
 // Producing a sparse selection matrix to select rows and columns from
 // covariance matrix.
 template <class Type>
@@ -152,39 +157,16 @@ Eigen::Matrix<T, -1, -1> cpow(const Eigen::Matrix<T, -1, -1> & input, double p) 
   return ret;
 }
 
-// Convert Eigen matrix to tmb matrix
-template<typename T>
-matrix<T> convert_eigen(const Eigen::Matrix<T, -1, -1> &input) {
-  matrix<T> ret = matrix<T>::Zero(input.rows(), input.cols());
-  for (int i = 0; i < input.rows(); i++) {
-    for (int j = 0; j < input.cols(); j++) {
-      ret(i, j) = input(i, j);
-    }
-  }
-  return(ret);
-}
-// Convert tmb matrix to Eigen matrix
-template<typename T>
-Eigen::Matrix<T, -1, -1> convert_tmb(const matrix<T> &input) {
-  Eigen::Matrix<T, -1, -1> eigen_mat(input.rows(), input.cols());
-  for (int i = 0; i < input.rows(); i++) {
-    for (int j = 0; j < input.cols(); j++) {
-      eigen_mat(i, j) = input(i, j);
-    }
-  }
-  return eigen_mat;
-}
-
 // Calculate the square root of the pseudo inverse of a matrix
 // adapted from the method for calculating the pseudo-Inverse as recommended by the Eigen developers
 template<typename T>
 matrix<T> pseudoInverseSqrt(const matrix<T> &input, double epsilon = std::numeric_limits<double>::epsilon()) {
-  Eigen::Matrix<T, -1, -1> eigen_mat = convert_tmb(input);
+  Eigen::Matrix<T, -1, -1> eigen_mat = as_matrix<Eigen::Matrix<T, -1, -1>, matrix<T>>(input);
 	Eigen::JacobiSVD< Eigen::Matrix<T, -1, -1> > svd(eigen_mat ,Eigen::ComputeFullU | Eigen::ComputeFullV);
 	double tolerance = epsilon * std::max(input.cols(), input.rows()) *svd.singularValues().array().abs()(0);
   auto singular_vals = Matrix<T,-1,-1>((svd.singularValues().array() > tolerance).select(svd.singularValues().array().inverse(), 0).matrix());
 	Eigen::Matrix<T, -1, -1> ret_eigen = svd.matrixV() *  cpow(singular_vals, 0.5).asDiagonal() * svd.matrixU().adjoint();
-  return convert_eigen(ret_eigen);
+  return as_matrix<matrix<T>, Eigen::Matrix<T, -1, -1>>(ret_eigen);
 }
 
 #endif
