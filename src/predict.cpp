@@ -9,10 +9,6 @@ using std::string;
 // and use `beta_vcov` to obtain the covariance matrix for the mean of the fit,
 // and use `beta` to obtain the estimate of the mean of the fit.
 NumericMatrix predict(List mmrm_data, NumericVector theta, NumericVector beta, NumericMatrix beta_vcov) {
-  auto as_num_matrix_tmb = as_matrix<matrix<double>, NumericMatrix>;
-  auto as_num_vector_tmb = as_vector<vector<double>, NumericVector>;
-  auto as_num_vector_rcpp = as_vector<NumericVector, vector<double>>;
-
   NumericMatrix x = mmrm_data["x_matrix"];
   NumericVector y = mmrm_data["y_vector"];
   LogicalVector y_na = is_na(y);
@@ -87,7 +83,7 @@ NumericMatrix predict(List mmrm_data, NumericVector theta, NumericVector beta, N
       y_hat = x_na * beta_v;
       var_conf = (x_na * beta_vcov_matrix * x_na.transpose()).diagonal();
       var_y_on_theta = var_conf + vector<double>(sigma_full.diagonal());
-      
+
     } else if (visit_na_vec.size() > 0) {
       // There are observations with invalid y.
       matrix<double> sigma_22_inv;

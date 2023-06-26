@@ -4,10 +4,6 @@ using namespace Rcpp;
 using std::string;
 // Obtain P,Q,R element from a mmrm fit, given theta.
 List get_pqr(List mmrm_fit, NumericVector theta) {
-  auto as_num_matrix_tmb = as_matrix<matrix<double>, NumericMatrix>;
-  auto as_num_matrix_rcpp = as_matrix<NumericMatrix, matrix<double>>;
-  auto as_num_vector_tmb = as_vector<vector<double>, NumericVector>;
-
   NumericMatrix x = mmrm_fit["x_matrix"];
   matrix<double> x_matrix = as_num_matrix_tmb(x);
   IntegerVector subject_zero_inds = mmrm_fit["subject_zero_inds"];
@@ -47,13 +43,13 @@ List get_pqr(List mmrm_fit, NumericVector theta) {
     }
     int subject_group_i = subject_groups[i] - 1;
     matrix<double> sigma_inv, sigma_d1, sigma_d2, sigma, sigma_inv_d1;
-    
+
     sigma_inv = derivatives_by_group.cache[subject_group_i]->get_sigma_inverse(visit_i, dist_i);
     sigma_d1 = derivatives_by_group.cache[subject_group_i]->get_sigma_derivative1(visit_i, dist_i);
     sigma_d2 = derivatives_by_group.cache[subject_group_i]->get_sigma_derivative2(visit_i, dist_i);
     sigma = derivatives_by_group.cache[subject_group_i]->get_sigma(visit_i, dist_i);
     sigma_inv_d1 = derivatives_by_group.cache[subject_group_i]->get_inverse_derivative(visit_i, dist_i);
-    
+
     matrix<double> Xi = x_matrix.block(start_i, 0, n_visits_i, x_matrix.cols());
     auto gi_sqrt_root = G_sqrt.segment(start_i, n_visits_i).matrix().asDiagonal();
     for (int r = 0; r < theta_size_per_group; r ++) {
