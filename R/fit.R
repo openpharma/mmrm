@@ -41,7 +41,7 @@ fit_single_optimizer <- function(formula,
                                  ...,
                                  control = mmrm_control(...)) {
   if (missing(tmb_data) || missing(formula_parts)) {
-    assert_formula(formula)
+    h_valid_formula(formula)
     assert_data_frame(data)
     assert_numeric(weights, any.missing = FALSE, lower = .Machine$double.xmin)
     assert_flag(reml)
@@ -393,6 +393,7 @@ mmrm <- function(formula,
   if (control$method %in% c("Kenward-Roger", "Kenward-Roger-Linear") && !reml) {
     stop("Kenward-Roger only works for REML")
   }
+  h_valid_formula(formula)
   covariance <- h_reconcile_cov_struct(formula, covariance)
   formula_parts <- h_mmrm_tmb_formula_parts(formula, covariance)
 
