@@ -29,6 +29,7 @@ Authors:
   \item Christian Stock \email{christian.stock@boehringer-ingelheim.com}
   \item Ya Wang \email{ya.wang10@gilead.com}
   \item Dan James \email{dan.james@astrazeneca.com}
+  \item Jonathan Sidi \email{yoni.sidi@sagerx.com}
 }
 
 Other contributors:
