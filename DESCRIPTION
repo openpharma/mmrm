@@ -13,6 +13,7 @@ Authors@R: c(
     person("Ya", "Wang", , "ya.wang10@gilead.com", role = "aut"),
     person("Craig", "Gower-Page", , "craig.gower-page@roche.com", role = "ctb"),
     person("Dan", "James", , "dan.james@astrazeneca.com", role = "aut"),
+    person("Jonathan", "Sidi", , "yoni.sidi@sagerx.com", role = "aut"),
     person("Boehringer Ingelheim Ltd.", role = c("cph", "fnd")),
     person("Gilead Sciences, Inc.", role = c("cph", "fnd")),
     person("F. Hoffmann-La Roche AG", role = c("cph", "fnd")),
