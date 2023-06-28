@@ -60,7 +60,7 @@ mmrm_wflow |>
 We can separate out the data preparation step from the modeling step using the `recipes` package. Here we are converting the `ARMCD` variable into a dummy variable and creating an interaction term with the new dummy variable and each visit. 
 
 ```{r}
-mmrm_recipe <- recipe(FEV1 ~ RACE + ARMCD + AVISIT, data = fev_data) |>
+mmrm_recipe <- recipe(FEV1 ~ ., data = fev_data) |>
   step_dummy(ARMCD) |>
   step_interact(terms = ~ starts_with("ARMCD"):AVISIT)
 ```
@@ -92,7 +92,15 @@ We combine these steps into a workflow:
   add_recipe(mmrm_recipe))
 ```
 
-```{r, eval = FALSE}
-fit(mmrm_wflow_nocov, data = fev_data)
+Last step is to fit the data with the workflow object
+
+```{r}
+(fit_tidy <- fit(mmrm_wflow_nocov, data = fev_data))
 ```
 
+To retrieve the fit object from within the workflow object run the following
+
+```{r}
+fit_tidy |>
+  hardhat::extract_fit_engine()
+```
