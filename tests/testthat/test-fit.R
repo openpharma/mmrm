@@ -146,6 +146,13 @@ test_that("fit_single_optimizer deals correctly with unobserved visits message",
   expect_true(attr(result, "converged"))
 })
 
+test_that("fit_single_optimizer fails if formula contains `.`", {
+  expect_error(
+    fit_single_optimizer(FEV1 ~ ., data = fev_data, weights = rep(1, 800)),
+    "`.` is not allowed in mmrm models!"
+  )
+})
+
 # h_summarize_all_fits ----
 
 test_that("h_summarize_all_fits works as expected", {
@@ -451,6 +458,17 @@ test_that("mmrm fails when using formula covariance with covariance argument", {
   )
 })
 
+test_that("mmrm works when using formula directly in covariance", {
+  expect_silent(
+    mmrm(
+      formula = FEV1 ~ ARMCD,
+      covariance = ~ us(AVISIT | USUBJID),
+      data = fev_data,
+    )
+  )
+})
+
+
 test_that("mmrm works for different na.actions", {
   na_action <- getOption("na.action")
   on.exit(options(na.action = na_action))
@@ -489,6 +507,13 @@ test_that("mmrm still works for a model that only contains an interaction term",
       data = fev_data,
       reml = TRUE
     )
+  )
+})
+
+test_that("mmrm fails if formula contains `.`", {
+  expect_error(
+    mmrm(FEV1 ~ ., data = fev_data, weights = rep(1, 800)),
+    "`.` is not allowed in mmrm models!"
   )
 })
 

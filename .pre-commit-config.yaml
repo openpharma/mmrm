@@ -19,7 +19,6 @@ repos:
         additional_dependencies:
           - checkmate
           - emmeans
-          - numDeriv
           - TMB
           - pkgbuild
           - Rdpack
@@ -63,7 +62,6 @@ repos:
         additional_dependencies:
           - checkmate
           - emmeans
-          - numDeriv
           - TMB
           - Rdpack
           - testthat

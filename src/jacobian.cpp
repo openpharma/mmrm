@@ -2,8 +2,9 @@
 
 using namespace Rcpp;
 using std::string;
-// Obtain P,Q,R element from a mmrm fit, given theta.
-List get_pqr(List mmrm_fit, NumericVector theta) {
+
+// Obtain Jacobian from a mmrm fit, given theta.
+List get_jacobian(List mmrm_fit, NumericVector theta, NumericMatrix beta_vcov) {
   NumericMatrix x = mmrm_fit["x_matrix"];
   matrix<double> x_matrix = as_num_matrix_tmb(x);
   IntegerVector subject_zero_inds = mmrm_fit["subject_zero_inds"];
@@ -19,14 +20,13 @@ List get_pqr(List mmrm_fit, NumericVector theta) {
   NumericVector weights_vector = mmrm_fit["weights_vector"];
   NumericMatrix coordinates = mmrm_fit["coordinates"];
   matrix<double> coords = as_num_matrix_tmb(coordinates);
+  matrix<double> beta_vcov_m = as_num_matrix_tmb(beta_vcov);
   vector<double> theta_v = as_num_vector_tmb(theta);
   vector<double> G_sqrt = as_num_vector_tmb(sqrt(weights_vector));
   int n_theta = theta.size();
   int theta_size_per_group = n_theta / n_groups;
   int p = x.cols();
   matrix<double> P = matrix<double>::Zero(p * n_theta, p);
-  matrix<double> Q = matrix<double>::Zero(p * theta_size_per_group * n_theta, p);
-  matrix<double> R = matrix<double>::Zero(p * theta_size_per_group * n_theta, p);
   // Use map to hold these base class pointers (can also work for child class objects).
   auto derivatives_by_group = cache_obj<double, derivatives_base<double>, derivatives_sp_exp<double>, derivatives_nonspatial<double>>(theta_v, n_groups, is_spatial, cov_type, n_visits);
   for (int i = 0; i < n_subjects; i++) {
@@ -42,31 +42,19 @@ List get_pqr(List mmrm_fit, NumericVector theta) {
       dist_i = euclidean(matrix<double>(coords.block(start_i, 0, n_visits_i, coordinates.cols())));
     }
     int subject_group_i = subject_groups[i] - 1;
-    matrix<double> sigma_inv, sigma_d1, sigma_d2, sigma, sigma_inv_d1;
-
-    sigma_inv = derivatives_by_group.cache[subject_group_i]->get_sigma_inverse(visit_i, dist_i);
-    sigma_d1 = derivatives_by_group.cache[subject_group_i]->get_sigma_derivative1(visit_i, dist_i);
-    sigma_d2 = derivatives_by_group.cache[subject_group_i]->get_sigma_derivative2(visit_i, dist_i);
-    sigma = derivatives_by_group.cache[subject_group_i]->get_sigma(visit_i, dist_i);
-    sigma_inv_d1 = derivatives_by_group.cache[subject_group_i]->get_inverse_derivative(visit_i, dist_i);
+    matrix<double> sigma_inv_d1 = derivatives_by_group.cache[subject_group_i]->get_inverse_derivative(visit_i, dist_i);
 
     matrix<double> Xi = x_matrix.block(start_i, 0, n_visits_i, x_matrix.cols());
     auto gi_sqrt_root = G_sqrt.segment(start_i, n_visits_i).matrix().asDiagonal();
     for (int r = 0; r < theta_size_per_group; r ++) {
       auto Pi = Xi.transpose() * gi_sqrt_root * sigma_inv_d1.block(r * n_visits_i, 0, n_visits_i, n_visits_i) * gi_sqrt_root * Xi;
       P.block(r * p + theta_size_per_group * subject_group_i * p, 0, p, p) += Pi;
-      for (int j = 0; j < theta_size_per_group; j++) {
-        auto Qij = Xi.transpose() * gi_sqrt_root * sigma_inv_d1.block(r * n_visits_i, 0, n_visits_i, n_visits_i) * sigma * sigma_inv_d1.block(j * n_visits_i, 0, n_visits_i, n_visits_i) * gi_sqrt_root * Xi;
-        // switch the order so that in the matrix partial(i) and partial(j) increase j first
-        Q.block((r * theta_size_per_group + j + theta_size_per_group * theta_size_per_group * subject_group_i) * p, 0, p, p) += Qij;
-        auto Rij = Xi.transpose() * gi_sqrt_root * sigma_inv * sigma_d2.block((j * theta_size_per_group + r) * n_visits_i, 0, n_visits_i, n_visits_i) * sigma_inv * gi_sqrt_root * Xi;
-        R.block((r * theta_size_per_group + j + theta_size_per_group * theta_size_per_group * subject_group_i) * p, 0, p, p) += Rij;
-      }
     }
   }
-  return List::create(
-    Named("P") = as_num_matrix_rcpp(P),
-    Named("Q") = as_num_matrix_rcpp(Q),
-    Named("R") = as_num_matrix_rcpp(R)
-  );
+  auto ret = List::create();
+  for (int i = 0; i < n_theta; i++) {
+    // the P is derivative of (XWX), the covariance is (XWX)^{-1}.
+    ret.push_back(as_num_matrix_rcpp(-beta_vcov_m * P.block(i * p, 0, p, p) * beta_vcov_m));
+  }
+  return ret;
 }

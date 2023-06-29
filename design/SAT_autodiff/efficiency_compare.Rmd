@@ -1,0 +1,102 @@
+---
+title: "autodiff in Satterthewaite"
+author: "Liming Li"
+output: html_document
+editor_options:
+  chunk_output_type: console
+---
+
+# comparison
+
+In this branch where the code for `h_jac_list` is implemented we can use this to compare directly.
+If the code is removed, we have to copy the code here to run
+
+```{r}
+h_covbeta_fun <- function(model) {
+  assert_class(model, "mmrm_tmb")
+
+  function(theta) {
+    reported <- model$tmb_object$report(theta)
+    reported$beta_vcov
+  }
+}
+h_jac_list <- function(covbeta_fun,
+                       theta_est) {
+  assert_function(covbeta_fun, args = "theta")
+  assert_numeric(theta_est, any.missing = FALSE, min.len = 1L)
+
+  jac_matrix <- numDeriv::jacobian(
+    func = covbeta_fun,
+    x = theta_est,
+    method = "Richardson"
+  )
+  lapply(
+    seq_len(ncol(jac_matrix)),
+    FUN = h_jac_col_as_matrix,
+    jac_matrix = jac_matrix
+  )
+}
+h_jac_col_as_matrix <- function(jac_matrix, col) {
+  assert_int(col)
+  assert_matrix(jac_matrix, min.cols = col)
+  p <- sqrt(nrow(jac_matrix))
+  assert_integerish(p)
+
+  jac_col <- jac_matrix[, col, drop = TRUE]
+  matrix(jac_col, nrow = p, ncol = p)
+}
+h_get_jac <- function(tmb_data, theta, beta_vcov) {
+  assert_class(tmb_data, "mmrm_tmb_data")
+  assert_class(theta, "numeric")
+  .Call(`_mmrm_get_jacobian`, PACKAGE = "mmrm", tmb_data, theta, beta_vcov)
+}
+```
+
+
+# create wrapper for comparison
+
+```{r}
+fit <- get_mmrm()
+
+h_jac_rcpp <- function() {
+  h_get_jac(fit$tmb_data, fit$theta_est, fit$beta_vcov)
+}
+
+h_jac_numderiv <- function() {
+  covbeta_fun <- h_covbeta_fun(fit)
+  h_jac_list(covbeta_fun, fit$theta_est)
+}
+
+microbenchmark::microbenchmark(
+  h_jac_rcpp(),
+  h_jac_numderiv(),
+  check = function(x) {
+    all.equal(x[[1]], x[[2]], tolerance = 1e-6)
+  },
+  times = 10L
+)
+```
+
+# grouped Satterthewaite
+
+```{r}
+fit <- get_mmrm_group()
+
+h_jac_rcpp <- function() {
+  h_get_jac(fit$tmb_data, fit$theta_est, fit$beta_vcov)
+}
+
+h_jac_numderiv <- function() {
+  covbeta_fun <- h_covbeta_fun(fit)
+  h_jac_list(covbeta_fun, fit$theta_est)
+}
+
+microbenchmark::microbenchmark(
+  h_jac_rcpp(),
+  h_jac_numderiv(),
+  check = function(x) {
+    all.equal(x[[1]], x[[2]], tolerance = 1e-6)
+  },
+  times = 10L
+)
+```

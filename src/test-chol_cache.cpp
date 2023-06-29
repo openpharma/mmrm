@@ -50,18 +50,18 @@ context("cholesky cache") {
 context("cholesky group object") {
   test_that("cholesky group return result correctly") {
     vector<double> theta {{log(1.0), log(2.0), 3.0, log(2.0), log(4.0), 5}};
-    auto chol_group = lower_chol_groups<double>(theta, 2, false, "us", 2);
+    auto chol_group = chol_cache_groups<double>(theta, 2, false, "us", 2);
     matrix<double> chol1_expected(2, 2);
     chol1_expected <<
       1.0, 0.0,
       6.0, 2.0;
     std::vector<int> vis{0, 1};
     matrix<double> dist;
-    expect_equal_matrix(chol_group.chols_by_group[0]->get_chol(vis, dist), chol1_expected);
+    expect_equal_matrix(chol_group.cache[0]->get_chol(vis, dist), chol1_expected);
     matrix<double> chol2_expected(2, 2);
     chol2_expected <<
       2.0, 0.0,
       20.0, 4.0;
-    expect_equal_matrix(chol_group.chols_by_group[1]->get_chol(vis, dist), chol2_expected);
+    expect_equal_matrix(chol_group.cache[1]->get_chol(vis, dist), chol2_expected);
   }
 }

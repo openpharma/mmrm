@@ -359,7 +359,7 @@ h_factor_ref <- function(x, ref, var_name = vname(x)) {
   assert_multi_class(ref, c("character", "factor"))
   assert_multi_class(x, c("character", "factor"))
   # NA can be possible values
-  uni_values <- as.character(na.omit(unique(x)))
+  uni_values <- as.character(stats::na.omit(unique(x)))
   # no NA in reference
   uni_ref <- as.character(unique(ref))
   assert_character(uni_values, .var.name = var_name)
@@ -372,5 +372,19 @@ h_factor_ref <- function(x, ref, var_name = vname(x)) {
 h_warn_na_action <- function() {
   if (!identical(getOption("na.action"), "na.omit")) {
     warning("na.action is always set to `na.omit` for `mmrm` fit!")
+  }
+}
+
+#' Validate mmrm Formula
+#' @param formula (`formula`)\cr to check.
+#'
+#' @details In mmrm models, `.` is not allowed as it introduces ambiguity of covariates
+#' to be used, so it is not allowed to be in formula.
+#'
+#' @keywords internal
+h_valid_formula <- function(formula) {
+  assert_formula(formula)
+  if ("." %in% all.vars(formula)) {
+    stop("`.` is not allowed in mmrm models!")
   }
 }

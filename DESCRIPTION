@@ -1,7 +1,7 @@
 Type: Package
 Package: mmrm
 Title: Mixed Models for Repeated Measures
-Version: 0.2.2.9021
+Version: 0.2.2.9024
 Authors@R: c(
     person("Daniel", "Sabanes Bove", , "daniel.sabanes_bove@roche.com", role = c("aut", "cre")),
     person("Julia", "Dedic", , "julia.dedic@roche.com", role = "aut"),
@@ -43,7 +43,6 @@ Imports:
     Matrix,
     methods,
     nlme,
-    numDeriv,
     parallel,
     Rcpp,
     Rdpack,
@@ -58,6 +57,7 @@ Suggests:
     dplyr,
     emmeans (>= 1.6),
     estimability,
+    generics,
     ggplot2,
     glmmTMB,
     knitr,
@@ -82,8 +82,6 @@ VignetteBuilder:
     knitr
 RdMacros:
     Rdpack
-Remotes: 
-    github::insightsengineering/sasr
 biocViews:
 Config/testthat/edition: 3
 Encoding: UTF-8
@@ -92,6 +90,7 @@ LazyData: true
 NeedsCompilation: yes
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
+SystemRequirements: C++14
 Collate:
     'catch-routine-registration.R'
     'component.R'
