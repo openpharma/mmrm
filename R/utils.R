@@ -320,3 +320,17 @@ h_warn_na_action <- function() {
     warning("na.action is always set to `na.omit` for `mmrm` fit!")
   }
 }
+
+#' Validate mmrm Formula
+#' @param formula (`formula`)\cr to check.
+#'
+#' @details In mmrm models, `.` is not allowed as it introduces ambiguity of covariates
+#' to be used, so it is not allowed to be in formula.
+#'
+#' @keywords internal
+h_valid_formula <- function(formula) {
+  assert_formula(formula)
+  if ("." %in% all.vars(formula)) {
+    stop("`.` is not allowed in mmrm models!")
+  }
+}
