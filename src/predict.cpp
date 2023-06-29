@@ -41,6 +41,7 @@ List predict(List mmrm_data, NumericVector theta, NumericVector beta, NumericMat
   NumericVector conf_var(y.size()); // Confidence interval variance.
   List covariance;
   List index;
+  NumericMatrix empty(0, 0);
   // Go through all subjects and calculate quantities initialized above.
   for (int i = 0; i < n_subjects; i++) {
     // Start index and number of visits for this subject.
@@ -101,6 +102,8 @@ List predict(List mmrm_data, NumericVector theta, NumericVector beta, NumericMat
       matrix<double> conditional_sigma = sigma_11 - ss * sigma_12.transpose();
       var_y_on_theta = var_conf + vector<double>(conditional_sigma.diagonal());
       covariance.push_back(as_num_matrix_rcpp(conditional_sigma));
+    } else if (visit_na_vec.size() == 0) {
+      covariance.push_back(empty);
     }
     index.push_back(na_index);
     // Replace the values with fitted values. If no missing value there, the `na_index` will be length 0 so no harm here.
