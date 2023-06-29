@@ -53,7 +53,8 @@ fitted.mmrm_tmb <- function(object, ...) {
 #' @param n_sim (`integr`)\cr number of replications to calculate prediction interval.
 #' @exportS3Method
 #' @examples
-#' predict(object, newdata = fev_data)
+#' fit <- mmrm(FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID), data = fev_data)
+#' predict(fit, newdata = fev_data)
 predict.mmrm_tmb <- function(
     object, newdata, se.fit = FALSE, # nolint
     interval = c("none", "confidence", "prediction"), level = 0.95,
@@ -91,7 +92,7 @@ predict.mmrm_tmb <- function(
   }
   colnames <- names(Filter(isFALSE, object$tmb_data$x_cols_aliased))
   tmb_data$x_matrix <- tmb_data$x_matrix[, colnames, drop = FALSE]
-  predictions <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
+  predictions <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)$prediction
   res <- cbind(fit = rep(NA_real_, nrow(newdata)))
   new_order <- match(row.names(tmb_data$full_frame), orig_row_names)
   res[new_order, "fit"] <- predictions[, 1]

@@ -8,7 +8,7 @@ using std::string;
 // we can use the provided `theta` to obtain the covariance matrix for the residual,
 // and use `beta_vcov` to obtain the covariance matrix for the mean of the fit,
 // and use `beta` to obtain the estimate of the mean of the fit.
-NumericMatrix predict(List mmrm_data, NumericVector theta, NumericVector beta, NumericMatrix beta_vcov) {
+List predict(List mmrm_data, NumericVector theta, NumericVector beta, NumericMatrix beta_vcov) {
   NumericMatrix x = mmrm_data["x_matrix"];
   NumericVector y = mmrm_data["y_vector"];
   LogicalVector y_na = is_na(y);
@@ -39,6 +39,8 @@ NumericMatrix predict(List mmrm_data, NumericVector theta, NumericVector beta, N
   NumericVector y_pred = clone(y); // Predict value of y; observed use the same value.
   NumericVector var(y.size()); // Variance of y with 0 as default.
   NumericVector conf_var(y.size()); // Confidence interval variance.
+  List covariance;
+  List index;
   // Go through all subjects and calculate quantities initialized above.
   for (int i = 0; i < n_subjects; i++) {
     // Start index and number of visits for this subject.
@@ -83,7 +85,7 @@ NumericMatrix predict(List mmrm_data, NumericVector theta, NumericVector beta, N
       y_hat = x_na * beta_v;
       var_conf = (x_na * beta_vcov_matrix * x_na.transpose()).diagonal();
       var_y_on_theta = var_conf + vector<double>(sigma_full.diagonal());
-
+      covariance.push_back(as_num_matrix_rcpp(sigma_full));
     } else if (visit_na_vec.size() > 0) {
       // There are observations with invalid y.
       matrix<double> sigma_22_inv;
@@ -96,12 +98,20 @@ NumericMatrix predict(List mmrm_data, NumericVector theta, NumericVector beta, N
       matrix<double> zz = x_na - ss * x_valid;
       y_hat = zz * beta_v + ss * y_valid;
       var_conf = (zz * beta_vcov_matrix * zz.transpose()).diagonal();
-      var_y_on_theta = var_conf + vector<double>((sigma_11 - ss * sigma_12.transpose()).diagonal());
+      matrix<double> conditional_sigma = sigma_11 - ss * sigma_12.transpose();
+      var_y_on_theta = var_conf + vector<double>(conditional_sigma.diagonal());
+      covariance.push_back(as_num_matrix_rcpp(conditional_sigma));
     }
+    index.push_back(na_index);
     // Replace the values with fitted values. If no missing value there, the `na_index` will be length 0 so no harm here.
     y_pred[na_index] = as_num_vector_rcpp(y_hat);
     conf_var[na_index] = as_num_vector_rcpp(var_conf);
     var[na_index] = as_num_vector_rcpp(var_y_on_theta);
   }
-  return cbind(y_pred, conf_var, var);
+  NumericMatrix ret = cbind(y_pred, conf_var, var);
+  return List::create(
+    Named("prediction") = ret,
+    Named("covariance") = covariance,
+    Named("index") = index
+  );
 }
