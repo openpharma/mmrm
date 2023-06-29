@@ -65,7 +65,7 @@ predict.mmrm_tmb <- function(
   orig_row_names <- row.names(newdata)
   assert_flag(se.fit)
   assert_number(level, lower = 0, upper = 1)
-  assert_integer(n_sim, lower = 1)
+  assert_int(n_sim, lower = 1)
   interval <- match.arg(interval)
   # make sure new data has the same levels as original data
   full_frame <- model.frame(
@@ -91,7 +91,7 @@ predict.mmrm_tmb <- function(
   }
   colnames <- names(Filter(isFALSE, object$tmb_data$x_cols_aliased))
   tmb_data$x_matrix <- tmb_data$x_matrix[, colnames, drop = FALSE]
-  predictions <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
+  predictions <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)$prediction
   res <- cbind(fit = rep(NA_real_, nrow(newdata)))
   new_order <- match(row.names(tmb_data$full_frame), orig_row_names)
   res[new_order, "fit"] <- predictions[, 1]
@@ -162,7 +162,7 @@ h_get_prediction_variance <- function(object, n_sim, tmb_data) {
     cond_beta_results <- object$tmb_object$report(theta_sample)
     beta_mean <- cond_beta_results$beta
     beta_cov <- cond_beta_results$beta_vcov
-    h_get_prediction(tmb_data, theta_sample, beta_mean, beta_cov)
+    h_get_prediction(tmb_data, theta_sample, beta_mean, beta_cov)$prediction
   })
   mean_of_var <- rowMeans(res[, 1, ])
   var_of_mean <- apply(res[, 3, ], 1, stats::var)
