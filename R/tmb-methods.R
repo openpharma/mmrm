@@ -53,8 +53,7 @@ fitted.mmrm_tmb <- function(object, ...) {
 #' @param n_sim (`integr`)\cr number of replications to calculate prediction interval.
 #' @exportS3Method
 #' @examples
-#' fit <- mmrm(FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID), data = fev_data)
-#' predict(fit, newdata = fev_data)
+#' predict(object, newdata = fev_data)
 predict.mmrm_tmb <- function(
     object, newdata, se.fit = FALSE, # nolint
     interval = c("none", "confidence", "prediction"), level = 0.95,

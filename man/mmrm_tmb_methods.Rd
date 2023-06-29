@@ -155,8 +155,7 @@ object <- fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)))
 coef(object)
 # Fitted values:
 fitted(object)
-fit <- mmrm(FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID), data = fev_data)
-predict(fit, newdata = fev_data)
+predict(object, newdata = fev_data)
 # Model frame:
 model.frame(object)
 model.frame(object, include = "subject_var")
