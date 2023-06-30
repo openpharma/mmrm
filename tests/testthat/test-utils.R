@@ -42,17 +42,6 @@ test_that("trace of a matrix works as expected", {
   expect_equal(h_tr(diag(v)), 6)
 })
 
-# free_cors ----
-
-test_that("free_cores throws deprecation warning", {
-  skip_on_cran()
-  expect_warning(
-    free_cores(),
-    regexp = "`free_cores()` was deprecated in mmrm 0.1.6.",
-    fixed = TRUE
-  )
-})
-
 # h_split_control ----
 
 test_that("h_split_control split the control args based on optimizers", {

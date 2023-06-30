@@ -1,4 +1,4 @@
-# mmrm 0.2.2.9024
+# mmrm 0.2.2.9026
 
 ### New Features
 
@@ -19,6 +19,10 @@
   sessions.
 - Add `predict` method to obtain conditional mean estimates and prediction intervals, both with or without previous observations.
 - Use automatic differentiation to calculate Satterthwaite adjusted degrees of freedom calculation, resulting in 10-fold speed-up of the Satterthwaite calculations after the initial model fit.
+
+### Miscellaneous
+
+- Removed `free_cores()` in favor of `parallelly::availableCores(omit = 1)`.
 
 ### Bug Fixes
 

@@ -48,7 +48,7 @@ BEGIN_RCPP
 END_RCPP
 }
 
-NumericMatrix predict(List mmrm_fit, NumericVector theta, NumericVector beta, NumericMatrix beta_vcov);
+List predict(List mmrm_fit, NumericVector theta, NumericVector beta, NumericMatrix beta_vcov);
 RcppExport SEXP _mmrm_predict(SEXP mmrm_fit_SEXP, SEXP theta_SEXP, SEXP beta_SEXP, SEXP beta_vcov_SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
