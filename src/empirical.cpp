@@ -4,9 +4,6 @@ using namespace Rcpp;
 using std::string;
 // Obtain the empirical given beta, beta_vcov, theta.
 List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, NumericMatrix beta_vcov, string type) {
-  auto as_num_matrix_tmb = as_matrix<matrix<double>, NumericMatrix>;
-  auto as_num_matrix_rcpp = as_matrix<NumericMatrix, matrix<double>>;
-  auto as_num_vector_tmb = as_vector<vector<double>, NumericVector>;
   NumericMatrix x = mmrm_data["x_matrix"];
   matrix<double> x_matrix = as_num_matrix_tmb(x);
   NumericVector y = mmrm_data["y_vector"];
@@ -34,7 +31,7 @@ List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, Nume
   int p = x.cols();
   // Use map to hold these base class pointers (can also work for child class objects).
   auto derivatives_by_group = cache_obj<double, derivatives_base<double>, derivatives_sp_exp<double>, derivatives_nonspatial<double>>(theta_v, n_groups, is_spatial, cov_type, n_visits);
-  matrix<double> meat = matrix<double>::Zero(p, p);  
+  matrix<double> meat = matrix<double>::Zero(p, p);
   matrix<double> xt_g_simga_inv_chol = matrix<double>::Zero(p, n_observations);
   matrix<double> ax = matrix<double>::Zero(n_observations, p);
   for (int i = 0; i < n_subjects; i++) {
@@ -93,4 +90,3 @@ List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, Nume
     Named("df_mat") = as_num_matrix_rcpp(gtvg)
   );
 }
-

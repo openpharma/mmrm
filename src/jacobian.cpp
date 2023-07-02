@@ -5,10 +5,6 @@ using std::string;
 
 // Obtain Jacobian from a mmrm fit, given theta.
 List get_jacobian(List mmrm_fit, NumericVector theta, NumericMatrix beta_vcov) {
-  auto as_num_matrix_tmb = as_matrix<matrix<double>, NumericMatrix>;
-  auto as_num_matrix_rcpp = as_matrix<NumericMatrix, matrix<double>>;
-  auto as_num_vector_tmb = as_vector<vector<double>, NumericVector>;
-
   NumericMatrix x = mmrm_fit["x_matrix"];
   matrix<double> x_matrix = as_num_matrix_tmb(x);
   IntegerVector subject_zero_inds = mmrm_fit["subject_zero_inds"];

@@ -55,6 +55,37 @@ test_that("fitted give same result compared to nlme if the order is changed", {
   expect_identical(fitted(fit_gls), fitted(fit)[new_order], tolerance = 1e-4, ignore_attr = TRUE)
 })
 
+# h_get_prediction ----
+
+test_that("h_get_prediction works", {
+  fit <- get_mmrm()
+  res <- expect_silent(h_get_prediction(fit$tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov))
+  expect_true(length(res$index) == 197)
+})
+
+test_that("h_get_prediction works for partial data", {
+  fit <- get_mmrm()
+  data <- fev_data[c(1:4, 97:100), ]
+  full_frame <- model.frame(fit,
+    data = data,
+    include = c("subject_var", "visit_var", "group_var", "response_var"),
+    na.action = "na.pass"
+  )
+  tmb_data <- h_mmrm_tmb_data(
+    fit$formula_parts, full_frame,
+    weights = rep(1, nrow(full_frame)),
+    reml = TRUE,
+    singular = "keep",
+    drop_visit_levels = FALSE,
+    allow_na_response = TRUE,
+    drop_levels = FALSE
+  )
+  res <- expect_silent(h_get_prediction(tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov))
+  expect_true(length(res$index) == 2)
+  expect_true(length(res$covariance) == 2)
+  expect_identical(length(res$index[[1]]), nrow(res$covariance[[1]]))
+})
+
 # predict -----
 
 test_that("predict works for old patient, new visit", {
