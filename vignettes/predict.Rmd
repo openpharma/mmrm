@@ -133,7 +133,7 @@ we need to make use of the full matrix $A_i$.
 
 ### Marginal Simulation
 
-To simulation marginally, we take the variance of $\hat\theta$ and $\hat\beta$ into consideration.
+To simulate marginally, we take the variance of $\hat\theta$ and $\hat\beta$ into consideration.
 For each simulation, we first generate $\theta$ assuming it approximately follows multi-variate normal distribution.
 Then, conditional on $\theta$ we sampled, we generate $\beta$ also assuming it approximately follows multi-variate normal distribution.
 Now we have $\theta$ and $\beta$ estimates, and we just follow the [conditional simulation](#conditional-simulation).
