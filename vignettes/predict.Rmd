@@ -138,3 +138,16 @@ For each simulation, we first generate $\theta$ assuming it approximately follow
 Then, conditional on $\theta$ we sampled, we generate $\beta$ also assuming it approximately follows multi-variate normal distribution.
 Now we have $\theta$ and $\beta$ estimates, and we just follow the [conditional simulation](#conditional-simulation).
 Repeat this step for multiple times and this is the marginal simulated response.
+
+### Implementation of `simulate`
+
+To implement `simulate` function, we first ensure that the expectation ($\mu$) and variance-covariance matrix ($A$) are generated
+in `predict` function, for each of the subjects.
+
+For `simulate(method = "conditional")`, we use the estimated $\theta$ and $\beta$ to construct the $\mu$ and $A$ directly.
+
+For `simulate(method = "marginal")`, for each repetition of simulation, we generate $\theta_{new}$ from the mmrm fit, where the estimate
+of $\theta$ and variance-covariance matrix of $\theta$ are provided.
+Using the generated $\theta_{new}$, we then obtain the $\beta_{new}$ and its variance-covariance matrix, with $\theta_{new}$ and
+the data used in fit. Then we simulate once with `simulate(method = "conditional", beta = beta_new, theta = theta_new)`.
+Pool all the repetition together and we get the marginal simulation results.
