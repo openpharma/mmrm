@@ -144,7 +144,8 @@ Repeat this step for multiple times and this is the marginal simulated response.
 To implement `simulate` function, we first ensure that the expectation ($\mu$) and variance-covariance matrix ($A$) are generated
 in `predict` function, for each of the subjects.
 
-For `simulate(method = "conditional")`, we use the estimated $\theta$ and $\beta$ to construct the $\mu$ and $A$ directly.
+For `simulate(method = "conditional")`, we use the estimated $\theta$ and $\beta$ to construct the $\mu$ and $A$ directly, and generate
+response with $N(\mu, A)$ distribution.
 
 For `simulate(method = "marginal")`, for each repetition of simulation, we generate $\theta_{new}$ from the mmrm fit, where the estimate
 of $\theta$ and variance-covariance matrix of $\theta$ are provided.
