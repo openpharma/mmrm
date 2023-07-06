@@ -11,6 +11,7 @@ The `summary` method for `mmrm` objects provides easy access to frequently neede
 model components.
 
 ```{r extraction-summary-fit}
+library(mmrm)
 fit <- mmrm(
   formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data

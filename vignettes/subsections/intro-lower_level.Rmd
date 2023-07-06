@@ -7,6 +7,7 @@ It may be useful for other packages that want to fit the model without
 the adjustment calculations.
 
 ```{r low-level-hmmrmtmb}
+library(mmrm)
 fit_mmrm(
   formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data,
@@ -15,4 +16,3 @@ fit_mmrm(
   control = mmrm_control()
 )
 ```
-

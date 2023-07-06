@@ -11,6 +11,7 @@ Compute the test of a one-dimensional (vector) contrast for a `mmrm` object with
 Satterthwaite degrees of freedom.
 
 ```{r 1d_satterthwaite}
+library(mmrm)
 fit <- mmrm(
   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data

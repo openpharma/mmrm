@@ -1,7 +1,3 @@
-```{r}
-library(mmrm)
-```
-
 From the high-level [`mmrm()`](https://openpharma.github.io/mmrm/main/reference/mmrm.html)
 interface, common changes to the default function call can be specified.
 
@@ -16,6 +12,7 @@ defined design matrix is singular, not drop unobserved visit levels.
 For example:
 
 ```{r low-level-control, eval=FALSE}
+library(mmrm)
 mmrm_control(
   method = "Kenward-Roger",
   optimizer = c("L-BFGS-B", "BFGS"),
@@ -82,7 +79,7 @@ The time points have to be unique for each subject. That is,
 there cannot be time points with multiple observations for any subject.
 The rationale is that these observations would need to be correlated, but it
 is not possible within the currently implemented covariance structure framework
-to do that correctly. Moreover, for non-spatial covariance structures, the time 
+to do that correctly. Moreover, for non-spatial covariance structures, the time
 variable must be coded as a factor.
 
 ## Weighting
