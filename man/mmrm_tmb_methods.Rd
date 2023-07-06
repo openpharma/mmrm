@@ -16,6 +16,7 @@
 \alias{BIC.mmrm_tmb}
 \alias{print.mmrm_tmb}
 \alias{residuals.mmrm_tmb}
+\alias{simulate.mmrm_tmb}
 \title{Methods for \code{mmrm_tmb} Objects}
 \usage{
 \method{coef}{mmrm_tmb}(object, complete = TRUE, ...)
@@ -51,16 +52,18 @@
 \method{print}{mmrm_tmb}(x, ...)
 
 \method{residuals}{mmrm_tmb}(object, type = c("response", "pearson", "normalized"), ...)
+
+\method{simulate}{mmrm_tmb}(object, nsim = 1, seed = NULL, newdata = NULL, ...)
 }
 \arguments{
-\item{object}{(\code{mmrm_tmb})\cr the fitted MMRM object.}
+\item{object}{an object of class 'mmrm'}
 
 \item{complete}{(\code{flag})\cr whether to include potential non-estimable
 coefficients.}
 
-\item{...}{not used.}
+\item{...}{}
 
-\item{newdata}{(\code{data.frame})\cr object in which to look for variables with which to predict.}
+\item{newdata}{data frame for which to evaluate predictions.}
 
 \item{se.fit}{(\code{flag})\cr indicator if standard errors are required.}
 
@@ -91,9 +94,16 @@ is the classical AIC.}
 
 \item{type}{(\code{string})\cr unscaled (\code{response}), \code{pearson} or \code{normalized}. Default is \code{response},
 and this is the only type available for use with models with a spatial covariance structure.}
+
+\item{nsim}{number of response vectors to simulate. Defaults to 1.}
+
+\item{seed}{an object specifying if and how the random number generator should be initialized (‘seeded’).}
 }
 \value{
 Depends on the method, see Functions.
+
+A \code{data.frame} of dimension \link{n, m} where n is the number of observations
+fitted in the model, and m is the number \code{nsim} of simulated responses.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
@@ -146,6 +156,8 @@ penalty parameter \code{k}.
 \item \code{print(mmrm_tmb)}: prints the object.
 
 \item \code{residuals(mmrm_tmb)}: to obtain residuals - either unscaled ('response'), 'pearson' or 'normalized'.
+
+\item \code{simulate(mmrm_tmb)}: Simulates from an mmrm model object
 
 }}
 \examples{

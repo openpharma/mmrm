@@ -4,7 +4,6 @@
 \alias{mmrm_methods}
 \alias{summary.mmrm}
 \alias{print.summary.mmrm}
-\alias{simulate.mmrm}
 \title{Methods for \code{mmrm} Objects}
 \usage{
 \method{summary}{mmrm}(object, ...)
@@ -15,25 +14,14 @@
   signif.stars = getOption("show.signif.stars"),
   ...
 )
-
-\method{simulate}{mmrm}(object, nsim = 1, seed = NULL, newdata = object$data, ...)
 }
 \arguments{
-\item{object}{an object of class 'mmrm'}
+\item{object}{(\code{mmrm})\cr the fitted MMRM including Jacobian and call etc.}
 
-\item{...}{}
-
-\item{nsim}{number of response vectors to simulate. Defaults to 1.}
-
-\item{seed}{an object specifying if and how the random number generator should be initialized (‘seeded’).}
-
-\item{newdata}{data frame for which to evaluate predictions.}
+\item{...}{not used.}
 }
 \value{
 Depends on the method, see Details and Functions.
-
-A \code{data.frame} of dimension \link{n, m} where n is the number of observations
-fitted in the model, and m is the number \code{nsim} of simulated responses.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
@@ -61,8 +49,6 @@ will be displayed.
 \item \code{summary(mmrm)}: summarizes the MMRM fit results.
 
 \item \code{print(summary.mmrm)}: prints the MMRM fit summary.
-
-\item \code{simulate(mmrm)}: Simulates from an mmrm model object
 
 }}
 \examples{
