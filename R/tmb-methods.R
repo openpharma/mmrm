@@ -481,6 +481,9 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
       ret[inds,] <- ret[inds, , drop=FALSE] + MASS::mvrnorm(nsim, rep.int(0, num_visits), covmat_i)
     }
   }else{
+    # order data.frame
+    newdata <- dplyr::arrange(newdata, !!object$formula_parts$subject_var, !!object$formula_parts$visit_var)
+
     # build data.frame of prediction vectors
     ret <- predict(object, newdata = newdata, se.fit = FALSE, interval = "none")
     ret <- data.frame(replicate(nsim, ret))
