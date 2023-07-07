@@ -65,25 +65,25 @@ may indicate chronic obstructive pulmonary disease (COPD). It is summarized belo
 
 ```
                                       Stratified by ARMCD
-                               Overall       PBO           TRT           
-  n                              800           420           380        
+                               Overall       PBO           TRT
+  n                              800           420           380
   USUBJID (%)
-     PT[1-200]                   200           105 (52.5)     95 (47.5)  
-  AVISIT                                                                 
-     VIS1                        200           105            95 
-     VIS2                        200           105            95 
-     VIS3                        200           105            95 
-     VIS4                        200           105            95 
-  RACE (%)                                                               
-     Asian                       280 (35.0)    152 (36.2)    128 (33.7) 
-     Black or African American   300 (37.5)    184 (43.8)    116 (30.5) 
-     White                       220 (27.5)     84 (20.0)    136 (35.8) 
-  SEX = Female (%)               424 (53.0)    220 (52.4)    204 (53.7) 
-  FEV1_BL (mean (SD))          40.19 (9.12)  40.46 (8.84)  39.90 (9.42)  
-  FEV1 (mean (SD))             42.30 (9.32)  40.24 (8.67)  44.45 (9.51)  
-  WEIGHT (mean (SD))            0.52 (0.23)   0.52 (0.23)   0.51 (0.23)  
-  VISITN (mean (SD))            2.50 (1.12)   2.50 (1.12)   2.50 (1.12)  
-  VISITN2 (mean (SD))          -0.02 (1.03)   0.01 (1.07)  -0.04 (0.98)  
+     PT[1-200]                   200           105 (52.5)     95 (47.5)
+  AVISIT
+     VIS1                        200           105            95
+     VIS2                        200           105            95
+     VIS3                        200           105            95
+     VIS4                        200           105            95
+  RACE (%)
+     Asian                       280 (35.0)    152 (36.2)    128 (33.7)
+     Black or African American   300 (37.5)    184 (43.8)    116 (30.5)
+     White                       220 (27.5)     84 (20.0)    136 (35.8)
+  SEX = Female (%)               424 (53.0)    220 (52.4)    204 (53.7)
+  FEV1_BL (mean (SD))          40.19 (9.12)  40.46 (8.84)  39.90 (9.42)
+  FEV1 (mean (SD))             42.30 (9.32)  40.24 (8.67)  44.45 (9.51)
+  WEIGHT (mean (SD))            0.52 (0.23)   0.52 (0.23)   0.51 (0.23)
+  VISITN (mean (SD))            2.50 (1.12)   2.50 (1.12)   2.50 (1.12)
+  VISITN2 (mean (SD))          -0.02 (1.03)   0.01 (1.07)  -0.04 (0.98)
 ```
 
 ## BCVA Data
@@ -95,26 +95,26 @@ visual acuity chart. A summary of the data is given below:
 
 ```
                                       Stratified by ARMCD
-                               Overall         CTL            TRT        
-  n                             8605          4123           4482        
+                               Overall         CTL            TRT
+  n                             8605          4123           4482
   USUBJID (%)
      PT[1-1000]                 1000           494 (49.4)     506 (50.6)
-  AVISIT                                                             
-     VIS1                        983           482            501 
-     VIS2                        980           481            499 
-     VIS3                        960           471            489 
-     VIS4                        946           458            488 
-     VIS5                        925           454            471 
-     VIS6                        868           410            458 
-     VIS7                        816           388            428 
-     VIS8                        791           371            420 
-     VIS9                        719           327            392 
-     VIS10                       617           281            336 
-  RACE (%)                                                               
-     Asian                       297 (29.7)    151 (30.6)     146 (28.9) 
-     Black or African American   317 (31.7)    149 (30.1)     168 (33.2) 
-     White                       386 (38.6)    194 (39.3)     192 (37.9) 
-  BCVA_BL (mean (SD))          75.12 (9.93)  74.90 (9.76)   75.40 (10.1)  
+  AVISIT
+     VIS1                        983           482            501
+     VIS2                        980           481            499
+     VIS3                        960           471            489
+     VIS4                        946           458            488
+     VIS5                        925           454            471
+     VIS6                        868           410            458
+     VIS7                        816           388            428
+     VIS8                        791           371            420
+     VIS9                        719           327            392
+     VIS10                       617           281            336
+  RACE (%)
+     Asian                       297 (29.7)    151 (30.6)     146 (28.9)
+     Black or African American   317 (31.7)    149 (30.1)     168 (33.2)
+     White                       386 (38.6)    194 (39.3)     192 (37.9)
+  BCVA_BL (mean (SD))          75.12 (9.93)  74.90 (9.76)   75.40 (10.1)
   BCVA_CHG (mean (SD))
      VIS1                       5.59 (1.31)   5.32 (1.23)    5.86 (1.33)
      VIS10                      9.18 (2.91)   7.49 (2.58)   10.60 (2.36)
@@ -293,7 +293,7 @@ MODEL FEV1 = AVISIT|ARMCD / ddfm=satterthwaite solution chisq;
 
 ## Spatial exponential
 
-### `PROC MIXED` 
+### `PROC MIXED`
 <pre><code>PROC MIXED DATA = fev_data cl method=ml;
 CLASS AVISIT(ref = 'VIS1') ARMCD(ref = 'PBO') USUBJID;
 MODEL FEV1 = AVISIT|ARMCD / ddfm=satterthwaite solution chisq;
@@ -374,14 +374,14 @@ CLASS AVISIT(ref = 'VIS1') ARMCD(ref = 'PBO') USUBJID;
 MODEL FEV1 = ARMCD|AVISIT / ddfm=satterthwaite solution chisq;
 <b>REPEATED AVISIT / subject=USUBJID</b> <b>type=un</b> r=1, 2, 3, 4, 5, 6, 7, 8, 9, 10 rcorr;
 </code></pre>
-  
+
 ### `mmrm`
 <pre><code>mmrm(
   formula = FEV1 ~ ARMCD * AVISIT + <b>us(AVISIT | USUBJID)</b>,
   data = fev_data
 )
 </code></pre>
-  
+
 ### `gls`
 <pre><code>gls(
   formula = FEV1 ~  ARMCD * AVISIT,
@@ -465,8 +465,8 @@ mb <- microbenchmark(
 # construct the partial results table based on R-based MMRM procedures
 partial_conv_time_tbl <- mb %>%
   summary() %>%
-  arrange(median) %>%
-  select(expression = expr, median, lower = lq, upper = uq, evaluations = neval)
+  dplyr::arrange(median) %>%
+  dplyr::select(expression = expr, median, lower = lq, upper = uq, evaluations = neval)
 
 # fit PROC MIXED 10 times if a sascfg file exists
 if (file.exists("sascfg_personal.py")) {
@@ -569,8 +569,8 @@ mb <- microbenchmark(
 # construct the partial results table based on R-based MMRM procedures
 partial_conv_time_tbl <- mb %>%
   summary() %>%
-  arrange(median) %>%
-  select(expression = expr, median, lower = lq, upper = uq, evaluations = neval)
+  dplyr::arrange(median) %>%
+  dplyr::select(expression = expr, median, lower = lq, upper = uq, evaluations = neval)
 
 # fit PROC MIXED 10 times if a sascfg file exists
 if (file.exists("sascfg_personal.py")) {
@@ -721,11 +721,11 @@ if (file.exists("sascfg_personal.py")) {
   ## extract the ATEs across visits
   ates_df <- sd2df("diffs_out") %>%
     dplyr::filter(AVISIT == `_AVISIT`) %>%
-    mutate(
+    dplyr::mutate(
       contrast = paste0(AVISIT, ": ", ARMCD, " - ", `_ARMCD`)
     ) %>%
-    select(contrast, Estimate, StdErr, DF, tValue, Lower, Upper) %>%
-    arrange(contrast)
+    dplyr::select(contrast, Estimate, StdErr, DF, tValue, Lower, Upper) %>%
+    dplyr::arrange(contrast)
 
   proc_mixed_ests <- ates_df$Estimate
 } else {
@@ -851,11 +851,11 @@ if (file.exists("sascfg_personal.py")) {
   ## extract the ATEs across visits
   ates_df <- sd2df("diffs_out") %>%
     dplyr::filter(AVISIT == `_AVISIT`) %>%
-    mutate(
+    dplyr::mutate(
       contrast = paste0(AVISIT, ": ", ARMCD, " - ", `_ARMCD`)
     ) %>%
-    select(contrast, Estimate, StdErr, DF, tValue, Lower, Upper) %>%
-    arrange(contrast)
+    dplyr::select(contrast, Estimate, StdErr, DF, tValue, Lower, Upper) %>%
+    dplyr::arrange(contrast)
 
   proc_mixed_ests <- ates_df$Estimate
 } else {

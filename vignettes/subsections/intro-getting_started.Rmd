@@ -1,0 +1,30 @@
+```{r getting-started}
+library(mmrm)
+fit <- mmrm(
+  formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data
+)
+```
+
+The code specifies an MMRM with the given covariates and an unstructured covariance
+matrix for the timepoints (also called visits in the clinical trial context, here
+given by `AVISIT`) within the subjects (here `USUBJID`). While by default this uses
+restricted maximum likelihood (REML), it is also possible to use ML, see `?mmrm`.
+
+Printing the object will show you output which should be familiar to anyone who
+has used any popular modeling functions such as `stats::lm()`, `stats::glm()`,
+`glmmTMB::glmmTMB()`, and `lme4::nlmer()`. From this print out we see the function call,
+the data used, the covariance structure with number of variance parameters, as well
+as the likelihood method, and model deviance achieved. Additionally the user is
+provided a printout of the estimated coefficients and the model convergence information:
+
+```{r print}
+fit
+```
+
+The `summary()` method then provides the coefficients table with Satterthwaite
+degrees of freedom as well as the covariance matrix estimate:
+
+```{r summary}
+summary(fit)
+```
