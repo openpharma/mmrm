@@ -442,9 +442,8 @@ h_residuals_response <- function(object) {
 #' @return A \code{data.frame} of dimension [n, m] where n is the number of observations
 #' fitted in the model, and m is the number \code{nsim} of simulated responses.
 simulate.mmrm_tmb <- function(object, nsim = 1,
-                          seed = NULL, newdata = NULL,
+                              newdata = NULL,
                           ...){
-  if(!is.null(seed)) set.seed(seed)
 
   if(is.null(newdata)){
     # build data.frame of prediction vectors
