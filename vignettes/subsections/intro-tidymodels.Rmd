@@ -1,15 +1,13 @@
----
-output: html_document
-editor_options: 
-  chunk_output_type: console
----
+```{r, include = FALSE}
+library(mmrm)
+```
+
 ## Tidymodels
 
 `mmrm` is compatible to work in a `tidymodels` workflow. The following is an example of how such a workflow would be constructed.
 
 ```{r, warning=FALSE, message=FALSE}
 library(tidymodels)
-library(mmrm)
 ```
 
 ### Direct fit
@@ -18,7 +16,7 @@ First we define the direct method to fit an mmrm model using the parsnip package
 
 - `linear_reg()` defines a model that can predict numeric values from predictors using a linear function
 - `set_engine()` is used to specify which package or system will be used to fit the model, along with any arguments specific to that software. We can set the method to adjust degrees of freedom directly in the call.
-  
+
 ```{r}
 model <- linear_reg() |>
   set_engine("mmrm", method = "Satterthwaite") |>
@@ -57,7 +55,7 @@ mmrm_wflow |>
   fit(data = fev_data)
 ```
 
-We can separate out the data preparation step from the modeling step using the `recipes` package. Here we are converting the `ARMCD` variable into a dummy variable and creating an interaction term with the new dummy variable and each visit. 
+We can separate out the data preparation step from the modeling step using the `recipes` package. Here we are converting the `ARMCD` variable into a dummy variable and creating an interaction term with the new dummy variable and each visit.
 
 ```{r}
 mmrm_recipe <- recipe(FEV1 ~ ., data = fev_data) |>
@@ -73,7 +71,7 @@ mmrm_recipe |>
   juice()
 ```
 
-We can pass the covariance structure as well in the `set_engine()` definition. This allows for more flexibility on presetting different covariance structures in the pipeline while keeping the data preparation step independent. 
+We can pass the covariance structure as well in the `set_engine()` definition. This allows for more flexibility on presetting different covariance structures in the pipeline while keeping the data preparation step independent.
 
 ```{r}
 mmrm_spec_with_cov <- linear_reg() |>

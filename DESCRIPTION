@@ -61,6 +61,7 @@ Suggests:
     generics,
     ggplot2,
     glmmTMB,
+    hardhat,
     knitr,
     lme4,
     MASS,

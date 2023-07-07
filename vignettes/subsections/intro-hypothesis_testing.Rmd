@@ -1,3 +1,7 @@
+```{r, include = FALSE}
+library(mmrm)
+```
+
 This package supports estimation of one- and multi-dimensional contrasts
 (t-test and F-test calculation) with the [`df_1d()`](https://openpharma.github.io/mmrm/main/reference/df_1d.html) and
 [`df_md()`](https://openpharma.github.io/mmrm/main/reference/df_md.html) functions.
@@ -11,7 +15,6 @@ Compute the test of a one-dimensional (vector) contrast for a `mmrm` object with
 Satterthwaite degrees of freedom.
 
 ```{r 1d_satterthwaite}
-library(mmrm)
 fit <- mmrm(
   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data

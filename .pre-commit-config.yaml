@@ -23,6 +23,7 @@ repos:
           - pkgbuild
           - Rdpack
           - testthat
+          - hardhat
       - id: use-tidy-description
       - id: spell-check
         exclude: >
@@ -65,6 +66,7 @@ repos:
           - TMB
           - Rdpack
           - testthat
+          - hardhat
       - id: readme-rmd-rendered
       - id: parsable-R
       - id: no-browser-statement

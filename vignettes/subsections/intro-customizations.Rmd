@@ -1,3 +1,7 @@
+```{r, include = FALSE}
+library(mmrm)
+```
+
 From the high-level [`mmrm()`](https://openpharma.github.io/mmrm/main/reference/mmrm.html)
 interface, common changes to the default function call can be specified.
 
@@ -11,8 +15,7 @@ provide a vector of starting parameter values, decide the action to be taken whe
 defined design matrix is singular, not drop unobserved visit levels.
 For example:
 
-```{r low-level-control, eval=FALSE}
-library(mmrm)
+```{r low-level-control, results = 'hide'}
 mmrm_control(
   method = "Kenward-Roger",
   optimizer = c("L-BFGS-B", "BFGS"),

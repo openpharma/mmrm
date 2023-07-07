@@ -1,3 +1,7 @@
+```{r, include = FALSE}
+library(mmrm)
+```
+
 ## Low-level mmrm
 
 The lower level function which is called by [`mmrm()`](https://openpharma.github.io/mmrm/main/reference/mmrm.html) is [`fit_mmrm()`](https://openpharma.github.io/mmrm/main/reference/fit_mmrm.html). This
@@ -7,7 +11,6 @@ It may be useful for other packages that want to fit the model without
 the adjustment calculations.
 
 ```{r low-level-hmmrmtmb}
-library(mmrm)
 fit_mmrm(
   formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data,

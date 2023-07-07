@@ -1,3 +1,7 @@
+```{r, include = FALSE}
+library(mmrm)
+```
+
 Similar to model objects created in other packages, components of `mmrm` and
 `mmrm_tmb` objects can be accessed with standard methods.  Additionally,
 [`component()`](https://openpharma.github.io/mmrm/main/reference/component.html) is provided to allow deeper and more precise access for those
@@ -11,7 +15,6 @@ The `summary` method for `mmrm` objects provides easy access to frequently neede
 model components.
 
 ```{r extraction-summary-fit}
-library(mmrm)
 fit <- mmrm(
   formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data
