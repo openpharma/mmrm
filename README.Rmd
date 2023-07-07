@@ -45,20 +45,15 @@ square means estimates by using `emmeans`.
 
 **Main Features:**
 
-<details><summary>Modeling</summary>
-
-  * Flexible covariance specification:
-    * [Structures](https://openpharma.github.io/mmrm/main/articles/covariance.html): unstructured, Toeplitz, AR1, compound symmetry, ante-dependence, and spatial exponential.
-    * Groups: shared covariance structure for all subjects or group-specific
-  covariance estimates.
-    * Variances: homogeneous or heterogeneous across time points.
-  * Inference:
-    * Supports REML and ML.
-    * Supports weights.
-
-</details>
-<details><summary>Hypothesis testing</summary>
-
+* Flexible covariance specification:
+  * [Structures](https://openpharma.github.io/mmrm/main/articles/covariance.html): unstructured, Toeplitz, AR1, compound symmetry, ante-dependence, and spatial exponential.
+  * Groups: shared covariance structure for all subjects or group-specific
+covariance estimates.
+  * Variances: homogeneous or heterogeneous across time points.
+* Inference:
+  * Supports REML and ML.
+  * Supports weights.
+* Hypothesis testing:
   * [Least square means](https://openpharma.github.io/mmrm/main/reference/emmeans_support.html):
     can be obtained with the `emmeans` package
   * One- and multi-dimensional linear contrasts of model parameters can be tested.
@@ -67,37 +62,43 @@ square means estimates by using `emmeans`.
   * [Kenward-Roger](https://openpharma.github.io/mmrm/main/articles/kenward.html)
     adjusted degrees of freedom and coefficients covariance matrix.
   * [Coefficient Covariance](https://openpharma.github.io/mmrm/main/articles/coef_vcov.html)
-</details>
-<details><summary>CPP Backend</summary>
-
-* Fast implementation using C++ and automatic differentiation to
-obtain precise gradient information for model fitting. 
-* Model fitting algorithm [details](https://openpharma.github.io/mmrm/main/articles/algorithm.html) used in `mmrm`.
-
-</details>
-<details><summary>Package Ecosystems Integration</summary>
-
-* Integration with [tidymodels](https://www.tidymodels.org/) package ecosystem
-  * Dedicated [parsnip](https://parsnip.tidymodels.org/) engine for linear regression
-  * Integration with [recipes](https://recipes.tidymodels.org/)
-* Integration with [tern](https://insightsengineering.github.io/tern/) package ecosystems
-  * The [tern.mmrm](https://insightsengineering.github.io/tern.mmrm/) package can be used to run the `mmrm` fit and generate: tabulation and plots of least square means per visit and treatment arm, tabulation of model diagnostics, diagnostic graphs, and other standard model outputs.
-
-</details>
+* `C++` backend:
+  * Fast implementation using `C++` and automatic differentiation to
+    obtain precise gradient information for model fitting.
+  * Model fitting algorithm [details](https://openpharma.github.io/mmrm/main/articles/algorithm.html) used in `mmrm`.
+* Package ecosystems integration:
+  * Integration with [tidymodels](https://www.tidymodels.org/) package ecosystem
+    * Dedicated [parsnip](https://parsnip.tidymodels.org/) engine for linear regression
+    * Integration with [recipes](https://recipes.tidymodels.org/)
+  * Integration with [tern](https://insightsengineering.github.io/tern/) package ecosystems
+    * The [tern.mmrm](https://insightsengineering.github.io/tern.mmrm/) package can be used to run the `mmrm` fit and generate tabulation and plots of least square means per visit and treatment arm, tabulation of model diagnostics, diagnostic graphs, and other standard model outputs.
 
 ## Installation
 
-**CRAN**
+### Release
 
-You can install the current stable version from CRAN with:
+You can install the current release version from *CRAN* with:
 
 ```{r cran-installation, eval = FALSE}
 install.packages("mmrm")
 ```
 
-**GitHub**
+### Development
 
-You can install the current development version from GitHub with:
+You can install the current development version from *R-Universe* with:
+
+```{r ru-installation, eval = FALSE}
+install.packages(
+  "mmrm",
+  repos = c("https://openpharma.r-universe.dev", "https://cloud.r-project.org")
+)
+```
+
+This is preferred, because for Windows and MacOS systems you can install
+pre-compiled binary versions of the packages, avoiding the need for compilation.
+
+Alternatively, you can install the current development version from
+*GitHub* with:
 
 ```{r gh-installation, eval = FALSE}
 if (!require("remotes")) {
@@ -105,6 +106,9 @@ if (!require("remotes")) {
 }
 remotes::install_github("openpharma/mmrm")
 ```
+
+Note that this installation from source can take a substantial amount of time,
+because compilation of the `C++` sources is required.
 
 ## Getting Started
 
