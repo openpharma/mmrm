@@ -39,7 +39,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9026</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9027</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -65,19 +65,18 @@
     <a class="dropdown-item" href="../articles/package_structure.html">Package Structure</a>
     <a class="dropdown-item" href="../articles/predict.html">Predicting from a MMRM</a>
     <a class="dropdown-item" href="../articles/satterthwaite.html">Details of the Satterthwaite calculations</a>
+    <a class="dropdown-item" href="../articles/subsections/intro-acknowledgments.html">UNKNOWN TITLE</a>
+    <a class="dropdown-item" href="../articles/subsections/intro-customizations.html">UNKNOWN TITLE</a>
+    <a class="dropdown-item" href="../articles/subsections/intro-getting_started.html">UNKNOWN TITLE</a>
+    <a class="dropdown-item" href="../articles/subsections/intro-hypothesis_testing.html">UNKNOWN TITLE</a>
+    <a class="dropdown-item" href="../articles/subsections/intro-lower_level.html">UNKNOWN TITLE</a>
+    <a class="dropdown-item" href="../articles/subsections/intro-model_features.html">UNKNOWN TITLE</a>
+    <a class="dropdown-item" href="../articles/subsections/intro-tidymodels.html">UNKNOWN TITLE</a>
   </div>
 </li>
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.2.2">v0.2.2</a> </div></li>
-<!-- end dropdown for versions -->
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-reports">Reports</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-reports">
@@ -151,25 +150,25 @@ in one second), a measure of how quickly the lungs can be emptied. Low
 levels of FEV1 may indicate chronic obstructive pulmonary disease
 (COPD). It is summarized below.</p>
 <pre><code>                                      Stratified by ARMCD
-                               Overall       PBO           TRT           
-  n                              800           420           380        
+                               Overall       PBO           TRT
+  n                              800           420           380
   USUBJID (%)
-     PT[1-200]                   200           105 (52.5)     95 (47.5)  
-  AVISIT                                                                 
-     VIS1                        200           105            95 
-     VIS2                        200           105            95 
-     VIS3                        200           105            95 
-     VIS4                        200           105            95 
-  RACE (%)                                                               
-     Asian                       280 (35.0)    152 (36.2)    128 (33.7) 
-     Black or African American   300 (37.5)    184 (43.8)    116 (30.5) 
-     White                       220 (27.5)     84 (20.0)    136 (35.8) 
-  SEX = Female (%)               424 (53.0)    220 (52.4)    204 (53.7) 
-  FEV1_BL (mean (SD))          40.19 (9.12)  40.46 (8.84)  39.90 (9.42)  
-  FEV1 (mean (SD))             42.30 (9.32)  40.24 (8.67)  44.45 (9.51)  
-  WEIGHT (mean (SD))            0.52 (0.23)   0.52 (0.23)   0.51 (0.23)  
-  VISITN (mean (SD))            2.50 (1.12)   2.50 (1.12)   2.50 (1.12)  
-  VISITN2 (mean (SD))          -0.02 (1.03)   0.01 (1.07)  -0.04 (0.98)  </code></pre>
+     PT[1-200]                   200           105 (52.5)     95 (47.5)
+  AVISIT
+     VIS1                        200           105            95
+     VIS2                        200           105            95
+     VIS3                        200           105            95
+     VIS4                        200           105            95
+  RACE (%)
+     Asian                       280 (35.0)    152 (36.2)    128 (33.7)
+     Black or African American   300 (37.5)    184 (43.8)    116 (30.5)
+     White                       220 (27.5)     84 (20.0)    136 (35.8)
+  SEX = Female (%)               424 (53.0)    220 (52.4)    204 (53.7)
+  FEV1_BL (mean (SD))          40.19 (9.12)  40.46 (8.84)  39.90 (9.42)
+  FEV1 (mean (SD))             42.30 (9.32)  40.24 (8.67)  44.45 (9.51)
+  WEIGHT (mean (SD))            0.52 (0.23)   0.52 (0.23)   0.51 (0.23)
+  VISITN (mean (SD))            2.50 (1.12)   2.50 (1.12)   2.50 (1.12)
+  VISITN2 (mean (SD))          -0.02 (1.03)   0.01 (1.07)  -0.04 (0.98)</code></pre>
 </div>
 <div class="section level3">
 <h3 id="bcva-data">BCVA Data<a class="anchor" aria-label="anchor" href="#bcva-data"></a>
@@ -180,26 +179,26 @@ acuity (BCVA) over the course of 10 visits. BCVA corresponds to the
 number of letters read from a visual acuity chart. A summary of the data
 is given below:</p>
 <pre><code>                                      Stratified by ARMCD
-                               Overall         CTL            TRT        
-  n                             8605          4123           4482        
+                               Overall         CTL            TRT
+  n                             8605          4123           4482
   USUBJID (%)
      PT[1-1000]                 1000           494 (49.4)     506 (50.6)
-  AVISIT                                                             
-     VIS1                        983           482            501 
-     VIS2                        980           481            499 
-     VIS3                        960           471            489 
-     VIS4                        946           458            488 
-     VIS5                        925           454            471 
-     VIS6                        868           410            458 
-     VIS7                        816           388            428 
-     VIS8                        791           371            420 
-     VIS9                        719           327            392 
-     VIS10                       617           281            336 
-  RACE (%)                                                               
-     Asian                       297 (29.7)    151 (30.6)     146 (28.9) 
-     Black or African American   317 (31.7)    149 (30.1)     168 (33.2) 
-     White                       386 (38.6)    194 (39.3)     192 (37.9) 
-  BCVA_BL (mean (SD))          75.12 (9.93)  74.90 (9.76)   75.40 (10.1)  
+  AVISIT
+     VIS1                        983           482            501
+     VIS2                        980           481            499
+     VIS3                        960           471            489
+     VIS4                        946           458            488
+     VIS5                        925           454            471
+     VIS6                        868           410            458
+     VIS7                        816           388            428
+     VIS8                        791           371            420
+     VIS9                        719           327            392
+     VIS10                       617           281            336
+  RACE (%)
+     Asian                       297 (29.7)    151 (30.6)     146 (28.9)
+     Black or African American   317 (31.7)    149 (30.1)     168 (33.2)
+     White                       386 (38.6)    194 (39.3)     192 (37.9)
+  BCVA_BL (mean (SD))          75.12 (9.93)  74.90 (9.76)   75.40 (10.1)
   BCVA_CHG (mean (SD))
      VIS1                       5.59 (1.31)   5.32 (1.23)    5.86 (1.33)
      VIS10                      9.18 (2.91)   7.49 (2.58)   10.60 (2.36)</code></pre>
@@ -705,27 +704,27 @@ replicate and are reported in the table below.</p>
 <tbody>
 <tr class="odd">
 <td align="left">mmrm</td>
-<td align="right">42.50</td>
-<td align="right">42.18</td>
-<td align="right">42.67</td>
+<td align="right">41.46</td>
+<td align="right">40.68</td>
+<td align="right">42.04</td>
 </tr>
 <tr class="even">
 <td align="left">lmer</td>
-<td align="right">163.56</td>
-<td align="right">163.10</td>
-<td align="right">164.10</td>
+<td align="right">179.98</td>
+<td align="right">178.77</td>
+<td align="right">181.40</td>
 </tr>
 <tr class="odd">
 <td align="left">gls</td>
-<td align="right">476.37</td>
-<td align="right">472.09</td>
-<td align="right">479.01</td>
+<td align="right">500.08</td>
+<td align="right">498.01</td>
+<td align="right">500.99</td>
 </tr>
 <tr class="even">
 <td align="left">glmmTMB</td>
-<td align="right">604.12</td>
-<td align="right">602.53</td>
-<td align="right">609.20</td>
+<td align="right">634.19</td>
+<td align="right">632.86</td>
+<td align="right">637.51</td>
 </tr>
 </tbody>
 </table>
@@ -752,26 +751,26 @@ times. The convergence times are presented below.</p>
 <tr class="odd">
 <td align="left">mmrm</td>
 <td align="right">2.38</td>
-<td align="right">2.36</td>
-<td align="right">2.44</td>
+<td align="right">2.37</td>
+<td align="right">2.40</td>
 </tr>
 <tr class="even">
 <td align="left">glmmTMB</td>
-<td align="right">12.02</td>
-<td align="right">11.95</td>
-<td align="right">12.08</td>
+<td align="right">12.13</td>
+<td align="right">12.01</td>
+<td align="right">12.53</td>
 </tr>
 <tr class="odd">
 <td align="left">gls</td>
-<td align="right">92.96</td>
-<td align="right">89.56</td>
-<td align="right">93.88</td>
+<td align="right">100.82</td>
+<td align="right">98.77</td>
+<td align="right">104.38</td>
 </tr>
 <tr class="even">
 <td align="left">lmer</td>
-<td align="right">106.95</td>
-<td align="right">105.37</td>
-<td align="right">107.64</td>
+<td align="right">103.49</td>
+<td align="right">103.02</td>
+<td align="right">104.79</td>
 </tr>
 </tbody>
 </table>
@@ -963,7 +962,7 @@ type II error rates.</p>
 <span><span class="co">## other attached packages:</span></span>
 <span><span class="co">##  [1] ggplot2_3.4.2           emmeans_1.8.6           knitr_1.43             </span></span>
 <span><span class="co">##  [4] sasr_0.1.2              glmmTMB_1.1.7           nlme_3.1-162           </span></span>
-<span><span class="co">##  [7] lme4_1.1-33             Matrix_1.5-4.1          mmrm_0.2.2.9026        </span></span>
+<span><span class="co">##  [7] lme4_1.1-33             Matrix_1.5-4.1          mmrm_0.2.2.9027        </span></span>
 <span><span class="co">## [10] stringr_1.5.0           microbenchmark_1.4.10   purrr_1.0.1            </span></span>
 <span><span class="co">## [13] dplyr_1.1.2             clusterGeneration_1.3.7 MASS_7.3-60            </span></span>
 <span><span class="co">## </span></span>
@@ -1000,7 +999,7 @@ type II error rates.</p>
 
     <footer><div class="pkgdown-footer-left">
   <p></p>
-<p>Developed by Daniel Sabanes Bove, Julia Dedic, Doug Kelkhoff, Kevin Kunzmann, Brian Matthew Lang, Liming Li, Christian Stock, Ya Wang, Dan James, Boehringer Ingelheim Ltd., Gilead Sciences, Inc., F. Hoffmann-La Roche AG, Merck Sharp &amp; Dohme, Inc., AstraZeneca plc.</p>
+<p>Developed by Daniel Sabanes Bove, Julia Dedic, Doug Kelkhoff, Kevin Kunzmann, Brian Matthew Lang, Liming Li, Christian Stock, Ya Wang, Dan James, Jonathan Sidi, Boehringer Ingelheim Ltd., Gilead Sciences, Inc., F. Hoffmann-La Roche AG, Merck Sharp &amp; Dohme, Inc., AstraZeneca plc.</p>
 </div>
 
 <div class="pkgdown-footer-right">

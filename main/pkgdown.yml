@@ -13,7 +13,14 @@ articles:
   package_structure: package_structure.html
   predict: predict.html
   satterthwaite: satterthwaite.html
-last_built: 2023-07-06T14:13Z
+  intro-acknowledgments: subsections/intro-acknowledgments.html
+  intro-customizations: subsections/intro-customizations.html
+  intro-getting_started: subsections/intro-getting_started.html
+  intro-hypothesis_testing: subsections/intro-hypothesis_testing.html
+  intro-lower_level: subsections/intro-lower_level.html
+  intro-model_features: subsections/intro-model_features.html
+  intro-tidymodels: subsections/intro-tidymodels.html
+last_built: 2023-07-07T13:48Z
 urls:
   reference: https://openpharma.github.io/mmrm/main/reference
   article: https://openpharma.github.io/mmrm/main/articles

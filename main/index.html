@@ -63,7 +63,7 @@
     
     <a class="navbar-brand me-2" href="index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9026</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9027</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -89,19 +89,18 @@
     <a class="dropdown-item" href="articles/package_structure.html">Package Structure</a>
     <a class="dropdown-item" href="articles/predict.html">Predicting from a MMRM</a>
     <a class="dropdown-item" href="articles/satterthwaite.html">Details of the Satterthwaite calculations</a>
+    <a class="dropdown-item" href="articles/subsections/intro-acknowledgments.html">UNKNOWN TITLE</a>
+    <a class="dropdown-item" href="articles/subsections/intro-customizations.html">UNKNOWN TITLE</a>
+    <a class="dropdown-item" href="articles/subsections/intro-getting_started.html">UNKNOWN TITLE</a>
+    <a class="dropdown-item" href="articles/subsections/intro-hypothesis_testing.html">UNKNOWN TITLE</a>
+    <a class="dropdown-item" href="articles/subsections/intro-lower_level.html">UNKNOWN TITLE</a>
+    <a class="dropdown-item" href="articles/subsections/intro-model_features.html">UNKNOWN TITLE</a>
+    <a class="dropdown-item" href="articles/subsections/intro-tidymodels.html">UNKNOWN TITLE</a>
   </div>
 </li>
 <li class="nav-item">
   <a class="nav-link" href="news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.2.2">v0.2.2</a> </div></li>
-<!-- end dropdown for versions -->
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-reports">Reports</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-reports">
@@ -151,6 +150,12 @@
 <li>Variances: homogeneous or heterogeneous across time points.</li>
 </ul>
 </li>
+<li>Inference:
+<ul>
+<li>Supports REML and ML.</li>
+<li>Supports weights.</li>
+</ul>
+</li>
 <li>Hypothesis testing:
 <ul>
 <li>
@@ -160,44 +165,75 @@
 <a href="https://openpharma.github.io/mmrm/main/articles/satterthwaite.html">Satterthwaite</a> adjusted degrees of freedom.</li>
 <li>
 <a href="https://openpharma.github.io/mmrm/main/articles/kenward.html">Kenward-Roger</a> adjusted degrees of freedom and coefficients covariance matrix.</li>
+<li><a href="https://openpharma.github.io/mmrm/main/articles/coef_vcov.html">Coefficient Covariance</a></li>
 </ul>
 </li>
-<li>Model inference:
+<li>
+<code>C++</code> backend:
 <ul>
-<li>Supports REML and ML.</li>
-<li>Supports weights.</li>
+<li>Fast implementation using <code>C++</code> and automatic differentiation to obtain precise gradient information for model fitting.</li>
+<li>Model fitting algorithm <a href="https://openpharma.github.io/mmrm/main/articles/algorithm.html">details</a> used in <code>mmrm</code>.</li>
 </ul>
 </li>
-<li>Fast implementation using C++ and automatic differentiation to obtain precise gradient information for model fitting. See <a href="https://openpharma.github.io/mmrm/main/articles/algorithm.html">here</a> for details of the model fitting algorithm used in <code>mmrm</code>.</li>
+<li>Package ecosystems integration:
+<ul>
+<li>Integration with <a href="https://www.tidymodels.org/" class="external-link">tidymodels</a> package ecosystem
+<ul>
+<li>Dedicated <a href="https://parsnip.tidymodels.org/" class="external-link">parsnip</a> engine for linear regression</li>
+<li>Integration with <a href="https://recipes.tidymodels.org/" class="external-link">recipes</a>
+</li>
+</ul>
+</li>
+<li>Integration with <a href="https://insightsengineering.github.io/tern/" class="external-link">tern</a> package ecosystems
+<ul>
+<li>The <a href="https://insightsengineering.github.io/tern.mmrm/" class="external-link">tern.mmrm</a> package can be used to run the <code>mmrm</code> fit and generate tabulation and plots of least square means per visit and treatment arm, tabulation of model diagnostics, diagnostic graphs, and other standard model outputs.</li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p><strong>CRAN</strong></p>
-<p>You can install the current stable version from CRAN with:</p>
+<div class="section level3">
+<h3 id="release">Release<a class="anchor" aria-label="anchor" href="#release"></a>
+</h3>
+<p>You can install the current release version from <em>CRAN</em> with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"mmrm"</span><span class="op">)</span></span></code></pre></div>
-<p><strong>GitHub</strong></p>
-<p>You can install the current development version from GitHub with:</p>
+</div>
+<div class="section level3">
+<h3 id="development">Development<a class="anchor" aria-label="anchor" href="#development"></a>
+</h3>
+<p>You can install the current development version from <em>R-Universe</em> with:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span></span>
+<span>  <span class="st">"mmrm"</span>,</span>
+<span>  repos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"https://openpharma.r-universe.dev"</span>, <span class="st">"https://cloud.r-project.org"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>This is preferred, because for Windows and MacOS systems you can install pre-compiled binary versions of the packages, avoiding the need for compilation.</p>
+<p>Alternatively, you can install the current development version from <em>GitHub</em> with:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://remotes.r-lib.org" class="external-link">"remotes"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"openpharma/mmrm"</span><span class="op">)</span></span></code></pre></div>
+<p>Note that this installation from source can take a substantial amount of time, because compilation of the <code>C++</code> sources is required.</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="getting-started">Getting Started<a class="anchor" aria-label="anchor" href="#getting-started"></a>
 </h2>
 <p>See also the <a href="https://openpharma.github.io/mmrm/main/articles/introduction.html">introductory vignette</a> or get started by trying out the example:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://openpharma.github.io/mmrm/" class="external-link">mmrm</a></span><span class="op">)</span></span>
 <span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">SEX</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">fev_data</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>The code specifies an MMRM with the given covariates and an unstructured covariance matrix for the timepoints (also called visits in the clinical trial context, here given by <code>AVISIT</code>) within the subjects (here <code>USUBJID</code>). While by default this uses restricted maximum likelihood (REML), it is also possible to use ML, see <code><a href="reference/mmrm.html">?mmrm</a></code>.</p>
-<p>You can look at the results high-level:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<p>Printing the object will show you output which should be familiar to anyone who has used any popular modeling functions such as <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">stats::lm()</a></code>, <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">stats::glm()</a></code>, <code><a href="https://rdrr.io/pkg/glmmTMB/man/glmmTMB.html" class="external-link">glmmTMB::glmmTMB()</a></code>, and <code><a href="https://rdrr.io/pkg/lme4/man/nlmer.html" class="external-link">lme4::nlmer()</a></code>. From this print out we see the function call, the data used, the covariance structure with number of variance parameters, as well as the likelihood method, and model deviance achieved. Additionally the user is provided a printout of the estimated coefficients and the model convergence information:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit</span></span>
 <span><span class="co">#&gt; mmrm fit</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -205,7 +241,7 @@
 <span><span class="co">#&gt; Data:        fev_data (used 537 observations from 197 subjects with maximum 4 </span></span>
 <span><span class="co">#&gt; timepoints)</span></span>
 <span><span class="co">#&gt; Covariance:  unstructured (10 variance parameters)</span></span>
-<span><span class="co">#&gt; Method:      REML</span></span>
+<span><span class="co">#&gt; Inference:   REML</span></span>
 <span><span class="co">#&gt; Deviance:    3386.45</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients: </span></span>
@@ -225,7 +261,7 @@
 <span><span class="co">#&gt; Model Inference Optimization:</span></span>
 <span><span class="co">#&gt; Converged with code 0 and message: convergence: rel_reduction_of_f &lt;= factr*epsmch</span></span></code></pre></div>
 <p>The <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> method then provides the coefficients table with Satterthwaite degrees of freedom as well as the covariance matrix estimate:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
 <span><span class="co">#&gt; mmrm fit</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -234,6 +270,7 @@
 <span><span class="co">#&gt; timepoints)</span></span>
 <span><span class="co">#&gt; Covariance:  unstructured (10 variance parameters)</span></span>
 <span><span class="co">#&gt; Method:      Satterthwaite</span></span>
+<span><span class="co">#&gt; Vcov Method: Asymptotic</span></span>
 <span><span class="co">#&gt; Inference:   REML</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Model selection criteria:</span></span>
@@ -324,6 +361,7 @@
 <li>Christian Stock <br><small class="roles"> Author </small>  </li>
 <li>Ya Wang <br><small class="roles"> Author </small>  </li>
 <li>Dan James <br><small class="roles"> Author </small>  </li>
+<li>Jonathan Sidi <br><small class="roles"> Author </small>  </li>
 <li>Boehringer Ingelheim Ltd. <br><small class="roles"> Copyright holder, funder </small>  </li>
 <li>Gilead Sciences, Inc. <br><small class="roles"> Copyright holder, funder </small>  </li>
 <li>F. Hoffmann-La Roche AG <br><small class="roles"> Copyright holder, funder </small>  </li>
@@ -350,7 +388,7 @@
 
     <footer><div class="pkgdown-footer-left">
   <p></p>
-<p>Developed by Daniel Sabanes Bove, Julia Dedic, Doug Kelkhoff, Kevin Kunzmann, Brian Matthew Lang, Liming Li, Christian Stock, Ya Wang, Dan James, Boehringer Ingelheim Ltd., Gilead Sciences, Inc., F. Hoffmann-La Roche AG, Merck Sharp &amp; Dohme, Inc., AstraZeneca plc.</p>
+<p>Developed by Daniel Sabanes Bove, Julia Dedic, Doug Kelkhoff, Kevin Kunzmann, Brian Matthew Lang, Liming Li, Christian Stock, Ya Wang, Dan James, Jonathan Sidi, Boehringer Ingelheim Ltd., Gilead Sciences, Inc., F. Hoffmann-La Roche AG, Merck Sharp &amp; Dohme, Inc., AstraZeneca plc.</p>
 </div>
 
 <div class="pkgdown-footer-right">
