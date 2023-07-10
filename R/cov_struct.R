@@ -156,7 +156,7 @@ COV_TYPES <- local({ # nolint
 #' where \eqn{d_{ij}} denotes the Euclidean distance between time points
 #' \eqn{i} and \eqn{j}.
 #'
-#' @family `cov_struct`
+#' @family covariance types
 #' @name covariance_types
 #' @export
 cov_types <- function(

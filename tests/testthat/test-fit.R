@@ -594,6 +594,24 @@ test_that("mmrm behaves correctly when some of alternative optimizers have diver
   expect_true(attr(result, "converged"))
 })
 
+test_that("mmrm works as expected when the only provided optimizer fails with divergence error", {
+  fake_optimizer <- function(par, fun, grad, ...) {
+    stop("NA/NaN Hessian evaluation")
+  }
+  expect_error(
+    expect_warning(
+      result <- mmrm(
+        formula = FEV1 ~ ARMCD + us(AVISIT | USUBJID),
+        data = fev_data,
+        optimizer_fun = fake_optimizer
+      ),
+      "Divergence with optimizer"
+    ),
+    "Consider trying multiple optimizers"
+  )
+  expect_false(attr(result, "converged"))
+})
+
 ## vcov and method combination ----
 
 test_that("mmrm works for vcov: Asymptotic and method: Sattherthwaite", {
