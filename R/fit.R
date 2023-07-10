@@ -40,6 +40,16 @@ fit_single_optimizer <- function(formula,
                                  formula_parts,
                                  ...,
                                  control = mmrm_control(...)) {
+  to_remove <- list(
+    # Transient visit to invalid parameters.
+    warnings = c("NA/NaN function evaluation")
+  )
+  as_diverged <- list(
+    errors = c(
+      "NA/NaN Hessian evaluation",
+      "L-BFGS-B needs finite values of 'fn'"
+    )
+  )
   if (missing(tmb_data) || missing(formula_parts)) {
     h_valid_formula(formula)
     assert_data_frame(data)
@@ -56,9 +66,8 @@ fit_single_optimizer <- function(formula,
         covariance = covariance,
         control = control
       ),
-      remove = list(
-        warnings = c("NA/NaN function evaluation") # Transient visit to invalid parameters.
-      )
+      remove = to_remove,
+      divergence = as_diverged
     )
   } else {
     assert_class(tmb_data, "mmrm_tmb_data")
@@ -69,22 +78,21 @@ fit_single_optimizer <- function(formula,
         tmb_data = tmb_data,
         control = control
       ),
-      remove = list(
-        warnings = c("NA/NaN function evaluation") # Transient visit to invalid parameters.
-      )
+      remove = to_remove,
+      divergence = as_diverged
     )
   }
-
-
   if (length(quiet_fit$errors)) {
     stop(quiet_fit$errors)
   }
   converged <- (length(quiet_fit$warnings) == 0L) &&
-    (quiet_fit$result$opt_details$convergence == 0)
+    (length(quiet_fit$divergence) == 0L) &&
+    isTRUE(quiet_fit$result$opt_details$convergence == 0)
   structure(
     quiet_fit$result,
     warnings = quiet_fit$warnings,
     messages = quiet_fit$messages,
+    divergence = quiet_fit$divergence,
     optimizer = names(control$optimizers)[1],
     converged = converged,
     class = c("mmrm_fit", class(quiet_fit$result))
@@ -144,11 +152,6 @@ refit_multiple_optimizers <- function(fit,
                                       control = mmrm_control(...)) {
   assert_class(fit, "mmrm_fit")
   assert_class(control, "mmrm_control")
-
-  # Extract the components of the original fit.
-  old_formula <- formula(fit)
-  old_data <- fit$data
-  old_weights <- fit$weights
 
   n_cores_used <- ifelse(
     .Platform$OS.type == "windows",
@@ -415,12 +418,21 @@ mmrm <- function(formula,
     drop_visit_levels = control$drop_visit_levels,
     allow_na_response = FALSE
   )
-  fit <- fit_single_optimizer(
-    tmb_data = tmb_data,
-    formula_parts = formula_parts,
-    control = control
-  )
-
+  fit <- list()
+  while ((length(fit) == 0) && length(control$optimizers) > 0) {
+    fit <- fit_single_optimizer(
+      tmb_data = tmb_data,
+      formula_parts = formula_parts,
+      control = control
+    )
+    if (length(fit) == 0) {
+      warning(paste0(
+        "Divergence with optimizer ", names(control$optimizers[1L]), " due to problems: ",
+        toString(attr(fit, "divergence"))
+      ))
+    }
+    control$optimizers <- control$optimizers[-1]
+  }
   if (!attr(fit, "converged")) {
     use_multiple <- length(control$optimizers) > 1L
     if (use_multiple) {

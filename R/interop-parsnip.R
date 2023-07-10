@@ -5,7 +5,9 @@
 #'
 #' @keywords internal
 parsnip_add_mmrm <- function(quietly = FALSE) {
-  if (!requireNamespace("parsnip", quietly = quietly)) return(FALSE)
+  if (!requireNamespace("parsnip", quietly = quietly)) {
+    return(FALSE)
+  }
 
   parsnip::set_model_engine(
     model = "linear_reg",
