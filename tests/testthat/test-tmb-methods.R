@@ -173,6 +173,118 @@ test_that("predict will return NA if data contains NA in covariates", {
   )
 })
 
+## integration test with SAS ----
+
+test_that("predict gives same result with sas in unstructured satterthwaite/Kenward-Roger", {
+  fit <- mmrm(FEV1 ~ ARMCD + us(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger")
+  full_frame <- model.frame(fit,
+    data = fev_data,
+    include = c("subject_var", "visit_var", "group_var", "response_var"),
+    na.action = "na.pass"
+  )
+  tmb_data <- h_mmrm_tmb_data(
+    fit$formula_parts, full_frame,
+    weights = rep(1, nrow(full_frame)),
+    reml = TRUE,
+    singular = "keep",
+    drop_visit_levels = FALSE,
+    allow_na_response = TRUE,
+    drop_levels = FALSE
+  )
+  sas_res_p <- c(44.9753553724207, 41.4074753229983)
+  sas_res_p_sd <- c(7.07537882030293, 4.72199122235202)
+  res <- h_get_prediction(tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov)
+  expect_equal(sas_res_p, res$prediction[c(1, 3), 1], tolerance = 1e-3)
+  expect_equal(sas_res_p_sd, sqrt(res$prediction[c(1, 3), 3]), tolerance = 1e-3)
+
+  sas_res_p <- c(44.9753553724207, 41.4074753229983)
+  sas_res_p_sd <- c(7.07537882030293, 4.72199122235202)
+  res <- h_get_prediction(tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov_adj)
+  expect_equal(sas_res_p, res$prediction[c(1, 3), 1], tolerance = 1e-3)
+  expect_equal(sas_res_p_sd, sqrt(res$prediction[c(1, 3), 3]), tolerance = 1e-3)
+})
+
+test_that("predict gives same result with sas in toep satterthwaite", {
+  fit <- mmrm(FEV1 ~ ARMCD + toep(AVISIT | USUBJID), data = fev_data)
+  full_frame <- model.frame(fit,
+    data = fev_data,
+    include = c("subject_var", "visit_var", "group_var", "response_var"),
+    na.action = "na.pass"
+  )
+  tmb_data <- h_mmrm_tmb_data(
+    fit$formula_parts, full_frame,
+    weights = rep(1, nrow(full_frame)),
+    reml = TRUE,
+    singular = "keep",
+    drop_visit_levels = FALSE,
+    allow_na_response = TRUE,
+    drop_levels = FALSE
+  )
+  sas_res_p <- c(49.2972533971016, 32.5585487765097)
+  sas_res_p_sd <- c(7.89495102841021, 7.32982693449642)
+  res <- h_get_prediction(tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov)
+  expect_equal(sas_res_p, res$prediction[c(1, 3), 1], tolerance = 1e-3)
+  expect_equal(sas_res_p_sd, sqrt(res$prediction[c(1, 3), 3]), tolerance = 1e-3)
+})
+
+test_that("predict gives same result with sas in ar1 satterthwaite/kenward-roger", {
+  fit <- mmrm(FEV1 ~ ARMCD + ar1(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger")
+  full_frame <- model.frame(fit,
+    data = fev_data,
+    include = c("subject_var", "visit_var", "group_var", "response_var"),
+    na.action = "na.pass"
+  )
+  tmb_data <- h_mmrm_tmb_data(
+    fit$formula_parts, full_frame,
+    weights = rep(1, nrow(full_frame)),
+    reml = TRUE,
+    singular = "keep",
+    drop_visit_levels = FALSE,
+    allow_na_response = TRUE,
+    drop_levels = FALSE
+  )
+  sas_res_p <- c(42.7404650408987, 34.8347780646782)
+  sas_res_p_sd <- c(8.469966361884, 7.88346546930503)
+  res <- h_get_prediction(tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov)
+  expect_equal(sas_res_p, res$prediction[c(1, 3), 1], tolerance = 1e-3)
+  expect_equal(sas_res_p_sd, sqrt(res$prediction[c(1, 3), 3]), tolerance = 1e-3)
+
+  sas_res_p <- c(42.7404650408987, 34.8347780646782)
+  sas_res_p_sd <- c(8.50085016679827, 7.91455389252041)
+  res <- h_get_prediction(tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov_adj)
+  expect_equal(sas_res_p, res$prediction[c(1, 3), 1], tolerance = 1e-3)
+  expect_equal(sas_res_p_sd, sqrt(res$prediction[c(1, 3), 3]), tolerance = 1e-2)
+})
+
+test_that("predict gives same result with sas in cs satterthwaite/kenward-roger", {
+  fit <- mmrm(FEV1 ~ ARMCD + cs(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger")
+  full_frame <- model.frame(fit,
+    data = fev_data,
+    include = c("subject_var", "visit_var", "group_var", "response_var"),
+    na.action = "na.pass"
+  )
+  tmb_data <- h_mmrm_tmb_data(
+    fit$formula_parts, full_frame,
+    weights = rep(1, nrow(full_frame)),
+    reml = TRUE,
+    singular = "keep",
+    drop_visit_levels = FALSE,
+    allow_na_response = TRUE,
+    drop_levels = FALSE
+  )
+  sas_res_p <- c(44.0595030539703, 44.0595030539703)
+  sas_res_p_sd <- c(9.10525401644359, 9.10525401644359)
+  res <- h_get_prediction(tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov)
+  expect_equal(sas_res_p, res$prediction[c(1, 3), 1], tolerance = 1e-3)
+  expect_equal(sas_res_p_sd, sqrt(res$prediction[c(1, 3), 3]), tolerance = 1e-3)
+
+  sas_res_p <- c(44.0595030539703, 44.0595030539703)
+  sas_res_p_sd <- c(9.13792825096229, 9.13792825096229)
+  res <- h_get_prediction(tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov_adj)
+  expect_equal(sas_res_p, res$prediction[c(1, 3), 1], tolerance = 1e-3)
+  expect_equal(sas_res_p_sd, sqrt(res$prediction[c(1, 3), 3]), tolerance = 1e-2)
+})
+
 # model.frame ----
 
 test_that("model.frame works as expected with defaults", {
