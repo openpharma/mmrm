@@ -443,7 +443,7 @@ h_residuals_response <- function(object) {
 #' fitted in the model, and m is the number \code{nsim} of simulated responses.
 simulate.mmrm_tmb <- function(object, nsim = 1,
                               newdata = NULL,
-                              method = c("conditional", "marginal"),
+                              method = "conditional",
                               ...){
 
   if(is.null(newdata)){
@@ -484,8 +484,29 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
     # order data.frame
     newdata <- dplyr::arrange(newdata, !!object$formula_parts$subject_var, !!object$formula_parts$visit_var)
 
+    # make sure new data has the same levels as original data
+    full_frame <- model.frame(
+      object,
+      data = newdata,
+      include = c("subject_var", "visit_var", "group_var", "response_var"),
+      na.action = "na.pass"
+    )
+    tmb_data <- h_mmrm_tmb_data(
+      object$formula_parts, full_frame,
+      weights = rep(1, nrow(full_frame)),
+      reml = TRUE,
+      singular = "keep",
+      drop_visit_levels = FALSE,
+      allow_na_response = TRUE,
+      drop_levels = FALSE
+    )
+
+    # get prediction and prediction variance
+    mu <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
+    A <- h_get_prediction_variance(object, n_sim, tmb_data) # TODO what happens for n_sim == 1?
+
     # build data.frame of prediction vectors
-    ret <- predict(object, newdata = newdata, se.fit = FALSE, interval = "none")
+    ret <- mu$prediction
     ret <- data.frame(replicate(nsim, ret))
 
     # get covariance matrix
