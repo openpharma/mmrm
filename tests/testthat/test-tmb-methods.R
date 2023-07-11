@@ -285,6 +285,36 @@ test_that("predict gives same result with sas in cs satterthwaite/kenward-roger"
   expect_equal(sas_res_p_sd, sqrt(res$prediction[c(1, 3), 3]), tolerance = 1e-2)
 })
 
+
+test_that("predict gives same result with sas in sp_exp satterthwaite/kenward-roger", {
+  fit <- mmrm(FEV1 ~ ARMCD + sp_exp(VISITN, VISITN2 | USUBJID), data = fev_data, method = "Kenward-Roger")
+  full_frame <- model.frame(fit,
+    data = fev_data,
+    include = c("subject_var", "visit_var", "group_var", "response_var"),
+    na.action = "na.pass"
+  )
+  tmb_data <- h_mmrm_tmb_data(
+    fit$formula_parts, full_frame,
+    weights = rep(1, nrow(full_frame)),
+    reml = TRUE,
+    singular = "keep",
+    drop_visit_levels = FALSE,
+    allow_na_response = TRUE,
+    drop_levels = FALSE
+  )
+  sas_res_p <- c(43.0487253094136, 41.7658999941086)
+  sas_res_p_sd <- c(8.70129696071474, 8.78510718323017)
+  res <- h_get_prediction(tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov)
+  expect_equal(sas_res_p, res$prediction[c(1, 3), 1], tolerance = 1e-3)
+  expect_equal(sas_res_p_sd, sqrt(res$prediction[c(1, 3), 3]), tolerance = 1e-3)
+
+  sas_res_p <- c(43.0487253094136, 41.7658999941086)
+  sas_res_p_sd <- c(8.73761421183867, 8.82021391504478)
+  res <- h_get_prediction(tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov_adj)
+  expect_equal(sas_res_p, res$prediction[c(1, 3), 1], tolerance = 1e-3)
+  expect_equal(sas_res_p_sd, sqrt(res$prediction[c(1, 3), 3]), tolerance = 1e-2)
+})
+
 # model.frame ----
 
 test_that("model.frame works as expected with defaults", {
