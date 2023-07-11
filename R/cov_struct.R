@@ -228,7 +228,7 @@ tmb_cov_type <- function(cov) {
 #' cov_struct("csh", "AVISITN", "USUBJID")
 #' cov_struct("spatial", c("VISITA", "VISITB"), group = "GRP", subject = "SBJ")
 #'
-#' @family `cov_struct`
+#' @family covariance types
 #' @export
 cov_struct <- function(
     type = cov_types(), visits, subject, group = character(),
@@ -396,7 +396,7 @@ print.cov_struct <- function(x, ...) {
 #' # when part of a full formula, suppress warnings using `warn_partial = FALSE`
 #' as.cov_struct(y ~ x + csh(visit | group / subject), warn_partial = FALSE)
 #'
-#' @family `cov_struct`
+#' @family covariance types
 #' @export
 as.cov_struct <- function(x, ...) { # nolint
   UseMethod("as.cov_struct")

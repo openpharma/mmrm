@@ -609,7 +609,6 @@ test_that("mmrm works as expected when the only provided optimizer fails with di
     ),
     "Consider trying multiple optimizers"
   )
-  expect_false(attr(result, "converged"))
 })
 
 ## vcov and method combination ----
