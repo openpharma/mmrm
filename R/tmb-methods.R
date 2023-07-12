@@ -446,6 +446,8 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
                               method = "conditional",
                               ...){
 
+  method <- match.arg(method)
+
   if(is.null(newdata)){
     # build data.frame of prediction vectors
     ret <- fitted(object)
@@ -480,7 +482,7 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
       # simulate from covariance matrix
       ret[inds,] <- ret[inds, , drop=FALSE] + MASS::mvrnorm(nsim, rep.int(0, num_visits), covmat_i)
     }
-  }else{
+  }else if(method == "conditional"){
     # order data.frame
     newdata <- dplyr::arrange(newdata, !!object$formula_parts$subject_var, !!object$formula_parts$visit_var)
 
@@ -503,10 +505,68 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
 
     # get prediction and prediction variance
     mu <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
-    A <- h_get_prediction_variance(object, n_sim, tmb_data) # TODO what happens for n_sim == 1?
+    A_mat <- h_get_prediction_variance(object, n_sim, tmb_data) # TODO what happens for n_sim == 1?
 
     # build data.frame of prediction vectors
-    ret <- mu$prediction
+    ret <- mu$prediction[,1]
+    ret <- data.frame(replicate(nsim, ret))
+
+    # get covariance matrix
+    covmat <- VarCorr(object)
+    grouped <- if(object$tmb_data$n_groups > 1) TRUE else FALSE
+
+    # get dataframe values
+    n_subjects <- tmb_data$n_subjects
+    subject_n_visits <- tmb_data$subject_n_visits
+    subject_zero_inds <- tmb_data$subject_zero_inds
+    visit_zero_inds <- tmb_data$visits_zero_inds
+
+      for(i in 1:n_subjects){
+
+        # Obtain indices of data.frame belonging to subject i
+        num_visits <- subject_n_visits[i]
+        inds <- (subject_zero_inds[i] + 1) : (subject_zero_inds[i] + num_visits)
+        visits <- visits_zero_inds[inds] + 1
+
+        # get relevant covariance matrix for subject i
+        covmat_i <- if(grouped){
+          covmat[[object$tmb_data$subject_groups[i]]]
+        }else{
+          covmat
+        }
+        # subset covariance matrix
+        covmat_i <- covmat_i[visits, visits]
+
+        # simulate from covariance matrix
+        ret[inds,] <- ret[inds, , drop=FALSE] + MASS::mvrnorm(nsim, rep.int(0, num_visits), covmat_i)
+      }
+  }else if(method == "marginal"){
+    # order data.frame
+    newdata <- dplyr::arrange(newdata, !!object$formula_parts$subject_var, !!object$formula_parts$visit_var)
+
+    # make sure new data has the same levels as original data
+    full_frame <- model.frame(
+      object,
+      data = newdata,
+      include = c("subject_var", "visit_var", "group_var", "response_var"),
+      na.action = "na.pass"
+    )
+    tmb_data <- h_mmrm_tmb_data(
+      object$formula_parts, full_frame,
+      weights = rep(1, nrow(full_frame)),
+      reml = TRUE,
+      singular = "keep",
+      drop_visit_levels = FALSE,
+      allow_na_response = TRUE,
+      drop_levels = FALSE
+    )
+
+    # get prediction and prediction variance
+    mu <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
+    A_mat <- h_get_prediction_variance(object, n_sim, tmb_data) # TODO what happens for n_sim == 1?
+
+    # build data.frame of prediction vectors
+    ret <- mu$prediction[,1]
     ret <- data.frame(replicate(nsim, ret))
 
     # get covariance matrix
