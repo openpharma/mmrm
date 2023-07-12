@@ -167,9 +167,8 @@ PROC MIXED DATA = fev_data method=reml;
 RUN;
 ```
 
-However, there are some differences between `SAS` implementations and our `mmrm` implementations, described as follows:
+However, there are some differences between the `SAS` implementation and our `mmrm` package, described as follows:
 
-1. While `mmrm` and `SAS` both provides prediction mean (conditional on other observations), `mmrm` do not predict those observed records.
-1. The prediction error is different in two implementations. In `SAS` the prediction error conditional on $\theta$ is provided, while
-in `mmrm` the marginal prediction error is provided.
-1. The intervals of prediction in `SAS` is using the t distribution, while in `mmrm` we use normal distribution.
+1. While `mmrm` and `SAS` both provide predicted means (conditional on other observations) for unobserved records, `SAS` also provides predicted means for observed records while `mmrm` does not. The rationale is that in the `mmrm` package we want to be consistent with the notion of predictions conditional on the observed records - which means that observed records are observed and therefore there is no prediction uncertainty anymore.
+1. The prediction standard error is different between `mmrm` and `SAS`. While in `SAS` the prediction standard error is conditional on the estimated variance parameters $\theta$, in `mmrm` the marginal prediction standard error is provided. The rationale is that in the `mmrm` package we want to take into account the full uncertainty about parameter estimates including $\theta$.
+1. The prediction intervals in `SAS` are based on the t distribution, while currently in `mmrm` we use the normal distribution. We will be considering an extension towards using the t distribution in the future and welcome feedback on this detail.
