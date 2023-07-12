@@ -12,7 +12,13 @@ test_that("h_record_all_outputs correctly removes specified messages", {
     },
     remove = list(messages = c("Almost done", "bla"))
   )
-  expected <- list(result = 3, warnings = "something went wrong", errors = NULL, messages = "O nearly done")
+  expected <- list(
+    result = 3,
+    warnings = "something went wrong",
+    errors = NULL,
+    messages = "O nearly done",
+    divergence = NULL
+  )
   expect_identical(result, expected)
 })
 
@@ -26,12 +32,29 @@ test_that("h_record_all_outputs works as expected with no removal list given for
     x + y
   })
   expected <- list(
-    result = 3, warnings = "something went wrong", errors = NULL,
-    messages = c("O nearly done", "oh noo")
+    result = 3,
+    warnings = "something went wrong",
+    errors = NULL,
+    messages = c("O nearly done", "oh noo"),
+    divergence = NULL
   )
   expect_identical(result, expected)
 })
 
+test_that("h_record_all_outputs catches divergence errors, warnings, messages as expected", {
+  result <- expect_silent(h_record_all_output(
+    {
+      x <- 1
+      y <- 2
+      warning("div1")
+      message("div2")
+      stop("div3")
+      x + y
+    },
+    divergence = list(warnings = "div1", errors = "div3", messages = "div2")
+  ))
+  expect_setequal(result$divergence, c("div1", "div2", "div3"))
+})
 
 # h_tr ----
 
