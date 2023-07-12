@@ -152,3 +152,24 @@ of $\theta$ and variance-covariance matrix of $\theta$ are provided.
 Using the generated $\theta_{new}$, we then obtain the $\beta_{new}$ and its variance-covariance matrix, with $\theta_{new}$ and
 the data used in fit. Then we simulate once with `simulate(method = "conditional", beta = beta_new, theta = theta_new)`.
 Pool all the repetition together and we get the marginal simulation results.
+
+## Comparison with `SAS`
+
+In `SAS`, from `proc mixed`, we are able to generate predictions using `outp` argument in `model` statement.
+An example will be
+
+```{sas eval=FALSE}
+PROC MIXED DATA = fev_data method=reml;
+  CLASS RACE(ref = 'Asian') AVISIT(ref = 'VIS4') SEX(ref = 'Male') ARMCD(ref = 'PBO') USUBJID;
+  MODEL FEV1 = ARMCD / ddfm=Satterthewaite solution chisq outpm=predm outp=pred;
+  REPEATED AVISIT / subject=USUBJID type=un r rcorr;
+  LSMEANS ARMCD / pdiff=all cl alpha=0.05 slice=AVISIT;
+RUN;
+```
+
+However, there are some differences between `SAS` implementations and our `mmrm` implementations, described as follows:
+
+1. While `mmrm` and `SAS` both provides prediction mean (conditional on other observations), `mmrm` do not predict those observed records.
+1. The prediction error is different in two implementations. In `SAS` the prediction error conditional on $\theta$ is provided, while
+in `mmrm` the marginal prediction error is provided.
+1. The intervals of prediction in `SAS` is using the `t` distribution, while in `mmrm` we use normal distribution.
