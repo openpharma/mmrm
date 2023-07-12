@@ -419,6 +419,7 @@ mmrm <- function(formula,
     allow_na_response = FALSE
   )
   fit <- list()
+  names_all_optimizers <- names(control$optimizers)
   while ((length(fit) == 0) && length(control$optimizers) > 0) {
     fit <- fit_single_optimizer(
       tmb_data = tmb_data,
@@ -434,13 +435,11 @@ mmrm <- function(formula,
     control$optimizers <- control$optimizers[-1]
   }
   if (!attr(fit, "converged")) {
-    use_multiple <- length(control$optimizers) > 1L
-    if (use_multiple) {
-      control_remain <- control
-      control_remain$optimizers <- control$optimizers[-1]
+    more_optimizers <- length(control$optimizers) >= 1L
+    if (more_optimizers) {
       fit <- refit_multiple_optimizers(
         fit = fit,
-        control = control_remain
+        control = control
       )
     } else {
       all_problems <- unlist(
@@ -448,9 +447,9 @@ mmrm <- function(formula,
         use.names = FALSE
       )
       stop(paste0(
-        "Chosen optimizer '", toString(names(control$optimizers)), "' led to problems during model fit:\n",
+        "Chosen optimizers '", toString(names_all_optimizers), "' led to problems during model fit:\n",
         paste(paste0(seq_along(all_problems), ") ", all_problems), collapse = ";\n"), "\n",
-        "Consider trying multiple optimizers."
+        "Consider trying multiple or different optimizers."
       ))
     }
   }

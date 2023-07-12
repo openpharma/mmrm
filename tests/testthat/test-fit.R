@@ -348,7 +348,7 @@ test_that("mmrm falls back to other optimizers if default does not work", {
       mmrm(formula, fev_data, optimizer_fun = fake_optimizer),
       "Divergence with optimizer"
     ),
-    "Consider trying multiple optimizers"
+    "Consider trying multiple or different optimizers"
   )
 
   # But another one works.
@@ -607,7 +607,7 @@ test_that("mmrm works as expected when the only provided optimizer fails with di
       ),
       "Divergence with optimizer"
     ),
-    "Consider trying multiple optimizers"
+    "Consider trying multiple or different optimizers"
   )
 })
 
