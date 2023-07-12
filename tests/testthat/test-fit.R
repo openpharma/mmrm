@@ -153,6 +153,38 @@ test_that("fit_single_optimizer fails if formula contains `.`", {
   )
 })
 
+test_that("fit_single_optimizer signals non-convergence but does not fail for finite values error", {
+  fake_optimizer <- function(par, fun, grad, ...) {
+    stop("L-BFGS-B needs finite values of 'fn'")
+  }
+  result <- expect_silent(fit_single_optimizer(
+    formula = FEV1 ~ AVISIT + us(AVISIT | USUBJID),
+    data = fev_data,
+    weights = rep(1, nrow(fev_data)),
+    control = mmrm_control(
+      optimizer_fun = fake_optimizer
+    )
+  ))
+  expect_false(attr(result, "converged"))
+  expect_identical(attr(result, "divergence"), "L-BFGS-B needs finite values of 'fn'")
+})
+
+test_that("fit_single_optimizer signals non-convergence but does not fail for NA/NaN Hessian error", {
+  fake_optimizer <- function(par, fun, grad, ...) {
+    stop("NA/NaN Hessian evaluation")
+  }
+  result <- expect_silent(fit_single_optimizer(
+    formula = FEV1 ~ AVISIT + us(AVISIT | USUBJID),
+    data = fev_data,
+    weights = rep(1, nrow(fev_data)),
+    control = mmrm_control(
+      optimizer_fun = fake_optimizer
+    )
+  ))
+  expect_false(attr(result, "converged"))
+  expect_identical(attr(result, "divergence"), "NA/NaN Hessian evaluation")
+})
+
 # h_summarize_all_fits ----
 
 test_that("h_summarize_all_fits works as expected", {
@@ -305,20 +337,32 @@ test_that("mmrm works as expected for toeplitz", {
 ## general ----
 
 test_that("mmrm falls back to other optimizers if default does not work", {
-  skip_on_cran()
-
   formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
-  data_small <- fev_data[1:50, ]
-  # Default does not work.
+
+  # Chosen optimizer does not work.
+  fake_optimizer <- function(par, fun, grad, ...) {
+    stop("NA/NaN Hessian evaluation")
+  }
   expect_error(
-    mmrm(formula, data_small, optimizer = "L-BFGS-B"),
-    "Model convergence problem"
+    expect_warning(
+      mmrm(formula, fev_data, optimizer_fun = fake_optimizer),
+      "Divergence with optimizer"
+    ),
+    "Consider trying multiple or different optimizers"
   )
+
   # But another one works.
   # Note: We disable parallel processing here to comply with CRAN checks.
-  result <- expect_silent(mmrm(formula, data_small, n_cores = 1L))
+  expect_warning(
+    result <- mmrm(
+      formula, fev_data,
+      n_cores = 1L,
+      optimizer_fun = c(fake = fake_optimizer, h_get_optimizers("L-BFGS-B"))
+    ),
+    "Divergence with optimizer"
+  )
   expect_true(attr(result, "converged"))
-  expect_false(identical(attr(result, "optimizer"), "L-BFGS-B"))
+  expect_true(identical(attr(result, "optimizer"), "L-BFGS-B"))
 })
 
 test_that("mmrm fails if no optimizer works", {
@@ -514,6 +558,56 @@ test_that("mmrm fails if formula contains `.`", {
   expect_error(
     mmrm(FEV1 ~ ., data = fev_data, weights = rep(1, 800)),
     "`.` is not allowed in mmrm models!"
+  )
+})
+
+test_that("mmrm can proceed to second optimizer if first one has divergence error", {
+  fake_optimizer <- function(par, fun, grad, ...) {
+    stop("NA/NaN Hessian evaluation")
+  }
+  expect_warning(
+    result <- mmrm(
+      formula = FEV1 ~ ARMCD + us(AVISIT | USUBJID),
+      data = fev_data,
+      control = mmrm_control(optimizers = c(fake = fake_optimizer, h_get_optimizers()))
+    ),
+    "Divergence with optimizer fake due to problems"
+  )
+  expect_true(attr(result, "converged"))
+})
+
+test_that("mmrm behaves correctly when some of alternative optimizers have divergence errors", {
+  fake_optimizer <- function(par, fun, grad, ...) {
+    stop("NA/NaN Hessian evaluation")
+  }
+  normal_optimizers <- h_get_optimizers()
+  expect_warning(
+    result <- mmrm(
+      formula = FEV1 ~ ARMCD + us(AVISIT | USUBJID),
+      data = fev_data,
+      control = mmrm_control(
+        optimizers = c(fake = fake_optimizer, normal_optimizers[1:2], fake2 = fake_optimizer)
+      )
+    ),
+    "Divergence with optimizer fake due to problems"
+  )
+  expect_true(attr(result, "converged"))
+})
+
+test_that("mmrm works as expected when the only provided optimizer fails with divergence error", {
+  fake_optimizer <- function(par, fun, grad, ...) {
+    stop("NA/NaN Hessian evaluation")
+  }
+  expect_error(
+    expect_warning(
+      result <- mmrm(
+        formula = FEV1 ~ ARMCD + us(AVISIT | USUBJID),
+        data = fev_data,
+        optimizer_fun = fake_optimizer
+      ),
+      "Divergence with optimizer"
+    ),
+    "Consider trying multiple or different optimizers"
   )
 })
 
