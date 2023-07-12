@@ -172,4 +172,4 @@ However, there are some differences between `SAS` implementations and our `mmrm`
 1. While `mmrm` and `SAS` both provides prediction mean (conditional on other observations), `mmrm` do not predict those observed records.
 1. The prediction error is different in two implementations. In `SAS` the prediction error conditional on $\theta$ is provided, while
 in `mmrm` the marginal prediction error is provided.
-1. The intervals of prediction in `SAS` is using the `t` distribution, while in `mmrm` we use normal distribution.
+1. The intervals of prediction in `SAS` is using the t distribution, while in `mmrm` we use normal distribution.
