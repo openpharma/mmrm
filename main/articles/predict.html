@@ -39,7 +39,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9028</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9029</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -77,14 +77,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.2.2">v0.2.2</a> </div></li>
-<!-- end dropdown for versions -->
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-reports">Reports</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-reports">
@@ -279,6 +271,42 @@ Then we simulate once with
 Pool all the repetition together and we get the marginal simulation
 results.</p>
 </div>
+</div>
+<div class="section level2">
+<h2 id="comparison-with-sas">Comparison with <code>SAS</code><a class="anchor" aria-label="anchor" href="#comparison-with-sas"></a>
+</h2>
+<p>In <code>SAS</code>, from <code>proc mixed</code>, we are able to
+generate predictions using the <code>outp</code> argument in the
+<code>model</code> statement. For example:</p>
+<pre class="sas"><code>PROC MIXED DATA = fev_data method=reml;
+  CLASS RACE(ref = 'Asian') AVISIT(ref = 'VIS4') SEX(ref = 'Male') ARMCD(ref = 'PBO') USUBJID;
+  MODEL FEV1 = ARMCD / ddfm=Satterthewaite solution chisq outp=pred;
+  REPEATED AVISIT / subject=USUBJID type=un r rcorr;
+  LSMEANS ARMCD / pdiff=all cl alpha=0.05 slice=AVISIT;
+RUN;</code></pre>
+<p>However, there are some differences between the <code>SAS</code>
+implementation and our <code>mmrm</code> package, described as
+follows:</p>
+<ol style="list-style-type: decimal">
+<li>While <code>mmrm</code> and <code>SAS</code> both provide predicted
+means (conditional on other observations) for unobserved records,
+<code>SAS</code> also provides predicted means for observed records
+while <code>mmrm</code> does not. The rationale is that in the
+<code>mmrm</code> package we want to be consistent with the notion of
+predictions conditional on the observed records - which means that
+observed records are observed and therefore there is no prediction
+uncertainty anymore.</li>
+<li>The prediction standard error is different between <code>mmrm</code>
+and <code>SAS</code>. While in <code>SAS</code> the prediction standard
+error is conditional on the estimated variance parameters <span class="math inline">\(\theta\)</span>, in <code>mmrm</code> the marginal
+prediction standard error is provided. The rationale is that in the
+<code>mmrm</code> package we want to take into account the full
+uncertainty about parameter estimates including <span class="math inline">\(\theta\)</span>.</li>
+<li>The prediction intervals in <code>SAS</code> are based on the t
+distribution, while currently in <code>mmrm</code> we use the normal
+distribution. We will be considering an extension towards using the t
+distribution in the future and welcome feedback on this detail.</li>
+</ol>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
