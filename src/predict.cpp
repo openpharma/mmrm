@@ -75,7 +75,12 @@ List predict(List mmrm_data, NumericVector theta, NumericVector beta, NumericMat
     matrix<double> na_sel_matrix = get_select_matrix<double>(as<std::vector<int>>(index_zero_i_na), n_visits_i); // select matrix based on already subsetted visits
     matrix<double> valid_sel_matrix = get_select_matrix<double>(as<std::vector<int>>(index_zero_i_valid), n_visits_i);
     matrix<double> sigma_12 = na_sel_matrix * sigma_full * valid_sel_matrix.transpose();
-    matrix<double> sigma_11 = chols_group.cache[subject_group_i]->get_sigma(visit_na, dist_i);
+    matrix<double> sigma_11;
+    if (!is_spatial) {
+      sigma_11 = chols_group.cache[subject_group_i]->get_sigma(visit_na, dist_i);
+    } else {
+      sigma_11 = na_sel_matrix * sigma_full * na_sel_matrix.transpose();
+    }
     matrix<double> x_na = na_sel_matrix * Xi;
     matrix<double> x_valid = valid_sel_matrix * Xi;
     vector<double> y_valid = as_num_vector_tmb(y_i[y_valid_i]);
