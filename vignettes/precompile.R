@@ -1,4 +1,4 @@
-# Precompil vignettes which is too slow.
+# Precompile vignettes which are too slow.
 # Must compile and install the `mmrm` package before knitting the vignette.
 
 library(knitr)
