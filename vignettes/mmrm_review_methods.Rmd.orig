@@ -22,7 +22,7 @@ editor_options:
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE, comment = "#>", out.width = "100%",
-  dpi = 150, fig.path = "vignettes/mmrm-"
+  dpi = 150, fig.path = "mmrm-"
 )
 ```
 
