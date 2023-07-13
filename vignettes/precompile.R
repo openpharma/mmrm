@@ -3,4 +3,4 @@
 
 library(knitr)
 
-knit('vignettes/mmrm_review_methods.Rmd.orig', output = 'vignettes/mmrm_review_methods.Rmd')
+knit("vignettes/mmrm_review_methods.Rmd.orig", output = "vignettes/mmrm_review_methods.Rmd")
