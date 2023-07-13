@@ -505,15 +505,10 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
 
     # get prediction and prediction variance
     mu <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
-    A_mat <- h_get_prediction_variance(object, n_sim, tmb_data) # TODO what happens for n_sim == 1?
 
     # build data.frame of prediction vectors
     ret <- mu$prediction[,1]
     ret <- data.frame(replicate(nsim, ret))
-
-    # get covariance matrix
-    covmat <- VarCorr(object)
-    grouped <- if(object$tmb_data$n_groups > 1) TRUE else FALSE
 
     # get dataframe values
     n_subjects <- tmb_data$n_subjects
@@ -523,22 +518,14 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
 
       for(i in 1:n_subjects){
 
-        # Obtain indices of data.frame belonging to subject i
-        num_visits <- subject_n_visits[i]
-        inds <- (subject_zero_inds[i] + 1) : (subject_zero_inds[i] + num_visits)
-        visits <- visits_zero_inds[inds] + 1
+        # Obtain indices of data.frame belonging to subject i (iterate by 1, since indices from cpp are 0-order)
+        inds <- mu$index[[i]] + 1
 
         # get relevant covariance matrix for subject i
-        covmat_i <- if(grouped){
-          covmat[[object$tmb_data$subject_groups[i]]]
-        }else{
-          covmat
-        }
-        # subset covariance matrix
-        covmat_i <- covmat_i[visits, visits]
+        covmat_i <- mu$covariance[[i]]
 
         # simulate from covariance matrix
-        ret[inds,] <- ret[inds, , drop=FALSE] + MASS::mvrnorm(nsim, rep.int(0, num_visits), covmat_i)
+        ret[inds,] <- ret[inds, , drop=FALSE] + MASS::mvrnorm(nsim, rep.int(0, length(inds)), covmat_i)
       }
   }else if(method == "marginal"){
     # order data.frame
@@ -563,41 +550,27 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
 
     # get prediction and prediction variance
     mu <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
-    A_mat <- h_get_prediction_variance(object, n_sim, tmb_data) # TODO what happens for n_sim == 1?
 
     # build data.frame of prediction vectors
     ret <- mu$prediction[,1]
     ret <- data.frame(replicate(nsim, ret))
 
-    # get covariance matrix
-    covmat <- VarCorr(object)
-    grouped <- if(object$tmb_data$n_groups > 1) TRUE else FALSE
-
     # get dataframe values
-    subjects <- unique(newdata$subject) # TODO
-    n_subjects <- length(subjects) # TODO
-    subject_n_visits <- apply(1:n_sujbects, 1, function(x) sum(subjects[subjects == x])) # TODO
-    subject_zero_inds <- apply(1:n_subjects, 1, function(x) first(subjects[subjects == x])) # TODO get zero inds
-    visit_zero_inds <- # TODO get visits
+    n_subjects <- tmb_data$n_subjects
+    subject_n_visits <- tmb_data$subject_n_visits
+    subject_zero_inds <- tmb_data$subject_zero_inds
+    visit_zero_inds <- tmb_data$visits_zero_inds
 
       for(i in 1:n_subjects){
 
         # Obtain indices of data.frame belonging to subject i
-        num_visits <- subject_n_visits[i]
-        inds <- (subject_zero_inds[i] + 1) : (subject_zero_inds[i] + num_visits)
-        visits <- visits_zero_inds[inds] + 1
+        inds <- mu$index[[i]] + 1
 
         # get relevant covariance matrix for subject i
-        covmat_i <- if(grouped){
-          covmat[[object$tmb_data$subject_groups[i]]]
-        }else{
-          covmat
-        }
-        # subset covariance matrix
-        covmat_i <- covmat_i[visits, visits]
+        covmat_i <- mu$covariance[[i]]
 
         # simulate from covariance matrix
-        ret[inds,] <- ret[inds, , drop=FALSE] + MASS::mvrnorm(nsim, rep.int(0, num_visits), covmat_i)
+        ret[inds,] <- ret[inds, , drop=FALSE] + MASS::mvrnorm(nsim, rep.int(0, length(inds)), covmat_i)
       }
   }
 
