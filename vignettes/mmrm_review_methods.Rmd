@@ -19,24 +19,9 @@ editor_options:
     wrap: 72
 ---
 
-```{r setup, message=FALSE, warning=FALSE, include=FALSE}
-library(MASS)
-library(clusterGeneration)
-library(dplyr)
-library(purrr)
-library(microbenchmark)
-library(stringr)
-library(mmrm)
-library(lme4)
-library(nlme)
-library(glmmTMB)
-library(sasr)
-library(knitr)
-library(emmeans)
-library(ggplot2)
 
-set.seed(5123)
-```
+
+
 
 # Introduction
 
@@ -430,99 +415,7 @@ The `mmrm`, `PROC MIXED`, `gls`, `lmer`, and `glmmTMB` functions are applied to
 the FEV dataset 10 times. The convergence times are recorded for each replicate
 and are reported in the table below.
 
-```{r, warning=FALSE, message=FALSE, echo=FALSE}
-# set the number of replicates
-n_reps <- 10
 
-# assess convergence times for R-based MMRM procedures
-mb <- microbenchmark(
-  times = n_reps,
-  gls = gls(
-    FEV1 ~ RACE + ARMCD * AVISIT,
-    data = fev_data,
-    na.action = na.omit,
-    correlation = nlme::corSymm(form = ~ VISITN | USUBJID),
-    weights = nlme::varIdent(form = ~ 1 | VISITN)
-  ),
-  mmrm = mmrm(
-    formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
-    data = fev_data
-  ),
-  lmer = lmer(
-    FEV1 ~ RACE + ARMCD * AVISIT + (0 + AVISIT | USUBJID),
-    data = fev_data,
-    control = lmerControl(check.nobs.vs.nRE = "ignore"),
-    na.action = na.omit
-  ),
-  glmmTMB = glmmTMB(
-    FEV1 ~ RACE + ARMCD * AVISIT + us(0 + AVISIT | USUBJID),
-    data = fev_data,
-    dispformula = ~0,
-    REML = TRUE
-  )
-)
-
-# construct the partial results table based on R-based MMRM procedures
-partial_conv_time_tbl <- mb %>%
-  summary() %>%
-  dplyr::arrange(median) %>%
-  dplyr::select(expression = expr, median, lower = lq, upper = uq, evaluations = neval)
-
-# fit PROC MIXED 10 times if a sascfg file exists
-if (file.exists("sascfg_personal.py")) {
-  fit_times <- sapply(
-    seq_len(n_reps),
-    function(x) {
-      # load the data into SAS
-      df2sd(fev_data, "fev_data")
-
-      sas_code <- "
-      PROC MIXED DATA = fev_data cl method=reml;
-        CLASS AVISIT(ref = 'VIS1') RACE(ref = 'Asian') ARMCD(ref = 'PBO') USUBJID;
-        MODEL FEV1 = RACE ARMCD AVISIT ARMCD*AVISIT / ddfm=satterthwaite solution chisq;
-        REPEATED AVISIT / subject=USUBJID type=un r rcorr;
-     RUN;
-    "
-
-      # generate the SAS output
-      sas_result <- run_sas(sas_code)
-
-      # extract the fit time (seconds)
-      fit_time <- sas_result$LOG %>%
-        str_extract("(?<=real time)\\s*[0-9.]+") %>%
-        as.numeric()
-
-      # convert fit times from seconds to milliseconds
-      fit_time * 1000
-    }
-  )
-
-  # add PROC MIXED results to convergence results table
-  proc_mixed_row <- tibble(
-    expression = "PROC MIXED",
-    median = median(fit_times),
-    lower = quantile(fit_times, probs = 0.25),
-    upper = quantile(fit_times, probs = 0.75),
-    evaluations = n_reps
-  )
-  conv_time_tbl <- bind_rows(partial_conv_time_tbl, proc_mixed_row)
-} else {
-  conv_time_tbl <- partial_conv_time_tbl
-}
-
-# format table in markdown
-conv_time_tbl %>%
-  arrange(median) %>%
-  transmute(
-    Implementation = expression,
-    Median = median,
-    `First Quartile` = lower,
-    `Third Quartile` = upper
-  ) %>%
-  knitr::kable(
-    caption = "Comparison of convergence times: milliseconds", digits = 2
-  )
-```
 
 It is clear from these results that `mmrm` converges significantly faster than
 other R functions. Though not demonstrated here, this is generally true
@@ -534,99 +427,7 @@ fastest procedure on average, however.
 The MMRM implementations are now applied to the BCVA dataset 10 times. The
 convergence times are presented below.
 
-```{r, warning=FALSE, message=FALSE, echo=FALSE}
-# set the number of replicates
-n_reps <- 10
 
-# assess convergence times for R-based MMRM procedures
-mb <- microbenchmark(
-  times = n_reps,
-  gls = gls(
-    BCVA_CHG ~ BCVA_BL + RACE + ARMCD * AVISIT,
-    data = bcva_data,
-    na.action = na.omit,
-    correlation = nlme::corSymm(form = ~ VISITN | USUBJID),
-    weights = nlme::varIdent(form = ~ 1 | VISITN)
-  ),
-  mmrm = mmrm(
-    formula = BCVA_CHG ~ BCVA_BL + RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
-    data = bcva_data
-  ),
-  lmer = lmer(
-    BCVA_CHG ~ BCVA_BL + RACE + ARMCD * AVISIT + (0 + AVISIT | USUBJID),
-    data = bcva_data,
-    control = lmerControl(check.nobs.vs.nRE = "ignore"),
-    na.action = na.omit
-  ),
-  glmmTMB = glmmTMB(
-    BCVA_CHG ~ BCVA_BL + RACE + ARMCD * AVISIT + us(0 + AVISIT | USUBJID),
-    data = bcva_data,
-    dispformula = ~0,
-    REML = TRUE
-  )
-)
-
-# construct the partial results table based on R-based MMRM procedures
-partial_conv_time_tbl <- mb %>%
-  summary() %>%
-  dplyr::arrange(median) %>%
-  dplyr::select(expression = expr, median, lower = lq, upper = uq, evaluations = neval)
-
-# fit PROC MIXED 10 times if a sascfg file exists
-if (file.exists("sascfg_personal.py")) {
-  fit_times <- sapply(
-    seq_len(n_reps),
-    function(x) {
-      # load the data into SAS
-      df2sd(bcva_data, "bcva_data")
-
-      sas_code <- "
-      PROC MIXED DATA = bcva_data cl method=reml;
-        CLASS AVISIT(ref = 'VIS01') RACE(ref = 'Asian') ARMCD(ref = 'CTL') USUBJID;
-        MODEL BCVA_CHG = BCVA_BL RACE ARMCD AVISIT ARMCD*AVISIT / ddfm=satterthwaite solution chisq;
-        REPEATED AVISIT / subject=USUBJID type=un r rcorr;
-     RUN;
-    "
-
-      # generate the SAS output
-      sas_result <- run_sas(sas_code)
-
-      # extract the fit time (seconds)
-      fit_time <- sas_result$LOG %>%
-        str_extract("(?<=real time)\\s*[0-9.]+") %>%
-        as.numeric()
-
-      # convert fit times from seconds to milliseconds
-      fit_time
-    }
-  )
-
-  # add PROC MIXED results to convergence results table
-  proc_mixed_row <- tibble(
-    expression = "PROC MIXED",
-    median = median(fit_times),
-    lower = quantile(fit_times, probs = 0.25),
-    upper = quantile(fit_times, probs = 0.75),
-    evaluations = n_reps
-  )
-  conv_time_tbl <- bind_rows(partial_conv_time_tbl, proc_mixed_row)
-} else {
-  conv_time_tbl <- partial_conv_time_tbl
-}
-
-# format table in markdown
-conv_time_tbl %>%
-  arrange(median) %>%
-  transmute(
-    Implementation = expression,
-    Median = median,
-    `First Quartile` = lower,
-    `Third Quartile` = upper
-  ) %>%
-  knitr::kable(
-    caption = "Comparison of convergence times: seconds", digits = 2
-  )
-```
 
 We again find that `PROC MIXED` produces the fastest convergence times on
 average, followed closely by `mmrm`. The latter is the fastest of the R
@@ -641,128 +442,9 @@ is also reported.
 
 ### FEV Data
 
-```{r, echo = FALSE, warning = FALSE, message = FALSE}
-# compute marginal estimates for mmrm
-mmrm_fit <- mmrm(
-  formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
-  data = fev_data
-)
-mmrm_ests <- as.data.frame(
-  emmeans(
-    mmrm_fit,
-    spec = trt.vs.ctrl ~ ARMCD | AVISIT,
-    weights = "proportional"
-  )$contrasts
-)$estimate
+<img src="mmrm-review-treatment-fev-1.png" alt="plot of chunk review-treatment-fev" width="100%" />
 
-# compute marginal estimates for lmer
-lmer_fit <- lmer(
-  FEV1 ~ RACE + ARMCD * AVISIT + (0 + AVISIT | USUBJID),
-  data = fev_data[complete.cases(fev_data), ],
-  control = lmerControl(check.nobs.vs.nRE = "ignore")
-)
-lmer_ests <- as.data.frame(
-  emmeans(
-    lmer_fit,
-    spec = trt.vs.ctrl ~ ARMCD | AVISIT,
-    data = fev_data[complete.cases(fev_data), ],
-    weights = "proportional"
-  )$contrasts
-)$estimate
 
-# compute marginal estimates for gls
-gls_fit <- gls(
-  FEV1 ~ RACE + ARMCD * AVISIT,
-  data = fev_data[complete.cases(fev_data), ],
-  correlation = nlme::corSymm(form = ~ VISITN | USUBJID),
-  weights = nlme::varIdent(form = ~ 1 | VISITN)
-)
-gls_ests <- as.data.frame(
-  emmeans(
-    gls_fit,
-    spec = trt.vs.ctrl ~ ARMCD | AVISIT,
-    data = fev_data[complete.cases(fev_data), ],
-    weights = "proportional",
-    mode = "df.error"
-  )$contrasts
-)$estimate
-
-# compute marginal estimates for glmmTMB
-glmmtmb_fit <- glmmTMB(
-  FEV1 ~ RACE + ARMCD * AVISIT + us(0 + AVISIT | USUBJID),
-  data = fev_data,
-  dispformula = ~0
-)
-glmmtmb_ests <- as.data.frame(
-  emmeans(
-    glmmtmb_fit,
-    spec = trt.vs.ctrl ~ ARMCD | AVISIT,
-    weights = "proportional"
-  )$contrasts
-)$estimate
-
-if (file.exists("sascfg_personal.py")) {
-  # compute marginal estimates from PROC MIXED
-  # load the data into SAS
-  df2sd(fev_data, "fev_data")
-
-  sas_code <- "ODS OUTPUT LSMEANS = lsmeans_out DIFFS = diffs_out;
-  PROC MIXED DATA = fev_data cl method=reml;
-    CLASS AVISIT(ref = 'VIS1') RACE(ref = 'Asian') ARMCD(ref = 'PBO') USUBJID;
-    MODEL FEV1 = ARMCD AVISIT ARMCD*AVISIT RACE / ddfm=satterthwaite solution chisq;
-    REPEATED AVISIT / subject=USUBJID type=un r rcorr;
-    LSMEANS ARMCD*AVISIT / pdiff slice=AVISIT cl alpha = 0.05 OBSMARGINS;
-  RUN;
-"
-
-  # generate the SAS output
-  sas_result <- run_sas(sas_code)
-
-  ## extract the ATEs across visits
-  ates_df <- sd2df("diffs_out") %>%
-    dplyr::filter(AVISIT == `_AVISIT`) %>%
-    dplyr::mutate(
-      contrast = paste0(AVISIT, ": ", ARMCD, " - ", `_ARMCD`)
-    ) %>%
-    dplyr::select(contrast, Estimate, StdErr, DF, tValue, Lower, Upper) %>%
-    dplyr::arrange(contrast)
-
-  proc_mixed_ests <- ates_df$Estimate
-} else {
-  proc_mixed_ests <- c(3.775614, 3.758119, 3.108027, 4.406510)
-}
-
-# compute the relative differences
-rel_diff <- function(ests) (ests - proc_mixed_ests) / proc_mixed_ests
-
-# construct table for plotting
-# NOTE: that convergence is assessed manually here, not all methods provide
-# methods for reporting convergence
-rel_diff_ests_tbl <- tibble(
-  parameter = factor(rep(c("Visit 1", "Visit 2", "Visit 3", "Visit 4"), 4)),
-  estimator = rep(c("mmrm", "lmer", "gls", "glmmTMB"), each = 4),
-  converged = rep(c(TRUE, TRUE, TRUE, TRUE), each = 4),
-  rel_diff = c(
-    rel_diff(mmrm_ests), rel_diff(lmer_ests), rel_diff(gls_ests),
-    rel_diff(glmmtmb_ests)
-  )
-) %>%
-  mutate(converged = factor(converged, levels = c(TRUE, FALSE)))
-
-# plot estimates
-rel_diff_ests_tbl %>%
-  ggplot(
-    aes(x = parameter, y = rel_diff, color = estimator, shape = converged)
-  ) +
-  geom_point(position = position_dodge(width = 0.5)) +
-  geom_hline(yintercept = 0, linetype = 2, alpha = 0.5) +
-  scale_color_discrete(name = "Procedure") +
-  scale_shape_discrete(name = "Convergence") +
-  ylab("Relative Difference") +
-  xlab("Marginal Treatment Effect") +
-  ggtitle("Average Treatment Effect Estimates Relative to SAS Estimates") +
-  theme_classic()
-```
 
 The R procedures' estimates are very similar to those output by `PROC MIXED`,
 though `mmrm` and `gls` generate the estimates that are closest to those
@@ -771,149 +453,9 @@ arguments.
 
 ### BCVA Data
 
-```{r, echo = FALSE, warning = FALSE, message = FALSE}
-# compute marginal estimates for mmrm
-mmrm_fit <- mmrm(
-  formula = BCVA_CHG ~ BCVA_BL + RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
-  data = bcva_data
-)
-mmrm_ests <- as.data.frame(
-  emmeans(
-    mmrm_fit,
-    spec = trt.vs.ctrl ~ ARMCD | AVISIT,
-    weights = "proportional"
-  )$contrasts
-)$estimate
+<img src="mmrm-review-treatment-bcva-1.png" alt="plot of chunk review-treatment-bcva" width="100%" /><img src="mmrm-review-treatment-bcva-2.png" alt="plot of chunk review-treatment-bcva" width="100%" />
 
-# compute marginal estimates for lmer
-lmer_fit <- lmer(
-  BCVA_CHG ~ BCVA_BL + RACE + ARMCD * AVISIT + (0 + AVISIT | USUBJID),
-  data = bcva_data[complete.cases(bcva_data), ],
-  control = lmerControl(check.nobs.vs.nRE = "ignore")
-)
-lmer_ests <- as.data.frame(
-  emmeans(
-    lmer_fit,
-    spec = trt.vs.ctrl ~ ARMCD | AVISIT,
-    data = bcva_data[complete.cases(bcva_data), ],
-    weights = "proportional"
-  )$contrasts
-)$estimate
 
-# compute marginal estimates for gls
-gls_fit <- gls(
-  BCVA_CHG ~ BCVA_BL + RACE + ARMCD * AVISIT,
-  data = bcva_data[complete.cases(bcva_data), ],
-  correlation = nlme::corSymm(form = ~ VISITN | USUBJID),
-  weights = nlme::varIdent(form = ~ 1 | VISITN)
-)
-gls_ests <- as.data.frame(
-  emmeans(
-    gls_fit,
-    spec = trt.vs.ctrl ~ ARMCD | AVISIT,
-    data = bcva_data[complete.cases(bcva_data), ],
-    weights = "proportional",
-    mode = "df.error"
-  )$contrasts
-)$estimate
-
-# compute marginal estimates for glmmTMB
-glmmtmb_fit <- glmmTMB(
-  BCVA_CHG ~ BCVA_BL + RACE + ARMCD * AVISIT + us(0 + AVISIT | USUBJID),
-  data = bcva_data,
-  dispformula = ~0
-)
-glmmtmb_ests <- as.data.frame(
-  emmeans(
-    glmmtmb_fit,
-    spec = trt.vs.ctrl ~ ARMCD | AVISIT,
-    weights = "proportional"
-  )$contrasts
-)$estimate
-
-if (file.exists("sascfg_personal.py")) {
-  # compute marginal estimates from PROC MIXED
-  # load the data into SAS
-  df2sd(bcva_data, "bcva_data")
-
-  sas_code <- "ODS OUTPUT LSMEANS = lsmeans_out DIFFS = diffs_out;
-  PROC MIXED DATA = bcva_data cl method=reml;
-    CLASS AVISIT(ref = 'VIS01') RACE(ref = 'Asian') ARMCD(ref = 'CTL') USUBJID;
-    MODEL BCVA_CHG = BCVA_BL ARMCD AVISIT ARMCD*AVISIT RACE / ddfm=satterthwaite solution chisq;
-    REPEATED AVISIT / subject=USUBJID type=un r rcorr;
-    LSMEANS ARMCD*AVISIT / pdiff slice=AVISIT cl alpha = 0.05 OBSMARGINS;
-  RUN;
-"
-
-  # generate the SAS output
-  sas_result <- run_sas(sas_code)
-
-  ## extract the ATEs across visits
-  ates_df <- sd2df("diffs_out") %>%
-    dplyr::filter(AVISIT == `_AVISIT`) %>%
-    dplyr::mutate(
-      contrast = paste0(AVISIT, ": ", ARMCD, " - ", `_ARMCD`)
-    ) %>%
-    dplyr::select(contrast, Estimate, StdErr, DF, tValue, Lower, Upper) %>%
-    dplyr::arrange(contrast)
-
-  proc_mixed_ests <- ates_df$Estimate
-} else {
-  proc_mixed_ests <- c(
-    0.539107, 0.724779, 1.011511, 1.104181, 1.383358,
-    1.630093, 2.015963, 2.346931, 2.658452, 3.072256
-  )
-}
-
-# compute the relative differences
-rel_diff <- function(ests) (ests - proc_mixed_ests) / proc_mixed_ests
-
-# construct table for plotting
-# NOTE: that convergence is assessed manually here, not all methods provide
-# methods for reporting convergence
-rel_diff_ests_tbl <- tibble(
-  parameter = factor(rep(c(paste("Visit", seq_len(10))), 4)),
-  estimator = rep(c("mmrm", "lmer", "gls", "glmmTMB"), each = 10),
-  converged = rep(c(TRUE, FALSE, TRUE, FALSE), each = 10),
-  rel_diff = c(
-    rel_diff(mmrm_ests), rel_diff(lmer_ests), rel_diff(gls_ests),
-    rel_diff(glmmtmb_ests)
-  )
-) %>%
-  mutate(converged = factor(converged, levels = c(TRUE, FALSE)))
-
-# plot estimates
-rel_diff_ests_tbl %>%
-  ggplot(
-    aes(x = parameter, y = rel_diff, color = estimator, shape = converged)
-  ) +
-  geom_point(position = position_dodge(width = 0.5)) +
-  geom_hline(yintercept = 0, linetype = 2, alpha = 0.5) +
-  scale_color_discrete(name = "Procedure") +
-  scale_shape_discrete(name = "Convergence") +
-  ylab("Relative Difference") +
-  xlab("Marginal Treatment Effect") +
-  ggtitle("Average Treatment Effect Estimates Relative to SAS Estimates") +
-  theme_classic()
-
-# excluding glmmTMB
-rel_diff_ests_tbl %>%
-  dplyr::filter(estimator != "glmmTMB") %>%
-  ggplot(
-    aes(x = parameter, y = rel_diff, color = estimator, shape = converged)
-  ) +
-  geom_point(position = position_dodge(width = 0.5)) +
-  geom_hline(yintercept = 0, linetype = 2, alpha = 0.5) +
-  scale_color_discrete(name = "Procedure") +
-  scale_shape_discrete(name = "Convergence") +
-  ylab("Relative Difference") +
-  xlab("Marginal Treatment Effect") +
-  ggtitle(
-    "Average Treatment Effect Estimates Relative to SAS Estimates
-      (Excluding glmmTMB)"
-  ) +
-  theme_classic()
-```
 
 `mmrm`, `gls` and `lmer` produce estimates that are virtually identical to `PROC
 MIXED`'s, while `glmmTMB` does not. This is likely explained by `glmmTMB`'s
@@ -934,318 +476,16 @@ missing at random. The number patients observed at each visit is obtained for
 one replicated dataset at each level of missingness is presented in the table
 below.
 
-```{r dgp-functions, echo=FALSE}
-# helper function for generating covariates
-generate_covariates <- function(n_obs, n_visits = 10) {
-  # participant ID
-  participant <- seq_len(n_obs)
 
-  # baseline best corrected visual acuity score
-  base_bcva <- rnorm(n = n_obs, mean = 75, sd = 10)
 
-  # stratification factor
-  strata <- as.vector(
-    c(1, 2, 3) %*% rmultinom(n = n_obs, 1, prob = c(0.3, 0.3, 0.4))
-  )
 
-  # treatment indicator
-  trt <- rbinom(n = n_obs, size = 1, prob = 0.5)
-
-  # visit number
-  visit_num <- rep(seq_len(n_visits), n_obs)
-
-  # assemble into a covariates data.frame
-  data.frame(
-    participant = rep(participant, each = n_visits),
-    base_bcva = rep(base_bcva, each = n_visits),
-    strata = as.factor(rep(strata, each = n_visits)),
-    trt = rep(trt, each = n_visits),
-    visit_num
-  )
-}
-
-# helper function for randomly generating unstructured covariance matrix
-compute_unstructured_matrix <- function(
-    vars = seq(from = 1, by = 0.5, length.out = 10)) {
-  n_visits <- length(vars)
-  corr_mat <- abs(cov2cor(
-    clusterGeneration::genPositiveDefMat(dim = n_visits)$Sigma
-  ))
-  sd_mat <- diag(sqrt(vars))
-  us_mat <- sd_mat %*% corr_mat %*% sd_mat
-  return(us_mat)
-}
-
-# helper function for generating BCVA data
-generate_outcomes <- function(
-    covars_df,
-    cov_mat,
-    intercept = 5,
-    base_bcva_coef = 1,
-    strata_2_coef = -1,
-    strata_3_coef = 1,
-    trt_coef = 1,
-    visit_coef = 0.25,
-    trt_visit_coef = 0.25) {
-  # construct the model matrix
-  model_mat <- model.matrix(
-    ~ base_bcva + strata + trt * visit_num,
-    data = covars_df
-  )
-
-  # generate the bvca outcomes
-  n_visits <- nrow(cov_mat)
-  n_obs <- nrow(covars_df) / n_visits
-  effect_coefs <- c(
-    intercept, base_bcva_coef, strata_2_coef, strata_3_coef,
-    trt_coef, visit_coef, trt_visit_coef
-  )
-  as.vector(model_mat %*% effect_coefs +
-    as.vector(t(MASS::mvrnorm(n_obs, rep(0, n_visits), cov_mat))))
-}
-
-# MAR helper function
-missing_at_random <- function(covars_df, type) {
-  # compute missingness probabilities
-  if (type == "none") {
-    prob_miss <- 0
-  } else if (type == "mild") {
-    prob_miss <- plogis(
-      -(5 - 0.01 * covars_df$base_bcva + 0.5 * (covars_df$strata == 2) +
-        1 * (covars_df$strata == 3) - 0.3 * covars_df$visit_num - 0.2 *
-          (covars_df$trt == 0))
-    )
-  } else if (type == "moderate") {
-    prob_miss <- plogis(
-      -(5 - 0.01 * covars_df$base_bcva + 0.5 * (covars_df$strata == 2) +
-        1 * (covars_df$strata == 3) - 0.4 * covars_df$visit_num - 0.5 *
-          (covars_df$trt == 0))
-    )
-  } else if (type == "high") {
-    prob_miss <- plogis(
-      -(5 - 0.02 * covars_df$base_bcva + 0.5 * (covars_df$strata == 2) +
-        1 * (covars_df$strata == 3) - 0.5 * covars_df$visit_num - 1 *
-          (covars_df$trt == 0))
-    )
-  }
-
-  # generate vector of missingness indicators
-  missing_ind <- rbinom(nrow(covars_df), 1, prob_miss)
-
-  # remove indicated visits
-  covars_df[missing_ind == 0, ]
-}
-
-# BCVA data-generating process
-rct_dgp_fun <- function(
-    n_obs = 1000,
-    outcome_covar_mat = compute_unstructured_matrix(),
-    trt_coef = 0.25,
-    visit_coef = 0.25,
-    trt_visit_coef = 0.25,
-    missing_type = "moderate") {
-  # generate the covariates
-  covars_df <- generate_covariates(
-    n_obs = n_obs, n_visits = nrow(outcome_covar_mat)
-  )
-
-  # generate the outcomes
-  bcva_out <- generate_outcomes(
-    covars_df = covars_df,
-    cov_mat = outcome_covar_mat,
-    trt_coef = trt_coef,
-    visit_coef = visit_coef,
-    trt_visit_coef = trt_visit_coef
-  )
-
-  # compute the change in BCVA
-  bcva_change <- bcva_out - covars_df$base_bcva
-
-  # assemble into a data.frame
-  df <- data.frame(
-    participant = covars_df$participant,
-    bcva_change = bcva_change,
-    base_bcva = covars_df$base_bcva,
-    strata = covars_df$strata,
-    trt = covars_df$trt,
-    visit_num = covars_df$visit_num
-  )
-
-  # delete observations at random
-  df <- missing_at_random(df, type = missing_type)
-
-  # format to resemble FEV dataset
-  df <- df %>%
-    transmute(
-      USUBJID = factor(participant),
-      VISITN = visit_num,
-      AVISIT = paste0("VIS", str_pad(visit_num, width = 2, pad = "0")),
-      AVISIT = factor(
-        AVISIT,
-        levels = paste0("VIS", str_pad(seq_len(10), width = 2, pad = "0"))
-      ),
-      ARMCD = ifelse(trt == 1, "TRT", "CTL"),
-      RACE = ifelse(strata == 1, "Black",
-        ifelse(strata == 2, "Asian", "White")
-      ),
-      BCVA_BL = base_bcva,
-      BCVA_CHG = bcva_change
-    )
-
-  return(df)
-}
-```
-
-```{r missingness-table, warning=FALSE, message=FALSE, echo=FALSE}
-# extract the number of patients at each visit
-bcva_none <- rct_dgp_fun(n_obs = 200, missing_type = "none") %>%
-  pull(AVISIT) %>%
-  table()
-bcva_mild <- rct_dgp_fun(n_obs = 200, missing_type = "mild") %>%
-  pull(AVISIT) %>%
-  table()
-bcva_moderate <- rct_dgp_fun(n_obs = 200, missing_type = "moderate") %>%
-  pull(AVISIT) %>%
-  table()
-bcva_high <- rct_dgp_fun(n_obs = 200, missing_type = "high") %>%
-  pull(AVISIT) %>%
-  table()
-
-## construct the table
-bind_cols(
-  tibble(Missingness = c("none", "mild", "moderate", "high")),
-  bind_rows(bcva_none, bcva_mild, bcva_moderate, bcva_high)
-) %>%
-  kable(caption = "Number of patients per visit")
-```
 
 The convergence rates of all implementations for stratified by missingness level
 is presented in the plot below.
 
-```{r convergence-rate-missingness, warning=FALSE, message=FALSE, echo=FALSE}
-get_convergence_rates <- function(n_replicates, missingness_level) {
-  purrr::map_df(
-    seq_len(n_replicates),
-    function(idx) {
-      ## simulate the data
-      miss_df <- rct_dgp_fun(n_obs = 200, missing_type = missingness_level)
+<img src="mmrm-review-convergence-rate-missingness-1.png" alt="plot of chunk review-convergence-rate-missingness" width="100%" />
 
-      ## fit MMRM methods and extract convergence
 
-      ## mmrm
-      safe_mmrm <- safely(mmrm)
-      mmrm_fit <- safe_mmrm(
-        formula = BCVA_CHG ~ BCVA_BL + RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
-        data = miss_df
-      )
-      mmrm_converged <- is.null(mmrm_fit$error)
-      mmrm_converged
-
-      ## lme4
-      lmer_fit <- lmer(
-        BCVA_CHG ~ BCVA_BL + RACE + ARMCD * AVISIT + (0 + AVISIT | USUBJID),
-        data = miss_df[complete.cases(miss_df), ],
-        control = lmerControl(check.nobs.vs.nRE = "ignore")
-      )
-      lmer_converged <- all(!str_detect(
-        lmer_fit@optinfo$conv$lme4$messages,
-        "Model failed to converge"
-      ))
-
-      ## nlme
-      safe_gls <- safely(gls)
-      gls_fit <- safe_gls(
-        BCVA_CHG ~ BCVA_BL + RACE + ARMCD * AVISIT,
-        data = miss_df[complete.cases(miss_df), ],
-        correlation = nlme::corSymm(form = ~ VISITN | USUBJID),
-        weights = nlme::varIdent(form = ~ 1 | VISITN)
-      )
-      gls_converged <- is.null(gls_fit$error)
-
-      ## glmmTMB
-      glmmtmb_fit <- glmmTMB(
-        BCVA_CHG ~ BCVA_BL + RACE + ARMCD * AVISIT + us(0 + AVISIT | USUBJID),
-        data = miss_df,
-        dispformula = ~0
-      )
-      glmmtmb_converged <- glmmtmb_fit$fit$convergence == 0
-
-      ## SAS
-      if (file.exists("sascfg_personal.py")) {
-        # compute marginal estimates from PROC MIXED
-        # load the data into SAS
-        df2sd(miss_df, "miss_df")
-
-        sas_code <- "ODS OUTPUT ConvergenceStatus = conv_status;
-          PROC MIXED DATA = miss_df cl method=reml;
-            CLASS AVISIT(ref = 'VIS01') RACE(ref = 'Asian') ARMCD(ref = 'CTL') USUBJID;
-            MODEL BCVA_CHG = BCVA_BL ARMCD AVISIT ARMCD*AVISIT RACE / ddfm=satterthwaite solution chisq;
-            REPEATED AVISIT / subject=USUBJID type=un r rcorr;
-          RUN;
-        "
-
-        # generate the SAS output
-        sas_result <- run_sas(sas_code)
-
-        ## extract the convergence status
-        conv_status_df <- sasr::sd2df("conv_status")
-        sas_converged <- conv_status_df$Reason == "Convergence criteria met."
-
-        ## assemble tibble row
-        results <- tibble(
-          replicate = idx,
-          method = c("mmrm", "lmer", "gls", "glmmTMB", "PROC MIXED"),
-          converged = c(
-            mmrm_converged, lmer_converged, gls_converged,
-            glmmtmb_converged, sas_converged
-          )
-        )
-      } else {
-        results <- tibble(
-          replicate = idx,
-          method = c("mmrm", "lmer", "gls", "glmmTMB"),
-          converged = c(
-            mmrm_converged, lmer_converged, gls_converged,
-            glmmtmb_converged
-          )
-        )
-      }
-
-      return(results)
-    }
-  ) %>%
-    group_by(method) %>%
-    summarize(convergence_rate = mean(converged), .groups = "drop") %>%
-    mutate(missingness = missingness_level)
-}
-
-## get the convergence rates
-n_reps <- 10
-cr_no_missing <- get_convergence_rates(n_reps, "none")
-cr_mild_missing <- get_convergence_rates(n_reps, "mild")
-cr_moderate_missing <- get_convergence_rates(n_reps, "moderate")
-cr_high_missing <- get_convergence_rates(n_reps, "high")
-cr_all <- bind_rows(
-  cr_no_missing, cr_mild_missing, cr_moderate_missing, cr_high_missing
-)
-
-## plot the convergence rates
-cr_all %>%
-  mutate(
-    missingness = factor(
-      missingness,
-      levels = c("none", "mild", "moderate", "high")
-    )
-  ) %>%
-  ggplot(aes(x = method, y = convergence_rate)) +
-  geom_point() +
-  facet_grid(rows = vars(missingness)) +
-  xlab("Method") +
-  ylab("Convergence Rate (10 Replicates)") +
-  ggtitle("Convergence Rates by Missingness Levels") +
-  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
-  theme_bw()
-```
 
 `mmrm`, `gls`, and `PROC MIXED` are resilient to missingness, only exhibiting
 some convergence problems in the scenarios with the most missingness. These
@@ -1272,6 +512,49 @@ variances, 95% coverage rates, type I error rates and type II error rates.
 
 # Session Information
 
-```{r session-info, echo=FALSE}
-sessionInfo()
+
+```
+#> R version 4.2.2 Patched (2022-11-10 r83330)
+#> Platform: x86_64-pc-linux-gnu (64-bit)
+#> Running under: Ubuntu 20.04.5 LTS
+#>
+#> Matrix products: default
+#> BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.9.0
+#> LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.9.0
+#>
+#> locale:
+#>  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C
+#>  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8
+#>  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8
+#>  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C
+#>  [9] LC_ADDRESS=C               LC_TELEPHONE=C
+#> [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C
+#>
+#> attached base packages:
+#> [1] stats     graphics  grDevices utils     datasets  methods   base
+#>
+#> other attached packages:
+#>  [1] ggplot2_3.4.1           emmeans_1.8.4-1         sasr_0.1.2
+#>  [4] glmmTMB_1.1.5           nlme_3.1-162            lme4_1.1-31
+#>  [7] Matrix_1.5-3            mmrm_0.2.2.9028         stringr_1.5.0
+#> [10] microbenchmark_1.4.9    purrr_1.0.1             dplyr_1.1.0
+#> [13] clusterGeneration_1.3.7 MASS_7.3-58.2           knitr_1.42
+#>
+#> loaded via a namespace (and not attached):
+#>  [1] reticulate_1.28     tidyselect_1.2.0    xfun_0.37
+#>  [4] TMB_1.9.2           splines_4.2.2       lattice_0.20-45
+#>  [7] colorspace_2.1-0    vctrs_0.5.2         generics_0.1.3
+#> [10] utf8_1.2.3          rlang_1.0.6         nloptr_2.0.3
+#> [13] pillar_1.8.1        withr_2.5.0         glue_1.6.2
+#> [16] lifecycle_1.0.3     munsell_0.5.0       gtable_0.3.1
+#> [19] mvtnorm_1.1-3       coda_0.19-4         evaluate_0.20
+#> [22] labeling_0.4.2      parallel_4.2.2      fansi_1.0.4
+#> [25] highr_0.10          Rcpp_1.0.10         xtable_1.8-4
+#> [28] backports_1.4.1     scales_1.2.1        checkmate_2.1.0
+#> [31] jsonlite_1.8.4      farver_2.1.1        png_0.1-8
+#> [34] stringi_1.7.12      numDeriv_2016.8-1.1 rbibutils_2.2.13
+#> [37] grid_4.2.2          Rdpack_2.4          cli_3.6.0
+#> [40] tools_4.2.2         magrittr_2.0.3      tibble_3.1.8
+#> [43] pkgconfig_2.0.3     estimability_1.4.1  minqa_1.2.5
+#> [46] R6_2.5.1            boot_1.3-28.1       compiler_4.2.2
 ```
