@@ -41,6 +41,8 @@ funder
 galecki
 github
 gitignore
+glmmTMB
+gls
 Gower
 hj
 Hoffmann
@@ -65,6 +67,7 @@ kr
 ldots
 leq
 lintr
+lmer
 MacOS
 Mallinckrodt
 mathbb
@@ -90,6 +93,7 @@ pkgdown
 plc
 pmatrix
 pre
+Quartile
 Raphson
 rightarrow
 Rmarkdown
@@ -120,6 +124,7 @@ varepsilon
 varphi
 vcov
 vdots
+VIS
 widehat
 WLS
 yaml
