@@ -77,9 +77,13 @@ check_package_version <- function(pkg, ver = c(NA, NA)) {
     warning(sprintf(
       "Cannot register mmrm for use with %s (v%s). Version %s required.",
       pkg, pkg_ver,
-      if (!any(ver_na)) sprintf("%s to %s", ver[[1]], ver[[2]])
-      else if (!is.na(ver[[1]])) paste0(">= ", ver[[1]])
-      else if (!is.na(ver[[2]])) paste0("<= ", ver[[1]])
+      if (!any(ver_na)) {
+        sprintf("%s to %s", ver[[1]], ver[[2]])
+      } else if (!is.na(ver[[1]])) {
+        paste0(">= ", ver[[1]])
+      } else if (!is.na(ver[[2]])) {
+        paste0("<= ", ver[[1]])
+      }
     ))
   }
 
@@ -101,8 +105,9 @@ emit_tidymodels_register_msg <- function() {
   pkg <- utils::packageName()
   ver <- utils::packageVersion(pkg)
 
-  if (isTRUE(getOption("tidymodels.quiet")))
+  if (isTRUE(getOption("tidymodels.quiet"))) {
     return()
+  }
 
   # if tidymodels is attached, cli packages come as a dependency
   has_cli <- requireNamespace("cli", quietly = TRUE)

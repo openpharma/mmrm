@@ -63,8 +63,8 @@ as.cov_struct(y ~ x + csh(visit | group / subject), warn_partial = FALSE)
 
 }
 \seealso{
-Other \code{cov_struct}: 
+Other covariance types: 
 \code{\link{cov_struct}()},
 \code{\link{covariance_types}}
 }
-\concept{\code{cov_struct}}
+\concept{covariance types}

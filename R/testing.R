@@ -23,8 +23,7 @@ df_1d <- function(object, contrast) {
   assert_class(object, "mmrm")
   assert_numeric(contrast, len = length(component(object, "beta_est")), any.missing = FALSE)
   contrast <- as.vector(contrast)
-  switch(
-    object$method,
+  switch(object$method,
     "Satterthwaite" = h_df_1d_sat(object, contrast),
     "Kenward-Roger" = h_df_1d_kr(object, contrast),
     "Residual" = h_df_1d_res(object, contrast),
@@ -64,8 +63,7 @@ df_md <- function(object, contrast) {
     contrast <- matrix(contrast, ncol = length(contrast))
   }
   assert_matrix(contrast, ncols = length(component(object, "beta_est")))
-  switch(
-    object$method,
+  switch(object$method,
     "Satterthwaite" = h_df_md_sat(object, contrast),
     "Kenward-Roger" = h_df_md_kr(object, contrast),
     "Residual" = h_df_md_res(object, contrast),

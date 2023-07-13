@@ -1,13 +1,16 @@
 #' Capture all Output
 #'
 #' This function silences all warnings, errors & messages and instead returns a list
-#' containing the results (if it didn't error) + the warning and error messages as
-#' character vectors.
+#' containing the results (if it didn't error), as well as the warnings, errors
+#' and messages and divergence signals as character vectors.
 #'
 #' @param expr (`expression`)\cr to be executed.
 #' @param remove (`list`)\cr optional list with elements `warnings`, `errors`,
 #'   `messages` which can be character vectors, which will be removed from the
 #'   results if specified.
+#' @param divergence (`list`)\cr optional list similar as `remove`, but these
+#'   character vectors will be moved to the `divergence` result and signal
+#'   that the fit did not converge.
 #'
 #' @return
 #' A list containing
@@ -16,9 +19,12 @@
 #' - `warnings`: `NULL` or a character vector if warnings were thrown.
 #' - `errors`: `NULL` or a string if an error was thrown.
 #' - `messages`: `NULL` or a character vector if messages were produced.
+#' - `divergence`: `NULL` or a character vector if divergence messages were caught.
 #'
 #' @keywords internal
-h_record_all_output <- function(expr, remove = list()) {
+h_record_all_output <- function(expr,
+                                remove = list(),
+                                divergence = list()) {
   # Note: We don't need to and cannot assert `expr` here.
   assert_list(remove)
   env <- new.env()
@@ -43,9 +49,14 @@ h_record_all_output <- function(expr, remove = list()) {
   )
   list(
     result = result,
-    warnings = setdiff(env$warning, remove$warnings),
-    errors = setdiff(env$error, remove$errors),
-    messages = setdiff(env$message, remove$messages)
+    warnings = setdiff(env$warning, c(remove$warnings, divergence$warnings)),
+    errors = setdiff(env$error, c(remove$errors, divergence$errors)),
+    messages = setdiff(env$message, c(remove$messages, divergence$messages)),
+    divergence = c(
+      intersect(env$warning, divergence$warnings),
+      intersect(env$error, divergence$errors),
+      intersect(env$message, divergence$messages)
+    )
   )
 }
 
