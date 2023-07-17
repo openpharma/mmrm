@@ -213,3 +213,20 @@ test_that("h_factor ref allows NA in x", {
   f <- expect_silent(h_factor_ref(x, ref))
   expect_identical(levels(f), ref)
 })
+
+# h_valid_fit ----
+test_that("h_valid_fit works", {
+  fit <- get_mmrm()
+  fit$beta_vcov[1, 1] <- NA
+  expect_error(
+    h_valid_fit(fit),
+    "The model might have been over-parameterized"
+  )
+})
+
+# h_qr ----
+test_that("h_qr works", {
+  m <- matrix(NA, 3, 3)
+  msg <- "random error"
+  expect_error(h_qr(m, msg), msg)
+})

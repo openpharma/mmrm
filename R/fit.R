@@ -461,6 +461,7 @@ mmrm <- function(formula,
   fit$call$formula <- formula
   fit$method <- control$method
   fit$vcov <- control$vcov
+  h_valid_fit(fit)
   if (identical(fit$method, "Satterthwaite") && identical(fit$vcov, "Asymptotic")) {
     fit$jac_list <- h_jac_list(fit$tmb_data, fit$theta_est, fit$beta_vcov)
   }
