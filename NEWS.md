@@ -38,8 +38,8 @@
   environment variables, instead of requiring `data` argument. `fit_mmrm` is not affected.
 - Previously `emmeans` does not work if fixed effect does not contain visit variable.
   This is now fixed.
-- Previously `mmrm` can provide non-finite values in coefficient covariance or theta covariance
-  due to over-parameterization. This will raise an error now.
+- Previously `mmrm` can provide non-finite values in Jacobian calculations.
+  This will raise an error now.
 
 # mmrm 0.2.2
 
