@@ -51,6 +51,9 @@ List get_jacobian(List mmrm_fit, NumericVector theta, NumericMatrix beta_vcov) {
       P.block(r * p + theta_size_per_group * subject_group_i * p, 0, p, p) += Pi;
     }
   }
+  if (Rcpp::any(Rcpp::is_infinite(as_num_matrix_rcpp(P)))) {
+    stop("Jacobian is not finite. The model can be over-parameterized.");
+  }
   auto ret = List::create();
   for (int i = 0; i < n_theta; i++) {
     // the P is derivative of (XWX), the covariance is (XWX)^{-1}.
