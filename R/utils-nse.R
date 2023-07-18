@@ -66,7 +66,7 @@ flatten_call <- function(call) {
 #' @keywords internal
 flatten_expr <- function(expr) {
   if (length(expr) > 1 && is_infix(expr[[1]])) {
-    op  <- list(expr[[1]])
+    op <- list(expr[[1]])
     lhs <- flatten_expr(expr[[2]])
     rhs <- flatten_expr(expr[[3]])
     c(lhs, op, rhs)
@@ -89,8 +89,11 @@ flatten_expr <- function(expr) {
 #'
 #' @keywords internal
 formula_rhs <- function(f) {
-  if (length(f) == 2) f
-  else f[-2]
+  if (length(f) == 2) {
+    f
+  } else {
+    f[-2]
+  }
 }
 
 #' Test Whether a Symbol is an Infix Operator

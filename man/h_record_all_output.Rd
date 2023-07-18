@@ -4,7 +4,7 @@
 \alias{h_record_all_output}
 \title{Capture all Output}
 \usage{
-h_record_all_output(expr, remove = list())
+h_record_all_output(expr, remove = list(), divergence = list())
 }
 \arguments{
 \item{expr}{(\code{expression})\cr to be executed.}
@@ -12,6 +12,10 @@ h_record_all_output(expr, remove = list())
 \item{remove}{(\code{list})\cr optional list with elements \code{warnings}, \code{errors},
 \code{messages} which can be character vectors, which will be removed from the
 results if specified.}
+
+\item{divergence}{(\code{list})\cr optional list similar as \code{remove}, but these
+character vectors will be moved to the \code{divergence} result and signal
+that the fit did not converge.}
 }
 \value{
 A list containing
@@ -20,11 +24,12 @@ A list containing
 \item \code{warnings}: \code{NULL} or a character vector if warnings were thrown.
 \item \code{errors}: \code{NULL} or a string if an error was thrown.
 \item \code{messages}: \code{NULL} or a character vector if messages were produced.
+\item \code{divergence}: \code{NULL} or a character vector if divergence messages were caught.
 }
 }
 \description{
 This function silences all warnings, errors & messages and instead returns a list
-containing the results (if it didn't error) + the warning and error messages as
-character vectors.
+containing the results (if it didn't error), as well as the warnings, errors
+and messages and divergence signals as character vectors.
 }
 \keyword{internal}

@@ -52,6 +52,8 @@ repos:
           .*\.Rds|
           .*\.sh|
           .*\.RData|
+          .*\.png|
+          .*\.orig|
           design/.*/.*\.txt
           )$
       - id: lintr

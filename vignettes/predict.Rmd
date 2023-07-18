@@ -152,3 +152,23 @@ of $\theta$ and variance-covariance matrix of $\theta$ are provided.
 Using the generated $\theta_{new}$, we then obtain the $\beta_{new}$ and its variance-covariance matrix, with $\theta_{new}$ and
 the data used in fit. Then we simulate once with `simulate(method = "conditional", beta = beta_new, theta = theta_new)`.
 Pool all the repetition together and we get the marginal simulation results.
+
+## Comparison with `SAS`
+
+In `SAS`, from `proc mixed`, we are able to generate predictions using the `outp` argument in the `model` statement.
+For example:
+
+```{sas eval=FALSE}
+PROC MIXED DATA = fev_data method=reml;
+  CLASS RACE(ref = 'Asian') AVISIT(ref = 'VIS4') SEX(ref = 'Male') ARMCD(ref = 'PBO') USUBJID;
+  MODEL FEV1 = ARMCD / ddfm=Satterthewaite solution chisq outp=pred;
+  REPEATED AVISIT / subject=USUBJID type=un r rcorr;
+  LSMEANS ARMCD / pdiff=all cl alpha=0.05 slice=AVISIT;
+RUN;
+```
+
+However, there are some differences between the `SAS` implementation and our `mmrm` package, described as follows:
+
+1. While `mmrm` and `SAS` both provide predicted means (conditional on other observations) for unobserved records, `SAS` also provides predicted means for observed records while `mmrm` does not. The rationale is that in the `mmrm` package we want to be consistent with the notion of predictions conditional on the observed records - which means that observed records are observed and therefore there is no prediction uncertainty anymore.
+1. The prediction standard error is different between `mmrm` and `SAS`. While in `SAS` the prediction standard error is conditional on the estimated variance parameters $\theta$, in `mmrm` the marginal prediction standard error is provided. The rationale is that in the `mmrm` package we want to take into account the full uncertainty about parameter estimates including $\theta$.
+1. The prediction intervals in `SAS` are based on the t distribution, while currently in `mmrm` we use the normal distribution. We will be considering an extension towards using the t distribution in the future and welcome feedback on this detail.
