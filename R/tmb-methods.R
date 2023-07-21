@@ -445,7 +445,7 @@ h_residuals_response <- function(object) {
 #' fitted in the model, and m is the number \code{nsim} of simulated responses.
 simulate.mmrm_tmb <- function(object, nsim = 1,
                               newdata = NULL,
-                              method = "conditional",
+                              method = c("conditional", "marginal"),
                               ...){
 
   method <- match.arg(method)
