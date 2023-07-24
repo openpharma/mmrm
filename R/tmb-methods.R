@@ -486,7 +486,7 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
     subject_zero_inds <- tmb_data$subject_zero_inds
     visit_zero_inds <- tmb_data$visits_zero_inds
 
-      for(i in 1:n_subjects){
+      for(i in seq_len(n_subjects)){
         if(length(mu$index[[i]]) > 0){
           # Obtain indices of data.frame belonging to subject i (iterate by 1, since indices from cpp are 0-order)
           inds <- mu$index[[i]] + 1
@@ -508,7 +508,7 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
     subject_zero_inds <- tmb_data$subject_zero_inds
     visit_zero_inds <- tmb_data$visits_zero_inds
 
-    for(j in 1:nsim){
+    for(j in seq_len(nsim)){
       # get prediction and prediction variance
 
       # sample from theta distribution
@@ -522,7 +522,7 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
       mu <- h_get_prediction(tmb_data, newtheta, newbeta, newbeta_vcov)
       ret[,j] <- mu$prediction[,1]
 
-      for(i in 1:n_subjects){
+      for(i in seq_len(n_subjects)){
         if(length(mu$index[[i]]) > 0){
           # Obtain indices of data.frame belonging to subject i
           inds <- mu$index[[i]] + 1
