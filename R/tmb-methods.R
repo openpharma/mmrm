@@ -455,7 +455,7 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
     newdata <- object$data
   }
 
-  # process the new data -- make sure new data has the same levels as original data
+  # process the new data such that new data has same levels as original data
   full_frame <- model.frame(
     object,
     data = newdata,
@@ -506,7 +506,7 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
     newdata <- dplyr::arrange(newdata, !!object$formula_parts$subject_var, !!object$formula_parts$visit_var)
 
     # build data.frame of prediction vectors
-    ret <- as.data.frame(matrix(NA, ncol = nsim, nrow = length(newdata)))
+    ret <- as.data.frame(matrix(NA, ncol = nsim, nrow = nrow(newdata)))
 
     # get dataframe values
     n_subjects <- tmb_data$n_subjects
@@ -517,10 +517,15 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
     for(j in 1:nsim){
       # get prediction and prediction variance
 
-      # sample from theta dist
-      # recalculate betas with object$tmb_data$report()
+      # sample from theta distribution
+      newtheta <- MASS::mvrnorm(1, object$theta_est, object$theta_vcov)
+      # recalculate betas with sampled thetas
+      hold <- object$tmb_object$report(newtheta)
+      newbeta <- hold$beta
+      newbeta_vcov <- hold$beta_vcov
 
-      mu <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
+      # get new predictions
+      mu <- h_get_prediction(tmb_data, newtheta, newbeta, newbeta_vcov)
       ret[,j] <- mu$prediction[,1]
 
       for(i in 1:n_subjects){
@@ -533,9 +538,9 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
 
         # simulate from covariance matrix
         ret[inds,] <- ret[inds, , drop=FALSE] + MASS::mvrnorm(nsim, rep.int(0, length(inds)), covmat_i)
+        }
       }
-      }
-  }
+    }
 
   ret
 }
