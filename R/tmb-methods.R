@@ -491,6 +491,9 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
     visit_zero_inds <- tmb_data$visits_zero_inds
 
       for(i in 1:n_subjects){
+        # TODO for pts with already filled values, are we replacing here? we should leave alone
+
+
         # Obtain indices of data.frame belonging to subject i (iterate by 1, since indices from cpp are 0-order)
         inds <- mu$index[[i]] + 1
 
@@ -529,15 +532,16 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
       ret[,j] <- mu$prediction[,1]
 
       for(i in 1:n_subjects){
+        if(length(mu$index[[i]]) > 0){
+          # Obtain indices of data.frame belonging to subject i
+          inds <- mu$index[[i]] + 1
 
-        # Obtain indices of data.frame belonging to subject i
-        inds <- mu$index[[i]] + 1
+          # get relevant covariance matrix for subject i
+          covmat_i <- mu$covariance[[i]]
 
-        # get relevant covariance matrix for subject i
-        covmat_i <- mu$covariance[[i]]
-
-        # simulate from covariance matrix
-        ret[inds,] <- ret[inds, , drop=FALSE] + MASS::mvrnorm(nsim, rep.int(0, length(inds)), covmat_i)
+          # simulate from covariance matrix
+          ret[inds,j] <- ret[inds, j, drop=FALSE] + MASS::mvrnorm(1, rep.int(0, length(inds)), covmat_i)
+          }
         }
       }
     }
