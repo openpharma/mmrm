@@ -473,10 +473,6 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
   )
 
   if(method == "conditional"){
-    # order data.frame
-    # TODO remove -- conform with predict() method approach
-    # newdata <- dplyr::arrange(newdata, !!object$formula_parts$subject_var, !!object$formula_parts$visit_var)
-
     # get prediction and prediction variance
     mu <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
 
@@ -499,14 +495,10 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
           covmat_i <- mu$covariance[[i]]
 
           # simulate from covariance matrix
-          ret[inds,] <- ret[inds, , drop=FALSE] + MASS::mvrnorm(nsim, rep.int(0, length(inds)), covmat_i)
+          ret[inds,] <- ret[inds, , drop=FALSE] + t(MASS::mvrnorm(nsim, rep.int(0, length(inds)), covmat_i))
         }
       }
   }else if(method == "marginal"){
-    # order data.frame
-    # TODO remove -- conform with predict() method approach
-    # newdata <- dplyr::arrange(newdata, !!object$formula_parts$subject_var, !!object$formula_parts$visit_var)
-
     # build data.frame of prediction vectors
     ret <- as.data.frame(matrix(NA, ncol = nsim, nrow = nrow(newdata)))
 
@@ -539,7 +531,7 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
           covmat_i <- mu$covariance[[i]]
 
           # simulate from covariance matrix
-          ret[inds,j] <- ret[inds, j, drop=FALSE] + MASS::mvrnorm(1, rep.int(0, length(inds)), covmat_i)
+          ret[inds,j] <- ret[inds, j, drop=FALSE] + t(MASS::mvrnorm(1, rep.int(0, length(inds)), covmat_i))
           }
         }
       }
