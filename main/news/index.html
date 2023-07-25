@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9031</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9032</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,14 +53,6 @@
 <li class="active nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.2.2">v0.2.2</a> </div></li>
-<!-- end dropdown for versions -->
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-reports">Reports</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-reports">
@@ -89,9 +81,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.2.2.9031" id="mmrm-0229031">mmrm 0.2.2.9031<a class="anchor" aria-label="anchor" href="#mmrm-0229031"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.2.2.9032" id="mmrm-0229032">mmrm 0.2.2.9032<a class="anchor" aria-label="anchor" href="#mmrm-0229032"></a></h2>
 <div class="section level4">
-<h4 id="new-features-0-2-2-9031">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-2-2-9031"></a></h4>
+<h4 id="new-features-0-2-2-9032">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-2-2-9032"></a></h4>
 <ul><li>Add argument <code>covariance</code> to <code><a href="../reference/mmrm.html">mmrm()</a></code> to allow for easier programmatic access to specifying the model’s covariance structure and to expose covariance customization through the <code>tidymodels</code> interface.</li>
 <li>Add Kenward-Roger support for spatial covariance structures.</li>
 <li>Add support for <code>residuals</code> method with a <code>type</code> argument allowing for raw, Pearson and normalized residuals to be calculated from an <code>mmrm</code> fit.</li>
@@ -102,11 +94,11 @@
 <li>Use automatic differentiation to calculate Satterthwaite adjusted degrees of freedom calculation, resulting in 10-fold speed-up of the Satterthwaite calculations after the initial model fit.</li>
 </ul></div>
 <div class="section level4">
-<h4 id="miscellaneous-0-2-2-9031">Miscellaneous<a class="anchor" aria-label="anchor" href="#miscellaneous-0-2-2-9031"></a></h4>
+<h4 id="miscellaneous-0-2-2-9032">Miscellaneous<a class="anchor" aria-label="anchor" href="#miscellaneous-0-2-2-9032"></a></h4>
 <ul><li>Removed <code>free_cores()</code> in favor of <code>parallelly::availableCores(omit = 1)</code>.</li>
 </ul></div>
 <div class="section level4">
-<h4 id="bug-fixes-0-2-2-9031">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-2-2-9031"></a></h4>
+<h4 id="bug-fixes-0-2-2-9032">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-2-2-9032"></a></h4>
 <ul><li>Previously <code>mmrm</code> fit follows the global option <code>na.action</code> and if it is set other than “na.omit” error will happen. This is now fixed and <code>NA</code> values are always removed prior to model fitting.</li>
 <li>Previously <code>model.frame</code> call on <code>mmrm</code> object with transformed terms, or new given data, e.g. <code>model.frame(mmrm(Y ~ log(X) + ar1(VISIT|ID), data = &lt;new data&gt;)</code>, will cause errors. This is now fixed and <code>model.frame</code> returns the data correctly. Now <code>na.action</code> argument can be “na.omit” or “na.pass”, <code>subset</code> argument is not used. The <code>full</code> argument is deprecated and the <code>include</code> can be used instead.</li>
 <li>Previously <code>mmrm</code> always requires <code>data</code> argument. Now fitting <code>mmrm</code> can use environment variables, instead of requiring <code>data</code> argument. <code>fit_mmrm</code> is not affected.</li>
