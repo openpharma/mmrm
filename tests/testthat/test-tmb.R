@@ -779,6 +779,42 @@ test_that("h_mmrm_tmb_check_conv warns if convergence code signals non-convergen
   )
 })
 
+test_that("h_mmrm_tmb_check_conv warns if theta_vcov contains missing value", {
+  tmb_opt <- list(
+    par = 1:5,
+    objective = 10,
+    convergence = 0,
+    message = NULL
+  )
+  mmrm_tmb <- structure(
+    list(theta_vcov = diag(NA, nrow = 2)),
+    class = "mmrm_tmb"
+  )
+  expect_warning(
+    h_mmrm_tmb_check_conv(tmb_opt, mmrm_tmb),
+    "Model convergence problem: theta_vcov contains non-finite values."
+  )
+})
+
+test_that("h_mmrm_tmb_check_conv warns if theta_vcov is singular", {
+  tmb_opt <- list(
+    par = 1:5,
+    objective = 10,
+    convergence = 0,
+    message = NULL
+  )
+  chol_m <- matrix(c(1, 0, 0, 2, 3, 0, 0, 0, 0), nrow = 3)
+
+  mmrm_tmb <- structure(
+    list(theta_vcov = chol_m %*% t(chol_m)),
+    class = "mmrm_tmb"
+  )
+  expect_warning(
+    h_mmrm_tmb_check_conv(tmb_opt, mmrm_tmb),
+    "Model convergence problem: theta_vcov is numerically singular."
+  )
+})
+
 # h_mmrm_tmb_extract_cov ----
 
 test_that("h_mmrm_tmb_extract_cov works as expected", {
