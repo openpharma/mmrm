@@ -436,10 +436,6 @@ h_residuals_response <- function(object) {
 #' @exportS3Method
 #'
 #' @param object an object of class 'mmrm'
-#' @param nsim number of response vectors to simulate. Defaults to 1.
-#' @param seed an object specifying if and how the random number generator should be initialized (‘seeded’).
-#' @param newdata data frame for which to evaluate predictions.
-#' @param ...
 #'
 #' @return A \code{data.frame} of dimension [n, m] where n is the number of observations
 #' fitted in the model, and m is the number \code{nsim} of simulated responses.
