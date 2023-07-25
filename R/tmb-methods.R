@@ -435,7 +435,7 @@ h_residuals_response <- function(object) {
 #' @importFrom stats simulate
 #' @exportS3Method
 #'
-#' @param object an object of class 'mmrm'
+#' @param object (`mmrm`)\cr an fitted 'mmrm' object
 #'
 #' @return A \code{data.frame} of dimension [n, m] where n is the number of observations
 #' fitted in the model, and m is the number \code{nsim} of simulated responses.
