@@ -437,8 +437,8 @@ h_residuals_response <- function(object) {
 #'
 #' @param object (`mmrm`)\cr an fitted 'mmrm' object
 #'
-#' @return A \code{data.frame} of dimension [n, m] where n is the number of observations
-#' fitted in the model, and m is the number \code{nsim} of simulated responses.
+#' @return A `data.frame` of dimension [n, m] where n is the number of rows in `newdata`,
+#' and m is the number `nsim` of simulated responses.
 simulate.mmrm_tmb <- function(object, nsim = 1,
                               newdata = NULL,
                               method = c("conditional", "marginal"),
@@ -447,11 +447,10 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
   method <- match.arg(method)
 
   if(is.null(newdata)){
-    # use data in fit
     newdata <- object$data
   }
 
-  # process the new data such that new data has same levels as original data
+  # make sure new data has the same levels as original data
   full_frame <- model.frame(
     object,
     data = newdata,
@@ -469,25 +468,15 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
   )
 
   if(method == "conditional"){
-    # get prediction and prediction variance
     mu <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
-
-    # get simulations for prediction object mu
     ret <- as.data.frame(h_get_sim_per_subj(mu, tmb_data$n_subjects, nsim))
-
   }else if(method == "marginal"){
-
-    # get simulations for each new sampled theta
     ret <- as.data.frame(
       sapply(seq_len(nsim), function(x) {
-        # sample from theta distribution
         newtheta <- MASS::mvrnorm(1, object$theta_est, object$theta_vcov)
         # recalculate betas with sampled thetas
         hold <- object$tmb_object$report(newtheta)
-        # get new predictions
         mu <- h_get_prediction(tmb_data, newtheta, hold$beta, hold$beta_vcov)
-
-        # get simulations for prediction object mu
         h_get_sim_per_subj(mu, tmb_data$n_subjects, 1L)
         }
       )
@@ -500,7 +489,7 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
 
 #' Get simulated values by patient
 #'
-#' @param mu (`list`)\cr object returned by \code{h_get_prediction()}
+#' @param mu (`list`)\cr object returned by `h_get_prediction()`
 #' @param nsub (`integer`)\cr number of subjects
 #' @param nsim (`integer`)\cr number of values to simulate
 #'
