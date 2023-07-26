@@ -53,17 +53,23 @@
 
 \method{residuals}{mmrm_tmb}(object, type = c("response", "pearson", "normalized"), ...)
 
-\method{simulate}{mmrm_tmb}(object, nsim = 1, seed = NULL, newdata = NULL, ...)
+\method{simulate}{mmrm_tmb}(
+  object,
+  nsim = 1,
+  newdata = NULL,
+  method = c("conditional", "marginal"),
+  ...
+)
 }
 \arguments{
-\item{object}{an object of class 'mmrm'}
+\item{object}{(\code{mmrm})\cr an fitted 'mmrm' object}
 
 \item{complete}{(\code{flag})\cr whether to include potential non-estimable
 coefficients.}
 
-\item{...}{}
+\item{...}{not used.}
 
-\item{newdata}{data frame for which to evaluate predictions.}
+\item{newdata}{(\code{data.frame})\cr object in which to look for variables with which to predict.}
 
 \item{se.fit}{(\code{flag})\cr indicator if standard errors are required.}
 
@@ -94,16 +100,12 @@ is the classical AIC.}
 
 \item{type}{(\code{string})\cr unscaled (\code{response}), \code{pearson} or \code{normalized}. Default is \code{response},
 and this is the only type available for use with models with a spatial covariance structure.}
-
-\item{nsim}{number of response vectors to simulate. Defaults to 1.}
-
-\item{seed}{an object specifying if and how the random number generator should be initialized (‘seeded’).}
 }
 \value{
 Depends on the method, see Functions.
 
-A \code{data.frame} of dimension \link{n, m} where n is the number of observations
-fitted in the model, and m is the number \code{nsim} of simulated responses.
+A \code{data.frame} of dimension \link{n, m} where n is the number of rows in \code{newdata},
+and m is the number \code{nsim} of simulated responses.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}

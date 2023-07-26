@@ -40,6 +40,7 @@ Other contributors:
   \item F. Hoffmann-La Roche AG [copyright holder, funder]
   \item Merck Sharp & Dohme, Inc. [copyright holder, funder]
   \item AstraZeneca plc [copyright holder, funder]
+  \item Daniel Leibovitz \email{daniel.leibovitz@roche.com} [contributor]
 }
 
 }
