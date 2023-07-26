@@ -472,67 +472,59 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
     # get prediction and prediction variance
     mu <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
 
-    # build data.frame of prediction vectors
-    ret <- mu$prediction[,1]
-    ret <- data.frame(replicate(nsim, ret))
+    # get simulations for prediction object mu
+    ret <- as.data.frame(h_get_sim_per_subj(mu, tmb_data$n_subjects, nsim))
 
-    # get dataframe values
-    n_subjects <- tmb_data$n_subjects
-    subject_n_visits <- tmb_data$subject_n_visits
-    subject_zero_inds <- tmb_data$subject_zero_inds
-    visit_zero_inds <- tmb_data$visits_zero_inds
-
-      for(i in seq_len(n_subjects)){
-        if(length(mu$index[[i]]) > 0){
-          # Obtain indices of data.frame belonging to subject i (iterate by 1, since indices from cpp are 0-order)
-          inds <- mu$index[[i]] + 1
-
-          # get relevant covariance matrix for subject i
-          covmat_i <- mu$covariance[[i]]
-
-          # simulate from covariance matrix
-          ret[inds,] <- ret[inds, , drop=FALSE] + t(MASS::mvrnorm(nsim, rep.int(0, length(inds)), covmat_i))
-        }
-      }
   }else if(method == "marginal"){
-    # build data.frame of prediction vectors
-    ret <- as.data.frame(matrix(NA, ncol = nsim, nrow = nrow(newdata)))
 
-    # get dataframe values
-    n_subjects <- tmb_data$n_subjects
-    subject_n_visits <- tmb_data$subject_n_visits
-    subject_zero_inds <- tmb_data$subject_zero_inds
-    visit_zero_inds <- tmb_data$visits_zero_inds
+    # get simulations for each new sampled theta
+    ret <- as.data.frame(
+      sapply(seq_len(nsim), function(x) {
+        # sample from theta distribution
+        newtheta <- MASS::mvrnorm(1, object$theta_est, object$theta_vcov)
+        # recalculate betas with sampled thetas
+        hold <- object$tmb_object$report(newtheta)
+        # get new predictions
+        mu <- h_get_prediction(tmb_data, newtheta, hold$beta, hold$beta_vcov)
 
-    for(j in seq_len(nsim)){
-      # get prediction and prediction variance
-
-      # sample from theta distribution
-      newtheta <- MASS::mvrnorm(1, object$theta_est, object$theta_vcov)
-      # recalculate betas with sampled thetas
-      hold <- object$tmb_object$report(newtheta)
-      newbeta <- hold$beta
-      newbeta_vcov <- hold$beta_vcov
-
-      # get new predictions
-      mu <- h_get_prediction(tmb_data, newtheta, newbeta, newbeta_vcov)
-      ret[,j] <- mu$prediction[,1]
-
-      for(i in seq_len(n_subjects)){
-        if(length(mu$index[[i]]) > 0){
-          # Obtain indices of data.frame belonging to subject i
-          inds <- mu$index[[i]] + 1
-
-          # get relevant covariance matrix for subject i
-          covmat_i <- mu$covariance[[i]]
-
-          # simulate from covariance matrix
-          ret[inds,j] <- ret[inds, j, drop=FALSE] + t(MASS::mvrnorm(1, rep.int(0, length(inds)), covmat_i))
-          }
+        # get simulations for prediction object mu
+        h_get_sim_per_subj(mu, tmb_data$n_subjects, 1L)
         }
-      }
-    }
+      )
+    )
+  }
 
   ret
 }
 
+
+#' Get simulated values by patient
+#'
+#' @param mu (`list`)\cr object returned by \code{h_get_prediction()}
+#' @param nsub (`integer`)\cr number of subjects
+#' @param nsim (`integer`)\cr number of values to simulate
+#'
+#' @keywords internal
+h_get_sim_per_subj <- function(mu, nsub, nsim){
+
+  ret <- matrix(replicate(nsim, mu$prediction[,1]), ncol = nsim)
+
+  for(i in seq_len(nsub)){
+    if(length(mu$index[[i]]) > 0){
+      # Obtain indices of data.frame belonging to subject i (iterate by 1, since indices from cpp are 0-order)
+      inds <- mu$index[[i]] + 1
+
+      # get relevant covariance matrix for subject i
+      covmat_i <- mu$covariance[[i]]
+
+      # simulate from covariance matrix
+      if(nsim > 1){
+        ret[inds,] <- ret[inds, , drop = FALSE] + t(MASS::mvrnorm(nsim, rep.int(0, length(inds)), covmat_i))
+      }else{
+        ret[inds,] <- ret[inds, , drop = FALSE] + MASS::mvrnorm(nsim, rep.int(0, length(inds)), covmat_i)
+      }
+    }
+  }
+
+  ret
+}
