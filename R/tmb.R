@@ -318,11 +318,20 @@ h_mmrm_tmb_check_conv <- function(tmb_opt, mmrm_tmb) {
 
   if (!is.null(tmb_opt$convergence) && tmb_opt$convergence != 0) {
     warning("Model convergence problem: ", tmb_opt$message, ".")
-  } else {
-    theta_vcov <- mmrm_tmb$theta_vcov
-    if (is(theta_vcov, "try-error")) {
-      warning("Model convergence problem: hessian is singular, theta_vcov not available")
-    }
+    return()
+  }
+  theta_vcov <- mmrm_tmb$theta_vcov
+  if (is(theta_vcov, "try-error")) {
+    warning("Model convergence problem: hessian is singular, theta_vcov not available.")
+    return()
+  }
+  if (!all(is.finite(theta_vcov))) {
+    warning("Model convergence problem: theta_vcov contains non-finite values.")
+    return()
+  }
+  qr_rank <- qr(theta_vcov)$rank
+  if (qr_rank < ncol(theta_vcov)) {
+    warning("Model convergence problem: theta_vcov is numerically singular.")
   }
 }
 
