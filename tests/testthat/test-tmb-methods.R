@@ -646,3 +646,48 @@ test_that("response residuals helper function works as expected", {
   expected <- component(object, "y_vector") - as.vector(fitted(object))
   expect_equal(result_rsp, expected)
 })
+
+# simulate.mmrm_tmb ----
+
+test_that("simulate.mmrm returns a data.frame object of correct dimension (including when nsim = 1) and with no missing values", {
+  object <- get_mmrm()
+  set.seed(1001)
+  sims <- simulate(object, nsim = 2)
+  expect_data_frame(sims, any.missing = FALSE, nrows = nrow(object$data), ncols = 2)
+
+  set.seed(202)
+  sims <- simulate(object, nsim = 1)
+  expect_data_frame(sims, any.missing = FALSE, nrows = nrow(object$data), ncols = 1)
+})
+
+test_that("simulate values are correctly centered for standard models", {
+  object <- get_mmrm()
+  set.seed(323)
+  sims <- simulate(object, nsim = 1000)
+  expect_equal(rowMeans(sims), predict(object, object$data), tolerance = 1e-1)
+})
+
+test_that("simulate works as expected for weighted models", {
+  object <- get_mmrm_weighted()
+  set.seed(535)
+  sims <- simulate(object, nsim = 1000)
+  expect_equal(rowMeans(sims), predict(object, object$data), tolerance = 1e-1)
+})
+
+test_that("simulate works as expected for grouped fits", {
+  object <- get_mmrm_group()
+  set.seed(737)
+  sims <- simulate(object, nsim = 1000)
+  expect_equal(rowMeans(sims), predict(object, object$data), tolerance = 1e-1)
+})
+
+test_that("simulate works as expected differently ordered/numbered data", {
+  object <- get_mmrm()
+  # construct trivial data.frame
+  df <- dplyr::slice(object$data, 1:10)
+  df <- df[sample(nrow(df)),]
+  set.seed(939)
+  sims <- simulate(object, nsim = 1000, newdata = df)
+  expect_equal(rowMeans(sims), predict(object, df), tolerance = 1e-1)
+})
+

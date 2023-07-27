@@ -226,3 +226,4 @@ print.summary.mmrm <- function(x,
   cat("\n")
   invisible(x)
 }
+

@@ -103,3 +103,4 @@ test_that("print.summary.mmrm works as expected for spatial fits", {
   result <- summary(object)
   expect_snapshot_output(print(result, digits = 1), cran = FALSE)
 })
+
