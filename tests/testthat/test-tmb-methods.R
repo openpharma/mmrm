@@ -649,7 +649,8 @@ test_that("response residuals helper function works as expected", {
 
 # simulate.mmrm_tmb ----
 
-test_that("simulate.mmrm returns a data.frame object of correct dimension (including when nsim = 1) and with no missing values", {
+test_that("simulate.mmrm returns a data.frame object of correct dimension
+          (including when nsim = 1) and with no missing values", {
   object <- get_mmrm()
   set.seed(1001)
   sims <- simulate(object, nsim = 2)
@@ -685,9 +686,8 @@ test_that("simulate works as expected differently ordered/numbered data", {
   object <- get_mmrm()
   # construct trivial data.frame
   df <- dplyr::slice(object$data, 1:10)
-  df <- df[sample(nrow(df)),]
+  df <- df[sample(nrow(df)), ]
   set.seed(939)
   sims <- simulate(object, nsim = 1000, newdata = df)
   expect_equal(rowMeans(sims), predict(object, df), tolerance = 1e-1)
 })
-
