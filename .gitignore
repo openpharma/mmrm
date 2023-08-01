@@ -44,3 +44,5 @@ README.md
 /vignettes/sascgf_personal.py
 simulations/chols/*chols
 renv
+renv.lock
+
