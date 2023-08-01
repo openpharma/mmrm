@@ -1,0 +1,11 @@
+renv.lock
+activate.R
+renv/*
+renv/settings.dcf
+library/
+local/
+cellar/
+lock/
+python/
+sandbox/
+staging/
