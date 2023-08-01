@@ -52,7 +52,6 @@ Imports:
     TMB (>= 1.9.1),
     utils
 Suggests:
-    broom,
     cli,
     clubSandwich,
     clusterGeneration,

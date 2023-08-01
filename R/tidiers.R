@@ -1,10 +1,10 @@
-#' @importFrom broom tidy glance augment
+#' @importFrom generics tidy glance augment
 #' @export
-broom::tidy
+generics::tidy
 #' @export
-broom::glance
+generics::glance
 #' @export
-broom::augment
+generics::augment
 
 #' @title Tidying methods for an mmrm model
 #' @description These methods tidy the estimates from an mmrm_tmb object into a
