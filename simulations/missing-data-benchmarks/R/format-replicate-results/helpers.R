@@ -84,7 +84,7 @@ get_mixed_emmeans_like_output <- function(fit) {
     stderr = StdErr,
     df = DF,
     tvalue = tValue,
-    pvalue = map2(tValue, DF, function(tvalue, df) {
+    pvalue = map2_dbl(tValue, DF, function(tvalue, df) {
       2 * min(c(pt(tvalue, df), pt(tvalue, df, lower.tail = FALSE)))
     }),
     lower = Lower,
@@ -107,4 +107,32 @@ get_emmeans_output <- function(method, fit, dt, converged) {
   } else {
     NA
   }
+}
+
+# format the fit results
+format_fit_results <- function(fit_results, missingness, sample_size) {
+  fit_results %>%
+    transmute(
+      missingness = missingness,
+      sample_size = sample_size,
+      effect_size = str_extract(.dgp_name, "^([^_])+"),
+      rep = .rep,
+      dgp_name = .dgp_name,
+      method_name = .method_name,
+      converged = pmap(
+        .l = list(fit, .method_name, converged),
+        .f = function(f, method_name, conv_status) {
+          get_convergence(method_name, f, conv_status)
+        }
+      ),
+      converged = unlist(converged),
+      fit_time = fit_time,
+      emmeans_output = pmap(
+        .l = list(fit, .dgp_name, .method_name, data, converged),
+        .f = function(f, dgp_name, method_name, dt, conv_status) {
+          get_emmeans_output(method_name, f, dt, conv_status)
+        }
+      )
+    ) %>%
+    unnest(cols = emmeans_output)
 }
