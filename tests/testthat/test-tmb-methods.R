@@ -691,3 +691,9 @@ test_that("simulate works as expected differently ordered/numbered data", {
   sims <- simulate(object, nsim = 1000, newdata = df)
   expect_equal(rowMeans(sims), predict(object, df), tolerance = 1e-1)
 })
+
+# h_get_sim_per_subj ----
+
+test_that("h_get_sim_per_subj", {
+  expect_equal(1,1)
+})

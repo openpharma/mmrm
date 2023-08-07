@@ -496,8 +496,8 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
 #' @keywords internal
 h_get_sim_per_subj <- function(mu, nsub, nsim) {
   assert_list(mu)
-  assert_integer(nsub)
-  assert_integer(nsim)
+  assert_int(nsub)
+  assert_int(nsim)
 
   ret <- matrix(mu$prediction[, 1], ncol = nsim, nrow = nrow(mu$prediction))
 
