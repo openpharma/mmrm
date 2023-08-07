@@ -470,16 +470,16 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
   if (method == "conditional") {
     mu <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
     ret <- as.data.frame(h_get_sim_per_subj(mu, tmb_data$n_subjects, nsim))
-  }else if (method == "marginal") {
-     ret <- as.data.frame(
+
+  } else if (method == "marginal") {
+    ret <- as.data.frame(
       sapply(seq_len(nsim), function(x) {
         newtheta <- MASS::mvrnorm(1, object$theta_est, object$theta_vcov)
         # recalculate betas with sampled thetas
         hold <- object$tmb_object$report(newtheta)
         mu <- h_get_prediction(tmb_data, newtheta, hold$beta, hold$beta_vcov)
         h_get_sim_per_subj(mu, tmb_data$n_subjects, 1L)
-        }
-      )
+      })
     )
   }
 
@@ -495,7 +495,6 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
 #'
 #' @keywords internal
 h_get_sim_per_subj <- function(mu, nsub, nsim) {
-
   assert_list(mu)
   assert_integer(nsub)
   assert_integer(nsim)
@@ -513,7 +512,7 @@ h_get_sim_per_subj <- function(mu, nsub, nsim) {
       # simulate from covariance matrix
       if (nsim > 1) {
         ret[inds, ] <- ret[inds, , drop = FALSE] + t(MASS::mvrnorm(nsim, rep.int(0, length(inds)), covmat_i))
-      }else {
+      } else {
         ret[inds, ] <- ret[inds, , drop = FALSE] + MASS::mvrnorm(nsim, rep.int(0, length(inds)), covmat_i)
       }
     }
