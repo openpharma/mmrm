@@ -450,7 +450,7 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
     newdata <- object$data
   }
 
-  # make sure new data has the same levels as original data
+  # Ensure new data has the same levels as original data.
   full_frame <- model.frame(
     object,
     data = newdata,
@@ -475,7 +475,7 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
     ret <- as.data.frame(
       sapply(seq_len(nsim), function(x) {
         newtheta <- MASS::mvrnorm(1, object$theta_est, object$theta_vcov)
-        # recalculate betas with sampled thetas
+        # Recalculate betas with sampled thetas.
         hold <- object$tmb_object$report(newtheta)
         mu <- h_get_prediction(tmb_data, newtheta, hold$beta, hold$beta_vcov)
         h_get_sim_per_subj(mu, tmb_data$n_subjects, 1L)
@@ -487,7 +487,7 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
 }
 
 
-#' Get simulated values by patient
+#' Get simulated values by patient.
 #'
 #' @param mu (`list`)\cr object returned by `h_get_prediction()`
 #' @param nsub (`integer`)\cr number of subjects
@@ -503,13 +503,13 @@ h_get_sim_per_subj <- function(mu, nsub, nsim) {
 
   for (i in seq_len(nsub)) {
     if (length(mu$index[[i]]) > 0) {
-      # Obtain indices of data.frame belonging to subject i (iterate by 1, since indices from cpp are 0-order)
+      # Obtain indices of data.frame belonging to subject i (iterate by 1, since indices from cpp are 0-order).
       inds <- mu$index[[i]] + 1
 
-      # get relevant covariance matrix for subject i
+      # Get relevant covariance matrix for subject i.
       covmat_i <- mu$covariance[[i]]
 
-      # simulate from covariance matrix
+      # Simulate from covariance matrix.
       if (nsim > 1) {
         ret[inds, ] <- ret[inds, , drop = FALSE] + t(MASS::mvrnorm(nsim, rep.int(0, length(inds)), covmat_i))
       } else {
