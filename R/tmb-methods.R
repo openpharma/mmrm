@@ -511,9 +511,9 @@ h_get_sim_per_subj <- function(mu, nsub, nsim) {
       covmat_i <- mu$covariance[[i]]
 
       # Simulate from covariance matrix.
-      M <- ret[inds, , drop = FALSE]
-      S <- MASS::mvrnorm(nsim, rep.int(0, length(inds)), covmat_i)
-      ret[inds, ] <- if (nsim > 1) {M + t(S)} else {M + S}
+      mus <- ret[inds, , drop = FALSE]
+      sigs <- MASS::mvrnorm(nsim, rep.int(0, length(inds)), covmat_i)
+      ret[inds, ] <- if (nsim > 1) mus + t(sigs) else mus + sigs
     }
   }
 

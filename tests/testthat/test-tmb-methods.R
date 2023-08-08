@@ -698,5 +698,5 @@ test_that("simulate works as expected differently ordered/numbered data", {
 
 test_that("h_get_sim_per_subj works for nsim == 1", {
   h_get_sim_per_subj(mu, nsub, nsim)
-  expect_equal(1,1)
+  expect_equal(1, 1)
 })

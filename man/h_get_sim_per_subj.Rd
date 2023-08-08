@@ -2,7 +2,7 @@
 % Please edit documentation in R/tmb-methods.R
 \name{h_get_sim_per_subj}
 \alias{h_get_sim_per_subj}
-\title{Get simulated values by patient}
+\title{Get simulated values by patient.}
 \usage{
 h_get_sim_per_subj(mu, nsub, nsim)
 }
@@ -14,6 +14,6 @@ h_get_sim_per_subj(mu, nsub, nsim)
 \item{nsim}{(\code{integer})\cr number of values to simulate}
 }
 \description{
-Get simulated values by patient
+Get simulated values by patient.
 }
 \keyword{internal}
