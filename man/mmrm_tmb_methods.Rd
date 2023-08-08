@@ -16,6 +16,7 @@
 \alias{BIC.mmrm_tmb}
 \alias{print.mmrm_tmb}
 \alias{residuals.mmrm_tmb}
+\alias{simulate.mmrm_tmb}
 \title{Methods for \code{mmrm_tmb} Objects}
 \usage{
 \method{coef}{mmrm_tmb}(object, complete = TRUE, ...)
@@ -51,9 +52,17 @@
 \method{print}{mmrm_tmb}(x, ...)
 
 \method{residuals}{mmrm_tmb}(object, type = c("response", "pearson", "normalized"), ...)
+
+\method{simulate}{mmrm_tmb}(
+  object,
+  nsim = 1,
+  newdata = NULL,
+  method = c("conditional", "marginal"),
+  ...
+)
 }
 \arguments{
-\item{object}{(\code{mmrm_tmb})\cr the fitted MMRM object.}
+\item{object}{(\code{mmrm})\cr an fitted 'mmrm' object}
 
 \item{complete}{(\code{flag})\cr whether to include potential non-estimable
 coefficients.}
@@ -94,6 +103,9 @@ and this is the only type available for use with models with a spatial covarianc
 }
 \value{
 Depends on the method, see Functions.
+
+A \code{data.frame} of dimension \link{n, m} where n is the number of rows in \code{newdata},
+and m is the number \code{nsim} of simulated responses.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
@@ -146,6 +158,8 @@ penalty parameter \code{k}.
 \item \code{print(mmrm_tmb)}: prints the object.
 
 \item \code{residuals(mmrm_tmb)}: to obtain residuals - either unscaled ('response'), 'pearson' or 'normalized'.
+
+\item \code{simulate(mmrm_tmb)}: Simulates from an mmrm model object
 
 }}
 \examples{
