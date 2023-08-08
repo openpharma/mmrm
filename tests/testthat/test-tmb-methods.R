@@ -665,35 +665,38 @@ test_that("simulate values are correctly centered for standard models", {
   object <- get_mmrm()
   set.seed(323)
   sims <- simulate(object, nsim = 1000)
-  expect_equal(rowMeans(sims), predict(object, object$data), tolerance = 1e-1)
+  expect_equal(rowMeans(sims), unname(predict(object, object$data)), tolerance = 1e-1)
 })
 
 test_that("simulate works as expected for weighted models", {
   object <- get_mmrm_weighted()
   set.seed(535)
   sims <- simulate(object, nsim = 1000)
-  expect_equal(rowMeans(sims), predict(object, object$data), tolerance = 1e-1)
+  expect_equal(rowMeans(sims), unname(predict(object, object$data)), tolerance = 1e-1)
 })
 
 test_that("simulate works as expected for grouped fits", {
   object <- get_mmrm_group()
   set.seed(737)
   sims <- simulate(object, nsim = 1000)
-  expect_equal(rowMeans(sims), predict(object, object$data), tolerance = 1e-1)
+  expect_equal(rowMeans(sims), unname(predict(object, object$data)), tolerance = 1e-1)
 })
 
 test_that("simulate works as expected differently ordered/numbered data", {
   object <- get_mmrm()
-  # construct trivial data.frame
+  # Construct a trivial data.frame.
   df <- dplyr::slice(object$data, 1:10)
-  df <- df[sample(nrow(df)), ]
+  neworder <- sample(nrow(df))
+  df_mixed <- df[neworder, ]
   set.seed(939)
   sims <- simulate(object, nsim = 1000, newdata = df)
-  expect_equal(rowMeans(sims), predict(object, df), tolerance = 1e-1)
+  sims_mixed <- sims[neworder, ]
+  expect_equal(rowMeans(sims_mixed), predict(object, df_mixed), tolerance = 1e-1)
 })
 
 # h_get_sim_per_subj ----
 
-test_that("h_get_sim_per_subj", {
+test_that("h_get_sim_per_subj works for nsim == 1", {
+  h_get_sim_per_subj(mu, nsub, nsim)
   expect_equal(1,1)
 })
