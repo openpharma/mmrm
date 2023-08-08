@@ -502,6 +502,7 @@ h_get_sim_per_subj <- function(mu, nsub, nsim) {
   ret <- matrix(mu$prediction[, 1], ncol = nsim, nrow = nrow(mu$prediction))
 
   for (i in seq_len(nsub)) {
+    # Skip null indices.
     if (length(mu$index[[i]]) > 0) {
       # Obtain indices of data.frame belonging to subject i (iterate by 1, since indices from cpp are 0-order).
       inds <- mu$index[[i]] + 1
@@ -510,11 +511,9 @@ h_get_sim_per_subj <- function(mu, nsub, nsim) {
       covmat_i <- mu$covariance[[i]]
 
       # Simulate from covariance matrix.
-      if (nsim > 1) {
-        ret[inds, ] <- ret[inds, , drop = FALSE] + t(MASS::mvrnorm(nsim, rep.int(0, length(inds)), covmat_i))
-      } else {
-        ret[inds, ] <- ret[inds, , drop = FALSE] + MASS::mvrnorm(nsim, rep.int(0, length(inds)), covmat_i)
-      }
+      M <- ret[inds, , drop = FALSE]
+      S <- MASS::mvrnorm(nsim, rep.int(0, length(inds)), covmat_i)
+      ret[inds, ] <- if (nsim > 1) {M + t(S)} else {M + S}
     }
   }
 
