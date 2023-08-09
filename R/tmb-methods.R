@@ -443,7 +443,6 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
                               newdata = NULL,
                               method = c("conditional", "marginal"),
                               ...) {
-
   method <- match.arg(method)
 
   if (is.null(newdata)) {
@@ -470,7 +469,6 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
   if (method == "conditional") {
     mu <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
     ret <- as.data.frame(h_get_sim_per_subj(mu, tmb_data$n_subjects, nsim))
-
   } else if (method == "marginal") {
     ret <- as.data.frame(
       sapply(seq_len(nsim), function(x) {
