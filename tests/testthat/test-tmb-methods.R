@@ -696,7 +696,99 @@ test_that("simulate works as expected differently ordered/numbered data", {
 
 # h_get_sim_per_subj ----
 
-test_that("h_get_sim_per_subj works for nsim == 1", {
-  h_get_sim_per_subj(mu, nsub, nsim)
-  expect_equal(1, 1)
+test_that("h_get_sim_per_subj returns no error for nsim == 1", {
+  object <- get_mmrm()
+  # Format data.frame to inherit from 'mmrm_tmb_data'.
+  tmb_data <- h_mmrm_tmb_data(
+    object$formula_parts, object$data,
+    weights = rep(1, nrow(object$data)),
+    reml = TRUE,
+    singular = "keep",
+    drop_visit_levels = FALSE,
+    allow_na_response = TRUE,
+    drop_levels = FALSE
+  )
+  mu <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
+  expect_no_error(h_get_sim_per_subj(mu, object$tmb_data$n_subjects, nsim = 1))
+})
+
+test_that("h_get_sim_per_subj returns no error for nsub == 1", {
+  object <- get_mmrm()
+  # Format data.frame to inherit from 'mmrm_tmb_data'.
+  tmb_data <- h_mmrm_tmb_data(
+    object$formula_parts, object$data,
+    weights = rep(1, nrow(object$data)),
+    reml = TRUE,
+    singular = "keep",
+    drop_visit_levels = FALSE,
+    allow_na_response = TRUE,
+    drop_levels = FALSE
+  )
+  mu <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
+  expect_no_error(h_get_sim_per_subj(mu, 1, nsim = 10))
+})
+
+test_that("h_get_sim_per_subj returns no error for data.frame with 1 row", {
+  object <- get_mmrm()
+  # Format data.frame to inherit from 'mmrm_tmb_data'.
+  tmb_data <- h_mmrm_tmb_data(
+    object$formula_parts, object$data[1, ],
+    weights = rep(1, nrow(object$data[1, ])),
+    reml = TRUE,
+    singular = "keep",
+    drop_visit_levels = FALSE,
+    allow_na_response = TRUE,
+    drop_levels = FALSE
+  )
+  mu <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
+  expect_no_error(h_get_sim_per_subj(mu, 1, nsim = 10))
+})
+
+test_that("h_get_sim_per_subj results match expectation for large nsim", {
+  object <- get_mmrm()
+  # Format data.frame to inherit from 'mmrm_tmb_data'.
+  tmb_data <- h_mmrm_tmb_data(
+    object$formula_parts, object$data,
+    weights = rep(1, nrow(object$data)),
+    reml = TRUE,
+    singular = "keep",
+    drop_visit_levels = FALSE,
+    allow_na_response = TRUE,
+    drop_levels = FALSE
+  )
+  mu <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
+  results <- h_get_sim_per_subj(mu, object$tmb_data$n_subjects, nsim = 1000)
+  expect_equal(rowMeans(results), mu$prediction[, 1], tolerance = 1e-1)
+})
+
+test_that("h_get_sim_per_subj throws error for nsim == 0", {
+  object <- get_mmrm()
+  # Format data.frame to inherit from 'mmrm_tmb_data'.
+  tmb_data <- h_mmrm_tmb_data(
+    object$formula_parts, object$data[1, ],
+    weights = rep(1, nrow(object$data[1, ])),
+    reml = TRUE,
+    singular = "keep",
+    drop_visit_levels = FALSE,
+    allow_na_response = TRUE,
+    drop_levels = FALSE
+  )
+  mu <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
+  expect_error(h_get_sim_per_subj(mu, object$tmb_data$n_subjects, nsim = 0))
+})
+
+test_that("h_get_sim_per_subj throws error for nsub == 0", {
+  object <- get_mmrm()
+  # Format data.frame to inherit from 'mmrm_tmb_data'.
+  tmb_data <- h_mmrm_tmb_data(
+    object$formula_parts, object$data[1, ],
+    weights = rep(1, nrow(object$data[1, ])),
+    reml = TRUE,
+    singular = "keep",
+    drop_visit_levels = FALSE,
+    allow_na_response = TRUE,
+    drop_levels = FALSE
+  )
+  mu <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
+  expect_error(h_get_sim_per_subj(mu, 0, nsim = 10))
 })
