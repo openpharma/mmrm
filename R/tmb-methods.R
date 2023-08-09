@@ -470,9 +470,11 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
     mu <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
     ret <- as.data.frame(h_get_sim_per_subj(mu, tmb_data$n_subjects, nsim))
   } else if (method == "marginal") {
+    theta_chol <- t(chol(object$theta_vcov))
+    ntheta <- length(object$theta_est)
     ret <- as.data.frame(
       sapply(seq_len(nsim), function(x) {
-        newtheta <- MASS::mvrnorm(1, object$theta_est, object$theta_vcov)
+        newtheta <- theta_chol %*% t(MASS::mvrnorm(1, rep(0, ntheta), diag(ntheta))) + object$theta_est
         # Recalculate betas with sampled thetas.
         hold <- object$tmb_object$report(newtheta)
         mu <- h_get_prediction(tmb_data, newtheta, hold$beta, hold$beta_vcov)
