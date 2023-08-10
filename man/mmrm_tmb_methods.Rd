@@ -102,11 +102,11 @@ is the classical AIC.}
 \item{type}{(\code{string})\cr unscaled (\code{response}), \code{pearson} or \code{normalized}. Default is \code{response},
 and this is the only type available for use with models with a spatial covariance structure.}
 
-\item{nsim}{(\code{integr})\cr number of replications to simulate.}
+\item{nsim}{(\code{integer})\cr number of replications to simulate.}
 
-\item{seed}{Unused argument from simulate generic.}
+\item{seed}{unused argument from simulate generic.}
 
-\item{method}{(\code{character})\cr One of "conditional" or "marginal". If "conditional",
+\item{method}{(\code{string})\cr One of "conditional" or "marginal". If "conditional",
 simulated values are sampled given the estimated covariance matrix of \code{object}. If "marginal",
 variance of the estimated covariance matrix is taken into account.}
 }
