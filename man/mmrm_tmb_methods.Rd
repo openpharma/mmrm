@@ -56,20 +56,21 @@
 \method{simulate}{mmrm_tmb}(
   object,
   nsim = 1,
+  seed = NULL,
+  ...,
   newdata = NULL,
-  method = c("conditional", "marginal"),
-  ...
+  method = c("conditional", "marginal")
 )
 }
 \arguments{
-\item{object}{(\code{mmrm})\cr an fitted 'mmrm' object}
+\item{object}{(\code{mmrm})\cr a fitted 'mmrm' object}
 
 \item{complete}{(\code{flag})\cr whether to include potential non-estimable
 coefficients.}
 
 \item{...}{not used.}
 
-\item{newdata}{(\code{data.frame})\cr object in which to look for variables with which to predict.}
+\item{newdata}{(\code{data.frame})\cr new data.frame for which to simulate values.}
 
 \item{se.fit}{(\code{flag})\cr indicator if standard errors are required.}
 
@@ -77,7 +78,7 @@ coefficients.}
 
 \item{level}{(\code{number})\cr tolerance/confidence level.}
 
-\item{n_sim}{(\code{integr})\cr number of replications to calculate prediction interval.}
+\item{n_sim}{(\code{integr})\cr number of replications to simulate.}
 
 \item{formula}{(\code{mmrm_tmb})\cr same as \code{object}.}
 
@@ -100,11 +101,15 @@ is the classical AIC.}
 
 \item{type}{(\code{string})\cr unscaled (\code{response}), \code{pearson} or \code{normalized}. Default is \code{response},
 and this is the only type available for use with models with a spatial covariance structure.}
+
+\item{method}{(\code{character})\cr One of "conditional" or "marginal". If "conditional",
+simulated values are sampled given the estimated covariance matrix of \code{object}. If "marginal",
+variance of the estimated covariance matrix is taken into account.}
 }
 \value{
 Depends on the method, see Functions.
 
-A \code{data.frame} of dimension \link{n, m} where n is the number of rows in \code{newdata},
+A \code{data.frame} of dimension \verb{[n, m]} where n is the number of rows in \code{newdata},
 and m is the number \code{nsim} of simulated responses.
 }
 \description{
