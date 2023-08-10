@@ -35,6 +35,7 @@ Authors:
 Other contributors:
 \itemize{
   \item Craig Gower-Page \email{craig.gower-page@roche.com} [contributor]
+  \item Daniel Leibovitz \email{daniel.leibovitz@roche.com} [contributor]
   \item Boehringer Ingelheim Ltd. [copyright holder, funder]
   \item Gilead Sciences, Inc. [copyright holder, funder]
   \item F. Hoffmann-La Roche AG [copyright holder, funder]
