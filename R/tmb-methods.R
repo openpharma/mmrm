@@ -479,7 +479,7 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
     ntheta <- length(object$theta_est)
     ret <- as.data.frame(
       sapply(seq_len(nsim), function(x) {
-        newtheta <- theta_chol %*% t(MASS::mvrnorm(1, rep(0, ntheta), diag(ntheta))) + object$theta_est
+        newtheta <- theta_chol %*% matrix(rnorm(ntheta), nrow = 1) + object$theta_est
         # Recalculate betas with sampled thetas.
         hold <- object$tmb_object$report(newtheta)
         mu <- h_get_prediction(tmb_data, newtheta, hold$beta, hold$beta_vcov)
@@ -513,14 +513,16 @@ h_get_sim_per_subj <- function(mu, nsub, nsim) {
     if (length(mu$index[[i]]) > 0) {
       # Obtain indices of data.frame belonging to subject i (iterate by 1, since indices from cpp are 0-order).
       inds <- mu$index[[i]] + 1
+      obs <- length(inds)
 
       # Get relevant covariance matrix for subject i.
       covmat_i <- mu$covariance[[i]]
+      theta_chol <- chol(covmat_i)
 
       # Simulate from covariance matrix.
       mus <- ret[inds, , drop = FALSE]
-      sigs <- MASS::mvrnorm(nsim, rep.int(0, length(inds)), covmat_i)
-      ret[inds, ] <- if (nsim > 1) mus + t(sigs) else mus + sigs
+      sigs <- matrix(rnorm(nsim*obs), nrow = nsim) %*% theta_chol
+      ret[inds, ] <- mus + t(sigs)
     }
   }
 
