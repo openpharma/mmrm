@@ -434,7 +434,7 @@ h_residuals_response <- function(object) {
 #' @importFrom stats simulate
 #'
 #' @param object (`mmrm`)\cr a fitted 'mmrm' object
-#' @param nsim (`integr`)\cr number of replications to simulate.
+#' @param nsim (`integer`)\cr number of replications to simulate.
 #' @param seed Unused argument from simulate generic.
 #' @param newdata (`data.frame`)\cr new data.frame for which to simulate values.
 #' @param method (`character`)\cr One of "conditional" or "marginal". If "conditional",
