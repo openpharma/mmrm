@@ -429,3 +429,101 @@ h_residuals_response <- function(object) {
   assert_class(object, "mmrm_tmb")
   component(object, "y_vector") - unname(fitted(object))
 }
+
+
+#' @describeIn mmrm_tmb_methods Simulates from an mmrm model object
+#' @importFrom stats simulate
+#' @exportS3Method
+#'
+#' @param object (`mmrm`)\cr a fitted 'mmrm' object
+#' @param n_sim (`integr`)\cr number of replications to simulate.
+#' @param newdata (`data.frame`)\cr new data.frame for which to simulate values.
+#' @param method (`character`)\cr One of "conditional" or "marginal". If "conditional",
+#' simulated values are sampled given the estimated covariance matrix of `object`. If "marginal",
+#' variance of the estimated covariance matrix is taken into account.
+#'
+#' @return A `data.frame` of dimension `[n, m]` where n is the number of rows in `newdata`,
+#' and m is the number `nsim` of simulated responses.
+simulate.mmrm_tmb <- function(object, nsim = 1,
+                              seed = NULL, ...,
+                              newdata = NULL,
+                              method = c("conditional", "marginal")
+                              ) {
+  method <- match.arg(method)
+
+  if (is.null(newdata)) {
+    newdata <- object$data
+  }
+
+  # Ensure new data has the same levels as original data.
+  full_frame <- model.frame(
+    object,
+    data = newdata,
+    include = c("subject_var", "visit_var", "group_var", "response_var"),
+    na.action = "na.pass"
+  )
+  tmb_data <- h_mmrm_tmb_data(
+    object$formula_parts, full_frame,
+    weights = rep(1, nrow(full_frame)),
+    reml = TRUE,
+    singular = "keep",
+    drop_visit_levels = FALSE,
+    allow_na_response = TRUE,
+    drop_levels = FALSE
+  )
+
+  if (method == "conditional") {
+    mu <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
+    ret <- as.data.frame(h_get_sim_per_subj(mu, tmb_data$n_subjects, nsim))
+  } else if (method == "marginal") {
+    theta_chol <- t(chol(object$theta_vcov))
+    ntheta <- length(object$theta_est)
+    ret <- as.data.frame(
+      sapply(seq_len(nsim), function(x) {
+        newtheta <- theta_chol %*% t(MASS::mvrnorm(1, rep(0, ntheta), diag(ntheta))) + object$theta_est
+        # Recalculate betas with sampled thetas.
+        hold <- object$tmb_object$report(newtheta)
+        mu <- h_get_prediction(tmb_data, newtheta, hold$beta, hold$beta_vcov)
+        h_get_sim_per_subj(mu, tmb_data$n_subjects, 1L)
+      })
+    )
+  }
+
+  ret
+}
+
+
+#' Get simulated values by patient.
+#'
+#' @param mu (`list`)\cr object returned by `h_get_prediction()`
+#' @param nsub (`integer`)\cr number of subjects
+#' @param nsim (`integer`)\cr number of values to simulate
+#'
+#' @keywords internal
+h_get_sim_per_subj <- function(mu, nsub, nsim) {
+  assert_list(mu)
+  assert_int(nsub)
+  assert(nsub > 0)
+  assert_int(nsim)
+  assert(nsim > 0)
+
+  ret <- matrix(mu$prediction[, 1], ncol = nsim, nrow = nrow(mu$prediction))
+
+  for (i in seq_len(nsub)) {
+    # Skip null indices.
+    if (length(mu$index[[i]]) > 0) {
+      # Obtain indices of data.frame belonging to subject i (iterate by 1, since indices from cpp are 0-order).
+      inds <- mu$index[[i]] + 1
+
+      # Get relevant covariance matrix for subject i.
+      covmat_i <- mu$covariance[[i]]
+
+      # Simulate from covariance matrix.
+      mus <- ret[inds, , drop = FALSE]
+      sigs <- MASS::mvrnorm(nsim, rep.int(0, length(inds)), covmat_i)
+      ret[inds, ] <- if (nsim > 1) mus + t(sigs) else mus + sigs
+    }
+  }
+
+  ret
+}
