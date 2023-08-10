@@ -430,13 +430,12 @@ h_residuals_response <- function(object) {
   component(object, "y_vector") - unname(fitted(object))
 }
 
-
-#' @describeIn mmrm_tmb_methods Simulates from an mmrm model object
+#' @describeIn mmrm_tmb_methods Simulate from an mmrm model object
 #' @importFrom stats simulate
-#' @exportS3Method
 #'
 #' @param object (`mmrm`)\cr a fitted 'mmrm' object
-#' @param n_sim (`integr`)\cr number of replications to simulate.
+#' @param nsim (`integr`)\cr number of replications to simulate.
+#' @param seed Unused argument from simulate generic.
 #' @param newdata (`data.frame`)\cr new data.frame for which to simulate values.
 #' @param method (`character`)\cr One of "conditional" or "marginal". If "conditional",
 #' simulated values are sampled given the estimated covariance matrix of `object`. If "marginal",
@@ -444,6 +443,7 @@ h_residuals_response <- function(object) {
 #'
 #' @return A `data.frame` of dimension `[n, m]` where n is the number of rows in `newdata`,
 #' and m is the number `nsim` of simulated responses.
+#' @exportS3Method
 simulate.mmrm_tmb <- function(object, nsim = 1,
                               seed = NULL, ...,
                               newdata = NULL,

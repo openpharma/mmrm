@@ -78,7 +78,7 @@ coefficients.}
 
 \item{level}{(\code{number})\cr tolerance/confidence level.}
 
-\item{n_sim}{(\code{integr})\cr number of replications to simulate.}
+\item{n_sim}{(\code{integr})\cr number of replications to calculate prediction interval.}
 
 \item{formula}{(\code{mmrm_tmb})\cr same as \code{object}.}
 
@@ -101,6 +101,10 @@ is the classical AIC.}
 
 \item{type}{(\code{string})\cr unscaled (\code{response}), \code{pearson} or \code{normalized}. Default is \code{response},
 and this is the only type available for use with models with a spatial covariance structure.}
+
+\item{nsim}{(\code{integr})\cr number of replications to simulate.}
+
+\item{seed}{Unused argument from simulate generic.}
 
 \item{method}{(\code{character})\cr One of "conditional" or "marginal". If "conditional",
 simulated values are sampled given the estimated covariance matrix of \code{object}. If "marginal",
@@ -164,7 +168,7 @@ penalty parameter \code{k}.
 
 \item \code{residuals(mmrm_tmb)}: to obtain residuals - either unscaled ('response'), 'pearson' or 'normalized'.
 
-\item \code{simulate(mmrm_tmb)}: Simulates from an mmrm model object
+\item \code{simulate(mmrm_tmb)}: Simulate from an mmrm model object
 
 }}
 \examples{
