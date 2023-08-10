@@ -521,7 +521,7 @@ h_get_sim_per_subj <- function(mu, nsub, nsim) {
 
       # Simulate from covariance matrix.
       mus <- ret[inds, , drop = FALSE]
-      sigs <- matrix(rnorm(nsim*obs), nrow = nsim) %*% theta_chol
+      sigs <- matrix(rnorm(nsim * obs), nrow = nsim) %*% theta_chol
       ret[inds, ] <- mus + t(sigs)
     }
   }
