@@ -447,8 +447,7 @@ h_residuals_response <- function(object) {
 simulate.mmrm_tmb <- function(object, nsim = 1,
                               seed = NULL, ...,
                               newdata = NULL,
-                              method = c("conditional", "marginal")
-                              ) {
+                              method = c("conditional", "marginal")) {
   method <- match.arg(method)
 
   if (is.null(newdata)) {
