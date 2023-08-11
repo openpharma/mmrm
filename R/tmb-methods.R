@@ -437,7 +437,7 @@ h_residuals_response <- function(object) {
 #' @param nsim (`integer`)\cr number of replications to simulate.
 #' @param seed unused argument from simulate generic.
 #' @param newdata (`data.frame`)\cr new data.frame for which to simulate values.
-#' @param method (`string`)\cr One of "conditional" or "marginal". If "conditional",
+#' @param method (`string`)\cr one of "conditional" or "marginal". If "conditional",
 #' simulated values are sampled given the estimated covariance matrix of `object`. If "marginal",
 #' variance of the estimated covariance matrix is taken into account.
 #'

@@ -106,7 +106,7 @@ and this is the only type available for use with models with a spatial covarianc
 
 \item{seed}{unused argument from simulate generic.}
 
-\item{method}{(\code{string})\cr One of "conditional" or "marginal". If "conditional",
+\item{method}{(\code{string})\cr one of "conditional" or "marginal". If "conditional",
 simulated values are sampled given the estimated covariance matrix of \code{object}. If "marginal",
 variance of the estimated covariance matrix is taken into account.}
 }
