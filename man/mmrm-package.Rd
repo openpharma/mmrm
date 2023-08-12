@@ -30,12 +30,12 @@ Authors:
   \item Ya Wang \email{ya.wang10@gilead.com}
   \item Dan James \email{dan.james@astrazeneca.com}
   \item Jonathan Sidi \email{yoni.sidi@sagerx.com}
+  \item Daniel Leibovitz \email{daniel.leibovitz@roche.com}
 }
 
 Other contributors:
 \itemize{
   \item Craig Gower-Page \email{craig.gower-page@roche.com} [contributor]
-  \item Daniel Leibovitz \email{daniel.leibovitz@roche.com} [contributor]
   \item Boehringer Ingelheim Ltd. [copyright holder, funder]
   \item Gilead Sciences, Inc. [copyright holder, funder]
   \item F. Hoffmann-La Roche AG [copyright holder, funder]
