@@ -131,7 +131,7 @@ predict_sas_sp <- function(cov = "sp_exp", ddfm = "Satterthewaite") {
 
 ```{r}
 predict_sas("un", "satterthwaite")
-predict_sas("un", "kenwardroger<linear>")
+predict_sas("un", "kenwardroger_linear")
 predict_sas("cs", "satterthwaite")
 predict_sas("cs", "kenwardroger")
 predict_sas("ar(1)", "satterthwaite")
