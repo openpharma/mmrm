@@ -50,7 +50,7 @@ These methods tidy the estimates from an mmrm_tmb object into a
 summary
 }
 \examples{
-if(interactive()){
+
 
   # fit a model
     fit <- mmrm(FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID), data = fev_data)
@@ -70,8 +70,8 @@ if(interactive()){
 
     fit |> augment(type.residuals='pearson')
     fit |> augment(type.residuals='normalized')
- }
+
 }
 \seealso{
-\code{\link[tibble]{as_tibble}}, \code{\link[tibble]{enframe}}
+\code{\link[tibble:as_tibble]{tibble::as_tibble()}}, \code{\link[tibble:enframe]{tibble::enframe()}}
 }
