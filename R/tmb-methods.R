@@ -211,17 +211,18 @@ model.frame.mmrm_tmb <- function(formula, data, include = NULL, full, na.action 
       na.action = na.action
     )
   # we need the full formula obs, so recalculating if not already full
-  ret_full <-
-    switch(as.character(lst_formula_and_data$is_full),
-      "TRUE" = ret,
-      "FALSE" =
-        stats::model.frame(
-          formula = lst_formula_and_data$formula_full,
-          data = lst_formula_and_data$data
-        )
-    )
+  if (lst_formula_and_data$is_full) {
+    ret_full <- ret
+  }
+  else {
+    ret_full <-
+      stats::model.frame(
+        formula = lst_formula_and_data$formula_full,
+        data = lst_formula_and_data$data
+      )
+  }
 
-  # subset data frame to only include obs included in model
+  # subset data frame to only include obs utilized in model
   ret[rownames(ret) %in% rownames(ret_full), , drop = FALSE]
 }
 
@@ -229,11 +230,13 @@ model.frame.mmrm_tmb <- function(formula, data, include = NULL, full, na.action 
 #' Construction of Model Frame Formula and Data Inputs
 #'
 #' @description
-#' Function returns a named list with three elements:
+#' Function returns a named list with four elements:
 #' - `"formula"`: the formula including the columns requested in the `include=` argument.
 #' - `"formula_full"`: the formula including all columns
 #' - `"data"`: a data frame including all columns where factor and
 #'   character columns have been processed with [h_factor_ref()].
+#' - `"is_full"`: a logical scalar indicating if the formula and
+#'   full formula are identical
 #'
 #' Input formulas are converted from mmrm-style to a style compatible
 #' with default [stats::model.frame()] and [stats::model.matrix()] methods.
@@ -258,6 +261,7 @@ h_construct_model_frame_inputs <- function(formula, data, include,
     include <- include_choice
   }
 
+  assert_class(formula, classes = "mmrm_tmb")
   assert_subset(include, include_choice)
   if (missing(data)) {
     data <- formula$tmb_data$data
@@ -299,12 +303,12 @@ h_construct_model_frame_inputs <- function(formula, data, include,
 #' # Model matrix:
 #' model.matrix(object)
 model.matrix.mmrm_tmb <- function(object, data, include = c("visit_var", "group_var"), ...) { # nolint
-  # construct updated formula and data arguments
+  # construct updated formula and data arguments.
   assert_subset(include, c("subject_var", "visit_var", "group_var"))
   lst_formula_and_data <-
     h_construct_model_frame_inputs(formula = object, data = data, include = include)
 
-  # construct matrix to return
+  # construct matrix to return.
   ret <-
     stats::model.matrix(
       object = lst_formula_and_data$formula,
@@ -312,19 +316,20 @@ model.matrix.mmrm_tmb <- function(object, data, include = c("visit_var", "group_
       ...
     )
 
-  # we need the full formula obs, so recalculating if not already full
-  ret_full <-
-    switch(as.character(lst_formula_and_data$is_full),
-      "TRUE" = ret,
-      "FALSE" =
-        stats::model.matrix(
-          object = lst_formula_and_data$formula_full,
-          data = lst_formula_and_data$data,
-          ...
-        )
-    )
+  # we need the full formula obs, so recalculating if not already full.
+  if (lst_formula_and_data$is_full) {
+    ret_full <- ret
+  }
+  else {
+    ret_full <-
+      stats::model.matrix(
+        object = lst_formula_and_data$formula_full,
+        data = lst_formula_and_data$data,
+        ...
+      )
+  }
 
-  # subset data frame to only include obs included in model
+  # subset data frame to only include obs utilized in model.
   ret[rownames(ret) %in% rownames(ret_full), , drop = FALSE]
 }
 
@@ -337,13 +342,14 @@ model.matrix.mmrm_tmb <- function(object, data, include = c("visit_var", "group_
 #' terms(object)
 #' terms(object, include = "subject_var")
 terms.mmrm_tmb <- function(x, include = "response_var", ...) { # nolint
-  # construct updated formula and data arguments
+  # construct updated formula and data arguments.
   lst_formula_and_data <-
     h_construct_model_frame_inputs(
       formula = x,
       include = include
     )
 
+  # use formula method for `terms()` to construct the mmrm terms object.
   stats::terms(
     x = lst_formula_and_data$formula,
     data = lst_formula_and_data$data

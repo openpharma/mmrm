@@ -601,7 +601,7 @@ test_that("terms works as expected with defaults", {
   result <- expect_silent(terms(object))
   expect_equal(
     result,
-    FEV1 ~ RACE + USUBJID + AVISIT,
+    FEV1 ~ RACE,
     ignore_attr = TRUE
   )
 })

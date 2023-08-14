@@ -2,7 +2,7 @@
 % Please edit documentation in R/tmb-methods.R
 \name{h_construct_model_frame_inputs}
 \alias{h_construct_model_frame_inputs}
-\title{Construct \code{model.frame()} formula and data inputs from mmrm model fit}
+\title{Construction of Model Frame Formula and Data Inputs}
 \usage{
 h_construct_model_frame_inputs(
   formula,
@@ -13,7 +13,7 @@ h_construct_model_frame_inputs(
 )
 }
 \arguments{
-\item{formula}{mmrm fit object}
+\item{formula}{(\code{mmrm})\cr mmrm fit object.}
 
 \item{data}{optional data frame that will be
 passed to \code{model.frame()} or \code{model.matrix()}}
@@ -26,16 +26,18 @@ passed to \code{model.frame()} or \code{model.matrix()}}
 list with two named elements: formula, and data
 }
 \description{
-Function returns a named list with three elements:
+Function returns a named list with four elements:
 \itemize{
 \item \code{"formula"}: the formula including the columns requested in the \verb{include=} argument.
 \item \code{"formula_full"}: the formula including all columns
 \item \code{"data"}: a data frame including all columns where factor and
-character columns have been processed with \code{h_factor_ref()}.
+character columns have been processed with \code{\link[=h_factor_ref]{h_factor_ref()}}.
+\item \code{"is_full"}: a logical scalar indicating if the formula and
+full formula are identical
 }
 
 Input formulas are converted from mmrm-style to a style compatible
-with default \code{model.frame()} and \code{model.matrix()} methods.
+with default \code{\link[stats:model.frame]{stats::model.frame()}} and \code{\link[stats:model.matrix]{stats::model.matrix()}} methods.
 
 The full formula is returned so we can construct, for example, the
 \code{model.frame()} including all columns as well as the requested subset.
