@@ -95,8 +95,7 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 SystemRequirements: C++14
 Collate:
-    'between_within.R'
-    'between_within_classic.R'
+    'between-within.R'
     'catch-routine-registration.R'
     'component.R'
     'cov_struct.R'
