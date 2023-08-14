@@ -461,7 +461,7 @@ test_that("model.frame do not care about subject levels", {
   fev_data2 <- fev_data
   fev_data2$USUBJID <- sprintf("%s_TEST", fev_data2$USUBJID)
   out_frame <- expect_silent(
-    model.frame(fit1, na.action = "na.fail", data = fev_data2, include = "subject_var")
+    model.frame(fit1, data = fev_data2, include = "subject_var")
   )
   expect_identical(
     # first remove missing obs from input data
@@ -473,17 +473,17 @@ test_that("model.frame do not care about subject levels", {
 test_that("model.frame include all specified variables", {
   fit1 <- get_mmrm_group()
   out_frame <- expect_silent(
-    model.frame(fit1, na.action = "na.fail", data = fev_data, include = "group_var")
+    model.frame(fit1, data = fev_data, include = "group_var")
   )
   expect_identical(colnames(out_frame), "ARMCD") # formula already contains "ARMCD"
 
   out_frame <- expect_silent(
-    model.frame(fit1, na.action = "na.fail", data = fev_data, include = "visit_var")
+    model.frame(fit1, data = fev_data, include = "visit_var")
   )
   expect_identical(colnames(out_frame), c("ARMCD", "AVISIT"))
 
   out_frame <- expect_silent(
-    model.frame(fit1, na.action = "na.fail", data = fev_data, include = "subject_var")
+    model.frame(fit1, data = fev_data, include = "subject_var")
   )
   expect_identical(colnames(out_frame), c("ARMCD", "USUBJID"))
 

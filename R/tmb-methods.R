@@ -218,7 +218,8 @@ model.frame.mmrm_tmb <- function(formula, data, include = NULL, full, na.action 
     ret_full <-
       stats::model.frame(
         formula = lst_formula_and_data$formula_full,
-        data = lst_formula_and_data$data
+        data = lst_formula_and_data$data,
+        na.action = na.action
       )
   }
 
