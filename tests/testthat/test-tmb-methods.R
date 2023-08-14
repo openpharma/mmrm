@@ -315,6 +315,13 @@ test_that("predict gives same result with sas in sp_exp satterthwaite/kenward-ro
   expect_equal(sas_res_p_sd, sqrt(res$prediction[c(1, 3), 3]), tolerance = 1e-2)
 })
 
+# h_construct_model_frame_inputs ----
+
+test_that("h_construct_model_frame_inputs works as expected with defaults", {
+
+})
+
+
 # model.frame ----
 
 test_that("model.frame works as expected with defaults", {
@@ -393,7 +400,11 @@ test_that("model.frame do not care about subject levels", {
   out_frame <- expect_silent(
     model.frame(fit1, na.action = "na.fail", data = fev_data2, include = "subject_var")
   )
-  expect_identical(fev_data2$USUBJID, out_frame$USUBJID)
+  expect_identical(
+    # first remove missing obs from input data
+    na.omit(fev_data2[all.vars(fit1$formula$formula)])$USUBJID,
+    out_frame$USUBJID
+  )
 })
 
 test_that("model.frame include all specified variables", {
@@ -447,6 +458,77 @@ test_that("model.frame with character reference will return factors", {
     allow_na_response = TRUE,
     drop_levels = FALSE
   ), "contrasts can be applied only to factors")
+})
+
+# model.matrix ----
+
+test_that("model.matrix works as expected with defaults", {
+  object <- get_mmrm_tmb()
+  result <- expect_silent(model.matrix(object))
+  expect_matrix(result, nrows = length(object$tmb_data$y_vector))
+  expect_equal(
+    colnames(result),
+    c("(Intercept)", "RACEBlack or African American", "RACEWhite", "AVISITVIS2", "AVISITVIS3", "AVISITVIS4")
+  )
+})
+
+test_that("model.matrix works as expected with includes", {
+  object <- get_mmrm_tmb()
+  result <- expect_silent(model.matrix(object, include = c("visit_var")))
+  expect_matrix(result, nrows = length(object$tmb_data$y_vector))
+  expect_equal(
+    colnames(result),
+    c("(Intercept)", "RACEBlack or African American", "RACEWhite", "AVISITVIS2", "AVISITVIS3", "AVISITVIS4")
+  )
+})
+
+test_that("model.matrix returns full model frame if requested", {
+  object <- get_mmrm_tmb()
+  result <- expect_silent(model.matrix(object, include = c("visit_var", "subject_var", "group_var")))
+  expect_matrix(result, nrows = length(object$tmb_data$y_vector))
+  # expecting many columns for covariates and dummy cols for USUBJID
+  expect_equal(
+    length(colnames(result)),
+    205L
+  )
+})
+
+test_that("model.matrix works if variable transformed", {
+  fit1 <- get_mmrm_transformed()
+  result <- expect_silent(model.matrix(fit1, include = c("visit_var")))
+  expect_matrix(result, nrows = length(fit1$tmb_data$y_vector))
+  expect_equal(
+    colnames(result),
+    c("(Intercept)", "log(FEV1_BL)", "AVISITVIS2", "AVISITVIS3", "AVISITVIS4")
+  )
+})
+
+test_that("model.matrix works for new data", {
+  fit1 <- get_mmrm_transformed()
+  result <- expect_silent(model.matrix(
+    fit1,
+    data = fev_data[complete.cases(fev_data), ][1:20, ],
+    include = c("visit_var")
+  ))
+  expect_matrix(result, nrows = 20L)
+  expect_equal(
+    colnames(result),
+    c("(Intercept)", "log(FEV1_BL)", "AVISITVIS2", "AVISITVIS3", "AVISITVIS4")
+  )
+})
+
+
+test_that("model.matrix include all specified variables", {
+  fit1 <- get_mmrm_group()
+  out_frame <- expect_silent(
+    model.matrix(fit1, data = fev_data, include = "group_var")
+  )
+  expect_identical(colnames(out_frame), c("(Intercept)", "ARMCDTRT")) # formula already contains "ARMCD"
+
+  out_frame <- expect_silent(
+    model.matrix(fit1, data = fev_data, include = "visit_var")
+  )
+  expect_identical(colnames(out_frame), c("(Intercept)", "ARMCDTRT", "AVISITVIS2", "AVISITVIS3", "AVISITVIS4"))
 })
 
 # logLik ----
