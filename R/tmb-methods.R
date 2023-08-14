@@ -517,11 +517,11 @@ h_get_sim_per_subj <- function(mu, nsub, nsim) {
 
       # Get relevant covariance matrix for subject i.
       covmat_i <- mu$covariance[[i]]
-      theta_chol <- chol(covmat_i)
+      theta_chol <- t(chol(covmat_i))
 
       # Simulate from covariance matrix.
       mus <- ret[inds, , drop = FALSE]
-      sigs <- matrix(rnorm(nsim * obs), nrow = nsim) %*% theta_chol
+      sigs <- theta_chol %*% t(matrix(rnorm(nsim * obs), nrow = nsim))
       ret[inds, ] <- mus + t(sigs)
     }
   }
