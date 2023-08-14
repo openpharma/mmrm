@@ -242,7 +242,7 @@ model.frame.mmrm_tmb <- function(formula, data, include = NULL, full, na.action 
 #' `model.frame()` including all columns as well as the requested subset.
 #' The full set is used to identify rows to include in the reduced model frame.
 #'
-#' @param formula mmrm fit object
+#' @param formula (`mmrm`)\cr mmrm fit object.
 #' @param data optional data frame that will be
 #'   passed to `model.frame()` or `model.matrix()`
 #' @param include names of variable to include
