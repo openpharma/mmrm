@@ -649,47 +649,92 @@ test_that("response residuals helper function works as expected", {
 
 # simulate.mmrm_tmb ----
 
-test_that("simulate.mmrm returns a data.frame object of correct dimension
+test_that("simulate.mmrm(method = 'conditional') returns a data.frame object of correct dimension
           (including when nsim = 1) and with no missing values", {
   object <- get_mmrm()
   set.seed(1001)
-  sims <- simulate(object, nsim = 2)
+  sims <- simulate(object, nsim = 2, method = "conditional")
   expect_data_frame(sims, any.missing = FALSE, nrows = nrow(object$data), ncols = 2)
 
   set.seed(202)
-  sims <- simulate(object, nsim = 1)
+  sims <- simulate(object, nsim = 1, method = "conditional")
   expect_data_frame(sims, any.missing = FALSE, nrows = nrow(object$data), ncols = 1)
 })
 
-test_that("simulate values are correctly centered for standard models", {
+test_that("simulate.mmrm(method = 'marginal') returns a data.frame object of correct dimension
+          (including when nsim = 1) and with no missing values", {
+            object <- get_mmrm()
+            set.seed(1001)
+            sims <- simulate(object, nsim = 2, method = "marginal")
+            expect_data_frame(sims, any.missing = FALSE, nrows = nrow(object$data), ncols = 2)
+
+            set.seed(202)
+            sims <- simulate(object, nsim = 1, method = "marginal")
+            expect_data_frame(sims, any.missing = FALSE, nrows = nrow(object$data), ncols = 1)
+          })
+
+test_that("simulate(method = 'conditional') results are correctly centered for standard models", {
   object <- get_mmrm()
   set.seed(323)
-  sims <- simulate(object, nsim = 1000)
+  sims <- simulate(object, nsim = 1000, method = "conditional")
   expect_equal(rowMeans(sims), unname(predict(object, object$data)), tolerance = 1e-1)
 })
 
-test_that("simulate works as expected for weighted models", {
+test_that("simulate(method = 'marginal') results are correctly centered for standard models", {
+  object <- get_mmrm()
+  set.seed(323)
+  sims <- simulate(object, nsim = 1000, method = "marginal")
+  expect_equal(rowMeans(sims), unname(predict(object, object$data)), tolerance = 1e-1)
+})
+
+test_that("simulate(method = 'conditional') works as expected for weighted models", {
   object <- get_mmrm_weighted()
   set.seed(535)
-  sims <- simulate(object, nsim = 1000)
+  sims <- simulate(object, nsim = 1000, method = "conditional")
   expect_equal(rowMeans(sims), unname(predict(object, object$data)), tolerance = 1e-1)
 })
 
-test_that("simulate works as expected for grouped fits", {
+test_that("simulate(method = 'marginal') works as expected for weighted models", {
+  object <- get_mmrm_weighted()
+  set.seed(535)
+  sims <- simulate(object, nsim = 1000, method = "marginal")
+  expect_equal(rowMeans(sims), unname(predict(object, object$data)), tolerance = 1e-1)
+})
+
+test_that("simulate(method = 'conditional') works as expected for grouped fits", {
   object <- get_mmrm_group()
   set.seed(737)
-  sims <- simulate(object, nsim = 1000)
+  sims <- simulate(object, nsim = 1000, method = "conditional")
   expect_equal(rowMeans(sims), unname(predict(object, object$data)), tolerance = 1e-1)
 })
 
-test_that("simulate works as expected differently ordered/numbered data", {
+test_that("simulate(method = 'marginal') works as expected for grouped fits", {
+  object <- get_mmrm_group()
+  set.seed(737)
+  sims <- simulate(object, nsim = 1000, method = "marginal")
+  expect_equal(rowMeans(sims), unname(predict(object, object$data)), tolerance = 1e-1)
+})
+
+test_that("simulate(method = 'conditional') works as expected differently ordered/numbered data", {
   object <- get_mmrm()
   # Construct a trivial data.frame.
   df <- dplyr::slice(object$data, 1:10)
   neworder <- sample(nrow(df))
   df_mixed <- df[neworder, ]
   set.seed(939)
-  sims <- simulate(object, nsim = 1000, newdata = df)
+  sims <- simulate(object, nsim = 1000, newdata = df, method = "conditional")
+  sims_mixed <- sims[neworder, ]
+  expect_equal(rowMeans(sims_mixed), predict(object, df_mixed), tolerance = 1e-1)
+})
+
+test_that("simulate(method = 'marginal') works as expected differently ordered/numbered data", {
+  object <- get_mmrm()
+  # Construct a trivial data.frame.
+  df <- dplyr::slice(object$data, 1:10)
+  neworder <- sample(nrow(df))
+  df_mixed <- df[neworder, ]
+  set.seed(939)
+  sims <- simulate(object, nsim = 1000, newdata = df, method = "marginal")
   sims_mixed <- sims[neworder, ]
   expect_equal(rowMeans(sims_mixed), predict(object, df_mixed), tolerance = 1e-1)
 })
