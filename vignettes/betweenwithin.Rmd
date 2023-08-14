@@ -27,7 +27,7 @@ library(mmrm)
 
 For determining the denominator degrees of freedom (DDF) required for the testing of fixed effects, one option is to use the 'between-within' method, originally proposed by @schluchter1990small as a small-sample adjustment.
 
-Using this method, the DDF are determined by the grouping level at which the term is estimated. In the case of an MMRM model with only fixed effect terms, this method simplifies to including 3 potential 'levels' of parameters (@galecki2013linear):
+Using this method, the DDF are determined by the grouping level at which the term is estimated. In our case of an MMRM (with only fixed effect terms), this method simplifies to including 3 potential 'levels' of parameters (@galecki2013linear):
 
 * Level 0: the intercept term, assuming the model has been fitted with one
 * Level 1: effects that change between subjects, but not across observations within subjects
@@ -35,9 +35,7 @@ Using this method, the DDF are determined by the grouping level at which the ter
 
 More generally, assuming $G$ levels of grouping:
 
-$DDF_g=N_g-(N_{g-1}+p_g)$
-
-$g=1, ..., G+1$
+$DDF_g=N_g-(N_{g-1}+p_g), g=1, ..., G+1$
 
 Where $N_g$ is the number of groups at the $g$-th grouping level and $p_g$ is the number of parameters estimated at that level.
 
@@ -97,3 +95,5 @@ The implementation described above is not identical to that of SAS. Differences 
 
 * In SAS, when using an unstructured covariance matrix, all effects are assigned the between-subjects degrees of freedom.
 * The within-subjects degrees of freedom in SAS are affected by the number of subjects in which the effect takes different values.
+
+# References

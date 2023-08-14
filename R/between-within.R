@@ -1,4 +1,4 @@
-#' Calculation of between-within Degrees of Freedom for One-Dimensional Contrast
+#' Calculation of Between-Within Degrees of Freedom for One-Dimensional Contrast
 #'
 #' @description Calculates the estimate, standard error, degrees of freedom,
 #' t statistic and p-value for one-dimensional contrast. Used in [df_1d()] if method is
@@ -51,7 +51,7 @@ h_df_1d_bw <- function(object, contrast) {
   )
 }
 
-#' Calculation of between-within Degrees of Freedom for Multi-Dimensional Contrast
+#' Calculation of Between-Within Degrees of Freedom for Multi-Dimensional Contrast
 #'
 #' @description Calculates the between-within degrees of freedom, F statistic and p value for multi-dimensional contrast.
 #' Used in [df_md()] if method is "Between-within".
