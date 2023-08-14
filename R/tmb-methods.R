@@ -338,7 +338,8 @@ model.matrix.mmrm_tmb <- function(object, data, include = c("visit_var", "group_
 #' # terms:
 #' terms(object)
 #' terms(object, include = "subject_var")
-terms.mmrm_tmb <- function(x, data, include = c("subject_var", "visit_var", "group_var", "response_var"), ...) { # nolint
+terms.mmrm_tmb <- function(x, data,
+                           include = c("subject_var", "visit_var", "group_var", "response_var"), ...) { # nolint
   # construct updated formula and data arguments
   lst_formula_and_data <-
     h_construct_model_frame_inputs(
