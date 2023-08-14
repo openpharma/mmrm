@@ -236,7 +236,7 @@ model.frame.mmrm_tmb <- function(formula, data, include = NULL, full, na.action 
 #'   character columns have been processed with [h_factor_ref()].
 #'
 #' Input formulas are converted from mmrm-style to a style compatible
-#' with default `model.frame()` and `model.matrix()` methods.
+#' with default [stats::model.frame()] and [stats::model.matrix()] methods.
 #'
 #' The full formula is returned so we can construct, for example, the
 #' `model.frame()` including all columns as well as the requested subset.
