@@ -1,13 +1,16 @@
 #' Capture all Output
 #'
 #' This function silences all warnings, errors & messages and instead returns a list
-#' containing the results (if it didn't error) + the warning and error messages as
-#' character vectors.
+#' containing the results (if it didn't error), as well as the warnings, errors
+#' and messages and divergence signals as character vectors.
 #'
 #' @param expr (`expression`)\cr to be executed.
 #' @param remove (`list`)\cr optional list with elements `warnings`, `errors`,
 #'   `messages` which can be character vectors, which will be removed from the
 #'   results if specified.
+#' @param divergence (`list`)\cr optional list similar as `remove`, but these
+#'   character vectors will be moved to the `divergence` result and signal
+#'   that the fit did not converge.
 #'
 #' @return
 #' A list containing
@@ -16,9 +19,12 @@
 #' - `warnings`: `NULL` or a character vector if warnings were thrown.
 #' - `errors`: `NULL` or a string if an error was thrown.
 #' - `messages`: `NULL` or a character vector if messages were produced.
+#' - `divergence`: `NULL` or a character vector if divergence messages were caught.
 #'
 #' @keywords internal
-h_record_all_output <- function(expr, remove = list()) {
+h_record_all_output <- function(expr,
+                                remove = list(),
+                                divergence = list()) {
   # Note: We don't need to and cannot assert `expr` here.
   assert_list(remove)
   env <- new.env()
@@ -43,65 +49,16 @@ h_record_all_output <- function(expr, remove = list()) {
   )
   list(
     result = result,
-    warnings = setdiff(env$warning, remove$warnings),
-    errors = setdiff(env$error, remove$errors),
-    messages = setdiff(env$message, remove$messages)
+    warnings = setdiff(env$warning, c(remove$warnings, divergence$warnings)),
+    errors = setdiff(env$error, c(remove$errors, divergence$errors)),
+    messages = setdiff(env$message, c(remove$messages, divergence$messages)),
+    divergence = c(
+      intersect(env$warning, divergence$warnings),
+      intersect(env$error, divergence$errors),
+      intersect(env$message, divergence$messages)
+    )
   )
 }
-
-#' Get an approximate number of free cores.
-#'
-#' @description `r lifecycle::badge("deprecated")` use
-#' `parallelly::availableCores(omit = 1)` instead
-#'
-#' @return The approximate number of free cores, which is an integer between 1 and one less than
-#' the total cores.
-#'
-#' @details
-#' - This uses the maximum load average at 1, 5 and 15 minutes on Linux and Mac
-#' machines to approximate the number of busy cores. For Windows, the load percentage is
-#' multiplied with the total number of cores.
-#' - We then subtract this from the number of all detected cores. One additional core
-#' is not used for extra safety.
-#'
-#' @note If executed during a unit test and on CRAN then always returns 1 to avoid any
-#' parallelization.
-#'
-#' @export
-free_cores <- function() {
-  lifecycle::deprecate_warn(
-    "0.1.6", "free_cores()",
-    "parallelly::availableCores(omit = 'number of cores to reserve, e.g. 1')"
-  )
-  all_cores <- parallel::detectCores(all.tests = TRUE)
-  busy_cores <-
-    if (.Platform$OS.type == "windows") {
-      load_percent_string <- system("wmic cpu get loadpercentage", intern = TRUE)
-      # This gives e.g.: c("LoadPercentage", "10", "")
-      # So we just take the number here.
-      load_percent <- as.integer(min(load_percent_string[2L], 100))
-      if (test_int(load_percent, lower = 0, upper = 100)) {
-        ceiling(all_cores * load_percent / 100)
-      } else {
-        all_cores
-      }
-    } else if (.Platform$OS.type == "unix") {
-      uptime_string <- system("uptime", intern = TRUE)
-      # This gives e.g.:
-      # "11:00  up  1:57, 3 users, load averages: 2.71 2.64 2.62"
-      # Here we just want the last three numbers.
-      uptime_split <- strsplit(uptime_string, split = ",|\\s")[[1]] # Split at comma or white space.
-      uptime_split <- uptime_split[uptime_split != ""]
-      load_averages <- as.numeric(utils::tail(uptime_split, 3))
-      ceiling(max(load_averages))
-    }
-  assert_number(all_cores, lower = 1, finite = TRUE)
-  assert_number(busy_cores, lower = 0, upper = all_cores)
-  # For safety, we subtract 1 more core from all cores.
-  as.integer(max(1, all_cores - busy_cores - 1))
-}
-
-
 
 #' Trace of a Matrix
 #'
@@ -359,7 +316,9 @@ h_default_value <- function(x, y) {
 h_factor_ref <- function(x, ref, var_name = vname(x)) {
   assert_multi_class(ref, c("character", "factor"))
   assert_multi_class(x, c("character", "factor"))
-  uni_values <- as.character(unique(x))
+  # NA can be possible values
+  uni_values <- as.character(stats::na.omit(unique(x)))
+  # no NA in reference
   uni_ref <- as.character(unique(ref))
   assert_character(uni_values, .var.name = var_name)
   assert_subset(uni_values, uni_ref, .var.name = var_name)
@@ -371,5 +330,19 @@ h_factor_ref <- function(x, ref, var_name = vname(x)) {
 h_warn_na_action <- function() {
   if (!identical(getOption("na.action"), "na.omit")) {
     warning("na.action is always set to `na.omit` for `mmrm` fit!")
+  }
+}
+
+#' Validate mmrm Formula
+#' @param formula (`formula`)\cr to check.
+#'
+#' @details In mmrm models, `.` is not allowed as it introduces ambiguity of covariates
+#' to be used, so it is not allowed to be in formula.
+#'
+#' @keywords internal
+h_valid_formula <- function(formula) {
+  assert_formula(formula)
+  if ("." %in% all.vars(formula)) {
+    stop("`.` is not allowed in mmrm models!")
   }
 }

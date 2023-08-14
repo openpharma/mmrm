@@ -11,7 +11,6 @@
 #' @importFrom lifecycle deprecated
 #' @importFrom Matrix .bdiag
 #' @importFrom methods is
-#' @importFrom numDeriv genD
 #' @importFrom stats acf
 #' @importFrom stringr boundary
 #' @importFrom parallel clusterApply

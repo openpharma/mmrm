@@ -1,0 +1,81 @@
+```{r, include = FALSE}
+library(mmrm)
+```
+
+This package supports estimation of one- and multi-dimensional contrasts
+(t-test and F-test calculation) with the [`df_1d()`](https://openpharma.github.io/mmrm/main/reference/df_1d.html) and
+[`df_md()`](https://openpharma.github.io/mmrm/main/reference/df_md.html) functions.
+Both functions utilize the chosen adjustment method from the initial `mmrm` call
+for the calculation of degrees of freedom and (for Kenward-Roger methods) the
+variance estimates for the test-statistics.
+
+## One-dimensional contrasts
+
+Compute the test of a one-dimensional (vector) contrast for a `mmrm` object with
+Satterthwaite degrees of freedom.
+
+```{r 1d_satterthwaite}
+fit <- mmrm(
+  formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data
+)
+
+contrast <- numeric(length(component(fit, "beta_est")))
+contrast[3] <- 1
+
+df_1d(fit, contrast)
+```
+
+This works similarly when choosing a Kenward-Roger adjustment:
+
+```{r 1d_kr}
+fit_kr <- mmrm(
+  formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data,
+  method = "Kenward-Roger"
+)
+
+df_1d(fit_kr, contrast)
+```
+
+We see that because this is a one-dimensional contrast, the degrees of freedoms
+are identical for Satterthwaite and Kenward-Roger. However, the standard errors
+are different and therefore the p-values are different.
+
+## Multi-dimensional contrasts
+
+Compute the test of a multi-dimensional (matrix) contrast for the above defined
+`mmrm` object with Satterthwaite degrees of freedom:
+
+```{r md_satterthwaite}
+contrast <- matrix(data = 0, nrow = 2, ncol = length(component(fit, "beta_est")))
+contrast[1, 2] <- contrast[2, 3] <- 1
+
+df_md(fit, contrast)
+```
+
+And for the Kenward-Roger adjustment:
+
+```{r md_kr}
+df_md(fit_kr, contrast)
+```
+
+We see that for the multi-dimensional contrast we get slightly different
+denominator degrees of freedom for the two adjustment methods.
+
+## Support for emmeans
+
+This package includes methods that allow `mmrm` objects to be used with the
+`emmeans` package. `emmeans` computes estimated marginal means (also called
+least-square means) for the coefficients of the MMRM.
+
+```{r emmeans}
+fit <- mmrm(
+  formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data
+)
+
+if (require(emmeans)) {
+  emmeans(fit, ~ ARMCD | AVISIT)
+}
+```

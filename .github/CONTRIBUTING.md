@@ -87,6 +87,12 @@ imports.
   `pkgdown` web pages. Note that this includes only exported objects. To
   make it look similar to the help page references, please here also use
   `function()` style.
+- `mmrm_review_methods.Rmd` is a large vignette and we precompute this vignette
+  to make the github actions faster. Run the script `vignettes/precompile.R`
+  to regenerate the precomputed vignette and subsequently update it in github.
+  Before every release we need to run this again.
+  Please note you need to install the package and then compile the vignette
+  because efficiency is better after installation to provide a fair comparison.
 
 ## Github conventions
 

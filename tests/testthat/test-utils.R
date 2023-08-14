@@ -12,7 +12,13 @@ test_that("h_record_all_outputs correctly removes specified messages", {
     },
     remove = list(messages = c("Almost done", "bla"))
   )
-  expected <- list(result = 3, warnings = "something went wrong", errors = NULL, messages = "O nearly done")
+  expected <- list(
+    result = 3,
+    warnings = "something went wrong",
+    errors = NULL,
+    messages = "O nearly done",
+    divergence = NULL
+  )
   expect_identical(result, expected)
 })
 
@@ -26,12 +32,29 @@ test_that("h_record_all_outputs works as expected with no removal list given for
     x + y
   })
   expected <- list(
-    result = 3, warnings = "something went wrong", errors = NULL,
-    messages = c("O nearly done", "oh noo")
+    result = 3,
+    warnings = "something went wrong",
+    errors = NULL,
+    messages = c("O nearly done", "oh noo"),
+    divergence = NULL
   )
   expect_identical(result, expected)
 })
 
+test_that("h_record_all_outputs catches divergence errors, warnings, messages as expected", {
+  result <- expect_silent(h_record_all_output(
+    {
+      x <- 1
+      y <- 2
+      warning("div1")
+      message("div2")
+      stop("div3")
+      x + y
+    },
+    divergence = list(warnings = "div1", errors = "div3", messages = "div2")
+  ))
+  expect_setequal(result$divergence, c("div1", "div2", "div3"))
+})
 
 # h_tr ----
 
@@ -40,17 +63,6 @@ test_that("trace of a matrix works as expected", {
   expect_error(h_tr(mx), "x must be square matrix")
   v <- c(1, 3, 2)
   expect_equal(h_tr(diag(v)), 6)
-})
-
-# free_cors ----
-
-test_that("free_cores throws deprecation warning", {
-  skip_on_cran()
-  expect_warning(
-    free_cores(),
-    regexp = "`free_cores()` was deprecated in mmrm 0.1.6.",
-    fixed = TRUE
-  )
 })
 
 # h_split_control ----
@@ -191,6 +203,13 @@ test_that("h_factor_ref fails on non existing level", {
 test_that("h_factor_ref works with character", {
   ref <- c("a", "b", "c")
   x <- c("a", "b")
+  f <- expect_silent(h_factor_ref(x, ref))
+  expect_identical(levels(f), ref)
+})
+
+test_that("h_factor ref allows NA in x", {
+  ref <- c("a", "b", "c")
+  x <- c("a", "b", NA)
   f <- expect_silent(h_factor_ref(x, ref))
   expect_identical(levels(f), ref)
 })

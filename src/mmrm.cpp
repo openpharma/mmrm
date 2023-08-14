@@ -55,24 +55,13 @@ Type objective_function<Type>::operator() ()
   vector<Type> y_vec_tilde = vector<Type>::Zero(y_vector.rows());
   // Sum of the log determinant will be incrementally calculated here.
   Type sum_log_det = 0.0;
-  // Get number of variance parameters for one group.
-  int theta_one_group_size = theta.size() / n_groups;
+  
   // Convert is_spatial_int to bool.
   bool is_spatial = (is_spatial_int == 1);
   // Diagonal of weighted covariance
   vector<Type> diag_cov_inv_sqrt(x_matrix.rows());
-  // Cache of all Cholesky factors
-  // Create the lower triangular Cholesky factor of the visit x visit covariance matrix.
-  std::map<int, lower_chol_base<Type>*> chols_by_group;
-  for (int r = 0; r < n_groups; r++) {
-    // in loops using new keyword is required so that the objects stays on the heap
-    // otherwise this will be destroyed and you will get unexpected result
-    if (is_spatial) {
-      chols_by_group[r] = new lower_chol_spatial<Type>(theta.segment(r * theta_one_group_size, theta_one_group_size), cov_type);
-    } else {
-      chols_by_group[r] = new lower_chol_nonspatial<Type>(theta.segment(r * theta_one_group_size, theta_one_group_size), n_visits, cov_type);
-    }
-  }
+  // Cholesky group object
+  auto chols_group = chol_cache_groups<Type>(theta, n_groups, is_spatial, cov_type, n_visits);
   // Go through all subjects and calculate quantities initialized above.
   for (int i = 0; i < n_subjects; i++) {
     // Start index and number of visits for this subject.
@@ -88,7 +77,7 @@ Type objective_function<Type>::operator() ()
       dist_i = euclidean(matrix<Type>(coordinates.block(start_i, 0, n_visits_i, coordinates.cols())));
     }
     // Obtain Cholesky factor Li.
-    matrix<Type> Li = chols_by_group[subject_groups[i]]->get_chol(visit_i, dist_i);  
+    matrix<Type> Li = chols_group.cache[subject_groups[i]]->get_chol(visit_i, dist_i);  
     // Calculate weighted Cholesky factor for this subject.
     Eigen::DiagonalMatrix<Type,Eigen::Dynamic,Eigen::Dynamic> Gi_inv_sqrt = weights_vector.segment(start_i, n_visits_i).cwiseInverse().sqrt().matrix().asDiagonal();
     Li = Gi_inv_sqrt * Li;
@@ -151,7 +140,7 @@ Type objective_function<Type>::operator() ()
   REPORT(epsilonTilde);
   // inverse square root of diagonal of covariance
   REPORT(diag_cov_inv_sqrt);
-  matrix<Type> covariance_lower_chol = get_chol_and_clean(chols_by_group, is_spatial, n_visits);
+  matrix<Type> covariance_lower_chol = chols_group.get_default_chol();
   REPORT(covariance_lower_chol);
 
   return neg_log_lik;

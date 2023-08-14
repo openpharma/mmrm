@@ -2,7 +2,7 @@
 
 test_that("flatten_expr collapses expressions into sequential atoms and ops", {
   expect_identical(
-    flatten_expr(quote(1 + 2 | 3 * 4 ^ 5)),
+    flatten_expr(quote(1 + 2 | 3 * 4^5)),
     list(1, as.name("+"), 2, as.name("|"), 3, as.name("*"), 4, as.name("^"), 5)
   )
 
@@ -66,7 +66,7 @@ test_that("is_infix identifies primitive infix operators", {
 test_that("formula_rhs fetches the right-most part of a formula", {
   expect_identical(
     formula_rhs(a ~ b + c),
-    ~b + c,
+    ~ b + c,
   )
 
   expect_identical(
@@ -76,7 +76,7 @@ test_that("formula_rhs fetches the right-most part of a formula", {
 
   expect_identical(
     formula_rhs(~ c | d),
-    ~c | d
+    ~ c | d
   )
 })
 
