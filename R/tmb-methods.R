@@ -212,8 +212,7 @@ model.frame.mmrm_tmb <- function(formula, data, include = NULL, full, na.action 
     )
   # we need the full formula obs, so recalculating if not already full
   ret_full <-
-    switch(
-      as.character(lst_formula_and_data$is_full),
+    switch(as.character(lst_formula_and_data$is_full),
       "TRUE" = ret,
       "FALSE" =
         stats::model.frame(
@@ -315,8 +314,7 @@ model.matrix.mmrm_tmb <- function(object, data, include = c("visit_var", "group_
 
   # we need the full formula obs, so recalculating if not already full
   ret_full <-
-    switch(
-      as.character(lst_formula_and_data$is_full),
+    switch(as.character(lst_formula_and_data$is_full),
       "TRUE" = ret,
       "FALSE" =
         stats::model.matrix(
@@ -338,13 +336,11 @@ model.matrix.mmrm_tmb <- function(object, data, include = c("visit_var", "group_
 #' # terms:
 #' terms(object)
 #' terms(object, include = "subject_var")
-terms.mmrm_tmb <- function(x, data,
-                           include = c("subject_var", "visit_var", "group_var", "response_var"), ...) { # nolint
+terms.mmrm_tmb <- function(x, include = "response_var", ...) { # nolint
   # construct updated formula and data arguments
   lst_formula_and_data <-
     h_construct_model_frame_inputs(
       formula = x,
-      data = data,
       include = include
     )
 

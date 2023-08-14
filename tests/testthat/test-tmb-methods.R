@@ -317,8 +317,71 @@ test_that("predict gives same result with sas in sp_exp satterthwaite/kenward-ro
 
 # h_construct_model_frame_inputs ----
 
-test_that("h_construct_model_frame_inputs works as expected with defaults", {
+test_that("h_construct_model_frame_inputs works with all columns", {
+  object <- get_mmrm_tmb()
 
+  result <-
+    expect_silent(
+      h_construct_model_frame_inputs(
+        formula = object,
+        data = object$data |> head(),
+        include = c("subject_var", "visit_var", "group_var", "response_var"),
+      )
+    )
+  expect_equal(
+    result$formula,
+    FEV1 ~ RACE + USUBJID + AVISIT,
+    ignore_attr = TRUE
+  )
+  expect_equal(
+    result$formula_full,
+    FEV1 ~ RACE + USUBJID + AVISIT,
+    ignore_attr = TRUE
+  )
+})
+
+test_that("h_construct_model_frame_inputs works with response var selected", {
+  object <- get_mmrm_tmb()
+  result <-
+    expect_silent(
+      h_construct_model_frame_inputs(
+        formula = object,
+        data = object$data |> head(),
+        include = "response_var",
+      )
+    )
+  expect_equal(
+    result$formula,
+    FEV1 ~ RACE,
+    ignore_attr = TRUE
+  )
+  expect_equal(
+    result$formula_full,
+    FEV1 ~ RACE + USUBJID + AVISIT,
+    ignore_attr = TRUE
+  )
+})
+
+test_that("h_construct_model_frame_inputs works with include=NULL", {
+  object <- get_mmrm_tmb()
+  result <-
+    expect_silent(
+      h_construct_model_frame_inputs(
+        formula = object,
+        data = object$data |> head(),
+        include = NULL,
+      )
+    )
+  expect_equal(
+    result$formula,
+    ~RACE,
+    ignore_attr = TRUE
+  )
+  expect_equal(
+    result$formula_full,
+    FEV1 ~ RACE + USUBJID + AVISIT,
+    ignore_attr = TRUE
+  )
 })
 
 
@@ -529,6 +592,18 @@ test_that("model.matrix include all specified variables", {
     model.matrix(fit1, data = fev_data, include = "visit_var")
   )
   expect_identical(colnames(out_frame), c("(Intercept)", "ARMCDTRT", "AVISITVIS2", "AVISITVIS3", "AVISITVIS4"))
+})
+
+# terms ----
+
+test_that("terms works as expected with defaults", {
+  object <- get_mmrm_tmb()
+  result <- expect_silent(terms(object))
+  expect_equal(
+    result,
+    FEV1 ~ RACE + USUBJID + AVISIT,
+    ignore_attr = TRUE
+  )
 })
 
 # logLik ----

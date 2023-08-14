@@ -38,12 +38,7 @@
 
 \method{model.matrix}{mmrm_tmb}(object, data, include = c("visit_var", "group_var"), ...)
 
-\method{terms}{mmrm_tmb}(
-  x,
-  data,
-  include = c("subject_var", "visit_var", "group_var", "response_var"),
-  ...
-)
+\method{terms}{mmrm_tmb}(x, include = "response_var", ...)
 
 \method{logLik}{mmrm_tmb}(object, ...)
 
