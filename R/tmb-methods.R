@@ -233,7 +233,7 @@ model.frame.mmrm_tmb <- function(formula, data, include = NULL, full, na.action 
 #' - `"formula"`: the formula including the columns requested in the `include=` argument.
 #' - `"formula_full"`: the formula including all columns
 #' - `"data"`: a data frame including all columns where factor and
-#'   character columns have been processed with `h_factor_ref()`.
+#'   character columns have been processed with [h_factor_ref()].
 #'
 #' Input formulas are converted from mmrm-style to a style compatible
 #' with default `model.frame()` and `model.matrix()` methods.
