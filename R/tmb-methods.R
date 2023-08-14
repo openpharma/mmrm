@@ -226,7 +226,7 @@ model.frame.mmrm_tmb <- function(formula, data, include = NULL, full, na.action 
 }
 
 
-#' Construct `model.frame()` formula and data inputs from mmrm model fit
+#' Construction of Model Frame Formula and Data Inputs
 #'
 #' @description
 #' Function returns a named list with three elements:
