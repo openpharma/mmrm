@@ -479,7 +479,7 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
     ntheta <- length(object$theta_est)
     ret <- as.data.frame(
       sapply(seq_len(nsim), function(x) {
-        newtheta <- theta_chol %*% matrix(rnorm(ntheta), nrow = 1) + object$theta_est
+        newtheta <- theta_chol %*% matrix(rnorm(ntheta), ncol = 1) + object$theta_est
         # Recalculate betas with sampled thetas.
         hold <- object$tmb_object$report(newtheta)
         mu <- h_get_prediction(tmb_data, newtheta, hold$beta, hold$beta_vcov)
@@ -522,7 +522,7 @@ h_get_sim_per_subj <- function(mu, nsub, nsim) {
       # Simulate from covariance matrix.
       mus <- ret[inds, , drop = FALSE]
       sigs <- theta_chol %*% t(matrix(rnorm(nsim * obs), nrow = nsim))
-      ret[inds, ] <- mus + t(sigs)
+      ret[inds, ] <- sigs + mus
     }
   }
 
