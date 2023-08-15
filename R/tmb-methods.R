@@ -212,11 +212,10 @@ model.frame.mmrm_tmb <- function(formula, data, include = c("subject_var", "visi
       na.action = na.action
     )
   # we need the full formula obs, so recalculating if not already full
-  if (lst_formula_and_data$is_full) {
-    ret_full <- ret
+  ret_full <- if (lst_formula_and_data$is_full) {
+    ret
   } else {
-    ret_full <-
-      stats::model.frame(
+    stats::model.frame(
         formula = lst_formula_and_data$formula_full,
         data = lst_formula_and_data$data,
         na.action = na.action
