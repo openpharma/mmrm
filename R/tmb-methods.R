@@ -214,8 +214,7 @@ model.frame.mmrm_tmb <- function(formula, data, include = c("subject_var", "visi
   # we need the full formula obs, so recalculating if not already full
   if (lst_formula_and_data$is_full) {
     ret_full <- ret
-  }
-  else {
+  } else {
     ret_full <-
       stats::model.frame(
         formula = lst_formula_and_data$formula_full,
@@ -321,8 +320,7 @@ model.matrix.mmrm_tmb <- function(object, data, include = NULL, ...) { # nolint
   # we need the full formula obs, so recalculating if not already full.
   if (lst_formula_and_data$is_full) {
     ret_full <- ret
-  }
-  else {
+  } else {
     ret_full <-
       stats::model.matrix(
         object = lst_formula_and_data$formula_full,
