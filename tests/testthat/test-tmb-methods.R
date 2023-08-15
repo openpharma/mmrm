@@ -580,7 +580,6 @@ test_that("model.matrix works for new data", {
   )
 })
 
-
 test_that("model.matrix include all specified variables", {
   fit1 <- get_mmrm_group()
   out_frame <- expect_silent(
