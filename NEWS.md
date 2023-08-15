@@ -47,7 +47,6 @@
 - Previously `mmrm` can provide non-finite values in Jacobian calculations.
   This will raise an error now.
 
-
 # mmrm 0.2.2
 
 ### New Features
