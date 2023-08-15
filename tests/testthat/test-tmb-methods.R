@@ -531,7 +531,7 @@ test_that("model.matrix works as expected with defaults", {
   expect_matrix(result, nrows = length(object$tmb_data$y_vector))
   expect_equal(
     colnames(result),
-    c("(Intercept)", "RACEBlack or African American", "RACEWhite", "AVISITVIS2", "AVISITVIS3", "AVISITVIS4")
+    c("(Intercept)", "RACEBlack or African American", "RACEWhite")
   )
 })
 

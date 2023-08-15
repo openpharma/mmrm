@@ -34,9 +34,16 @@
   ...
 )
 
-\method{model.frame}{mmrm_tmb}(formula, data, include = NULL, full, na.action = "na.omit", ...)
+\method{model.frame}{mmrm_tmb}(
+  formula,
+  data,
+  include = "response_var",
+  full,
+  na.action = "na.omit",
+  ...
+)
 
-\method{model.matrix}{mmrm_tmb}(object, data, include = c("visit_var", "group_var"), ...)
+\method{model.matrix}{mmrm_tmb}(object, data, include = NULL, ...)
 
 \method{terms}{mmrm_tmb}(x, include = "response_var", ...)
 

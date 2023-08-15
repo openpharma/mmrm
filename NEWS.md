@@ -21,10 +21,14 @@
 - Use automatic differentiation to calculate Satterthwaite adjusted degrees of freedom calculation, resulting in 10-fold speed-up of the Satterthwaite calculations after the initial model fit.
 - Two new methods added for mmrm models: `model.matrix()` and `terms()`.
 
-
 ### Miscellaneous
 
 - Removed `free_cores()` in favor of `parallelly::availableCores(omit = 1)`.
+- The mmrm `model.frame()` method has been updated to return a data frame the size of 
+  the number of observations utilized in the model for all combinations of the 
+  `model.frame(include)` argument when `na.action='na.omit'` (the default).
+- The `model.frame(include=)` mmrm method argument's default has been updated to
+  `include='response_var'`.
 
 ### Bug Fixes
 
@@ -42,9 +46,7 @@
   This is now fixed.
 - Previously `mmrm` can provide non-finite values in Jacobian calculations.
   This will raise an error now.
-- The `model.frame()` method has been updated to return a data frame the size of 
-  the number of observations utilized in the model for all combinations of the 
-  `model.frame(include)` argument.
+
 
 # mmrm 0.2.2
 
