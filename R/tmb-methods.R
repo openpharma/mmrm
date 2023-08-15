@@ -204,14 +204,14 @@ model.frame.mmrm_tmb <- function(formula, data, include = c("subject_var", "visi
       full = full
     )
 
-  # construct data frame to return
+  # Construct data frame to return to users.
   ret <-
     stats::model.frame(
       formula = lst_formula_and_data$formula,
       data = lst_formula_and_data$data,
       na.action = na.action
     )
-  # we need the full formula obs, so recalculating if not already full
+  # We need the full formula obs, so recalculating if not already full.
   ret_full <- if (lst_formula_and_data$is_full) {
     ret
   } else {
@@ -222,7 +222,7 @@ model.frame.mmrm_tmb <- function(formula, data, include = c("subject_var", "visi
       )
   }
 
-  # subset data frame to only include obs utilized in model
+  # Lastly, subsetting returned data frame to only include obs utilized in model.
   ret[rownames(ret) %in% rownames(ret_full), , drop = FALSE]
 }
 
@@ -230,14 +230,6 @@ model.frame.mmrm_tmb <- function(formula, data, include = c("subject_var", "visi
 #' Construction of Model Frame Formula and Data Inputs
 #'
 #' @description
-#' Function returns a named list with four elements:
-#' - `"formula"`: the formula including the columns requested in the `include=` argument.
-#' - `"formula_full"`: the formula including all columns
-#' - `"data"`: a data frame including all columns where factor and
-#'   character columns have been processed with [h_factor_ref()].
-#' - `"is_full"`: a logical scalar indicating if the formula and
-#'   full formula are identical
-#'
 #' Input formulas are converted from mmrm-style to a style compatible
 #' with default [stats::model.frame()] and [stats::model.matrix()] methods.
 #'
@@ -248,10 +240,16 @@ model.frame.mmrm_tmb <- function(formula, data, include = c("subject_var", "visi
 #' @param formula (`mmrm`)\cr mmrm fit object.
 #' @param data optional data frame that will be
 #'   passed to `model.frame()` or `model.matrix()`
-#' @param include names of variable to include
-#' @param full deprecated
+#' @param include (`character`)\cr names of variable to include
+#' @param full (`flag`)\cr indicator whether to return full model frame (deprecated).
 #'
-#' @return list with two named elements: formula, and data
+#' @return named list with four elements:
+#' - `"formula"`: the formula including the columns requested in the `include=` argument.
+#' - `"formula_full"`: the formula including all columns
+#' - `"data"`: a data frame including all columns where factor and
+#'   character columns have been processed with [h_factor_ref()].
+#' - `"is_full"`: a logical scalar indicating if the formula and
+#'   full formula are identical
 #' @keywords internal
 h_construct_model_frame_inputs <- function(formula, data, include,
                                            include_choice = c("subject_var", "visit_var", "group_var", "response_var"),
@@ -277,7 +275,7 @@ h_construct_model_frame_inputs <- function(formula, data, include,
   new_formula_full <-
     h_add_terms(formula$formula_parts$model_formula, add_vars_full, drop_response_full)
 
-  # update data for the FULL return
+  # Update data based on the columns in the full formula return.
   all_vars <- all.vars(new_formula_full)
   assert_names(colnames(data), must.include = all_vars)
   full_frame <- formula$tmb_data$full_frame
@@ -287,7 +285,7 @@ h_construct_model_frame_inputs <- function(formula, data, include,
     }
   }
 
-  # return updated formula and data
+  # Return list with updated formula, full formula, data, and full formula flag.
   list(
     formula = new_formula,
     formula_full = new_formula_full,
@@ -303,12 +301,12 @@ h_construct_model_frame_inputs <- function(formula, data, include,
 #' # Model matrix:
 #' model.matrix(object)
 model.matrix.mmrm_tmb <- function(object, data, include = NULL, ...) { # nolint
-  # construct updated formula and data arguments.
+  # Construct updated formula and data arguments.
   assert_subset(include, c("subject_var", "visit_var", "group_var"))
   lst_formula_and_data <-
     h_construct_model_frame_inputs(formula = object, data = data, include = include)
 
-  # construct matrix to return.
+  # Construct matrix to return to users.
   ret <-
     stats::model.matrix(
       object = lst_formula_and_data$formula,
@@ -316,11 +314,10 @@ model.matrix.mmrm_tmb <- function(object, data, include = NULL, ...) { # nolint
       ...
     )
 
-  # we need the full formula obs, so recalculating if not already full.
-  if (lst_formula_and_data$is_full) {
-    ret_full <- ret
+  # We need the full formula obs, so recalculating if not already full.
+  ret_full <- if (lst_formula_and_data$is_full) {
+     ret
   } else {
-    ret_full <-
       stats::model.matrix(
         object = lst_formula_and_data$formula_full,
         data = lst_formula_and_data$data,
@@ -328,7 +325,7 @@ model.matrix.mmrm_tmb <- function(object, data, include = NULL, ...) { # nolint
       )
   }
 
-  # subset data frame to only include obs utilized in model.
+  # Subset data frame to only include obs utilized in model.
   ret[rownames(ret) %in% rownames(ret_full), , drop = FALSE]
 }
 
@@ -341,14 +338,14 @@ model.matrix.mmrm_tmb <- function(object, data, include = NULL, ...) { # nolint
 #' terms(object)
 #' terms(object, include = "subject_var")
 terms.mmrm_tmb <- function(x, include = "response_var", ...) { # nolint
-  # construct updated formula and data arguments.
+  # Construct updated formula and data arguments.
   lst_formula_and_data <-
     h_construct_model_frame_inputs(
       formula = x,
       include = include
     )
 
-  # use formula method for `terms()` to construct the mmrm terms object.
+  # Use formula method for `terms()` to construct the mmrm terms object.
   stats::terms(
     x = lst_formula_and_data$formula,
     data = lst_formula_and_data$data

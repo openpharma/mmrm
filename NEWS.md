@@ -19,7 +19,7 @@
   sessions.
 - Add `predict` method to obtain conditional mean estimates and prediction intervals, both with or without previous observations.
 - Use automatic differentiation to calculate Satterthwaite adjusted degrees of freedom calculation, resulting in 10-fold speed-up of the Satterthwaite calculations after the initial model fit.
-- Two new methods added for mmrm models: `model.matrix()` and `terms()`.
+- Add methods `model.matrix()` and `terms()` often available for modeling functions that assist in post-processing of a model object.
 
 ### Miscellaneous
 

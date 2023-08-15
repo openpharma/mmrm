@@ -18,15 +18,12 @@ h_construct_model_frame_inputs(
 \item{data}{optional data frame that will be
 passed to \code{model.frame()} or \code{model.matrix()}}
 
-\item{include}{names of variable to include}
+\item{include}{(\code{character})\cr names of variable to include}
 
-\item{full}{deprecated}
+\item{full}{(\code{flag})\cr indicator whether to return full model frame (deprecated).}
 }
 \value{
-list with two named elements: formula, and data
-}
-\description{
-Function returns a named list with four elements:
+named list with four elements:
 \itemize{
 \item \code{"formula"}: the formula including the columns requested in the \verb{include=} argument.
 \item \code{"formula_full"}: the formula including all columns
@@ -35,7 +32,8 @@ character columns have been processed with \code{\link[=h_factor_ref]{h_factor_r
 \item \code{"is_full"}: a logical scalar indicating if the formula and
 full formula are identical
 }
-
+}
+\description{
 Input formulas are converted from mmrm-style to a style compatible
 with default \code{\link[stats:model.frame]{stats::model.frame()}} and \code{\link[stats:model.matrix]{stats::model.matrix()}} methods.
 
