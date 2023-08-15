@@ -215,10 +215,10 @@ model.frame.mmrm_tmb <- function(formula, data, include = c("subject_var", "visi
     ret
   } else {
     stats::model.frame(
-        formula = lst_formula_and_data$formula_full,
-        data = lst_formula_and_data$data,
-        na.action = na.action
-      )
+      formula = lst_formula_and_data$formula_full,
+      data = lst_formula_and_data$data,
+      na.action = na.action
+    )
   }
 
   # Lastly, subsetting returned data frame to only include obs utilized in model.
@@ -315,13 +315,13 @@ model.matrix.mmrm_tmb <- function(object, data, include = NULL, ...) { # nolint
 
   # We need the full formula obs, so recalculating if not already full.
   ret_full <- if (lst_formula_and_data$is_full) {
-     ret
+    ret
   } else {
-      stats::model.matrix(
-        object = lst_formula_and_data$formula_full,
-        data = lst_formula_and_data$data,
-        ...
-      )
+    stats::model.matrix(
+      object = lst_formula_and_data$formula_full,
+      data = lst_formula_and_data$data,
+      ...
+    )
   }
 
   # Subset data frame to only include obs utilized in model.
