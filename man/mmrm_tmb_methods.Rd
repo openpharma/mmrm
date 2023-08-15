@@ -71,8 +71,7 @@
 \item{complete}{(\code{flag})\cr whether to include potential non-estimable
 coefficients.}
 
-\item{...}{mostly not used. Dots passed to
-\code{model.matrix.default(...)} from \code{model.matrix.mmrm_tmb()}.}
+\item{...}{mostly not used; Exception is \code{model.matrix()} passing \code{...} to the default method.}
 
 \item{newdata}{(\code{data.frame})\cr object in which to look for variables with which to predict.}
 
