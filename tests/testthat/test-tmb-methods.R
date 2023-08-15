@@ -739,6 +739,24 @@ test_that("simulate(method = 'marginal') works as expected differently ordered/n
   expect_equal(rowMeans(sims_mixed), predict(object, df_mixed), tolerance = 1e-1)
 })
 
+test_that("simulate(method = 'conditional') returns values in the
+          distribution of predict(interval = 'confidence')", {
+  object <- get_mmrm()
+  # Construct a trivial data.frame.
+  predict_range <- predict(object, interval = "confidence")
+  sims <- simulate(object, nsim = 1000, method = "conditional")
+  expect_equal(A, B, tolerance = 1e-1)
+})
+
+test_that("simulate(method = 'marginal') returns values in the
+          distribution of predict(interval = 'prediction')", {
+  object <- get_mmrm()
+  # Construct a trivial data.frame.
+  predict_range <- predict(object, interval = "prediction")
+  sims <- simulate(object, nsim = 1000, method = "marginal")
+  expect_equal(A, B, tolerance = 1e-1)
+})
+
 # h_get_sim_per_subj ----
 
 test_that("h_get_sim_per_subj returns no error for nsim == 1", {
