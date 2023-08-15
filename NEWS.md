@@ -27,7 +27,7 @@
 - The `model.frame()` method has been updated to return a data frame the size of 
   the number of observations utilized in the model for all combinations of the 
   `model.frame(include)` argument when `na.action='na.omit'` (the default).
-- The `model.frame(include=)` mmrm method argument's default has been updated 
+- The `model.frame(include=)` method argument's default has been updated 
   from `include=NULL` to `include=c("subject_var", "visit_var", "group_var", "response_var")`.
 
 ### Bug Fixes
