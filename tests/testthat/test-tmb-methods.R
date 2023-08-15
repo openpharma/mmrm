@@ -451,7 +451,7 @@ test_that("model.frame makes the levels match", {
   # changes the levels
   levels(fev_data2$AVISIT) <- c("VIS3", "VIS2", "VIS4", "VIS1")
   out_frame <- expect_silent(
-    model.frame(fit1, na.action = "na.fail", data = fev_data2)
+    model.frame(fit1, data = fev_data2)
   )
   expect_identical(levels(fev_data$AVISIT), levels(out_frame$AVISIT))
 })
