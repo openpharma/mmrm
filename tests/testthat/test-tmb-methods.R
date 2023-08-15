@@ -434,7 +434,7 @@ test_that("model.frame works for new data", {
 test_that("model.frame works if input x does not contain NA, y contains but not included", {
   fit1 <- get_mmrm_transformed()
   expect_silent(
-    model.frame(fit1, na.action = "na.fail")
+    model.frame(fit1, data = na.omit(fit1$data), na.action = "na.fail")
   )
 })
 
