@@ -37,7 +37,7 @@
 \method{model.frame}{mmrm_tmb}(
   formula,
   data,
-  include = "response_var",
+  include = c("subject_var", "visit_var", "group_var", "response_var"),
   full,
   na.action = "na.omit",
   ...

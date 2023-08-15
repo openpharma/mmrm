@@ -193,7 +193,8 @@ h_get_prediction_variance <- function(object, n_sim, tmb_data) {
 #' # Model frame:
 #' model.frame(object)
 #' model.frame(object, include = "subject_var")
-model.frame.mmrm_tmb <- function(formula, data, include = "response_var", full, na.action = "na.omit", ...) { # nolint
+model.frame.mmrm_tmb <- function(formula, data, include = c("subject_var", "visit_var", "group_var", "response_var"),
+                                 full, na.action = "na.omit", ...) { # nolint
   # Construct updated formula and data arguments.
   lst_formula_and_data <-
     h_construct_model_frame_inputs(
