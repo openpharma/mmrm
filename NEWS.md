@@ -28,7 +28,8 @@
   the number of observations utilized in the model for all combinations of the 
   `model.frame(include)` argument when `na.action='na.omit'` (the default).
 - The `model.frame(include=)` method argument's default has been updated 
-  from `include=NULL` to `include=c("subject_var", "visit_var", "group_var", "response_var")`.
+  from `include=NULL` to `include=c("subject_var", "visit_var", "group_var", "response_var")`
+  such that by default all relevant variables are returned.
 
 ### Bug Fixes
 
