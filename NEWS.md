@@ -24,7 +24,7 @@
 ### Miscellaneous
 
 - Removed `free_cores()` in favor of `parallelly::availableCores(omit = 1)`.
-- The mmrm `model.frame()` method has been updated to return a data frame the size of 
+- The `model.frame()` method has been updated to return a data frame the size of 
   the number of observations utilized in the model for all combinations of the 
   `model.frame(include)` argument when `na.action='na.omit'` (the default).
 - The `model.frame(include=)` mmrm method argument's default has been updated 
