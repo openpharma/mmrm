@@ -11,4 +11,4 @@ jobs:
     name: CRAN Status Monitor 📺
     uses: insightsengineering/r.pkg.template/.github/workflows/cran-status.yaml@main
     with:
-      issue-assignees: "ddsjoberg,danielinteractive,clarkliming"
+      issue-assignees: "danielinteractive,clarkliming"
