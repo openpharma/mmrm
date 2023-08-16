@@ -30,6 +30,7 @@ Authors:
   \item Ya Wang \email{ya.wang10@gilead.com}
   \item Dan James \email{dan.james@astrazeneca.com}
   \item Jonathan Sidi \email{yoni.sidi@sagerx.com}
+  \item Daniel D. Sjoberg \email{sjobergd@gene.com} (\href{https://orcid.org/0000-0003-0862-2018}{ORCID})
 }
 
 Other contributors:
