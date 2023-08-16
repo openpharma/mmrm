@@ -549,7 +549,7 @@ test_that("model.matrix returns full model frame if requested", {
   object <- get_mmrm_tmb()
   result <- expect_silent(model.matrix(object, include = c("visit_var", "subject_var", "group_var")))
   expect_matrix(result, nrows = length(object$tmb_data$y_vector))
-  # expecting many columns for covariates and dummy cols for USUBJID.
+  # Expecting many columns for covariates and dummy cols for USUBJID.
   expect_equal(
     length(colnames(result)),
     205L
