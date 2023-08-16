@@ -83,12 +83,12 @@ augment.mmrm <- function(x, newdata = NULL,
   .resid <- NULL
   type.residuals <- match.arg(type.residuals, choices = c("response", "pearson", "normalized"))
   if (missing(newdata)) {
-    newdata <- mmrm_get_data(x)
+    newdata <- stats::get_all_vars(x, data = stats::na.omit(x$data))
     .resid <- data.frame(.rownames = rownames(newdata), .resid = residuals(x, type = type.residuals) |> unname())
   }
   interval <- match.arg(interval, choices = c("none", "confidence", "prediction"))
 
-  ret <- mmrm_augment_newdata(x, newdata = newdata, .se_fit = se_fit, interval = interval)
+  ret <- h_mmrm_augment_newdata(x, newdata = newdata, .se_fit = se_fit, interval = interval)
 
   if (!is.null(.resid)) {
     ret <- merge(ret, .resid, by = '.rownames')
@@ -113,66 +113,17 @@ h_mmrm_confint_terms <- function (x, ...)
   ci
 }
 
-
-mmrm_get_data <- function(x){
-  stats::get_all_vars(x, data = stats::na.omit(x$data))
-}
-
-#' @importFrom tibble is_tibble
-has_rownames <- function (df) {
-  if (tibble::is_tibble(df)) {
-    return(FALSE)
-  }
-  any(rownames(df) != as.character(1:nrow(df)))
-}
-
-#' @importFrom tibble add_column as_tibble
-as_augment_tibble <- function (data) {
-  if (inherits(data, "matrix") & is.null(colnames(data))) {
-    stop("The supplied `data`/`newdata` argument was an unnamed matrix. ",
-         "Please supply a matrix or dataframe with column names.")
-  }
-  tryCatch(df <- tibble::as_tibble(data), error = function(cnd) {
-    stop("Could not coerce data to `tibble`. Try explicitly passing a",
-         "dataset to either the `data` or `newdata` argument.",
-         call. = FALSE)
-  })
-  if (tibble::has_rownames(data)) {
-    df <- tibble::add_column(df, .rownames = rownames(data),
-                             .before = TRUE)
-  }
-  df
-}
-
-#' @importFrom rlang as_label f_lhs
-check_response <- function(xterms){
-  output <- FALSE
-
-  if (!is.null(xterms) & inherits(xterms, "formula")) {
-    output <- rlang::as_label(rlang::f_lhs(xterms)) %in%
-      names(df) || all.vars(xterms)[1] %in% names(df)
-  }
-
-  output
-}
-
-mmrm_augment_newdata <- function (x, newdata, .se_fit, interval = NULL, ...) {
-
-  df <- newdata
-
-  passed_newdata <- !is.null(newdata)
+h_mmrm_augment_newdata <- function (x, newdata, .se_fit, interval = NULL, ...) {
 
   if (is.null(interval)){
     interval <- 'none'
   }
 
-
   if (interval == 'none'){
     .se_fit <- FALSE
   }
 
-  df <- as_augment_tibble(df)
-  has_response <- check_response(stats::terms(x$formula_parts$formula))
+  df <- h_augment_tibble(newdata)
   pred_obj <- predict(x, newdata = newdata, na.action = na.pass, se.fit = .se_fit, interval = interval, ...)
 
   if(interval=='none'){
@@ -188,5 +139,22 @@ mmrm_augment_newdata <- function (x, newdata, .se_fit, interval = NULL, ...) {
     df$.se.fit <- pred_obj[[se_idx]]
   }
 
+  df
+}
+
+#' @importFrom tibble add_column as_tibble has_rownames
+h_augment_tibble <- function (data) {
+  if (inherits(data, "matrix") & is.null(colnames(data))) {
+    stop("The supplied `data`/`newdata` argument was an unnamed matrix. ",
+         "Please supply a matrix or dataframe with column names.")
+  }
+  tryCatch(df <- tibble::as_tibble(data), error = function(cnd) {
+    stop("Could not coerce data to `tibble`. Try explicitly passing a",
+         "dataset to either the `data` or `newdata` argument.",
+         call. = FALSE)
+  })
+  if (tibble::has_rownames(data)) {
+    df <- tibble::add_column(df, .rownames = rownames(data),.before = TRUE)
+  }
   df
 }
