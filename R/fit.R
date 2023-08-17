@@ -461,10 +461,6 @@ mmrm <- function(formula,
   fit$call$formula <- formula
   fit$method <- control$method
   fit$vcov <- control$vcov
-  if (identical(fit$method, "Satterthwaite") && identical(fit$vcov, "Asymptotic")) {
-    fit$jac_list <- h_jac_list(fit$tmb_data, fit$theta_est, fit$beta_vcov)
-  }
-
   if (control$vcov %in% c("Kenward-Roger", "Kenward-Roger-Linear")) {
     fit$kr_comp <- h_get_kr_comp(fit$tmb_data, fit$theta_est)
     fit$beta_vcov_adj <- h_var_adj(
@@ -485,6 +481,9 @@ mmrm <- function(formula,
   } else if (identical(control$vcov, "Asymptotic")) {
   } else {
     stop("Unrecognized coefficent variance-covariance method!")
+  }
+  if (identical(fit$method, "Satterthwaite")) {
+    fit$jac_list <- h_jac_list(fit$tmb_data, fit$theta_est, fit$beta_vcov)
   }
   class(fit) <- c("mmrm", class(fit))
   fit

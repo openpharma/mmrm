@@ -629,6 +629,21 @@ test_that("mmrm works for vcov: Asymptotic and method: Sattherthwaite", {
   expect_list(result$jac_list, types = "matrix")
 })
 
+test_that("mmrm works for vcov: Asymptotic and method: Between-within", {
+  result <- expect_silent(
+    mmrm(
+      formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+      data = fev_data,
+      method = "Between-within",
+      vcov = "Asymptotic"
+    )
+  )
+  expect_class(result, c("mmrm", "mmrm_fit", "mmrm_tmb"))
+  expect_true(attr(result, "converged"))
+  expect_class(result$call, "call")
+  expect_true(result$reml)
+})
+
 test_that("mmrm fails for vcov: Kenward-Roger and method: Sattherthwaite", {
   expect_error(
     mmrm(
