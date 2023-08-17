@@ -6,6 +6,8 @@
 \alias{fitted.mmrm_tmb}
 \alias{predict.mmrm_tmb}
 \alias{model.frame.mmrm_tmb}
+\alias{model.matrix.mmrm_tmb}
+\alias{terms.mmrm_tmb}
 \alias{logLik.mmrm_tmb}
 \alias{formula.mmrm_tmb}
 \alias{vcov.mmrm_tmb}
@@ -32,7 +34,18 @@
   ...
 )
 
-\method{model.frame}{mmrm_tmb}(formula, data, include = NULL, full, na.action = "na.omit", ...)
+\method{model.frame}{mmrm_tmb}(
+  formula,
+  data,
+  include = c("subject_var", "visit_var", "group_var", "response_var"),
+  full,
+  na.action = "na.omit",
+  ...
+)
+
+\method{model.matrix}{mmrm_tmb}(object, data, include = NULL, ...)
+
+\method{terms}{mmrm_tmb}(x, include = "response_var", ...)
 
 \method{logLik}{mmrm_tmb}(object, ...)
 
@@ -58,7 +71,7 @@
 \item{complete}{(\code{flag})\cr whether to include potential non-estimable
 coefficients.}
 
-\item{...}{not used.}
+\item{...}{mostly not used; Exception is \code{model.matrix()} passing \code{...} to the default method.}
 
 \item{newdata}{(\code{data.frame})\cr object in which to look for variables with which to predict.}
 
@@ -74,7 +87,8 @@ coefficients.}
 
 \item{data}{(\code{data.frame})\cr object in which to construct the frame.}
 
-\item{include}{(\code{character})\cr names of variable to include.}
+\item{include}{(\code{character})\cr names of variable types to include.
+Must be \code{NULL} or one or more of \code{c("subject_var", "visit_var", "group_var", "response_var")}.}
 
 \item{full}{(\code{flag})\cr indicator whether to return full model frame (deprecated).}
 
@@ -119,6 +133,10 @@ columns and one row per input data row.
 
 \item \code{model.frame(mmrm_tmb)}: obtains the model frame.
 
+\item \code{model.matrix(mmrm_tmb)}: obtains the model matrix.
+
+\item \code{terms(mmrm_tmb)}: obtains the terms object.
+
 \item \code{logLik(mmrm_tmb)}: obtains the attained log likelihood value.
 
 \item \code{formula(mmrm_tmb)}: obtains the used formula.
@@ -159,6 +177,11 @@ predict(object, newdata = fev_data)
 # Model frame:
 model.frame(object)
 model.frame(object, include = "subject_var")
+# Model matrix:
+model.matrix(object)
+# terms:
+terms(object)
+terms(object, include = "subject_var")
 # Log likelihood given the estimated parameters:
 logLik(object)
 # Formula which was used:
