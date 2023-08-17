@@ -1,6 +1,8 @@
 ---
 title: "Between-within degrees of freedom"
 package: mmrm
+bibliography: '`r system.file("REFERENCES.bib", package = "mmrm")`'
+csl: '`r system.file("jss.csl", package = "mmrm")`'
 output:
   rmarkdown::html_document:
           theme: "spacelab"
