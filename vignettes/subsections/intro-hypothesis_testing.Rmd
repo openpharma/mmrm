@@ -42,6 +42,8 @@ We see that because this is a one-dimensional contrast, the degrees of freedoms
 are identical for Satterthwaite and Kenward-Roger. However, the standard errors
 are different and therefore the p-values are different.
 
+Additional options for the degrees of freedom `method` are Residual and Between-Within.
+
 ## Multi-dimensional contrasts
 
 Compute the test of a multi-dimensional (matrix) contrast for the above defined
@@ -63,6 +65,9 @@ df_md(fit_kr, contrast)
 We see that for the multi-dimensional contrast we get slightly different
 denominator degrees of freedom for the two adjustment methods.
 
+Also the simpler Residual and Between-Within `method` choices can be used of 
+course together with multidimensional contrasts.
+
 ## Support for emmeans
 
 This package includes methods that allow `mmrm` objects to be used with the
@@ -79,3 +84,6 @@ if (require(emmeans)) {
   emmeans(fit, ~ ARMCD | AVISIT)
 }
 ```
+
+Note that the degrees of freedom choice is inherited here from the initial `mmrm`
+fit.

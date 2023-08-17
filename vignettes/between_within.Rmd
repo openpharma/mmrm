@@ -115,6 +115,6 @@ The implementation described above is not identical to that of SAS. Differences 
 * In SAS, the within-subjects degrees of freedom are affected by the number of subjects in which the effect takes different values. 
 * In SAS, if there are multiple within-subject effects containing classification variables, the within-subject degrees of freedom are partitioned into components corresponding to the subject-by-effect interactions.
 
-Code contributions for adding the SAS version of between-within degrees of freedom to the `mmrm` package are welcome.
+Code contributions for adding the SAS version of between-within degrees of freedom to the `mmrm` package are welcome!
 
 ## References
