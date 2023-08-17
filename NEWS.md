@@ -45,6 +45,7 @@
   environment variables, instead of requiring `data` argument. `fit_mmrm` is not affected.
 - Previously `emmeans` does not work if fixed effect does not contain visit variable.
   This is now fixed.
+- Previously `emmeans` does not work if working with transformed terms. This is now fixed.
 - Previously `mmrm` can provide non-finite values in Jacobian calculations.
   This will raise an error now.
 
