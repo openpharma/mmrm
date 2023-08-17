@@ -39,9 +39,11 @@ More generally, assuming $G$ levels of grouping:
 
 $DDF_g=N_g-(N_{g-1}+p_g), g=1, ..., G+1$
 
-Where $N_g$ is the number of groups at the $g$-th grouping level and $p_g$ is the number of parameters estimated at that level.
+where $N_g$ is the number of groups at the $g$-th grouping level and $p_g$ is the number of parameters estimated at that level.
 
-$N_0=1$ if the model includes an intercept term, but note that the DDF for the intercept term are calculated at the $G+1$ level.
+$N_0=1$ if the model includes an intercept term and $N_0=0$ otherwise. Note however
+that the DDF for the intercept term itself (when it is included) are calculated at the 
+$G+1$ level.
 
 With an MMRM with only fixed terms there is a single grouping level (e.g. subject), $G=1$. Therefore:
 
