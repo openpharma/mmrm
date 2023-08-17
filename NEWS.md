@@ -11,8 +11,8 @@
 - Add empirical, empirical Jackknife and empirical bias-reduced adjusted coefficients covariance matrix.
   In addition, the argument `method` now only specifies the method used
   for the degrees of freedom, another argument `vcov` is added to specify the
-  method used to adjust the coefficients covariance matrix. Empirical, empirical Jackknife
-  and empirical bias-reduced covariance support residual and Satterthwaite degrees of freedom.
+  method used to adjust the coefficients covariance matrix.
+- Add residual and between-within degrees of freedom methods.
 - Add optional `tidymodels` framework support.
 - Add confirmation if the number of visit levels is too large. Use `options(mmrm.max_visits = )`
   to specify the maximum number of visits allowed in non-interactive mode, or asked in interactive
