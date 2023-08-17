@@ -714,6 +714,7 @@ test_that("mmrm works for vcov: Empirical and method: Satterthwaite", {
   expect_class(result$call, "call")
   expect_true(result$reml)
   expect_matrix(result$beta_vcov_adj)
+  expect_list(result$jac_list, types = "matrix")
 })
 
 test_that("mmrm works for vcov: Jackknife and method: Satterthwaite", {
@@ -730,6 +731,7 @@ test_that("mmrm works for vcov: Jackknife and method: Satterthwaite", {
   expect_class(result$call, "call")
   expect_true(result$reml)
   expect_matrix(result$beta_vcov_adj)
+  expect_list(result$jac_list, types = "matrix")
 })
 
 test_that("mmrm fails for vcov: Asymptotic and method: Kenward-Roger", {
