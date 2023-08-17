@@ -212,28 +212,31 @@ refit_multiple_optimizers <- function(fit,
 #' @param ... additional arguments passed to [h_get_optimizers()].
 #'
 #' @details
-#' The `drop_visit_levels` flag will decide whether unobserved visits will be kept for analysis.
-#' For example, if the data only has observations at visits `VIS1`, `VIS3` and `VIS4`, by default
-#' they are treated to be equally spaced, the distance from `VIS1` to `VIS3`, and from `VIS3` to `VIS4`,
-#' are identical. However, you can manually convert this visit into a factor, with
-#' `levels = c("VIS1", "VIS2", "VIS3", "VIS4")`, and also use `drop_visits_levels = FALSE`,
-#' then the distance from `VIS1` to `VIS3` will be double, as `VIS2` is a valid visit.
-#' However, please be cautious because this can lead to convergence failure
-#' when using an unstructured covariance matrix and there are no observations
-#' at the missing visits.
-#' The `method` and `vcov` arguments specify the degrees of freedom and coefficients covariance matrix
-#' adjustment methods, respectively.
-#' If `method` is "Kenward-Roger" then only "Kenward-Roger" or "Kenward-Roger-Linear" are allowed for `vcov`.
-#' The `vcov` argument can be `NULL` to use the default covariance method depending on the `method`
-#' used for degrees of freedom, see the following table:
-#' | `method`  |  Default `vcov`|
-#' |-----------|----------|
-#' |Satterthwaite| Asymptotic|
-#' |Kenward-Roger| Kenward-Roger|
-#' |Residual| Empirical|
-#' |Between-within| Asymptotic|
-#' Please note that "Kenward-Roger" for "Unstructured" covariance gives different result compared to SAS.
-#' Use "Kenward-Roger-Linear" for `vcov` for better matching.
+#'
+#' - The `drop_visit_levels` flag will decide whether unobserved visits will be kept for analysis.
+#'   For example, if the data only has observations at visits `VIS1`, `VIS3` and `VIS4`, by default
+#'   they are treated to be equally spaced, the distance from `VIS1` to `VIS3`, and from `VIS3` to `VIS4`,
+#'   are identical. However, you can manually convert this visit into a factor, with
+#'   `levels = c("VIS1", "VIS2", "VIS3", "VIS4")`, and also use `drop_visits_levels = FALSE`,
+#'   then the distance from `VIS1` to `VIS3` will be double, as `VIS2` is a valid visit.
+#'   However, please be cautious because this can lead to convergence failure
+#'   when using an unstructured covariance matrix and there are no observations
+#'   at the missing visits.
+#' - The `method` and `vcov` arguments specify the degrees of freedom and coefficients
+#'   covariance matrix adjustment methods, respectively.
+#'   If `method` is "Kenward-Roger" then only "Kenward-Roger" or "Kenward-Roger-Linear" are
+#'   allowed for `vcov`.
+#' - The `vcov` argument can be `NULL` to use the default covariance method depending on the `method`
+#'   used for degrees of freedom, see the following table:
+#'  | `method`  |  Default `vcov`|
+#'  |-----------|----------|
+#'  |Satterthwaite| Asymptotic|
+#'  |Kenward-Roger| Kenward-Roger|
+#'  |Residual| Empirical|
+#'  |Between-within| Asymptotic|
+#' - Please note that "Kenward-Roger" for "Unstructured" covariance gives different results
+#'   compared to SAS; Use "Kenward-Roger-Linear" for `vcov` instead for better matching
+#'   of the SAS results.
 #'
 #' @return List of class `mmrm_control` with the control parameters.
 #' @export
@@ -265,13 +268,19 @@ mmrm_control <- function(n_cores = 1L,
   assert_subset(
     vcov,
     c(
-      "Asymptotic", "Empirical", "Empirical-Bias-Reduced",
-      "Empirical-Jackknife", "Kenward-Roger", "Kenward-Roger-Linear"
+      "Asymptotic",
+      "Empirical",
+      "Empirical-Bias-Reduced",
+      "Empirical-Jackknife",
+      "Kenward-Roger",
+      "Kenward-Roger-Linear"
     )
   )
-
   if (xor(identical(method, "Kenward-Roger"), vcov %in% c("Kenward-Roger", "Kenward-Roger-Linear"))) {
-    stop("Kenward-Roger degrees of freedom must work together with Kenward-Roger or Kenward-Roger-Linear covariance!")
+    stop(paste(
+      "Kenward-Roger degrees of freedom must work together with Kenward-Roger",
+      "or Kenward-Roger-Linear covariance!"
+    ))
   }
   structure(
     list(
@@ -286,7 +295,6 @@ mmrm_control <- function(n_cores = 1L,
     class = "mmrm_control"
   )
 }
-
 
 #' Fit an MMRM
 #'
