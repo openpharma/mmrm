@@ -743,8 +743,10 @@ test_that("simulate(method = 'conditional') returns values in the
           distribution of predict(interval = 'confidence')", {
   object <- get_mmrm()
   # Construct a trivial data.frame.
-  predict_range <- predict(object, interval = "confidence")
-  sims <- simulate(object, nsim = 1000, method = "conditional")
+  predict_range <- predict(object, newdata = fev_data, se.fit = TRUE,
+                           interval = "confidence", level = 0.50)
+  sims <- simulate(object, newdata = fev_data, nsim = 10000,
+                   method = "conditional")
   expect_equal(A, B, tolerance = 1e-1)
 })
 
@@ -752,8 +754,12 @@ test_that("simulate(method = 'marginal') returns values in the
           distribution of predict(interval = 'prediction')", {
   object <- get_mmrm()
   # Construct a trivial data.frame.
-  predict_range <- predict(object, interval = "prediction")
-  sims <- simulate(object, nsim = 1000, method = "marginal")
+  predict_range <- predict(object, newdata = fev_data, se.fit = TRUE,
+                           interval = "prediction", level = 0.50)
+  sims <- simulate(object, newdata = fev_data, nsim = 10000,
+                   method = "marginal")
+  sims_quantiles <- t(apply(sims, 1, function(x)
+    quantile(x, probs = c(0.25, 0.75))))
   expect_equal(A, B, tolerance = 1e-1)
 })
 
