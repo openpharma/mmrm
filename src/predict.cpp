@@ -30,7 +30,6 @@ List predict(List mmrm_data, NumericVector theta, NumericVector beta, NumericMat
   int n_groups = mmrm_data["n_groups"];
   vector<double> beta_v = as_num_vector_tmb(beta);
   vector<double> theta_v = as_num_vector_tmb(theta);
-  int n_theta = theta.size();
   // Use map to hold these base class pointers (can also work for child class objects).
   auto chols_group = chol_cache_groups<double>(theta_v, n_groups, is_spatial, cov_type, n_visits);
   NumericVector y_pred = clone(y); // Predict value of y; observed use the same value.
