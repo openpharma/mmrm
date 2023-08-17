@@ -75,6 +75,11 @@ get_mmrm_emp <- function() {
   .mmrm_emp
 }
 
+.mmrm_bw <- mmrm(.mmrm_kr_formula, data = fev_data, method = "Between-within")
+get_mmrm_bw <- function() {
+  .mmrm_bw
+}
+
 .mmrm_jackknife <- mmrm(.mmrm_kr_formula, data = fev_data, vcov = "Empirical-Jackknife", method = "Residual")
 get_mmrm_jack <- function() {
   .mmrm_jackknife
