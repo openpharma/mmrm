@@ -1,19 +1,5 @@
-#' Calculation of Between-Within Degrees of Freedom for One-Dimensional Contrast
-#'
-#' @description Calculates the estimate, standard error, degrees of freedom,
-#' t statistic and p-value for one-dimensional contrast. Used in [df_1d()] if method is
-#' "Between-within".
-#'
-#' @param object (`mmrm`)\cr the MMRM fit.
-#' @param contrast (`numeric`)\cr contrast vector. Note that this should not include
-#'   elements for singular coefficient estimates, i.e. only refer to the
-#'   actually estimated coefficients.
-#'
-#' @return List with `est`, `se`, `df`, `t_stat` and `p_val`.
-#' @keywords internal
-h_df_1d_bw <- function(object, contrast) {
+h_df_bw_calc <- function(object) {
   assert_class(object, "mmrm")
-  assert_numeric(contrast, len = length(component(object, "beta_est")))
 
   n_subjects <- component(object, "n_subjects")
   n_obs  <- component(object, "n_obs")
@@ -34,7 +20,37 @@ h_df_1d_bw <- function(object, contrast) {
   n_pars_within  <- sum(bw_pars == "within") - n_intercept
   ddf_between <- n_subjects - n_pars_between - n_intercept
   ddf_within <- n_obs - n_subjects - n_pars_within
-  df <- if (bw_pars[as.logical(contrast)] == "within") ddf_within else ddf_between
+
+  list(
+    bw_pars = bw_pars,
+    ddf_between = ddf_between,
+    ddf_within = ddf_within
+  )
+}
+
+#' Calculation of Between-Within Degrees of Freedom for One-Dimensional Contrast
+#'
+#' @description Calculates the estimate, standard error, degrees of freedom,
+#' t statistic and p-value for one-dimensional contrast. Used in [df_1d()] if method is
+#' "Between-within".
+#'
+#' @param object (`mmrm`)\cr the MMRM fit.
+#' @param contrast (`numeric`)\cr contrast vector. Note that this should not include
+#'   elements for singular coefficient estimates, i.e. only refer to the
+#'   actually estimated coefficients.
+#'
+#' @return List with `est`, `se`, `df`, `t_stat` and `p_val`.
+#' @keywords internal
+h_df_1d_bw <- function(object, contrast) {
+  assert_class(object, "mmrm")
+  assert_numeric(contrast, len = length(component(object, "beta_est")))
+
+  bw_calc <- h_df_bw_calc(object)
+  df <- if (bw_calc$bw_pars[as.logical(contrast)] == "within") {
+    bw_calc$ddf_within
+  } else {
+    bw_calc$ddf_between
+  }
   df <- unname(df)
 
   h_test_1d(object, contrast, df)
@@ -55,30 +71,11 @@ h_df_md_bw <- function(object, contrast) {
   assert_class(object, "mmrm")
   assert_matrix(contrast, mode = "numeric", any.missing = FALSE, ncols = length(component(object, "beta_est")))
 
-  n_subjects <- component(object, "n_subjects")
-  n_obs  <- component(object, "n_obs")
-  x_mat <- object$tmb_data$x_matrix
-  n_intercept <- if (any(colnames(x_mat) == "(Intercept)")) 1 else 0
-  x_mat_names <- colnames(x_mat)
-
-  bw_pars <- sapply(X = x_mat_names, function(x) {
-    if (x == "(Intercept)") {"within"}
-    else {
-      n_unique <- nrow(unique(cbind(x_mat[, x], as.numeric(object$tmb_data$full_frame[[object$formula_parts$subject_var]]))))
-      if (n_unique > n_subjects) "within"
-      else "between"
-    }
-  })
-
-  n_pars_between <- sum(bw_pars == "between")
-  n_pars_within  <- sum(bw_pars == "within") - n_intercept
-  ddf_between <- n_subjects - n_pars_between - n_intercept
-  ddf_within <- n_obs - n_subjects - n_pars_within
-
+  bw_calc <- h_df_bw_calc(object)
   df <- apply(X = object$tmb_data$x_matrix[, as.logical(colSums(contrast)), drop = FALSE], MARGIN = 2, FUN = function(x) {
     n_unique <- nrow(unique(cbind(x, as.numeric(object$tmb_data$full_frame[[object$formula_parts$subject_var]]))))
-    if (n_unique > n_subjects) ddf_within
-    else ddf_between
+    if (n_unique > n_subjects) bw_calc$ddf_within
+    else bw_calc$ddf_between
   })
   df <- unname(min(df))
 
