@@ -6,6 +6,7 @@
 // Base class of spatial and non-spatial Cholesky.
 template <class Type>
 struct lower_chol_base {
+  virtual ~lower_chol_base() {}
   virtual matrix<Type> get_chol(std::vector<int> visits, matrix<Type> dist) = 0;
   virtual matrix<Type> get_sigma(std::vector<int> visits, matrix<Type> dist) = 0;
   virtual matrix<Type> get_sigma_inverse(std::vector<int> visits, matrix<Type> dist) = 0;

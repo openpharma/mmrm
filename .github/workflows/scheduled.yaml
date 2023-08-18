@@ -1,0 +1,14 @@
+---
+name: Scheduled 🕰️
+
+on:
+  schedule:
+    - cron: '45 3 * * 0'
+  workflow_dispatch:
+
+jobs:
+  cran-status:
+    name: CRAN Status Monitor 📺
+    uses: insightsengineering/r.pkg.template/.github/workflows/cran-status.yaml@main
+    with:
+      issue-assignees: "danielinteractive,clarkliming"
