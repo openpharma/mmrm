@@ -100,8 +100,7 @@ h_gradient <- function(jac_list, contrast) {
 
 #' Calculation of Satterthwaite Degrees of Freedom for One-Dimensional Contrast
 #'
-#' @description Calculates the estimate, standard error, degrees of freedom,
-#' t statistic and p-value for one-dimensional contrast. Used in [df_1d()] if method is
+#' @description Used in [df_1d()] if method is
 #' "Satterthwaite".
 #'
 #' @param object (`mmrm`)\cr the MMRM fit.
@@ -183,8 +182,7 @@ h_df_md_from_1d <- function(object, contrast) {
 
 #' Calculation of Satterthwaite Degrees of Freedom for Multi-Dimensional Contrast
 #'
-#' @description Calculates the degrees of freedom, F statistic and p value for multi-dimensional contrast.
-#' Used in [df_md()] if method is "Satterthwaite".
+#' @description Used in [df_md()] if method is "Satterthwaite".
 #'
 #' @param object (`mmrm`)\cr the MMRM fit.
 #' @param contrast (`matrix`)\cr numeric contrast matrix, if given a `numeric`

@@ -17,7 +17,8 @@ the degrees of freedom method used.
 }
 \details{
 The default covariance method is different for different degrees of freedom method.
-If degrees of freedom is "Satterthwaite", "Asymptotic" is returned.
-If degrees of freedom is "Kenward-Roger", then "Kenward-Roger" is returned.
+For "Satterthwaite" or "Between-within", "Asymptotic" is returned.
+For "Kenward-Roger" only, "Kenward-Roger" is returned.
+For "Residual" only, "Empirical" is returned.
 }
 \keyword{internal}

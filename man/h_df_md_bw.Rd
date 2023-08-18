@@ -7,15 +7,17 @@
 h_df_md_bw(object, contrast)
 }
 \arguments{
-\item{object}{(\code{mmrm})\cr object.}
+\item{object}{(\code{mmrm})\cr the MMRM fit.}
 
-\item{contrast}{(\code{matrix})\cr contrast matrix.}
+\item{contrast}{(\code{matrix})\cr numeric contrast matrix, if given a \code{numeric}
+then this is coerced to a row vector. Note that this should not include
+elements for singular coefficient estimates, i.e. only refer to the
+actually estimated coefficients.}
 }
 \value{
 List with \code{num_df}, \code{denom_df}, \code{f_stat} and \code{p_val} (2-sided p-value).
 }
 \description{
-Calculates the between-within degrees of freedom, F statistic and p value for multi-dimensional contrast.
 Used in \code{\link[=df_md]{df_md()}} if method is "Between-within".
 }
 \keyword{internal}

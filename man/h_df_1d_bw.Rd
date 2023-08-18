@@ -17,8 +17,6 @@ actually estimated coefficients.}
 List with \code{est}, \code{se}, \code{df}, \code{t_stat} and \code{p_val}.
 }
 \description{
-Calculates the estimate, standard error, degrees of freedom,
-t statistic and p-value for one-dimensional contrast. Used in \code{\link[=df_1d]{df_1d()}} if method is
-"Between-within".
+Used in \code{\link[=df_1d]{df_1d()}} if method is "Between-within".
 }
 \keyword{internal}
