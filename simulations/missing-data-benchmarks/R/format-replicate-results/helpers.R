@@ -23,7 +23,6 @@ format_emmeans_df <- function(emmeans_df) {
 
 # extract model fits output at each visit from mmrm fit
 get_mmrm_emmeans_output <- function(fit) {
-
   # extract emmeans output
   marginal_means <- emmeans(
     fit,
@@ -37,7 +36,6 @@ get_mmrm_emmeans_output <- function(fit) {
 
   # format to resemble SAS output
   format_emmeans_df(emmeans_df)
-
 }
 
 # extract model fit outputs at each visit from glmmTMB fit
@@ -54,7 +52,6 @@ get_glmm_emmeans_output <- function(fit) {
 
   # format to resemble SAS output
   format_emmeans_df(emmeans_df)
-
 }
 
 # extract model fit outputs estimates at each visit from gls fit
@@ -73,7 +70,6 @@ get_nlme_emmeans_output <- function(fit, data) {
 
   # format to resemble SAS output
   format_emmeans_df(emmeans_df)
-
 }
 
 # extract model fit outputs estimates at each visit from PROC MIXED fit
