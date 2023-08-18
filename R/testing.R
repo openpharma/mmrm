@@ -126,7 +126,7 @@ h_test_md <- function(object,
   assert_class(object, "mmrm")
   assert_matrix(contrast, ncols = length(component(object, "beta_est")))
   num_df <- nrow(contrast)
-  assert_numeric(df, lower = .Machine$double.xmin, len = num_df)
+  assert_number(df, lower = .Machine$double.xmin)
   assert_number(f_stat_factor, lower = .Machine$double.xmin)
 
   prec_contrast <- solve(h_quad_form_mat(contrast, component(object, "beta_vcov")))

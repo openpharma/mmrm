@@ -63,8 +63,23 @@ test_that("h_test_1d works as expected", {
   contrast[3] <- 1
   df <- 3.5
 
-  result <- expect_silent(h_test_1d(contrast, object, df))
+  result <- expect_silent(h_test_1d(object, contrast, df))
   expect_list(result)
   expect_named(result, c("est", "se", "df", "t_stat", "p_val"))
+  expect_snapshot_tolerance(result)
+})
+
+# h_test_md ----
+
+test_that("h_test_md works as expected", {
+  object <- get_mmrm()
+  contrast_md <- matrix(0, nrow = 2, ncol = length(object$beta_est))
+  contrast_md[2, 1] <- 1
+  contrast_md[1, 3] <- 1
+  df <- 5
+
+  result <- expect_silent(h_test_md(object, contrast_md, df))
+  expect_list(result)
+  expect_named(result, c("num_df", "denom_df", "f_stat", "p_val"))
   expect_snapshot_tolerance(result)
 })

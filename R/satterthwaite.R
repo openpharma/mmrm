@@ -128,7 +128,7 @@ h_df_1d_sat <- function(object, contrast) {
     h_tr(g_matrix)^2 / sum(g_matrix^2)
   }
 
-  h_test_1d(contrast, object, df)
+  h_test_1d(object, contrast, df)
 }
 
 #' Calculating Denominator Degrees of Freedom for the Multi-Dimensional Case
