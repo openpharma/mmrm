@@ -60,7 +60,7 @@
 #' @export
 component <- function(object,
                       name = c(
-                        "cov_type", "n_theta", "n_subjects", "n_timepoints",
+                        "cov_type", "subject_var", "n_theta", "n_subjects", "n_timepoints",
                         "n_obs", "beta_vcov", "beta_vcov_complete",
                         "varcor", "formula", "dataset", "n_groups",
                         "reml", "convergence", "evaluations", "method",
@@ -78,6 +78,7 @@ component <- function(object,
     "call" = object$call,
     # Strings.
     "cov_type" = object$formula_parts$cov_type,
+    "subject_var" = object$formula_parts$subject_var,
     "formula" = deparse(object$call$formula),
     "dataset" = object$call$data,
     "reml" = object$reml,

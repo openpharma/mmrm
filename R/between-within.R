@@ -1,3 +1,34 @@
+#' Determine Within or Between for each Design Matrix Column
+#'
+#' @description Used in [h_df_bw_calc()] to determine whether a variable
+#'   differs only between subjects or also within subjects.
+#'
+#' @param x_matrix (`matrix`)\cr the design matrix with column names.
+#' @param subject_ids (`factor`)\cr the subject IDs.
+#'
+#' @return Character vector with "intercept", "within" or "between" for each
+#'   design matrix column identified via the names of the vector.
+#'
+#' @keywords internal
+h_within_or_between <- function(x_matrix, subject_ids) {
+  assert_matrix(x_matrix, col.names = "unique", min.cols = 1L)
+  assert_factor(subject_ids, len = nrow(x_matrix))
+
+  n_subjects <- length(unique(subject_ids))
+  vapply(
+    colnames(x_matrix),
+    function(x) {
+      if (x == "(Intercept)") {
+        "intercept"
+      } else {
+        n_unique <- nrow(unique(cbind(x_matrix[, x], subject_ids)))
+        if (n_unique > n_subjects) "within" else "between"
+      }
+    },
+    character(1L)
+  )
+}
+
 #' Calculation of Between-Within Degrees of Freedom
 #'
 #' @description Used in [h_df_1d_bw()] and [h_df_md_bw()].
@@ -5,7 +36,7 @@
 #' @param object (`mmrm`)\cr the fitted MMRM.
 #'
 #' @return List with:
-#'   - `pars` (`character` mapping the design matrix columns to "between" or "within")
+#'   - `coefs_between_within` calculated via [h_within_or_between()]
 #'   - `ddf_between`
 #'   - `ddf_within`
 #'
@@ -16,25 +47,20 @@ h_df_bw_calc <- function(object) {
   n_subjects <- component(object, "n_subjects")
   n_obs  <- component(object, "n_obs")
   x_mat <- component(object, "x_matrix")
-  n_intercept <- if (any(colnames(x_mat) == "(Intercept)")) 1L else 0L
-  x_mat_names <- colnames(x_mat)
 
-  pars <- sapply(X = x_mat_names, function(x) {
-    if (x == "(Intercept)") {"within"}
-    else {
-      n_unique <- nrow(unique(cbind(x_mat[, x], as.numeric(object$tmb_data$full_frame[[object$formula_parts$subject_var]]))))
-      if (n_unique > n_subjects) "within"
-      else "between"
-    }
-  })
+  subject_var <- component(object, "subject_var")
+  full_frame <- component(object, "full_frame")
+  subject_ids <- full_frame[[subject_var]]
 
-  n_pars_between <- sum(pars == "between")
-  n_pars_within  <- sum(pars == "within") - n_intercept
-  ddf_between <- n_subjects - n_pars_between - n_intercept
-  ddf_within <- n_obs - n_subjects - n_pars_within
+  coefs_between_within <- h_within_or_between(x_mat, subject_ids)
+  n_coefs_between <- sum(coefs_between_within == "between")
+  n_intercept <- sum(coefs_between_within == "intercept")
+  n_coefs_within  <- sum(coefs_between_within == "within")
+  ddf_between <- n_subjects - n_coefs_between - n_intercept
+  ddf_within <- n_obs - n_subjects - n_coefs_within
 
   list(
-    pars = pars,
+    coefs_between_within = coefs_between_within,
     ddf_between = ddf_between,
     ddf_within = ddf_within
   )
@@ -52,7 +78,7 @@ h_df_1d_bw <- function(object, contrast) {
   assert_numeric(contrast, len = length(component(object, "beta_est")))
 
   bw_calc <- h_df_bw_calc(object)
-  df <- if (bw_calc$pars[as.logical(contrast)] == "within") {
+  df <- if (bw_calc$coefs[as.logical(contrast)] == "within") {
     bw_calc$ddf_within
   } else {
     bw_calc$ddf_between

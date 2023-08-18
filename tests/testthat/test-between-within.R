@@ -1,3 +1,18 @@
+# h_within_or_between ----
+
+test_that("h_within_or_between works as expected", {
+  x_matrix <- cbind(
+    "(Intercept)" = 1,
+    "AGE" = c(10, 10, 10, 20, 20, 20, 30, 30, 30, 40, 10, 20),
+    "VISIT" = c(1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 4, 2),
+    "SLOW" = c(1, 2, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+  )
+  subject_ids <- factor(c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 1, 2))
+  result <- expect_silent(h_within_or_between(x_matrix, subject_ids))
+  expected <- c("(Intercept)" = "intercept", "AGE" = "between", "VISIT" = "within", "SLOW" = "within")
+  expect_identical(result, expected)
+})
+
 # h_df_bw_calc ----
 
 test_that("h_df_bw_calc works as expected", {
@@ -5,14 +20,14 @@ test_that("h_df_bw_calc works as expected", {
   result <- expect_silent(h_df_bw_calc(object))
 
   expect_list(result)
-  expect_named(result, c("pars", "ddf_between", "ddf_within"))
+  expect_named(result, c("coefs_between_within", "ddf_between", "ddf_within"))
 
   # This is the vignette (between_within.Rmd) so we know the expected numbers:
   expect_identical(result$ddf_between, 192L)
   expect_identical(result$ddf_within, 334L)
 
-  expect_character(result$pars)
-  expect_snapshot(result$pars)
+  expect_character(result$coefs_between_within)
+  expect_snapshot(result$coefs_between_within)
 })
 
 # h_df_1d_bw ----
@@ -29,6 +44,15 @@ test_that("h_df_1d_bw works as expected", {
   expect_identical(round(result$df), 196)
   expect_equal(result$t_stat, 122.07, tolerance = 1e-4)
   expect_true(result$p_val < 0.0001)
+})
+
+test_that("h_df_1d_bw works as expected for univariate linear combination contrasts", {
+  object <- mmrm(
+    formula = FEV1 ~ ARMCD + RACE + us(AVISIT | USUBJID),
+    data = fev_data
+  )
+  lin_contrast <- c(0, 0, 1, -1)
+  result <- expect_silent(h_df_1d_bw(object, lin_contrast))
 })
 
 test_that("h_df_1d_bw works as expected for singular fits", {
