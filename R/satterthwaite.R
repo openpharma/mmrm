@@ -224,7 +224,7 @@ h_df_md_sat <- function(object, contrast) {
   t_squared <- t_squared_nums / t_squared_denoms
   f_stat <- sum(t_squared) / rank_cont_cov
   t_stat_df_nums <- 2 * eigen_cont_cov_vals^2
-  if (identical(object$vcov, "Asymptotic")) {
+  t_stat_df <- if (identical(object$vcov, "Asymptotic")) {
     grads_vctrs_cont_prod <- lapply(
       rank_seq,
       function(m) h_gradient(component(object, "jac_list"), contrast = vctrs_cont_prod[m, ])
@@ -235,9 +235,9 @@ h_df_md_sat <- function(object, contrast) {
       center = component(object, "theta_vcov"),
       numeric(1)
     )
-    t_stat_df <- t_stat_df_nums / t_stat_df_denoms
+    t_stat_df_nums / t_stat_df_denoms
   } else {
-    t_stat_df <- vapply(
+    vapply(
       rank_seq,
       function(m) {
         contrast_matrix <- Matrix::.bdiag(
