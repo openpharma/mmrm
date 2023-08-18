@@ -743,24 +743,26 @@ test_that("simulate(method = 'conditional') returns values in the
           distribution of predict(interval = 'confidence')", {
   object <- get_mmrm()
   # Construct a trivial data.frame.
-  predict_range <- predict(object, newdata = fev_data, se.fit = TRUE,
-                           interval = "confidence", level = 0.50)
+  predict_range <- unname(predict(object, newdata = fev_data, se.fit = TRUE,
+                           interval = "confidence", level = 0.95))
   sims <- simulate(object, newdata = fev_data, nsim = 10000,
                    method = "conditional")
-  expect_equal(A, B, tolerance = 1e-1)
+  sims_quantiles <- unname(t(apply(sims, 1, function(x)
+    quantile(x, probs = c(0.025, 0.975)))))
+  expect_equal(predict_range[,3:4], sims_quantiles, tolerance = 1e-2)
 })
 
 test_that("simulate(method = 'marginal') returns values in the
           distribution of predict(interval = 'prediction')", {
   object <- get_mmrm()
   # Construct a trivial data.frame.
-  predict_range <- predict(object, newdata = fev_data, se.fit = TRUE,
-                           interval = "prediction", level = 0.50)
+  predict_range <- unname(predict(object, newdata = fev_data, se.fit = TRUE,
+                           interval = "prediction", level = 0.95))
   sims <- simulate(object, newdata = fev_data, nsim = 10000,
                    method = "marginal")
-  sims_quantiles <- t(apply(sims, 1, function(x)
-    quantile(x, probs = c(0.25, 0.75))))
-  expect_equal(A, B, tolerance = 1e-1)
+  sims_quantiles <- unname(t(apply(sims, 1, function(x)
+    quantile(x, probs = c(0.025, 0.975)))))
+  expect_equal(predict_range[,3:4], sims_quantiles, tolerance = 1e-2)
 })
 
 # h_get_sim_per_subj ----
