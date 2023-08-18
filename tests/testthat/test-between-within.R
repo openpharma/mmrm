@@ -1,3 +1,20 @@
+# h_df_bw_calc ----
+
+test_that("h_df_bw_calc works as expected", {
+  object <- get_mmrm()
+  result <- expect_silent(h_df_bw_calc(object))
+
+  expect_list(result)
+  expect_named(result, c("pars", "ddf_between", "ddf_within"))
+
+  # This is the vignette (between_within.Rmd) so we know the expected numbers:
+  expect_identical(result$ddf_between, 192L)
+  expect_identical(result$ddf_within, 334L)
+
+  expect_character(result$pars)
+  expect_snapshot(result$pars)
+})
+
 # h_df_1d_bw ----
 
 test_that("h_df_1d_bw works as expected", {
