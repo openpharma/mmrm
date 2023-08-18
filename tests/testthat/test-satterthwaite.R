@@ -55,20 +55,6 @@ test_that("h_gradient works as expected", {
   expect_equal(result, expected)
 })
 
-# h_df_1d_list ----
-
-test_that("h_df_1d_list works as expected", {
-  result <- expect_silent(h_df_1d_list(est = 5, var = 4, v_num = 1, v_denom = 2))
-  expected <- list(
-    est = 5,
-    se = 2,
-    df = 1 / 2,
-    t_stat = 5 / 2,
-    p_val = 2 * stats::pt(q = 5 / 2, df = 1 / 2, lower.tail = FALSE)
-  )
-  expect_equal(result, expected)
-})
-
 # h_df_1d_sat ----
 
 test_that("h_df_1d_sat works as expected", {

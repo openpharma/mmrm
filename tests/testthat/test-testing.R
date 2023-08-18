@@ -54,3 +54,17 @@ test_that("df_md uses correct function on Between-within method fit", {
   contrast_md[1, 2] <- 1
   expect_identical(df_md(object_bw, contrast_md), h_df_md_bw(object_bw, contrast_md))
 })
+
+# h_test_1d ----
+
+test_that("h_test_1d works as expected", {
+  object <- get_mmrm()
+  contrast <- rep(0, length(object$beta_est))
+  contrast[3] <- 1
+  df <- 3.5
+
+  result <- expect_silent(h_test_1d(contrast, object, df))
+  expect_list(result)
+  expect_named(result, c("est", "se", "df", "t_stat", "p_val"))
+  expect_snapshot_tolerance(result)
+})
