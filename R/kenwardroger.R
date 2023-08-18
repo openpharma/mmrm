@@ -27,17 +27,12 @@ h_get_kr_comp <- function(tmb_data, theta) {
   .Call(`_mmrm_get_pqr`, PACKAGE = "mmrm", tmb_data, theta)
 }
 
-
 #' Calculation of Kenward-Roger Degrees of Freedom for Multi-Dimensional Contrast
 #'
-#' @description Calculates the Kenward-Roger degrees of freedom, F statistic and p value for multi-dimensional contrast.
-#' Used in [df_md()] if method is "Kenward-Roger" or "Kenward-Roger-Linear".
+#' @description Used in [df_md()] if method is "Kenward-Roger" or "Kenward-Roger-Linear".
 #'
-#' @param object (`mmrm`)\cr object.
-#' @param contrast (`matrix`)\cr contrast matrix.
-#'
-#' @return List with `num_df`, `denom_df`, `f_stat` and `p_val` (2-sided p-value).
-#'
+#' @inheritParams h_df_md_sat
+#' @inherit h_df_md_sat return
 #' @keywords internal
 h_df_md_kr <- function(object, contrast) {
   assert_class(object, "mmrm")
@@ -55,15 +50,11 @@ h_df_md_kr <- function(object, contrast) {
 
 #' Calculation of Kenward-Roger Degrees of Freedom for One-Dimensional Contrast
 #'
-#' @description Calculates the estimate, adjusted standard error, Kenward-Roger degrees of freedom,
-#' t statistic and p-value for one-dimensional contrast. Used in [df_1d()] if method is
+#' @description Used in [df_1d()] if method is
 #' "Kenward-Roger" or "Kenward-Roger-Linear".
 #'
-#' @param object (`mmrm`)\cr object created by [mmrm()] with Kenward-Roger(-Linear) method.
-#' @param contrast (`numeric`)\cr contrast vector.
-#'
-#' @return List with `est`, `se`, `df`, `t_stat` and `p_val`.
-#'
+#' @inheritParams h_df_1d_sat
+#' @inherit h_df_1d_sat return
 #' @keywords internal
 h_df_1d_kr <- function(object, contrast) {
   assert_class(object, "mmrm")

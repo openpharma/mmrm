@@ -7,16 +7,17 @@
 h_df_1d_kr(object, contrast)
 }
 \arguments{
-\item{object}{(\code{mmrm})\cr object created by \code{\link[=mmrm]{mmrm()}} with Kenward-Roger(-Linear) method.}
+\item{object}{(\code{mmrm})\cr the MMRM fit.}
 
-\item{contrast}{(\code{numeric})\cr contrast vector.}
+\item{contrast}{(\code{numeric})\cr contrast vector. Note that this should not include
+elements for singular coefficient estimates, i.e. only refer to the
+actually estimated coefficients.}
 }
 \value{
 List with \code{est}, \code{se}, \code{df}, \code{t_stat} and \code{p_val}.
 }
 \description{
-Calculates the estimate, adjusted standard error, Kenward-Roger degrees of freedom,
-t statistic and p-value for one-dimensional contrast. Used in \code{\link[=df_1d]{df_1d()}} if method is
+Used in \code{\link[=df_1d]{df_1d()}} if method is
 "Kenward-Roger" or "Kenward-Roger-Linear".
 }
 \keyword{internal}

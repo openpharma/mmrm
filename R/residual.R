@@ -1,15 +1,10 @@
 #' Calculation of Residual Degrees of Freedom for One-Dimensional Contrast
 #'
-#' @description Calculates the estimate, standard error, degrees of freedom,
-#' t statistic and p-value for one-dimensional contrast. Used in [df_1d()] if method is
+#' @description Used in [df_1d()] if method is
 #' "Residual".
 #'
-#' @param object (`mmrm`)\cr the MMRM fit.
-#' @param contrast (`numeric`)\cr contrast vector. Note that this should not include
-#'   elements for singular coefficient estimates, i.e. only refer to the
-#'   actually estimated coefficients.
-#'
-#' @return List with `est`, `se`, `df`, `t_stat` and `p_val`.
+#' @inheritParams h_df_1d_sat
+#' @inherit h_df_1d_sat return
 #' @keywords internal
 h_df_1d_res <- function(object, contrast) {
   assert_class(object, "mmrm")
@@ -22,14 +17,10 @@ h_df_1d_res <- function(object, contrast) {
 
 #' Calculation of Residual Degrees of Freedom for Multi-Dimensional Contrast
 #'
-#' @description Calculates the residual degrees of freedom, F statistic and p value for multi-dimensional contrast.
-#' Used in [df_md()] if method is "Residual".
+#' @description Used in [df_md()] if method is "Residual".
 #'
-#' @param object (`mmrm`)\cr object.
-#' @param contrast (`matrix`)\cr contrast matrix.
-#'
-#' @return List with `num_df`, `denom_df`, `f_stat` and `p_val` (2-sided p-value).
-#'
+#' @inheritParams h_df_md_sat
+#' @inherit h_df_md_sat return
 #' @keywords internal
 h_df_md_res <- function(object, contrast) {
   assert_class(object, "mmrm")
