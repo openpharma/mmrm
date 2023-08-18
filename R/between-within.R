@@ -82,13 +82,5 @@ h_df_md_bw <- function(object, contrast) {
   })
   df <- unname(min(df))
 
-  prec_contrast <- solve(h_quad_form_mat(contrast, component(object, "beta_vcov")))
-  contrast_est <- component(object, "beta_est") %*% t(contrast)
-  f_statistic <- as.numeric(1 / nrow(contrast) * h_quad_form_mat(contrast_est, prec_contrast))
-  list(
-    num_df = nrow(contrast),
-    denom_df = df,
-    f_stat = f_statistic,
-    p_val = stats::pf(f_statistic, nrow(contrast), df, lower.tail = FALSE)
-  )
+  h_test_md(object, contrast, df)
 }

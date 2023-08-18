@@ -50,16 +50,7 @@ h_df_md_kr <- function(object, contrast) {
   v_adj <- object$beta_vcov_adj
   df <- h_kr_df(v0 = object$beta_vcov, l = contrast, w = w, p = kr_comp$P)
 
-  prec_contrast <- solve(h_quad_form_mat(contrast, v_adj))
-  contrast_est <- component(object, "beta_est") %*% t(contrast)
-  f_statistic <- 1 / nrow(contrast) * h_quad_form_mat(contrast_est, prec_contrast)
-  f_star <- f_statistic * df$lambda
-  list(
-    num_df = nrow(contrast),
-    denom_df = df$m,
-    f_stat = f_star[1, 1],
-    p_val = stats::pf(f_star[1, 1], nrow(contrast), df$m, lower.tail = FALSE)
-  )
+  h_test_md(object, contrast, df = df$m, f_stat_factor = df$lambda)
 }
 
 #' Calculation of Kenward-Roger Degrees of Freedom for One-Dimensional Contrast
