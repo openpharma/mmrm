@@ -17,7 +17,7 @@ h_df_1d_res <- function(object, contrast) {
 
   df <- component(object, "n_obs") - length(component(object, "beta_est"))
 
-  h_test_1d(contrast, object, df)
+  h_test_1d(object, contrast, df)
 }
 
 #' Calculation of Residual Degrees of Freedom for Multi-Dimensional Contrast

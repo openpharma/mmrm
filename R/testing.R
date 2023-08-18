@@ -84,8 +84,8 @@ df_md <- function(object, contrast) {
 #' @return List with `est`, `se`, `df`, `t_stat` and `p_val` (2-sided p-value).
 #'
 #' @keywords internal
-h_test_1d <- function(contrast,
-                      object,
+h_test_1d <- function(object,
+                      contrast,
                       df) {
   assert_class(object, "mmrm")
   assert_numeric(contrast, len = length(component(object, "beta_est")))
@@ -106,16 +106,40 @@ h_test_1d <- function(contrast,
   )
 }
 
-h_test_md <- function(contrast,
-                      object,
+#' Creating F-Statistic Test Results For Multi-Dimensional Contrast
+#'
+#' @description Creates a list of results for multi-dimensional contrasts using
+#' an F-test statistic and the given degrees of freedom.
+#'
+#' @inheritParams df_md
+#' @param contrast (`matrix`)\cr numeric contrast matrix.
+#' @param df (`number`)\cr denominator degrees of freedom for the multi-dimensional contrast.
+#'
+#' @return List with `num_df`, `denom_df`, `f_stat` and `p_val` (2-sided p-value).
+#'
+#' @keywords internal
+h_test_md <- function(object,
+                      contrast,
                       df) {
+  assert_class(object, "mmrm")
+  assert_matrix(contrast, ncols = length(component(object, "beta_est")))
+  num_df <- nrow(contrast)
+  assert_numeric(df, lower = .Machine$double.xmin, len = nrow(contrast))
+
   prec_contrast <- solve(h_quad_form_mat(contrast, component(object, "beta_vcov")))
   contrast_est <- component(object, "beta_est") %*% t(contrast)
   f_statistic <- as.numeric(1 / nrow(contrast) * h_quad_form_mat(contrast_est, prec_contrast))
+  p_val <- stats::pf(
+    q = f_statistic,
+    df1 = num_df,
+    df2 = df,
+    lower.tail = FALSE
+  )
+
   list(
-    num_df = nrow(contrast),
+    num_df = num_df,
     denom_df = df,
     f_stat = f_statistic,
-    p_val = stats::pf(f_statistic, nrow(contrast), df, lower.tail = FALSE)
+    p_val = p_val
   )
 }

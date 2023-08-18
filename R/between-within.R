@@ -37,7 +37,7 @@ h_df_1d_bw <- function(object, contrast) {
   df <- if (bw_pars[as.logical(contrast)] == "within") ddf_within else ddf_between
   df <- unname(df)
 
-  h_test_1d(contrast, object, df)
+  h_test_1d(object, contrast, df)
 }
 
 #' Calculation of Between-Within Degrees of Freedom for Multi-Dimensional Contrast

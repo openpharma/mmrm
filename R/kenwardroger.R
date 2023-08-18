@@ -88,7 +88,7 @@ h_df_1d_kr <- function(object, contrast) {
     p = object$kr_comp$P
   )
 
-  h_test_1d(contrast, object, df$m)
+  h_test_1d(object, contrast, df$m)
 }
 
 #' Obtain the Adjusted Kenward-Roger degrees of freedom
