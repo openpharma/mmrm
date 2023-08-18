@@ -160,38 +160,6 @@ h_md_denom_df <- function(t_stat_df) {
   }
 }
 
-#' Creating Results List for Multi-Dimensional Contrast
-#'
-#' @description Calculate the p-value using the F statistic and the numerator/denominator
-#' degrees of freedom and return a list.
-#'
-#' @param f_stat (`number`)\cr F-statistic.
-#' @param num_df (`number`)\cr numerator degrees of freedom.
-#' @param denom_df (`number`)\cr denominator degrees of freedom.
-#'
-#' @return List with `num_df`, `denom_df`, `f_stat` and `p_val` (2-sided p-value).
-#'
-#' @keywords internal
-h_df_md_list <- function(f_stat, num_df, denom_df) {
-  assert_number(f_stat, lower = .Machine$double.xmin)
-  assert_number(num_df, lower = 1)
-  assert_number(denom_df, lower = 2)
-
-  p_val <- stats::pf(
-    q = f_stat,
-    df1 = num_df,
-    df2 = denom_df,
-    lower.tail = FALSE
-  )
-
-  list(
-    num_df = num_df,
-    denom_df = denom_df,
-    f_stat = f_stat,
-    p_val = p_val
-  )
-}
-
 #' Creating F-Statistic Results from One-Dimensional Contrast
 #'
 #' @description Creates multi-dimensional result from one-dimensional contrast from [df_1d()].
@@ -199,16 +167,17 @@ h_df_md_list <- function(f_stat, num_df, denom_df) {
 #' @param object (`mmrm`)\cr model fit.
 #' @param contrast (`numeric`)\cr one-dimensional contrast.
 #'
-#' @return The one-dimensional results are calculated and then returned as per
-#'   [h_df_md_list()].
+#' @return The one-dimensional degrees of freedom are calculated and then
+#'   based on that the p-value is calculated.
 #'
 #' @keywords internal
 h_df_md_from_1d <- function(object, contrast) {
   res_1d <- h_df_1d_sat(object, contrast)
-  h_df_md_list(
-    f_stat = res_1d$t_stat^2,
+  list(
     num_df = 1,
-    denom_df = res_1d$df
+    denom_df = res_1d$df,
+    f_stat = res_1d$t_stat^2,
+    p_val = stats::pf(q = res_1d$t_stat^2, df1 = 1, df2 = res_1d$df, lower.tail = FALSE)
   )
 }
 
@@ -283,9 +252,10 @@ h_df_md_sat <- function(object, contrast) {
   }
   denom_df <- h_md_denom_df(t_stat_df)
 
-  h_df_md_list(
-    f_stat = f_stat,
+  list(
     num_df = rank_cont_cov,
-    denom_df = denom_df
+    denom_df = denom_df,
+    f_stat = f_stat,
+    p_val = stats::pf(q = f_stat, df1 = rank_cont_cov, df2 = denom_df, lower.tail = FALSE)
   )
 }

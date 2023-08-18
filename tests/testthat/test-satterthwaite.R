@@ -119,19 +119,6 @@ test_that("h_md_denom_df works as expected when one t-statistic is 2 or smaller"
   expect_false(identical(h_md_denom_df(c(2.1, 5, 10, 15)), 2))
 })
 
-# h_df_md_list ----
-
-test_that("h_df_md_list works as expected", {
-  result <- expect_silent(h_df_md_list(f_stat = 0.38, num_df = 1, denom_df = 166))
-  expected <- list(
-    num_df = 1,
-    denom_df = 166,
-    f_stat = 0.38,
-    p_val = 0.5406
-  )
-  expect_equal(result, expected, tolerance = 1e-2)
-})
-
 # h_df_md_from_1d ----
 
 test_that("h_df_md_from_1d works as expected", {
