@@ -14,9 +14,6 @@
 h_df_1d_bw <- function(object, contrast) {
   assert_class(object, "mmrm")
   assert_numeric(contrast, len = length(component(object, "beta_est")))
-  est <- sum(contrast * component(object, "beta_est"))
-  var <- h_quad_form_vec(contrast, component(object, "beta_vcov"))
-  se <- sqrt(var)
 
   n_subjects <- component(object, "n_subjects")
   n_obs  <- component(object, "n_obs")
@@ -40,15 +37,7 @@ h_df_1d_bw <- function(object, contrast) {
   df <- if (bw_pars[as.logical(contrast)] == "within") ddf_within else ddf_between
   df <- unname(df)
 
-  t_stat <- est / se
-  p_val <- 2 * stats::pt(q = abs(t_stat), df = df, lower.tail = FALSE)
-  list(
-    est = est,
-    se = se,
-    df = df,
-    t_stat = t_stat,
-    p_val = p_val
-  )
+  h_test_1d(contrast, object, df)
 }
 
 #' Calculation of Between-Within Degrees of Freedom for Multi-Dimensional Contrast
@@ -65,9 +54,6 @@ h_df_1d_bw <- function(object, contrast) {
 h_df_md_bw <- function(object, contrast) {
   assert_class(object, "mmrm")
   assert_matrix(contrast, mode = "numeric", any.missing = FALSE, ncols = length(component(object, "beta_est")))
-  prec_contrast <- solve(h_quad_form_mat(contrast, component(object, "beta_vcov")))
-  contrast_est <- component(object, "beta_est") %*% t(contrast)
-  f_statistic <- as.numeric(1 / nrow(contrast) * h_quad_form_mat(contrast_est, prec_contrast))
 
   n_subjects <- component(object, "n_subjects")
   n_obs  <- component(object, "n_obs")
@@ -96,6 +82,9 @@ h_df_md_bw <- function(object, contrast) {
   })
   df <- unname(min(df))
 
+  prec_contrast <- solve(h_quad_form_mat(contrast, component(object, "beta_vcov")))
+  contrast_est <- component(object, "beta_est") %*% t(contrast)
+  f_statistic <- as.numeric(1 / nrow(contrast) * h_quad_form_mat(contrast_est, prec_contrast))
   list(
     num_df = nrow(contrast),
     denom_df = df,

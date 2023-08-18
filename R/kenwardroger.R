@@ -49,6 +49,7 @@ h_df_md_kr <- function(object, contrast) {
   w <- component(object, "theta_vcov")
   v_adj <- object$beta_vcov_adj
   df <- h_kr_df(v0 = object$beta_vcov, l = contrast, w = w, p = kr_comp$P)
+
   prec_contrast <- solve(h_quad_form_mat(contrast, v_adj))
   contrast_est <- component(object, "beta_est") %*% t(contrast)
   f_statistic <- 1 / nrow(contrast) * h_quad_form_mat(contrast_est, prec_contrast)
@@ -79,25 +80,15 @@ h_df_1d_kr <- function(object, contrast) {
   if (component(object, "reml") != 1) {
     stop("Kenward-Roger is only for REML!")
   }
-  est <- sum(contrast * component(object, "beta_est"))
+
   df <- h_kr_df(
     v0 = object$beta_vcov,
     l = matrix(contrast, nrow = 1),
     w = component(object, "theta_vcov"),
     p = object$kr_comp$P
   )
-  se <- sqrt(h_quad_form_vec(contrast, object$beta_vcov_adj))
 
-  t_stat <- abs(est) / se
-  p_val <- stats::pt(t_stat, df$m, lower.tail = FALSE) * 2
-
-  list(
-    est = est,
-    se = se,
-    df = df$m,
-    t_stat = t_stat,
-    p_val = p_val
-  )
+  h_test_1d(contrast, object, df$m)
 }
 
 #' Obtain the Adjusted Kenward-Roger degrees of freedom

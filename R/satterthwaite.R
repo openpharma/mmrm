@@ -98,42 +98,6 @@ h_gradient <- function(jac_list, contrast) {
   )
 }
 
-#' Creating Results List for One-Dimensional Contrast
-#'
-#' @description Creates a list of results for one-dimensional contrasts using the estimated
-#' values from quadratic form.
-#'
-#' @param est (`number`)\cr estimate.
-#' @param var (`number`)\cr variance of estimate.
-#' @param v_num (`number`)\cr numerator for Satterthwaite d.f.
-#' @param v_denom (`number`)\cr denominator for Satterthwaite d.f.
-#'
-#' @return List with `est`, `se`, `df`, `t_stat` and `p_val` (2-sided p-value).
-#'
-#' @keywords internal
-h_df_1d_list <- function(est,
-                         var,
-                         v_num,
-                         v_denom) {
-  assert_number(est)
-  assert_number(var, lower = .Machine$double.xmin)
-  assert_number(v_num, lower = .Machine$double.xmin)
-  assert_number(v_denom, lower = .Machine$double.xmin)
-
-  se <- sqrt(var)
-  t_stat <- est / se
-  df <- v_num / v_denom
-  p_val <- 2 * stats::pt(q = abs(t_stat), df = df, lower.tail = FALSE)
-
-  list(
-    est = est,
-    se = se,
-    df = df,
-    t_stat = t_stat,
-    p_val = p_val
-  )
-}
-
 #' Calculation of Satterthwaite Degrees of Freedom for One-Dimensional Contrast
 #'
 #' @description Calculates the estimate, standard error, degrees of freedom,
@@ -151,32 +115,20 @@ h_df_1d_sat <- function(object, contrast) {
   assert_class(object, "mmrm")
   contrast <- as.numeric(contrast)
   assert_numeric(contrast, len = length(component(object, "beta_est")))
-  est <- sum(contrast * component(object, "beta_est"))
-  var <- h_quad_form_vec(contrast, component(object, "beta_vcov"))
-  if (identical(object$vcov, "Asymptotic")) {
+
+  df <- if (identical(object$vcov, "Asymptotic")) {
     grad <- h_gradient(component(object, "jac_list"), contrast)
     v_num <- 2 * var^2
     v_denom <- h_quad_form_vec(grad, component(object, "theta_vcov"))
-    h_df_1d_list(
-      est = est,
-      var = var,
-      v_num = v_num,
-      v_denom = v_denom
-    )
+    v_num / v_denom
   } else if (object$vcov %in% c("Empirical", "Empirical-Jackknife", "Empirical-Bias-Reduced")) {
     contrast_matrix <- Matrix::.bdiag(rep(list(matrix(contrast, nrow = 1)), component(object, "n_subjects")))
     contrast_matrix <- as.matrix(contrast_matrix)
     g_matrix <- h_quad_form_mat(contrast_matrix, object$empirical_df_mat)
-    df <- h_tr(g_matrix)^2 / sum(g_matrix^2)
-    se <- sqrt(var)
-    list(
-      est = est,
-      se = se,
-      df = df,
-      t_stat = est / se,
-      p_val = 2 * stats::pt(abs(est / se), df = df, lower.tail = FALSE)
-    )
+    h_tr(g_matrix)^2 / sum(g_matrix^2)
   }
+
+  h_test_1d(contrast, object, df)
 }
 
 #' Calculating Denominator Degrees of Freedom for the Multi-Dimensional Case
