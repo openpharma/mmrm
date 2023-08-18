@@ -118,7 +118,7 @@ h_df_1d_sat <- function(object, contrast) {
 
   df <- if (identical(object$vcov, "Asymptotic")) {
     grad <- h_gradient(component(object, "jac_list"), contrast)
-    v_num <- 2 * var^2
+    v_num <- 2 * h_quad_form_vec(contrast, component(object, "beta_vcov"))^2
     v_denom <- h_quad_form_vec(grad, component(object, "theta_vcov"))
     v_num / v_denom
   } else if (object$vcov %in% c("Empirical", "Empirical-Jackknife", "Empirical-Bias-Reduced")) {
