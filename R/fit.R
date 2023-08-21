@@ -224,6 +224,9 @@ refit_multiple_optimizers <- function(fit,
 #' at the missing visits.
 #' The `method` and `vcov` arguments specify the degrees of freedom and coefficients covariance matrix
 #' adjustment methods, respectively.
+#' Allowed `vcov` includes: "Asymptotic", "Kenward-Roger", "Kenward-Roger-Linear", "Empirical" (CR0),
+#' "Empirical-Jackknife" (CR2), and "Empirical-Bias-Reduced" (CR3).
+#' Allowed `method` includes: "Satterthwaite", "Kenward-Roger" and "Residual".
 #' If `method` is "Kenward-Roger" then only "Kenward-Roger" or "Kenward-Roger-Linear" are allowed for `vcov`.
 #' The `vcov` argument can be `NULL` to use the default covariance method depending on the `method`
 #' used for degrees of freedom, see the following table:

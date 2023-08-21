@@ -56,6 +56,9 @@ when using an unstructured covariance matrix and there are no observations
 at the missing visits.
 The \code{method} and \code{vcov} arguments specify the degrees of freedom and coefficients covariance matrix
 adjustment methods, respectively.
+Allowed \code{vcov} includes: "Asymptotic", "Kenward-Roger", "Kenward-Roger-Linear", "Empirical" (CR0),
+"Empirical-Jackknife" (CR2), and "Empirical-Bias-Reduced" (CR3).
+Allowed \code{method} includes: "Satterthwaite", "Kenward-Roger" and "Residual".
 If \code{method} is "Kenward-Roger" then only "Kenward-Roger" or "Kenward-Roger-Linear" are allowed for \code{vcov}.
 The \code{vcov} argument can be \code{NULL} to use the default covariance method depending on the \code{method}
 used for degrees of freedom, see the following table:\tabular{ll}{
