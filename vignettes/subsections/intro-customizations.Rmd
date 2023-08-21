@@ -183,6 +183,17 @@ when the degrees of freedom method is "Kenward-Roger".
 Details can be found in [Coefficients Covariance Matrix Adjustment vignette](coef_vcov.html) and
 [Weighted Least Square Empirical Covariance](empirical_wls.html).
 
+An example of using other variance-covariance is:
+
+```{r}
+fit_emp <- mmrm(
+  formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data,
+  method = "Satterthwaite",
+  vcov = "Empirical"
+)
+```
+
 ## Keeping Unobserved Visits
 
 Sometimes not all possible time points are observed in a given data set.
