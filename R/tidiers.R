@@ -88,7 +88,7 @@ augment.mmrm <- function(x, newdata = NULL,
   }
   interval <- match.arg(interval, choices = c("none", "confidence", "prediction"))
 
-  ret <- h_mmrm_augment_newdata(x, newdata = newdata, .se_fit = se_fit, interval = interval)
+  ret <- h_mmrm_augment_newdata(x, newdata = newdata, .se_fit = se_fit, interval = interval, ...)
 
   if (!is.null(.resid)) {
     ret <- merge(ret, .resid, by = '.rownames')
@@ -129,14 +129,14 @@ h_mmrm_augment_newdata <- function (x, newdata, .se_fit, interval = NULL, ...) {
   if(interval=='none'){
     df$.fitted <- pred_obj |> unname()
   }else{
-    df$.fitted <- pred_obj[, "fit"]
-    df$.lower  <- pred_obj[, "lwr"]
-    df$.upper  <- pred_obj[, "upr"]
+    df$.fitted <- pred_obj[, "fit"] |> unname()
+    df$.lower  <- pred_obj[, "lwr"] |> unname()
+    df$.upper  <- pred_obj[, "upr"] |> unname()
   }
 
   if (.se_fit) {
     se_idx <- which(colnames(pred_obj) %in% c("se.fit", "se"))
-    df$.se.fit <- pred_obj[[se_idx]]
+    df$.se.fit <- pred_obj[,se_idx] |> as.numeric()
   }
 
   df
