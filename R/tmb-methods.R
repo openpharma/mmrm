@@ -160,14 +160,14 @@ h_get_prediction_variance <- function(object, n_sim, tmb_data) {
   n_theta <- length(object$theta_est)
   res <- replicate(n_sim, {
     z <- stats::rnorm(n = n_theta)
-    theta_sample <- object$theta_est + theta_chol %*% z
+    theta_sample <- object$theta_est + z %*% theta_chol
     cond_beta_results <- object$tmb_object$report(theta_sample)
     beta_mean <- cond_beta_results$beta
     beta_cov <- cond_beta_results$beta_vcov
     h_get_prediction(tmb_data, theta_sample, beta_mean, beta_cov)$prediction
   })
-  mean_of_var <- rowMeans(res[, 1, ])
-  var_of_mean <- apply(res[, 3, ], 1, stats::var)
+  mean_of_var <- rowMeans(res[, 3, ])
+  var_of_mean <- apply(res[, 1, ], 1, stats::var)
   mean_of_var + var_of_mean
 }
 
