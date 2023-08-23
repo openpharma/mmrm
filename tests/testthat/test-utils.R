@@ -164,7 +164,8 @@ test_that("h_get_cov_default works correctly", {
 
   expect_error(
     h_get_cov_default("UNKNOWN"),
-    "'arg' should be one of \"Satterthwaite\", \"Kenward-Roger\", \"Residual\", \"Between-within\"")
+    "'arg' should be one of \"Satterthwaite\", \"Kenward-Roger\", \"Residual\", \"Between-within\""
+  )
 })
 
 # h_confirm_large_levels ----
