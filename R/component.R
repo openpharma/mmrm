@@ -41,6 +41,7 @@
 #' - `x_matrix`: design matrix used (excluding aliased columns).
 #' - `y_vector`: response vector used.
 #' - `jac_list`: Jacobian, see  [h_jac_list()] for details.
+#' - `full_frame`: `data.frame` with `n` rows containing all variables needed in the model.
 #'
 #' @seealso In the `lme4` package there is a similar function `getME()`.
 #'
@@ -59,13 +60,14 @@
 #' @export
 component <- function(object,
                       name = c(
-                        "cov_type", "n_theta", "n_subjects", "n_timepoints",
+                        "cov_type", "subject_var", "n_theta", "n_subjects", "n_timepoints",
                         "n_obs", "beta_vcov", "beta_vcov_complete",
                         "varcor", "formula", "dataset", "n_groups",
                         "reml", "convergence", "evaluations", "method",
                         "conv_message", "call", "theta_est",
                         "beta_est", "beta_est_complete", "beta_aliased",
-                        "x_matrix", "y_vector", "neg_log_lik", "jac_list", "theta_vcov"
+                        "x_matrix", "y_vector", "neg_log_lik", "jac_list", "theta_vcov",
+                        "full_frame"
                       )) {
   assert_class(object, "mmrm_tmb")
   name <- match.arg(name, several.ok = TRUE)
@@ -76,6 +78,7 @@ component <- function(object,
     "call" = object$call,
     # Strings.
     "cov_type" = object$formula_parts$cov_type,
+    "subject_var" = object$formula_parts$subject_var,
     "formula" = deparse(object$call$formula),
     "dataset" = object$call$data,
     "reml" = object$reml,
@@ -128,6 +131,7 @@ component <- function(object,
     "varcor" = object$cov,
     "x_matrix" = object$tmb_data$x_matrix,
     "theta_vcov" = object$theta_vcov,
+    "full_frame" = object$tmb_data$full_frame,
     # If not found.
     "..foo.." =
       stop(sprintf(
