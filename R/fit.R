@@ -487,12 +487,15 @@ mmrm <- function(formula,
     fit$empirical_df_mat <- empirical_comp$df_mat
     dimnames(fit$beta_vcov_adj) <- dimnames(fit$beta_vcov)
   } else if (identical(control$vcov, "Asymptotic")) {
+    # Note that we only need the Jacobian list under Asymptotic covariance method,
+    # cf. the Satterthwaite vignette.
+    if (identical(fit$method, "Satterthwaite")) {
+      fit$jac_list <- h_jac_list(fit$tmb_data, fit$theta_est, fit$beta_vcov)
+    }
   } else {
     stop("Unrecognized coefficent variance-covariance method!")
   }
-  if (identical(fit$method, "Satterthwaite")) {
-    fit$jac_list <- h_jac_list(fit$tmb_data, fit$theta_est, fit$beta_vcov)
-  }
+
   class(fit) <- c("mmrm", class(fit))
   fit
 }
