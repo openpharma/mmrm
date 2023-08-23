@@ -55,20 +55,6 @@ test_that("h_gradient works as expected", {
   expect_equal(result, expected)
 })
 
-# h_df_1d_list ----
-
-test_that("h_df_1d_list works as expected", {
-  result <- expect_silent(h_df_1d_list(est = 5, var = 4, v_num = 1, v_denom = 2))
-  expected <- list(
-    est = 5,
-    se = 2,
-    df = 1 / 2,
-    t_stat = 5 / 2,
-    p_val = 2 * stats::pt(q = 5 / 2, df = 1 / 2, lower.tail = FALSE)
-  )
-  expect_equal(result, expected)
-})
-
 # h_df_1d_sat ----
 
 test_that("h_df_1d_sat works as expected", {
@@ -131,19 +117,6 @@ test_that("h_md_denom_df works as expected when one t-statistic is 2 or smaller"
   expect_identical(h_md_denom_df(c(1.9, 5, 10, 15)), 2)
   expect_identical(h_md_denom_df(c(2, 5, 10, 15)), 2)
   expect_false(identical(h_md_denom_df(c(2.1, 5, 10, 15)), 2))
-})
-
-# h_df_md_list ----
-
-test_that("h_df_md_list works as expected", {
-  result <- expect_silent(h_df_md_list(f_stat = 0.38, num_df = 1, denom_df = 166))
-  expected <- list(
-    num_df = 1,
-    denom_df = 166,
-    f_stat = 0.38,
-    p_val = 0.5406
-  )
-  expect_equal(result, expected, tolerance = 1e-2)
 })
 
 # h_df_md_from_1d ----

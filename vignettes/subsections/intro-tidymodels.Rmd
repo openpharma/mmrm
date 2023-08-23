@@ -86,8 +86,8 @@ We combine these steps into a workflow:
 
 ```{r}
 (mmrm_wflow_nocov <- workflow() |>
-  add_model(mmrm_spec_with_cov, formula = FEV1 ~ SEX) |>
-  add_recipe(mmrm_recipe))
+   add_model(mmrm_spec_with_cov, formula = FEV1 ~ SEX) |>
+   add_recipe(mmrm_recipe))
 ```
 
 Last step is to fit the data with the workflow object
