@@ -92,12 +92,12 @@ test_that("h_df_1d_bw works as expected for univariate linear combination contra
 
   contrast <- c(0, 0, 1, -1)
   result <- expect_silent(h_df_1d_bw(object, contrast))
-  expected_df <- 193L  # Because non-zero entries correspond to RACE which is a between-variable.
+  expected_df <- 193L # Because non-zero entries correspond to RACE which is a between-variable.
   expect_identical(result$df, expected_df)
 
   contrast <- c(1, 0, -1, 0)
   result <- expect_silent(h_df_1d_bw(object, contrast))
-  expected_df <- 193L  # Because mixed with intercept does not change the minimum.
+  expected_df <- 193L # Because mixed with intercept does not change the minimum.
   expect_identical(result$df, expected_df)
 })
 

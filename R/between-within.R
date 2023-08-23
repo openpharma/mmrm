@@ -45,7 +45,7 @@ h_df_bw_calc <- function(object) {
   assert_class(object, "mmrm")
 
   n_subjects <- component(object, "n_subjects")
-  n_obs  <- component(object, "n_obs")
+  n_obs <- component(object, "n_obs")
   x_mat <- component(object, "x_matrix")
 
   subject_var <- component(object, "subject_var")
@@ -55,7 +55,7 @@ h_df_bw_calc <- function(object) {
   coefs_between_within <- h_within_or_between(x_mat, subject_ids)
   n_coefs_between <- sum(coefs_between_within == "between")
   n_intercept <- sum(coefs_between_within == "intercept")
-  n_coefs_within  <- sum(coefs_between_within == "within")
+  n_coefs_within <- sum(coefs_between_within == "within")
   ddf_between <- n_subjects - n_coefs_between - n_intercept
   ddf_within <- n_obs - n_subjects - n_coefs_within
 

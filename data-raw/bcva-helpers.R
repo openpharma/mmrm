@@ -74,8 +74,8 @@ missing_at_random <- function(covars_df, type) {
   # Compute missingness probabilities.
   lin_pred <- function(coef_visit, coef_trt) {
     -(5 - 0.01 * covars_df$base_bcva + 0.5 * (covars_df$strata == 2) +
-        1 * (covars_df$strata == 3) + coef_visit * covars_df$visit_num +
-        coef_trt * (covars_df$trt == 0))
+      1 * (covars_df$strata == 3) + coef_visit * covars_df$visit_num +
+      coef_trt * (covars_df$trt == 0))
   }
   prob_miss <- if (type == "none") {
     0
