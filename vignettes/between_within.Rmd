@@ -25,24 +25,24 @@ knitr::opts_chunk$set(
 library(mmrm)
 ```
 
-For determining the denominator degrees of freedom (DDF) required for the testing of fixed effects, 
+For determining the degrees of freedom (DF) required for the testing of fixed effects, 
 one option is to use the "between-within" method, originally proposed by @schluchter1990small as a small-sample adjustment.
 
 ## General definition
 
-Using this method, the DDF are determined by the grouping level at which the term is estimated. Generally, assuming $G$ levels of grouping:
+Using this method, the DF are determined by the grouping level at which the term is estimated. Generally, assuming $G$ levels of grouping:
 
-$DDF_g=N_g-(N_{g-1}+p_g), g=1, ..., G+1$
+$DF_g=N_g-(N_{g-1}+p_g), g=1, ..., G+1$
 
 where $N_g$ is the number of groups at the $g$-th grouping level and $p_g$ is the number of parameters estimated at that level.
 
 $N_0=1$ if the model includes an intercept term and $N_0=0$ otherwise. Note however
-that the DDF for the intercept term itself (when it is included) are calculated at the $G+1$ level, 
-i.e. for the intercept we use $DDF_{G+1}$ degrees of freedom.
+that the DF for the intercept term itself (when it is included) are calculated at the $G+1$ level, 
+i.e. for the intercept we use $DF_{G+1}$ degrees of freedom.
 
 We note that general contrasts $C\beta$ have not been considered in the literature so far. 
 Here we therefore use a pragmatic approach and define that for a general contrast matrix $C$
-we take the minimum DDF across the involved coefficients as the DDF.
+we take the minimum DF across the involved coefficients as the DF.
 
 ## MMRM special case
 
@@ -50,17 +50,17 @@ In our case of an MMRM (with only fixed effect terms), there is only a single gr
 so $G=1$. This means there are 3 potential "levels" of parameters (@galecki2013linear):
 
 * Level 0: The intercept term, assuming the model has been fitted with one. 
-  - We use $DDF_2$ degrees of freedom as defined below.
+  - We use $DF_2$ degrees of freedom as defined below.
 * Level 1: Effects that change between subjects, but not across observations within subjects.
   - These are the "between parameters".
-  - The corresponding degrees of freedom are $DDF_1 = N_1 - (N_0 + p_1)$.
+  - The corresponding degrees of freedom are $DF_1 = N_1 - (N_0 + p_1)$.
   - In words this can be read as:\
-    "Between" DDF = "number of subjects" - ("1 if intercept otherwise 0" + "number of between parameters").
+    "Between" DF = "number of subjects" - ("1 if intercept otherwise 0" + "number of between parameters").
 * Level 2: Effects that change within subjects.
   - These are the "within parameters".
-  - The corresponding degrees of freedom are $DDF_2 = N_2 - (N_1 + p_2)$.
+  - The corresponding degrees of freedom are $DF_2 = N_2 - (N_1 + p_2)$.
   - In words this can be read as:\
-    "Within" DDF = "number of observations" - ("number of subjects" + "number of within parameters").
+    "Within" DF = "number of observations" - ("number of subjects" + "number of within parameters").
 
 ## Example
 
@@ -107,10 +107,10 @@ Therefore we obtain the following numbers of parameters $p_g$ at the levels $g=1
 * $p_1 = 2 + 1 + 1 = 4$
 * $p_2 = 3 + 3 = 6$
 
-And we obtain therefore the degrees of freedom $DDF_g$ at the levels $g=1,2$:
+And we obtain therefore the degrees of freedom $DF_g$ at the levels $g=1,2$:
 
-* $DDF_1 = N_1 - (N_0 + p_1) = 197 - (1 + 4) = 192$
-* $DDF_2 = N_2 - (N_1 + p_2) = 537 - (197 + 6) = 334$
+* $DF_1 = N_1 - (N_0 + p_1) = 197 - (1 + 4) = 192$
+* $DF_2 = N_2 - (N_1 + p_2) = 537 - (197 + 6) = 334$
 
 So we can finally see that those degrees of freedom are exactly as displayed in the summary table above.
 
@@ -121,7 +121,7 @@ The implementation described above is not identical to that of SAS. Differences 
 * In SAS, when using an unstructured covariance matrix, all effects are assigned the between-subjects degrees of freedom.
 * In SAS, the within-subjects degrees of freedom are affected by the number of subjects in which the effect takes different values. 
 * In SAS, if there are multiple within-subject effects containing classification variables, the within-subject degrees of freedom are partitioned into components corresponding to the subject-by-effect interactions.
-* In SAS, the final effect you list in the `CONTRAST`/`ESTIMATE` statement is used to define the DDF for general contrasts.
+* In SAS, the final effect you list in the `CONTRAST`/`ESTIMATE` statement is used to define the DF for general contrasts.
 
 Code contributions for adding the SAS version of between-within degrees of freedom to the `mmrm` package are welcome!
 
