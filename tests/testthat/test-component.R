@@ -8,13 +8,13 @@ test_that("component works as expected for mmrm_tmb objects", {
   expect_equal(
     names(component(object_mmrm_tmb)),
     c(
-      "cov_type", "n_theta", "n_subjects", "n_timepoints",
+      "cov_type", "subject_var", "n_theta", "n_subjects", "n_timepoints",
       "n_obs", "beta_vcov", "beta_vcov_complete", "varcor", "formula", "dataset",
       "n_groups", "reml", "convergence", "evaluations", "method",
       "conv_message", "call", "theta_est",
       "beta_est", "beta_est_complete", "beta_aliased",
       "x_matrix", "y_vector", "neg_log_lik",
-      "jac_list", "theta_vcov"
+      "jac_list", "theta_vcov", "full_frame"
     )
   )
 
@@ -47,7 +47,8 @@ test_that("component returns Jackknife beta vcov matrix", {
   object_mmrm_jack <- get_mmrm_jack()
   expect_identical(component(object_mmrm_jack, "beta_vcov"), object_mmrm_jack$beta_vcov_adj)
 })
-## best_est_complete ----
+
+## beta_est_complete ----
 
 test_that("component produces complete coefficient vector as expected in full rank model", {
   object_mmrm_tmb <- get_mmrm_tmb()
@@ -73,7 +74,7 @@ test_that("component returns coefficient vectors as expected in rank deficient m
   )
 })
 
-## best_vcov_complete ----
+## beta_vcov_complete ----
 
 test_that("component produces complete variance-covariance matrix as expected in full rank model", {
   object_mmrm_tmb <- get_mmrm_tmb()

@@ -119,10 +119,7 @@ We can see that the estimated covariance matrices are different in different `AR
 
 ## Adjustment Method
 
-In additional to the residual degrees of freedom, both Satterthwaite and Kenward-Roger adjustment methods
-are available. The default is Satterthwaite adjustment of the degrees of freedom. To use Kenward-Roger
-adjustment of the degrees of freedom as well as the coefficients covariance
-matrix, use the `method` argument:
+In additional to the residual and Between-Within degrees of freedom, both Satterthwaite and Kenward-Roger adjustment methods are available. The default is Satterthwaite adjustment of the degrees of freedom. To use e.g. the Kenward-Roger adjustment of the degrees of freedom as well as the coefficients covariance matrix, use the `method` argument:
 
 ```{r kr}
 fit_kr <- mmrm(

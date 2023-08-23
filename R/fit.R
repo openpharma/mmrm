@@ -200,8 +200,7 @@ refit_multiple_optimizers <- function(fit,
 #' control function.
 #'
 #' @param n_cores (`int`)\cr number of cores to be used.
-#' @param method (`string`)\cr adjustment method for degrees of freedom and
-#'   coefficients covariance matrix.
+#' @param method (`string`)\cr adjustment method for degrees of freedom.
 #' @param vcov (`string`)\cr coefficients covariance matrix adjustment method.
 #' @param start (`numeric` or `NULL`)\cr optional start values for variance
 #'   parameters.
@@ -213,30 +212,33 @@ refit_multiple_optimizers <- function(fit,
 #' @param ... additional arguments passed to [h_get_optimizers()].
 #'
 #' @details
-#' The `drop_visit_levels` flag will decide whether unobserved visits will be kept for analysis.
-#' For example, if the data only has observations at visits `VIS1`, `VIS3` and `VIS4`, by default
-#' they are treated to be equally spaced, the distance from `VIS1` to `VIS3`, and from `VIS3` to `VIS4`,
-#' are identical. However, you can manually convert this visit into a factor, with
-#' `levels = c("VIS1", "VIS2", "VIS3", "VIS4")`, and also use `drop_visits_levels = FALSE`,
-#' then the distance from `VIS1` to `VIS3` will be double, as `VIS2` is a valid visit.
-#' However, please be cautious because this can lead to convergence failure
-#' when using an unstructured covariance matrix and there are no observations
-#' at the missing visits.
-#' The `method` and `vcov` arguments specify the degrees of freedom and coefficients covariance matrix
-#' adjustment methods, respectively.
-#' Allowed `vcov` includes: "Asymptotic", "Kenward-Roger", "Kenward-Roger-Linear", "Empirical" (CR0),
-#' "Empirical-Jackknife" (CR2), and "Empirical-Bias-Reduced" (CR3).
-#' Allowed `method` includes: "Satterthwaite", "Kenward-Roger" and "Residual".
-#' If `method` is "Kenward-Roger" then only "Kenward-Roger" or "Kenward-Roger-Linear" are allowed for `vcov`.
-#' The `vcov` argument can be `NULL` to use the default covariance method depending on the `method`
-#' used for degrees of freedom, see the following table:
-#' | `method`  |  Default `vcov`|
-#' |-----------|----------|
-#' |Satterthwaite| Asymptotic|
-#' |Kenward-Roger| Kenward-Roger|
-#' |Residual| Empirical|
-#' Please note that "Kenward-Roger" for "Unstructured" covariance gives different result compared to SAS.
-#' Use "Kenward-Roger-Linear" for `vcov` for better matching.
+#  - The `drop_visit_levels` flag will decide whether unobserved visits will be kept for analysis.
+#'   For example, if the data only has observations at visits `VIS1`, `VIS3` and `VIS4`, by default
+#'   they are treated to be equally spaced, the distance from `VIS1` to `VIS3`, and from `VIS3` to `VIS4`,
+#'   are identical. However, you can manually convert this visit into a factor, with
+#'   `levels = c("VIS1", "VIS2", "VIS3", "VIS4")`, and also use `drop_visits_levels = FALSE`,
+#'   then the distance from `VIS1` to `VIS3` will be double, as `VIS2` is a valid visit.
+#'   However, please be cautious because this can lead to convergence failure
+#'   when using an unstructured covariance matrix and there are no observations
+#'   at the missing visits.
+#' - The `method` and `vcov` arguments specify the degrees of freedom and coefficients
+#'   covariance matrix adjustment methods, respectively.
+#'   Allowed `vcov` includes: "Asymptotic", "Kenward-Roger", "Kenward-Roger-Linear", "Empirical" (CR0),
+#'   "Empirical-Jackknife" (CR2), and "Empirical-Bias-Reduced" (CR3).
+#'   Allowed `method` includes: "Satterthwaite", "Kenward-Roger", "Between-Within" and "Residual".
+#'   If `method` is "Kenward-Roger" then only "Kenward-Roger" or "Kenward-Roger-Linear" are
+#'   allowed for `vcov`.
+#' - The `vcov` argument can be `NULL` to use the default covariance method depending on the `method`
+#'   used for degrees of freedom, see the following table:
+#'  | `method`  |  Default `vcov`|
+#'  |-----------|----------|
+#'  |Satterthwaite| Asymptotic|
+#'  |Kenward-Roger| Kenward-Roger|
+#'  |Residual| Empirical|
+#'  |Between-Within| Asymptotic|
+#' - Please note that "Kenward-Roger" for "Unstructured" covariance gives different results
+#'   compared to SAS; Use "Kenward-Roger-Linear" for `vcov` instead for better matching
+#'   of the SAS results.
 #'
 #' @return List of class `mmrm_control` with the control parameters.
 #' @export
@@ -247,7 +249,7 @@ refit_multiple_optimizers <- function(fit,
 #'   optimizer_args = list(method = "L-BFGS-B")
 #' )
 mmrm_control <- function(n_cores = 1L,
-                         method = c("Satterthwaite", "Kenward-Roger", "Residual"),
+                         method = c("Satterthwaite", "Kenward-Roger", "Residual", "Between-Within"),
                          vcov = NULL,
                          start = NULL,
                          accept_singular = TRUE,
@@ -268,13 +270,19 @@ mmrm_control <- function(n_cores = 1L,
   assert_subset(
     vcov,
     c(
-      "Asymptotic", "Empirical", "Empirical-Bias-Reduced",
-      "Empirical-Jackknife", "Kenward-Roger", "Kenward-Roger-Linear"
+      "Asymptotic",
+      "Empirical",
+      "Empirical-Bias-Reduced",
+      "Empirical-Jackknife",
+      "Kenward-Roger",
+      "Kenward-Roger-Linear"
     )
   )
-
   if (xor(identical(method, "Kenward-Roger"), vcov %in% c("Kenward-Roger", "Kenward-Roger-Linear"))) {
-    stop("Kenward-Roger degrees of freedom must work together with Kenward-Roger or Kenward-Roger-Linear covariance!")
+    stop(paste(
+      "Kenward-Roger degrees of freedom must work together with Kenward-Roger",
+      "or Kenward-Roger-Linear covariance!"
+    ))
   }
   structure(
     list(
@@ -289,7 +297,6 @@ mmrm_control <- function(n_cores = 1L,
     class = "mmrm_control"
   )
 }
-
 
 #' Fit an MMRM
 #'
@@ -464,10 +471,6 @@ mmrm <- function(formula,
   fit$call$formula <- formula
   fit$method <- control$method
   fit$vcov <- control$vcov
-  if (identical(fit$method, "Satterthwaite") && identical(fit$vcov, "Asymptotic")) {
-    fit$jac_list <- h_jac_list(fit$tmb_data, fit$theta_est, fit$beta_vcov)
-  }
-
   if (control$vcov %in% c("Kenward-Roger", "Kenward-Roger-Linear")) {
     fit$kr_comp <- h_get_kr_comp(fit$tmb_data, fit$theta_est)
     fit$beta_vcov_adj <- h_var_adj(
@@ -486,9 +489,15 @@ mmrm <- function(formula,
     fit$empirical_df_mat <- empirical_comp$df_mat
     dimnames(fit$beta_vcov_adj) <- dimnames(fit$beta_vcov)
   } else if (identical(control$vcov, "Asymptotic")) {
+    # Note that we only need the Jacobian list under Asymptotic covariance method,
+    # cf. the Satterthwaite vignette.
+    if (identical(fit$method, "Satterthwaite")) {
+      fit$jac_list <- h_jac_list(fit$tmb_data, fit$theta_est, fit$beta_vcov)
+    }
   } else {
     stop("Unrecognized coefficent variance-covariance method!")
   }
+
   class(fit) <- c("mmrm", class(fit))
   fit
 }
