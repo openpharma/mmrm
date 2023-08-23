@@ -37,7 +37,8 @@ $DDF_g=N_g-(N_{g-1}+p_g), g=1, ..., G+1$
 where $N_g$ is the number of groups at the $g$-th grouping level and $p_g$ is the number of parameters estimated at that level.
 
 $N_0=1$ if the model includes an intercept term and $N_0=0$ otherwise. Note however
-that the DDF for the intercept term itself (when it is included) are calculated at the $G+1$ level, i.e. for the intercept we use $DDF_{G+1}$ degrees of freedom.
+that the DDF for the intercept term itself (when it is included) are calculated at the $G+1$ level, 
+i.e. for the intercept we use $DDF_{G+1}$ degrees of freedom.
 
 We note that general contrasts $C\beta$ have not been considered in the literature so far. 
 Here we therefore use a pragmatic approach and define that for a general contrast matrix $C$
@@ -45,7 +46,8 @@ we take the minimum DDF across the involved coefficients as the DDF.
 
 ## MMRM special case
 
-In our case of an MMRM (with only fixed effect terms), there is only a single grouping level (subject), so $G=1$. This means there are 3 potential "levels" of parameters (@galecki2013linear):
+In our case of an MMRM (with only fixed effect terms), there is only a single grouping level (subject), 
+so $G=1$. This means there are 3 potential "levels" of parameters (@galecki2013linear):
 
 * Level 0: The intercept term, assuming the model has been fitted with one. 
   - We use $DDF_2$ degrees of freedom as defined below.

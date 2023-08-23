@@ -66,6 +66,36 @@ h_df_bw_calc <- function(object) {
   )
 }
 
+#' Assign Minimum Degrees of Freedom Given Involved Coefficients
+#'
+#' @description Used in [h_df_1d_bw()] and [h_df_md_bw()].
+#'
+#' @param bw_calc (`list`)\cr from [h_df_bw_calc()].
+#' @param is_coef_involved (`logical`)\cr whether each coefficient is involved
+#'   in the contrast.
+#'
+#' @return The minimum of the degrees of freedom assigned to each involved
+#'   coefficient according to its between-within categorization.
+#'
+#' @keywords internal
+h_df_min_bw <- function(bw_calc, is_coef_involved) {
+  assert_list(bw_calc)
+  assert_names(names(bw_calc), identical.to = c("coefs_between_within", "ddf_between", "ddf_within"))
+  assert_logical(is_coef_involved, len = length(bw_calc$coefs_between_within))
+  assert_true(sum(is_coef_involved) > 0)
+
+  coef_categories <- bw_calc$coefs_between_within[is_coef_involved]
+  coef_dfs <- vapply(
+    X = coef_categories,
+    FUN = switch,
+    intercept = bw_calc$ddf_within,
+    between = bw_calc$ddf_between,
+    within = bw_calc$ddf_within,
+    FUN.VALUE = integer(1)
+  )
+  min(coef_dfs)
+}
+
 #' Calculation of Between-Within Degrees of Freedom for One-Dimensional Contrast
 #'
 #' @description Used in [df_1d()] if method is "Between-within".
@@ -78,13 +108,8 @@ h_df_1d_bw <- function(object, contrast) {
   assert_numeric(contrast, len = length(component(object, "beta_est")))
 
   bw_calc <- h_df_bw_calc(object)
-  df <- if (bw_calc$coefs[as.logical(contrast)] == "within") {
-    bw_calc$ddf_within
-  } else {
-    bw_calc$ddf_between
-  }
-  df <- unname(df)
-
+  is_coef_involved <- contrast != 0
+  df <- h_df_min_bw(bw_calc, is_coef_involved)
   h_test_1d(object, contrast, df)
 }
 
@@ -100,12 +125,7 @@ h_df_md_bw <- function(object, contrast) {
   assert_matrix(contrast, mode = "numeric", any.missing = FALSE, ncols = length(component(object, "beta_est")))
 
   bw_calc <- h_df_bw_calc(object)
-  df <- apply(X = object$tmb_data$x_matrix[, as.logical(colSums(contrast)), drop = FALSE], MARGIN = 2, FUN = function(x) {
-    n_unique <- nrow(unique(cbind(x, as.numeric(object$tmb_data$full_frame[[object$formula_parts$subject_var]]))))
-    if (n_unique > n_subjects) bw_calc$ddf_within
-    else bw_calc$ddf_between
-  })
-  df <- unname(min(df))
-
+  is_coef_involved <- apply(X = contrast != 0, MARGIN = 2L, FUN = any)
+  df <- h_df_min_bw(bw_calc, is_coef_involved)
   h_test_md(object, contrast, df)
 }
