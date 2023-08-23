@@ -487,7 +487,9 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
       })
     )
   }
-
+  orig_row_names <- row.names(newdata)
+  new_order <- match(orig_row_names, row.names(tmb_data$full_frame))
+  ret <- ret[new_order, ]
   ret
 }
 
