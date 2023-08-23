@@ -13,6 +13,9 @@
     <loc>https://openpharma.github.io/mmrm/articles/algorithm.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/mmrm/articles/between_within.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/mmrm/articles/coef_vcov.html</loc>
   </url>
   <url>
@@ -160,10 +163,10 @@
     <loc>https://openpharma.github.io/mmrm/reference/h_default_value.html</loc>
   </url>
   <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_df_1d_kr.html</loc>
+    <loc>https://openpharma.github.io/mmrm/reference/h_df_1d_bw.html</loc>
   </url>
   <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_df_1d_list.html</loc>
+    <loc>https://openpharma.github.io/mmrm/reference/h_df_1d_kr.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/reference/h_df_1d_res.html</loc>
@@ -172,19 +175,25 @@
     <loc>https://openpharma.github.io/mmrm/reference/h_df_1d_sat.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/mmrm/reference/h_df_bw_calc.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/reference/h_df_md_bw.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/mmrm/reference/h_df_md_from_1d.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/reference/h_df_md_kr.html</loc>
   </url>
   <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_df_md_list.html</loc>
-  </url>
-  <url>
     <loc>https://openpharma.github.io/mmrm/reference/h_df_md_res.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/reference/h_df_md_sat.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/reference/h_df_min_bw.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/reference/h_drop_covariance_terms.html</loc>
@@ -286,6 +295,12 @@
     <loc>https://openpharma.github.io/mmrm/reference/h_summarize_all_fits.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/mmrm/reference/h_test_1d.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/reference/h_test_md.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/mmrm/reference/h_tr.html</loc>
   </url>
   <url>
@@ -296,6 +311,9 @@
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/reference/h_warn_na_action.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/reference/h_within_or_between.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/reference/index.html</loc>

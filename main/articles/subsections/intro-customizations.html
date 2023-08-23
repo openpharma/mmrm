@@ -39,7 +39,7 @@
     
     <a class="navbar-brand me-2" href="../../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9038</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9039</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,6 +55,7 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../../articles/algorithm.html">Details of the Model Fitting in `mmrm`</a>
+    <a class="dropdown-item" href="../../articles/between_within.html">Between-within degrees of freedom</a>
     <a class="dropdown-item" href="../../articles/coef_vcov.html">Coefficients Covariance Matrix Adjustment in `mmrm`</a>
     <a class="dropdown-item" href="../../articles/covariance.html">Covariance Structures in `mmrm`</a>
     <a class="dropdown-item" href="../../articles/empirical_wls.html">Weighted Least Square Empirical Covariance</a>
@@ -77,14 +78,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.2.2">v0.2.2</a> </div></li>
-<!-- end dropdown for versions -->
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-reports">Reports</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-reports">
@@ -351,11 +344,12 @@ different <code>ARMCD</code> groups.</p>
 <div class="section level2">
 <h2 id="adjustment-method">Adjustment Method<a class="anchor" aria-label="anchor" href="#adjustment-method"></a>
 </h2>
-<p>In additional to the residual degrees of freedom, both Satterthwaite
-and Kenward-Roger adjustment methods are available. The default is
-Satterthwaite adjustment of the degrees of freedom. To use Kenward-Roger
-adjustment of the degrees of freedom as well as the coefficients
-covariance matrix, use the <code>method</code> argument:</p>
+<p>In additional to the residual and Between-Within degrees of freedom,
+both Satterthwaite and Kenward-Roger adjustment methods are available.
+The default is Satterthwaite adjustment of the degrees of freedom. To
+use e.g. the Kenward-Roger adjustment of the degrees of freedom as well
+as the coefficients covariance matrix, use the <code>method</code>
+argument:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit_kr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
@@ -394,8 +388,8 @@ standard errors and degrees of freedom:</p>
 <span><span class="co">## AVISITVIS2                      4.82859    0.80408 143.66000   6.005 1.49e-08</span></span>
 <span><span class="co">## AVISITVIS3                     10.33317    0.82303 155.66000  12.555  &lt; 2e-16</span></span>
 <span><span class="co">## AVISITVIS4                     15.05256    1.30180 138.39000  11.563  &lt; 2e-16</span></span>
-<span><span class="co">## ARMCDTRT:AVISITVIS2            -0.01737    1.13154 138.39000   0.015  0.98777</span></span>
-<span><span class="co">## ARMCDTRT:AVISITVIS3            -0.66753    1.18714 158.21000   0.562  0.57470</span></span>
+<span><span class="co">## ARMCDTRT:AVISITVIS2            -0.01737    1.13154 138.39000  -0.015  0.98777</span></span>
+<span><span class="co">## ARMCDTRT:AVISITVIS3            -0.66753    1.18714 158.21000  -0.562  0.57470</span></span>
 <span><span class="co">## ARMCDTRT:AVISITVIS4             0.63094    1.83319 129.64000   0.344  0.73127</span></span>
 <span><span class="co">##                                  </span></span>
 <span><span class="co">## (Intercept)                   ***</span></span>
