@@ -45,13 +45,16 @@ fitted.mmrm_tmb <- function(object, ...) {
 #'  Returns a vector of predictions if `se.fit == FALSE` and
 #'  `interval == "none"`; otherwise it returns a data.frame with multiple
 #'  columns and one row per input data row.
-#' @importFrom stats predict
+#'
 #' @param newdata (`data.frame`)\cr object in which to look for variables with which to predict.
 #' @param se.fit (`flag`)\cr indicator if standard errors are required.
 #' @param interval (`string`)\cr type of interval calculation. Can be abbreviated.
 #' @param level (`number`)\cr tolerance/confidence level.
-#' @param n_sim (`integr`)\cr number of replications to calculate prediction interval.
+#' @param n_sim (`count`)\cr number of replications to calculate prediction interval.
+#'
+#' @importFrom stats predict
 #' @exportS3Method
+#'
 #' @examples
 #' predict(object, newdata = fev_data)
 predict.mmrm_tmb <- function(
@@ -65,7 +68,7 @@ predict.mmrm_tmb <- function(
   orig_row_names <- row.names(newdata)
   assert_flag(se.fit)
   assert_number(level, lower = 0, upper = 1)
-  assert_int(n_sim, lower = 1)
+  assert_count(n_sim, positive = TRUE)
   interval <- match.arg(interval)
   # make sure new data has the same levels as original data
   full_frame <- model.frame(
@@ -127,6 +130,7 @@ predict.mmrm_tmb <- function(
 }
 
 #' Get Prediction
+#'
 #' @description Get predictions with given `data`, `theta`, `beta`, `beta_vcov`.
 #'
 #' @param tmb_data (`mmrm_tmb_data`)\cr object.
@@ -145,17 +149,18 @@ h_get_prediction <- function(tmb_data, theta, beta, beta_vcov) {
 }
 
 #' Get Prediction Variance
+#'
 #' @description Get prediction variance with given fit, `tmb_data` with the Monte Carlo sampling method.
 #'
 #' @param object (`mmrm_tmb`)\cr the fitted MMRM.
-#' @param n_sim (`integer`)\cr number of samples.
+#' @param n_sim (`count`)\cr number of samples.
 #' @param tmb_data (`mmrm_tmb_data`)\cr object.
 #'
 #' @keywords internal
 h_get_prediction_variance <- function(object, n_sim, tmb_data) {
   assert_class(object, "mmrm_tmb")
   assert_class(tmb_data, "mmrm_tmb_data")
-  assert_int(n_sim)
+  assert_count(n_sim, positive = TRUE)
   theta_chol <- chol(object$theta_vcov)
   n_theta <- length(object$theta_est)
   res <- replicate(n_sim, {
@@ -170,7 +175,6 @@ h_get_prediction_variance <- function(object, n_sim, tmb_data) {
   var_of_mean <- apply(res[, 1, ], 1, stats::var)
   mean_of_var + var_of_mean
 }
-
 
 #' @describeIn mmrm_tmb_methods obtains the model frame.
 #' @param data (`data.frame`)\cr object in which to construct the frame.
@@ -629,16 +633,14 @@ simulate.mmrm_tmb <- function(object, nsim = 1,
 #' Get simulated values by patient.
 #'
 #' @param mu (`list`)\cr object returned by `h_get_prediction()`
-#' @param nsub (`integer`)\cr number of subjects
-#' @param nsim (`integer`)\cr number of values to simulate
+#' @param nsub (`count`)\cr number of subjects.
+#' @param nsim (`count`)\cr number of values to simulate.
 #'
 #' @keywords internal
 h_get_sim_per_subj <- function(mu, nsub, nsim) {
   assert_list(mu)
-  assert_int(nsub)
-  assert(nsub > 0)
-  assert_int(nsim)
-  assert(nsim > 0)
+  assert_count(nsub, positive = TRUE)
+  assert_count(nsim, positive = TRUE)
 
   ret <- matrix(mu$prediction[, 1], ncol = nsim, nrow = nrow(mu$prediction))
 

@@ -16,7 +16,7 @@ mmrm_control(
 )
 }
 \arguments{
-\item{n_cores}{(\code{int})\cr number of cores to be used.}
+\item{n_cores}{(\code{count})\cr number of cores to be used.}
 
 \item{method}{(\code{string})\cr adjustment method for degrees of freedom.}
 

@@ -9,9 +9,9 @@ h_get_sim_per_subj(mu, nsub, nsim)
 \arguments{
 \item{mu}{(\code{list})\cr object returned by \code{h_get_prediction()}}
 
-\item{nsub}{(\code{integer})\cr number of subjects}
+\item{nsub}{(\code{count})\cr number of subjects.}
 
-\item{nsim}{(\code{integer})\cr number of values to simulate}
+\item{nsim}{(\code{count})\cr number of values to simulate.}
 }
 \description{
 Get simulated values by patient.

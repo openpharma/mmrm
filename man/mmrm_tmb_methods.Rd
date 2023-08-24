@@ -91,7 +91,7 @@ coefficients.}
 
 \item{level}{(\code{number})\cr tolerance/confidence level.}
 
-\item{n_sim}{(\code{integr})\cr number of replications to calculate prediction interval.}
+\item{n_sim}{(\code{count})\cr number of replications to calculate prediction interval.}
 
 \item{formula}{(\code{mmrm_tmb})\cr same as \code{object}.}
 

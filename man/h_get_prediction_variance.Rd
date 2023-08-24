@@ -9,7 +9,7 @@ h_get_prediction_variance(object, n_sim, tmb_data)
 \arguments{
 \item{object}{(\code{mmrm_tmb})\cr the fitted MMRM.}
 
-\item{n_sim}{(\code{integer})\cr number of samples.}
+\item{n_sim}{(\code{count})\cr number of samples.}
 
 \item{tmb_data}{(\code{mmrm_tmb_data})\cr object.}
 }

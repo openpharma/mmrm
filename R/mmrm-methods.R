@@ -140,13 +140,13 @@ h_print_call <- function(call, n_obs, n_subjects, n_timepoints) {
 #' This is used in [print.summary.mmrm()].
 #'
 #' @param cov_type (`string`)\cr covariance structure abbreviation.
-#' @param n_theta (`int`)\cr number of variance parameters.
-#' @param n_groups (`int`)\cr number of groups.
+#' @param n_theta (`count`)\cr number of variance parameters.
+#' @param n_groups (`count`)\cr number of groups.
 #' @keywords internal
 h_print_cov <- function(cov_type, n_theta, n_groups) {
   assert_string(cov_type)
-  assert_int(n_theta, lower = 1L)
-  assert_int(n_groups, lower = 1L)
+  assert_int(n_theta, positive = TRUE)
+  assert_int(n_groups, positive = TRUE)
   cov_definition <- switch(cov_type,
     us = "unstructured",
     toep = "Toeplitz",

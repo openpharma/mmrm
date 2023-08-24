@@ -199,7 +199,7 @@ refit_multiple_optimizers <- function(fit,
 #' Fine-grained specification of the MMRM fit details is possible using this
 #' control function.
 #'
-#' @param n_cores (`int`)\cr number of cores to be used.
+#' @param n_cores (`count`)\cr number of cores to be used.
 #' @param method (`string`)\cr adjustment method for degrees of freedom.
 #' @param vcov (`string`)\cr coefficients covariance matrix adjustment method.
 #' @param start (`numeric` or `NULL`)\cr optional start values for variance
@@ -256,7 +256,7 @@ mmrm_control <- function(n_cores = 1L,
                          drop_visit_levels = TRUE,
                          ...,
                          optimizers = h_get_optimizers(...)) {
-  assert_int(n_cores, lower = 1L)
+  assert_count(n_cores, positive = TRUE)
   assert_character(method)
   assert_numeric(start, null.ok = TRUE)
   assert_flag(accept_singular)
