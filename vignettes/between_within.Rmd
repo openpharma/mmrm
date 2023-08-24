@@ -1,5 +1,5 @@
 ---
-title: "Between-within degrees of freedom"
+title: "Between-Within degrees of freedom"
 package: mmrm
 bibliography: '`r system.file("REFERENCES.bib", package = "mmrm")`'
 csl: '`r system.file("jss.csl", package = "mmrm")`'
@@ -10,7 +10,7 @@ output:
           toc: true
           toc_float: true
 vignette: |
-  %\VignetteIndexEntry{Between-within degrees of freedom}
+  %\VignetteIndexEntry{Between-Within degrees of freedom}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options:
@@ -70,7 +70,7 @@ Let's look at a concrete example and what the "between-within" degrees of freedo
 fit <- mmrm(
   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data,
-  control = mmrm_control(method = "Between-within")
+  control = mmrm_control(method = "Between-Within")
 )
 summary(fit)
 ```

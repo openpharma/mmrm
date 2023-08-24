@@ -6,7 +6,7 @@
 \usage{
 mmrm_control(
   n_cores = 1L,
-  method = c("Satterthwaite", "Kenward-Roger", "Residual", "Between-within"),
+  method = c("Satterthwaite", "Kenward-Roger", "Residual", "Between-Within"),
   vcov = NULL,
   start = NULL,
   accept_singular = TRUE,
@@ -44,8 +44,6 @@ Fine-grained specification of the MMRM fit details is possible using this
 control function.
 }
 \details{
-\itemize{
-\item The \code{drop_visit_levels} flag will decide whether unobserved visits will be kept for analysis.
 For example, if the data only has observations at visits \code{VIS1}, \code{VIS3} and \code{VIS4}, by default
 they are treated to be equally spaced, the distance from \code{VIS1} to \code{VIS3}, and from \code{VIS3} to \code{VIS4},
 are identical. However, you can manually convert this visit into a factor, with
@@ -54,8 +52,12 @@ then the distance from \code{VIS1} to \code{VIS3} will be double, as \code{VIS2}
 However, please be cautious because this can lead to convergence failure
 when using an unstructured covariance matrix and there are no observations
 at the missing visits.
+\itemize{
 \item The \code{method} and \code{vcov} arguments specify the degrees of freedom and coefficients
 covariance matrix adjustment methods, respectively.
+Allowed \code{vcov} includes: "Asymptotic", "Kenward-Roger", "Kenward-Roger-Linear", "Empirical" (CR0),
+"Empirical-Jackknife" (CR2), and "Empirical-Bias-Reduced" (CR3).
+Allowed \code{method} includes: "Satterthwaite", "Kenward-Roger", "Between-Within" and "Residual".
 If \code{method} is "Kenward-Roger" then only "Kenward-Roger" or "Kenward-Roger-Linear" are
 allowed for \code{vcov}.
 \item The \code{vcov} argument can be \code{NULL} to use the default covariance method depending on the \code{method}
@@ -65,7 +67,7 @@ used for degrees of freedom, see the following table:
 |Satterthwaite| Asymptotic|
 |Kenward-Roger| Kenward-Roger|
 |Residual| Empirical|
-|Between-within| Asymptotic|
+|Between-Within| Asymptotic|
 \item Please note that "Kenward-Roger" for "Unstructured" covariance gives different results
 compared to SAS; Use "Kenward-Roger-Linear" for \code{vcov} instead for better matching
 of the SAS results.

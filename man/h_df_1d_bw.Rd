@@ -17,6 +17,6 @@ actually estimated coefficients.}
 List with \code{est}, \code{se}, \code{df}, \code{t_stat} and \code{p_val}.
 }
 \description{
-Used in \code{\link[=df_1d]{df_1d()}} if method is "Between-within".
+Used in \code{\link[=df_1d]{df_1d()}} if method is "Between-Within".
 }
 \keyword{internal}

@@ -14,7 +14,7 @@ test_that("df_1d uses correct function on Kenward-Roger method fit", {
   expect_identical(df_1d(object_kr, contrast), h_df_1d_kr(object_kr, contrast))
 })
 
-test_that("df_1d uses correct function on Between-within method fit", {
+test_that("df_1d uses correct function on Between-Within method fit", {
   object <- get_mmrm_bw()
   contrast <- rep(0, length(object$beta_est))
   contrast[2] <- 1
@@ -47,7 +47,7 @@ test_that("df_md uses correct function on Kenward-Roger-Linear method fit", {
   expect_identical(df_md(object_kr, contrast_md), h_df_md_kr(object_kr, contrast_md))
 })
 
-test_that("df_md uses correct function on Between-within method fit", {
+test_that("df_md uses correct function on Between-Within method fit", {
   object_bw <- get_mmrm_bw()
   contrast_md <- matrix(0, nrow = 2, ncol = length(object_bw$beta_est))
   contrast_md[2, 1] <- 1

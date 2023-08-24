@@ -629,12 +629,12 @@ test_that("mmrm works for vcov: Asymptotic and method: Sattherthwaite", {
   expect_list(result$jac_list, types = "matrix")
 })
 
-test_that("mmrm works for vcov: Asymptotic and method: Between-within", {
+test_that("mmrm works for vcov: Asymptotic and method: Between-Within", {
   result <- expect_silent(
     mmrm(
       formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
       data = fev_data,
-      method = "Between-within",
+      method = "Between-Within",
       vcov = "Asymptotic"
     )
   )

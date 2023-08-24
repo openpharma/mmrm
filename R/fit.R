@@ -212,8 +212,7 @@ refit_multiple_optimizers <- function(fit,
 #' @param ... additional arguments passed to [h_get_optimizers()].
 #'
 #' @details
-#'
-#' - The `drop_visit_levels` flag will decide whether unobserved visits will be kept for analysis.
+#  - The `drop_visit_levels` flag will decide whether unobserved visits will be kept for analysis.
 #'   For example, if the data only has observations at visits `VIS1`, `VIS3` and `VIS4`, by default
 #'   they are treated to be equally spaced, the distance from `VIS1` to `VIS3`, and from `VIS3` to `VIS4`,
 #'   are identical. However, you can manually convert this visit into a factor, with
@@ -224,6 +223,9 @@ refit_multiple_optimizers <- function(fit,
 #'   at the missing visits.
 #' - The `method` and `vcov` arguments specify the degrees of freedom and coefficients
 #'   covariance matrix adjustment methods, respectively.
+#'   Allowed `vcov` includes: "Asymptotic", "Kenward-Roger", "Kenward-Roger-Linear", "Empirical" (CR0),
+#'   "Empirical-Jackknife" (CR2), and "Empirical-Bias-Reduced" (CR3).
+#'   Allowed `method` includes: "Satterthwaite", "Kenward-Roger", "Between-Within" and "Residual".
 #'   If `method` is "Kenward-Roger" then only "Kenward-Roger" or "Kenward-Roger-Linear" are
 #'   allowed for `vcov`.
 #' - The `vcov` argument can be `NULL` to use the default covariance method depending on the `method`
@@ -233,7 +235,7 @@ refit_multiple_optimizers <- function(fit,
 #'  |Satterthwaite| Asymptotic|
 #'  |Kenward-Roger| Kenward-Roger|
 #'  |Residual| Empirical|
-#'  |Between-within| Asymptotic|
+#'  |Between-Within| Asymptotic|
 #' - Please note that "Kenward-Roger" for "Unstructured" covariance gives different results
 #'   compared to SAS; Use "Kenward-Roger-Linear" for `vcov` instead for better matching
 #'   of the SAS results.
@@ -247,7 +249,7 @@ refit_multiple_optimizers <- function(fit,
 #'   optimizer_args = list(method = "L-BFGS-B")
 #' )
 mmrm_control <- function(n_cores = 1L,
-                         method = c("Satterthwaite", "Kenward-Roger", "Residual", "Between-within"),
+                         method = c("Satterthwaite", "Kenward-Roger", "Residual", "Between-Within"),
                          vcov = NULL,
                          start = NULL,
                          accept_singular = TRUE,

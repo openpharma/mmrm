@@ -5,7 +5,7 @@
 \title{Obtain Default Covariance Method}
 \usage{
 h_get_cov_default(
-  method = c("Satterthwaite", "Kenward-Roger", "Residual", "Between-within")
+  method = c("Satterthwaite", "Kenward-Roger", "Residual", "Between-Within")
 )
 }
 \arguments{
@@ -17,7 +17,7 @@ the degrees of freedom method used.
 }
 \details{
 The default covariance method is different for different degrees of freedom method.
-For "Satterthwaite" or "Between-within", "Asymptotic" is returned.
+For "Satterthwaite" or "Between-Within", "Asymptotic" is returned.
 For "Kenward-Roger" only, "Kenward-Roger" is returned.
 For "Residual" only, "Empirical" is returned.
 }

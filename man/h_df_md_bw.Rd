@@ -18,6 +18,6 @@ actually estimated coefficients.}
 List with \code{num_df}, \code{denom_df}, \code{f_stat} and \code{p_val} (2-sided p-value).
 }
 \description{
-Used in \code{\link[=df_md]{df_md()}} if method is "Between-within".
+Used in \code{\link[=df_md]{df_md()}} if method is "Between-Within".
 }
 \keyword{internal}

@@ -75,7 +75,7 @@ get_mmrm_emp <- function() {
   .mmrm_emp
 }
 
-.mmrm_bw <- mmrm(.mmrm_kr_formula, data = fev_data, method = "Between-within")
+.mmrm_bw <- mmrm(.mmrm_kr_formula, data = fev_data, method = "Between-Within")
 get_mmrm_bw <- function() {
   .mmrm_bw
 }

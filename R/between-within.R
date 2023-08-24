@@ -98,7 +98,7 @@ h_df_min_bw <- function(bw_calc, is_coef_involved) {
 
 #' Calculation of Between-Within Degrees of Freedom for One-Dimensional Contrast
 #'
-#' @description Used in [df_1d()] if method is "Between-within".
+#' @description Used in [df_1d()] if method is "Between-Within".
 #'
 #' @inheritParams h_df_1d_sat
 #' @inherit h_df_1d_sat return
@@ -115,7 +115,7 @@ h_df_1d_bw <- function(object, contrast) {
 
 #' Calculation of Between-Within Degrees of Freedom for Multi-Dimensional Contrast
 #'
-#' @description Used in [df_md()] if method is "Between-within".
+#' @description Used in [df_md()] if method is "Between-Within".
 #'
 #' @inheritParams h_df_md_sat
 #' @inherit h_df_md_sat return
