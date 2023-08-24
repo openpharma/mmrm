@@ -831,42 +831,42 @@ test_that("simulate with conditional method results are correctly centered", {
   object <- get_mmrm()
   set.seed(323)
   sims <- simulate(object, nsim = 1000, method = "conditional")
-  expect_equal(rowMeans(sims), unname(predict(object, object$data)), tolerance = 1e-2)
+  expect_equal(rowMeans(sims), predict(object), tolerance = 1e-2)
 })
 
 test_that("simulate with marginal method results are correctly centered", {
   object <- get_mmrm()
   set.seed(323)
   sims <- simulate(object, nsim = 100, method = "marginal")
-  expect_equal(rowMeans(sims), unname(predict(object, object$data, )), tolerance = 1e-1)
+  expect_equal(rowMeans(sims), predict(object), tolerance = 1e-2)
 })
 
 test_that("simulate with conditional method works as expected for weighted models", {
   object <- get_mmrm_weighted()
   set.seed(535)
   sims <- simulate(object, nsim = 1000, method = "conditional")
-  expect_equal(rowMeans(sims), unname(predict(object, object$data)), tolerance = 1e-2)
+  expect_equal(rowMeans(sims), predict(object), tolerance = 1e-2)
 })
 
 test_that("simulate with marginal method works as expected for weighted models", {
   object <- get_mmrm_weighted()
   set.seed(535)
   sims <- simulate(object, nsim = 100, method = "marginal")
-  expect_equal(rowMeans(sims), unname(predict(object, object$data)), tolerance = 1e-1)
+  expect_equal(rowMeans(sims), predict(object), tolerance = 1e-2)
 })
 
 test_that("simulate with conditional method works as expected for grouped fits", {
   object <- get_mmrm_group()
   set.seed(737)
   sims <- simulate(object, nsim = 1000, method = "conditional")
-  expect_equal(rowMeans(sims), unname(predict(object, object$data)), tolerance = 1e-2)
+  expect_equal(rowMeans(sims), predict(object), tolerance = 1e-2)
 })
 
 test_that("simulate with marginal method works as expected for grouped fits", {
   object <- get_mmrm_group()
   set.seed(737)
   sims <- simulate(object, nsim = 100, method = "marginal")
-  expect_equal(rowMeans(sims), unname(predict(object, object$data)), tolerance = 1e-1)
+  expect_equal(rowMeans(sims), predict(object), tolerance = 1e-2)
 })
 
 test_that("simulate with conditional method works for differently ordered/numbered data", {
@@ -877,8 +877,7 @@ test_that("simulate with conditional method works for differently ordered/number
   df_mixed <- df_subset[neworder, ]
   set.seed(939)
   sims <- simulate(object, nsim = 1000, newdata = df_mixed, method = "conditional")
-  expect_equal(rowMeans(sims), predict(object, df_mixed), tolerance = 1e-1)
-  # Daniel: I think this should work, needs fix I think.
+  expect_equal(rowMeans(sims), predict(object, df_mixed), tolerance = 1e-2)
 })
 
 test_that("simulate with marginal method works for differently ordered/numbered data", {
@@ -889,25 +888,32 @@ test_that("simulate with marginal method works for differently ordered/numbered 
   df_mixed <- df_subset[neworder, ]
   set.seed(939)
   sims <- simulate(object, nsim = 1000, newdata = df_mixed, method = "marginal")
-  expect_equal(rowMeans(sims), predict(object, df_mixed), tolerance = 1e-1)
-  # Daniel: Same here.
+  expect_equal(rowMeans(sims), predict(object, df_mixed), tolerance = 1e-2)
 })
 
 test_that("simulate with conditional method is compatible with confidence intervals", {
   object <- get_mmrm()
+  # Note that observed y have se = 0 here. So we only look at
+  # unobserved y predictions.
+  is_unobserved <- is.na(fev_data$FEV1)
   intervals <- predict(
     object,
+    newdata = fev_data[is_unobserved, ],
     se.fit = TRUE,
     interval = "confidence",
     level = 0.95
   )
-  # Daniel: Separate issue but why are there observations with se = 0 ?
-  # Just because of that we won't be able to see compatible results with simulate.
-  # sims <- simulate(object, newdata = fev_data, nsim = 10000,
-  #                  method = "conditional")
-  # sims_quantiles <- unname(t(apply(sims, 1, function(x)
-  #   quantile(x, probs = c(0.025, 0.975)))))
-  # expect_equal(predict_range[,3:4], sims_quantiles, tolerance = 1e-2)
+  expect_true(all(intervals[, "se"] > 0))
+  sims <- simulate(
+    object,
+    newdata = fev_data[is_unobserved, ],
+    nsim = 10000,
+    method = "conditional"
+  )
+  result <- t(apply(sims, 1, quantile, probs = c(0.025, 0.975)))
+  expected <- intervals[, c("lwr", "upr")]
+  expect_equal(result, expected, tolerance = 1e-2)
+  # Daniel: this still fails
 })
 
 test_that("simulate with marginal method is compatible with prediction intervals", {
@@ -918,8 +924,6 @@ test_that("simulate with marginal method is compatible with prediction intervals
     interval = "prediction",
     level = 0.95
   )
-  # Daniel: Other issue but why is predict here quite slow?
-  # At least the se looks more reasonable here.
   sims <- simulate(
     object,
     nsim = 100,
@@ -928,9 +932,6 @@ test_that("simulate with marginal method is compatible with prediction intervals
   sims_quantiles <- t(apply(sims, 1, quantile, probs = c(0.025, 0.975)))
   expect_equal(sims_quantiles[, "2.5%"], intervals[, "lwr"], tolerance = 1e-1)
   expect_equal(sims_quantiles[, "97.5%"], intervals[, "upr"], tolerance = 1e-1)
-  # Daniel: Looking at the plots, something goes wrong here.
-  # plot(sims_quantiles[, "2.5%"], intervals[, "lwr"])
-  # plot(sims_quantiles[, "97.5%"], intervals[, "upr"])
 })
 
 # h_get_sim_per_subj ----
