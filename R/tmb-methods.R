@@ -7,7 +7,7 @@
 #' @param formula (`mmrm_tmb`)\cr same as `object`.
 #' @param complete (`flag`)\cr whether to include potential non-estimable
 #'   coefficients.
-#' @param ... not used.
+#' @param ... mostly not used; Exception is `model.matrix()` passing `...` to the default method.
 #' @return Depends on the method, see Functions.
 #'
 #' @name mmrm_tmb_methods
@@ -174,7 +174,8 @@ h_get_prediction_variance <- function(object, n_sim, tmb_data) {
 
 #' @describeIn mmrm_tmb_methods obtains the model frame.
 #' @param data (`data.frame`)\cr object in which to construct the frame.
-#' @param include (`character`)\cr names of variable to include.
+#' @param include (`character`)\cr names of variable types to include.
+#'   Must be `NULL` or one or more of `c("subject_var", "visit_var", "group_var", "response_var")`.
 #' @param full (`flag`)\cr indicator whether to return full model frame (deprecated).
 #' @param na.action (`string`)\cr na action.
 #' @importFrom stats model.frame
@@ -191,21 +192,90 @@ h_get_prediction_variance <- function(object, n_sim, tmb_data) {
 #' # Model frame:
 #' model.frame(object)
 #' model.frame(object, include = "subject_var")
-model.frame.mmrm_tmb <- function(formula, data, include = NULL, full, na.action = "na.omit", ...) { # nolint
-  include_choice <- c("subject_var", "visit_var", "group_var", "response_var")
+model.frame.mmrm_tmb <- function(formula, data, include = c("subject_var", "visit_var", "group_var", "response_var"),
+                                 full, na.action = "na.omit", ...) { # nolint
+  # Construct updated formula and data arguments.
+  lst_formula_and_data <-
+    h_construct_model_frame_inputs(
+      formula = formula,
+      data = data,
+      include = include,
+      full = full
+    )
+
+  # Construct data frame to return to users.
+  ret <-
+    stats::model.frame(
+      formula = lst_formula_and_data$formula,
+      data = lst_formula_and_data$data,
+      na.action = na.action
+    )
+  # We need the full formula obs, so recalculating if not already full.
+  ret_full <- if (lst_formula_and_data$is_full) {
+    ret
+  } else {
+    stats::model.frame(
+      formula = lst_formula_and_data$formula_full,
+      data = lst_formula_and_data$data,
+      na.action = na.action
+    )
+  }
+
+  # Lastly, subsetting returned data frame to only include obs utilized in model.
+  ret[rownames(ret) %in% rownames(ret_full), , drop = FALSE]
+}
+
+
+#' Construction of Model Frame Formula and Data Inputs
+#'
+#' @description
+#' Input formulas are converted from mmrm-style to a style compatible
+#' with default [stats::model.frame()] and [stats::model.matrix()] methods.
+#'
+#' The full formula is returned so we can construct, for example, the
+#' `model.frame()` including all columns as well as the requested subset.
+#' The full set is used to identify rows to include in the reduced model frame.
+#'
+#' @param formula (`mmrm`)\cr mmrm fit object.
+#' @param data optional data frame that will be
+#'   passed to `model.frame()` or `model.matrix()`
+#' @param include (`character`)\cr names of variable to include
+#' @param full (`flag`)\cr indicator whether to return full model frame (deprecated).
+#'
+#' @return named list with four elements:
+#' - `"formula"`: the formula including the columns requested in the `include=` argument.
+#' - `"formula_full"`: the formula including all columns
+#' - `"data"`: a data frame including all columns where factor and
+#'   character columns have been processed with [h_factor_ref()].
+#' - `"is_full"`: a logical scalar indicating if the formula and
+#'   full formula are identical
+#' @keywords internal
+h_construct_model_frame_inputs <- function(formula, data, include,
+                                           include_choice = c("subject_var", "visit_var", "group_var", "response_var"),
+                                           full) {
   if (!missing(full) && identical(full, TRUE)) {
     lifecycle::deprecate_warn("0.3", "model.frame.mmrm_tmb(full)")
     include <- include_choice
   }
+
+  assert_class(formula, classes = "mmrm_tmb")
   assert_subset(include, include_choice)
   if (missing(data)) {
     data <- formula$tmb_data$data
   }
   assert_data_frame(data)
+
   drop_response <- !"response_var" %in% include
   add_vars <- unlist(formula$formula_parts[include])
   new_formula <- h_add_terms(formula$formula_parts$model_formula, add_vars, drop_response)
-  all_vars <- all.vars(new_formula)
+
+  drop_response_full <- !"response_var" %in% include_choice
+  add_vars_full <- unlist(formula$formula_parts[include_choice])
+  new_formula_full <-
+    h_add_terms(formula$formula_parts$model_formula, add_vars_full, drop_response_full)
+
+  # Update data based on the columns in the full formula return.
+  all_vars <- all.vars(new_formula_full)
   assert_names(colnames(data), must.include = all_vars)
   full_frame <- formula$tmb_data$full_frame
   for (v in setdiff(all_vars, formula$formula_parts$subject_var)) {
@@ -213,12 +283,74 @@ model.frame.mmrm_tmb <- function(formula, data, include = NULL, full, na.action 
       data[[v]] <- h_factor_ref(data[[v]], full_frame[[v]])
     }
   }
-  model.frame(
+
+  # Return list with updated formula, full formula, data, and full formula flag.
+  list(
     formula = new_formula,
+    formula_full = new_formula_full,
     data = data,
-    na.action = na.action
+    is_full = setequal(include, include_choice)
   )
 }
+
+#' @describeIn mmrm_tmb_methods obtains the model matrix.
+#' @exportS3Method
+#'
+#' @examples
+#' # Model matrix:
+#' model.matrix(object)
+model.matrix.mmrm_tmb <- function(object, data, include = NULL, ...) { # nolint
+  # Construct updated formula and data arguments.
+  assert_subset(include, c("subject_var", "visit_var", "group_var"))
+  lst_formula_and_data <-
+    h_construct_model_frame_inputs(formula = object, data = data, include = include)
+
+  # Construct matrix to return to users.
+  ret <-
+    stats::model.matrix(
+      object = lst_formula_and_data$formula,
+      data = lst_formula_and_data$data,
+      ...
+    )
+
+  # We need the full formula obs, so recalculating if not already full.
+  ret_full <- if (lst_formula_and_data$is_full) {
+    ret
+  } else {
+    stats::model.matrix(
+      object = lst_formula_and_data$formula_full,
+      data = lst_formula_and_data$data,
+      ...
+    )
+  }
+
+  # Subset data frame to only include obs utilized in model.
+  ret[rownames(ret) %in% rownames(ret_full), , drop = FALSE]
+}
+
+#' @describeIn mmrm_tmb_methods obtains the terms object.
+#' @importFrom stats model.frame
+#' @exportS3Method
+#'
+#' @examples
+#' # terms:
+#' terms(object)
+#' terms(object, include = "subject_var")
+terms.mmrm_tmb <- function(x, include = "response_var", ...) { # nolint
+  # Construct updated formula and data arguments.
+  lst_formula_and_data <-
+    h_construct_model_frame_inputs(
+      formula = x,
+      include = include
+    )
+
+  # Use formula method for `terms()` to construct the mmrm terms object.
+  stats::terms(
+    x = lst_formula_and_data$formula,
+    data = lst_formula_and_data$data
+  )
+}
+
 
 #' @describeIn mmrm_tmb_methods obtains the attained log likelihood value.
 #' @importFrom stats logLik

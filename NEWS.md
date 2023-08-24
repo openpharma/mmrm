@@ -1,4 +1,4 @@
-# mmrm 0.2.2.9034
+# mmrm 0.2.2.9041
 
 ### New Features
 
@@ -11,18 +11,25 @@
 - Add empirical, empirical Jackknife and empirical bias-reduced adjusted coefficients covariance matrix.
   In addition, the argument `method` now only specifies the method used
   for the degrees of freedom, another argument `vcov` is added to specify the
-  method used to adjust the coefficients covariance matrix. Empirical, empirical Jackknife
-  and empirical bias-reduced covariance support residual and Satterthwaite degrees of freedom.
+  method used to adjust the coefficients covariance matrix.
+- Add residual and between-within degrees of freedom methods.
 - Add optional `tidymodels` framework support.
 - Add confirmation if the number of visit levels is too large. Use `options(mmrm.max_visits = )`
   to specify the maximum number of visits allowed in non-interactive mode, or asked in interactive
   sessions.
 - Add `predict` method to obtain conditional mean estimates and prediction intervals, both with or without previous observations.
 - Use automatic differentiation to calculate Satterthwaite adjusted degrees of freedom calculation, resulting in 10-fold speed-up of the Satterthwaite calculations after the initial model fit.
+- Add methods `model.matrix()` and `terms()` often available for modeling functions that assist in post-processing of a model object.
 
 ### Miscellaneous
 
 - Removed `free_cores()` in favor of `parallelly::availableCores(omit = 1)`.
+- The `model.frame()` method has been updated to return a data frame the size of 
+  the number of observations utilized in the model for all combinations of the 
+  `model.frame(include)` argument when `na.action='na.omit'` (the default).
+- The `model.frame(include=)` method argument's default has been updated 
+  from `include=NULL` to `include=c("subject_var", "visit_var", "group_var", "response_var")`
+  such that by default all relevant variables are returned.
 
 ### Bug Fixes
 
@@ -38,6 +45,7 @@
   environment variables, instead of requiring `data` argument. `fit_mmrm` is not affected.
 - Previously `emmeans` does not work if fixed effect does not contain visit variable.
   This is now fixed.
+- Previously `emmeans` does not work if working with transformed terms. This is now fixed.
 - Previously `mmrm` can provide non-finite values in Jacobian calculations.
   This will raise an error now.
 

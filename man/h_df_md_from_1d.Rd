@@ -12,8 +12,8 @@ h_df_md_from_1d(object, contrast)
 \item{contrast}{(\code{numeric})\cr one-dimensional contrast.}
 }
 \value{
-The one-dimensional results are calculated and then returned as per
-\code{\link[=h_df_md_list]{h_df_md_list()}}.
+The one-dimensional degrees of freedom are calculated and then
+based on that the p-value is calculated.
 }
 \description{
 Creates multi-dimensional result from one-dimensional contrast from \code{\link[=df_1d]{df_1d()}}.

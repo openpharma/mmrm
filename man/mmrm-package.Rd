@@ -31,6 +31,7 @@ Authors:
   \item Dan James \email{dan.james@astrazeneca.com}
   \item Jonathan Sidi \email{yoni.sidi@sagerx.com}
   \item Daniel Leibovitz \email{daniel.leibovitz@roche.com}
+  \item Daniel D. Sjoberg \email{sjobergd@gene.com} (\href{https://orcid.org/0000-0003-0862-2018}{ORCID})
 }
 
 Other contributors:
