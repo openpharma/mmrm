@@ -119,7 +119,16 @@ We can see that the estimated covariance matrices are different in different `AR
 
 ## Adjustment Method
 
-In additional to the residual and Between-Within degrees of freedom, both Satterthwaite and Kenward-Roger adjustment methods are available. The default is Satterthwaite adjustment of the degrees of freedom. To use e.g. the Kenward-Roger adjustment of the degrees of freedom as well as the coefficients covariance matrix, use the `method` argument:
+In additional to the residual and Between-Within degrees of freedom, both Satterthwaite and Kenward-Roger adjustment methods are available.
+The default is Satterthwaite adjustment of the degrees of freedom.
+To use e.g. the Kenward-Roger adjustment of the degrees of freedom as well as the coefficients covariance matrix, use the `method` argument:
+
+A list of all allowed `method` is
+
+1. "Kenward-Roger"
+1. "Satterthwaite"
+1. "Residual"
+1. "Between-Within"
 
 ```{r kr}
 fit_kr <- mmrm(
@@ -166,12 +175,12 @@ for details.
 
 There are multiple variance-covariance estimator available for the coefficients, including:
 
-1. Asymptotic
-1. Empirical (Cluster Robust Sandwich)
-1. Empirical-Jackknife
-1. Empirical-Bias-Reduced
-1. Kenward-Roger
-1. Kenward-Roger-Linear
+1. "Asymptotic"
+1. "Empirical" (Cluster Robust Sandwich)
+1. "Empirical-Jackknife"
+1. "Empirical-Bias-Reduced"
+1. "Kenward-Roger"
+1. "Kenward-Roger-Linear"
 
 Please note that, not all combinations of variance-covariance for coefficients and method of
 degrees of freedom are possible, e.g. "Kenward-Roger" and "Kenward-Roger-Linear" are available only
