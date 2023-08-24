@@ -39,7 +39,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9039</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9040</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,7 +55,7 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/algorithm.html">Details of the Model Fitting in `mmrm`</a>
-    <a class="dropdown-item" href="../articles/between_within.html">Between-within degrees of freedom</a>
+    <a class="dropdown-item" href="../articles/between_within.html">Between-Within degrees of freedom</a>
     <a class="dropdown-item" href="../articles/coef_vcov.html">Coefficients Covariance Matrix Adjustment in `mmrm`</a>
     <a class="dropdown-item" href="../articles/covariance.html">Covariance Structures in `mmrm`</a>
     <a class="dropdown-item" href="../articles/empirical_wls.html">Weighted Least Square Empirical Covariance</a>
@@ -78,14 +78,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.2.2">v0.2.2</a> </div></li>
-<!-- end dropdown for versions -->
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-reports">Reports</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-reports">
@@ -156,8 +148,8 @@ matrix of inverse of covariance matrix of <span class="math inline">\(\epsilon\)
 <div class="section level3">
 <h3 id="empirical-covariance">Empirical Covariance<a class="anchor" aria-label="anchor" href="#empirical-covariance"></a>
 </h3>
-<p>Empirical covariance, also known as the robust sandwich estimator, is
-derived by replacing the covariance matrix of <span class="math inline">\(\epsilon\)</span> by observed covariance
+<p>Empirical covariance, also known as the robust sandwich estimator, or
+“CR0”, is derived by replacing the covariance matrix of <span class="math inline">\(\epsilon\)</span> by observed covariance
 matrix.</p>
 <p><span class="math display">\[
   cov(\hat\beta) = (X^\top W X)^{-1}(\sum_{i}{X_i^\top W_i
@@ -177,8 +169,7 @@ vignette.</p>
 <h3 id="jackknife-covariance">Jackknife Covariance<a class="anchor" aria-label="anchor" href="#jackknife-covariance"></a>
 </h3>
 <p>Jackknife method in <code>mmrm</code> is the “leave-one-cluster-out”
-method. Following <span class="citation">McCaffrey and Bell
-(2003)</span>, we have</p>
+method. It is also known as “CR3”. Following <span class="citation">McCaffrey and Bell (2003)</span>, we have</p>
 <p><span class="math display">\[
   cov(\hat\beta) = (X^\top W X)^{-1}(\sum_{i}{X_i^\top L_{i} (I_{i} -
 H_{ii})^{-1} L_{i}^\top \hat\epsilon_i\hat\epsilon_i^\top L_{i} (I_{i} -
@@ -190,6 +181,20 @@ X)^{-1}X_i^\top\]</span></p>
 <p>Please note that in the paper there is an additional scale parameter
 <span class="math inline">\(\frac{n-1}{n}\)</span> where <span class="math inline">\(n\)</span> is the number of subjects, here we do
 not include this parameter.</p>
+</div>
+<div class="section level3">
+<h3 id="bias-reduced-covariance">Bias-Reduced Covariance<a class="anchor" aria-label="anchor" href="#bias-reduced-covariance"></a>
+</h3>
+<p>Bias-reduced method, also known as “CR2”, provides unbiased under
+correct working model. Following <span class="citation">McCaffrey and
+Bell (2003)</span>, we have <span class="math display">\[
+  cov(\hat\beta) = (X^\top W X)^{-1}(\sum_{i}{X_i^\top L_{i} (I_{i} -
+H_{ii})^{-1/2} L_{i}^\top \hat\epsilon_i\hat\epsilon_i^\top L_{i} (I_{i}
+- H_{ii})^{-1} L_{i}^\top X_i})(X^\top W X)^{-1}
+\]</span></p>
+<p>where</p>
+<p><span class="math display">\[H_{ii} = X_i(X^\top
+X)^{-1}X_i^\top\]</span></p>
 </div>
 <div class="section level3">
 <h3 id="kenward-roger-covariance">Kenward-Roger Covariance<a class="anchor" aria-label="anchor" href="#kenward-roger-covariance"></a>

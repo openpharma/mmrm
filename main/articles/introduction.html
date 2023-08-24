@@ -39,7 +39,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9039</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9040</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,7 +55,7 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/algorithm.html">Details of the Model Fitting in `mmrm`</a>
-    <a class="dropdown-item" href="../articles/between_within.html">Between-within degrees of freedom</a>
+    <a class="dropdown-item" href="../articles/between_within.html">Between-Within degrees of freedom</a>
     <a class="dropdown-item" href="../articles/coef_vcov.html">Coefficients Covariance Matrix Adjustment in `mmrm`</a>
     <a class="dropdown-item" href="../articles/covariance.html">Covariance Structures in `mmrm`</a>
     <a class="dropdown-item" href="../articles/empirical_wls.html">Weighted Least Square Empirical Covariance</a>
@@ -78,14 +78,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.2.2">v0.2.2</a> </div></li>
-<!-- end dropdown for versions -->
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-reports">Reports</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-reports">
@@ -473,6 +465,13 @@ The default is Satterthwaite adjustment of the degrees of freedom. To
 use e.g. the Kenward-Roger adjustment of the degrees of freedom as well
 as the coefficients covariance matrix, use the <code>method</code>
 argument:</p>
+<p>A list of all allowed <code>method</code> is</p>
+<ol style="list-style-type: decimal">
+<li>“Kenward-Roger”</li>
+<li>“Satterthwaite”</li>
+<li>“Residual”</li>
+<li>“Between-Within”</li>
+</ol>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit_kr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
@@ -558,12 +557,12 @@ vignette</a> for details.</p>
 <p>There are multiple variance-covariance estimator available for the
 coefficients, including:</p>
 <ol style="list-style-type: decimal">
-<li>Asymptotic</li>
-<li>Empirical (Cluster Robust Sandwich)</li>
-<li>Empirical-Jackknife</li>
-<li>Empirical-Bias-Reduced</li>
-<li>Kenward-Roger</li>
-<li>Kenward-Roger-Linear</li>
+<li>“Asymptotic”</li>
+<li>“Empirical” (Cluster Robust Sandwich)</li>
+<li>“Empirical-Jackknife”</li>
+<li>“Empirical-Bias-Reduced”</li>
+<li>“Kenward-Roger”</li>
+<li>“Kenward-Roger-Linear”</li>
 </ol>
 <p>Please note that, not all combinations of variance-covariance for
 coefficients and method of degrees of freedom are possible,
@@ -572,6 +571,14 @@ the degrees of freedom method is “Kenward-Roger”.</p>
 <p>Details can be found in <a href="coef_vcov.html">Coefficients
 Covariance Matrix Adjustment vignette</a> and <a href="empirical_wls.html">Weighted Least Square Empirical
 Covariance</a>.</p>
+<p>An example of using other variance-covariance is:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit_emp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
+<span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">fev_data</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">"Satterthwaite"</span>,</span>
+<span>  vcov <span class="op">=</span> <span class="st">"Empirical"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="keeping-unobserved-visits">Keeping Unobserved Visits<a class="anchor" aria-label="anchor" href="#keeping-unobserved-visits"></a>
@@ -586,7 +593,7 @@ distance between the observed time points.</p>
 the model where we do not drop the visit level explicitly, using the
 <code>drop_visit_levels = FALSE</code> choice. Second we fit the model
 by default without this option.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sparse_data</span> <span class="op">&lt;-</span> <span class="va">fev_data</span><span class="op">[</span><span class="va">fev_data</span><span class="op">$</span><span class="va">AVISIT</span> <span class="op">!=</span> <span class="st">"VIS3"</span>, <span class="op">]</span></span>
 <span><span class="va">sparse_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
 <span>  <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="fu">ar1</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
@@ -601,7 +608,7 @@ by default without this option.</p>
 <span><span class="co">#&gt; In AVISIT there are dropped visits: VIS3</span></span></code></pre></div>
 <p>We see that we get a message about the dropped visit level by
 default. Now we can compare the estimated correlation matrices:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cov2cor</a></span><span class="op">(</span><span class="fu"><a href="../reference/mmrm_tmb_methods.html">VarCorr</a></span><span class="op">(</span><span class="va">sparse_result</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;            VIS1      VIS2      VIS3       VIS4</span></span>
 <span><span class="co">#&gt; VIS1 1.00000000 0.4051834 0.1641736 0.06652042</span></span>
@@ -636,7 +643,7 @@ be found at the package website.</a></p>
 </h3>
 <p>The <code>summary</code> method for <code>mmrm</code> objects
 provides easy access to frequently needed model components.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">fev_data</span></span>
@@ -644,7 +651,7 @@ provides easy access to frequently needed model components.</p>
 <span><span class="va">fit_summary</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></code></pre></div>
 <p>From this summary object, you can easily retrieve the coefficients
 table.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit_summary</span><span class="op">$</span><span class="va">coefficients</span></span>
 <span><span class="co">#&gt;                                  Estimate Std. Error       df     t value</span></span>
 <span><span class="co">#&gt; (Intercept)                   30.96769899  0.8293349 187.9132 37.34040185</span></span>
@@ -670,7 +677,7 @@ table.</p>
 <span><span class="co">#&gt; ARMCDTRT:AVISITVIS4           7.337266e-01</span></span></code></pre></div>
 <p>Other model parameters and metadata available in the summary object
 is as follows:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">fit_summary</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 15</span></span>
 <span><span class="co">#&gt;  $ cov_type        : chr "us"</span></span>
@@ -713,7 +720,7 @@ be used to provide three different types of residuals:</p>
 fitted or predicted value. MMRMs can allow for heteroscedasticity, so
 these residuals should be interpreted with caution.</li>
 </ol>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">fev_data</span></span>
@@ -725,7 +732,7 @@ standard deviation of the response. This residual type is better suited
 to identifying outlying observations and the appropriateness of the
 covariance structure, compared to the raw residuals.</li>
 </ol>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">residuals_pearson</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/residuals.html" class="external-link">residuals</a></span><span class="op">(</span><span class="va">fit</span>, type <span class="op">=</span> <span class="st">"pearson"</span><span class="op">)</span></span></code></pre></div>
 <ol start="3" style="list-style-type: decimal">
 <li>Normalized or scaled residuals - the raw residuals are
@@ -734,7 +741,7 @@ variance-covariance matrix. These residuals should approximately follow
 the standard normal distribution, and therefore can be used to check for
 normality (<span class="citation">@galecki2013linear</span>).</li>
 </ol>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">residuals_norm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/residuals.html" class="external-link">residuals</a></span><span class="op">(</span><span class="va">fit</span>, type <span class="op">=</span> <span class="st">"normalized"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -744,7 +751,7 @@ normality (<span class="citation">@galecki2013linear</span>).</li>
 with the <a href="https://openpharma.github.io/mmrm/main/reference/component.html"><code>component()</code></a>
 function. The default will output all supported components.</p>
 <p>For example, a user may want information about convergence:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/component.html">component</a></span><span class="op">(</span><span class="va">fit</span>, name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"convergence"</span>, <span class="st">"evaluations"</span>, <span class="st">"conv_message"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $convergence</span></span>
 <span><span class="co">#&gt; [1] 0</span></span>
@@ -756,13 +763,13 @@ function. The default will output all supported components.</p>
 <span><span class="co">#&gt; $conv_message</span></span>
 <span><span class="co">#&gt; [1] "CONVERGENCE: REL_REDUCTION_OF_F &lt;= FACTR*EPSMCH"</span></span></code></pre></div>
 <p>or the original low-level call:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/component.html">component</a></span><span class="op">(</span><span class="va">fit</span>, name <span class="op">=</span> <span class="st">"call"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; mmrm(formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID), </span></span>
 <span><span class="co">#&gt;     data = fev_data)</span></span></code></pre></div>
 <p>the user could also ask for all provided components by not specifying
 the <code>name</code> argument.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/component.html">component</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
@@ -778,7 +785,7 @@ This function is exported and can be used directly. It is similar to <a href="ht
 but lacks some post-processing and support for Satterthwaite and
 Kenward-Roger calculations. It may be useful for other packages that
 want to fit the model without the adjustment calculations.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/fit_mmrm.html">fit_mmrm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">fev_data</span>,</span>
@@ -827,7 +834,7 @@ test-statistics.</p>
 </h3>
 <p>Compute the test of a one-dimensional (vector) contrast for a
 <code>mmrm</code> object with Satterthwaite degrees of freedom.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">SEX</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">fev_data</span></span>
@@ -852,7 +859,7 @@ test-statistics.</p>
 <span><span class="co">#&gt; $p_val</span></span>
 <span><span class="co">#&gt; [1] 1.564869e-14</span></span></code></pre></div>
 <p>This works similarly when choosing a Kenward-Roger adjustment:</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit_kr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">SEX</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">fev_data</span>,</span>
@@ -887,7 +894,7 @@ Residual and Between-Within.</p>
 <p>Compute the test of a multi-dimensional (matrix) contrast for the
 above defined <code>mmrm</code> object with Satterthwaite degrees of
 freedom:</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">contrast</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fl">0</span>, nrow <span class="op">=</span> <span class="fl">2</span>, ncol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="../reference/component.html">component</a></span><span class="op">(</span><span class="va">fit</span>, <span class="st">"beta_est"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">contrast</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">contrast</span><span class="op">[</span><span class="fl">2</span>, <span class="fl">3</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
 <span></span>
@@ -904,7 +911,7 @@ freedom:</p>
 <span><span class="co">#&gt; $p_val</span></span>
 <span><span class="co">#&gt; [1] 5.544575e-14</span></span></code></pre></div>
 <p>And for the Kenward-Roger adjustment:</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/df_md.html">df_md</a></span><span class="op">(</span><span class="va">fit_kr</span>, <span class="va">contrast</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $num_df</span></span>
 <span><span class="co">#&gt; [1] 2</span></span>
@@ -931,7 +938,7 @@ contrasts.</p>
 be used with the <code>emmeans</code> package. <code>emmeans</code>
 computes estimated marginal means (also called least-square means) for
 the coefficients of the MMRM.</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">fev_data</span></span>
@@ -977,7 +984,7 @@ initial <code>mmrm</code> fit.</p>
 <p><code>mmrm</code> is compatible to work in a <code>tidymodels</code>
 workflow. The following is an example of how such a workflow would be
 constructed.</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidymodels.tidymodels.org" class="external-link">tidymodels</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level4">
 <h4 id="direct-fit">Direct fit<a class="anchor" aria-label="anchor" href="#direct-fit"></a>
@@ -995,11 +1002,11 @@ will be used to fit the model, along with any arguments specific to that
 software. We can set the method to adjust degrees of freedom directly in
 the call.</li>
 </ul>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu">linear_reg</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">set_engine</span><span class="op">(</span><span class="st">"mmrm"</span>, method <span class="op">=</span> <span class="st">"Satterthwaite"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">fit</span><span class="op">(</span><span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>, <span class="va">fev_data</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model</span></span>
 <span><span class="co">#&gt; parsnip model object</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -1029,7 +1036,7 @@ the call.</li>
 <span><span class="co">#&gt; Converged with code 0 and message: convergence: rel_reduction_of_f &lt;= factr*epsmch</span></span></code></pre></div>
 <p>We can also pass in the full <code>mmrm_control</code> object into
 the <code>set_engine()</code> call</p>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model_with_control</span> <span class="op">&lt;-</span> <span class="fu">linear_reg</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">set_engine</span><span class="op">(</span><span class="st">"mmrm"</span>, control <span class="op">=</span> <span class="fu"><a href="../reference/mmrm_control.html">mmrm_control</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"Satterthwaite"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">fit</span><span class="op">(</span><span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>, <span class="va">fev_data</span><span class="op">)</span></span></code></pre></div>
@@ -1047,7 +1054,7 @@ predictors that will be used in the formula. We then add the model using
 the formula.</li>
 <li>Lastly, we fit the model</li>
 </ul>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mmrm_spec</span> <span class="op">&lt;-</span> <span class="fu">linear_reg</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">set_engine</span><span class="op">(</span><span class="st">"mmrm"</span>, method <span class="op">=</span> <span class="st">"Satterthwaite"</span><span class="op">)</span></span>
 <span></span>
@@ -1094,13 +1101,13 @@ the formula.</li>
 using the <code>recipes</code> package. Here we are converting the
 <code>ARMCD</code> variable into a dummy variable and creating an
 interaction term with the new dummy variable and each visit.</p>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mmrm_recipe</span> <span class="op">&lt;-</span> <span class="fu">recipe</span><span class="op">(</span><span class="va">FEV1</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">fev_data</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">step_dummy</span><span class="op">(</span><span class="va">ARMCD</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">step_interact</span><span class="op">(</span>terms <span class="op">=</span> <span class="op">~</span> <span class="fu">starts_with</span><span class="op">(</span><span class="st">"ARMCD"</span><span class="op">)</span><span class="op">:</span><span class="va">AVISIT</span><span class="op">)</span></span></code></pre></div>
 <p>Using <code>prep()</code> and <code>juice()</code> we can see what
 the transformed data that will be used in the model fit looks like.</p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mmrm_recipe</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">prep</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">juice</span><span class="op">(</span><span class="op">)</span></span>
@@ -1124,7 +1131,7 @@ the transformed data that will be used in the model fit looks like.</p>
 <code>set_engine()</code> definition. This allows for more flexibility
 on presetting different covariance structures in the pipeline while
 keeping the data preparation step independent.</p>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mmrm_spec_with_cov</span> <span class="op">&lt;-</span> <span class="fu">linear_reg</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">set_engine</span><span class="op">(</span></span>
 <span>    <span class="st">"mmrm"</span>,</span>
@@ -1132,7 +1139,7 @@ keeping the data preparation step independent.</p>
 <span>    covariance <span class="op">=</span> <span class="fu"><a href="../reference/as.cov_struct.html">as.cov_struct</a></span><span class="op">(</span><span class="op">~</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 <p>We combine these steps into a workflow:</p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">(</span><span class="va">mmrm_wflow_nocov</span> <span class="op">&lt;-</span> <span class="fu">workflow</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">add_model</span><span class="op">(</span><span class="va">mmrm_spec_with_cov</span>, formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">SEX</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">add_recipe</span><span class="op">(</span><span class="va">mmrm_recipe</span><span class="op">)</span><span class="op">)</span></span>
@@ -1155,7 +1162,7 @@ keeping the data preparation step independent.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Computational engine: mmrm</span></span></code></pre></div>
 <p>Last step is to fit the data with the workflow object</p>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">(</span><span class="va">fit_tidy</span> <span class="op">&lt;-</span> <span class="fu">fit</span><span class="op">(</span><span class="va">mmrm_wflow_nocov</span>, data <span class="op">=</span> <span class="va">fev_data</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ══ Workflow [trained] ══════════════════════════════════════════════════════════</span></span>
 <span><span class="co">#&gt; <span style="font-style: italic;">Preprocessor:</span> Recipe</span></span>
@@ -1186,7 +1193,7 @@ keeping the data preparation step independent.</p>
 <span><span class="co">#&gt; Converged with code 0 and message: convergence: rel_reduction_of_f &lt;= factr*epsmch</span></span></code></pre></div>
 <p>To retrieve the fit object from within the workflow object run the
 following</p>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit_tidy</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">hardhat</span><span class="fu">::</span><span class="fu"><a href="https://hardhat.tidymodels.org/reference/hardhat-extract.html" class="external-link">extract_fit_engine</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; mmrm fit</span></span>
