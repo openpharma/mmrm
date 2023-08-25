@@ -4,10 +4,10 @@
 \alias{h_get_sim_per_subj}
 \title{Get simulated values by patient.}
 \usage{
-h_get_sim_per_subj(mu, nsub, nsim)
+h_get_sim_per_subj(predict_res, nsub, nsim)
 }
 \arguments{
-\item{mu}{(\code{list})\cr object returned by \code{h_get_prediction()}}
+\item{predict_res}{(\code{list})\cr from \code{\link[=h_get_prediction]{h_get_prediction()}}.}
 
 \item{nsub}{(\code{count})\cr number of subjects.}
 

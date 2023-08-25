@@ -70,20 +70,20 @@
   object,
   nsim = 1,
   seed = NULL,
+  newdata,
   ...,
-  newdata = NULL,
   method = c("conditional", "marginal")
 )
 }
 \arguments{
-\item{object}{(\code{mmrm})\cr a fitted 'mmrm' object}
+\item{object}{(\code{mmrm_tmb})\cr the fitted MMRM object.}
 
 \item{complete}{(\code{flag})\cr whether to include potential non-estimable
 coefficients.}
 
 \item{...}{mostly not used; Exception is \code{model.matrix()} passing \code{...} to the default method.}
 
-\item{newdata}{(\code{data.frame})\cr new data.frame for which to simulate values.}
+\item{newdata}{(\code{data.frame})\cr optional new data, otherwise data from \code{object} is used.}
 
 \item{se.fit}{(\code{flag})\cr indicator if standard errors are required.}
 
@@ -118,17 +118,14 @@ and this is the only type available for use with models with a spatial covarianc
 
 \item{nsim}{(\code{integer})\cr number of replications to simulate.}
 
-\item{seed}{unused argument from simulate generic.}
+\item{seed}{unused argument from \code{\link[stats:simulate]{stats::simulate()}}.}
 
-\item{method}{(\code{string})\cr one of "conditional" or "marginal". If "conditional",
-simulated values are sampled given the estimated covariance matrix of \code{object}. If "marginal",
-variance of the estimated covariance matrix is taken into account.}
+\item{method}{(\code{string})\cr simulation method to use. If "conditional",
+simulated values are sampled given the estimated covariance matrix of \code{object}.
+If "marginal", the variance of the estimated covariance matrix is taken into account.}
 }
 \value{
 Depends on the method, see Functions.
-
-A \code{data.frame} of dimension \verb{[n, m]} where n is the number of rows in \code{newdata},
-and m is the number \code{nsim} of simulated responses.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
@@ -186,7 +183,10 @@ penalty parameter \code{k}.
 
 \item \code{residuals(mmrm_tmb)}: to obtain residuals - either unscaled ('response'), 'pearson' or 'normalized'.
 
-\item \code{simulate(mmrm_tmb)}: Simulate from an mmrm model object
+\item \code{simulate(mmrm_tmb)}: simulate responses from a fitted model according
+to the simulation \code{method}, returning a \code{data.frame} of dimension \verb{[n, m]}
+where n is the number of rows in \code{newdata},
+and m is the number \code{nsim} of simulated responses.
 
 }}
 \examples{

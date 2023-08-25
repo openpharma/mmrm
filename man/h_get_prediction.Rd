@@ -15,7 +15,18 @@ h_get_prediction(tmb_data, theta, beta, beta_vcov)
 
 \item{beta_vcov}{(\code{matrix})\cr beta_vcov matrix.}
 }
+\value{
+List with:
+\itemize{
+\item \code{prediction}: Matrix with columns \code{fit}, \code{conf_var}, and \code{var}.
+\item \code{covariance}: List with subject specific covariance matrices.
+\item \code{index}: List of zero-based subject indices.
+}
+}
 \description{
 Get predictions with given \code{data}, \code{theta}, \code{beta}, \code{beta_vcov}.
+}
+\details{
+See \code{predict} function in \code{predict.cpp} which is called internally.
 }
 \keyword{internal}
