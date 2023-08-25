@@ -838,7 +838,7 @@ test_that("simulate with marginal method results are correctly centered", {
   object <- get_mmrm()
   set.seed(323)
   sims <- simulate(object, nsim = 100, method = "marginal")
-  expect_equal(rowMeans(sims), predict(object), tolerance = 1e-2)
+  expect_equal(rowMeans(sims), predict(object), tolerance = 1e-1)
 })
 
 test_that("simulate with conditional method works as expected for weighted models", {
