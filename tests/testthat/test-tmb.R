@@ -1859,8 +1859,7 @@ test_that("fit_mmrm works with below full rank original design matrix by default
   expect_match(names(which(result$tmb_data$x_cols_aliased)), "SEX2")
 })
 
-test_that("fit_mmrm throws informative error when covariance structure is not
-          spatial and time variable is not a factor", {
+test_that("fit_mmrm throws informative error for non-spatial cov with non-factor", {
   tmp_data <- fev_data
   levels(tmp_data$AVISIT) <- c(1, 2, 3, 4)
   tmp_data$AVISIT <- as.numeric(tmp_data$AVISIT)

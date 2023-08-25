@@ -24,16 +24,12 @@ List predict(List mmrm_data, NumericVector theta, NumericVector beta, NumericMat
   matrix<double> coordinates_m = as_num_matrix_tmb(coordinates);
   matrix<double> beta_vcov_matrix = as_num_matrix_tmb(beta_vcov);
   int n_subjects = mmrm_data["n_subjects"];
-  int n_observations = x_matrix.rows();
   int n_visits = mmrm_data["n_visits"];
   int is_spatial_int = mmrm_data["is_spatial_int"];
   bool is_spatial = is_spatial_int == 1;
   int n_groups = mmrm_data["n_groups"];
   vector<double> beta_v = as_num_vector_tmb(beta);
   vector<double> theta_v = as_num_vector_tmb(theta);
-  int n_theta = theta.size();
-  int theta_one_group_size = n_theta / n_groups;
-  int p = x.cols();
   // Use map to hold these base class pointers (can also work for child class objects).
   auto chols_group = chol_cache_groups<double>(theta_v, n_groups, is_spatial, cov_type, n_visits);
   NumericVector y_pred = clone(y); // Predict value of y; observed use the same value.

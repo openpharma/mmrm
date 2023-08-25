@@ -16,8 +16,8 @@ sas_code <- function(ddfm, covtype) {
 sas_wrapper <- function(ddfm, covtype, result_name) {
   sas_result <- run_sas(sas_code(ddfm, covtype))
   result <- sd2df("diff")
-  cat(sas_result$LST, file = sprintf("design/KR/%s.txt", result_name))
-  write.csv(result, file = sprintf("design/KR/%s.csv", result_name))
+  cat(sas_result$LST, file = sprintf("design/ddfm_covtype/%s.txt", result_name))
+  write.csv(result, file = sprintf("design/ddfm_covtype/%s.csv", result_name))
 }
 
 sas_wrapper("kr", "ar(1)", "kr_ar1")

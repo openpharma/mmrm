@@ -1,4 +1,4 @@
-# mmrm 0.2.2.9037
+# mmrm 0.2.2.9041
 
 ### New Features
 
@@ -11,8 +11,8 @@
 - Add empirical, empirical Jackknife and empirical bias-reduced adjusted coefficients covariance matrix.
   In addition, the argument `method` now only specifies the method used
   for the degrees of freedom, another argument `vcov` is added to specify the
-  method used to adjust the coefficients covariance matrix. Empirical, empirical Jackknife
-  and empirical bias-reduced covariance support residual and Satterthwaite degrees of freedom.
+  method used to adjust the coefficients covariance matrix.
+- Add residual and between-within degrees of freedom methods.
 - Add optional `tidymodels` framework support.
 - Add confirmation if the number of visit levels is too large. Use `options(mmrm.max_visits = )`
   to specify the maximum number of visits allowed in non-interactive mode, or asked in interactive
@@ -45,6 +45,7 @@
   environment variables, instead of requiring `data` argument. `fit_mmrm` is not affected.
 - Previously `emmeans` does not work if fixed effect does not contain visit variable.
   This is now fixed.
+- Previously `emmeans` does not work if working with transformed terms. This is now fixed.
 - Previously `mmrm` can provide non-finite values in Jacobian calculations.
   This will raise an error now.
 
