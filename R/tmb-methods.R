@@ -171,8 +171,8 @@ h_get_prediction_variance <- function(object, n_sim, tmb_data) {
     beta_cov <- cond_beta_results$beta_vcov
     h_get_prediction(tmb_data, theta_sample, beta_mean, beta_cov)$prediction
   })
-  mean_of_var <- rowMeans(res[, 3, ])
-  var_of_mean <- apply(res[, 1, ], 1, stats::var)
+  mean_of_var <- rowMeans(res[, "var", ])
+  var_of_mean <- apply(res[, "fit", ], 1, stats::var)
   mean_of_var + var_of_mean
 }
 

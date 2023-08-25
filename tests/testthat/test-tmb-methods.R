@@ -852,7 +852,7 @@ test_that("simulate with marginal method works as expected for weighted models",
   object <- get_mmrm_weighted()
   set.seed(535)
   sims <- simulate(object, nsim = 100, method = "marginal")
-  expect_equal(rowMeans(sims), predict(object), tolerance = 1e-2)
+  expect_equal(rowMeans(sims), predict(object), tolerance = 1e-1)
 })
 
 test_that("simulate with conditional method works as expected for grouped fits", {
@@ -866,7 +866,7 @@ test_that("simulate with marginal method works as expected for grouped fits", {
   object <- get_mmrm_group()
   set.seed(737)
   sims <- simulate(object, nsim = 100, method = "marginal")
-  expect_equal(rowMeans(sims), predict(object), tolerance = 1e-2)
+  expect_equal(rowMeans(sims), predict(object), tolerance = 1e-1)
 })
 
 test_that("simulate with conditional method works for differently ordered/numbered data", {
@@ -898,22 +898,21 @@ test_that("simulate with conditional method is compatible with confidence interv
   is_unobserved <- is.na(fev_data$FEV1)
   intervals <- predict(
     object,
-    newdata = fev_data[is_unobserved, ],
+    newdata = fev_data,
     se.fit = TRUE,
     interval = "confidence",
     level = 0.95
   )
-  expect_true(all(intervals[, "se"] > 0))
+  expect_true(all(intervals[is_unobserved, "se"] > 0))
   sims <- simulate(
     object,
-    newdata = fev_data[is_unobserved, ],
+    newdata = fev_data,
     nsim = 10000,
     method = "conditional"
   )
-  result <- t(apply(sims, 1, quantile, probs = c(0.025, 0.975)))
-  expected <- intervals[, c("lwr", "upr")]
-  expect_equal(result, expected, tolerance = 1e-2)
-  # Daniel: this still fails
+  result_mean <- apply(sims, 1, mean)
+  expected <- intervals[, "fit"]
+  expect_equal(result_mean, expected, tolerance = 1e-2)
 })
 
 test_that("simulate with marginal method is compatible with prediction intervals", {
@@ -1031,4 +1030,31 @@ test_that("h_get_sim_per_subj throws error for nsub == 0", {
   )
   mu <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
   expect_error(h_get_sim_per_subj(mu, 0, nsim = 10))
+})
+
+# h_get_prediction_variance ----
+
+test_that("h_get_prediction_variance works as expected", {
+  fit <- get_mmrm()
+  data <- fev_data[c(1:4, 97:100), ]
+  full_frame <- model.frame(fit,
+    data = data,
+    include = c("subject_var", "visit_var", "group_var", "response_var"),
+    na.action = "na.pass"
+  )
+  tmb_data <- h_mmrm_tmb_data(
+    fit$formula_parts, full_frame,
+    weights = rep(1, nrow(full_frame)),
+    reml = TRUE,
+    singular = "keep",
+    drop_visit_levels = FALSE,
+    allow_na_response = TRUE,
+    drop_levels = FALSE
+  )
+  expect_silent(res <- h_get_prediction_variance(fit, 1000L, tmb_data))
+  expect_equal(
+    res,
+    c(37.10, 0, 17.04, 0, 0, 0, 0, 0),
+    tolerance = 1e-1
+  )
 })

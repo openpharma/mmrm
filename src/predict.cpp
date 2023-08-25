@@ -113,6 +113,8 @@ List predict(List mmrm_data, NumericVector theta, NumericVector beta, NumericMat
     var[na_index] = as_num_vector_rcpp(var_y_on_theta);
   }
   NumericMatrix ret = cbind(y_pred, conf_var, var);
+  CharacterVector cnms = {"fit", "conf_var", "var"};
+  colnames(ret) = cnms;
   return List::create(
     Named("prediction") = ret,
     Named("covariance") = covariance,

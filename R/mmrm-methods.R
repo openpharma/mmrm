@@ -145,8 +145,8 @@ h_print_call <- function(call, n_obs, n_subjects, n_timepoints) {
 #' @keywords internal
 h_print_cov <- function(cov_type, n_theta, n_groups) {
   assert_string(cov_type)
-  assert_int(n_theta, positive = TRUE)
-  assert_int(n_groups, positive = TRUE)
+  assert_count(n_theta, positive = TRUE)
+  assert_count(n_groups, positive = TRUE)
   cov_definition <- switch(cov_type,
     us = "unstructured",
     toep = "Toeplitz",
