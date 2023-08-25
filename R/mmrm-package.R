@@ -8,13 +8,14 @@
 #' @useDynLib mmrm, .registration = TRUE
 #' @importFrom Rcpp evalCpp
 #' @import checkmate
-#' @importFrom lifecycle deprecated badge
+#' @importFrom lifecycle deprecated
 #' @importFrom Matrix .bdiag
 #' @importFrom methods is
-#' @importFrom stats acf na.omit get_all_vars confint
+#' @importFrom stats acf
 #' @importFrom stringr boundary
 #' @importFrom parallel clusterApply
 #' @importFrom Rdpack reprompt
 #' @importFrom utils modifyList
-#' @importFrom tibble as_tibble enframe add_column has_rownames
+#' @importFrom tibble as_tibble
+#' @importFrom generics tidy glance augment
 NULL

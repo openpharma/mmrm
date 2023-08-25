@@ -75,4 +75,3 @@ fit <- mmrm(
     fit |> augment(type.residuals='pearson')
     fit |> augment(type.residuals='normalized')
 }
-\concept{mmrm tidiers}

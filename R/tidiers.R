@@ -1,3 +1,10 @@
+#' @export
+generics::tidy
+#' @export
+generics::glance
+#' @export
+generics::augment
+
 #' Tidying methods for an `mmrm` objects
 #'
 #' @description `r lifecycle::badge("experimental")`
@@ -16,7 +23,6 @@
 #' @param \dots arguments passed on to the [predict.mmrm_tmb()] method.
 #'
 #' @name mmrm_tidiers
-#' @family mmrm tidiers
 #' @aliases mmrm_tidiers
 #'
 #' @examples
