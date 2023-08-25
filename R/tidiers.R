@@ -20,6 +20,11 @@
 #' @aliases mmrm_tidiers
 #'
 #' @examples
+#' fit <- mmrm(
+#'    formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+#'    data = fev_data
+#'    )
+#'
 #'   # Applying tidy method to return summary table of covariate estimates.
 #'     fit |> tidy()
 #'     fit |> tidy(conf.int = TRUE)

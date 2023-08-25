@@ -84,3 +84,38 @@ argument.
 ```{r, eval=FALSE}
 component(fit)
 ```
+
+## Broom extensions
+
+`mmrm` contains S3 methods `broom` methods for `tidy`, `glance` and `augment`
+
+For example
+
+Applying tidy method to return summary table of covariate estimates.
+
+```{r}
+fit |> tidy()
+  fit |> tidy(conf.int = TRUE)
+  fit |> tidy(conf.int = TRUE, conf.level = 0.9)
+```
+
+Applying glance method to return summary table of goodness of fit statistics.
+
+```{r}
+fit |> glance()
+```
+
+Applying augment method to return merged tibble of model data, fitted and residuals.
+
+```{r}
+fit |> augment()
+  fit |> augment(interval = 'confidence')
+  fit |> augment(interval = 'prediction')
+```
+
+Extracting residuals
+
+```{r}
+  fit |> augment(type.residuals='pearson')
+  fit |> augment(type.residuals='normalized')
+```
