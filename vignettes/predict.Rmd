@@ -148,6 +148,7 @@ For each simulation, we first generate $\theta$ assuming it approximately follow
 multivariate normal distribution.
 Then, conditional on the $\theta$ we sampled, we generate $\beta$ also assuming 
 it approximately follows a multivariate normal distribution.
+
 Now we have $\theta$ and $\beta$ estimates, and we just follow the 
 [conditional simulation](#conditional-simulation).
 
@@ -164,8 +165,33 @@ For `simulate(method = "marginal")`, for each repetition of simulation, we gener
 $\theta_{new}$ from the mmrm fit, where the estimate of $\theta$ and variance-covariance 
 matrix of $\theta$ are provided.
 Using the generated $\theta_{new}$, we then obtain the $\beta_{new}$ and its 
-variance-covariance matrix, with $\theta_{new}$ and the data used in fit. Then 
-we simulate once with `simulate(method = "conditional", beta = beta_new, theta = theta_new)`.
+variance-covariance matrix, with $\theta_{new}$ and the data used in fit. 
+
+Then we sample $\beta$ as follows. We note that on the `C++` side we already have the
+robust Cholesky decomposition of the inverse of its asymptotic covariance matrix:
+\[
+cov(\hat\beta) = (X^\top W X)^{-1} = (LDL^\top)^{-1}
+\]
+Hence we make sure to report the lower triangular matrix $L$ and the diagonal matrix
+$D$ back to the `R` side, and afterwards we can generate $\beta$ samples as follows:
+\[
+\beta_{sample} = \beta_{new} + L^{-\top}D^{-1/2}z_{sample}
+\]
+where $z_{sample}$ is drawn from the standard multivariate normal distribution, since
+\[
+cov(L^{-\top}D^{-1/2}z_{sample}) 
+= L^{-\top}D^{-1/2} I_p D^{-1/2} L^{-1} 
+= L^{-\top}D^{-1}L^{-1} 
+= (LDL^\top)^{-1} 
+= cov(\hat\beta)
+\]
+We note that calculating $w = L^{-\top}D^{-1/2}z_{sample}$ is efficient via backwards solving
+\[
+L^\top w = D^{-1/2}z_{sample}
+\]
+since $L^\top$ is upper right triangular.
+
+Then we simulate the observations once with `simulate(method = "conditional", beta = beta_sample, theta = theta_new)`.
 We pool all the repetitions together and thus obtain the marginal simulation results.
 
 ## Relationship Between `predict` and `simulate` Results
