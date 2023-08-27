@@ -113,34 +113,34 @@ Please see `?mmrm_tidiers` for the detailed documentation.
 For example, we can apply the `tidy` method to return a summary table of coefficient estimates:
 
 ```{r}
-model |> 
+model |>
   tidy()
 ```
 
 We can also specify some details to request confidence intervals of specific confidence level:
 
 ```{r}
-model |> 
+model |>
   tidy(conf.int = TRUE, conf.level = 0.9)
 ```
 
 Or we can apply the `glance` method to return a summary table of goodness of fit statistics:
 
 ```{r}
-model |> 
+model |>
   glance()
 ```
 
-Finally, we can use the `augment` method to return a merged tibble of the data, fitted values and residuals:
+Finally, we can use the `augment` method to return a merged `tibble` of the data, fitted values and residuals:
 
 ```{r}
-model |> 
+model |>
   augment()
 ```
 
 Also here we can specify details for the prediction intervals and type of residuals via the arguments:
 
 ```{r}
-model |> 
+model |>
   augment(interval = "confidence", type = "normalized")
 ```

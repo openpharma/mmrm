@@ -2,7 +2,7 @@
 % Please edit documentation in R/tidiers.R
 \name{h_tbl_confint_terms}
 \alias{h_tbl_confint_terms}
-\title{Extract Tibble with Confidence Intervals and Term Names}
+\title{Extract \code{tibble} with Confidence Intervals and Term Names}
 \usage{
 h_tbl_confint_terms(x, ...)
 }

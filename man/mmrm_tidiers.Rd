@@ -5,7 +5,7 @@
 \alias{tidy.mmrm}
 \alias{glance.mmrm}
 \alias{augment.mmrm}
-\title{Tidying Methods for \code{mmrm} Ojects}
+\title{Tidying Methods for \code{mmrm} Objects}
 \usage{
 \method{tidy}{mmrm}(x, conf.int = FALSE, conf.level = 0.95, ...)
 
@@ -64,7 +64,7 @@ fit |> tidy(conf.int = TRUE)
 fit |> tidy(conf.int = TRUE, conf.level = 0.9)
 # Applying glance method to return summary table of goodness of fit statistics.
 fit |> glance()
-# Applying augment method to return merged tibble of model data, fitted and residuals.
+# Applying augment method to return merged `tibble` of model data, fitted and residuals.
 fit |> augment()
 fit |> augment(interval = "confidence")
 fit |> augment(interval = "prediction")

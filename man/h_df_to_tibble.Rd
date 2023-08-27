@@ -2,7 +2,7 @@
 % Please edit documentation in R/tidiers.R
 \name{h_df_to_tibble}
 \alias{h_df_to_tibble}
-\title{Coerce a Data Frame to a Tibble}
+\title{Coerce a Data Frame to a \code{tibble}}
 \usage{
 h_df_to_tibble(data)
 }

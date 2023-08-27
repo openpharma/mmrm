@@ -1,4 +1,4 @@
-#' Tidying Methods for `mmrm` Ojects
+#' Tidying Methods for `mmrm` Objects
 #'
 #' @description `r lifecycle::badge("experimental")`
 #'
@@ -36,10 +36,10 @@ NULL
 #' fit |> tidy()
 #' fit |> tidy(conf.int = TRUE)
 #' fit |> tidy(conf.int = TRUE, conf.level = 0.9)
-tidy.mmrm <- function (x,
-                       conf.int = FALSE,
-                       conf.level = 0.95,
-                       ...) {
+tidy.mmrm <- function(x,
+                      conf.int = FALSE, #nolint
+                      conf.level = 0.95, #nolint
+                      ...) {
   assert_flag(conf.int)
   assert_number(conf.level, lower = 0, upper = 1)
   tbl <- tibble::as_tibble(summary(x)$coefficients, rownames = "term")
@@ -72,7 +72,7 @@ glance.mmrm <- function(x, ...) {
 #' @export augment
 #' @exportS3Method
 #' @examples
-#' # Applying augment method to return merged tibble of model data, fitted and residuals.
+#' # Applying augment method to return merged `tibble` of model data, fitted and residuals.
 #' fit |> augment()
 #' fit |> augment(interval = "confidence")
 #' fit |> augment(interval = "prediction")
@@ -82,9 +82,9 @@ augment.mmrm <- function(x,
                          newdata = NULL,
                          interval = c("none", "confidence", "prediction"),
                          se_fit = (interval != "none"),
-                         type.residuals = c("response", "pearson", "normalized"),
+                         type.residuals = c("response", "pearson", "normalized"), #nolint
                          ...) {
-  type.residuals <- match.arg(type.residuals)
+  type.residuals <- match.arg(type.residuals) #nolint
   resid_df <- NULL
   if (is.null(newdata)) {
     newdata <- stats::get_all_vars(x, data = stats::na.omit(x$data))
@@ -110,7 +110,7 @@ augment.mmrm <- function(x,
   tibble::as_tibble(tbl)
 }
 
-#' Extract Tibble with Confidence Intervals and Term Names
+#' Extract `tibble` with Confidence Intervals and Term Names
 #'
 #' This is used in [tidy.mmrm()].
 #'
@@ -120,7 +120,7 @@ augment.mmrm <- function(x,
 #' @return A `tibble` with `term`, `conf.low`, `conf.high` columns.
 #'
 #' @keywords internal
-h_tbl_confint_terms <- function(x, ...){
+h_tbl_confint_terms <- function(x, ...) {
   df <- stats::confint(x, ...)
   tbl <- tibble::as_tibble(df, rownames = "term", .name_repair = "minimal")
   names(tbl) <- c("term", "conf.low", "conf.high")
@@ -171,8 +171,8 @@ h_newdata_add_pred <- function(x,
   } else {
     assert_matrix(pred_results)
     tbl$.fitted <- unname(pred_results[, "fit"])
-    tbl$.lower  <- unname(pred_results[, "lwr"])
-    tbl$.upper  <- unname(pred_results[, "upr"])
+    tbl$.lower <- unname(pred_results[, "lwr"])
+    tbl$.upper <- unname(pred_results[, "upr"])
   }
   if (se_fit) {
     tbl$.se.fit <- unname(pred_results[, "se"])
@@ -180,7 +180,7 @@ h_newdata_add_pred <- function(x,
   tbl
 }
 
-#' Coerce a Data Frame to a Tibble
+#' Coerce a Data Frame to a `tibble`
 #'
 #' This is used in [h_newdata_add_pred()].
 #'
@@ -197,8 +197,9 @@ h_newdata_add_pred <- function(x,
 h_df_to_tibble <- function(data) {
   tryCatch(tbl <- tibble::as_tibble(data), error = function(cnd) {
     stop("Could not coerce data to `tibble`. Try explicitly passing a",
-         "dataset to either the `data` or `newdata` argument.",
-         call. = FALSE)
+      "dataset to either the `data` or `newdata` argument.",
+      call. = FALSE
+    )
   })
   if (tibble::has_rownames(data)) {
     tbl <- tibble::add_column(tbl, .rownames = rownames(data), .before = TRUE)
