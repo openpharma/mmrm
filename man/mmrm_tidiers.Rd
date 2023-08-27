@@ -5,17 +5,17 @@
 \alias{tidy.mmrm}
 \alias{glance.mmrm}
 \alias{augment.mmrm}
-\title{Tidying methods for an \code{mmrm} objects}
+\title{Tidying Methods for \code{mmrm} Ojects}
 \usage{
-\method{tidy}{mmrm}(x, conf.int = FALSE, conf.level = 0.95)
+\method{tidy}{mmrm}(x, conf.int = FALSE, conf.level = 0.95, ...)
 
-\method{glance}{mmrm}(x)
+\method{glance}{mmrm}(x, ...)
 
 \method{augment}{mmrm}(
   x,
   newdata = NULL,
   interval = c("none", "confidence", "prediction"),
-  se_fit = interval != "none",
+  se_fit = (interval != "none"),
   type.residuals = c("response", "pearson", "normalized"),
   ...
 )
@@ -28,15 +28,15 @@
 
 \item{conf.level}{(\code{number})\cr defines the range of the optional confidence internal.}
 
-\item{newdata}{(\code{NULL} or \code{data.frame})\cr optional new data frame.}
+\item{...}{only used by \code{augment()} to pass arguments to the \code{\link[=predict.mmrm_tmb]{predict.mmrm_tmb()}} method.}
+
+\item{newdata}{(\code{data.frame} or \code{NULL})\cr optional new data frame.}
 
 \item{interval}{(\code{string})\cr type of interval calculation.}
 
 \item{se_fit}{(\code{flag})\cr whether to return standard errors of fit.}
 
 \item{type.residuals}{(\code{string})\cr passed on to \code{\link[=residuals.mmrm_tmb]{residuals.mmrm_tmb()}}.}
-
-\item{\dots}{arguments passed on to the \code{\link[=predict.mmrm_tmb]{predict.mmrm_tmb()}} method.}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
@@ -46,32 +46,28 @@ summary.
 }
 \section{Functions}{
 \itemize{
-\item \code{tidy(mmrm)}: Method to derive tidy tibble from an \code{mmrm} object
+\item \code{tidy(mmrm)}: derives tidy \code{tibble} from an \code{mmrm} object.
 
-\item \code{glance(mmrm)}: Method to derive glance tibble from an \code{mmrm} object
+\item \code{glance(mmrm)}: derives \code{glance} \code{tibble} from an \code{mmrm} object.
 
-\item \code{augment(mmrm)}: Method to derive augment tibble from an \code{mmrm} object
+\item \code{augment(mmrm)}: derives \code{augment} \code{tibble} from an \code{mmrm} object.
 
 }}
 \examples{
 fit <- mmrm(
-   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
-   data = fev_data
-   )
-
-  # Applying tidy method to return summary table of covariate estimates.
-    fit |> tidy()
-    fit |> tidy(conf.int = TRUE)
-    fit |> tidy(conf.int = TRUE, conf.level = 0.9)
-
-  # Applying glance method to return summary table of goodness of fit statistics.
-    fit |> glance()
-
-  # Applying augment method to return merged tibble of model data, fitted and residuals.
-    fit |> augment()
-    fit |> augment(interval = 'confidence')
-    fit |> augment(interval = 'prediction')
-
-    fit |> augment(type.residuals='pearson')
-    fit |> augment(type.residuals='normalized')
+  formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data
+)
+# Applying tidy method to return summary table of covariate estimates.
+fit |> tidy()
+fit |> tidy(conf.int = TRUE)
+fit |> tidy(conf.int = TRUE, conf.level = 0.9)
+# Applying glance method to return summary table of goodness of fit statistics.
+fit |> glance()
+# Applying augment method to return merged tibble of model data, fitted and residuals.
+fit |> augment()
+fit |> augment(interval = "confidence")
+fit |> augment(interval = "prediction")
+fit |> augment(type.residuals = "pearson")
+fit |> augment(type.residuals = "normalized")
 }

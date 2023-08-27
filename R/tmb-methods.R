@@ -102,14 +102,12 @@ predict.mmrm_tmb <- function(
     "prediction" = sqrt(h_get_prediction_variance(object, n_sim, tmb_data)),
     "none" = NULL
   )
-  if (se.fit && interval != "none") {
+  if (interval != "none") {
     res <- cbind(
       res,
       se = NA_real_
     )
     res[new_order, "se"] <- se
-  }
-  if (interval != "none") {
     alpha <- 1 - level
     z <- stats::qnorm(1 - alpha / 2) * res[, "se"]
     res <- cbind(
@@ -117,6 +115,10 @@ predict.mmrm_tmb <- function(
       lwr = res[, "fit"] - z,
       upr = res[, "fit"] + z
     )
+
+    if (!se.fit) {
+      res <- res[, setdiff(colnames(res), "se")]
+    }
   }
   # Use original names.
   row.names(res) <- orig_row_names

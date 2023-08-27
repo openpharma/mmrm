@@ -88,7 +88,6 @@ summary.mmrm <- function(object, ...) {
     "n_subjects", "n_timepoints", "n_obs",
     "beta_vcov", "varcor"
   ))
-
   components$method <- object$method
   components$vcov <- object$vcov
   structure(
