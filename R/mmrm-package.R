@@ -16,4 +16,15 @@
 #' @importFrom parallel clusterApply
 #' @importFrom Rdpack reprompt
 #' @importFrom utils modifyList
+#' @importFrom tibble as_tibble
 NULL
+
+#' @importFrom generics tidy
+#' @export
+generics::tidy
+#' @importFrom generics glance
+#' @export
+generics::glance
+#' @importFrom generics augment
+#' @export
+generics::augment

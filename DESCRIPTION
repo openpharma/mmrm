@@ -42,6 +42,7 @@ Depends:
     R (>= 4.0)
 Imports:
     checkmate (>= 2.0),
+    generics,
     lifecycle,
     Matrix,
     methods,
@@ -51,6 +52,7 @@ Imports:
     Rdpack,
     stats,
     stringr,
+    tibble,
     TMB (>= 1.9.1),
     utils
 Suggests:
@@ -60,7 +62,6 @@ Suggests:
     dplyr,
     emmeans (>= 1.6),
     estimability,
-    generics,
     ggplot2,
     glmmTMB,
     hardhat,
@@ -112,6 +113,7 @@ Collate:
     'utils-nse.R'
     'utils-formula.R'
     'satterthwaite.R'
+    'tidiers.R'
     'testing.R'
     'tmb-methods.R'
     'tmb.R'
