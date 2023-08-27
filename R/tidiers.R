@@ -27,7 +27,7 @@ NULL
 
 #' @describeIn mmrm_tidiers derives tidy `tibble` from an `mmrm` object.
 #' @importFrom generics tidy
-#' @exportS3Method
+#' @export tidy
 #' @examples
 #' # Applying tidy method to return summary table of covariate estimates.
 #' fit |> tidy()
@@ -55,7 +55,7 @@ tidy.mmrm <- function (x,
 
 #' @describeIn mmrm_tidiers derives `glance` `tibble` from an `mmrm` object.
 #' @importFrom generics glance
-#' @exportS3Method
+#' @export glance
 #' @examples
 #' # Applying glance method to return summary table of goodness of fit statistics.
 #' fit |> glance()
@@ -65,7 +65,7 @@ glance.mmrm <- function(x, ...) {
 
 #' @describeIn mmrm_tidiers derives `augment` `tibble` from an `mmrm` object.
 #' @importFrom generics augment
-#' @exportS3Method
+#' @export augment
 #' @examples
 #' # Applying augment method to return merged tibble of model data, fitted and residuals.
 #' fit |> augment()
@@ -102,7 +102,7 @@ augment.mmrm <- function(x,
     tbl$.rownames <- as.numeric(tbl$.rownames)
     tbl <- tbl[order(tbl$.rownames), , drop = FALSE]
   }
-  tbl
+  tibble::as_tibble(tbl)
 }
 
 #' Extract Tibble with Confidence Intervals and Term Names

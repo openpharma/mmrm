@@ -43,7 +43,7 @@ test_that("tidy conf.int level", {
 
 # augment ----
 
-test_that("augment returns tibble form", {
+test_that("augment returns tibble form when called with default arguments", {
   object <- get_mmrm()
   result <- augment(object)
   expect_tibble(result)
@@ -88,7 +88,7 @@ test_that("augment returns prediction with confidence interval with level", {
 test_that("augment returns prediction with prediction interval", {
   object <- get_mmrm()
   set.seed(132)
-  result <- augment(object, newdata = object$data, interval = "prediction", nsim = 10L)
+  result <- augment(object, newdata = object$data, interval = "prediction", n_sim = 10L)
   result_pi <- result[, c(".fitted", ".se.fit", ".lower", ".upper")]
   set.seed(132)
   expected <- tibble::as_tibble(predict(
@@ -96,7 +96,7 @@ test_that("augment returns prediction with prediction interval", {
     newdata = object$data,
     se.fit = TRUE,
     interval = "prediction",
-    nsim = 10L
+    n_sim = 10L
   ))
   names(expected) <- c(".fitted", ".se.fit", ".lower", ".upper")
   expect_equal(result_pi, expected)
@@ -105,7 +105,7 @@ test_that("augment returns prediction with prediction interval", {
 test_that("augment returns prediction with prediction interval with level", {
   object <- get_mmrm()
   set.seed(132)
-  result <- augment(object, newdata = object$data, interval = "prediction", level = 0.9, nsim = 10L)
+  result <- augment(object, newdata = object$data, interval = "prediction", level = 0.9, n_sim = 10L)
   result_pi <- result[, c(".fitted", ".se.fit", ".lower", ".upper")]
   set.seed(132)
   expected <- tibble::as_tibble(predict(
@@ -113,7 +113,7 @@ test_that("augment returns prediction with prediction interval with level", {
     newdata = object$data,
     se.fit = TRUE,
     interval = "prediction",
-    nsim = 10L,
+    n_sim = 10L,
     level = 0.9
   ))
   names(expected) <- c(".fitted", ".se.fit", ".lower", ".upper")
@@ -123,7 +123,7 @@ test_that("augment returns prediction with prediction interval with level", {
 test_that("augment returns residuals response", {
   object <- get_mmrm()
   result <- augment(object, type.residuals = "response")
-  result_resid <- result$resid
+  result_resid <- result$.resid
   expected <- residuals(object, type = "response")
   expect_equal(result_resid, expected)
 })
@@ -131,7 +131,7 @@ test_that("augment returns residuals response", {
 test_that("augment returns residuals pearson", {
   object <- get_mmrm()
   result <- augment(object, type.residuals = "pearson")
-  result_resid <- result$resid
+  result_resid <- result$.resid
   expected <- residuals(object, type = "pearson")
   expect_equal(result_resid, expected)
 })
@@ -139,7 +139,7 @@ test_that("augment returns residuals pearson", {
 test_that("augment returns residuals normalized", {
   object <- get_mmrm()
   result <- augment(object, type.residuals = "normalized")
-  result_resid <- result$resid
+  result_resid <- result$.resid
   expected <- residuals(object, type = "normalized")
   expect_equal(result_resid, expected)
 })
