@@ -120,3 +120,27 @@ test_that("augment returns residuals normalized", {
   expected <- residuals(object, type = "normalized")
   expect_equal(result_resid, expected)
 })
+
+# h_mmrm_confint_terms ----
+
+test_that("h_mmrm_confint_terms works as expected", {
+  result <- expect_silent(h_mmrm_confint_terms())
+  expected <-
+  expect_identical(result, expected)
+})
+
+# h_mmrm_augment_newdata ----
+
+test_that("h_mmrm_augment_newdata works as expected", {
+  result <- expect_silent(h_mmrm_augment_newdata())
+  expected <-
+  expect_identical(result, expected)
+})
+
+# h_augment_tibble ----
+
+test_that("h_augment_tibble works as expected", {
+  result <- expect_silent(h_augment_tibble())
+  expected <-
+  expect_identical(result, expected)
+})
