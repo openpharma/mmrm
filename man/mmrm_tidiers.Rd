@@ -60,16 +60,13 @@ fit <- mmrm(
 )
 # Applying tidy method to return summary table of covariate estimates.
 fit |> tidy()
-fit |> tidy(conf.int = TRUE)
 fit |> tidy(conf.int = TRUE, conf.level = 0.9)
 # Applying glance method to return summary table of goodness of fit statistics.
 fit |> glance()
 # Applying augment method to return merged `tibble` of model data, fitted and residuals.
 fit |> augment()
 fit |> augment(interval = "confidence")
-fit |> augment(interval = "prediction")
 fit |> augment(type.residuals = "pearson")
-fit |> augment(type.residuals = "normalized")
 }
 \seealso{
 \code{\link{mmrm_methods}}, \code{\link{mmrm_tmb_methods}} for additional methods.

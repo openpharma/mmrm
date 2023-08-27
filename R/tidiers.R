@@ -28,13 +28,10 @@
 NULL
 
 #' @describeIn mmrm_tidiers derives tidy `tibble` from an `mmrm` object.
-#' @importFrom generics tidy
-#' @export tidy
 #' @exportS3Method
 #' @examples
 #' # Applying tidy method to return summary table of covariate estimates.
 #' fit |> tidy()
-#' fit |> tidy(conf.int = TRUE)
 #' fit |> tidy(conf.int = TRUE, conf.level = 0.9)
 tidy.mmrm <- function(x,
                       conf.int = FALSE, #nolint
@@ -57,8 +54,6 @@ tidy.mmrm <- function(x,
 }
 
 #' @describeIn mmrm_tidiers derives `glance` `tibble` from an `mmrm` object.
-#' @importFrom generics glance
-#' @export glance
 #' @exportS3Method
 #' @examples
 #' # Applying glance method to return summary table of goodness of fit statistics.
@@ -68,16 +63,12 @@ glance.mmrm <- function(x, ...) {
 }
 
 #' @describeIn mmrm_tidiers derives `augment` `tibble` from an `mmrm` object.
-#' @importFrom generics augment
-#' @export augment
 #' @exportS3Method
 #' @examples
 #' # Applying augment method to return merged `tibble` of model data, fitted and residuals.
 #' fit |> augment()
 #' fit |> augment(interval = "confidence")
-#' fit |> augment(interval = "prediction")
 #' fit |> augment(type.residuals = "pearson")
-#' fit |> augment(type.residuals = "normalized")
 augment.mmrm <- function(x,
                          newdata = NULL,
                          interval = c("none", "confidence", "prediction"),
@@ -160,7 +151,7 @@ h_newdata_add_pred <- function(x,
   pred_results <- predict(
     x,
     newdata = newdata,
-    na.action = na.pass,
+    na.action = stats::na.pass,
     se.fit = se_fit,
     interval = interval,
     ...
