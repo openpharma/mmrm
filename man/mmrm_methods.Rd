@@ -57,4 +57,7 @@ object <- mmrm(formula, fev_data)
 # Summary:
 summary(object)
 }
+\seealso{
+\code{\link{mmrm_tmb_methods}}, \code{\link{mmrm_tidiers}} for additional methods.
+}
 \keyword{internal}

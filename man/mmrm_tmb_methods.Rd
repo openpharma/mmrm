@@ -212,3 +212,6 @@ residuals(object, type = "normalized")
 \item \insertRef{galecki2013linear}{mmrm}
 }
 }
+\seealso{
+\code{\link{mmrm_methods}}, \code{\link{mmrm_tidiers}} for additional methods.
+}

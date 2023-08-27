@@ -102,3 +102,29 @@ To retrieve the fit object from within the workflow object run the following
 fit_tidy |>
   hardhat::extract_fit_engine()
 ```
+
+## Broom extensions
+
+`mmrm` also contains S3 methods methods for `tidy`, `glance` and `augment` which were
+introduced by [`broom`](https://broom.tidymodels.org/). Note that these methods
+will work also without loading the `broom` package.
+
+For example, we can apply the `tidy` method to return a summary table of coefficient estimates:
+
+```{r}
+fit |> tidy()
+fit |> tidy(conf.int = TRUE, conf.level = 0.9)
+```
+
+Or we can apply the `glance` method to return a summary table of goodness of fit statistics:
+
+```{r}
+fit |> glance()
+```
+
+Finally, we can use the `augment` method to return a merged tibble of the data, fitted values and residuals:
+
+```{r}
+fit |> augment()
+fit |> augment(interval = "confidence", type = "normalized")
+```

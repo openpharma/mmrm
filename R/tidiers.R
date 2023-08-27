@@ -18,6 +18,8 @@
 #' @name mmrm_tidiers
 #' @aliases mmrm_tidiers
 #'
+#' @seealso [`mmrm_methods`], [`mmrm_tmb_methods`] for additional methods.
+#'
 #' @examples
 #' fit <- mmrm(
 #'   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
@@ -28,6 +30,7 @@ NULL
 #' @describeIn mmrm_tidiers derives tidy `tibble` from an `mmrm` object.
 #' @importFrom generics tidy
 #' @export tidy
+#' @exportS3Method
 #' @examples
 #' # Applying tidy method to return summary table of covariate estimates.
 #' fit |> tidy()
@@ -56,6 +59,7 @@ tidy.mmrm <- function (x,
 #' @describeIn mmrm_tidiers derives `glance` `tibble` from an `mmrm` object.
 #' @importFrom generics glance
 #' @export glance
+#' @exportS3Method
 #' @examples
 #' # Applying glance method to return summary table of goodness of fit statistics.
 #' fit |> glance()
@@ -66,6 +70,7 @@ glance.mmrm <- function(x, ...) {
 #' @describeIn mmrm_tidiers derives `augment` `tibble` from an `mmrm` object.
 #' @importFrom generics augment
 #' @export augment
+#' @exportS3Method
 #' @examples
 #' # Applying augment method to return merged tibble of model data, fitted and residuals.
 #' fit |> augment()

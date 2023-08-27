@@ -12,6 +12,8 @@
 #'
 #' @name mmrm_tmb_methods
 #'
+#' @seealso [`mmrm_methods`], [`mmrm_tidiers`] for additional methods.
+#'
 #' @examples
 #' formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
 #' object <- fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)))

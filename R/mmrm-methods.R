@@ -22,6 +22,8 @@
 #'
 #' @name mmrm_methods
 #'
+#' @seealso [`mmrm_tmb_methods`], [`mmrm_tidiers`] for additional methods.
+#'
 #' @examples
 #' formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
 #' object <- mmrm(formula, fev_data)

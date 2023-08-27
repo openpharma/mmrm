@@ -71,3 +71,6 @@ fit |> augment(interval = "prediction")
 fit |> augment(type.residuals = "pearson")
 fit |> augment(type.residuals = "normalized")
 }
+\seealso{
+\code{\link{mmrm_methods}}, \code{\link{mmrm_tmb_methods}} for additional methods.
+}
