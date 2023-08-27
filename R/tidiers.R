@@ -34,8 +34,8 @@ NULL
 #' fit |> tidy()
 #' fit |> tidy(conf.int = TRUE, conf.level = 0.9)
 tidy.mmrm <- function(x,
-                      conf.int = FALSE, #nolint
-                      conf.level = 0.95, #nolint
+                      conf.int = FALSE, # nolint
+                      conf.level = 0.95, # nolint
                       ...) {
   assert_flag(conf.int)
   assert_number(conf.level, lower = 0, upper = 1)
@@ -73,9 +73,9 @@ augment.mmrm <- function(x,
                          newdata = NULL,
                          interval = c("none", "confidence", "prediction"),
                          se_fit = (interval != "none"),
-                         type.residuals = c("response", "pearson", "normalized"), #nolint
+                         type.residuals = c("response", "pearson", "normalized"), # nolint
                          ...) {
-  type.residuals <- match.arg(type.residuals) #nolint
+  type.residuals <- match.arg(type.residuals) # nolint
   resid_df <- NULL
   if (is.null(newdata)) {
     newdata <- stats::get_all_vars(x, data = stats::na.omit(x$data))
