@@ -624,7 +624,9 @@ simulate.mmrm_tmb <- function(object,
         newtheta <- theta_chol %*% matrix(rnorm(ntheta), ncol = 1) + object$theta_est
         # Recalculate betas with sampled thetas.
         hold <- object$tmb_object$report(newtheta)
-        predict_res <- h_get_prediction(tmb_data, newtheta, hold$beta, hold$beta_vcov)
+        # Resample betas given new beta distribution.
+        beta_sample <- hold$beta + VCOV %*% rnorm(length(hold$beta))
+        predict_res <- h_get_prediction(tmb_data, newtheta, beta_sample, hold$beta_vcov)
         h_get_sim_per_subj(predict_res, tmb_data$n_subjects, 1L)
       })
     )
