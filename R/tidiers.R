@@ -1,11 +1,4 @@
-#' @export
-generics::tidy
-#' @export
-generics::glance
-#' @export
-generics::augment
-
-#' Tidying methods for an `mmrm` objects
+#' Tidying Methods for `mmrm` Ojects
 #'
 #' @description `r lifecycle::badge("experimental")`
 #'
@@ -16,88 +9,93 @@ generics::augment
 #' @param conf.int (`flag`)\cr if `TRUE` columns for the lower (`conf.low`) and upper bounds
 #'   (`conf.high`) of coefficient estimates are included.
 #' @param conf.level (`number`)\cr defines the range of the optional confidence internal.
-#' @param newdata (`NULL` or `data.frame`)\cr optional new data frame.
+#' @param newdata (`data.frame`)\cr optional new data frame.
 #' @param se_fit (`flag`)\cr whether to return standard errors of fit.
 #' @param interval (`string`)\cr type of interval calculation.
 #' @param type.residuals (`string`)\cr passed on to [residuals.mmrm_tmb()].
-#' @param \dots arguments passed on to the [predict.mmrm_tmb()] method.
+#' @param ... arguments passed on to the [predict.mmrm_tmb()] method.
 #'
 #' @name mmrm_tidiers
 #' @aliases mmrm_tidiers
 #'
 #' @examples
 #' fit <- mmrm(
-#'    formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
-#'    data = fev_data
-#'    )
-#'
-#'   # Applying tidy method to return summary table of covariate estimates.
-#'     fit |> tidy()
-#'     fit |> tidy(conf.int = TRUE)
-#'     fit |> tidy(conf.int = TRUE, conf.level = 0.9)
-#'
-#'   # Applying glance method to return summary table of goodness of fit statistics.
-#'     fit |> glance()
-#'
-#'   # Applying augment method to return merged tibble of model data, fitted and residuals.
-#'     fit |> augment()
-#'     fit |> augment(interval = 'confidence')
-#'     fit |> augment(interval = 'prediction')
-#'
-#'     fit |> augment(type.residuals='pearson')
-#'     fit |> augment(type.residuals='normalized')
+#'   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+#'   data = fev_data
+#' )
 NULL
 
-#' @describeIn mmrm_tidiers Method to derive tidy tibble from an `mmrm` object
-#' @export
+#' @describeIn mmrm_tidiers derives tidy `tibble` from an `mmrm` object.
+#' @importFrom generics tidy
+#' @exportS3method
+#' @examples
+#' # Applying tidy method to return summary table of covariate estimates.
+#' fit |> tidy()
+#' fit |> tidy(conf.int = TRUE)
+#' fit |> tidy(conf.int = TRUE, conf.level = 0.9)
 tidy.mmrm <- function (x, conf.int = FALSE, conf.level = 0.95) {
-  assert_logical(conf.int)
-  assert_numeric(conf.level)
-  ret <- tibble::as_tibble(summary(x)$coefficients, rownames = "term")
-  colnames(ret) <- c("term", "estimate", "std.error", "df", "statistic", "p.value")
+  assert_flag(conf.int)
+  assert_number(conf.level, lower = 0, upper = 1)
+  tbl <- tibble::as_tibble(summary(x)$coefficients, rownames = "term")
+  colnames(tbl) <- c("term", "estimate", "std.error", "df", "statistic", "p.value")
   coefs <- coef(x)
-  if (length(coefs) != nrow(ret)) {
+  if (length(coefs) != nrow(tbl)) {
     coefs <- tibble::enframe(coefs, name = "term", value = "estimate")
-    ret <- merge(coefs, ret, by = c("term", "estimate"))
+    tbl <- merge(coefs, tbl, by = c("term", "estimate"))
   }
   if (conf.int) {
     ci <- h_mmrm_confint_terms(x, level = conf.level)
-    ret <- tibble::as_tibble(merge(ret, ci, by = "term"))
+    tbl <- tibble::as_tibble(merge(tbl, ci, by = "term"))
   }
-  ret
+  tbl
 }
 
-#' @describeIn mmrm_tidiers Method to derive glance tibble from an `mmrm` object
-#' @export
+#' @describeIn mmrm_tidiers derives `glance` `tibble` from an `mmrm` object.
+#' @importFrom generics glance
+#' @exportS3method
+#' @examples
+#' # Applying glance method to return summary table of goodness of fit statistics.
+#' fit |> glance()
 glance.mmrm <- function(x) {
   tibble::as_tibble(summary(x)$aic_list)
 }
 
-#' @describeIn mmrm_tidiers Method to derive augment tibble from an `mmrm` object
-#' @export
-augment.mmrm <- function(x, newdata = NULL,
+#' @describeIn mmrm_tidiers derives `augment` `tibble` from an `mmrm` object.
+#' @importFrom generics augment
+#' @exportS3method
+#' @examples
+#' # Applying augment method to return merged tibble of model data, fitted and residuals.
+#' fit |> augment()
+#' fit |> augment(interval = "confidence")
+#' fit |> augment(interval = "prediction")
+#' fit |> augment(type.residuals = "pearson")
+#' fit |> augment(type.residuals = "normalized")
+augment.mmrm <- function(x,
+                         newdata,
                          interval = c("none", "confidence", "prediction"),
-                         se_fit = interval!='none',
-                         type.residuals = c("response", "pearson", "normalized"), ...) {
+                         se_fit = (interval != "none"),
+                         type.residuals = c("response", "pearson", "normalized"),
+                         ...) {
+  type.residuals <- match.arg(type.residuals)
   resid <- NULL
-  typeresiduals <- match.arg(type.residuals, choices = c("response", "pearson", "normalized"))
   if (missing(newdata)) {
     newdata <- stats::get_all_vars(x, data = stats::na.omit(x$data))
-    resid <- data.frame(.rownames = rownames(newdata), resid = unname(residuals(x, type = type.residuals)))
+    resid <- data.frame(
+      .rownames = rownames(newdata),
+      resid = unname(residuals(x, type = type.residuals))
+    )
   }
-  interval <- match.arg(interval, choices = c("none", "confidence", "prediction"))
+  assert_data_frame(newdata)
+  interval <- match.arg(interval)
 
-  ret <- h_mmrm_augment_newdata(x, newdata = newdata, se_fit = se_fit, interval = interval, ...)
-
+  tbl <- h_mmrm_augment_newdata(x, newdata = newdata, se_fit = se_fit, interval = interval, ...)
   if (!is.null(resid)) {
-    ret <- merge(ret, resid, by = '.rownames')
-    ret$.rownames <- as.numeric(ret$.rownames)
-    ret <- ret[order(ret$.rownames),]
+    tbl <- merge(tbl, resid, by = ".rownames")
+    tbl$.rownames <- as.numeric(tbl$.rownames)
+    tbl <- tbl[order(tbl$.rownames), , drop = FALSE]
   }
-
-  tibble::as_tibble(ret)
+  tbl
 }
-
 
 h_mmrm_confint_terms <- function(x, ...){
   ci <- suppressMessages(stats::confint(x, ...))

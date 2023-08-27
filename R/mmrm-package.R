@@ -17,5 +17,4 @@
 #' @importFrom Rdpack reprompt
 #' @importFrom utils modifyList
 #' @importFrom tibble as_tibble
-#' @importFrom generics tidy glance augment
 NULL

@@ -1,7 +1,7 @@
 # mmrm 0.2.2.9041
 
 ### New Features
-- add methods to integrate with broom S3 methods for `mmrm` objects
+- Add methods `tidy()`, `glance()` and `augment()` to tidy the `mmrm` fit results into summary tables.
 - Add argument `covariance` to `mmrm()` to allow for easier programmatic access
   to specifying the model's covariance structure and to expose covariance
   customization through the `tidymodels` interface.
