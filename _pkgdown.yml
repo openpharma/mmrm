@@ -66,6 +66,7 @@ reference:
   - title: Methods
     contents:
       - mmrm_methods
+      - mmrm_tidiers
       - mmrm_tmb_methods
   - title: Covariance Structures
     contents:
