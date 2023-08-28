@@ -99,7 +99,7 @@ Also here we can specify details for the prediction intervals and type of residu
 
 ```{r}
 fit |>
-  augment(interval = "confidence", type = "normalized")
+  augment(interval = "confidence", type.residuals = "normalized")
 ```
 
 ## Other components
