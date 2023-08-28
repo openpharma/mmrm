@@ -625,7 +625,15 @@ simulate.mmrm_tmb <- function(object,
         # Recalculate betas with sampled thetas.
         hold <- object$tmb_object$report(newtheta)
         # Resample betas given new beta distribution.
-        beta_sample <- hold$beta + t(chol(hold$beta_vcov)) %*% rnorm(length(hold$beta))
+        # We first solve L^\top w = D^{-1/2}z_{sample}:
+        w_sample <- backsolve(
+          r = hold$beta_vcov_inv_L,
+          x = rnorm(length(hold$beta)) / sqrt(hold$beta_vcov_inv_D),
+          upper.tri = FALSE,
+          transpose = TRUE
+        )
+        # Then we add the mean vector, the beta estimate.
+        beta_sample <- hold$beta + w_sample
         predict_res <- h_get_prediction(tmb_data, newtheta, beta_sample, hold$beta_vcov)
         h_get_sim_per_subj(predict_res, tmb_data$n_subjects, 1L)
       })
