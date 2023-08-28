@@ -917,12 +917,14 @@ test_that("simulate with conditional method is compatible with confidence interv
 
 test_that("simulate with marginal method is compatible with prediction intervals", {
   object <- get_mmrm()
+  set.seed(123)
   intervals <- predict(
     object,
     se.fit = TRUE,
     interval = "prediction",
     level = 0.95
   )
+
   sims <- simulate(
     object,
     nsim = 100,

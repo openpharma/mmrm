@@ -52,7 +52,7 @@ fitted.mmrm_tmb <- function(object, ...) {
 #' @param se.fit (`flag`)\cr indicator if standard errors are required.
 #' @param interval (`string`)\cr type of interval calculation. Can be abbreviated.
 #' @param level (`number`)\cr tolerance/confidence level.
-#' @param n_sim (`count`)\cr number of replications to calculate prediction interval.
+#' @param nsim (`count`)\cr number of replications to calculate prediction interval.
 #'
 #' @importFrom stats predict
 #' @exportS3Method
@@ -62,7 +62,7 @@ fitted.mmrm_tmb <- function(object, ...) {
 predict.mmrm_tmb <- function(
     object, newdata, se.fit = FALSE, # nolint
     interval = c("none", "confidence", "prediction"), level = 0.95,
-    n_sim = 1000L, ...) {
+    nsim = 1000L, ...) {
   if (missing(newdata)) {
     newdata <- object$tmb_data$data
   }
@@ -70,7 +70,7 @@ predict.mmrm_tmb <- function(
   orig_row_names <- row.names(newdata)
   assert_flag(se.fit)
   assert_number(level, lower = 0, upper = 1)
-  assert_count(n_sim, positive = TRUE)
+  assert_count(nsim, positive = TRUE)
   interval <- match.arg(interval)
   # make sure new data has the same levels as original data
   full_frame <- model.frame(
@@ -104,7 +104,7 @@ predict.mmrm_tmb <- function(
   res[new_order, "fit"] <- predictions[, "fit"]
   se <- switch(interval,
     "confidence" = sqrt(predictions[, "conf_var"]),
-    "prediction" = sqrt(h_get_prediction_variance(object, n_sim, tmb_data)),
+    "prediction" = sqrt(h_get_prediction_variance(object, nsim, tmb_data)),
     "none" = NULL
   )
   if (interval != "none") {
@@ -164,17 +164,17 @@ h_get_prediction <- function(tmb_data, theta, beta, beta_vcov) {
 #' @description Get prediction variance with given fit, `tmb_data` with the Monte Carlo sampling method.
 #'
 #' @param object (`mmrm_tmb`)\cr the fitted MMRM.
-#' @param n_sim (`count`)\cr number of samples.
+#' @param nsim (`count`)\cr number of samples.
 #' @param tmb_data (`mmrm_tmb_data`)\cr object.
 #'
 #' @keywords internal
-h_get_prediction_variance <- function(object, n_sim, tmb_data) {
+h_get_prediction_variance <- function(object, nsim, tmb_data) {
   assert_class(object, "mmrm_tmb")
   assert_class(tmb_data, "mmrm_tmb_data")
-  assert_count(n_sim, positive = TRUE)
+  assert_count(nsim, positive = TRUE)
   theta_chol <- chol(object$theta_vcov)
   n_theta <- length(object$theta_est)
-  res <- replicate(n_sim, {
+  res <- replicate(nsim, {
     z <- stats::rnorm(n = n_theta)
     theta_sample <- object$theta_est + z %*% theta_chol
     cond_beta_results <- object$tmb_object$report(theta_sample)

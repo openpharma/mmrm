@@ -31,7 +31,7 @@
   se.fit = FALSE,
   interval = c("none", "confidence", "prediction"),
   level = 0.95,
-  n_sim = 1000L,
+  nsim = 1000L,
   ...
 )
 
@@ -91,7 +91,7 @@ coefficients.}
 
 \item{level}{(\code{number})\cr tolerance/confidence level.}
 
-\item{n_sim}{(\code{count})\cr number of replications to calculate prediction interval.}
+\item{nsim}{(\code{count})\cr number of replications to calculate prediction interval.}
 
 \item{formula}{(\code{mmrm_tmb})\cr same as \code{object}.}
 
