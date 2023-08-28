@@ -175,6 +175,9 @@
     <loc>https://openpharma.github.io/mmrm/reference/h_df_min_bw.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/mmrm/reference/h_df_to_tibble.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/mmrm/reference/h_drop_covariance_terms.html</loc>
   </url>
   <url>
@@ -235,6 +238,9 @@
     <loc>https://openpharma.github.io/mmrm/reference/h_mmrm_tmb_parameters.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/mmrm/reference/h_newdata_add_pred.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/mmrm/reference/h_optimizer_fun.html</loc>
   </url>
   <url>
@@ -272,6 +278,9 @@
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/reference/h_summarize_all_fits.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/reference/h_tbl_confint_terms.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/reference/h_test_1d.html</loc>
@@ -313,6 +322,9 @@
     <loc>https://openpharma.github.io/mmrm/reference/mmrm_methods.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/mmrm/reference/mmrm_tidiers.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/mmrm/reference/mmrm_tmb_methods.html</loc>
   </url>
   <url>
@@ -323,6 +335,9 @@
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/reference/print.cov_struct.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/reference/reexports.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/reference/refit_multiple_optimizers.html</loc>
