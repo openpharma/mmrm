@@ -33,7 +33,7 @@ NULL
 #' # Applying tidy method to return summary table of covariate estimates.
 #' fit |> tidy()
 #' fit |> tidy(conf.int = TRUE, conf.level = 0.9)
-tidy.mmrm <- function(x,
+tidy.mmrm <- function(x, # nolint
                       conf.int = FALSE, # nolint
                       conf.level = 0.95, # nolint
                       ...) {
@@ -58,7 +58,7 @@ tidy.mmrm <- function(x,
 #' @examples
 #' # Applying glance method to return summary table of goodness of fit statistics.
 #' fit |> glance()
-glance.mmrm <- function(x, ...) {
+glance.mmrm <- function(x, ...) { # nolint
   tibble::as_tibble(summary(x)$aic_list)
 }
 
@@ -69,7 +69,7 @@ glance.mmrm <- function(x, ...) {
 #' fit |> augment()
 #' fit |> augment(interval = "confidence")
 #' fit |> augment(type.residuals = "pearson")
-augment.mmrm <- function(x,
+augment.mmrm <- function(x, # nolint
                          newdata = NULL,
                          interval = c("none", "confidence", "prediction"),
                          se_fit = (interval != "none"),
