@@ -1,4 +1,4 @@
-# mmrm 0.2.2.9042
+# mmrm 0.2.2.9043
 
 ### New Features
 - Add methods `tidy()`, `glance()` and `augment()` to tidy the `mmrm` fit results into summary tables.
