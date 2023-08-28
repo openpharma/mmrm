@@ -22,6 +22,8 @@
 #'
 #' @name mmrm_methods
 #'
+#' @seealso [`mmrm_tmb_methods`], [`mmrm_tidiers`] for additional methods.
+#'
 #' @examples
 #' formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
 #' object <- mmrm(formula, fev_data)
@@ -88,7 +90,6 @@ summary.mmrm <- function(object, ...) {
     "n_subjects", "n_timepoints", "n_obs",
     "beta_vcov", "varcor"
   ))
-
   components$method <- object$method
   components$vcov <- object$vcov
   structure(

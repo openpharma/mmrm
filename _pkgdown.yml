@@ -22,6 +22,33 @@ navbar:
       icon: fa-github
       href: https://github.com/openpharma/mmrm
 
+articles:
+  - title: Introduction
+    navbar: Introduction
+    contents:
+      - introduction
+      - methodological_introduction
+  - title: Covariance Structure
+    navbar: Covariance Structure
+    contents:
+      - covariance
+  - title: Degrees of Freedom
+    navbar: Degrees of Freedom
+    contents:
+      - between_within
+      - kenward
+      - satterthwaite
+  - title: Coefficient Covariance
+    navbar: Coefficient Covariance
+    contents:
+      - coef_vcov
+      - empirical_wls
+  - title: Other
+    contents:
+      - algorithm
+      - mmrm_review_methods
+      - predict
+      - package_structure
 reference:
   - title: Package
     contents:
@@ -39,6 +66,7 @@ reference:
   - title: Methods
     contents:
       - mmrm_methods
+      - mmrm_tidiers
       - mmrm_tmb_methods
   - title: Covariance Structures
     contents:

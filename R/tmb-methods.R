@@ -12,6 +12,8 @@
 #'
 #' @name mmrm_tmb_methods
 #'
+#' @seealso [`mmrm_methods`], [`mmrm_tidiers`] for additional methods.
+#'
 #' @examples
 #' formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
 #' object <- fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)))
@@ -105,14 +107,12 @@ predict.mmrm_tmb <- function(
     "prediction" = sqrt(h_get_prediction_variance(object, n_sim, tmb_data)),
     "none" = NULL
   )
-  if (se.fit && interval != "none") {
+  if (interval != "none") {
     res <- cbind(
       res,
       se = NA_real_
     )
     res[new_order, "se"] <- se
-  }
-  if (interval != "none") {
     alpha <- 1 - level
     z <- stats::qnorm(1 - alpha / 2) * res[, "se"]
     res <- cbind(
@@ -120,6 +120,10 @@ predict.mmrm_tmb <- function(
       lwr = res[, "fit"] - z,
       upr = res[, "fit"] + z
     )
+
+    if (!se.fit) {
+      res <- res[, setdiff(colnames(res), "se")]
+    }
   }
   # Use original names.
   row.names(res) <- orig_row_names
