@@ -629,14 +629,14 @@ simulate.mmrm_tmb <- function(object,
     n_theta <- length(object$theta_est)
     as.data.frame(
       sapply(seq_len(nsim), function(x) {
-        newtheta <- object$theta_est + theta_chol %*% matrix(rnorm(n_theta), ncol = 1)
+        newtheta <- object$theta_est + theta_chol %*% matrix(stats::rnorm(n_theta), ncol = 1)
         # Recalculate betas with sampled thetas.
         hold <- object$tmb_object$report(newtheta)
         # Resample betas given new beta distribution.
         # We first solve L^\top w = D^{-1/2}z_{sample}:
         w_sample <- backsolve(
           r = hold$XtWX_L,
-          x = rnorm(length(hold$beta)) / sqrt(hold$XtWX_D),
+          x = stats::rnorm(length(hold$beta)) / sqrt(hold$XtWX_D),
           upper.tri = FALSE,
           transpose = TRUE
         )
@@ -669,7 +669,6 @@ h_get_sim_per_subj <- function(predict_res, nsub, nsim) {
     ncol = nsim,
     nrow = nrow(predict_res$prediction)
   )
-
   for (i in seq_len(nsub)) {
     # Skip subjects which are not included in predict_res.
     if (length(predict_res$index[[i]]) > 0) {
@@ -684,7 +683,7 @@ h_get_sim_per_subj <- function(predict_res, nsub, nsim) {
 
       # Simulate epsilon from covariance matrix.
       mus <- ret[inds, , drop = FALSE]
-      epsilons <- theta_chol %*% t(matrix(rnorm(nsim * obs), nrow = nsim))
+      epsilons <- theta_chol %*% matrix(stats::rnorm(nsim * obs), ncol = nsim)
       ret[inds, ] <- mus + epsilons
     }
   }

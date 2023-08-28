@@ -426,8 +426,8 @@ h_mmrm_tmb_fit <- function(tmb_object,
   names(beta_est) <- x_matrix_cols
   beta_vcov <- tmb_report$beta_vcov
   dimnames(beta_vcov) <- list(x_matrix_cols, x_matrix_cols)
-  beta_vcov_inv_L <- tmb_report$XtWX_L
-  beta_vcov_inv_D <- tmb_report$XtWX_D
+  beta_vcov_inv_L <- tmb_report$XtWX_L # nolint
+  beta_vcov_inv_D <- tmb_report$XtWX_D # nolint
   theta_est <- tmb_opt$par
   names(theta_est) <- NULL
   theta_vcov <- try(solve(tmb_object$he(tmb_opt$par)), silent = TRUE)
