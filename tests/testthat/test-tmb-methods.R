@@ -933,6 +933,24 @@ test_that("simulate with marginal method is compatible with prediction intervals
   expect_equal(sims_quantiles[, "97.5%"], intervals[, "upr"], tolerance = 1e-1)
 })
 
+test_that("we calculate correctly w_sample", {
+  object <- get_mmrm()
+  set.seed(654)
+  z_sample <- rnorm(length(object$beta_est))
+  result <- backsolve(
+    r = object$beta_vcov_inv_L,
+    x = z_sample / sqrt(object$beta_vcov_inv_D),
+    upper.tri = FALSE,
+    transpose = TRUE
+  )
+  expected <- as.numeric(
+    solve(t(object$beta_vcov_inv_L)) %*%
+      diag(1 / sqrt(object$beta_vcov_inv_D)) %*%
+      z_sample
+  )
+  expect_equal(result, expected)
+})
+
 # h_get_sim_per_subj ----
 
 test_that("h_get_sim_per_subj returns no error for nsim == 1", {

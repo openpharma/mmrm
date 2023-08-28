@@ -581,8 +581,8 @@ h_residuals_response <- function(object) {
 #' @param nsim (`integer`)\cr number of replications to simulate.
 #' @param seed unused argument from [stats::simulate()].
 #' @param method (`string`)\cr simulation method to use. If "conditional",
-#' simulated values are sampled given the estimated covariance matrix of `object`.
-#' If "marginal", the variance of the estimated covariance matrix is taken into account.
+#'   simulated values are sampled given the estimated covariance matrix of `object`.
+#'   If "marginal", the variance of the estimated covariance matrix is taken into account.
 #'
 #' @importFrom stats simulate
 #' @exportS3Method
@@ -612,16 +612,15 @@ simulate.mmrm_tmb <- function(object,
     allow_na_response = TRUE,
     drop_levels = FALSE
   )
-
   ret <- if (method == "conditional") {
     predict_res <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
     as.data.frame(h_get_sim_per_subj(predict_res, tmb_data$n_subjects, nsim))
   } else if (method == "marginal") {
     theta_chol <- t(chol(object$theta_vcov))
-    ntheta <- length(object$theta_est)
+    n_theta <- length(object$theta_est)
     as.data.frame(
       sapply(seq_len(nsim), function(x) {
-        newtheta <- theta_chol %*% matrix(rnorm(ntheta), ncol = 1) + object$theta_est
+        newtheta <- object$theta_est + theta_chol %*% matrix(rnorm(n_theta), ncol = 1)
         # Recalculate betas with sampled thetas.
         hold <- object$tmb_object$report(newtheta)
         # Resample betas given new beta distribution.
@@ -643,7 +642,6 @@ simulate.mmrm_tmb <- function(object,
   new_order <- match(orig_row_names, row.names(tmb_data$full_frame))
   ret[new_order, , drop = FALSE]
 }
-
 
 #' Get simulated values by patient.
 #'
