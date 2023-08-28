@@ -943,12 +943,19 @@ test_that("h_mmrm_tmb_fit works as expected", {
   expect_named(result$beta_est, colnames(tmb_data$x_matrix))
   expect_identical(rownames(result$beta_vcov), colnames(tmb_data$x_matrix))
   expect_identical(colnames(result$beta_vcov), colnames(tmb_data$x_matrix))
+
+  # Check LDL^T decomposition of inverse beta_vcov.
   expect_matrix(result$beta_vcov_inv_L, nrows = nrow(result$beta_vcov), ncols = ncol(result$beta_vcov))
   expect_numeric(result$beta_vcov_inv_L[lower.tri(result$beta_vcov_inv_L)], any.missing = FALSE)
   expect_true(all(result$beta_vcov_inv_L[lower.tri(result$beta_vcov_inv_L)] != 0))
   expect_true(all(diag(result$beta_vcov_inv_L) == 1))
   expect_true(all(result$beta_vcov_inv_L[upper.tri(result$beta_vcov_inv_L)] == 0))
   expect_numeric(result$beta_vcov_inv_D, lower = .Machine$double.xmin, len = nrow(result$beta_vcov))
+  expect_equal(
+    with(result, unname(beta_vcov) %*% beta_vcov_inv_L %*% diag(beta_vcov_inv_D) %*% t(beta_vcov_inv_L)),
+    diag(nrow(result$beta_vcov))
+  )
+
   expect_matrix(result$theta_vcov, nrows = length(result$theta_est), ncols = length(result$theta_est))
   expect_number(result$neg_log_lik)
   expect_list(result$formula_parts)

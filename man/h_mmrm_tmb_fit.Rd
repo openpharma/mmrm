@@ -27,6 +27,8 @@ List of class \code{mmrm_tmb} with:
 \item \code{cov}: estimated covariance matrix, or named list of estimated group specific covariance matrices.
 \item \code{beta_est}: vector of coefficient estimates.
 \item \code{beta_vcov}: Variance-covariance matrix for coefficient estimates.
+\item \code{beta_vcov_inv_L}: Lower triangular matrix \code{L} of the inverse variance-covariance matrix decomposition.
+\item \code{beta_vcov_inv_D}: vector of diagonal matrix \code{D} of the inverse variance-covariance matrix decomposition.
 \item \code{theta_est}: vector of variance parameter estimates.
 \item \code{theta_vcov}: variance-covariance matrix for variance parameter estimates.
 \item \code{neg_log_lik}: obtained negative log-likelihood.
@@ -42,5 +44,10 @@ List of class \code{mmrm_tmb} with:
 \description{
 This helper does some simple post-processing of the \code{TMB} object and
 optimization results, including setting names, inverting matrices etc.
+}
+\details{
+Instead of inverting or decomposing \code{beta_vcov}, it can be more efficient to use its robust
+Cholesky decomposition \code{LDL^T}, therefore we return the corresponding two components \code{L} and \code{D}
+as well since they have been available on the \verb{C++} side already.
 }
 \keyword{internal}
