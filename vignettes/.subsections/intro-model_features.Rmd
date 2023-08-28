@@ -60,6 +60,48 @@ residuals_pearson <- residuals(fit, type = "pearson")
 residuals_norm <- residuals(fit, type = "normalized")
 ```
 
+## `broom` extensions
+
+`mmrm` also contains S3 methods methods for `tidy`, `glance` and `augment` which were
+introduced by [`broom`](https://broom.tidymodels.org/). Note that these methods
+will work also without loading the `broom` package.
+Please see `?mmrm_tidiers` for the detailed documentation.
+
+For example, we can apply the `tidy` method to return a summary table of coefficient estimates:
+
+```{r}
+fit |>
+  tidy()
+```
+
+We can also specify some details to request confidence intervals of specific confidence level:
+
+```{r}
+fit |>
+  tidy(conf.int = TRUE, conf.level = 0.9)
+```
+
+Or we can apply the `glance` method to return a summary table of goodness of fit statistics:
+
+```{r}
+fit |>
+  glance()
+```
+
+Finally, we can use the `augment` method to return a merged `tibble` of the data, fitted values and residuals:
+
+```{r}
+fit |>
+  augment()
+```
+
+Also here we can specify details for the prediction intervals and type of residuals via the arguments:
+
+```{r}
+fit |>
+  augment(interval = "confidence", type = "normalized")
+```
+
 ## Other components
 
 Specific model quantities not supported by methods can be retrieved with the
