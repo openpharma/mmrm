@@ -887,7 +887,7 @@ test_that("simulate with marginal method works for differently ordered/numbered 
   neworder <- sample(nrow(df_subset))
   df_mixed <- df_subset[neworder, ]
   set.seed(939)
-  sims <- simulate(object, nsim = 1000, newdata = df_mixed, method = "marginal")
+  sims <- simulate(object, nsim = 100, newdata = df_mixed, method = "marginal")
   expect_equal(rowMeans(sims), predict(object, df_mixed), tolerance = 1e-2)
 })
 
@@ -922,9 +922,9 @@ test_that("simulate with marginal method is compatible with prediction intervals
     object,
     se.fit = TRUE,
     interval = "prediction",
-    level = 0.95
+    level = 0.95,
+    nsim = 100
   )
-
   sims <- simulate(
     object,
     nsim = 100,

@@ -91,7 +91,7 @@ coefficients.}
 
 \item{level}{(\code{number})\cr tolerance/confidence level.}
 
-\item{nsim}{(\code{count})\cr number of replications to calculate prediction interval.}
+\item{nsim}{(\code{count})\cr number of simulations to use.}
 
 \item{formula}{(\code{mmrm_tmb})\cr same as \code{object}.}
 
@@ -115,8 +115,6 @@ is the classical AIC.}
 
 \item{type}{(\code{string})\cr unscaled (\code{response}), \code{pearson} or \code{normalized}. Default is \code{response},
 and this is the only type available for use with models with a spatial covariance structure.}
-
-\item{nsim}{(\code{integer})\cr number of replications to simulate.}
 
 \item{seed}{unused argument from \code{\link[stats:simulate]{stats::simulate()}}.}
 

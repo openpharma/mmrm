@@ -52,17 +52,20 @@ fitted.mmrm_tmb <- function(object, ...) {
 #' @param se.fit (`flag`)\cr indicator if standard errors are required.
 #' @param interval (`string`)\cr type of interval calculation. Can be abbreviated.
 #' @param level (`number`)\cr tolerance/confidence level.
-#' @param nsim (`count`)\cr number of replications to calculate prediction interval.
+#' @param nsim (`count`)\cr number of simulations to use.
 #'
 #' @importFrom stats predict
 #' @exportS3Method
 #'
 #' @examples
 #' predict(object, newdata = fev_data)
-predict.mmrm_tmb <- function(
-    object, newdata, se.fit = FALSE, # nolint
-    interval = c("none", "confidence", "prediction"), level = 0.95,
-    nsim = 1000L, ...) {
+predict.mmrm_tmb <- function(object,
+                             newdata,
+                             se.fit = FALSE, # nolint
+                             interval = c("none", "confidence", "prediction"),
+                             level = 0.95,
+                             nsim = 1000L,
+                             ...) {
   if (missing(newdata)) {
     newdata <- object$tmb_data$data
   }
@@ -120,7 +123,6 @@ predict.mmrm_tmb <- function(
       lwr = res[, "fit"] - z,
       upr = res[, "fit"] + z
     )
-
     if (!se.fit) {
       res <- res[, setdiff(colnames(res), "se")]
     }
@@ -582,7 +584,6 @@ h_residuals_response <- function(object) {
 #'   where n is the number of rows in `newdata`,
 #'   and m is the number `nsim` of simulated responses.
 #'
-#' @param nsim (`integer`)\cr number of replications to simulate.
 #' @param seed unused argument from [stats::simulate()].
 #' @param method (`string`)\cr simulation method to use. If "conditional",
 #'   simulated values are sampled given the estimated covariance matrix of `object`.
@@ -596,10 +597,14 @@ simulate.mmrm_tmb <- function(object,
                               newdata,
                               ...,
                               method = c("conditional", "marginal")) {
-  method <- match.arg(method)
+  assert_count(nsim, positive = TRUE)
+  assert_null(seed)
   if (missing(newdata)) {
     newdata <- object$data
   }
+  assert_data_frame(newdata)
+  method <- match.arg(method)
+
   # Ensure new data has the same levels as original data.
   full_frame <- model.frame(
     object,
@@ -630,8 +635,8 @@ simulate.mmrm_tmb <- function(object,
         # Resample betas given new beta distribution.
         # We first solve L^\top w = D^{-1/2}z_{sample}:
         w_sample <- backsolve(
-          r = hold$beta_vcov_inv_L,
-          x = rnorm(length(hold$beta)) / sqrt(hold$beta_vcov_inv_D),
+          r = hold$XtWX_L,
+          x = rnorm(length(hold$beta)) / sqrt(hold$XtWX_D),
           upper.tri = FALSE,
           transpose = TRUE
         )
