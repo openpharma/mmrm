@@ -65,7 +65,7 @@ df_md(fit_kr, contrast)
 We see that for the multi-dimensional contrast we get slightly different
 denominator degrees of freedom for the two adjustment methods.
 
-Also the simpler Residual and Between-Within `method` choices can be used of 
+Also the simpler Residual and Between-Within `method` choices can be used of
 course together with multidimensional contrasts.
 
 ## Support for emmeans
