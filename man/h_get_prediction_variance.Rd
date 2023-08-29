@@ -4,12 +4,12 @@
 \alias{h_get_prediction_variance}
 \title{Get Prediction Variance}
 \usage{
-h_get_prediction_variance(object, n_sim, tmb_data)
+h_get_prediction_variance(object, nsim, tmb_data)
 }
 \arguments{
 \item{object}{(\code{mmrm_tmb})\cr the fitted MMRM.}
 
-\item{n_sim}{(\code{integer})\cr number of samples.}
+\item{nsim}{(\code{count})\cr number of samples.}
 
 \item{tmb_data}{(\code{mmrm_tmb_data})\cr object.}
 }

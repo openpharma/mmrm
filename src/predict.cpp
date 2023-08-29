@@ -107,12 +107,15 @@ List predict(List mmrm_data, NumericVector theta, NumericVector beta, NumericMat
       covariance.push_back(empty);
     }
     index.push_back(na_index);
-    // Replace the values with fitted values. If no missing value there, the `na_index` will be length 0 so no harm here.
+    // Replace the values with fitted values. If no missing value there, the `na_index` will be length 0
+    // and the left hand side will hence not be modified.
     y_pred[na_index] = as_num_vector_rcpp(y_hat);
     conf_var[na_index] = as_num_vector_rcpp(var_conf);
     var[na_index] = as_num_vector_rcpp(var_y_on_theta);
   }
   NumericMatrix ret = cbind(y_pred, conf_var, var);
+  CharacterVector cnms = {"fit", "conf_var", "var"};
+  colnames(ret) = cnms;
   return List::create(
     Named("prediction") = ret,
     Named("covariance") = covariance,

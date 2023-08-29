@@ -390,6 +390,8 @@ h_mmrm_tmb_extract_cov <- function(tmb_report, tmb_data, visit_var, is_spatial) 
 #'   - `cov`: estimated covariance matrix, or named list of estimated group specific covariance matrices.
 #'   - `beta_est`: vector of coefficient estimates.
 #'   - `beta_vcov`: Variance-covariance matrix for coefficient estimates.
+#'   - `beta_vcov_inv_L`: Lower triangular matrix `L` of the inverse variance-covariance matrix decomposition.
+#'   - `beta_vcov_inv_D`: vector of diagonal matrix `D` of the inverse variance-covariance matrix decomposition.
 #'   - `theta_est`: vector of variance parameter estimates.
 #'   - `theta_vcov`: variance-covariance matrix for variance parameter estimates.
 #'   - `neg_log_lik`: obtained negative log-likelihood.
@@ -400,6 +402,10 @@ h_mmrm_tmb_extract_cov <- function(tmb_report, tmb_data, visit_var, is_spatial) 
 #'   - `opt_details`: list with optimization details including convergence code.
 #'   - `tmb_object`: original `TMB` object created with [TMB::MakeADFun()].
 #'   - `tmb_data`: input.
+#'
+#' @details Instead of inverting or decomposing `beta_vcov`, it can be more efficient to use its robust
+#'   Cholesky decomposition `LDL^T`, therefore we return the corresponding two components `L` and `D`
+#'   as well since they have been available on the `C++` side already.
 #'
 #' @keywords internal
 h_mmrm_tmb_fit <- function(tmb_object,
@@ -420,6 +426,8 @@ h_mmrm_tmb_fit <- function(tmb_object,
   names(beta_est) <- x_matrix_cols
   beta_vcov <- tmb_report$beta_vcov
   dimnames(beta_vcov) <- list(x_matrix_cols, x_matrix_cols)
+  beta_vcov_inv_L <- tmb_report$XtWX_L # nolint
+  beta_vcov_inv_D <- tmb_report$XtWX_D # nolint
   theta_est <- tmb_opt$par
   names(theta_est) <- NULL
   theta_vcov <- try(solve(tmb_object$he(tmb_opt$par)), silent = TRUE)
@@ -432,6 +440,8 @@ h_mmrm_tmb_fit <- function(tmb_object,
       cov = cov,
       beta_est = beta_est,
       beta_vcov = beta_vcov,
+      beta_vcov_inv_L = beta_vcov_inv_L,
+      beta_vcov_inv_D = beta_vcov_inv_D,
       theta_est = theta_est,
       theta_vcov = theta_vcov,
       neg_log_lik = tmb_opt$objective,

@@ -88,7 +88,7 @@ test_that("augment returns prediction with confidence interval with level", {
 test_that("augment returns prediction with prediction interval", {
   object <- get_mmrm()
   set.seed(132)
-  result <- augment(object, newdata = object$data, interval = "prediction", n_sim = 10L)
+  result <- augment(object, newdata = object$data, interval = "prediction", nsim = 10L)
   result_pi <- result[, c(".fitted", ".se.fit", ".lower", ".upper")]
   set.seed(132)
   expected <- tibble::as_tibble(predict(
@@ -96,7 +96,7 @@ test_that("augment returns prediction with prediction interval", {
     newdata = object$data,
     se.fit = TRUE,
     interval = "prediction",
-    n_sim = 10L
+    nsim = 10L
   ))
   names(expected) <- c(".fitted", ".se.fit", ".lower", ".upper")
   expect_equal(result_pi, expected)
@@ -105,7 +105,7 @@ test_that("augment returns prediction with prediction interval", {
 test_that("augment returns prediction with prediction interval with level", {
   object <- get_mmrm()
   set.seed(132)
-  result <- augment(object, newdata = object$data, interval = "prediction", level = 0.9, n_sim = 10L)
+  result <- augment(object, newdata = object$data, interval = "prediction", level = 0.9, nsim = 10L)
   result_pi <- result[, c(".fitted", ".se.fit", ".lower", ".upper")]
   set.seed(132)
   expected <- tibble::as_tibble(predict(
@@ -113,7 +113,7 @@ test_that("augment returns prediction with prediction interval with level", {
     newdata = object$data,
     se.fit = TRUE,
     interval = "prediction",
-    n_sim = 10L,
+    nsim = 10L,
     level = 0.9
   ))
   names(expected) <- c(".fitted", ".se.fit", ".lower", ".upper")

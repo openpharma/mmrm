@@ -55,7 +55,7 @@ Type objective_function<Type>::operator() ()
   vector<Type> y_vec_tilde = vector<Type>::Zero(y_vector.rows());
   // Sum of the log determinant will be incrementally calculated here.
   Type sum_log_det = 0.0;
-  
+
   // Convert is_spatial_int to bool.
   bool is_spatial = (is_spatial_int == 1);
   // Diagonal of weighted covariance
@@ -77,7 +77,7 @@ Type objective_function<Type>::operator() ()
       dist_i = euclidean(matrix<Type>(coordinates.block(start_i, 0, n_visits_i, coordinates.cols())));
     }
     // Obtain Cholesky factor Li.
-    matrix<Type> Li = chols_group.cache[subject_groups[i]]->get_chol(visit_i, dist_i);  
+    matrix<Type> Li = chols_group.cache[subject_groups[i]]->get_chol(visit_i, dist_i);
     // Calculate weighted Cholesky factor for this subject.
     Eigen::DiagonalMatrix<Type,Eigen::Dynamic,Eigen::Dynamic> Gi_inv_sqrt = weights_vector.segment(start_i, n_visits_i).cwiseInverse().sqrt().matrix().asDiagonal();
     Li = Gi_inv_sqrt * Li;
@@ -112,9 +112,11 @@ Type objective_function<Type>::operator() ()
   // Calculate negative log-likelihood.
   Type neg_log_lik;
 
+  // Always extract the D vector since we want to report this below.
+  vector<Type> XtWX_D = XtWX_decomposition.vectorD();
+
   if (reml == 1) {
     // Use restricted maximum likelihood.
-    vector<Type> XtWX_D = XtWX_decomposition.vectorD();
     Type XtWX_log_det = XtWX_D.log().sum();
     neg_log_lik = (x_matrix.rows() - x_matrix.cols()) / 2.0 * log(2.0 * M_PI) +
       sum_log_det +
@@ -136,6 +138,13 @@ Type objective_function<Type>::operator() ()
   Identity.setIdentity();
   matrix<Type> beta_vcov = XtWX_decomposition.solve(Identity);
   REPORT(beta_vcov);
+
+  // Also return the decomposition components L and D.
+  matrix<Type> XtWX_L(XtWX.rows(), XtWX.cols());
+  XtWX_L = XtWX_decomposition.matrixL();
+  REPORT(XtWX_L);
+  REPORT(XtWX_D);
+
   // normalized residual
   REPORT(epsilonTilde);
   // inverse square root of diagonal of covariance

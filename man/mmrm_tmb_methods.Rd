@@ -18,6 +18,7 @@
 \alias{BIC.mmrm_tmb}
 \alias{print.mmrm_tmb}
 \alias{residuals.mmrm_tmb}
+\alias{simulate.mmrm_tmb}
 \title{Methods for \code{mmrm_tmb} Objects}
 \usage{
 \method{coef}{mmrm_tmb}(object, complete = TRUE, ...)
@@ -30,7 +31,7 @@
   se.fit = FALSE,
   interval = c("none", "confidence", "prediction"),
   level = 0.95,
-  n_sim = 1000L,
+  nsim = 1000L,
   ...
 )
 
@@ -64,6 +65,15 @@
 \method{print}{mmrm_tmb}(x, ...)
 
 \method{residuals}{mmrm_tmb}(object, type = c("response", "pearson", "normalized"), ...)
+
+\method{simulate}{mmrm_tmb}(
+  object,
+  nsim = 1,
+  seed = NULL,
+  newdata,
+  ...,
+  method = c("conditional", "marginal")
+)
 }
 \arguments{
 \item{object}{(\code{mmrm_tmb})\cr the fitted MMRM object.}
@@ -73,7 +83,7 @@ coefficients.}
 
 \item{...}{mostly not used; Exception is \code{model.matrix()} passing \code{...} to the default method.}
 
-\item{newdata}{(\code{data.frame})\cr object in which to look for variables with which to predict.}
+\item{newdata}{(\code{data.frame})\cr optional new data, otherwise data from \code{object} is used.}
 
 \item{se.fit}{(\code{flag})\cr indicator if standard errors are required.}
 
@@ -81,7 +91,7 @@ coefficients.}
 
 \item{level}{(\code{number})\cr tolerance/confidence level.}
 
-\item{n_sim}{(\code{integr})\cr number of replications to calculate prediction interval.}
+\item{nsim}{(\code{count})\cr number of simulations to use.}
 
 \item{formula}{(\code{mmrm_tmb})\cr same as \code{object}.}
 
@@ -105,6 +115,12 @@ is the classical AIC.}
 
 \item{type}{(\code{string})\cr unscaled (\code{response}), \code{pearson} or \code{normalized}. Default is \code{response},
 and this is the only type available for use with models with a spatial covariance structure.}
+
+\item{seed}{unused argument from \code{\link[stats:simulate]{stats::simulate()}}.}
+
+\item{method}{(\code{string})\cr simulation method to use. If "conditional",
+simulated values are sampled given the estimated covariance matrix of \code{object}.
+If "marginal", the variance of the estimated covariance matrix is taken into account.}
 }
 \value{
 Depends on the method, see Functions.
@@ -164,6 +180,11 @@ penalty parameter \code{k}.
 \item \code{print(mmrm_tmb)}: prints the object.
 
 \item \code{residuals(mmrm_tmb)}: to obtain residuals - either unscaled ('response'), 'pearson' or 'normalized'.
+
+\item \code{simulate(mmrm_tmb)}: simulate responses from a fitted model according
+to the simulation \code{method}, returning a \code{data.frame} of dimension \verb{[n, m]}
+where n is the number of rows in \code{newdata},
+and m is the number \code{nsim} of simulated responses.
 
 }}
 \examples{

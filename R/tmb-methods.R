@@ -47,19 +47,25 @@ fitted.mmrm_tmb <- function(object, ...) {
 #'  Returns a vector of predictions if `se.fit == FALSE` and
 #'  `interval == "none"`; otherwise it returns a data.frame with multiple
 #'  columns and one row per input data row.
-#' @importFrom stats predict
-#' @param newdata (`data.frame`)\cr object in which to look for variables with which to predict.
+#'
+#' @param newdata (`data.frame`)\cr optional new data, otherwise data from `object` is used.
 #' @param se.fit (`flag`)\cr indicator if standard errors are required.
 #' @param interval (`string`)\cr type of interval calculation. Can be abbreviated.
 #' @param level (`number`)\cr tolerance/confidence level.
-#' @param n_sim (`integr`)\cr number of replications to calculate prediction interval.
+#' @param nsim (`count`)\cr number of simulations to use.
+#'
+#' @importFrom stats predict
 #' @exportS3Method
+#'
 #' @examples
 #' predict(object, newdata = fev_data)
-predict.mmrm_tmb <- function(
-    object, newdata, se.fit = FALSE, # nolint
-    interval = c("none", "confidence", "prediction"), level = 0.95,
-    n_sim = 1000L, ...) {
+predict.mmrm_tmb <- function(object,
+                             newdata,
+                             se.fit = FALSE, # nolint
+                             interval = c("none", "confidence", "prediction"),
+                             level = 0.95,
+                             nsim = 1000L,
+                             ...) {
   if (missing(newdata)) {
     newdata <- object$tmb_data$data
   }
@@ -67,7 +73,7 @@ predict.mmrm_tmb <- function(
   orig_row_names <- row.names(newdata)
   assert_flag(se.fit)
   assert_number(level, lower = 0, upper = 1)
-  assert_int(n_sim, lower = 1)
+  assert_count(nsim, positive = TRUE)
   interval <- match.arg(interval)
   # make sure new data has the same levels as original data
   full_frame <- model.frame(
@@ -98,10 +104,10 @@ predict.mmrm_tmb <- function(
   )$prediction
   res <- cbind(fit = rep(NA_real_, nrow(newdata)))
   new_order <- match(row.names(tmb_data$full_frame), orig_row_names)
-  res[new_order, "fit"] <- predictions[, 1]
+  res[new_order, "fit"] <- predictions[, "fit"]
   se <- switch(interval,
-    "confidence" = sqrt(predictions[, 2]),
-    "prediction" = sqrt(h_get_prediction_variance(object, n_sim, tmb_data)),
+    "confidence" = sqrt(predictions[, "conf_var"]),
+    "prediction" = sqrt(h_get_prediction_variance(object, nsim, tmb_data)),
     "none" = NULL
   )
   if (interval != "none") {
@@ -117,7 +123,6 @@ predict.mmrm_tmb <- function(
       lwr = res[, "fit"] - z,
       upr = res[, "fit"] + z
     )
-
     if (!se.fit) {
       res <- res[, setdiff(colnames(res), "se")]
     }
@@ -131,12 +136,20 @@ predict.mmrm_tmb <- function(
 }
 
 #' Get Prediction
+#'
 #' @description Get predictions with given `data`, `theta`, `beta`, `beta_vcov`.
+#'
+#' @details See `predict` function in `predict.cpp` which is called internally.
 #'
 #' @param tmb_data (`mmrm_tmb_data`)\cr object.
 #' @param theta (`numeric`)\cr theta value.
 #' @param beta (`numeric`)\cr beta value.
 #' @param beta_vcov (`matrix`)\cr beta_vcov matrix.
+#'
+#' @return List with:
+#' - `prediction`: Matrix with columns `fit`, `conf_var`, and `var`.
+#' - `covariance`: List with subject specific covariance matrices.
+#' - `index`: List of zero-based subject indices.
 #'
 #' @keywords internal
 h_get_prediction <- function(tmb_data, theta, beta, beta_vcov) {
@@ -149,32 +162,32 @@ h_get_prediction <- function(tmb_data, theta, beta, beta_vcov) {
 }
 
 #' Get Prediction Variance
+#'
 #' @description Get prediction variance with given fit, `tmb_data` with the Monte Carlo sampling method.
 #'
 #' @param object (`mmrm_tmb`)\cr the fitted MMRM.
-#' @param n_sim (`integer`)\cr number of samples.
+#' @param nsim (`count`)\cr number of samples.
 #' @param tmb_data (`mmrm_tmb_data`)\cr object.
 #'
 #' @keywords internal
-h_get_prediction_variance <- function(object, n_sim, tmb_data) {
+h_get_prediction_variance <- function(object, nsim, tmb_data) {
   assert_class(object, "mmrm_tmb")
   assert_class(tmb_data, "mmrm_tmb_data")
-  assert_int(n_sim)
+  assert_count(nsim, positive = TRUE)
   theta_chol <- chol(object$theta_vcov)
   n_theta <- length(object$theta_est)
-  res <- replicate(n_sim, {
+  res <- replicate(nsim, {
     z <- stats::rnorm(n = n_theta)
-    theta_sample <- object$theta_est + theta_chol %*% z
+    theta_sample <- object$theta_est + z %*% theta_chol
     cond_beta_results <- object$tmb_object$report(theta_sample)
     beta_mean <- cond_beta_results$beta
     beta_cov <- cond_beta_results$beta_vcov
     h_get_prediction(tmb_data, theta_sample, beta_mean, beta_cov)$prediction
   })
-  mean_of_var <- rowMeans(res[, 1, ])
-  var_of_mean <- apply(res[, 3, ], 1, stats::var)
+  mean_of_var <- rowMeans(res[, "var", ])
+  var_of_mean <- apply(res[, "fit", ], 1, stats::var)
   mean_of_var + var_of_mean
 }
-
 
 #' @describeIn mmrm_tmb_methods obtains the model frame.
 #' @param data (`data.frame`)\cr object in which to construct the frame.
@@ -564,4 +577,116 @@ h_residuals_normalized <- function(object) {
 h_residuals_response <- function(object) {
   assert_class(object, "mmrm_tmb")
   component(object, "y_vector") - unname(fitted(object))
+}
+
+#' @describeIn mmrm_tmb_methods simulate responses from a fitted model according
+#'   to the simulation `method`, returning a `data.frame` of dimension `[n, m]`
+#'   where n is the number of rows in `newdata`,
+#'   and m is the number `nsim` of simulated responses.
+#'
+#' @param seed unused argument from [stats::simulate()].
+#' @param method (`string`)\cr simulation method to use. If "conditional",
+#'   simulated values are sampled given the estimated covariance matrix of `object`.
+#'   If "marginal", the variance of the estimated covariance matrix is taken into account.
+#'
+#' @importFrom stats simulate
+#' @exportS3Method
+simulate.mmrm_tmb <- function(object,
+                              nsim = 1,
+                              seed = NULL,
+                              newdata,
+                              ...,
+                              method = c("conditional", "marginal")) {
+  assert_count(nsim, positive = TRUE)
+  assert_null(seed)
+  if (missing(newdata)) {
+    newdata <- object$data
+  }
+  assert_data_frame(newdata)
+  method <- match.arg(method)
+
+  # Ensure new data has the same levels as original data.
+  full_frame <- model.frame(
+    object,
+    data = newdata,
+    include = c("subject_var", "visit_var", "group_var", "response_var"),
+    na.action = "na.pass"
+  )
+  tmb_data <- h_mmrm_tmb_data(
+    object$formula_parts, full_frame,
+    weights = rep(1, nrow(full_frame)),
+    reml = TRUE,
+    singular = "keep",
+    drop_visit_levels = FALSE,
+    allow_na_response = TRUE,
+    drop_levels = FALSE
+  )
+  ret <- if (method == "conditional") {
+    predict_res <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
+    as.data.frame(h_get_sim_per_subj(predict_res, tmb_data$n_subjects, nsim))
+  } else if (method == "marginal") {
+    theta_chol <- t(chol(object$theta_vcov))
+    n_theta <- length(object$theta_est)
+    as.data.frame(
+      sapply(seq_len(nsim), function(x) {
+        newtheta <- object$theta_est + theta_chol %*% matrix(stats::rnorm(n_theta), ncol = 1)
+        # Recalculate betas with sampled thetas.
+        hold <- object$tmb_object$report(newtheta)
+        # Resample betas given new beta distribution.
+        # We first solve L^\top w = D^{-1/2}z_{sample}:
+        w_sample <- backsolve(
+          r = hold$XtWX_L,
+          x = stats::rnorm(length(hold$beta)) / sqrt(hold$XtWX_D),
+          upper.tri = FALSE,
+          transpose = TRUE
+        )
+        # Then we add the mean vector, the beta estimate.
+        beta_sample <- hold$beta + w_sample
+        predict_res <- h_get_prediction(tmb_data, newtheta, beta_sample, hold$beta_vcov)
+        h_get_sim_per_subj(predict_res, tmb_data$n_subjects, 1L)
+      })
+    )
+  }
+  orig_row_names <- row.names(newdata)
+  new_order <- match(orig_row_names, row.names(tmb_data$full_frame))
+  ret[new_order, , drop = FALSE]
+}
+
+#' Get simulated values by patient.
+#'
+#' @param predict_res (`list`)\cr from [h_get_prediction()].
+#' @param nsub (`count`)\cr number of subjects.
+#' @param nsim (`count`)\cr number of values to simulate.
+#'
+#' @keywords internal
+h_get_sim_per_subj <- function(predict_res, nsub, nsim) {
+  assert_list(predict_res)
+  assert_count(nsub, positive = TRUE)
+  assert_count(nsim, positive = TRUE)
+
+  ret <- matrix(
+    predict_res$prediction[, "fit"],
+    ncol = nsim,
+    nrow = nrow(predict_res$prediction)
+  )
+  for (i in seq_len(nsub)) {
+    # Skip subjects which are not included in predict_res.
+    if (length(predict_res$index[[i]]) > 0) {
+      # Obtain indices of data.frame belonging to subject i
+      # (increment by 1, since indices from cpp are 0-order).
+      inds <- predict_res$index[[i]] + 1
+      obs <- length(inds)
+
+      # Get relevant covariance matrix for subject i.
+      covmat_i <- predict_res$covariance[[i]]
+      theta_chol <- t(chol(covmat_i))
+
+      # Simulate epsilon from covariance matrix.
+      mus <- ret[inds, , drop = FALSE]
+      epsilons <- theta_chol %*% matrix(stats::rnorm(nsim * obs), ncol = nsim)
+      ret[inds, ] <- mus + epsilons
+    }
+  }
+
+  ret
 }

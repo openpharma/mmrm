@@ -802,3 +802,279 @@ test_that("response residuals helper function works as expected", {
   expected <- component(object, "y_vector") - as.vector(fitted(object))
   expect_equal(result_rsp, expected)
 })
+
+# simulate.mmrm_tmb ----
+
+test_that("simulate with conditional method returns a df of correct dimension", {
+  object <- get_mmrm()
+  set.seed(1001)
+  sims <- simulate(object, nsim = 2, method = "conditional")
+  expect_data_frame(sims, any.missing = FALSE, nrows = nrow(object$data), ncols = 2)
+
+  set.seed(202)
+  sims <- simulate(object, nsim = 1, method = "conditional")
+  expect_data_frame(sims, any.missing = FALSE, nrows = nrow(object$data), ncols = 1)
+})
+
+test_that("simulate with marginal method returns a df of correct dimension", {
+  object <- get_mmrm()
+  set.seed(1001)
+  sims <- simulate(object, nsim = 2, method = "marginal")
+  expect_data_frame(sims, any.missing = FALSE, nrows = nrow(object$data), ncols = 2)
+
+  set.seed(202)
+  sims <- simulate(object, nsim = 1, method = "marginal")
+  expect_data_frame(sims, any.missing = FALSE, nrows = nrow(object$data), ncols = 1)
+})
+
+test_that("simulate with conditional method results are correctly centered", {
+  object <- get_mmrm()
+  set.seed(323)
+  sims <- simulate(object, nsim = 1000, method = "conditional")
+  expect_equal(rowMeans(sims), predict(object), tolerance = 1e-2)
+})
+
+test_that("simulate with marginal method results are correctly centered", {
+  object <- get_mmrm()
+  set.seed(323)
+  sims <- simulate(object, nsim = 100, method = "marginal")
+  expect_equal(rowMeans(sims), predict(object), tolerance = 1e-1)
+})
+
+test_that("simulate with conditional method works as expected for weighted models", {
+  object <- get_mmrm_weighted()
+  set.seed(535)
+  sims <- simulate(object, nsim = 1000, method = "conditional")
+  expect_equal(rowMeans(sims), predict(object), tolerance = 1e-2)
+})
+
+test_that("simulate with marginal method works as expected for weighted models", {
+  object <- get_mmrm_weighted()
+  set.seed(535)
+  sims <- simulate(object, nsim = 100, method = "marginal")
+  expect_equal(rowMeans(sims), predict(object), tolerance = 1e-1)
+})
+
+test_that("simulate with conditional method works as expected for grouped fits", {
+  object <- get_mmrm_group()
+  set.seed(737)
+  sims <- simulate(object, nsim = 1000, method = "conditional")
+  expect_equal(rowMeans(sims), predict(object), tolerance = 1e-2)
+})
+
+test_that("simulate with marginal method works as expected for grouped fits", {
+  object <- get_mmrm_group()
+  set.seed(737)
+  sims <- simulate(object, nsim = 100, method = "marginal")
+  expect_equal(rowMeans(sims), predict(object), tolerance = 1e-1)
+})
+
+test_that("simulate with conditional method works for differently ordered/numbered data", {
+  object <- get_mmrm()
+  # Look at a permuted small subset of the original data.
+  df_subset <- dplyr::slice(object$data, 1:10)
+  neworder <- sample(nrow(df_subset))
+  df_mixed <- df_subset[neworder, ]
+  set.seed(939)
+  sims <- simulate(object, nsim = 1000, newdata = df_mixed, method = "conditional")
+  expect_equal(rowMeans(sims), predict(object, df_mixed), tolerance = 1e-2)
+})
+
+test_that("simulate with marginal method works for differently ordered/numbered data", {
+  object <- get_mmrm()
+  # Look at a permuted small subset of the original data.
+  df_subset <- dplyr::slice(object$data, 1:10)
+  neworder <- sample(nrow(df_subset))
+  df_mixed <- df_subset[neworder, ]
+  set.seed(939)
+  sims <- simulate(object, nsim = 100, newdata = df_mixed, method = "marginal")
+  expect_equal(rowMeans(sims), predict(object, df_mixed), tolerance = 1e-2)
+})
+
+test_that("simulate with conditional method is compatible with confidence intervals", {
+  object <- get_mmrm()
+  # Note that observed y have se = 0 here. So we only look at
+  # unobserved y predictions.
+  is_unobserved <- is.na(fev_data$FEV1)
+  intervals <- predict(
+    object,
+    newdata = fev_data,
+    se.fit = TRUE,
+    interval = "confidence",
+    level = 0.95
+  )
+  expect_true(all(intervals[is_unobserved, "se"] > 0))
+  sims <- simulate(
+    object,
+    newdata = fev_data,
+    nsim = 10000,
+    method = "conditional"
+  )
+  result_mean <- apply(sims, 1, mean)
+  expected <- intervals[, "fit"]
+  expect_equal(result_mean, expected, tolerance = 1e-2)
+})
+
+test_that("simulate with marginal method is compatible with prediction intervals", {
+  object <- get_mmrm()
+  set.seed(123)
+  intervals <- predict(
+    object,
+    se.fit = TRUE,
+    interval = "prediction",
+    level = 0.95,
+    nsim = 100
+  )
+  sims <- simulate(
+    object,
+    nsim = 100,
+    method = "marginal"
+  )
+  sims_quantiles <- t(apply(sims, 1, quantile, probs = c(0.025, 0.975)))
+  expect_equal(sims_quantiles[, "2.5%"], intervals[, "lwr"], tolerance = 1e-1)
+  expect_equal(sims_quantiles[, "97.5%"], intervals[, "upr"], tolerance = 1e-1)
+})
+
+test_that("we calculate correctly w_sample", {
+  object <- get_mmrm()
+  set.seed(654)
+  z_sample <- rnorm(length(object$beta_est))
+  result <- backsolve(
+    r = object$beta_vcov_inv_L,
+    x = z_sample / sqrt(object$beta_vcov_inv_D),
+    upper.tri = FALSE,
+    transpose = TRUE
+  )
+  expected <- as.numeric(
+    solve(t(object$beta_vcov_inv_L)) %*%
+      diag(1 / sqrt(object$beta_vcov_inv_D)) %*%
+      z_sample
+  )
+  expect_equal(result, expected)
+})
+
+# h_get_sim_per_subj ----
+
+test_that("h_get_sim_per_subj returns no error for nsim == 1", {
+  object <- get_mmrm()
+  # Format data.frame to inherit from 'mmrm_tmb_data'.
+  tmb_data <- h_mmrm_tmb_data(
+    object$formula_parts, object$data,
+    weights = rep(1, nrow(object$data)),
+    reml = TRUE,
+    singular = "keep",
+    drop_visit_levels = FALSE,
+    allow_na_response = TRUE,
+    drop_levels = FALSE
+  )
+  mu <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
+  expect_no_error(h_get_sim_per_subj(mu, object$tmb_data$n_subjects, nsim = 1))
+})
+
+test_that("h_get_sim_per_subj returns no error for nsub == 1", {
+  object <- get_mmrm()
+  # Format data.frame to inherit from 'mmrm_tmb_data'.
+  tmb_data <- h_mmrm_tmb_data(
+    object$formula_parts, object$data,
+    weights = rep(1, nrow(object$data)),
+    reml = TRUE,
+    singular = "keep",
+    drop_visit_levels = FALSE,
+    allow_na_response = TRUE,
+    drop_levels = FALSE
+  )
+  mu <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
+  expect_no_error(h_get_sim_per_subj(mu, 1, nsim = 10))
+})
+
+test_that("h_get_sim_per_subj returns no error for data.frame with 1 row", {
+  object <- get_mmrm()
+  # Format data.frame to inherit from 'mmrm_tmb_data'.
+  tmb_data <- h_mmrm_tmb_data(
+    object$formula_parts, object$data[1, ],
+    weights = rep(1, nrow(object$data[1, ])),
+    reml = TRUE,
+    singular = "keep",
+    drop_visit_levels = FALSE,
+    allow_na_response = TRUE,
+    drop_levels = FALSE
+  )
+  mu <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
+  expect_no_error(h_get_sim_per_subj(mu, 1, nsim = 10))
+})
+
+test_that("h_get_sim_per_subj results match expectation for large nsim", {
+  object <- get_mmrm()
+  # Format data.frame to inherit from 'mmrm_tmb_data'.
+  tmb_data <- h_mmrm_tmb_data(
+    object$formula_parts, object$data,
+    weights = rep(1, nrow(object$data)),
+    reml = TRUE,
+    singular = "keep",
+    drop_visit_levels = FALSE,
+    allow_na_response = TRUE,
+    drop_levels = FALSE
+  )
+  mu <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
+  results <- h_get_sim_per_subj(mu, object$tmb_data$n_subjects, nsim = 1000)
+  expect_equal(rowMeans(results), mu$prediction[, 1], tolerance = 1e-1)
+})
+
+test_that("h_get_sim_per_subj throws error for nsim == 0", {
+  object <- get_mmrm()
+  # Format data.frame to inherit from 'mmrm_tmb_data'.
+  tmb_data <- h_mmrm_tmb_data(
+    object$formula_parts, object$data[1, ],
+    weights = rep(1, nrow(object$data[1, ])),
+    reml = TRUE,
+    singular = "keep",
+    drop_visit_levels = FALSE,
+    allow_na_response = TRUE,
+    drop_levels = FALSE
+  )
+  mu <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
+  expect_error(h_get_sim_per_subj(mu, object$tmb_data$n_subjects, nsim = 0))
+})
+
+test_that("h_get_sim_per_subj throws error for nsub == 0", {
+  object <- get_mmrm()
+  # Format data.frame to inherit from 'mmrm_tmb_data'.
+  tmb_data <- h_mmrm_tmb_data(
+    object$formula_parts, object$data[1, ],
+    weights = rep(1, nrow(object$data[1, ])),
+    reml = TRUE,
+    singular = "keep",
+    drop_visit_levels = FALSE,
+    allow_na_response = TRUE,
+    drop_levels = FALSE
+  )
+  mu <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
+  expect_error(h_get_sim_per_subj(mu, 0, nsim = 10))
+})
+
+# h_get_prediction_variance ----
+
+test_that("h_get_prediction_variance works as expected", {
+  fit <- get_mmrm()
+  data <- fev_data[c(1:4, 97:100), ]
+  full_frame <- model.frame(fit,
+    data = data,
+    include = c("subject_var", "visit_var", "group_var", "response_var"),
+    na.action = "na.pass"
+  )
+  tmb_data <- h_mmrm_tmb_data(
+    fit$formula_parts, full_frame,
+    weights = rep(1, nrow(full_frame)),
+    reml = TRUE,
+    singular = "keep",
+    drop_visit_levels = FALSE,
+    allow_na_response = TRUE,
+    drop_levels = FALSE
+  )
+  expect_silent(res <- h_get_prediction_variance(fit, 1000L, tmb_data))
+  expect_equal(
+    res,
+    c(37.10, 0, 17.04, 0, 0, 0, 0, 0),
+    tolerance = 1e-1
+  )
+})
