@@ -222,7 +222,7 @@ The distance matrix is
     \end{pmatrix}
 \]
 
-## Spatial exponential
+## Spatial exponential (`sp_exp`)
 
 For spatial exponential, the covariance structure is defined as follows:
 
