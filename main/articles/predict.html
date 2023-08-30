@@ -39,7 +39,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9042</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9043</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -76,14 +76,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.2.2">v0.2.2</a> </div></li>
-<!-- end dropdown for versions -->
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-reports">Reports</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-reports">
@@ -189,36 +181,37 @@ instead. The delta method could again be used to make upper and lower
 boundaries reflect parameter estimation uncertainty.</p>
 <p>Alternatively, both intervals can be derived using a parametric
 bootstrap sample of the unrestricted parameters <span class="math inline">\(\theta\)</span>. This would probably also be
-easier for the <code>= "prediction"</code> case.</p>
+easier for the <code>interval = "prediction"</code> case.</p>
 <p>Please note that for these intervals, we assume that the distribution
 is approximately normal: we use <span class="math inline">\(\mu_{i,j}(\hat\beta, \hat\theta) \pm Z_{\alpha} *
 sqrt(A_{i, j, j}(\hat\beta, \hat\theta))\)</span> to construct it, where
 <span class="math inline">\(\mu_{i,j}(\hat\beta, \hat\theta)\)</span> is
-the <span class="math inline">\(j\)</span>th element of <span class="math inline">\(\mu_i(\hat\beta, \hat\theta)\)</span>, <span class="math inline">\(A_{i, j, j}(\hat\beta, \hat\theta)\)</span> is the
+the <span class="math inline">\(j\)</span>th element of <span class="math inline">\(\mu_i(\hat\beta, \hat\theta)\)</span>, and <span class="math inline">\(A_{i, j, j}(\hat\beta, \hat\theta)\)</span> is the
 <span class="math inline">\(j,j\)</span> element of <span class="math inline">\(A_i(\hat\beta, \hat\theta)\)</span>.</p>
 </div>
 <div class="section level3">
-<h3 id="parametric-sampling-for-prediction-interval">Parametric Sampling for prediction interval<a class="anchor" aria-label="anchor" href="#parametric-sampling-for-prediction-interval"></a>
+<h3 id="parametric-sampling-for-prediction-interval">Parametric Sampling for Prediction Interval<a class="anchor" aria-label="anchor" href="#parametric-sampling-for-prediction-interval"></a>
 </h3>
 <p>With the conditional variance formula</p>
 <p><span class="math display">\[
-  Var(Y_i) = Var(E(Y_i|\theta)) + E(Var(Y_i|\theta))
+Var(Y_i) = Var(E(Y_i|\theta)) + E(Var(Y_i|\theta))
 \]</span></p>
-<p>the conditional expectation <span class="math inline">\(E(Y_i|\theta)\)</span> and the conditional
-variance <span class="math inline">\(Var(Y_i|\theta)\)</span> are
-already described</p>
+<p>and the conditional expectation <span class="math inline">\(E(Y_i|\theta)\)</span> and the conditional
+variance <span class="math inline">\(Var(Y_i|\theta)\)</span> being
+already described as</p>
 <p><span class="math display">\[
-  E(Y_i|\theta) = \mu_i(\beta,\theta)
+E(Y_i|\theta) = \mu_i(\beta, \theta)
 \]</span></p>
+<p>and</p>
 <p><span class="math display">\[
-  Var(Y_i|\theta) = A_i(\beta, \theta)
+Var(Y_i|\theta) = A_i(\beta, \theta),
 \]</span></p>
-<p>so we can sample on <span class="math inline">\(\theta\)</span> and
+<p>we can sample on <span class="math inline">\(\theta\)</span> and
 obtain <span class="math inline">\(\beta\)</span>, then calculate the
 variance of conditional mean and the mean of conditional variance.</p>
 </div>
 <div class="section level3">
-<h3 id="prediction-of-conditional-mean-for-new-subjects">Prediction of conditional mean for new subjects<a class="anchor" aria-label="anchor" href="#prediction-of-conditional-mean-for-new-subjects"></a>
+<h3 id="prediction-of-conditional-mean-for-new-subjects">Prediction of Conditional Mean for New Subjects<a class="anchor" aria-label="anchor" href="#prediction-of-conditional-mean-for-new-subjects"></a>
 </h3>
 <p>If there are no observations for a subject, then the prediction is
 quite simple:</p>
@@ -232,7 +225,7 @@ quite simple:</p>
 </h2>
 <p>To create simulation of responses from a fitted model, we have
 multiple situations: whether this simulation is conditional on both
-<span class="math inline">\(\theta\)</span> and <span class="math inline">\(\beta\)</span>, or it is marginal?</p>
+<span class="math inline">\(\theta\)</span> and <span class="math inline">\(\beta\)</span> estimates, or it is marginal?</p>
 <div class="section level3">
 <h3 id="conditional-simulation">Conditional Simulation<a class="anchor" aria-label="anchor" href="#conditional-simulation"></a>
 </h3>
@@ -241,19 +234,19 @@ and the expectation of <span class="math inline">\(Y_i\)</span> are
 already given in <a href="#Mathematical-Derivations">Mathematical
 Derivations</a>.</p>
 <p>Please note that in implementation of <code>predict</code> function,
-we only use the diagonal elements, however, here we need to make use of
-the full matrix <span class="math inline">\(A_i\)</span>.</p>
+we only use the diagonal elements of <span class="math inline">\(A_i\)</span>, however, here we need to make use of
+the full matrix <span class="math inline">\(A_i\)</span> to obtain
+correctly correlated simulated observations.</p>
 </div>
 <div class="section level3">
 <h3 id="marginal-simulation">Marginal Simulation<a class="anchor" aria-label="anchor" href="#marginal-simulation"></a>
 </h3>
 <p>To simulate marginally, we take the variance of <span class="math inline">\(\hat\theta\)</span> and <span class="math inline">\(\hat\beta\)</span> into consideration. For each
 simulation, we first generate <span class="math inline">\(\theta\)</span> assuming it approximately follows
-multi-variate normal distribution. Then, conditional on <span class="math inline">\(\theta\)</span> we sampled, we generate <span class="math inline">\(\beta\)</span> also assuming it approximately
-follows multi-variate normal distribution. Now we have <span class="math inline">\(\theta\)</span> and <span class="math inline">\(\beta\)</span> estimates, and we just follow the
-<a href="#conditional-simulation">conditional simulation</a>. Repeat
-this step for multiple times and this is the marginal simulated
-response.</p>
+a multivariate normal distribution. Then, conditional on the <span class="math inline">\(\theta\)</span> we sampled, we generate <span class="math inline">\(\beta\)</span> also assuming it approximately
+follows a multivariate normal distribution.</p>
+<p>Now we have <span class="math inline">\(\theta\)</span> and <span class="math inline">\(\beta\)</span> estimates, and we just follow the
+<a href="#conditional-simulation">conditional simulation</a>.</p>
 </div>
 <div class="section level3">
 <h3 id="implementation-of-simulate">Implementation of <code>simulate</code><a class="anchor" aria-label="anchor" href="#implementation-of-simulate"></a>
@@ -272,11 +265,86 @@ estimate of <span class="math inline">\(\theta\)</span> and
 variance-covariance matrix of <span class="math inline">\(\theta\)</span> are provided. Using the generated
 <span class="math inline">\(\theta_{new}\)</span>, we then obtain the
 <span class="math inline">\(\beta_{new}\)</span> and its
-variance-covariance matrix, with <span class="math inline">\(\theta_{new}\)</span> and the data used in fit.
-Then we simulate once with
-<code>simulate(method = "conditional", beta = beta_new, theta = theta_new)</code>.
-Pool all the repetition together and we get the marginal simulation
-results.</p>
+variance-covariance matrix, with <span class="math inline">\(\theta_{new}\)</span> and the data used in
+fit.</p>
+<p>Then we sample <span class="math inline">\(\beta\)</span> as follows.
+We note that on the <code>C++</code> side we already have the robust
+Cholesky decomposition of the inverse of its asymptotic covariance
+matrix: <span class="math display">\[
+cov(\hat\beta) = (X^\top W X)^{-1} = (LDL^\top)^{-1}
+\]</span> Hence we make sure to report the lower triangular matrix <span class="math inline">\(L\)</span> and the diagonal matrix <span class="math inline">\(D\)</span> back to the <code>R</code> side, and
+afterwards we can generate <span class="math inline">\(\beta\)</span>
+samples as follows: <span class="math display">\[
+\beta_{sample} = \beta_{new} + L^{-\top}D^{-1/2}z_{sample}
+\]</span> where <span class="math inline">\(z_{sample}\)</span> is drawn
+from the standard multivariate normal distribution, since <span class="math display">\[
+cov(L^{-\top}D^{-1/2}z_{sample})
+= L^{-\top}D^{-1/2} I_p D^{-1/2} L^{-1}
+= L^{-\top}D^{-1}L^{-1}
+= (LDL^\top)^{-1}
+= cov(\hat\beta)
+\]</span> We note that calculating <span class="math inline">\(w =
+L^{-\top}D^{-1/2}z_{sample}\)</span> is efficient via backwards solving
+<span class="math display">\[
+L^\top w = D^{-1/2}z_{sample}
+\]</span> since <span class="math inline">\(L^\top\)</span> is upper
+right triangular.</p>
+<p>Then we simulate the observations once with
+<code>simulate(method = "conditional", beta = beta_sample, theta = theta_new)</code>.
+We pool all the repetitions together and thus obtain the marginal
+simulation results.</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="relationship-between-predict-and-simulate-results">Relationship Between <code>predict</code> and <code>simulate</code>
+Results<a class="anchor" aria-label="anchor" href="#relationship-between-predict-and-simulate-results"></a>
+</h2>
+<p>We summarize the different options for <code>predict</code> and
+<code>simulate</code> methods and explain how they relate to each
+other.</p>
+<div class="section level3">
+<h3 id="predict-options">
+<code>predict</code> options<a class="anchor" aria-label="anchor" href="#predict-options"></a>
+</h3>
+<ol style="list-style-type: decimal">
+<li>
+<code>predict(type = "confidence")</code> gives the variance of the
+predictions conditional on the <span class="math inline">\(\theta\)</span> estimate, taking into account the
+uncertainty of estimating <span class="math inline">\(\beta\)</span>. So
+here we ignore the uncertainty in estimating <span class="math inline">\(\theta\)</span>. It also does not add measurement
+error <span class="math inline">\(\epsilon\)</span>. We can use this
+prediction when we are only interested in predicting the mean of the
+unobserved <span class="math inline">\(y_i\)</span>, assuming the
+estimated <span class="math inline">\(\theta\)</span> as the true
+variance parameters.</li>
+<li>
+<code>predict(type = "prediction")</code> in contrast takes into
+account the full uncertainty, including the variance of <span class="math inline">\(\theta\)</span> and the measurement error <span class="math inline">\(\epsilon\)</span>. We can use this prediction when
+we are interested in reliable confidence intervals for the unobserved
+<span class="math inline">\(y_i\)</span> as well as the observed <span class="math inline">\(y_i\)</span>, assuming we would like to predict
+repeated observations from the same subjects and time points.</li>
+</ol>
+</div>
+<div class="section level3">
+<h3 id="simulate-options">
+<code>simulate</code> options<a class="anchor" aria-label="anchor" href="#simulate-options"></a>
+</h3>
+<ol style="list-style-type: decimal">
+<li>
+<code>simulate(type = "conditional")</code> simulates observations
+while keeping the <span class="math inline">\(\theta\)</span> and <span class="math inline">\(\beta\)</span> estimates fixed. It adds
+measurement errors <span class="math inline">\(\epsilon\)</span> when
+generating the simulated values. Hence the mean of the simulated values
+will be within the confidence intervals from
+<code>predict(type = "conditional")</code>.</li>
+<li>
+<code>simulate(type = "marginal")</code> simulates observations
+while taking into account the uncertainty of <span class="math inline">\(\beta\)</span> and <span class="math inline">\(\theta\)</span> through sampling from their
+asymptotic frequentist distributions. On top of that, it also adds
+measurement errors <span class="math inline">\(\epsilon\)</span>. This
+hence is using the same distribution as
+<code>predict(type = "prediction")</code>.</li>
+</ol>
 </div>
 </div>
 <div class="section level2">
@@ -323,7 +391,7 @@ distribution in the future and welcome feedback on this detail.</li>
 
     <footer><div class="pkgdown-footer-left">
   <p></p>
-<p>Developed by Daniel Sabanes Bove, Julia Dedic, Doug Kelkhoff, Kevin Kunzmann, Brian Matthew Lang, Liming Li, Christian Stock, Ya Wang, Dan James, Jonathan Sidi, Daniel D. Sjoberg, Boehringer Ingelheim Ltd., Gilead Sciences, Inc., F. Hoffmann-La Roche AG, Merck Sharp &amp; Dohme, Inc., AstraZeneca plc.</p>
+<p>Developed by Daniel Sabanes Bove, Julia Dedic, Doug Kelkhoff, Kevin Kunzmann, Brian Matthew Lang, Liming Li, Christian Stock, Ya Wang, Dan James, Jonathan Sidi, Daniel Leibovitz, Daniel D. Sjoberg, Boehringer Ingelheim Ltd., Gilead Sciences, Inc., F. Hoffmann-La Roche AG, Merck Sharp &amp; Dohme, Inc., AstraZeneca plc.</p>
 </div>
 
 <div class="pkgdown-footer-right">
