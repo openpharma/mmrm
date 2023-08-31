@@ -54,10 +54,10 @@ test_that("parsnip works with predict", {
     parsnip::fit(FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID), fev_data)
   result <- expect_silent(predict(model, new_data = fev_data))
   expect_tibble(result)
-  expect_names(names(result), identical.to = c(".pred", ".pred_se", ".pred_lwr", ".pred_upr"))
+  expect_names(names(result), identical.to = ".pred")
 })
 
-test_that("parsnip allows to pass additional arguments to predict via `opts`", {
+test_that("parsnip allows to pass additional arguments to predict with type `raw` via `opts`", {
   skip_if_not_installed("parsnip", minimum_version = "1.1.0")
 
   model <- parsnip::linear_reg() |>
@@ -66,14 +66,16 @@ test_that("parsnip allows to pass additional arguments to predict via `opts`", {
   result <- expect_silent(predict(
     model,
     new_data = fev_data,
+    type = "raw",
     opts = list(
       interval = "prediction",
       nsim = 10L,
-      se.fit = FALSE
+      se.fit = TRUE
     )
   ))
-  expect_tibble(result)
-  expect_names(names(result), identical.to = ".pred")
+  expect_matrix(result)
+  expect_names(colnames(result), identical.to = c("fit", "se", "lwr", "upr"))
+  expect_true(all(result[, "se"] > 0))
 })
 
 # augment ----

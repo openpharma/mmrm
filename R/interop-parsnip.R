@@ -59,10 +59,7 @@ parsnip_add_mmrm <- function(quietly = FALSE) {
       # This is boilerplate.
       func = c(fun = "predict"),
       object = quote(object$fit),
-      newdata = quote(new_data),
-      # Here we can set fixed defaults for the additional arguments.
-      se.fit = TRUE,
-      interval = "confidence"
+      newdata = quote(new_data)
     )
   )
 
@@ -76,10 +73,9 @@ parsnip_add_mmrm <- function(quietly = FALSE) {
       # This is boilerplate.
       func = c(fun = "predict"),
       object = quote(object$fit),
-      newdata = quote(new_data),
-      # Here we can set defaults for the additional arguments.
-      se.fit = TRUE,
-      interval = "confidence"
+      newdata = quote(new_data)
+      # We don't specify additional argument defaults here since otherwise
+      # the user is not able to change them (they will be fixed).
     )
   )
 
