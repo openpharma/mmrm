@@ -46,15 +46,6 @@ test_that("parsnip works with the covariance structure in the formula in `fit()`
 
 # augment ----
 
-test_that("parsnip works with augment without providing `new_data`", {
-  skip_if_not_installed("parsnip", minimum_version = "1.1.0")
-
-  model <- parsnip::linear_reg() |>
-      parsnip::set_engine("mmrm", control = mmrm_control(method = "Satterthwaite")) |>
-      parsnip::fit(FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID), fev_data)
-  result <- expect_silent(augment(model))
-})
-
 test_that("parsnip works with augment and using `new_data`", {
   skip_if_not_installed("parsnip", minimum_version = "1.1.0")
 
@@ -62,4 +53,6 @@ test_that("parsnip works with augment and using `new_data`", {
       parsnip::set_engine("mmrm", control = mmrm_control(method = "Satterthwaite")) |>
       parsnip::fit(FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID), fev_data)
   result <- expect_silent(augment(model, new_data = fev_data))
+  expect_tibble(result)
+  expect_names(names(result), must.include = c(".pred", ".resid"))
 })
