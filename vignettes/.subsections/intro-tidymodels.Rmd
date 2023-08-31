@@ -49,9 +49,9 @@ On the other hand, when using `type = "raw"` we can customize the calculations v
 
 ```{r}
 predict(
-  model, 
-  new_data = fev_data, 
-  type = "raw", 
+  model,
+  new_data = fev_data,
+  type = "raw",
   opts = list(se.fit = TRUE, interval = "prediction", nsim = 10L)
 )
 ```

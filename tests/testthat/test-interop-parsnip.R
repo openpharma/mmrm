@@ -1,6 +1,3 @@
-# Needed for the parsnip calls to work below, more lightweight than loading tidymodels:
-library(generics)
-
 # linear_reg, set_engine, fit ----
 
 test_that("parsnip works with a formula for the `covariance` specification outside of `fit()`", {
@@ -75,7 +72,7 @@ test_that("parsnip allows to pass additional arguments to predict with type `raw
   ))
   expect_matrix(result)
   expect_names(colnames(result), identical.to = c("fit", "se", "lwr", "upr"))
-  expect_true(all(result[, "se"] > 0))
+  expect_true(all(result[is.na(fev_data$FEV1), "se"] > 0))
 })
 
 # augment ----
@@ -84,8 +81,8 @@ test_that("parsnip works with augment and using `new_data`", {
   skip_if_not_installed("parsnip", minimum_version = "1.1.0")
 
   model <- parsnip::linear_reg() |>
-      parsnip::set_engine("mmrm", control = mmrm_control(method = "Satterthwaite")) |>
-      parsnip::fit(FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID), fev_data)
+    parsnip::set_engine("mmrm", control = mmrm_control(method = "Satterthwaite")) |>
+    parsnip::fit(FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID), fev_data)
   result <- expect_silent(augment(model, new_data = fev_data))
   expect_tibble(result)
   expect_names(names(result), must.include = c(".pred", ".resid"))

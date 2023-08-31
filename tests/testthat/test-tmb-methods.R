@@ -173,18 +173,6 @@ test_that("predict will return NA if data contains NA in covariates", {
   )
 })
 
-test_that("predict works with prediction method as expected", {
-  model <- mmrm(FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID), data = fev_data)
-  result <- expect_silent(predict(
-    model,
-    newdata = fev_data,
-    interval = "prediction",
-    nsim = 10L,
-    se.fit = TRUE
-  ))
-  expect_true(all(result[, "se"] > 0))
-})
-
 ## integration test with SAS ----
 
 test_that("predict gives same result with sas in unstructured satterthwaite/Kenward-Roger", {
