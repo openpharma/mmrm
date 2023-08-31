@@ -7,7 +7,8 @@
 #' @param formula (`mmrm_tmb`)\cr same as `object`.
 #' @param complete (`flag`)\cr whether to include potential non-estimable
 #'   coefficients.
-#' @param ... mostly not used; Exception is `model.matrix()` passing `...` to the default method.
+#' @param ... mostly not used;
+#'   Exception is `model.matrix()` passing `...` to the default method.
 #' @return Depends on the method, see Functions.
 #'
 #' @name mmrm_tmb_methods

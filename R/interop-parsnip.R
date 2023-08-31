@@ -56,9 +56,30 @@ parsnip_add_mmrm <- function(quietly = FALSE) {
     mode = "regression",
     type = "numeric",
     value = parsnip::pred_value_template(
+      # This is boilerplate.
       func = c(fun = "predict"),
       object = quote(object$fit),
-      newdata = quote(new_data)
+      newdata = quote(new_data),
+      # Here we can set fixed defaults for the additional arguments.
+      se.fit = TRUE,
+      interval = "confidence"
+    )
+  )
+
+  parsnip::set_pred(
+    model = "linear_reg",
+    eng = "mmrm",
+    mode = "regression",
+    # This type allows to pass arguments via `opts` to `parsnip::predict.model_fit`.
+    type = "raw",
+    value = parsnip::pred_value_template(
+      # This is boilerplate.
+      func = c(fun = "predict"),
+      object = quote(object$fit),
+      newdata = quote(new_data),
+      # Here we can set defaults for the additional arguments.
+      se.fit = TRUE,
+      interval = "confidence"
     )
   )
 

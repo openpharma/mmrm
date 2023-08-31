@@ -44,6 +44,38 @@ test_that("parsnip works with the covariance structure in the formula in `fit()`
   expect_s3_class(result, "model_fit")
 })
 
+# predict ----
+
+test_that("parsnip works with predict", {
+  skip_if_not_installed("parsnip", minimum_version = "1.1.0")
+
+  model <- parsnip::linear_reg() |>
+    parsnip::set_engine("mmrm", control = mmrm_control(method = "Satterthwaite")) |>
+    parsnip::fit(FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID), fev_data)
+  result <- expect_silent(predict(model, new_data = fev_data))
+  expect_tibble(result)
+  expect_names(names(result), identical.to = c(".pred", ".pred_se", ".pred_lwr", ".pred_upr"))
+})
+
+test_that("parsnip allows to pass additional arguments to predict via `opts`", {
+  skip_if_not_installed("parsnip", minimum_version = "1.1.0")
+
+  model <- parsnip::linear_reg() |>
+    parsnip::set_engine("mmrm", control = mmrm_control(method = "Satterthwaite")) |>
+    parsnip::fit(FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID), fev_data)
+  result <- expect_silent(predict(
+    model,
+    new_data = fev_data,
+    opts = list(
+      interval = "prediction",
+      nsim = 10L,
+      se.fit = FALSE
+    )
+  ))
+  expect_tibble(result)
+  expect_names(names(result), identical.to = ".pred")
+})
+
 # augment ----
 
 test_that("parsnip works with augment and using `new_data`", {
