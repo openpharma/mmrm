@@ -81,7 +81,8 @@
 \item{complete}{(\code{flag})\cr whether to include potential non-estimable
 coefficients.}
 
-\item{...}{mostly not used; Exception is \code{model.matrix()} passing \code{...} to the default method.}
+\item{...}{mostly not used;
+Exception is \code{model.matrix()} passing \code{...} to the default method.}
 
 \item{newdata}{(\code{data.frame})\cr optional new data, otherwise data from \code{object} is used.}
 
