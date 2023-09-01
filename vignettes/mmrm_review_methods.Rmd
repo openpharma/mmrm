@@ -19,6 +19,10 @@ editor_options:
     wrap: 72
 ---
 
+
+
+
+
 # Introduction
 
 In this vignette we briefly compare the `mmrm::mmrm`, SAS's `PROC MIXED`,
@@ -412,14 +416,18 @@ the FEV dataset 10 times. The convergence times are recorded for each replicate
 and are reported in the table below.
 
 
+
 Table: Comparison of convergence times: milliseconds
 
-|Implementation | Median| First Quartile| Third Quartile|
-|:--------------|------:|--------------:|--------------:|
-|mmrm           |  51.73|          51.49|          52.79|
-|lmer           | 208.05|         206.38|         222.01|
-|gls            | 625.38|         608.06|         650.33|
-|glmmTMB        | 669.86|         655.51|         681.12|
+|Implementation |  Median| First Quartile| Third Quartile|
+|:--------------|-------:|--------------:|--------------:|
+|PROC MIXED     |   20.00|          20.00|          20.00|
+|mmrm           |  181.22|         179.51|         184.47|
+|gls            |  374.90|         370.64|         395.70|
+|glmmTMB        | 1364.69|        1361.70|        1375.51|
+|lmer           | 1458.74|        1455.75|        1465.95|
+
+
 
 It is clear from these results that `mmrm` converges significantly faster than
 other R functions. Though not demonstrated here, this is generally true
@@ -432,14 +440,23 @@ The MMRM implementations are now applied to the BCVA dataset 10 times. The
 convergence times are presented below.
 
 
+```
+#> [Errno 32] Datenübergabe unterbrochen (broken pipe)
+```
+
+
+
 Table: Comparison of convergence times: seconds
 
-|Implementation | Median| First Quartile| Third Quartile|
-|:--------------|------:|--------------:|--------------:|
-|mmrm           |   3.10|           3.06|           3.15|
-|glmmTMB        |  17.15|          16.74|          17.68|
-|gls            | 135.02|         134.35|         143.26|
-|lmer           | 149.75|         145.14|         152.33|
+|Implementation |  Median| First Quartile| Third Quartile|
+|:--------------|-------:|--------------:|--------------:|
+|PROC MIXED     |   20.00|          20.00|          20.00|
+|mmrm           |  181.22|         179.51|         184.47|
+|gls            |  374.90|         370.64|         395.70|
+|glmmTMB        | 1364.69|        1361.70|        1375.51|
+|lmer           | 1458.74|        1455.75|        1465.95|
+
+
 
 We again find that `PROC MIXED` produces the fastest convergence times on
 average, followed closely by `mmrm`. The latter is the fastest of the R
@@ -454,7 +471,12 @@ is also reported.
 
 ### FEV Data
 
-<img src="mmrm-review-treatment-fev-1.png" alt="plot of chunk review-treatment-fev" width="100%" />
+
+```
+#> [Errno 32] Datenübergabe unterbrochen (broken pipe)
+#> Error in rel_diff(mmrm_ests): Objekt 'proc_mixed_ests' nicht gefunden
+#> Error in eval(expr, envir, enclos): Objekt 'rel_diff_ests_tbl' nicht gefunden
+```
 
 The R procedures' estimates are very similar to those output by `PROC MIXED`,
 though `mmrm` and `gls` generate the estimates that are closest to those
@@ -463,7 +485,13 @@ arguments.
 
 ### BCVA Data
 
-<img src="mmrm-review-treatment-bcva-1.png" alt="plot of chunk review-treatment-bcva" width="100%" /><img src="mmrm-review-treatment-bcva-2.png" alt="plot of chunk review-treatment-bcva" width="100%" />
+
+```
+#> [Errno 32] Datenübergabe unterbrochen (broken pipe)
+#> Error in rel_diff(mmrm_ests): Objekt 'proc_mixed_ests' nicht gefunden
+#> Error in eval(expr, envir, enclos): Objekt 'rel_diff_ests_tbl' nicht gefunden
+#> Error in eval(expr, envir, enclos): Objekt 'rel_diff_ests_tbl' nicht gefunden
+```
 
 `mmrm`, `gls` and `lmer` produce estimates that are virtually identical to `PROC
 MIXED`'s, while `glmmTMB` does not. This is likely explained by `glmmTMB`'s
@@ -487,6 +515,7 @@ below.
 
 
 
+
 Table: Number of patients per visit
 
 |Missingness | VIS01| VIS02| VIS03| VIS04| VIS05| VIS06| VIS07| VIS08| VIS09| VIS10|
@@ -496,10 +525,20 @@ Table: Number of patients per visit
 |moderate    |   196|   198|   197|   189|   187|   173|   167|   155|   139|   117|
 |high        |   191|   192|   173|   166|   145|   130|   111|    90|    69|    49|
 
+
+
 The convergence rates of all implementations for stratified by missingness level
 is presented in the plot below.
 
-<img src="mmrm-review-convergence-rate-missingness-1.png" alt="plot of chunk review-convergence-rate-missingness" width="100%" />
+
+```
+#> Error in if (loc_frame && loc_frame <= nrow(parent_trace)) {: Fehlender Wert, wo TRUE/FALSE nötig ist
+#> Error in if (loc_frame && loc_frame <= nrow(parent_trace)) {: Fehlender Wert, wo TRUE/FALSE nötig ist
+#> Error in if (loc_frame && loc_frame <= nrow(parent_trace)) {: Fehlender Wert, wo TRUE/FALSE nötig ist
+#> Error in if (loc_frame && loc_frame <= nrow(parent_trace)) {: Fehlender Wert, wo TRUE/FALSE nötig ist
+#> Error in eval(expr, envir, enclos): Objekt 'cr_no_missing' nicht gefunden
+#> Error in eval(expr, envir, enclos): Objekt 'cr_all' nicht gefunden
+```
 
 `mmrm`, `gls`, and `PROC MIXED` are resilient to missingness, only exhibiting
 some convergence problems in the scenarios with the most missingness. These
@@ -528,48 +567,41 @@ variances, 95% coverage rates, type I error rates and type II error rates.
 
 
 ```
-#> R version 4.2.2 Patched (2022-11-10 r83330)
+#> R version 4.3.1 (2023-06-16)
 #> Platform: x86_64-pc-linux-gnu (64-bit)
-#> Running under: Ubuntu 20.04.5 LTS
-#>
+#> Running under: Ubuntu 20.04.6 LTS
+#> 
 #> Matrix products: default
-#> BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.9.0
+#> BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.9.0 
 #> LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.9.0
-#>
+#> 
 #> locale:
-#>  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C
-#>  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8
-#>  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8
-#>  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C
-#>  [9] LC_ADDRESS=C               LC_TELEPHONE=C
-#> [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C
-#>
+#>  [1] LC_CTYPE=de_DE.UTF-8       LC_NUMERIC=C               LC_TIME=de_CH.UTF-8        LC_COLLATE=de_DE.UTF-8    
+#>  [5] LC_MONETARY=de_CH.UTF-8    LC_MESSAGES=de_DE.UTF-8    LC_PAPER=de_CH.UTF-8       LC_NAME=C                 
+#>  [9] LC_ADDRESS=C               LC_TELEPHONE=C             LC_MEASUREMENT=de_CH.UTF-8 LC_IDENTIFICATION=C       
+#> 
+#> time zone: Europe/Luxembourg
+#> tzcode source: system (glibc)
+#> 
 #> attached base packages:
-#> [1] stats     graphics  grDevices utils     datasets  methods   base
-#>
+#> [1] stats     graphics  grDevices utils     datasets  methods   base     
+#> 
 #> other attached packages:
-#>  [1] ggplot2_3.4.1           emmeans_1.8.4-1         sasr_0.1.2
-#>  [4] glmmTMB_1.1.5           nlme_3.1-162            lme4_1.1-31
-#>  [7] Matrix_1.5-3            mmrm_0.2.2.9028         stringr_1.5.0
-#> [10] microbenchmark_1.4.9    purrr_1.0.1             dplyr_1.1.0
-#> [13] clusterGeneration_1.3.7 MASS_7.3-58.2           knitr_1.42
-#>
+#>  [1] ggplot2_3.4.2           emmeans_1.8.7           sasr_0.1.2              glmmTMB_1.1.7          
+#>  [5] nlme_3.1-163            lme4_1.1-34             Matrix_1.5-4.1          mmrm_0.3.0             
+#>  [9] stringr_1.5.0           microbenchmark_1.4.10   purrr_1.0.1             dplyr_1.1.2            
+#> [13] clusterGeneration_1.3.7 MASS_7.3-60             knitr_1.43             
+#> 
 #> loaded via a namespace (and not attached):
-#>  [1] reticulate_1.28     tidyselect_1.2.0    xfun_0.37
-#>  [4] TMB_1.9.2           splines_4.2.2       lattice_0.20-45
-#>  [7] colorspace_2.1-0    vctrs_0.5.2         generics_0.1.3
-#> [10] utf8_1.2.3          rlang_1.0.6         nloptr_2.0.3
-#> [13] pillar_1.8.1        withr_2.5.0         glue_1.6.2
-#> [16] lifecycle_1.0.3     munsell_0.5.0       gtable_0.3.1
-#> [19] mvtnorm_1.1-3       coda_0.19-4         evaluate_0.20
-#> [22] labeling_0.4.2      pbkrtest_0.5.2      parallel_4.2.2
-#> [25] fansi_1.0.4         highr_0.10          broom_1.0.3
-#> [28] Rcpp_1.0.10         xtable_1.8-4        backports_1.4.1
-#> [31] scales_1.2.1        checkmate_2.1.0     jsonlite_1.8.4
-#> [34] farver_2.1.1        png_0.1-8           stringi_1.7.12
-#> [37] numDeriv_2016.8-1.1 rbibutils_2.2.13    grid_4.2.2
-#> [40] Rdpack_2.4          cli_3.6.0           tools_4.2.2
-#> [43] magrittr_2.0.3      tibble_3.1.8        tidyr_1.3.0
-#> [46] pkgconfig_2.0.3     estimability_1.4.1  minqa_1.2.5
-#> [49] R6_2.5.1            boot_1.3-28.1       compiler_4.2.2
+#>  [1] tidyr_1.3.0         utf8_1.2.3          generics_0.1.3      stringi_1.7.12      lattice_0.21-8     
+#>  [6] magrittr_2.0.3      evaluate_0.21       grid_4.3.1          estimability_1.4.1  mvtnorm_1.2-2      
+#> [11] rprojroot_2.0.3     jsonlite_1.8.7      backports_1.4.1     fansi_1.0.4         scales_1.2.1       
+#> [16] numDeriv_2016.8-1.1 Rdpack_2.4          cli_3.6.1           rlang_1.1.1         rbibutils_2.2.13   
+#> [21] munsell_0.5.0       splines_4.3.1       withr_2.5.0         pbkrtest_0.5.2      tools_4.3.1        
+#> [26] parallel_4.3.1      nloptr_2.0.3        checkmate_2.2.0     coda_0.19-4         minqa_1.2.5        
+#> [31] colorspace_2.1-0    here_1.0.1          boot_1.3-28         broom_1.0.5         reticulate_1.30    
+#> [36] png_0.1-7           vctrs_0.6.3         R6_2.5.1            lifecycle_1.0.3     pkgconfig_2.0.3    
+#> [41] gtable_0.3.3        pillar_1.9.0        glue_1.6.2          Rcpp_1.0.10         xfun_0.39          
+#> [46] tibble_3.2.1        tidyselect_1.2.0    rstudioapi_0.14     xtable_1.8-4        TMB_1.9.4          
+#> [51] compiler_4.3.1
 ```
