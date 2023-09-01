@@ -1,6 +1,7 @@
-# mmrm 0.2.2.9045
+# mmrm 0.3.0
 
 ### New Features
+
 - Add methods `tidy()`, `glance()` and `augment()` to tidy the `mmrm` fit results into summary tables.
 - Add argument `covariance` to `mmrm()` to allow for easier programmatic access
   to specifying the model's covariance structure and to expose covariance
