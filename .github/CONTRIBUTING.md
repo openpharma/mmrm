@@ -1,3 +1,4 @@
+
 <!-- markdownlint-disable-file -->
 <!-- Please edit only the Rmd file, and then knit to obtain CONTRIBUTING.md -->
 
@@ -82,16 +83,19 @@ imports.
 - Exported objects must be included in the `_pkgdown.yml` file to be
   populated on the `pkgdown`
   [website](https://openpharma.github.io/mmrm/main/reference/index.html).
+
 - In vignettes, you cannot directly reference help pages but only
   `pkgdown` web pages. Note that this includes only exported objects. To
   make it look similar to the help page references, please here also use
   `function()` style.
-- `mmrm_review_methods.Rmd` is a large vignette and we precompute this vignette
-  to make the GitHub actions faster. Run the script `vignettes/precompile.R`
-  to regenerate the precomputed vignette and subsequently update it in GitHub.
-  Before every release we need to run this again.
-  Please note you need to install the package and then compile the vignette
-  because efficiency is better after installation to provide a fair comparison.
+
+- `mmrm_review_methods.Rmd` is a large vignette and we precompute this
+  vignette to make the GitHub actions faster. Run the script
+  `vignettes/precompile.R` to regenerate the precomputed vignette and
+  subsequently update it in GitHub. Before every release we need to run
+  this again. Please note you need to install the package and then
+  compile the vignette because efficiency is better after installation
+  to provide a fair comparison.
 
 ## Github conventions
 
@@ -148,7 +152,7 @@ install:
 The issues are categorized with several labels:
 
 | Label name         | Description                                                                                                                        |
-| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+|--------------------|------------------------------------------------------------------------------------------------------------------------------------|
 | `SPx`              | `SP` (story points) indicate complexity, and the larger the subsequent number, the more time consuming the issue is expected to be |
 | `priority`         | Issues with this label should be completed with higher priority                                                                    |
 | `good first issue` | Good choices for new team members                                                                                                  |
@@ -176,7 +180,7 @@ create a new test file, with a name prefix of “test-”.
 
 In each test case, use the following structure:
 
-```r
+``` r
 test_that("function_name does something as expected", {
   result <- function_name(input)
   expected <- hardcoded_result
