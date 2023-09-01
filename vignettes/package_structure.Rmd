@@ -129,7 +129,9 @@ This file implements the `P`, `Q` and `R` matrix calculations which are needed f
 
 ### Makevars
 
-This file specifies additional flags used in the source code compilation. In particular, it asks `TMB` to use the `TMB` automatic differentiation framework (instead of the default `CppAD` framework) to be more efficient, and it disables useless warnings from the `Eigen` library compilation.
+This file specifies additional flags used in the source code compilation. 
+We specify here the use of `C++14` such that `std::make_unique()` is available.
+Also we ask `TMB` to use the `TMB` automatic differentiation framework (instead of the default `CppAD` framework) to be more efficient, and disable useless warnings from the `Eigen` library compilation.
 
 Note that additional flags such as `-Wno-ignored-attributes` cannot be included here because they are compiler specific. These can instead be specified in local `~/.R/Makevars` files.
 
