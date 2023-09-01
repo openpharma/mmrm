@@ -1,5 +1,5 @@
 ---
-title: "Introduction to `mmrm`"
+title: "Package Introduction"
 package: mmrm
 output:
   rmarkdown::html_document:
@@ -8,7 +8,7 @@ output:
           toc: true
           toc_float: true
 vignette: |
-  %\VignetteIndexEntry{Introduction to `mmrm`}
+  %\VignetteIndexEntry{Package Introduction}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options:

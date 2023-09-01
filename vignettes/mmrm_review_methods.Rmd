@@ -1,5 +1,5 @@
 ---
-title: "Implementations of MMRM: a comparison of what's available"
+title: "Comparison with other software"
 package: mmrm
 bibliography: mmrm_review_refs.bib
 output:
@@ -11,17 +11,13 @@ output:
           toc_depth: 2
 vignette: |
   %\VignetteEncoding{UTF-8}
-  %\VignetteIndexEntry{Implementations of MMRM: a comparison of what's available}
+  %\VignetteIndexEntry{Comparison with other software}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options:
   chunk_output_type: console
   markdown:
     wrap: 72
 ---
-
-
-
-
 
 # Introduction
 

@@ -28,8 +28,9 @@ articles:
     contents:
       - introduction
       - methodological_introduction
-  - title: Covariance Structure
-    navbar: Covariance Structure
+      - mmrm_review_methods
+  - title: Covariance Structures
+    navbar: Covariance Structures
     contents:
       - covariance
   - title: Degrees of Freedom
@@ -43,11 +44,14 @@ articles:
     contents:
       - coef_vcov
       - empirical_wls
-  - title: Other
+  - title: Algorithm Details
+    navbar: Algorithm Details
     contents:
       - algorithm
-      - mmrm_review_methods
       - predict
+  - title: Developers
+    navbar: Developers
+    contents:
       - package_structure
 reference:
   - title: Package
