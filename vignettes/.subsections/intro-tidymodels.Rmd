@@ -12,7 +12,7 @@ library(tidymodels)
 
 ### Direct fit
 
-First we define the direct method to fit an mmrm model using the parsnip package functions `linear_reg()` and `set_engine()`.
+First we define the direct method to fit an `mmrm` model using the `parsnip` package functions `linear_reg()` and `set_engine()`.
 
 - `linear_reg()` defines a model that can predict numeric values from predictors using a linear function
 - `set_engine()` is used to specify which package or system will be used to fit the model, along with any arguments specific to that software. We can set the method to adjust degrees of freedom directly in the call.
@@ -21,19 +21,51 @@ First we define the direct method to fit an mmrm model using the parsnip package
 model <- linear_reg() |>
   set_engine("mmrm", method = "Satterthwaite") |>
   fit(FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID), fev_data)
-```
-
-```{r}
 model
 ```
 
-We can also pass in the full `mmrm_control` object into the `set_engine()` call
+We can also pass in the full `mmrm_control` object into the `set_engine()` call:
 
 ```{r}
 model_with_control <- linear_reg() |>
   set_engine("mmrm", control = mmrm_control(method = "Satterthwaite")) |>
   fit(FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID), fev_data)
 ```
+
+### Predictions
+
+Lastly, we can also obtain predictions with the `predict()` method:
+
+```{r}
+predict(model, new_data = fev_data)
+```
+
+Note that we need to explicitly pass `new_data` because the method definition
+does not allow to default it to the data set we used for the model fitting automatically.
+
+By using the `type = "numeric"` default of `predict()` as above we cannot further customize the calculations. We obtain predicted values without confidence intervals or standard errors.
+
+On the other hand, when using `type = "raw"` we can customize the calculations via the `opts` list:
+
+```{r}
+predict(
+  model,
+  new_data = fev_data,
+  type = "raw",
+  opts = list(se.fit = TRUE, interval = "prediction", nsim = 10L)
+)
+```
+
+The result is now a matrix, because that is what the `predict()` method returns for `mmrm` objects. Note that this cannot be changed to return a `tibble` at the moment.
+
+Similarly, we can also use the `augment()` method to add predicted values to a new data set:
+
+```{r}
+augment(model, new_data = fev_data) |>
+  select(USUBJID, AVISIT, .resid, .pred)
+```
+
+Note that here we cannot customize the `predict` options as this is currently not supported by the `augment()` method in `parsnip`.
 
 ### Using mmrm in workflows
 

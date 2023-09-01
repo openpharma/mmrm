@@ -7,7 +7,8 @@
 #' @param formula (`mmrm_tmb`)\cr same as `object`.
 #' @param complete (`flag`)\cr whether to include potential non-estimable
 #'   coefficients.
-#' @param ... mostly not used; Exception is `model.matrix()` passing `...` to the default method.
+#' @param ... mostly not used;
+#'   Exception is `model.matrix()` passing `...` to the default method.
 #' @return Depends on the method, see Functions.
 #'
 #' @name mmrm_tmb_methods
@@ -67,7 +68,7 @@ predict.mmrm_tmb <- function(object,
                              nsim = 1000L,
                              ...) {
   if (missing(newdata)) {
-    newdata <- object$tmb_data$data
+    newdata <- object$data
   }
   assert_data_frame(newdata)
   orig_row_names <- row.names(newdata)
@@ -267,7 +268,9 @@ model.frame.mmrm_tmb <- function(formula, data, include = c("subject_var", "visi
 #' - `"is_full"`: a logical scalar indicating if the formula and
 #'   full formula are identical
 #' @keywords internal
-h_construct_model_frame_inputs <- function(formula, data, include,
+h_construct_model_frame_inputs <- function(formula,
+                                           data,
+                                           include,
                                            include_choice = c("subject_var", "visit_var", "group_var", "response_var"),
                                            full) {
   if (!missing(full) && identical(full, TRUE)) {
@@ -278,7 +281,7 @@ h_construct_model_frame_inputs <- function(formula, data, include,
   assert_class(formula, classes = "mmrm_tmb")
   assert_subset(include, include_choice)
   if (missing(data)) {
-    data <- formula$tmb_data$data
+    data <- formula$data
   }
   assert_data_frame(data)
 
