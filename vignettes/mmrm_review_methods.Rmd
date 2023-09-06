@@ -416,15 +416,14 @@ the FEV dataset 10 times. The convergence times are recorded for each replicate
 and are reported in the table below.
 
 
-
 Table: Comparison of convergence times: milliseconds
 
 |Implementation | Median| First Quartile| Third Quartile|
 |:--------------|------:|--------------:|--------------:|
-|mmrm           |  56.35|          56.13|          56.50|
-|lmer           | 239.62|         236.86|         248.69|
-|gls            | 702.58|         694.61|         711.56|
-|glmmTMB        | 765.78|         759.68|         771.40|
+|mmrm           |  55.03|          55.00|          55.06|
+|lmer           | 236.58|         235.19|         246.55|
+|gls            | 680.56|         676.58|         692.96|
+|glmmTMB        | 681.96|         678.29|         683.28|
 
 It is clear from these results that `mmrm` converges significantly faster than
 other R functions. Though not demonstrated here, this is generally true
@@ -437,20 +436,14 @@ The MMRM implementations are now applied to the BCVA dataset 10 times. The
 convergence times are presented below.
 
 
-```
-#> [Errno 32] Datenübergabe unterbrochen (broken pipe)
-```
-
-
-
 Table: Comparison of convergence times: seconds
 
 |Implementation | Median| First Quartile| Third Quartile|
 |:--------------|------:|--------------:|--------------:|
-|mmrm           |   3.36|           3.33|           3.37|
-|glmmTMB        |  18.44|          18.33|          18.71|
-|gls            | 157.60|         156.60|         159.17|
-|lmer           | 162.83|         159.22|         166.29|
+|mmrm           |   3.34|           3.32|           3.36|
+|glmmTMB        |  17.93|          17.86|          18.68|
+|lmer           | 153.43|         150.52|         161.13|
+|gls            | 160.73|         156.37|         163.01|
 
 We again find that `PROC MIXED` produces the fastest convergence times on
 average, followed closely by `mmrm`. The latter is the fastest of the R
@@ -465,12 +458,7 @@ is also reported.
 
 ### FEV Data
 
-
-```
-#> [Errno 32] Datenübergabe unterbrochen (broken pipe)
-#> Error in rel_diff(mmrm_ests): Objekt 'proc_mixed_ests' nicht gefunden
-#> Error in eval(expr, envir, enclos): Objekt 'rel_diff_ests_tbl' nicht gefunden
-```
+<img src="mmrm-review-treatment-fev-1.png" alt="plot of chunk review-treatment-fev" width="100%" />
 
 The R procedures' estimates are very similar to those output by `PROC MIXED`,
 though `mmrm` and `gls` generate the estimates that are closest to those
@@ -479,13 +467,7 @@ arguments.
 
 ### BCVA Data
 
-
-```
-#> [Errno 32] Datenübergabe unterbrochen (broken pipe)
-#> Error in rel_diff(mmrm_ests): Objekt 'proc_mixed_ests' nicht gefunden
-#> Error in eval(expr, envir, enclos): Objekt 'rel_diff_ests_tbl' nicht gefunden
-#> Error in eval(expr, envir, enclos): Objekt 'rel_diff_ests_tbl' nicht gefunden
-```
+<img src="mmrm-review-treatment-bcva-1.png" alt="plot of chunk review-treatment-bcva" width="100%" /><img src="mmrm-review-treatment-bcva-2.png" alt="plot of chunk review-treatment-bcva" width="100%" />
 
 `mmrm`, `gls` and `lmer` produce estimates that are virtually identical to `PROC
 MIXED`'s, while `glmmTMB` does not. This is likely explained by `glmmTMB`'s
@@ -509,7 +491,6 @@ below.
 
 
 
-
 Table: Number of patients per visit
 
 |Missingness | VIS01| VIS02| VIS03| VIS04| VIS05| VIS06| VIS07| VIS08| VIS09| VIS10|
@@ -519,20 +500,10 @@ Table: Number of patients per visit
 |moderate    |   196|   198|   197|   189|   187|   173|   167|   155|   139|   117|
 |high        |   191|   192|   173|   166|   145|   130|   111|    90|    69|    49|
 
-
-
 The convergence rates of all implementations for stratified by missingness level
 is presented in the plot below.
 
-
-```
-#> Error in if (loc_frame && loc_frame <= nrow(parent_trace)) {: Fehlender Wert, wo TRUE/FALSE nötig ist
-#> Error in if (loc_frame && loc_frame <= nrow(parent_trace)) {: Fehlender Wert, wo TRUE/FALSE nötig ist
-#> Error in if (loc_frame && loc_frame <= nrow(parent_trace)) {: Fehlender Wert, wo TRUE/FALSE nötig ist
-#> Error in if (loc_frame && loc_frame <= nrow(parent_trace)) {: Fehlender Wert, wo TRUE/FALSE nötig ist
-#> Error in eval(expr, envir, enclos): Objekt 'cr_no_missing' nicht gefunden
-#> Error in eval(expr, envir, enclos): Objekt 'cr_all' nicht gefunden
-```
+<img src="mmrm-review-convergence-rate-missingness-1.png" alt="plot of chunk review-convergence-rate-missingness" width="100%" />
 
 `mmrm`, `gls`, and `PROC MIXED` are resilient to missingness, only exhibiting
 some convergence problems in the scenarios with the most missingness. These
@@ -561,21 +532,21 @@ variances, 95% coverage rates, type I error rates and type II error rates.
 
 
 ```
-#> R version 4.3.1 (2023-06-16)
+#> R version 4.2.2 Patched (2022-11-10 r83330)
 #> Platform: x86_64-pc-linux-gnu (64-bit)
-#> Running under: Ubuntu 20.04.6 LTS
+#> Running under: Ubuntu 20.04.5 LTS
 #>
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.9.0
 #> LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.9.0
 #>
 #> locale:
-#>  [1] LC_CTYPE=de_DE.UTF-8       LC_NUMERIC=C               LC_TIME=de_CH.UTF-8        LC_COLLATE=de_DE.UTF-8
-#>  [5] LC_MONETARY=de_CH.UTF-8    LC_MESSAGES=de_DE.UTF-8    LC_PAPER=de_CH.UTF-8       LC_NAME=C
-#>  [9] LC_ADDRESS=C               LC_TELEPHONE=C             LC_MEASUREMENT=de_CH.UTF-8 LC_IDENTIFICATION=C
-#>
-#> time zone: Europe/Luxembourg
-#> tzcode source: system (glibc)
+#>  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C
+#>  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8
+#>  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8
+#>  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C
+#>  [9] LC_ADDRESS=C               LC_TELEPHONE=C
+#> [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C
 #>
 #> attached base packages:
 #> [1] stats     graphics  grDevices utils     datasets  methods   base
