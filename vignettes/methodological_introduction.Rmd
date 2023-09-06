@@ -1,5 +1,5 @@
 ---
-title: "What are MMRMs? A brief introduction"
+title: "Mixed Models for Repeated Measures"
 package: mmrm
 bibliography: '`r system.file("REFERENCES.bib", package = "mmrm")`'
 csl: '`r system.file("jss.csl", package = "mmrm")`'
@@ -10,7 +10,7 @@ output:
           toc: true
           toc_float: true
 vignette: |
-  %\VignetteIndexEntry{What are MMRMs? A brief introduction}
+  %\VignetteIndexEntry{Mixed Models for Repeated Measures}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options:

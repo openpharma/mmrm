@@ -1,5 +1,5 @@
 ---
-title: "Introduction to `mmrm`"
+title: "Package Introduction"
 package: mmrm
 output:
   rmarkdown::html_document:
@@ -8,7 +8,7 @@ output:
           toc: true
           toc_float: true
 vignette: |
-  %\VignetteIndexEntry{Introduction to `mmrm`}
+  %\VignetteIndexEntry{Package Introduction}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options:
@@ -29,38 +29,38 @@ A minimal call of [`mmrm()`](https://openpharma.github.io/mmrm/main/reference/mm
 
 Here we fit a mmrm model with `us` (unstructured) covariance structure specified, as well as the defaults of `reml = TRUE` and `control = mmrm_control()`.
 
-```{r, child='.subsections/intro-getting_started.Rmd'}
+```{r, child='subsections/_intro-getting_started.Rmd'}
 ```
 
 # Common customizations
 
-```{r, child='.subsections/intro-customizations.Rmd'}
+```{r, child='subsections/_intro-customizations.Rmd'}
 ```
 
 # Extraction of model features
 
-```{r, child='.subsections/intro-model_features.Rmd'}
+```{r, child='subsections/_intro-model_features.Rmd'}
 ```
 
 # Lower level functions
 
-```{r, child='.subsections/intro-lower_level.Rmd'}
+```{r, child='subsections/_intro-lower_level.Rmd'}
 ```
 
 # Hypothesis testing
 
-```{r, child='.subsections/intro-hypothesis_testing.Rmd'}
+```{r, child='subsections/_intro-hypothesis_testing.Rmd'}
 ```
 
 # Tidymodels
 
-```{r, child='.subsections/intro-tidymodels.Rmd'}
+```{r, child='subsections/_intro-tidymodels.Rmd'}
 ```
 
 
 # Acknowledgments
 
-```{r, child='.subsections/intro-acknowledgments.Rmd'}
+```{r, child='subsections/_intro-acknowledgments.Rmd'}
 ```
 
 

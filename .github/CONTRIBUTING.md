@@ -1,3 +1,4 @@
+
 <!-- markdownlint-disable-file -->
 <!-- Please edit only the Rmd file, and then knit to obtain CONTRIBUTING.md -->
 
@@ -87,16 +88,18 @@ imports.
   `pkgdown` web pages. Note that this includes only exported objects. To
   make it look similar to the help page references, please here also use
   `function()` style.
-- `mmrm_review_methods.Rmd` is a large vignette and we precompute this vignette
-  to make the github actions faster. Run the script `vignettes/precompile.R`
-  to regenerate the precomputed vignette and subsequently update it in github.
-  Before every release we need to run this again.
-  Please note you need to install the package and then compile the vignette
-  because efficiency is better after installation to provide a fair comparison.
+
+- `mmrm_review_methods.Rmd` is a large vignette and we precompute this
+  vignette to make the GitHub actions faster. Run the script
+  `vignettes/precompile.R` to regenerate the precomputed vignette and
+  subsequently update it in GitHub. Before every release we need to run
+  this again. Please note you need to install the package and then
+  compile the vignette because efficiency is better after installation
+  to provide a fair comparison.
 
 ## Github conventions
 
-When using github to collaborate, the following conventions are needed:
+When using GitHub to collaborate, the following conventions are needed:
 
 1.  Github issues is for issues, feature requests, bugs. Before creating
     a issue, please make sure this issue has not been reported yet.
@@ -107,7 +110,7 @@ When using github to collaborate, the following conventions are needed:
       issue id.
     - The name of a branch should be of the form:
       `<issue_id>_<short_discription>`.
-3.  Add changes to the branch and push it to github.
+3.  Add changes to the branch and push it to GitHub.
     - Please use clear commit messages.
     - Please keep your changes focused on the issue. If there are
       independent changes, please separate it into another PR linking to
@@ -116,7 +119,7 @@ When using github to collaborate, the following conventions are needed:
     ready:
     - Functions are well documented.
     - Functions have corresponding unit tests.
-    - Changes pass all the github action checks.
+    - Changes pass all the GitHub action checks.
     - The checklist in the corresponding issue is completed.
 5.  Address all the comments you receive.
     - at least one approval is needed to merge.
@@ -149,7 +152,7 @@ install:
 The issues are categorized with several labels:
 
 | Label name         | Description                                                                                                                        |
-| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+|--------------------|------------------------------------------------------------------------------------------------------------------------------------|
 | `SPx`              | `SP` (story points) indicate complexity, and the larger the subsequent number, the more time consuming the issue is expected to be |
 | `priority`         | Issues with this label should be completed with higher priority                                                                    |
 | `good first issue` | Good choices for new team members                                                                                                  |
@@ -177,7 +180,7 @@ create a new test file, with a name prefix of “test-”.
 
 In each test case, use the following structure:
 
-```r
+``` r
 test_that("function_name does something as expected", {
   result <- function_name(input)
   expected <- hardcoded_result
@@ -296,7 +299,7 @@ There are several communication channels, please use appropriate ones.
 GitHub issues and pull requests are where implementations are discussed
 and reviewed. Feature requests, bugs, enhancements, technical
 implementations can be discussed here. When you have ideas that needs to
-be documented, it is better to have them in github.
+be documented, it is better to have them in GitHub.
 
 ### Slack
 

@@ -1,5 +1,5 @@
 ---
-title: "Implementations of MMRM: a comparison of what's available"
+title: "Comparison with other software"
 package: mmrm
 bibliography: mmrm_review_refs.bib
 output:
@@ -11,7 +11,7 @@ output:
           toc_depth: 2
 vignette: |
   %\VignetteEncoding{UTF-8}
-  %\VignetteIndexEntry{Implementations of MMRM: a comparison of what's available}
+  %\VignetteIndexEntry{Comparison with other software}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options:
   chunk_output_type: console
@@ -416,6 +416,7 @@ the FEV dataset 10 times. The convergence times are recorded for each replicate
 and are reported in the table below.
 
 
+
 Table: Comparison of convergence times: milliseconds
 
 |Implementation | Median| First Quartile| Third Quartile|
@@ -434,6 +435,12 @@ fastest procedure on average, however.
 
 The MMRM implementations are now applied to the BCVA dataset 10 times. The
 convergence times are presented below.
+
+
+```
+#> [Errno 32] Datenübergabe unterbrochen (broken pipe)
+```
+
 
 
 Table: Comparison of convergence times: seconds
@@ -458,7 +465,12 @@ is also reported.
 
 ### FEV Data
 
-<img src="mmrm-review-treatment-fev-1.png" alt="plot of chunk review-treatment-fev" width="100%" />
+
+```
+#> [Errno 32] Datenübergabe unterbrochen (broken pipe)
+#> Error in rel_diff(mmrm_ests): Objekt 'proc_mixed_ests' nicht gefunden
+#> Error in eval(expr, envir, enclos): Objekt 'rel_diff_ests_tbl' nicht gefunden
+```
 
 The R procedures' estimates are very similar to those output by `PROC MIXED`,
 though `mmrm` and `gls` generate the estimates that are closest to those
@@ -467,7 +479,13 @@ arguments.
 
 ### BCVA Data
 
-<img src="mmrm-review-treatment-bcva-1.png" alt="plot of chunk review-treatment-bcva" width="100%" /><img src="mmrm-review-treatment-bcva-2.png" alt="plot of chunk review-treatment-bcva" width="100%" />
+
+```
+#> [Errno 32] Datenübergabe unterbrochen (broken pipe)
+#> Error in rel_diff(mmrm_ests): Objekt 'proc_mixed_ests' nicht gefunden
+#> Error in eval(expr, envir, enclos): Objekt 'rel_diff_ests_tbl' nicht gefunden
+#> Error in eval(expr, envir, enclos): Objekt 'rel_diff_ests_tbl' nicht gefunden
+```
 
 `mmrm`, `gls` and `lmer` produce estimates that are virtually identical to `PROC
 MIXED`'s, while `glmmTMB` does not. This is likely explained by `glmmTMB`'s
@@ -491,6 +509,7 @@ below.
 
 
 
+
 Table: Number of patients per visit
 
 |Missingness | VIS01| VIS02| VIS03| VIS04| VIS05| VIS06| VIS07| VIS08| VIS09| VIS10|
@@ -500,10 +519,20 @@ Table: Number of patients per visit
 |moderate    |   196|   198|   197|   189|   187|   173|   167|   155|   139|   117|
 |high        |   191|   192|   173|   166|   145|   130|   111|    90|    69|    49|
 
+
+
 The convergence rates of all implementations for stratified by missingness level
 is presented in the plot below.
 
-<img src="mmrm-review-convergence-rate-missingness-1.png" alt="plot of chunk review-convergence-rate-missingness" width="100%" />
+
+```
+#> Error in if (loc_frame && loc_frame <= nrow(parent_trace)) {: Fehlender Wert, wo TRUE/FALSE nötig ist
+#> Error in if (loc_frame && loc_frame <= nrow(parent_trace)) {: Fehlender Wert, wo TRUE/FALSE nötig ist
+#> Error in if (loc_frame && loc_frame <= nrow(parent_trace)) {: Fehlender Wert, wo TRUE/FALSE nötig ist
+#> Error in if (loc_frame && loc_frame <= nrow(parent_trace)) {: Fehlender Wert, wo TRUE/FALSE nötig ist
+#> Error in eval(expr, envir, enclos): Objekt 'cr_no_missing' nicht gefunden
+#> Error in eval(expr, envir, enclos): Objekt 'cr_all' nicht gefunden
+```
 
 `mmrm`, `gls`, and `PROC MIXED` are resilient to missingness, only exhibiting
 some convergence problems in the scenarios with the most missingness. These
@@ -532,21 +561,21 @@ variances, 95% coverage rates, type I error rates and type II error rates.
 
 
 ```
-#> R version 4.2.2 Patched (2022-11-10 r83330)
+#> R version 4.3.1 (2023-06-16)
 #> Platform: x86_64-pc-linux-gnu (64-bit)
-#> Running under: Ubuntu 20.04.5 LTS
+#> Running under: Ubuntu 20.04.6 LTS
 #>
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.9.0
 #> LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.9.0
 #>
 #> locale:
-#>  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C
-#>  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8
-#>  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8
-#>  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C
-#>  [9] LC_ADDRESS=C               LC_TELEPHONE=C
-#> [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C
+#>  [1] LC_CTYPE=de_DE.UTF-8       LC_NUMERIC=C               LC_TIME=de_CH.UTF-8        LC_COLLATE=de_DE.UTF-8
+#>  [5] LC_MONETARY=de_CH.UTF-8    LC_MESSAGES=de_DE.UTF-8    LC_PAPER=de_CH.UTF-8       LC_NAME=C
+#>  [9] LC_ADDRESS=C               LC_TELEPHONE=C             LC_MEASUREMENT=de_CH.UTF-8 LC_IDENTIFICATION=C
+#>
+#> time zone: Europe/Luxembourg
+#> tzcode source: system (glibc)
 #>
 #> attached base packages:
 #> [1] stats     graphics  grDevices utils     datasets  methods   base
