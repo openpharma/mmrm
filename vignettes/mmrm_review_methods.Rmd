@@ -420,10 +420,10 @@ Table: Comparison of convergence times: milliseconds
 
 |Implementation | Median| First Quartile| Third Quartile|
 |:--------------|------:|--------------:|--------------:|
-|mmrm           |  51.73|          51.49|          52.79|
-|lmer           | 208.05|         206.38|         222.01|
-|gls            | 625.38|         608.06|         650.33|
-|glmmTMB        | 669.86|         655.51|         681.12|
+|mmrm           |  56.35|          56.13|          56.50|
+|lmer           | 239.62|         236.86|         248.69|
+|gls            | 702.58|         694.61|         711.56|
+|glmmTMB        | 765.78|         759.68|         771.40|
 
 It is clear from these results that `mmrm` converges significantly faster than
 other R functions. Though not demonstrated here, this is generally true
@@ -440,10 +440,10 @@ Table: Comparison of convergence times: seconds
 
 |Implementation | Median| First Quartile| Third Quartile|
 |:--------------|------:|--------------:|--------------:|
-|mmrm           |   3.10|           3.06|           3.15|
-|glmmTMB        |  17.15|          16.74|          17.68|
-|gls            | 135.02|         134.35|         143.26|
-|lmer           | 149.75|         145.14|         152.33|
+|mmrm           |   3.36|           3.33|           3.37|
+|glmmTMB        |  18.44|          18.33|          18.71|
+|gls            | 157.60|         156.60|         159.17|
+|lmer           | 162.83|         159.22|         166.29|
 
 We again find that `PROC MIXED` produces the fastest convergence times on
 average, followed closely by `mmrm`. The latter is the fastest of the R
@@ -554,16 +554,16 @@ variances, 95% coverage rates, type I error rates and type II error rates.
 #> other attached packages:
 #>  [1] ggplot2_3.4.1           emmeans_1.8.4-1         sasr_0.1.2
 #>  [4] glmmTMB_1.1.5           nlme_3.1-162            lme4_1.1-31
-#>  [7] Matrix_1.5-3            mmrm_0.2.2.9028         stringr_1.5.0
-#> [10] microbenchmark_1.4.9    purrr_1.0.1             dplyr_1.1.0
-#> [13] clusterGeneration_1.3.7 MASS_7.3-58.2           knitr_1.42
+#>  [7] Matrix_1.5-3            stringr_1.5.0           microbenchmark_1.4.9
+#> [10] purrr_1.0.1             dplyr_1.1.0             clusterGeneration_1.3.7
+#> [13] MASS_7.3-58.2           knitr_1.42              mmrm_0.2.2.9045
 #>
 #> loaded via a namespace (and not attached):
 #>  [1] reticulate_1.28     tidyselect_1.2.0    xfun_0.37
 #>  [4] TMB_1.9.2           splines_4.2.2       lattice_0.20-45
 #>  [7] colorspace_2.1-0    vctrs_0.5.2         generics_0.1.3
 #> [10] utf8_1.2.3          rlang_1.0.6         nloptr_2.0.3
-#> [13] pillar_1.8.1        withr_2.5.0         glue_1.6.2
+#> [13] pillar_1.8.1        glue_1.6.2          withr_2.5.0
 #> [16] lifecycle_1.0.3     munsell_0.5.0       gtable_0.3.1
 #> [19] mvtnorm_1.1-3       coda_0.19-4         evaluate_0.20
 #> [22] labeling_0.4.2      pbkrtest_0.5.2      parallel_4.2.2
@@ -573,7 +573,7 @@ variances, 95% coverage rates, type I error rates and type II error rates.
 #> [34] farver_2.1.1        png_0.1-8           stringi_1.7.12
 #> [37] numDeriv_2016.8-1.1 rbibutils_2.2.13    grid_4.2.2
 #> [40] Rdpack_2.4          cli_3.6.0           tools_4.2.2
-#> [43] magrittr_2.0.3      tibble_3.1.8        tidyr_1.3.0
+#> [43] magrittr_2.0.3      tibble_3.2.0        tidyr_1.3.0
 #> [46] pkgconfig_2.0.3     estimability_1.4.1  minqa_1.2.5
 #> [49] R6_2.5.1            boot_1.3-28.1       compiler_4.2.2
 ```
