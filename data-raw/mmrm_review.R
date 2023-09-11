@@ -48,15 +48,15 @@ df2sd_long <- function(data, name, block = 500, n_try = 10) {
 # FEV data: convergence time ----
 # load the data into SAS
 df2sd_long(fev_data, "fev_data")
-# fit PROC MIXED 10 times if a sascfg file exists
+# fit PROC GLIMMIX 10 times if a sascfg file exists
 fit_times <- sapply(
   seq_len(n_reps),
   function(x) {
     sas_code <- "
-    PROC MIXED DATA = fev_data cl method=reml;
+    PROC GLIMMIX DATA = fev_data;
       CLASS AVISIT(ref = 'VIS1') RACE(ref = 'Asian') ARMCD(ref = 'PBO') USUBJID;
       MODEL FEV1 = RACE ARMCD AVISIT ARMCD*AVISIT / ddfm=satterthwaite solution chisq;
-      REPEATED AVISIT / subject=USUBJID type=un r rcorr;
+      RANDOM AVISIT / subject=USUBJID type=un;
     RUN;
   "
 
@@ -72,9 +72,9 @@ fit_times <- sapply(
     fit_time * 1000
   }
 )
-# add PROC MIXED results to convergence results table
-proc_mixed_row_fev <- tibble(
-  expression = "PROC MIXED",
+# add PROC GLIMMIX results to convergence results table
+proc_glimmix_row_fev <- tibble(
+  expression = "PROC GLIMMIX",
   median = median(fit_times),
   lower = quantile(fit_times, probs = 0.25),
   upper = quantile(fit_times, probs = 0.75),
@@ -91,10 +91,10 @@ fit_times <- sapply(
   seq_len(n_reps),
   function(x) {
     sas_code <- "
-    PROC MIXED DATA = bcva_data cl method=reml;
+    PROC GLIMMIX DATA = bcva_data;
       CLASS AVISIT(ref = 'VIS01') RACE(ref = 'Asian') ARMCD(ref = 'CTL') USUBJID;
       MODEL BCVA_CHG = BCVA_BL RACE ARMCD AVISIT ARMCD*AVISIT / ddfm=satterthwaite solution chisq;
-      REPEATED AVISIT / subject=USUBJID type=un r rcorr;
+      RANDOM AVISIT / subject=USUBJID type=un;
     RUN;
   "
 
@@ -111,9 +111,9 @@ fit_times <- sapply(
   }
 )
 
-# add PROC MIXED results to convergence results table
-proc_mixed_row_bcva <- tibble(
-  expression = "PROC MIXED",
+# add PROC GLIMMIX results to convergence results table
+proc_glimmix_row_bcva <- tibble(
+  expression = "PROC GLIMMIX",
   median = median(fit_times),
   lower = quantile(fit_times, probs = 0.25),
   upper = quantile(fit_times, probs = 0.75),
@@ -123,10 +123,10 @@ proc_mixed_row_bcva <- tibble(
 # estimations fev ----
 
 sas_code <- "ODS OUTPUT LSMEANS = lsmeans_out DIFFS = diffs_out;
-  PROC MIXED DATA = fev_data cl method=reml;
+  PROC GLIMMIX DATA = fev_data;
     CLASS AVISIT(ref = 'VIS1') RACE(ref = 'Asian') ARMCD(ref = 'PBO') USUBJID;
     MODEL FEV1 = ARMCD AVISIT ARMCD*AVISIT RACE / ddfm=satterthwaite solution chisq;
-    REPEATED AVISIT / subject=USUBJID type=un r rcorr;
+    RANDOM AVISIT / subject=USUBJID type=un;
     LSMEANS ARMCD*AVISIT / pdiff slice=AVISIT cl alpha = 0.05 OBSMARGINS;
   RUN;
 "
@@ -143,16 +143,16 @@ ates_df <- sd2df("diffs_out") %>%
   dplyr::select(contrast, Estimate, StdErr, DF, tValue, Lower, Upper) %>%
   dplyr::arrange(contrast)
 
-proc_mixed_ests_fev <- ates_df$Estimate
+proc_glimmix_ests_fev <- ates_df$Estimate
 
 
 # estimations bcva ----
 
 sas_code <- "ODS OUTPUT LSMEANS = lsmeans_out DIFFS = diffs_out;
-  PROC MIXED DATA = bcva_data cl method=reml;
+  PROC GLIMMIX DATA = bcva_data;
     CLASS AVISIT(ref = 'VIS01') RACE(ref = 'Asian') ARMCD(ref = 'CTL') USUBJID;
     MODEL BCVA_CHG = BCVA_BL ARMCD AVISIT ARMCD*AVISIT RACE / ddfm=satterthwaite solution chisq;
-    REPEATED AVISIT / subject=USUBJID type=un r rcorr;
+    RANDOM AVISIT / subject=USUBJID type=un;
     LSMEANS ARMCD*AVISIT / pdiff slice=AVISIT cl alpha = 0.05 OBSMARGINS;
   RUN;
 "
@@ -169,7 +169,7 @@ ates_df <- sd2df("diffs_out") %>%
   dplyr::select(contrast, Estimate, StdErr, DF, tValue, Lower, Upper) %>%
   dplyr::arrange(contrast)
 
-proc_mixed_ests_bcva <- ates_df$Estimate
+proc_glimmix_ests_bcva <- ates_df$Estimate
 
 # DGP ----
 # helper function for generating covariates
@@ -356,12 +356,12 @@ get_convergence_rates_sas <- function(missingness_level) {
     get_dgp_data(missing_type = missingness_level),
     function(data) {
       ## SAS
-      # compute marginal estimates from PROC MIXED
+      # compute marginal estimates from PROC GLIMMIX
       # load the data into SAS
       df2sd_long(data, "miss_df")
 
       sas_code <- "ODS OUTPUT ConvergenceStatus = conv_status;
-        PROC MIXED DATA = miss_df cl method=reml;
+        PROC GLIMMIX DATA = miss_df cl method=reml;
           CLASS AVISIT(ref = 'VIS01') RACE(ref = 'Asian') ARMCD(ref = 'CTL') USUBJID;
           MODEL BCVA_CHG = BCVA_BL ARMCD AVISIT ARMCD*AVISIT RACE / ddfm=satterthwaite solution chisq;
           REPEATED AVISIT / subject=USUBJID type=un r rcorr;
@@ -377,7 +377,7 @@ get_convergence_rates_sas <- function(missingness_level) {
 
       ## assemble tibble row
       results <- tibble(
-        method = "PROC MIXED",
+        method = "PROC GLIMMIX",
         converged = sas_converged
       )
       return(results)
@@ -539,10 +539,10 @@ rel_diff_ests_tbl_fev <- tibble(
   estimator = rep(c("mmrm", "lmer", "gls", "glmmTMB"), each = 4),
   converged = rep(c(TRUE, TRUE, TRUE, TRUE), each = 4),
   rel_diff = c(
-    rel_diff(mmrm_ests, proc_mixed_ests_fev),
-    rel_diff(lmer_ests, proc_mixed_ests_fev),
-    rel_diff(gls_ests, proc_mixed_ests_fev),
-    rel_diff(glmmtmb_ests, proc_mixed_ests_fev)
+    rel_diff(mmrm_ests, proc_glimmix_ests_fev),
+    rel_diff(lmer_ests, proc_glimmix_ests_fev),
+    rel_diff(gls_ests, proc_glimmix_ests_fev),
+    rel_diff(glmmtmb_ests, proc_glimmix_ests_fev)
   )
 ) %>%
   mutate(converged = factor(converged, levels = c(TRUE, FALSE)))
@@ -616,10 +616,10 @@ rel_diff_ests_tbl_bcva <- tibble(
   estimator = rep(c("mmrm", "lmer", "gls", "glmmTMB"), each = 10),
   converged = rep(c(TRUE, FALSE, TRUE, FALSE), each = 10),
   rel_diff = c(
-    rel_diff(mmrm_ests, proc_mixed_ests_bcva),
-    rel_diff(lmer_ests, proc_mixed_ests_bcva),
-    rel_diff(gls_ests, proc_mixed_ests_bcva),
-    rel_diff(glmmtmb_ests, proc_mixed_ests_bcva)
+    rel_diff(mmrm_ests, proc_glimmix_ests_bcva),
+    rel_diff(lmer_ests, proc_glimmix_ests_bcva),
+    rel_diff(gls_ests, proc_glimmix_ests_bcva),
+    rel_diff(glmmtmb_ests, proc_glimmix_ests_bcva)
   )
 ) %>%
   mutate(converged = factor(converged, levels = c(TRUE, FALSE)))
@@ -708,8 +708,8 @@ cr_all <- bind_rows(
 )
 
 cached_mmrm_results <- list(
-  conv_time_fev = rbind(proc_mixed_row_fev, partial_conv_time_tbl_fev),
-  conv_time_bcva = rbind(proc_mixed_row_bcva, partial_conv_time_tbl_bcva),
+  conv_time_fev = rbind(proc_glimmix_row_fev, partial_conv_time_tbl_fev),
+  conv_time_bcva = rbind(proc_glimmix_row_bcva, partial_conv_time_tbl_bcva),
   rel_diff_ests_tbl_fev = rel_diff_ests_tbl_fev,
   rel_diff_ests_tbl_bcva = rel_diff_ests_tbl_bcva,
   conv_rate = rbind(cr_all_sas, cr_all),
