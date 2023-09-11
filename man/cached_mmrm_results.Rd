@@ -24,4 +24,10 @@ cached_mmrm_results
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
+\note{
+The cached data for comparison is used for the vignettes generation.
+Please make sure this data is refreshed before package release.
+Plase make sure to install \code{mmrm} package instead of \code{devtools::load_all()}
+before running the simulation.
+}
 \keyword{internal}

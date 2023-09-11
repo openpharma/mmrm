@@ -47,6 +47,11 @@
 #'
 #' @description `r lifecycle::badge("experimental")`
 #'
+#' @note The cached data for comparison is used for the vignettes generation.
+#' Please make sure this data is refreshed before package release.
+#' Plase make sure to install `mmrm` package instead of `devtools::load_all()`
+#' before running the simulation.
+#'
 #' @format A `list` with following elements:
 #'   - `conv_time_fev`: Convergence time on FEV data.
 #'   - `conv_time_bcva`: Convergence time on BCVA data.
