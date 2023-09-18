@@ -26,8 +26,9 @@ cached_mmrm_results
 }
 \note{
 The cached data for comparison is used for the vignettes generation.
-Please make sure this data is refreshed before package release.
-Plase make sure to install \code{mmrm} package instead of \code{devtools::load_all()}
-before running the simulation.
+Please make sure that this data is refreshed before each package release
+by running the script \code{data-raw/mmrm_review.R}.
+Please make sure to install the \code{mmrm} package instead of using
+\code{devtools::load_all()} before running the script to achieve accurate timings.
 }
 \keyword{internal}

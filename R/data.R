@@ -48,9 +48,10 @@
 #' @description `r lifecycle::badge("experimental")`
 #'
 #' @note The cached data for comparison is used for the vignettes generation.
-#' Please make sure this data is refreshed before package release.
-#' Plase make sure to install `mmrm` package instead of `devtools::load_all()`
-#' before running the simulation.
+#' Please make sure that this data is refreshed before each package release
+#' by running the script `data-raw/mmrm_review.R`.
+#' Please make sure to install the `mmrm` package instead of using
+#' `devtools::load_all()` before running the script to achieve accurate timings.
 #'
 #' @format A `list` with following elements:
 #'   - `conv_time_fev`: Convergence time on FEV data.
