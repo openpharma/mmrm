@@ -135,7 +135,7 @@ sas_code <- "ODS OUTPUT LSMEANS = lsmeans_out DIFFS = diffs_out;
 sas_result <- run_sas(sas_code)
 
 ## extract the ATEs across visits
-ates_df <- sd2df("diffs_out") %>%
+ates_df <- sd2df("diffs_out", "work") %>%
   dplyr::filter(AVISIT == `_AVISIT`) %>%
   dplyr::mutate(
     contrast = paste0(AVISIT, ": ", ARMCD, " - ", `_ARMCD`)
@@ -161,7 +161,7 @@ sas_code <- "ODS OUTPUT LSMEANS = lsmeans_out DIFFS = diffs_out;
 sas_result <- run_sas(sas_code)
 
 ## extract the ATEs across visits
-ates_df <- sd2df("diffs_out") %>%
+ates_df <- sd2df("diffs_out", "work") %>%
   dplyr::filter(AVISIT == `_AVISIT`) %>%
   dplyr::mutate(
     contrast = paste0(AVISIT, ": ", ARMCD, " - ", `_ARMCD`)
@@ -361,19 +361,17 @@ get_convergence_rates_sas <- function(missingness_level) {
       df2sd_long(data, "miss_df")
 
       sas_code <- "ODS OUTPUT ConvergenceStatus = conv_status;
-        PROC GLIMMIX DATA = miss_df cl method=reml;
+        PROC GLIMMIX DATA = miss_df;
           CLASS AVISIT(ref = 'VIS01') RACE(ref = 'Asian') ARMCD(ref = 'CTL') USUBJID;
           MODEL BCVA_CHG = BCVA_BL ARMCD AVISIT ARMCD*AVISIT RACE / ddfm=satterthwaite solution chisq;
-          REPEATED AVISIT / subject=USUBJID type=un r rcorr;
+          RANDOM AVISIT / subject=USUBJID type=un;
         RUN;
       "
-
       # generate the SAS output
       sas_result <- run_sas(sas_code)
-
       ## extract the convergence status
-      conv_status_df <- sasr::sd2df("conv_status")
-      sas_converged <- conv_status_df$Reason == "Convergence criteria met."
+      conv_status_df <- sd2df("conv_status", "work")
+      sas_converged <- conv_status_df$Status == 0
 
       ## assemble tibble row
       results <- tibble(
