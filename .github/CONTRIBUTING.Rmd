@@ -61,12 +61,8 @@ In package `mmrm`, we follow the following convention in package imports.
 - For references to other help pages use the corresponding markdown syntax, e.g. `[function()]` to reference other functions.
 - Exported objects must be included in the `_pkgdown.yml` file to be populated on the `pkgdown` [website](https://openpharma.github.io/mmrm/main/reference/index.html).
 - In vignettes, you cannot directly reference help pages but only `pkgdown` web pages. Note that this includes only exported objects. To make it look similar to the help page references, please here also use `function()` style.
-- `mmrm_review_methods.Rmd` is a large vignette and we precompute this vignette
-  to make the GitHub actions faster. Run the script `vignettes/precompile.R`
-  to regenerate the precomputed vignette and subsequently update it in GitHub.
-  Before every release we need to run this again.
-  Please note you need to install the package and then compile the vignette
-  because efficiency is better after installation to provide a fair comparison.
+- `mmrm_review_methods.Rmd` is a large vignette and we cache the comparison results in `cached_mmrm_results`. Before every release we need to update the data with the script `data-raw/mmrm_review.R`.
+  Please note you need to install the package and then compile the vignette, because efficiency is better after installation to provide a fair comparison.  
   
 ## Github conventions
 

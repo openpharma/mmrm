@@ -42,3 +42,24 @@
 #'
 #' @source This is an artificial dataset.
 "bcva_data"
+
+#' Cache Data for `mmrm` Model Comparison
+#'
+#' @description `r lifecycle::badge("experimental")`
+#'
+#' @note The cached data for comparison is used for the vignettes generation.
+#' Please make sure this data is refreshed before package release.
+#' Plase make sure to install `mmrm` package instead of `devtools::load_all()`
+#' before running the simulation.
+#'
+#' @format A `list` with following elements:
+#'   - `conv_time_fev`: Convergence time on FEV data.
+#'   - `conv_time_bcva`: Convergence time on BCVA data.
+#'   - `rel_diff_ests_tbl_fev`: Relative difference in estimates on FEV data.
+#'   - `rel_diff_ests_tbl_bcva`: Relative difference in estimates on BCVA data.
+#'   - `conv_rate`: Convergence rate on data with different missing levels.
+#'   - `df_missingness`: Summary of missingness on simulated data.
+#'
+#' @keywords internal
+#' @source This is created based on simulations on FEV data and BCVA data.
+"cached_mmrm_results"
