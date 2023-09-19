@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="mmrm">
-<title>Introduction to `mmrm` • mmrm</title>
+<title>Package Introduction • mmrm</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -14,12 +14,12 @@
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Introduction to `mmrm`">
+<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Package Introduction">
 <meta property="og:description" content="mmrm">
-<meta property="og:image" content="https://openpharma.github.io/mmrm/main/logo.svg">
+<meta property="og:image" content="https://openpharma.github.io/mmrm/logo.svg">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -39,7 +39,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,12 +54,29 @@
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/algorithm.html">Details of the Model Fitting in `mmrm`</a>
-    <a class="dropdown-item" href="../articles/covariance.html">Covariance Structures in `mmrm`</a>
-    <a class="dropdown-item" href="../articles/introduction.html">Introduction to `mmrm`</a>
-    <a class="dropdown-item" href="../articles/kenward.html">Details of the Kenward-Roger calculations</a>
+    <h6 class="dropdown-header" data-toc-skip>Introduction</h6>
+    <a class="dropdown-item" href="../articles/introduction.html">Package Introduction</a>
+    <a class="dropdown-item" href="../articles/methodological_introduction.html">Mixed Models for Repeated Measures</a>
+    <a class="dropdown-item" href="../articles/mmrm_review_methods.html">Comparison with other software</a>
+    <div class="dropdown-divider"></div>
+    <h6 class="dropdown-header" data-toc-skip>Covariance Structures</h6>
+    <a class="dropdown-item" href="../articles/covariance.html">Covariance Structures</a>
+    <div class="dropdown-divider"></div>
+    <h6 class="dropdown-header" data-toc-skip>Degrees of Freedom</h6>
+    <a class="dropdown-item" href="../articles/between_within.html">Between-Within</a>
+    <a class="dropdown-item" href="../articles/kenward.html">Kenward-Roger</a>
+    <a class="dropdown-item" href="../articles/satterthwaite.html">Satterthwaite</a>
+    <div class="dropdown-divider"></div>
+    <h6 class="dropdown-header" data-toc-skip>Coefficient Covariance</h6>
+    <a class="dropdown-item" href="../articles/coef_vcov.html">Coefficients Covariance Matrix Adjustment</a>
+    <a class="dropdown-item" href="../articles/empirical_wls.html">Details of Weighted Least Square Empirical Covariance</a>
+    <div class="dropdown-divider"></div>
+    <h6 class="dropdown-header" data-toc-skip>Algorithm Details</h6>
+    <a class="dropdown-item" href="../articles/algorithm.html">Model Fitting Algorithm</a>
+    <a class="dropdown-item" href="../articles/predict.html">Prediction and Simulation</a>
+    <div class="dropdown-divider"></div>
+    <h6 class="dropdown-header" data-toc-skip>Developers</h6>
     <a class="dropdown-item" href="../articles/package_structure.html">Package Structure</a>
-    <a class="dropdown-item" href="../articles/satterthwaite.html">Details of the Satterthwaite calculations</a>
   </div>
 </li>
 <li class="nav-item">
@@ -71,8 +88,16 @@
           aria-expanded="false" aria-haspopup="true"
           id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
+<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.0">v0.3.0</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.2.2">v0.2.2</a> </div></li>
 <!-- end dropdown for versions -->
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-reports">Reports</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-reports">
+    <a class="dropdown-item" href="../coverage-report/">Coverage report</a>
+    <a class="dropdown-item" href="../unit-test-report/">Unit test report</a>
+  </div>
+</li>
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -97,7 +122,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.svg" class="logo" alt=""><h1>Introduction to `mmrm`</h1>
+      <img src="../logo.svg" class="logo" alt=""><h1>Package Introduction</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/HEAD/vignettes/introduction.Rmd" class="external-link"><code>vignettes/introduction.Rmd</code></a></small>
@@ -112,15 +137,22 @@
 <p>A minimal call of <a href="https://openpharma.github.io/mmrm/main/reference/mmrm.html"><code>mmrm()</code></a>,
 consisting of only formula and data arguments will produce an object of
 class <code>mmrm</code>, <code>mmrm_fit</code>, and
-<code>mmrm_tmb</code>. Here we fit a mmrm model with <code>us</code>
-(unstructured) covariance structure specified, as well as the defaults
-of <code>reml = TRUE</code> and
-<code>control = mmrm_control()</code>.</p>
+<code>mmrm_tmb</code>.</p>
+<p>Here we fit a mmrm model with <code>us</code> (unstructured)
+covariance structure specified, as well as the defaults of
+<code>reml = TRUE</code> and <code>control = mmrm_control()</code>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
-<span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://openpharma.github.io/mmrm/">mmrm</a></span><span class="op">)</span></span>
+<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
+<span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">SEX</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">fev_data</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+<p>The code specifies an MMRM with the given covariates and an
+unstructured covariance matrix for the timepoints (also called visits in
+the clinical trial context, here given by <code>AVISIT</code>) within
+the subjects (here <code>USUBJID</code>). While by default this uses
+restricted maximum likelihood (REML), it is also possible to use ML, see
+<code><a href="../reference/mmrm.html">?mmrm</a></code>.</p>
 <p>Printing the object will show you output which should be familiar to
 anyone who has used any popular modeling functions such as
 <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">stats::lm()</a></code>, <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">stats::glm()</a></code>,
@@ -129,32 +161,87 @@ this print out we see the function call, the data used, the covariance
 structure with number of variance parameters, as well as the likelihood
 method, and model deviance achieved. Additionally the user is provided a
 printout of the estimated coefficients and the model convergence
-information.</p>
+information:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">fit</span></span>
 <span><span class="co">#&gt; mmrm fit</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Formula:     FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID)</span></span>
+<span><span class="co">#&gt; Formula:     FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)</span></span>
 <span><span class="co">#&gt; Data:        fev_data (used 537 observations from 197 subjects with maximum 4 </span></span>
 <span><span class="co">#&gt; timepoints)</span></span>
 <span><span class="co">#&gt; Covariance:  unstructured (10 variance parameters)</span></span>
-<span><span class="co">#&gt; Method:      REML</span></span>
-<span><span class="co">#&gt; Deviance:    3387.373</span></span>
+<span><span class="co">#&gt; Inference:   REML</span></span>
+<span><span class="co">#&gt; Deviance:    3386.45</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients: </span></span>
 <span><span class="co">#&gt;                   (Intercept) RACEBlack or African American </span></span>
-<span><span class="co">#&gt;                   30.96769899                    1.50464863 </span></span>
-<span><span class="co">#&gt;                     RACEWhite                      ARMCDTRT </span></span>
-<span><span class="co">#&gt;                    5.61309565                    3.77555734 </span></span>
-<span><span class="co">#&gt;                    AVISITVIS2                    AVISITVIS3 </span></span>
-<span><span class="co">#&gt;                    4.82858803                   10.33317002 </span></span>
-<span><span class="co">#&gt;                    AVISITVIS4           ARMCDTRT:AVISITVIS2 </span></span>
-<span><span class="co">#&gt;                   15.05255715                   -0.01737409 </span></span>
-<span><span class="co">#&gt;           ARMCDTRT:AVISITVIS3           ARMCDTRT:AVISITVIS4 </span></span>
-<span><span class="co">#&gt;                   -0.66753189                    0.63094392 </span></span>
+<span><span class="co">#&gt;                   30.77747548                    1.53049977 </span></span>
+<span><span class="co">#&gt;                     RACEWhite                     SEXFemale </span></span>
+<span><span class="co">#&gt;                    5.64356535                    0.32606192 </span></span>
+<span><span class="co">#&gt;                      ARMCDTRT                    AVISITVIS2 </span></span>
+<span><span class="co">#&gt;                    3.77423004                    4.83958845 </span></span>
+<span><span class="co">#&gt;                    AVISITVIS3                    AVISITVIS4 </span></span>
+<span><span class="co">#&gt;                   10.34211288                   15.05389826 </span></span>
+<span><span class="co">#&gt;           ARMCDTRT:AVISITVIS2           ARMCDTRT:AVISITVIS3 </span></span>
+<span><span class="co">#&gt;                   -0.04192625                   -0.69368537 </span></span>
+<span><span class="co">#&gt;           ARMCDTRT:AVISITVIS4 </span></span>
+<span><span class="co">#&gt;                    0.62422703 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Model Inference Optimization:</span></span>
 <span><span class="co">#&gt; Converged with code 0 and message: convergence: rel_reduction_of_f &lt;= factr*epsmch</span></span></code></pre></div>
+<p>The <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> method then provides the coefficients
+table with Satterthwaite degrees of freedom as well as the covariance
+matrix estimate:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
+<span><span class="co">#&gt; mmrm fit</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Formula:     FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)</span></span>
+<span><span class="co">#&gt; Data:        fev_data (used 537 observations from 197 subjects with maximum 4 </span></span>
+<span><span class="co">#&gt; timepoints)</span></span>
+<span><span class="co">#&gt; Covariance:  unstructured (10 variance parameters)</span></span>
+<span><span class="co">#&gt; Method:      Satterthwaite</span></span>
+<span><span class="co">#&gt; Vcov Method: Asymptotic</span></span>
+<span><span class="co">#&gt; Inference:   REML</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Model selection criteria:</span></span>
+<span><span class="co">#&gt;      AIC      BIC   logLik deviance </span></span>
+<span><span class="co">#&gt;   3406.4   3439.3  -1693.2   3386.4 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients: </span></span>
+<span><span class="co">#&gt;                                Estimate Std. Error        df t value Pr(&gt;|t|)</span></span>
+<span><span class="co">#&gt; (Intercept)                    30.77748    0.88656 218.80000  34.715  &lt; 2e-16</span></span>
+<span><span class="co">#&gt; RACEBlack or African American   1.53050    0.62448 168.67000   2.451 0.015272</span></span>
+<span><span class="co">#&gt; RACEWhite                       5.64357    0.66561 157.14000   8.479 1.56e-14</span></span>
+<span><span class="co">#&gt; SEXFemale                       0.32606    0.53195 166.13000   0.613 0.540744</span></span>
+<span><span class="co">#&gt; ARMCDTRT                        3.77423    1.07415 145.55000   3.514 0.000589</span></span>
+<span><span class="co">#&gt; AVISITVIS2                      4.83959    0.80172 143.88000   6.037 1.27e-08</span></span>
+<span><span class="co">#&gt; AVISITVIS3                     10.34211    0.82269 155.56000  12.571  &lt; 2e-16</span></span>
+<span><span class="co">#&gt; AVISITVIS4                     15.05390    1.31281 138.47000  11.467  &lt; 2e-16</span></span>
+<span><span class="co">#&gt; ARMCDTRT:AVISITVIS2            -0.04193    1.12932 138.56000  -0.037 0.970439</span></span>
+<span><span class="co">#&gt; ARMCDTRT:AVISITVIS3            -0.69369    1.18765 158.17000  -0.584 0.559996</span></span>
+<span><span class="co">#&gt; ARMCDTRT:AVISITVIS4             0.62423    1.85085 129.72000   0.337 0.736463</span></span>
+<span><span class="co">#&gt;                                  </span></span>
+<span><span class="co">#&gt; (Intercept)                   ***</span></span>
+<span><span class="co">#&gt; RACEBlack or African American *  </span></span>
+<span><span class="co">#&gt; RACEWhite                     ***</span></span>
+<span><span class="co">#&gt; SEXFemale                        </span></span>
+<span><span class="co">#&gt; ARMCDTRT                      ***</span></span>
+<span><span class="co">#&gt; AVISITVIS2                    ***</span></span>
+<span><span class="co">#&gt; AVISITVIS3                    ***</span></span>
+<span><span class="co">#&gt; AVISITVIS4                    ***</span></span>
+<span><span class="co">#&gt; ARMCDTRT:AVISITVIS2              </span></span>
+<span><span class="co">#&gt; ARMCDTRT:AVISITVIS3              </span></span>
+<span><span class="co">#&gt; ARMCDTRT:AVISITVIS4              </span></span>
+<span><span class="co">#&gt; ---</span></span>
+<span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Covariance estimate:</span></span>
+<span><span class="co">#&gt;         VIS1    VIS2    VIS3    VIS4</span></span>
+<span><span class="co">#&gt; VIS1 40.5537 14.3960  4.9747 13.3867</span></span>
+<span><span class="co">#&gt; VIS2 14.3960 26.5715  2.7855  7.4745</span></span>
+<span><span class="co">#&gt; VIS3  4.9747  2.7855 14.8979  0.9082</span></span>
+<span><span class="co">#&gt; VIS4 13.3867  7.4745  0.9082 95.5568</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="common-customizations">Common customizations<a class="anchor" aria-label="anchor" href="#common-customizations"></a>
@@ -173,7 +260,7 @@ Unix systems for trying several optimizers in parallel, provide a vector
 of starting parameter values, decide the action to be taken when the
 defined design matrix is singular, not drop unobserved visit levels. For
 example:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/mmrm_control.html">mmrm_control</a></span><span class="op">(</span></span>
 <span>  method <span class="op">=</span> <span class="st">"Kenward-Roger"</span>,</span>
 <span>  optimizer <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"L-BFGS-B"</span>, <span class="st">"BFGS"</span><span class="op">)</span>,</span>
@@ -192,7 +279,7 @@ this below.</p>
 </h3>
 <p>Users can specify if REML should be used (default) or if ML should be
 used in optimization.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit_ml</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">fev_data</span>,</span>
@@ -205,7 +292,7 @@ used in optimization.</p>
 <span><span class="co">#&gt; Data:        fev_data (used 537 observations from 197 subjects with maximum 4 </span></span>
 <span><span class="co">#&gt; timepoints)</span></span>
 <span><span class="co">#&gt; Covariance:  unstructured (10 variance parameters)</span></span>
-<span><span class="co">#&gt; Method:      ML</span></span>
+<span><span class="co">#&gt; Inference:   ML</span></span>
 <span><span class="co">#&gt; Deviance:    3397.934</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients: </span></span>
@@ -229,14 +316,14 @@ used in optimization.</p>
 <p>Users can specify which optimizer should be used, changing from the
 default of four optimizers, which starts with <code>L-BFGS-B</code> and
 proceeds through the other choices if optimization fails to converge.
-Other choices are <code>BFGS</code>, <code>CG</code>, and
-<code>nlminb</code>.</p>
+Other choices are <code>BFGS</code>, <code>CG</code>,
+<code>nlminb</code> and other user-defined custom optimizers.</p>
 <p><code>L-BFGS-B</code>, <code>BFGS</code> and <code>CG</code> are all
 implemented with <code><a href="https://rdrr.io/r/stats/optim.html" class="external-link">stats::optim()</a></code> and the Hessian is not
 used, while <code>nlminb</code> is using <code><a href="https://rdrr.io/r/stats/nlminb.html" class="external-link">stats::nlminb()</a></code>
 which in turn uses both the gradient and the Hessian (by default but can
 be switch off) for the optimization.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit_opt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">fev_data</span>,</span>
@@ -249,20 +336,20 @@ be switch off) for the optimization.</p>
 <span><span class="co">#&gt; Data:        fev_data (used 537 observations from 197 subjects with maximum 4 </span></span>
 <span><span class="co">#&gt; timepoints)</span></span>
 <span><span class="co">#&gt; Covariance:  unstructured (10 variance parameters)</span></span>
-<span><span class="co">#&gt; Method:      REML</span></span>
+<span><span class="co">#&gt; Inference:   REML</span></span>
 <span><span class="co">#&gt; Deviance:    3387.373</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients: </span></span>
 <span><span class="co">#&gt;                   (Intercept) RACEBlack or African American </span></span>
-<span><span class="co">#&gt;                   30.96769004                    1.50467449 </span></span>
+<span><span class="co">#&gt;                    30.9676902                     1.5046744 </span></span>
 <span><span class="co">#&gt;                     RACEWhite                      ARMCDTRT </span></span>
-<span><span class="co">#&gt;                    5.61310489                    3.77554263 </span></span>
+<span><span class="co">#&gt;                     5.6131048                     3.7755423 </span></span>
 <span><span class="co">#&gt;                    AVISITVIS2                    AVISITVIS3 </span></span>
-<span><span class="co">#&gt;                    4.82858562                   10.33317692 </span></span>
+<span><span class="co">#&gt;                     4.8285855                    10.3331770 </span></span>
 <span><span class="co">#&gt;                    AVISITVIS4           ARMCDTRT:AVISITVIS2 </span></span>
-<span><span class="co">#&gt;                   15.05257072                   -0.01735093 </span></span>
+<span><span class="co">#&gt;                    15.0525706                    -0.0173504 </span></span>
 <span><span class="co">#&gt;           ARMCDTRT:AVISITVIS3           ARMCDTRT:AVISITVIS4 </span></span>
-<span><span class="co">#&gt;                   -0.66751927                    0.63095827 </span></span>
+<span><span class="co">#&gt;                    -0.6675190                     0.6309586 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Model Inference Optimization:</span></span>
 <span><span class="co">#&gt; Converged with code 0 and message:</span></span></code></pre></div>
@@ -274,7 +361,7 @@ be switch off) for the optimization.</p>
 continuously developed. For a complete list and description please visit
 the <a href="covariance.html">covariance vignette</a>. Below we see the
 function call for homogeneous compound symmetry (<code>cs</code>).</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit_cs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">cs</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">fev_data</span>,</span>
@@ -287,7 +374,7 @@ function call for homogeneous compound symmetry (<code>cs</code>).</p>
 <span><span class="co">#&gt; Data:        fev_data (used 537 observations from 197 subjects with maximum 4 </span></span>
 <span><span class="co">#&gt; timepoints)</span></span>
 <span><span class="co">#&gt; Covariance:  compound symmetry (2 variance parameters)</span></span>
-<span><span class="co">#&gt; Method:      ML</span></span>
+<span><span class="co">#&gt; Inference:   ML</span></span>
 <span><span class="co">#&gt; Deviance:    3536.989</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients: </span></span>
@@ -308,14 +395,15 @@ function call for homogeneous compound symmetry (<code>cs</code>).</p>
 cannot be time points with multiple observations for any subject. The
 rationale is that these observations would need to be correlated, but it
 is not possible within the currently implemented covariance structure
-framework to do that correctly.</p>
+framework to do that correctly. Moreover, for non-spatial covariance
+structures, the time variable must be coded as a factor.</p>
 </div>
 <div class="section level3">
 <h3 id="weighting">Weighting<a class="anchor" aria-label="anchor" href="#weighting"></a>
 </h3>
 <p>Users can perform weighted MMRM by specifying a numeric vector
 <code>weights</code> with positive values.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit_wt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">fev_data</span>,</span>
@@ -329,7 +417,7 @@ framework to do that correctly.</p>
 <span><span class="co">#&gt; timepoints)</span></span>
 <span><span class="co">#&gt; Weights:     fev_data$WEIGHT</span></span>
 <span><span class="co">#&gt; Covariance:  unstructured (10 variance parameters)</span></span>
-<span><span class="co">#&gt; Method:      REML</span></span>
+<span><span class="co">#&gt; Inference:   REML</span></span>
 <span><span class="co">#&gt; Deviance:    3476.526</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients: </span></span>
@@ -358,7 +446,7 @@ vary across groups. We use the form
 variable.</p>
 <p>Here is an example of how we use <code>ARMCD</code> as group
 variable.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit_cs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">cs</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">ARMCD</span> <span class="op">/</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">fev_data</span>,</span>
@@ -384,12 +472,20 @@ different <code>ARMCD</code> groups.</p>
 <div class="section level3">
 <h3 id="adjustment-method">Adjustment Method<a class="anchor" aria-label="anchor" href="#adjustment-method"></a>
 </h3>
-<p>Both Satterthwaite and Kenward-Roger adjustment methods are
-available. The default is Satterthwaite adjustment of the degrees of
-freedom. To use Kenward-Roger adjustment of the degrees of freedom as
-well as the coefficients covariance matrix, use the <code>method</code>
+<p>In additional to the residual and Between-Within degrees of freedom,
+both Satterthwaite and Kenward-Roger adjustment methods are available.
+The default is Satterthwaite adjustment of the degrees of freedom. To
+use e.g. the Kenward-Roger adjustment of the degrees of freedom as well
+as the coefficients covariance matrix, use the <code>method</code>
 argument:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<p>A list of all allowed <code>method</code> is</p>
+<ol style="list-style-type: decimal">
+<li>“Kenward-Roger”</li>
+<li>“Satterthwaite”</li>
+<li>“Residual”</li>
+<li>“Between-Within”</li>
+</ol>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit_kr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">fev_data</span>,</span>
@@ -402,7 +498,7 @@ result of the fitted model (because the initial model fit is not
 affected by the choice of the adjustment method), looking at the
 <code>summary</code> we see the method and the correspondingly adjusted
 standard errors and degrees of freedom:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit_kr</span><span class="op">)</span></span>
 <span><span class="co">#&gt; mmrm fit</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -411,6 +507,7 @@ standard errors and degrees of freedom:</p>
 <span><span class="co">#&gt; timepoints)</span></span>
 <span><span class="co">#&gt; Covariance:  unstructured (10 variance parameters)</span></span>
 <span><span class="co">#&gt; Method:      Kenward-Roger</span></span>
+<span><span class="co">#&gt; Vcov Method: Kenward-Roger</span></span>
 <span><span class="co">#&gt; Inference:   REML</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Model selection criteria:</span></span>
@@ -426,8 +523,8 @@ standard errors and degrees of freedom:</p>
 <span><span class="co">#&gt; AVISITVIS2                      4.82859    0.80408 143.66000   6.005 1.49e-08</span></span>
 <span><span class="co">#&gt; AVISITVIS3                     10.33317    0.82303 155.66000  12.555  &lt; 2e-16</span></span>
 <span><span class="co">#&gt; AVISITVIS4                     15.05256    1.30180 138.39000  11.563  &lt; 2e-16</span></span>
-<span><span class="co">#&gt; ARMCDTRT:AVISITVIS2            -0.01737    1.13154 138.39000   0.015  0.98777</span></span>
-<span><span class="co">#&gt; ARMCDTRT:AVISITVIS3            -0.66753    1.18714 158.21000   0.562  0.57470</span></span>
+<span><span class="co">#&gt; ARMCDTRT:AVISITVIS2            -0.01737    1.13154 138.39000  -0.015  0.98777</span></span>
+<span><span class="co">#&gt; ARMCDTRT:AVISITVIS3            -0.66753    1.18714 158.21000  -0.562  0.57470</span></span>
 <span><span class="co">#&gt; ARMCDTRT:AVISITVIS4             0.63094    1.83319 129.64000   0.344  0.73127</span></span>
 <span><span class="co">#&gt;                                  </span></span>
 <span><span class="co">#&gt; (Intercept)                   ***</span></span>
@@ -456,15 +553,45 @@ are different.</p>
 <p>Note that if you would like to match SAS results for an unstructured
 covariance model, you can use the linear Kenward-Roger
 approximation:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit_kr_lin</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">fev_data</span>,</span>
-<span>  method <span class="op">=</span> <span class="st">"Kenward-Roger-Linear"</span></span>
+<span>  method <span class="op">=</span> <span class="st">"Kenward-Roger"</span>,</span>
+<span>  vcov <span class="op">=</span> <span class="st">"Kenward-Roger-Linear"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>This is due to the different parametrization of the unstructured
 covariance matrix, see the <a href="kenward.html#parameterization-methods-and-kenward-roger">Kenward-Roger
 vignette</a> for details.</p>
+</div>
+<div class="section level3">
+<h3 id="variance-covariance-for-coefficients">Variance-covariance for Coefficients<a class="anchor" aria-label="anchor" href="#variance-covariance-for-coefficients"></a>
+</h3>
+<p>There are multiple variance-covariance estimator available for the
+coefficients, including:</p>
+<ol style="list-style-type: decimal">
+<li>“Asymptotic”</li>
+<li>“Empirical” (Cluster Robust Sandwich)</li>
+<li>“Empirical-Jackknife”</li>
+<li>“Empirical-Bias-Reduced”</li>
+<li>“Kenward-Roger”</li>
+<li>“Kenward-Roger-Linear”</li>
+</ol>
+<p>Please note that, not all combinations of variance-covariance for
+coefficients and method of degrees of freedom are possible,
+e.g. “Kenward-Roger” and “Kenward-Roger-Linear” are available only when
+the degrees of freedom method is “Kenward-Roger”.</p>
+<p>Details can be found in <a href="coef_vcov.html">Coefficients
+Covariance Matrix Adjustment vignette</a> and <a href="empirical_wls.html">Weighted Least Square Empirical
+Covariance</a>.</p>
+<p>An example of using other variance-covariance is:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit_emp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
+<span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">fev_data</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">"Satterthwaite"</span>,</span>
+<span>  vcov <span class="op">=</span> <span class="st">"Empirical"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="keeping-unobserved-visits">Keeping Unobserved Visits<a class="anchor" aria-label="anchor" href="#keeping-unobserved-visits"></a>
@@ -479,7 +606,7 @@ distance between the observed time points.</p>
 the model where we do not drop the visit level explicitly, using the
 <code>drop_visit_levels = FALSE</code> choice. Second we fit the model
 by default without this option.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sparse_data</span> <span class="op">&lt;-</span> <span class="va">fev_data</span><span class="op">[</span><span class="va">fev_data</span><span class="op">$</span><span class="va">AVISIT</span> <span class="op">!=</span> <span class="st">"VIS3"</span>, <span class="op">]</span></span>
 <span><span class="va">sparse_result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
 <span>  <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="fu">ar1</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
@@ -494,7 +621,7 @@ by default without this option.</p>
 <span><span class="co">#&gt; In AVISIT there are dropped visits: VIS3</span></span></code></pre></div>
 <p>We see that we get a message about the dropped visit level by
 default. Now we can compare the estimated correlation matrices:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cov2cor</a></span><span class="op">(</span><span class="fu"><a href="../reference/mmrm_tmb_methods.html">VarCorr</a></span><span class="op">(</span><span class="va">sparse_result</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;            VIS1      VIS2      VIS3       VIS4</span></span>
 <span><span class="co">#&gt; VIS1 1.00000000 0.4051834 0.1641736 0.06652042</span></span>
@@ -529,7 +656,7 @@ be found at the package website.</a></p>
 </h3>
 <p>The <code>summary</code> method for <code>mmrm</code> objects
 provides easy access to frequently needed model components.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">fev_data</span></span>
@@ -537,7 +664,7 @@ provides easy access to frequently needed model components.</p>
 <span><span class="va">fit_summary</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></code></pre></div>
 <p>From this summary object, you can easily retrieve the coefficients
 table.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit_summary</span><span class="op">$</span><span class="va">coefficients</span></span>
 <span><span class="co">#&gt;                                  Estimate Std. Error       df     t value</span></span>
 <span><span class="co">#&gt; (Intercept)                   30.96769899  0.8293349 187.9132 37.34040185</span></span>
@@ -551,21 +678,21 @@ table.</p>
 <span><span class="co">#&gt; ARMCDTRT:AVISITVIS3           -0.66753189  1.1865359 158.2106 -0.56258887</span></span>
 <span><span class="co">#&gt; ARMCDTRT:AVISITVIS4            0.63094392  1.8507884 129.6377  0.34090549</span></span>
 <span><span class="co">#&gt;                                   Pr(&gt;|t|)</span></span>
-<span><span class="co">#&gt; (Intercept)                   7.122405e-89</span></span>
+<span><span class="co">#&gt; (Intercept)                   7.122411e-89</span></span>
 <span><span class="co">#&gt; RACEBlack or African American 1.638725e-02</span></span>
 <span><span class="co">#&gt; RACEWhite                     1.605553e-14</span></span>
 <span><span class="co">#&gt; ARMCDTRT                      6.001485e-04</span></span>
 <span><span class="co">#&gt; AVISITVIS2                    1.366921e-08</span></span>
 <span><span class="co">#&gt; AVISITVIS3                    1.927523e-25</span></span>
-<span><span class="co">#&gt; AVISITVIS4                    8.242710e-22</span></span>
+<span><span class="co">#&gt; AVISITVIS4                    8.242709e-22</span></span>
 <span><span class="co">#&gt; ARMCDTRT:AVISITVIS2           9.877459e-01</span></span>
 <span><span class="co">#&gt; ARMCDTRT:AVISITVIS3           5.745112e-01</span></span>
 <span><span class="co">#&gt; ARMCDTRT:AVISITVIS4           7.337266e-01</span></span></code></pre></div>
 <p>Other model parameters and metadata available in the summary object
 is as follows:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">fit_summary</span><span class="op">)</span></span>
-<span><span class="co">#&gt; List of 14</span></span>
+<span><span class="co">#&gt; List of 15</span></span>
 <span><span class="co">#&gt;  $ cov_type        : chr "us"</span></span>
 <span><span class="co">#&gt;  $ reml            : logi TRUE</span></span>
 <span><span class="co">#&gt;  $ n_groups        : int 1</span></span>
@@ -582,6 +709,7 @@ is as follows:</p>
 <span><span class="co">#&gt;   .. ..$ : chr [1:4] "VIS1" "VIS2" "VIS3" "VIS4"</span></span>
 <span><span class="co">#&gt;   .. ..$ : chr [1:4] "VIS1" "VIS2" "VIS3" "VIS4"</span></span>
 <span><span class="co">#&gt;  $ method          : chr "Satterthwaite"</span></span>
+<span><span class="co">#&gt;  $ vcov            : chr "Asymptotic"</span></span>
 <span><span class="co">#&gt;  $ coefficients    : num [1:10, 1:5] 30.97 1.5 5.61 3.78 4.83 ...</span></span>
 <span><span class="co">#&gt;   ..- attr(*, "dimnames")=List of 2</span></span>
 <span><span class="co">#&gt;   .. ..$ : chr [1:10] "(Intercept)" "RACEBlack or African American" "RACEWhite" "ARMCDTRT" ...</span></span>
@@ -592,8 +720,137 @@ is as follows:</p>
 <span><span class="co">#&gt;   ..$ BIC     : num 3440</span></span>
 <span><span class="co">#&gt;   ..$ logLik  : num -1694</span></span>
 <span><span class="co">#&gt;   ..$ deviance: num 3387</span></span>
-<span><span class="co">#&gt;  $ call            : language fit_mmrm(formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),      data = "fev_data", weights = weights| __truncated__</span></span>
+<span><span class="co">#&gt;  $ call            : language mmrm(formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID), data = fev_data)</span></span>
 <span><span class="co">#&gt;  - attr(*, "class")= chr "summary.mmrm"</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="residuals">Residuals<a class="anchor" aria-label="anchor" href="#residuals"></a>
+</h3>
+<p>The <code>residuals</code> method for <code>mmrm</code> objects can
+be used to provide three different types of residuals:</p>
+<ol style="list-style-type: decimal">
+<li>Response or raw residuals - the difference between the observed and
+fitted or predicted value. MMRMs can allow for heteroscedasticity, so
+these residuals should be interpreted with caution.</li>
+</ol>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
+<span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">fev_data</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">residuals_resp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/residuals.html" class="external-link">residuals</a></span><span class="op">(</span><span class="va">fit</span>, type <span class="op">=</span> <span class="st">"response"</span><span class="op">)</span></span></code></pre></div>
+<ol start="2" style="list-style-type: decimal">
+<li>Pearson residuals - the raw residuals scaled by the estimated
+standard deviation of the response. This residual type is better suited
+to identifying outlying observations and the appropriateness of the
+covariance structure, compared to the raw residuals.</li>
+</ol>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">residuals_pearson</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/residuals.html" class="external-link">residuals</a></span><span class="op">(</span><span class="va">fit</span>, type <span class="op">=</span> <span class="st">"pearson"</span><span class="op">)</span></span></code></pre></div>
+<ol start="3" style="list-style-type: decimal">
+<li>Normalized or scaled residuals - the raw residuals are
+‘de-correlated’ based on the Cholesky decomposition of the
+variance-covariance matrix. These residuals should approximately follow
+the standard normal distribution, and therefore can be used to check for
+normality (<span class="citation">@galecki2013linear</span>).</li>
+</ol>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">residuals_norm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/residuals.html" class="external-link">residuals</a></span><span class="op">(</span><span class="va">fit</span>, type <span class="op">=</span> <span class="st">"normalized"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="broom-extensions">
+<code>broom</code> extensions<a class="anchor" aria-label="anchor" href="#broom-extensions"></a>
+</h3>
+<p><code>mmrm</code> also contains S3 methods methods for
+<code>tidy</code>, <code>glance</code> and <code>augment</code> which
+were introduced by <a href="https://broom.tidymodels.org/" class="external-link"><code>broom</code></a>. Note that
+these methods will work also without loading the <code>broom</code>
+package. Please see <code><a href="../reference/mmrm_tidiers.html">?mmrm_tidiers</a></code> for the detailed
+documentation.</p>
+<p>For example, we can apply the <code>tidy</code> method to return a
+summary table of coefficient estimates:</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 10 × 6</span></span></span>
+<span><span class="co">#&gt;    term                          estimate std.error    df statistic  p.value</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> (Intercept)                    31.0        0.829  188.   37.3    7.12<span style="color: #949494;">e</span><span style="color: #BB0000;">-89</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> RACEBlack or African American   1.50       0.621  170.    2.42   1.64<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> RACEWhite                       5.61       0.663  159.    8.47   1.61<span style="color: #949494;">e</span><span style="color: #BB0000;">-14</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> ARMCDTRT                        3.78       1.08   146.    3.51   6.00<span style="color: #949494;">e</span><span style="color: #BB0000;">- 4</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> AVISITVIS2                      4.83       0.802  144.    6.02   1.37<span style="color: #949494;">e</span><span style="color: #BB0000;">- 8</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> AVISITVIS3                     10.3        0.822  156.   12.6    1.93<span style="color: #949494;">e</span><span style="color: #BB0000;">-25</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> AVISITVIS4                     15.1        1.31   138.   11.5    8.24<span style="color: #949494;">e</span><span style="color: #BB0000;">-22</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> ARMCDTRT:AVISITVIS2            -<span style="color: #BB0000;">0.017</span><span style="color: #BB0000; text-decoration: underline;">4</span>     1.13   138.   -<span style="color: #BB0000;">0.015</span><span style="color: #BB0000; text-decoration: underline;">4</span> 9.88<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> ARMCDTRT:AVISITVIS3            -<span style="color: #BB0000;">0.668</span>      1.19   158.   -<span style="color: #BB0000;">0.563</span>  5.75<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> ARMCDTRT:AVISITVIS4             0.631      1.85   130.    0.341  7.34<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span></span></span></code></pre></div>
+<p>We can also specify some details to request confidence intervals of
+specific confidence level:</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy</a></span><span class="op">(</span>conf.int <span class="op">=</span> <span class="cn">TRUE</span>, conf.level <span class="op">=</span> <span class="fl">0.9</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 10 × 8</span></span></span>
+<span><span class="co">#&gt;    term           estimate std.error    df statistic  p.value conf.low conf.high</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> (Intercept)     31.0        0.829  188.   37.3    7.12<span style="color: #949494;">e</span><span style="color: #BB0000;">-89</span>   29.6       32.3 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> ARMCDTRT         3.78       1.08   146.    3.51   6.00<span style="color: #949494;">e</span><span style="color: #BB0000;">- 4</span>    2.01       5.55</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> ARMCDTRT:AVIS…  -<span style="color: #BB0000;">0.017</span><span style="color: #BB0000; text-decoration: underline;">4</span>     1.13   138.   -<span style="color: #BB0000;">0.015</span><span style="color: #BB0000; text-decoration: underline;">4</span> 9.88<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span>   -<span style="color: #BB0000;">1.87</span>       1.84</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> ARMCDTRT:AVIS…  -<span style="color: #BB0000;">0.668</span>      1.19   158.   -<span style="color: #BB0000;">0.563</span>  5.75<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span>   -<span style="color: #BB0000;">2.62</span>       1.28</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> ARMCDTRT:AVIS…   0.631      1.85   130.    0.341  7.34<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span>   -<span style="color: #BB0000;">2.41</span>       3.68</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> AVISITVIS2       4.83       0.802  144.    6.02   1.37<span style="color: #949494;">e</span><span style="color: #BB0000;">- 8</span>    3.51       6.15</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> AVISITVIS3      10.3        0.822  156.   12.6    1.93<span style="color: #949494;">e</span><span style="color: #BB0000;">-25</span>    8.98      11.7 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> AVISITVIS4      15.1        1.31   138.   11.5    8.24<span style="color: #949494;">e</span><span style="color: #BB0000;">-22</span>   12.9       17.2 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> RACEBlack or …   1.50       0.621  170.    2.42   1.64<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span>    0.484      2.53</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> RACEWhite        5.61       0.663  159.    8.47   1.61<span style="color: #949494;">e</span><span style="color: #BB0000;">-14</span>    4.52       6.70</span></span></code></pre></div>
+<p>Or we can apply the <code>glance</code> method to return a summary
+table of goodness of fit statistics:</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://generics.r-lib.org/reference/glance.html" class="external-link">glance</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 4</span></span></span>
+<span><span class="co">#&gt;     AIC   BIC logLik deviance</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> <span style="text-decoration: underline;">3</span>407. <span style="text-decoration: underline;">3</span>440. -<span style="color: #BB0000; text-decoration: underline;">1</span><span style="color: #BB0000;">694.</span>    <span style="text-decoration: underline;">3</span>387.</span></span></code></pre></div>
+<p>Finally, we can use the <code>augment</code> method to return a
+merged <code>tibble</code> of the data, fitted values and residuals:</p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://generics.r-lib.org/reference/augment.html" class="external-link">augment</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 537 × 8</span></span></span>
+<span><span class="co">#&gt;    .rownames  FEV1 RACE                     ARMCD AVISIT USUBJID .fitted  .resid</span></span>
+<span><span class="co">#&gt;        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>         2  40.0 Black or African Americ… TRT   VIS2   PT1        40.0  -<span style="color: #BB0000;">1.09</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>         4  20.5 Black or African Americ… TRT   VIS4   PT1        20.5 -<span style="color: #BB0000;">31.4</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>         6  31.5 Asian                    PBO   VIS2   PT2        31.5  -<span style="color: #BB0000;">4.34</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>         7  36.9 Asian                    PBO   VIS3   PT2        36.9  -<span style="color: #BB0000;">4.42</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>         8  48.8 Asian                    PBO   VIS4   PT2        48.8   2.79 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>        10  36.0 Black or African Americ… PBO   VIS2   PT3        36.0  -<span style="color: #BB0000;">1.31</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>        12  37.2 Black or African Americ… PBO   VIS4   PT3        37.2 -<span style="color: #BB0000;">10.4</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>        13  33.9 Asian                    TRT   VIS1   PT4        33.9  -<span style="color: #BB0000;">0.851</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>        14  33.7 Asian                    TRT   VIS2   PT4        33.7  -<span style="color: #BB0000;">5.81</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>        16  54.5 Asian                    TRT   VIS4   PT4        54.5   4.02 </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 527 more rows</span></span></span></code></pre></div>
+<p>Also here we can specify details for the prediction intervals and
+type of residuals via the arguments:</p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://generics.r-lib.org/reference/augment.html" class="external-link">augment</a></span><span class="op">(</span>interval <span class="op">=</span> <span class="st">"confidence"</span>, type.residuals <span class="op">=</span> <span class="st">"normalized"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 537 × 11</span></span></span>
+<span><span class="co">#&gt;    .rownames  FEV1 RACE       ARMCD AVISIT USUBJID .fitted .lower .upper .se.fit</span></span>
+<span><span class="co">#&gt;        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>         2  40.0 Black or … TRT   VIS2   PT1        40.0   40.0   40.0       0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>         4  20.5 Black or … TRT   VIS4   PT1        20.5   20.5   20.5       0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>         6  31.5 Asian      PBO   VIS2   PT2        31.5   31.5   31.5       0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>         7  36.9 Asian      PBO   VIS3   PT2        36.9   36.9   36.9       0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>         8  48.8 Asian      PBO   VIS4   PT2        48.8   48.8   48.8       0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>        10  36.0 Black or … PBO   VIS2   PT3        36.0   36.0   36.0       0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>        12  37.2 Black or … PBO   VIS4   PT3        37.2   37.2   37.2       0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>        13  33.9 Asian      TRT   VIS1   PT4        33.9   33.9   33.9       0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>        14  33.7 Asian      TRT   VIS2   PT4        33.7   33.7   33.7       0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>        16  54.5 Asian      TRT   VIS4   PT4        54.5   54.5   54.5       0</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 527 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1 more variable: .resid &lt;dbl&gt;</span></span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="other-components">Other components<a class="anchor" aria-label="anchor" href="#other-components"></a>
@@ -602,7 +859,7 @@ is as follows:</p>
 with the <a href="https://openpharma.github.io/mmrm/main/reference/component.html"><code>component()</code></a>
 function. The default will output all supported components.</p>
 <p>For example, a user may want information about convergence:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/component.html">component</a></span><span class="op">(</span><span class="va">fit</span>, name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"convergence"</span>, <span class="st">"evaluations"</span>, <span class="st">"conv_message"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $convergence</span></span>
 <span><span class="co">#&gt; [1] 0</span></span>
@@ -614,14 +871,13 @@ function. The default will output all supported components.</p>
 <span><span class="co">#&gt; $conv_message</span></span>
 <span><span class="co">#&gt; [1] "CONVERGENCE: REL_REDUCTION_OF_F &lt;= FACTR*EPSMCH"</span></span></code></pre></div>
 <p>or the original low-level call:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/component.html">component</a></span><span class="op">(</span><span class="va">fit</span>, name <span class="op">=</span> <span class="st">"call"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; fit_mmrm(formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | </span></span>
-<span><span class="co">#&gt;     USUBJID), data = "fev_data", weights = weights, reml = reml, </span></span>
-<span><span class="co">#&gt;     control = control)</span></span></code></pre></div>
+<span><span class="co">#&gt; mmrm(formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID), </span></span>
+<span><span class="co">#&gt;     data = fev_data)</span></span></code></pre></div>
 <p>the user could also ask for all provided components by not specifying
 the <code>name</code> argument.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/component.html">component</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
@@ -637,7 +893,7 @@ This function is exported and can be used directly. It is similar to <a href="ht
 but lacks some post-processing and support for Satterthwaite and
 Kenward-Roger calculations. It may be useful for other packages that
 want to fit the model without the adjustment calculations.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/fit_mmrm.html">fit_mmrm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">fev_data</span>,</span>
@@ -650,8 +906,9 @@ want to fit the model without the adjustment calculations.</p>
 <span><span class="co">#&gt; Formula:     FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID)</span></span>
 <span><span class="co">#&gt; Data:        fev_data (used 537 observations from 197 subjects with maximum 4 </span></span>
 <span><span class="co">#&gt; timepoints)</span></span>
+<span><span class="co">#&gt; Weights:     rep(1, nrow(fev_data))</span></span>
 <span><span class="co">#&gt; Covariance:  unstructured (10 variance parameters)</span></span>
-<span><span class="co">#&gt; Method:      REML</span></span>
+<span><span class="co">#&gt; Inference:   REML</span></span>
 <span><span class="co">#&gt; Deviance:    3387.373</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients: </span></span>
@@ -685,7 +942,7 @@ test-statistics.</p>
 </h3>
 <p>Compute the test of a one-dimensional (vector) contrast for a
 <code>mmrm</code> object with Satterthwaite degrees of freedom.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">SEX</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">fev_data</span></span>
@@ -710,7 +967,7 @@ test-statistics.</p>
 <span><span class="co">#&gt; $p_val</span></span>
 <span><span class="co">#&gt; [1] 1.564869e-14</span></span></code></pre></div>
 <p>This works similarly when choosing a Kenward-Roger adjustment:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit_kr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">SEX</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">fev_data</span>,</span>
@@ -736,6 +993,8 @@ test-statistics.</p>
 of freedoms are identical for Satterthwaite and Kenward-Roger. However,
 the standard errors are different and therefore the p-values are
 different.</p>
+<p>Additional options for the degrees of freedom <code>method</code> are
+Residual and Between-Within.</p>
 </div>
 <div class="section level3">
 <h3 id="multi-dimensional-contrasts">Multi-dimensional contrasts<a class="anchor" aria-label="anchor" href="#multi-dimensional-contrasts"></a>
@@ -743,7 +1002,7 @@ different.</p>
 <p>Compute the test of a multi-dimensional (matrix) contrast for the
 above defined <code>mmrm</code> object with Satterthwaite degrees of
 freedom:</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">contrast</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fl">0</span>, nrow <span class="op">=</span> <span class="fl">2</span>, ncol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="../reference/component.html">component</a></span><span class="op">(</span><span class="va">fit</span>, <span class="st">"beta_est"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">contrast</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">contrast</span><span class="op">[</span><span class="fl">2</span>, <span class="fl">3</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
 <span></span>
@@ -760,7 +1019,7 @@ freedom:</p>
 <span><span class="co">#&gt; $p_val</span></span>
 <span><span class="co">#&gt; [1] 5.544575e-14</span></span></code></pre></div>
 <p>And for the Kenward-Roger adjustment:</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/df_md.html">df_md</a></span><span class="op">(</span><span class="va">fit_kr</span>, <span class="va">contrast</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $num_df</span></span>
 <span><span class="co">#&gt; [1] 2</span></span>
@@ -776,6 +1035,9 @@ freedom:</p>
 <p>We see that for the multi-dimensional contrast we get slightly
 different denominator degrees of freedom for the two adjustment
 methods.</p>
+<p>Also the simpler Residual and Between-Within <code>method</code>
+choices can be used of course together with multidimensional
+contrasts.</p>
 </div>
 <div class="section level3">
 <h3 id="support-for-emmeans">Support for emmeans<a class="anchor" aria-label="anchor" href="#support-for-emmeans"></a>
@@ -784,7 +1046,7 @@ methods.</p>
 be used with the <code>emmeans</code> package. <code>emmeans</code>
 computes estimated marginal means (also called least-square means) for
 the coefficients of the MMRM.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">fev_data</span></span>
@@ -794,6 +1056,7 @@ the coefficients of the MMRM.</p>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/emmeans/man/emmeans.html" class="external-link">emmeans</a></span><span class="op">(</span><span class="va">fit</span>, <span class="op">~</span> <span class="va">ARMCD</span> <span class="op">|</span> <span class="va">AVISIT</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span><span class="co">#&gt; Loading required package: emmeans</span></span>
+<span><span class="co">#&gt; mmrm() registered as emmeans extension</span></span>
 <span><span class="co">#&gt; AVISIT = VIS1:</span></span>
 <span><span class="co">#&gt;  ARMCD emmean    SE  df lower.CL upper.CL</span></span>
 <span><span class="co">#&gt;  PBO     33.3 0.757 149     31.8     34.8</span></span>
@@ -816,6 +1079,1112 @@ the coefficients of the MMRM.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Results are averaged over the levels of: RACE </span></span>
 <span><span class="co">#&gt; Confidence level used: 0.95</span></span></code></pre></div>
+<p>Note that the degrees of freedom choice is inherited here from the
+initial <code>mmrm</code> fit.</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="tidymodels">Tidymodels<a class="anchor" aria-label="anchor" href="#tidymodels"></a>
+</h2>
+<div class="section level3">
+<h3 id="tidymodels-1">Tidymodels<a class="anchor" aria-label="anchor" href="#tidymodels-1"></a>
+</h3>
+<p><code>mmrm</code> is compatible to work in a <code>tidymodels</code>
+workflow. The following is an example of how such a workflow would be
+constructed.</p>
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidymodels.tidymodels.org" class="external-link">tidymodels</a></span><span class="op">)</span></span></code></pre></div>
+<div class="section level4">
+<h4 id="direct-fit">Direct fit<a class="anchor" aria-label="anchor" href="#direct-fit"></a>
+</h4>
+<p>First we define the direct method to fit an <code>mmrm</code> model
+using the <code>parsnip</code> package functions
+<code>linear_reg()</code> and <code>set_engine()</code>.</p>
+<ul>
+<li>
+<code>linear_reg()</code> defines a model that can predict numeric
+values from predictors using a linear function</li>
+<li>
+<code>set_engine()</code> is used to specify which package or system
+will be used to fit the model, along with any arguments specific to that
+software. We can set the method to adjust degrees of freedom directly in
+the call.</li>
+</ul>
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu">linear_reg</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">set_engine</span><span class="op">(</span><span class="st">"mmrm"</span>, method <span class="op">=</span> <span class="st">"Satterthwaite"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">fit</span><span class="op">(</span><span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>, <span class="va">fev_data</span><span class="op">)</span></span>
+<span><span class="va">model</span></span>
+<span><span class="co">#&gt; parsnip model object</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; mmrm fit</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Formula:     FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID)</span></span>
+<span><span class="co">#&gt; Data:        data (used 537 observations from 197 subjects with maximum 4 </span></span>
+<span><span class="co">#&gt; timepoints)</span></span>
+<span><span class="co">#&gt; Weights:     weights</span></span>
+<span><span class="co">#&gt; Covariance:  unstructured (10 variance parameters)</span></span>
+<span><span class="co">#&gt; Inference:   REML</span></span>
+<span><span class="co">#&gt; Deviance:    3387.373</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients: </span></span>
+<span><span class="co">#&gt;                   (Intercept) RACEBlack or African American </span></span>
+<span><span class="co">#&gt;                   30.96769899                    1.50464863 </span></span>
+<span><span class="co">#&gt;                     RACEWhite                      ARMCDTRT </span></span>
+<span><span class="co">#&gt;                    5.61309565                    3.77555734 </span></span>
+<span><span class="co">#&gt;                    AVISITVIS2                    AVISITVIS3 </span></span>
+<span><span class="co">#&gt;                    4.82858803                   10.33317002 </span></span>
+<span><span class="co">#&gt;                    AVISITVIS4           ARMCDTRT:AVISITVIS2 </span></span>
+<span><span class="co">#&gt;                   15.05255715                   -0.01737409 </span></span>
+<span><span class="co">#&gt;           ARMCDTRT:AVISITVIS3           ARMCDTRT:AVISITVIS4 </span></span>
+<span><span class="co">#&gt;                   -0.66753189                    0.63094392 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Model Inference Optimization:</span></span>
+<span><span class="co">#&gt; Converged with code 0 and message: convergence: rel_reduction_of_f &lt;= factr*epsmch</span></span></code></pre></div>
+<p>We can also pass in the full <code>mmrm_control</code> object into
+the <code>set_engine()</code> call:</p>
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">model_with_control</span> <span class="op">&lt;-</span> <span class="fu">linear_reg</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">set_engine</span><span class="op">(</span><span class="st">"mmrm"</span>, control <span class="op">=</span> <span class="fu"><a href="../reference/mmrm_control.html">mmrm_control</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"Satterthwaite"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">fit</span><span class="op">(</span><span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>, <span class="va">fev_data</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level4">
+<h4 id="predictions">Predictions<a class="anchor" aria-label="anchor" href="#predictions"></a>
+</h4>
+<p>Lastly, we can also obtain predictions with the
+<code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code> method:</p>
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">model</span>, new_data <span class="op">=</span> <span class="va">fev_data</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 800 × 1</span></span></span>
+<span><span class="co">#&gt;    .pred</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>  32.5</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>  40.0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>  45.7</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>  20.5</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>  28.0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>  31.5</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>  36.9</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>  48.8</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>  30.7</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>  36.0</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 790 more rows</span></span></span></code></pre></div>
+<p>Note that we need to explicitly pass <code>new_data</code> because
+the method definition does not allow to default it to the data set we
+used for the model fitting automatically.</p>
+<p>By using the <code>type = "numeric"</code> default of
+<code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code> as above we cannot further customize the
+calculations. We obtain predicted values without confidence intervals or
+standard errors.</p>
+<p>On the other hand, when using <code>type = "raw"</code> we can
+customize the calculations via the <code>opts</code> list:</p>
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span></span>
+<span>  <span class="va">model</span>,</span>
+<span>  new_data <span class="op">=</span> <span class="va">fev_data</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"raw"</span>,</span>
+<span>  opts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>se.fit <span class="op">=</span> <span class="cn">TRUE</span>, interval <span class="op">=</span> <span class="st">"prediction"</span>, nsim <span class="op">=</span> <span class="fl">10L</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt;          fit        se      lwr      upr</span></span>
+<span><span class="co">#&gt; 1   32.47877  6.328341 20.07545 44.88209</span></span>
+<span><span class="co">#&gt; 2   39.97105  0.000000 39.97105 39.97105</span></span>
+<span><span class="co">#&gt; 3   45.70508  4.260127 37.35538 54.05477</span></span>
+<span><span class="co">#&gt; 4   20.48379  0.000000 20.48379 20.48379</span></span>
+<span><span class="co">#&gt; 5   28.01243  5.796614 16.65127 39.37358</span></span>
+<span><span class="co">#&gt; 6   31.45522  0.000000 31.45522 31.45522</span></span>
+<span><span class="co">#&gt; 7   36.87889  0.000000 36.87889 36.87889</span></span>
+<span><span class="co">#&gt; 8   48.80809  0.000000 48.80809 48.80809</span></span>
+<span><span class="co">#&gt; 9   30.73774  5.931329 19.11255 42.36293</span></span>
+<span><span class="co">#&gt; 10  35.98699  0.000000 35.98699 35.98699</span></span>
+<span><span class="co">#&gt; 11  42.64153  4.068537 34.66734 50.61571</span></span>
+<span><span class="co">#&gt; 12  37.16444  0.000000 37.16444 37.16444</span></span>
+<span><span class="co">#&gt; 13  33.89229  0.000000 33.89229 33.89229</span></span>
+<span><span class="co">#&gt; 14  33.74637  0.000000 33.74637 33.74637</span></span>
+<span><span class="co">#&gt; 15  44.04155  3.998944 36.20376 51.87934</span></span>
+<span><span class="co">#&gt; 16  54.45055  0.000000 54.45055 54.45055</span></span>
+<span><span class="co">#&gt; 17  32.31386  0.000000 32.31386 32.31386</span></span>
+<span><span class="co">#&gt; 18  37.31982  4.680845 28.14553 46.49410</span></span>
+<span><span class="co">#&gt; 19  46.79361  0.000000 46.79361 46.79361</span></span>
+<span><span class="co">#&gt; 20  41.71154  0.000000 41.71154 41.71154</span></span>
+<span><span class="co">#&gt; 21  31.17198  6.435192 18.55923 43.78472</span></span>
+<span><span class="co">#&gt; 22  36.63341  5.139415 26.56034 46.70648</span></span>
+<span><span class="co">#&gt; 23  39.02423  0.000000 39.02423 39.02423</span></span>
+<span><span class="co">#&gt; 24  47.26333 10.183040 27.30494 67.22173</span></span>
+<span><span class="co">#&gt; 25  31.93050  0.000000 31.93050 31.93050</span></span>
+<span><span class="co">#&gt; 26  32.90947  0.000000 32.90947 32.90947</span></span>
+<span><span class="co">#&gt; 27  41.27523  3.943471 33.54617 49.00429</span></span>
+<span><span class="co">#&gt; 28  48.28031  0.000000 48.28031 48.28031</span></span>
+<span><span class="co">#&gt; 29  32.23021  0.000000 32.23021 32.23021</span></span>
+<span><span class="co">#&gt; 30  35.91080  0.000000 35.91080 35.91080</span></span>
+<span><span class="co">#&gt; 31  45.54898  0.000000 45.54898 45.54898</span></span>
+<span><span class="co">#&gt; 32  53.02877  0.000000 53.02877 53.02877</span></span>
+<span><span class="co">#&gt; 33  47.16898  0.000000 47.16898 47.16898</span></span>
+<span><span class="co">#&gt; 34  46.64287  0.000000 46.64287 46.64287</span></span>
+<span><span class="co">#&gt; 35  50.84665  3.967415 43.07066 58.62264</span></span>
+<span><span class="co">#&gt; 36  58.09713  0.000000 58.09713 58.09713</span></span>
+<span><span class="co">#&gt; 37  33.21881  6.391593 20.69152 45.74610</span></span>
+<span><span class="co">#&gt; 38  37.68412  5.101882 27.68462 47.68363</span></span>
+<span><span class="co">#&gt; 39  44.97613  0.000000 44.97613 44.97613</span></span>
+<span><span class="co">#&gt; 40  47.67506 10.168713 27.74474 67.60537</span></span>
+<span><span class="co">#&gt; 41  44.32755  0.000000 44.32755 44.32755</span></span>
+<span><span class="co">#&gt; 42  38.97813  0.000000 38.97813 38.97813</span></span>
+<span><span class="co">#&gt; 43  43.72862  0.000000 43.72862 43.72862</span></span>
+<span><span class="co">#&gt; 44  46.43393  0.000000 46.43393 46.43393</span></span>
+<span><span class="co">#&gt; 45  40.34576  0.000000 40.34576 40.34576</span></span>
+<span><span class="co">#&gt; 46  42.76568  0.000000 42.76568 42.76568</span></span>
+<span><span class="co">#&gt; 47  40.11155  0.000000 40.11155 40.11155</span></span>
+<span><span class="co">#&gt; 48  49.71974 10.017856 30.08511 69.35438</span></span>
+<span><span class="co">#&gt; 49  41.46341  6.298989 29.11762 53.80920</span></span>
+<span><span class="co">#&gt; 50  45.73510  5.093749 35.75154 55.71867</span></span>
+<span><span class="co">#&gt; 51  53.31791  0.000000 53.31791 53.31791</span></span>
+<span><span class="co">#&gt; 52  56.07641  0.000000 56.07641 56.07641</span></span>
+<span><span class="co">#&gt; 53  32.16382  6.378763 19.66168 44.66597</span></span>
+<span><span class="co">#&gt; 54  37.14256  5.089794 27.16675 47.11837</span></span>
+<span><span class="co">#&gt; 55  41.90837  0.000000 41.90837 41.90837</span></span>
+<span><span class="co">#&gt; 56  47.46284 10.152585 27.56414 67.36155</span></span>
+<span><span class="co">#&gt; 57  27.78883  6.438650 15.16931 40.40835</span></span>
+<span><span class="co">#&gt; 58  34.13887  5.213369 23.92086 44.35688</span></span>
+<span><span class="co">#&gt; 59  34.65663  0.000000 34.65663 34.65663</span></span>
+<span><span class="co">#&gt; 60  39.07791  0.000000 39.07791 39.07791</span></span>
+<span><span class="co">#&gt; 61  31.18775  5.894336 19.63506 42.74044</span></span>
+<span><span class="co">#&gt; 62  35.89612  0.000000 35.89612 35.89612</span></span>
+<span><span class="co">#&gt; 63  41.31608  4.038753 33.40027 49.23189</span></span>
+<span><span class="co">#&gt; 64  47.67264  0.000000 47.67264 47.67264</span></span>
+<span><span class="co">#&gt; 65  22.65440  0.000000 22.65440 22.65440</span></span>
+<span><span class="co">#&gt; 66  36.35488  4.824370 26.89929 45.81047</span></span>
+<span><span class="co">#&gt; 67  45.20175  4.161558 37.04524 53.35825</span></span>
+<span><span class="co">#&gt; 68  40.85376  0.000000 40.85376 40.85376</span></span>
+<span><span class="co">#&gt; 69  32.60048  0.000000 32.60048 32.60048</span></span>
+<span><span class="co">#&gt; 70  33.64329  0.000000 33.64329 33.64329</span></span>
+<span><span class="co">#&gt; 71  44.00451  4.028095 36.10958 51.89943</span></span>
+<span><span class="co">#&gt; 72  40.92278  0.000000 40.92278 40.92278</span></span>
+<span><span class="co">#&gt; 73  32.14831  0.000000 32.14831 32.14831</span></span>
+<span><span class="co">#&gt; 74  46.43604  0.000000 46.43604 46.43604</span></span>
+<span><span class="co">#&gt; 75  41.34973  0.000000 41.34973 41.34973</span></span>
+<span><span class="co">#&gt; 76  66.30382  0.000000 66.30382 66.30382</span></span>
+<span><span class="co">#&gt; 77  42.79902  5.873658 31.28686 54.31118</span></span>
+<span><span class="co">#&gt; 78  47.95358  0.000000 47.95358 47.95358</span></span>
+<span><span class="co">#&gt; 79  53.97364  0.000000 53.97364 53.97364</span></span>
+<span><span class="co">#&gt; 80  56.89204 10.092345 37.11141 76.67268</span></span>
+<span><span class="co">#&gt; 81  46.35384  6.066128 34.46445 58.24323</span></span>
+<span><span class="co">#&gt; 82  56.64544  0.000000 56.64544 56.64544</span></span>
+<span><span class="co">#&gt; 83  49.70872  0.000000 49.70872 49.70872</span></span>
+<span><span class="co">#&gt; 84  60.40497  0.000000 60.40497 60.40497</span></span>
+<span><span class="co">#&gt; 85  45.98525  0.000000 45.98525 45.98525</span></span>
+<span><span class="co">#&gt; 86  51.90911  0.000000 51.90911 51.90911</span></span>
+<span><span class="co">#&gt; 87  41.50787  0.000000 41.50787 41.50787</span></span>
+<span><span class="co">#&gt; 88  53.42727  0.000000 53.42727 53.42727</span></span>
+<span><span class="co">#&gt; 89  23.86859  0.000000 23.86859 23.86859</span></span>
+<span><span class="co">#&gt; 90  35.98563  0.000000 35.98563 35.98563</span></span>
+<span><span class="co">#&gt; 91  43.60626  0.000000 43.60626 43.60626</span></span>
+<span><span class="co">#&gt; 92  44.77520  9.977179 25.22029 64.33011</span></span>
+<span><span class="co">#&gt; 93  29.59773  0.000000 29.59773 29.59773</span></span>
+<span><span class="co">#&gt; 94  35.50688  0.000000 35.50688 35.50688</span></span>
+<span><span class="co">#&gt; 95  55.42944  0.000000 55.42944 55.42944</span></span>
+<span><span class="co">#&gt; 96  52.10530  0.000000 52.10530 52.10530</span></span>
+<span><span class="co">#&gt; 97  31.69644  0.000000 31.69644 31.69644</span></span>
+<span><span class="co">#&gt; 98  32.16159  0.000000 32.16159 32.16159</span></span>
+<span><span class="co">#&gt; 99  51.04735  0.000000 51.04735 51.04735</span></span>
+<span><span class="co">#&gt; 100 55.85987  0.000000 55.85987 55.85987</span></span>
+<span><span class="co">#&gt; 101 49.11706  0.000000 49.11706 49.11706</span></span>
+<span><span class="co">#&gt; 102 49.25544  0.000000 49.25544 49.25544</span></span>
+<span><span class="co">#&gt; 103 51.72211  0.000000 51.72211 51.72211</span></span>
+<span><span class="co">#&gt; 104 69.99128  0.000000 69.99128 69.99128</span></span>
+<span><span class="co">#&gt; 105 22.07169  0.000000 22.07169 22.07169</span></span>
+<span><span class="co">#&gt; 106 36.35845  4.838107 26.87593 45.84097</span></span>
+<span><span class="co">#&gt; 107 46.08393  0.000000 46.08393 46.08393</span></span>
+<span><span class="co">#&gt; 108 52.42288  0.000000 52.42288 52.42288</span></span>
+<span><span class="co">#&gt; 109 37.69466  0.000000 37.69466 37.69466</span></span>
+<span><span class="co">#&gt; 110 44.59400  0.000000 44.59400 44.59400</span></span>
+<span><span class="co">#&gt; 111 52.08897  0.000000 52.08897 52.08897</span></span>
+<span><span class="co">#&gt; 112 58.22961  0.000000 58.22961 58.22961</span></span>
+<span><span class="co">#&gt; 113 37.22824  0.000000 37.22824 37.22824</span></span>
+<span><span class="co">#&gt; 114 34.39863  0.000000 34.39863 34.39863</span></span>
+<span><span class="co">#&gt; 115 45.88949  4.101886 37.84994 53.92904</span></span>
+<span><span class="co">#&gt; 116 36.34012  0.000000 36.34012 36.34012</span></span>
+<span><span class="co">#&gt; 117 45.44182  0.000000 45.44182 45.44182</span></span>
+<span><span class="co">#&gt; 118 41.54847  0.000000 41.54847 41.54847</span></span>
+<span><span class="co">#&gt; 119 43.92172  0.000000 43.92172 43.92172</span></span>
+<span><span class="co">#&gt; 120 61.83243  0.000000 61.83243 61.83243</span></span>
+<span><span class="co">#&gt; 121 27.25656  0.000000 27.25656 27.25656</span></span>
+<span><span class="co">#&gt; 122 34.77803  4.776636 25.41600 44.14007</span></span>
+<span><span class="co">#&gt; 123 45.65133  0.000000 45.65133 45.65133</span></span>
+<span><span class="co">#&gt; 124 44.56078 10.005509 24.95034 64.17122</span></span>
+<span><span class="co">#&gt; 125 33.19334  0.000000 33.19334 33.19334</span></span>
+<span><span class="co">#&gt; 126 39.72671  4.712987 30.48942 48.96400</span></span>
+<span><span class="co">#&gt; 127 45.59637  4.013838 37.72939 53.46335</span></span>
+<span><span class="co">#&gt; 128 41.66826  0.000000 41.66826 41.66826</span></span>
+<span><span class="co">#&gt; 129 27.12753  0.000000 27.12753 27.12753</span></span>
+<span><span class="co">#&gt; 130 31.74858  0.000000 31.74858 31.74858</span></span>
+<span><span class="co">#&gt; 131 44.57711  4.197659 36.34985 52.80437</span></span>
+<span><span class="co">#&gt; 132 41.60000  0.000000 41.60000 41.60000</span></span>
+<span><span class="co">#&gt; 133 39.45250  0.000000 39.45250 39.45250</span></span>
+<span><span class="co">#&gt; 134 32.61823  0.000000 32.61823 32.61823</span></span>
+<span><span class="co">#&gt; 135 34.62445  0.000000 34.62445 34.62445</span></span>
+<span><span class="co">#&gt; 136 45.90515  0.000000 45.90515 45.90515</span></span>
+<span><span class="co">#&gt; 137 36.17780  0.000000 36.17780 36.17780</span></span>
+<span><span class="co">#&gt; 138 39.79796  0.000000 39.79796 39.79796</span></span>
+<span><span class="co">#&gt; 139 45.87019  3.951097 38.12619 53.61420</span></span>
+<span><span class="co">#&gt; 140 50.08272  0.000000 50.08272 50.08272</span></span>
+<span><span class="co">#&gt; 141 36.27753  6.054156 24.41160 48.14346</span></span>
+<span><span class="co">#&gt; 142 44.64316  0.000000 44.64316 44.64316</span></span>
+<span><span class="co">#&gt; 143 44.88252  4.094265 36.85790 52.90713</span></span>
+<span><span class="co">#&gt; 144 39.73529  0.000000 39.73529 39.73529</span></span>
+<span><span class="co">#&gt; 145 34.06164  0.000000 34.06164 34.06164</span></span>
+<span><span class="co">#&gt; 146 40.18592  0.000000 40.18592 40.18592</span></span>
+<span><span class="co">#&gt; 147 41.17584  0.000000 41.17584 41.17584</span></span>
+<span><span class="co">#&gt; 148 57.76669  0.000000 57.76669 57.76669</span></span>
+<span><span class="co">#&gt; 149 38.18460  0.000000 38.18460 38.18460</span></span>
+<span><span class="co">#&gt; 150 38.61735  4.708172 29.38950 47.84520</span></span>
+<span><span class="co">#&gt; 151 47.19893  0.000000 47.19893 47.19893</span></span>
+<span><span class="co">#&gt; 152 48.18237 10.147911 28.29283 68.07191</span></span>
+<span><span class="co">#&gt; 153 37.32785  0.000000 37.32785 37.32785</span></span>
+<span><span class="co">#&gt; 154 37.89476  4.665543 28.75046 47.03906</span></span>
+<span><span class="co">#&gt; 155 43.16048  0.000000 43.16048 43.16048</span></span>
+<span><span class="co">#&gt; 156 41.40349  0.000000 41.40349 41.40349</span></span>
+<span><span class="co">#&gt; 157 30.15733  0.000000 30.15733 30.15733</span></span>
+<span><span class="co">#&gt; 158 35.84353  0.000000 35.84353 35.84353</span></span>
+<span><span class="co">#&gt; 159 40.95250  0.000000 40.95250 40.95250</span></span>
+<span><span class="co">#&gt; 160 46.76086  9.886491 27.38369 66.13802</span></span>
+<span><span class="co">#&gt; 161 36.09804  5.857808 24.61695 47.57913</span></span>
+<span><span class="co">#&gt; 162 41.37928  0.000000 41.37928 41.37928</span></span>
+<span><span class="co">#&gt; 163 50.17316  0.000000 50.17316 50.17316</span></span>
+<span><span class="co">#&gt; 164 45.35226  0.000000 45.35226 45.35226</span></span>
+<span><span class="co">#&gt; 165 39.06491  0.000000 39.06491 39.06491</span></span>
+<span><span class="co">#&gt; 166 39.39597  4.722573 30.13990 48.65205</span></span>
+<span><span class="co">#&gt; 167 43.69372  4.001901 35.85014 51.53731</span></span>
+<span><span class="co">#&gt; 168 42.11960  0.000000 42.11960 42.11960</span></span>
+<span><span class="co">#&gt; 169 29.81042  0.000000 29.81042 29.81042</span></span>
+<span><span class="co">#&gt; 170 42.57055  0.000000 42.57055 42.57055</span></span>
+<span><span class="co">#&gt; 171 47.81652  0.000000 47.81652 47.81652</span></span>
+<span><span class="co">#&gt; 172 68.06024  0.000000 68.06024 68.06024</span></span>
+<span><span class="co">#&gt; 173 35.62071  0.000000 35.62071 35.62071</span></span>
+<span><span class="co">#&gt; 174 40.83933  4.711457 31.60505 50.07362</span></span>
+<span><span class="co">#&gt; 175 45.83438  3.997712 37.99901 53.66975</span></span>
+<span><span class="co">#&gt; 176 51.72310  9.985014 32.15283 71.29336</span></span>
+<span><span class="co">#&gt; 177 33.89134  0.000000 33.89134 33.89134</span></span>
+<span><span class="co">#&gt; 178 36.42808  0.000000 36.42808 36.42808</span></span>
+<span><span class="co">#&gt; 179 37.57519  0.000000 37.57519 37.57519</span></span>
+<span><span class="co">#&gt; 180 58.46873  0.000000 58.46873 58.46873</span></span>
+<span><span class="co">#&gt; 181 19.54516  0.000000 19.54516 19.54516</span></span>
+<span><span class="co">#&gt; 182 31.13541  0.000000 31.13541 31.13541</span></span>
+<span><span class="co">#&gt; 183 40.89955  0.000000 40.89955 40.89955</span></span>
+<span><span class="co">#&gt; 184 42.08852 10.033675 22.42288 61.75416</span></span>
+<span><span class="co">#&gt; 185 22.18809  0.000000 22.18809 22.18809</span></span>
+<span><span class="co">#&gt; 186 41.05857  0.000000 41.05857 41.05857</span></span>
+<span><span class="co">#&gt; 187 37.32452  0.000000 37.32452 37.32452</span></span>
+<span><span class="co">#&gt; 188 47.28633 10.506314 26.69433 67.87832</span></span>
+<span><span class="co">#&gt; 189 35.28933  5.930491 23.66579 46.91288</span></span>
+<span><span class="co">#&gt; 190 43.12432  0.000000 43.12432 43.12432</span></span>
+<span><span class="co">#&gt; 191 41.99349  0.000000 41.99349 41.99349</span></span>
+<span><span class="co">#&gt; 192 49.12250 10.133250 29.26169 68.98330</span></span>
+<span><span class="co">#&gt; 193 44.03080  0.000000 44.03080 44.03080</span></span>
+<span><span class="co">#&gt; 194 38.66417  0.000000 38.66417 38.66417</span></span>
+<span><span class="co">#&gt; 195 53.45993  0.000000 53.45993 53.45993</span></span>
+<span><span class="co">#&gt; 196 53.14026 10.340410 32.87343 73.40710</span></span>
+<span><span class="co">#&gt; 197 29.81948  0.000000 29.81948 29.81948</span></span>
+<span><span class="co">#&gt; 198 30.43859  0.000000 30.43859 30.43859</span></span>
+<span><span class="co">#&gt; 199 40.18095  0.000000 40.18095 40.18095</span></span>
+<span><span class="co">#&gt; 200 48.07272  9.967243 28.53728 67.60815</span></span>
+<span><span class="co">#&gt; 201 26.78578  0.000000 26.78578 26.78578</span></span>
+<span><span class="co">#&gt; 202 34.55115  0.000000 34.55115 34.55115</span></span>
+<span><span class="co">#&gt; 203 44.66449  4.123926 36.58174 52.74724</span></span>
+<span><span class="co">#&gt; 204 40.06421  0.000000 40.06421 40.06421</span></span>
+<span><span class="co">#&gt; 205 36.66313  5.942700 25.01565 48.31061</span></span>
+<span><span class="co">#&gt; 206 43.09329  0.000000 43.09329 43.09329</span></span>
+<span><span class="co">#&gt; 207 46.09670  4.062984 38.13340 54.06000</span></span>
+<span><span class="co">#&gt; 208 45.71567  0.000000 45.71567 45.71567</span></span>
+<span><span class="co">#&gt; 209 40.74992  0.000000 40.74992 40.74992</span></span>
+<span><span class="co">#&gt; 210 44.74635  0.000000 44.74635 44.74635</span></span>
+<span><span class="co">#&gt; 211 47.51420  3.986462 39.70088 55.32753</span></span>
+<span><span class="co">#&gt; 212 53.24620  9.955047 33.73466 72.75773</span></span>
+<span><span class="co">#&gt; 213 40.35635  6.620353 27.38070 53.33201</span></span>
+<span><span class="co">#&gt; 214 45.16757  5.186297 35.00261 55.33252</span></span>
+<span><span class="co">#&gt; 215 50.02199  4.137823 41.91201 58.13197</span></span>
+<span><span class="co">#&gt; 216 56.03985 10.197209 36.05369 76.02602</span></span>
+<span><span class="co">#&gt; 217 40.14674  0.000000 40.14674 40.14674</span></span>
+<span><span class="co">#&gt; 218 48.75859  0.000000 48.75859 48.75859</span></span>
+<span><span class="co">#&gt; 219 46.43462  0.000000 46.43462 46.43462</span></span>
+<span><span class="co">#&gt; 220 53.05319 10.007873 33.43812 72.66826</span></span>
+<span><span class="co">#&gt; 221 29.33990  0.000000 29.33990 29.33990</span></span>
+<span><span class="co">#&gt; 222 36.24424  4.689861 27.05228 45.43620</span></span>
+<span><span class="co">#&gt; 223 42.39946  3.977660 34.60339 50.19553</span></span>
+<span><span class="co">#&gt; 224 47.93165  0.000000 47.93165 47.93165</span></span>
+<span><span class="co">#&gt; 225 36.59443  5.731392 25.36111 47.82775</span></span>
+<span><span class="co">#&gt; 226 41.11632  0.000000 41.11632 41.11632</span></span>
+<span><span class="co">#&gt; 227 47.05889  0.000000 47.05889 47.05889</span></span>
+<span><span class="co">#&gt; 228 52.24599  0.000000 52.24599 52.24599</span></span>
+<span><span class="co">#&gt; 229 45.12054  6.047408 33.26784 56.97325</span></span>
+<span><span class="co">#&gt; 230 54.14236  0.000000 54.14236 54.14236</span></span>
+<span><span class="co">#&gt; 231 50.44618  0.000000 50.44618 50.44618</span></span>
+<span><span class="co">#&gt; 232 58.53593 10.219379 38.50632 78.56555</span></span>
+<span><span class="co">#&gt; 233 37.53657  0.000000 37.53657 37.53657</span></span>
+<span><span class="co">#&gt; 234 44.28282  4.653963 35.16122 53.40442</span></span>
+<span><span class="co">#&gt; 235 49.45840  0.000000 49.45840 49.45840</span></span>
+<span><span class="co">#&gt; 236 59.12866  0.000000 59.12866 59.12866</span></span>
+<span><span class="co">#&gt; 237 40.31268  0.000000 40.31268 40.31268</span></span>
+<span><span class="co">#&gt; 238 39.66049  0.000000 39.66049 39.66049</span></span>
+<span><span class="co">#&gt; 239 50.89726  0.000000 50.89726 50.89726</span></span>
+<span><span class="co">#&gt; 240 56.13116  0.000000 56.13116 56.13116</span></span>
+<span><span class="co">#&gt; 241 32.82981  0.000000 32.82981 32.82981</span></span>
+<span><span class="co">#&gt; 242 46.53837  0.000000 46.53837 46.53837</span></span>
+<span><span class="co">#&gt; 243 44.46016  4.012140 36.59651 52.32382</span></span>
+<span><span class="co">#&gt; 244 51.81265  0.000000 51.81265 51.81265</span></span>
+<span><span class="co">#&gt; 245 27.76886  6.060476 15.89055 39.64718</span></span>
+<span><span class="co">#&gt; 246 29.91939  0.000000 29.91939 29.91939</span></span>
+<span><span class="co">#&gt; 247 40.70944  4.119124 32.63610 48.78277</span></span>
+<span><span class="co">#&gt; 248 44.37942 10.161018 24.46419 64.29465</span></span>
+<span><span class="co">#&gt; 249 43.47695  5.902016 31.90921 55.04469</span></span>
+<span><span class="co">#&gt; 250 51.05656  0.000000 51.05656 51.05656</span></span>
+<span><span class="co">#&gt; 251 50.50059  0.000000 50.50059 50.50059</span></span>
+<span><span class="co">#&gt; 252 64.11388  0.000000 64.11388 64.11388</span></span>
+<span><span class="co">#&gt; 253 32.21843  0.000000 32.21843 32.21843</span></span>
+<span><span class="co">#&gt; 254 29.64732  0.000000 29.64732 29.64732</span></span>
+<span><span class="co">#&gt; 255 42.48707  4.049783 34.54964 50.42449</span></span>
+<span><span class="co">#&gt; 256 45.09919  0.000000 45.09919 45.09919</span></span>
+<span><span class="co">#&gt; 257 39.75659  0.000000 39.75659 39.75659</span></span>
+<span><span class="co">#&gt; 258 37.28894  0.000000 37.28894 37.28894</span></span>
+<span><span class="co">#&gt; 259 44.80145  0.000000 44.80145 44.80145</span></span>
+<span><span class="co">#&gt; 260 65.95920  0.000000 65.95920 65.95920</span></span>
+<span><span class="co">#&gt; 261 33.43439  0.000000 33.43439 33.43439</span></span>
+<span><span class="co">#&gt; 262 33.57042  0.000000 33.57042 33.57042</span></span>
+<span><span class="co">#&gt; 263 39.91543  0.000000 39.91543 39.91543</span></span>
+<span><span class="co">#&gt; 264 49.57098  0.000000 49.57098 49.57098</span></span>
+<span><span class="co">#&gt; 265 38.91634  0.000000 38.91634 38.91634</span></span>
+<span><span class="co">#&gt; 266 36.69011  0.000000 36.69011 36.69011</span></span>
+<span><span class="co">#&gt; 267 45.66665  0.000000 45.66665 45.66665</span></span>
+<span><span class="co">#&gt; 268 52.07431  0.000000 52.07431 52.07431</span></span>
+<span><span class="co">#&gt; 269 42.21411  0.000000 42.21411 42.21411</span></span>
+<span><span class="co">#&gt; 270 45.02901  0.000000 45.02901 45.02901</span></span>
+<span><span class="co">#&gt; 271 50.22530  3.956570 42.47057 57.98004</span></span>
+<span><span class="co">#&gt; 272 56.56084  9.940090 37.07862 76.04306</span></span>
+<span><span class="co">#&gt; 273 30.98338  0.000000 30.98338 30.98338</span></span>
+<span><span class="co">#&gt; 274 44.72932  0.000000 44.72932 44.72932</span></span>
+<span><span class="co">#&gt; 275 40.68711  0.000000 40.68711 40.68711</span></span>
+<span><span class="co">#&gt; 276 34.71530  0.000000 34.71530 34.71530</span></span>
+<span><span class="co">#&gt; 277 27.30752  0.000000 27.30752 27.30752</span></span>
+<span><span class="co">#&gt; 278 37.31585  0.000000 37.31585 37.31585</span></span>
+<span><span class="co">#&gt; 279 42.23592  3.949193 34.49564 49.97619</span></span>
+<span><span class="co">#&gt; 280 44.83000  0.000000 44.83000 44.83000</span></span>
+<span><span class="co">#&gt; 281 32.93042  0.000000 32.93042 32.93042</span></span>
+<span><span class="co">#&gt; 282 44.91911  0.000000 44.91911 44.91911</span></span>
+<span><span class="co">#&gt; 283 45.68636  0.000000 45.68636 45.68636</span></span>
+<span><span class="co">#&gt; 284 65.98800  0.000000 65.98800 65.98800</span></span>
+<span><span class="co">#&gt; 285 46.60130  0.000000 46.60130 46.60130</span></span>
+<span><span class="co">#&gt; 286 40.89786  0.000000 40.89786 40.89786</span></span>
+<span><span class="co">#&gt; 287 46.66708  0.000000 46.66708 46.66708</span></span>
+<span><span class="co">#&gt; 288 53.97575 10.170630 34.04169 73.90982</span></span>
+<span><span class="co">#&gt; 289 34.51394  6.299838 22.16649 46.86140</span></span>
+<span><span class="co">#&gt; 290 40.31956  5.091944 30.33954 50.29959</span></span>
+<span><span class="co">#&gt; 291 43.83270  0.000000 43.83270 43.83270</span></span>
+<span><span class="co">#&gt; 292 44.11604  0.000000 44.11604 44.11604</span></span>
+<span><span class="co">#&gt; 293 38.29612  0.000000 38.29612 38.29612</span></span>
+<span><span class="co">#&gt; 294 42.38074  4.705682 33.15777 51.60371</span></span>
+<span><span class="co">#&gt; 295 51.38570  0.000000 51.38570 51.38570</span></span>
+<span><span class="co">#&gt; 296 56.20979  0.000000 56.20979 56.20979</span></span>
+<span><span class="co">#&gt; 297 35.93809  5.988841 24.20018 47.67600</span></span>
+<span><span class="co">#&gt; 298 43.45819  0.000000 43.45819 43.45819</span></span>
+<span><span class="co">#&gt; 299 38.38741  0.000000 38.38741 38.38741</span></span>
+<span><span class="co">#&gt; 300 56.42818  0.000000 56.42818 56.42818</span></span>
+<span><span class="co">#&gt; 301 39.05050  0.000000 39.05050 39.05050</span></span>
+<span><span class="co">#&gt; 302 44.66707  4.690309 35.47423 53.85990</span></span>
+<span><span class="co">#&gt; 303 49.86836  3.976885 42.07381 57.66292</span></span>
+<span><span class="co">#&gt; 304 54.09200  0.000000 54.09200 54.09200</span></span>
+<span><span class="co">#&gt; 305 31.40521  0.000000 31.40521 31.40521</span></span>
+<span><span class="co">#&gt; 306 46.13330  0.000000 46.13330 46.13330</span></span>
+<span><span class="co">#&gt; 307 45.29845  0.000000 45.29845 45.29845</span></span>
+<span><span class="co">#&gt; 308 28.06936  0.000000 28.06936 28.06936</span></span>
+<span><span class="co">#&gt; 309 39.05960  5.791717 27.70804 50.41116</span></span>
+<span><span class="co">#&gt; 310 42.50283  0.000000 42.50283 42.50283</span></span>
+<span><span class="co">#&gt; 311 46.45368  0.000000 46.45368 46.45368</span></span>
+<span><span class="co">#&gt; 312 64.97366  0.000000 64.97366 64.97366</span></span>
+<span><span class="co">#&gt; 313 30.67876  6.484535 17.96930 43.38821</span></span>
+<span><span class="co">#&gt; 314 35.63991  5.137832 25.56994 45.70988</span></span>
+<span><span class="co">#&gt; 315 41.27878  4.112017 33.21938 49.33819</span></span>
+<span><span class="co">#&gt; 316 43.97847  0.000000 43.97847 43.97847</span></span>
+<span><span class="co">#&gt; 317 35.33466  0.000000 35.33466 35.33466</span></span>
+<span><span class="co">#&gt; 318 39.34378  0.000000 39.34378 39.34378</span></span>
+<span><span class="co">#&gt; 319 41.27633  0.000000 41.27633 41.27633</span></span>
+<span><span class="co">#&gt; 320 50.74572  9.900646 31.34081 70.15063</span></span>
+<span><span class="co">#&gt; 321 34.18429  5.758417 22.89800 45.47058</span></span>
+<span><span class="co">#&gt; 322 39.83058  0.000000 39.83058 39.83058</span></span>
+<span><span class="co">#&gt; 323 43.49673  0.000000 43.49673 43.49673</span></span>
+<span><span class="co">#&gt; 324 44.06114  0.000000 44.06114 44.06114</span></span>
+<span><span class="co">#&gt; 325 41.43742  0.000000 41.43742 41.43742</span></span>
+<span><span class="co">#&gt; 326 40.68384  4.671127 31.52860 49.83908</span></span>
+<span><span class="co">#&gt; 327 46.16954  0.000000 46.16954 46.16954</span></span>
+<span><span class="co">#&gt; 328 54.24024  0.000000 54.24024 54.24024</span></span>
+<span><span class="co">#&gt; 329 36.61831  0.000000 36.61831 36.61831</span></span>
+<span><span class="co">#&gt; 330 42.09272  0.000000 42.09272 42.09272</span></span>
+<span><span class="co">#&gt; 331 50.69556  0.000000 50.69556 50.69556</span></span>
+<span><span class="co">#&gt; 332 51.72563  0.000000 51.72563 51.72563</span></span>
+<span><span class="co">#&gt; 333 32.08271  6.508659 19.32597 44.83945</span></span>
+<span><span class="co">#&gt; 334 36.39974  5.148559 26.30875 46.49073</span></span>
+<span><span class="co">#&gt; 335 41.38610  4.121854 33.30742 49.46479</span></span>
+<span><span class="co">#&gt; 336 53.89947  0.000000 53.89947 53.89947</span></span>
+<span><span class="co">#&gt; 337 31.94884  6.295848 19.60920 44.28848</span></span>
+<span><span class="co">#&gt; 338 36.34138  5.063916 26.41629 46.26647</span></span>
+<span><span class="co">#&gt; 339 39.94420  0.000000 39.94420 39.94420</span></span>
+<span><span class="co">#&gt; 340 56.42482  0.000000 56.42482 56.42482</span></span>
+<span><span class="co">#&gt; 341 41.86385  0.000000 41.86385 41.86385</span></span>
+<span><span class="co">#&gt; 342 34.56420  0.000000 34.56420 34.56420</span></span>
+<span><span class="co">#&gt; 343 38.68927  0.000000 38.68927 38.68927</span></span>
+<span><span class="co">#&gt; 344 62.88743  0.000000 62.88743 62.88743</span></span>
+<span><span class="co">#&gt; 345 28.85343  0.000000 28.85343 28.85343</span></span>
+<span><span class="co">#&gt; 346 38.89808  4.802532 29.48529 48.31088</span></span>
+<span><span class="co">#&gt; 347 49.29495  0.000000 49.29495 49.29495</span></span>
+<span><span class="co">#&gt; 348 48.90884 10.028462 29.25341 68.56426</span></span>
+<span><span class="co">#&gt; 349 28.74029  0.000000 28.74029 28.74029</span></span>
+<span><span class="co">#&gt; 350 36.38836  4.701957 27.17269 45.60402</span></span>
+<span><span class="co">#&gt; 351 43.59994  0.000000 43.59994 43.59994</span></span>
+<span><span class="co">#&gt; 352 57.38616  0.000000 57.38616 57.38616</span></span>
+<span><span class="co">#&gt; 353 35.36824  0.000000 35.36824 35.36824</span></span>
+<span><span class="co">#&gt; 354 43.06110  0.000000 43.06110 43.06110</span></span>
+<span><span class="co">#&gt; 355 31.27551  0.000000 31.27551 31.27551</span></span>
+<span><span class="co">#&gt; 356 54.13245  0.000000 54.13245 54.13245</span></span>
+<span><span class="co">#&gt; 357 25.97050  0.000000 25.97050 25.97050</span></span>
+<span><span class="co">#&gt; 358 34.04514  4.728613 24.77723 43.31305</span></span>
+<span><span class="co">#&gt; 359 40.67015  4.009238 32.81219 48.52812</span></span>
+<span><span class="co">#&gt; 360 44.36054 10.015792 24.72995 63.99113</span></span>
+<span><span class="co">#&gt; 361 39.69391  6.285098 27.37535 52.01248</span></span>
+<span><span class="co">#&gt; 362 44.79720  5.063240 34.87343 54.72097</span></span>
+<span><span class="co">#&gt; 363 51.17493  0.000000 51.17493 51.17493</span></span>
+<span><span class="co">#&gt; 364 48.44043  0.000000 48.44043 48.44043</span></span>
+<span><span class="co">#&gt; 365 43.33128  0.000000 43.33128 43.33128</span></span>
+<span><span class="co">#&gt; 366 46.45918  4.710003 37.22775 55.69062</span></span>
+<span><span class="co">#&gt; 367 55.93546  0.000000 55.93546 55.93546</span></span>
+<span><span class="co">#&gt; 368 54.15312  0.000000 54.15312 54.15312</span></span>
+<span><span class="co">#&gt; 369 33.79699  5.784463 22.45965 45.13433</span></span>
+<span><span class="co">#&gt; 370 40.60252  0.000000 40.60252 40.60252</span></span>
+<span><span class="co">#&gt; 371 44.44715  0.000000 44.44715 44.44715</span></span>
+<span><span class="co">#&gt; 372 40.54161  0.000000 40.54161 40.54161</span></span>
+<span><span class="co">#&gt; 373 33.95563  0.000000 33.95563 33.95563</span></span>
+<span><span class="co">#&gt; 374 36.84083  4.649256 27.72845 45.95320</span></span>
+<span><span class="co">#&gt; 375 43.67802  0.000000 43.67802 43.67802</span></span>
+<span><span class="co">#&gt; 376 42.76023  0.000000 42.76023 42.76023</span></span>
+<span><span class="co">#&gt; 377 34.18486  5.990614 22.44347 45.92625</span></span>
+<span><span class="co">#&gt; 378 42.82678  0.000000 42.82678 42.82678</span></span>
+<span><span class="co">#&gt; 379 39.59218  0.000000 39.59218 39.59218</span></span>
+<span><span class="co">#&gt; 380 47.93427 10.186288 27.96951 67.89902</span></span>
+<span><span class="co">#&gt; 381 33.49216  0.000000 33.49216 33.49216</span></span>
+<span><span class="co">#&gt; 382 35.39266  0.000000 35.39266 35.39266</span></span>
+<span><span class="co">#&gt; 383 42.88943  3.946494 35.15445 50.62442</span></span>
+<span><span class="co">#&gt; 384 42.36266  0.000000 42.36266 42.36266</span></span>
+<span><span class="co">#&gt; 385 48.54368  0.000000 48.54368 48.54368</span></span>
+<span><span class="co">#&gt; 386 43.94366  0.000000 43.94366 43.94366</span></span>
+<span><span class="co">#&gt; 387 50.98218  4.006133 43.13031 58.83406</span></span>
+<span><span class="co">#&gt; 388 47.91204  0.000000 47.91204 47.91204</span></span>
+<span><span class="co">#&gt; 389 20.72928  0.000000 20.72928 20.72928</span></span>
+<span><span class="co">#&gt; 390 28.00599  0.000000 28.00599 28.00599</span></span>
+<span><span class="co">#&gt; 391 40.19255  0.000000 40.19255 40.19255</span></span>
+<span><span class="co">#&gt; 392 37.79360  0.000000 37.79360 37.79360</span></span>
+<span><span class="co">#&gt; 393 32.17343  5.993973 20.42546 43.92141</span></span>
+<span><span class="co">#&gt; 394 36.75177  0.000000 36.75177 36.75177</span></span>
+<span><span class="co">#&gt; 395 42.75025  4.058659 34.79543 50.70508</span></span>
+<span><span class="co">#&gt; 396 47.37158 10.101405 27.57319 67.16997</span></span>
+<span><span class="co">#&gt; 397 34.59822  0.000000 34.59822 34.59822</span></span>
+<span><span class="co">#&gt; 398 39.32034  0.000000 39.32034 39.32034</span></span>
+<span><span class="co">#&gt; 399 40.65702  0.000000 40.65702 40.65702</span></span>
+<span><span class="co">#&gt; 400 48.52002  9.901956 29.11254 67.92749</span></span>
+<span><span class="co">#&gt; 401 40.41786  5.911790 28.83096 52.00475</span></span>
+<span><span class="co">#&gt; 402 43.03255  0.000000 43.03255 43.03255</span></span>
+<span><span class="co">#&gt; 403 54.65715  0.000000 54.65715 54.65715</span></span>
+<span><span class="co">#&gt; 404 55.54195 10.155817 35.63691 75.44698</span></span>
+<span><span class="co">#&gt; 405 35.55742  0.000000 35.55742 35.55742</span></span>
+<span><span class="co">#&gt; 406 43.70215  0.000000 43.70215 43.70215</span></span>
+<span><span class="co">#&gt; 407 42.52157  0.000000 42.52157 42.52157</span></span>
+<span><span class="co">#&gt; 408 54.89337  0.000000 54.89337 54.89337</span></span>
+<span><span class="co">#&gt; 409 32.03460  0.000000 32.03460 32.03460</span></span>
+<span><span class="co">#&gt; 410 29.45107  0.000000 29.45107 29.45107</span></span>
+<span><span class="co">#&gt; 411 45.35138  0.000000 45.35138 45.35138</span></span>
+<span><span class="co">#&gt; 412 45.33026 10.169474 25.39845 65.26206</span></span>
+<span><span class="co">#&gt; 413 38.73784  0.000000 38.73784 38.73784</span></span>
+<span><span class="co">#&gt; 414 39.30063  4.703976 30.08100 48.52025</span></span>
+<span><span class="co">#&gt; 415 41.42283  0.000000 41.42283 41.42283</span></span>
+<span><span class="co">#&gt; 416 47.32385  0.000000 47.32385 47.32385</span></span>
+<span><span class="co">#&gt; 417 40.41284  5.938378 28.77384 52.05185</span></span>
+<span><span class="co">#&gt; 418 47.55310  0.000000 47.55310 47.55310</span></span>
+<span><span class="co">#&gt; 419 49.06509  0.000000 49.06509 49.06509</span></span>
+<span><span class="co">#&gt; 420 53.79511 10.121574 33.95719 73.63303</span></span>
+<span><span class="co">#&gt; 421 29.22591  0.000000 29.22591 29.22591</span></span>
+<span><span class="co">#&gt; 422 40.08175  0.000000 40.08175 40.08175</span></span>
+<span><span class="co">#&gt; 423 45.68142  0.000000 45.68142 45.68142</span></span>
+<span><span class="co">#&gt; 424 41.47403  0.000000 41.47403 41.47403</span></span>
+<span><span class="co">#&gt; 425 37.55612  6.451121 24.91215 50.20009</span></span>
+<span><span class="co">#&gt; 426 41.98123  5.136605 31.91366 52.04879</span></span>
+<span><span class="co">#&gt; 427 42.51970  0.000000 42.51970 42.51970</span></span>
+<span><span class="co">#&gt; 428 69.36099  0.000000 69.36099 69.36099</span></span>
+<span><span class="co">#&gt; 429 42.39760  0.000000 42.39760 42.39760</span></span>
+<span><span class="co">#&gt; 430 43.72376  0.000000 43.72376 43.72376</span></span>
+<span><span class="co">#&gt; 431 49.47601  0.000000 49.47601 49.47601</span></span>
+<span><span class="co">#&gt; 432 51.94188  0.000000 51.94188 51.94188</span></span>
+<span><span class="co">#&gt; 433 31.77722  5.909596 20.19462 43.35981</span></span>
+<span><span class="co">#&gt; 434 40.59100  0.000000 40.59100 40.59100</span></span>
+<span><span class="co">#&gt; 435 39.97833  0.000000 39.97833 39.97833</span></span>
+<span><span class="co">#&gt; 436 31.69049  0.000000 31.69049 31.69049</span></span>
+<span><span class="co">#&gt; 437 33.99809  5.856154 22.52024 45.47594</span></span>
+<span><span class="co">#&gt; 438 37.20517  0.000000 37.20517 37.20517</span></span>
+<span><span class="co">#&gt; 439 46.28740  0.000000 46.28740 46.28740</span></span>
+<span><span class="co">#&gt; 440 49.81365 10.088896 30.03978 69.58752</span></span>
+<span><span class="co">#&gt; 441 35.15913  6.525518 22.36935 47.94891</span></span>
+<span><span class="co">#&gt; 442 40.63997  5.164185 30.51835 50.76158</span></span>
+<span><span class="co">#&gt; 443 46.80529  4.142376 38.68638 54.92420</span></span>
+<span><span class="co">#&gt; 444 41.58720  0.000000 41.58720 41.58720</span></span>
+<span><span class="co">#&gt; 445 32.17365  0.000000 32.17365 32.17365</span></span>
+<span><span class="co">#&gt; 446 37.07479  4.677690 27.90669 46.24290</span></span>
+<span><span class="co">#&gt; 447 40.69375  0.000000 40.69375 40.69375</span></span>
+<span><span class="co">#&gt; 448 47.52336  9.947825 28.02598 67.02074</span></span>
+<span><span class="co">#&gt; 449 32.28771  0.000000 32.28771 32.28771</span></span>
+<span><span class="co">#&gt; 450 41.76205  0.000000 41.76205 41.76205</span></span>
+<span><span class="co">#&gt; 451 40.06768  0.000000 40.06768 40.06768</span></span>
+<span><span class="co">#&gt; 452 47.21582  9.975254 27.66469 66.76696</span></span>
+<span><span class="co">#&gt; 453 29.14213  0.000000 29.14213 29.14213</span></span>
+<span><span class="co">#&gt; 454 39.50989  0.000000 39.50989 39.50989</span></span>
+<span><span class="co">#&gt; 455 43.32349  0.000000 43.32349 43.32349</span></span>
+<span><span class="co">#&gt; 456 47.16756  0.000000 47.16756 47.16756</span></span>
+<span><span class="co">#&gt; 457 40.93020  0.000000 40.93020 40.93020</span></span>
+<span><span class="co">#&gt; 458 42.19406  0.000000 42.19406 42.19406</span></span>
+<span><span class="co">#&gt; 459 41.21057  0.000000 41.21057 41.21057</span></span>
+<span><span class="co">#&gt; 460 49.76205 10.011957 30.13898 69.38513</span></span>
+<span><span class="co">#&gt; 461 38.54330  0.000000 38.54330 38.54330</span></span>
+<span><span class="co">#&gt; 462 41.44104  4.704018 32.22133 50.66074</span></span>
+<span><span class="co">#&gt; 463 43.96324  0.000000 43.96324 43.96324</span></span>
+<span><span class="co">#&gt; 464 42.67652  0.000000 42.67652 42.67652</span></span>
+<span><span class="co">#&gt; 465 22.79584  0.000000 22.79584 22.79584</span></span>
+<span><span class="co">#&gt; 466 33.91004  4.770477 24.56008 43.26001</span></span>
+<span><span class="co">#&gt; 467 41.58421  4.076348 33.59471 49.57370</span></span>
+<span><span class="co">#&gt; 468 44.31106 10.110978 24.49391 64.12821</span></span>
+<span><span class="co">#&gt; 469 31.43559  0.000000 31.43559 31.43559</span></span>
+<span><span class="co">#&gt; 470 38.85064  0.000000 38.85064 38.85064</span></span>
+<span><span class="co">#&gt; 471 48.24288  0.000000 48.24288 48.24288</span></span>
+<span><span class="co">#&gt; 472 46.15940  9.976949 26.60494 65.71386</span></span>
+<span><span class="co">#&gt; 473 44.71302  0.000000 44.71302 44.71302</span></span>
+<span><span class="co">#&gt; 474 51.85370  0.000000 51.85370 51.85370</span></span>
+<span><span class="co">#&gt; 475 50.77548  4.038611 42.85995 58.69101</span></span>
+<span><span class="co">#&gt; 476 58.11432  9.999768 38.51513 77.71350</span></span>
+<span><span class="co">#&gt; 477 30.56757  0.000000 30.56757 30.56757</span></span>
+<span><span class="co">#&gt; 478 35.65607  4.710094 26.42446 44.88769</span></span>
+<span><span class="co">#&gt; 479 41.25037  3.981832 33.44612 49.05462</span></span>
+<span><span class="co">#&gt; 480 45.88736  9.985125 26.31688 65.45785</span></span>
+<span><span class="co">#&gt; 481 37.37624  6.503985 24.62866 50.12381</span></span>
+<span><span class="co">#&gt; 482 41.66978  5.150332 31.57531 51.76424</span></span>
+<span><span class="co">#&gt; 483 45.99979  4.132235 37.90076 54.09882</span></span>
+<span><span class="co">#&gt; 484 59.90473  0.000000 59.90473 59.90473</span></span>
+<span><span class="co">#&gt; 485 33.87728  6.651903 20.83978 46.91477</span></span>
+<span><span class="co">#&gt; 486 37.28988  5.348859 26.80631 47.77345</span></span>
+<span><span class="co">#&gt; 487 49.76150  0.000000 49.76150 49.76150</span></span>
+<span><span class="co">#&gt; 488 46.60552 10.364218 26.29203 66.91902</span></span>
+<span><span class="co">#&gt; 489 47.21985  0.000000 47.21985 47.21985</span></span>
+<span><span class="co">#&gt; 490 40.34525  0.000000 40.34525 40.34525</span></span>
+<span><span class="co">#&gt; 491 48.29793  0.000000 48.29793 48.29793</span></span>
+<span><span class="co">#&gt; 492 54.57153 10.174744 34.62940 74.51366</span></span>
+<span><span class="co">#&gt; 493 36.13680  5.861094 24.64927 47.62434</span></span>
+<span><span class="co">#&gt; 494 44.39634  0.000000 44.39634 44.39634</span></span>
+<span><span class="co">#&gt; 495 41.71421  0.000000 41.71421 41.71421</span></span>
+<span><span class="co">#&gt; 496 47.37535  0.000000 47.37535 47.37535</span></span>
+<span><span class="co">#&gt; 497 42.03797  0.000000 42.03797 42.03797</span></span>
+<span><span class="co">#&gt; 498 37.56100  0.000000 37.56100 37.56100</span></span>
+<span><span class="co">#&gt; 499 45.11793  0.000000 45.11793 45.11793</span></span>
+<span><span class="co">#&gt; 500 52.86788 10.007323 33.25389 72.48187</span></span>
+<span><span class="co">#&gt; 501 34.62530  0.000000 34.62530 34.62530</span></span>
+<span><span class="co">#&gt; 502 45.28206  0.000000 45.28206 45.28206</span></span>
+<span><span class="co">#&gt; 503 44.51505  4.013990 36.64777 52.38232</span></span>
+<span><span class="co">#&gt; 504 63.57761  0.000000 63.57761 63.57761</span></span>
+<span><span class="co">#&gt; 505 35.80878  0.000000 35.80878 35.80878</span></span>
+<span><span class="co">#&gt; 506 40.93038  4.685628 31.74672 50.11405</span></span>
+<span><span class="co">#&gt; 507 45.85156  3.979761 38.05137 53.65175</span></span>
+<span><span class="co">#&gt; 508 52.67314  0.000000 52.67314 52.67314</span></span>
+<span><span class="co">#&gt; 509 35.88734  0.000000 35.88734 35.88734</span></span>
+<span><span class="co">#&gt; 510 38.73222  0.000000 38.73222 38.73222</span></span>
+<span><span class="co">#&gt; 511 46.70361  0.000000 46.70361 46.70361</span></span>
+<span><span class="co">#&gt; 512 53.65398  0.000000 53.65398 53.65398</span></span>
+<span><span class="co">#&gt; 513 36.71543  0.000000 36.71543 36.71543</span></span>
+<span><span class="co">#&gt; 514 43.89170  4.726781 34.62738 53.15602</span></span>
+<span><span class="co">#&gt; 515 49.56246  4.004442 41.71389 57.41102</span></span>
+<span><span class="co">#&gt; 516 54.83060  9.998550 35.23380 74.42740</span></span>
+<span><span class="co">#&gt; 517 37.85241  5.880195 26.32744 49.37738</span></span>
+<span><span class="co">#&gt; 518 41.54317  0.000000 41.54317 41.54317</span></span>
+<span><span class="co">#&gt; 519 51.67909  0.000000 51.67909 51.67909</span></span>
+<span><span class="co">#&gt; 520 51.76691 10.135821 31.90106 71.63275</span></span>
+<span><span class="co">#&gt; 521 27.40130  0.000000 27.40130 27.40130</span></span>
+<span><span class="co">#&gt; 522 30.33517  0.000000 30.33517 30.33517</span></span>
+<span><span class="co">#&gt; 523 37.73092  0.000000 37.73092 37.73092</span></span>
+<span><span class="co">#&gt; 524 29.11668  0.000000 29.11668 29.11668</span></span>
+<span><span class="co">#&gt; 525 30.03596  5.802185 18.66389 41.40804</span></span>
+<span><span class="co">#&gt; 526 32.08830  0.000000 32.08830 32.08830</span></span>
+<span><span class="co">#&gt; 527 41.66067  0.000000 41.66067 41.66067</span></span>
+<span><span class="co">#&gt; 528 53.90815  0.000000 53.90815 53.90815</span></span>
+<span><span class="co">#&gt; 529 34.02622  5.854819 22.55098 45.50145</span></span>
+<span><span class="co">#&gt; 530 35.06937  0.000000 35.06937 35.06937</span></span>
+<span><span class="co">#&gt; 531 47.17615  0.000000 47.17615 47.17615</span></span>
+<span><span class="co">#&gt; 532 56.49347  0.000000 56.49347 56.49347</span></span>
+<span><span class="co">#&gt; 533 34.02880  5.789778 22.68104 45.37655</span></span>
+<span><span class="co">#&gt; 534 38.88006  0.000000 38.88006 38.88006</span></span>
+<span><span class="co">#&gt; 535 47.54070  0.000000 47.54070 47.54070</span></span>
+<span><span class="co">#&gt; 536 43.53705  0.000000 43.53705 43.53705</span></span>
+<span><span class="co">#&gt; 537 31.82054  0.000000 31.82054 31.82054</span></span>
+<span><span class="co">#&gt; 538 39.62816  0.000000 39.62816 39.62816</span></span>
+<span><span class="co">#&gt; 539 44.95543  0.000000 44.95543 44.95543</span></span>
+<span><span class="co">#&gt; 540 21.11543  0.000000 21.11543 21.11543</span></span>
+<span><span class="co">#&gt; 541 34.74671  0.000000 34.74671 34.74671</span></span>
+<span><span class="co">#&gt; 542 43.27308  4.715995 34.02990 52.51626</span></span>
+<span><span class="co">#&gt; 543 49.29538  4.005188 41.44536 57.14541</span></span>
+<span><span class="co">#&gt; 544 56.69249  0.000000 56.69249 56.69249</span></span>
+<span><span class="co">#&gt; 545 22.73126  0.000000 22.73126 22.73126</span></span>
+<span><span class="co">#&gt; 546 32.50075  0.000000 32.50075 32.50075</span></span>
+<span><span class="co">#&gt; 547 42.37206  0.000000 42.37206 42.37206</span></span>
+<span><span class="co">#&gt; 548 42.89847  0.000000 42.89847 42.89847</span></span>
+<span><span class="co">#&gt; 549 55.62582  0.000000 55.62582 55.62582</span></span>
+<span><span class="co">#&gt; 550 45.38998  0.000000 45.38998 45.38998</span></span>
+<span><span class="co">#&gt; 551 52.66743  0.000000 52.66743 52.66743</span></span>
+<span><span class="co">#&gt; 552 56.87348 10.773296 35.75821 77.98876</span></span>
+<span><span class="co">#&gt; 553 30.66032  6.672129 17.58318 43.73745</span></span>
+<span><span class="co">#&gt; 554 37.44228  5.411757 26.83543 48.04913</span></span>
+<span><span class="co">#&gt; 555 34.18931  0.000000 34.18931 34.18931</span></span>
+<span><span class="co">#&gt; 556 45.59740  0.000000 45.59740 45.59740</span></span>
+<span><span class="co">#&gt; 557 28.89198  0.000000 28.89198 28.89198</span></span>
+<span><span class="co">#&gt; 558 38.46147  0.000000 38.46147 38.46147</span></span>
+<span><span class="co">#&gt; 559 42.42099  3.939954 34.69882 50.14315</span></span>
+<span><span class="co">#&gt; 560 49.90357  0.000000 49.90357 49.90357</span></span>
+<span><span class="co">#&gt; 561 39.74586  5.894422 28.19300 51.29872</span></span>
+<span><span class="co">#&gt; 562 44.14167  0.000000 44.14167 44.14167</span></span>
+<span><span class="co">#&gt; 563 49.91712  4.049872 41.97952 57.85473</span></span>
+<span><span class="co">#&gt; 564 55.24278  0.000000 55.24278 55.24278</span></span>
+<span><span class="co">#&gt; 565 36.24790  6.621579 23.26985 49.22596</span></span>
+<span><span class="co">#&gt; 566 41.05912  5.185181 30.89635 51.22189</span></span>
+<span><span class="co">#&gt; 567 45.91354  4.144486 37.79050 54.03659</span></span>
+<span><span class="co">#&gt; 568 51.93141 10.196460 31.94671 71.91610</span></span>
+<span><span class="co">#&gt; 569 27.38001  0.000000 27.38001 27.38001</span></span>
+<span><span class="co">#&gt; 570 33.63251  0.000000 33.63251 33.63251</span></span>
+<span><span class="co">#&gt; 571 44.70168  4.145116 36.57740 52.82596</span></span>
+<span><span class="co">#&gt; 572 39.34410  0.000000 39.34410 39.34410</span></span>
+<span><span class="co">#&gt; 573 26.98575  0.000000 26.98575 26.98575</span></span>
+<span><span class="co">#&gt; 574 24.04175  0.000000 24.04175 24.04175</span></span>
+<span><span class="co">#&gt; 575 42.16648  0.000000 42.16648 42.16648</span></span>
+<span><span class="co">#&gt; 576 44.75380  0.000000 44.75380 44.75380</span></span>
+<span><span class="co">#&gt; 577 31.55469  0.000000 31.55469 31.55469</span></span>
+<span><span class="co">#&gt; 578 44.42696  0.000000 44.42696 44.42696</span></span>
+<span><span class="co">#&gt; 579 44.10343  0.000000 44.10343 44.10343</span></span>
+<span><span class="co">#&gt; 580 48.06505  9.995073 28.47507 67.65504</span></span>
+<span><span class="co">#&gt; 581 34.87547  5.788135 23.53093 46.22001</span></span>
+<span><span class="co">#&gt; 582 37.87445  0.000000 37.87445 37.87445</span></span>
+<span><span class="co">#&gt; 583 48.31828  0.000000 48.31828 48.31828</span></span>
+<span><span class="co">#&gt; 584 50.21520  0.000000 50.21520 50.21520</span></span>
+<span><span class="co">#&gt; 585 41.94615  0.000000 41.94615 41.94615</span></span>
+<span><span class="co">#&gt; 586 39.62690  0.000000 39.62690 39.62690</span></span>
+<span><span class="co">#&gt; 587 46.69763  0.000000 46.69763 46.69763</span></span>
+<span><span class="co">#&gt; 588 49.44653 10.156344 29.54046 69.35260</span></span>
+<span><span class="co">#&gt; 589 38.01775  5.854587 26.54297 49.49253</span></span>
+<span><span class="co">#&gt; 590 43.75255  0.000000 43.75255 43.75255</span></span>
+<span><span class="co">#&gt; 591 47.38873  0.000000 47.38873 47.38873</span></span>
+<span><span class="co">#&gt; 592 52.70780 10.069832 32.97129 72.44430</span></span>
+<span><span class="co">#&gt; 593 32.43412  0.000000 32.43412 32.43412</span></span>
+<span><span class="co">#&gt; 594 43.07163  0.000000 43.07163 43.07163</span></span>
+<span><span class="co">#&gt; 595 42.99551  0.000000 42.99551 42.99551</span></span>
+<span><span class="co">#&gt; 596 53.82759  0.000000 53.82759 53.82759</span></span>
+<span><span class="co">#&gt; 597 39.45747  6.354089 27.00368 51.91125</span></span>
+<span><span class="co">#&gt; 598 42.93167  5.158776 32.82065 53.04268</span></span>
+<span><span class="co">#&gt; 599 50.64802  0.000000 50.64802 50.64802</span></span>
+<span><span class="co">#&gt; 600 63.44051  0.000000 63.44051 63.44051</span></span>
+<span><span class="co">#&gt; 601 34.48949  0.000000 34.48949 34.48949</span></span>
+<span><span class="co">#&gt; 602 40.08056  0.000000 40.08056 40.08056</span></span>
+<span><span class="co">#&gt; 603 41.86656  3.961055 34.10303 49.63008</span></span>
+<span><span class="co">#&gt; 604 47.46553  0.000000 47.46553 47.46553</span></span>
+<span><span class="co">#&gt; 605 32.03992  5.981829 20.31575 43.76409</span></span>
+<span><span class="co">#&gt; 606 37.11697  0.000000 37.11697 37.11697</span></span>
+<span><span class="co">#&gt; 607 44.12071  4.104464 36.07611 52.16531</span></span>
+<span><span class="co">#&gt; 608 36.25120  0.000000 36.25120 36.25120</span></span>
+<span><span class="co">#&gt; 609 29.20171  0.000000 29.20171 29.20171</span></span>
+<span><span class="co">#&gt; 610 31.53773  0.000000 31.53773 31.53773</span></span>
+<span><span class="co">#&gt; 611 42.35683  0.000000 42.35683 42.35683</span></span>
+<span><span class="co">#&gt; 612 64.78352  0.000000 64.78352 64.78352</span></span>
+<span><span class="co">#&gt; 613 32.72757  0.000000 32.72757 32.72757</span></span>
+<span><span class="co">#&gt; 614 37.50022  0.000000 37.50022 37.50022</span></span>
+<span><span class="co">#&gt; 615 42.76167  3.939749 35.03991 50.48344</span></span>
+<span><span class="co">#&gt; 616 57.03861  0.000000 57.03861 57.03861</span></span>
+<span><span class="co">#&gt; 617 36.32475  0.000000 36.32475 36.32475</span></span>
+<span><span class="co">#&gt; 618 40.15241  4.671056 30.99730 49.30751</span></span>
+<span><span class="co">#&gt; 619 41.46725  0.000000 41.46725 41.46725</span></span>
+<span><span class="co">#&gt; 620 59.01411  0.000000 59.01411 59.01411</span></span>
+<span><span class="co">#&gt; 621 30.14970  0.000000 30.14970 30.14970</span></span>
+<span><span class="co">#&gt; 622 34.91740  0.000000 34.91740 34.91740</span></span>
+<span><span class="co">#&gt; 623 52.13900  0.000000 52.13900 52.13900</span></span>
+<span><span class="co">#&gt; 624 58.73839  0.000000 58.73839 58.73839</span></span>
+<span><span class="co">#&gt; 625 35.83185  0.000000 35.83185 35.83185</span></span>
+<span><span class="co">#&gt; 626 41.04423  4.689669 31.85265 50.23581</span></span>
+<span><span class="co">#&gt; 627 45.82688  3.980329 38.02558 53.62818</span></span>
+<span><span class="co">#&gt; 628 56.41409  0.000000 56.41409 56.41409</span></span>
+<span><span class="co">#&gt; 629 37.80184  5.770783 26.49131 49.11236</span></span>
+<span><span class="co">#&gt; 630 43.55593  0.000000 43.55593 43.55593</span></span>
+<span><span class="co">#&gt; 631 44.26320  0.000000 44.26320 44.26320</span></span>
+<span><span class="co">#&gt; 632 59.25579  0.000000 59.25579 59.25579</span></span>
+<span><span class="co">#&gt; 633 28.47314  0.000000 28.47314 28.47314</span></span>
+<span><span class="co">#&gt; 634 47.47581  0.000000 47.47581 47.47581</span></span>
+<span><span class="co">#&gt; 635 44.01685  4.070225 36.03936 51.99435</span></span>
+<span><span class="co">#&gt; 636 49.57489 10.292640 29.40168 69.74809</span></span>
+<span><span class="co">#&gt; 637 39.38085  5.932315 27.75373 51.00797</span></span>
+<span><span class="co">#&gt; 638 46.47483  0.000000 46.47483 46.47483</span></span>
+<span><span class="co">#&gt; 639 51.22677  0.000000 51.22677 51.22677</span></span>
+<span><span class="co">#&gt; 640 45.82777  0.000000 45.82777 45.82777</span></span>
+<span><span class="co">#&gt; 641 33.43408  6.001982 21.67041 45.19775</span></span>
+<span><span class="co">#&gt; 642 39.06783  0.000000 39.06783 39.06783</span></span>
+<span><span class="co">#&gt; 643 42.98333  4.056639 35.03247 50.93420</span></span>
+<span><span class="co">#&gt; 644 48.01822 10.105548 28.21171 67.82473</span></span>
+<span><span class="co">#&gt; 645 29.99542  0.000000 29.99542 29.99542</span></span>
+<span><span class="co">#&gt; 646 35.69583  4.702741 26.47863 44.91303</span></span>
+<span><span class="co">#&gt; 647 41.11547  3.977183 33.32034 48.91061</span></span>
+<span><span class="co">#&gt; 648 54.17796  0.000000 54.17796 54.17796</span></span>
+<span><span class="co">#&gt; 649 39.32289  5.949171 27.66273 50.98305</span></span>
+<span><span class="co">#&gt; 650 44.55743  0.000000 44.55743 44.55743</span></span>
+<span><span class="co">#&gt; 651 47.26282  4.091564 39.24350 55.28214</span></span>
+<span><span class="co">#&gt; 652 62.59579  0.000000 62.59579 62.59579</span></span>
+<span><span class="co">#&gt; 653 31.80300  5.740763 20.55131 43.05469</span></span>
+<span><span class="co">#&gt; 654 35.48396  0.000000 35.48396 35.48396</span></span>
+<span><span class="co">#&gt; 655 44.07768  0.000000 44.07768 44.07768</span></span>
+<span><span class="co">#&gt; 656 46.57837  0.000000 46.57837 46.57837</span></span>
+<span><span class="co">#&gt; 657 47.67979  0.000000 47.67979 47.67979</span></span>
+<span><span class="co">#&gt; 658 47.73388  4.735848 38.45179 57.01597</span></span>
+<span><span class="co">#&gt; 659 50.94631  4.031499 43.04472 58.84790</span></span>
+<span><span class="co">#&gt; 660 58.47218 10.080334 38.71508 78.22927</span></span>
+<span><span class="co">#&gt; 661 22.15439  0.000000 22.15439 22.15439</span></span>
+<span><span class="co">#&gt; 662 35.14301  4.826749 25.68276 44.60327</span></span>
+<span><span class="co">#&gt; 663 42.82000  4.143302 34.69928 50.94073</span></span>
+<span><span class="co">#&gt; 664 46.24563 10.193355 26.26703 66.22424</span></span>
+<span><span class="co">#&gt; 665 34.27765  0.000000 34.27765 34.27765</span></span>
+<span><span class="co">#&gt; 666 36.90059  0.000000 36.90059 36.90059</span></span>
+<span><span class="co">#&gt; 667 43.05627  3.941943 35.33020 50.78234</span></span>
+<span><span class="co">#&gt; 668 40.54285  0.000000 40.54285 40.54285</span></span>
+<span><span class="co">#&gt; 669 29.09494  0.000000 29.09494 29.09494</span></span>
+<span><span class="co">#&gt; 670 37.21768  0.000000 37.21768 37.21768</span></span>
+<span><span class="co">#&gt; 671 43.08491  0.000000 43.08491 43.08491</span></span>
+<span><span class="co">#&gt; 672 46.50100  9.892842 27.11139 65.89062</span></span>
+<span><span class="co">#&gt; 673 27.12174  0.000000 27.12174 27.12174</span></span>
+<span><span class="co">#&gt; 674 34.11916  0.000000 34.11916 34.11916</span></span>
+<span><span class="co">#&gt; 675 45.56320  4.100041 37.52727 53.59914</span></span>
+<span><span class="co">#&gt; 676 48.00823 10.027537 28.35462 67.66184</span></span>
+<span><span class="co">#&gt; 677 35.93048  5.795433 24.57164 47.28932</span></span>
+<span><span class="co">#&gt; 678 40.80230  0.000000 40.80230 40.80230</span></span>
+<span><span class="co">#&gt; 679 45.89269  0.000000 45.89269 45.89269</span></span>
+<span><span class="co">#&gt; 680 43.69153  0.000000 43.69153 43.69153</span></span>
+<span><span class="co">#&gt; 681 28.56569  6.053402 16.70124 40.43014</span></span>
+<span><span class="co">#&gt; 682 29.22869  0.000000 29.22869 29.22869</span></span>
+<span><span class="co">#&gt; 683 40.67646  4.127091 32.58751 48.76541</span></span>
+<span><span class="co">#&gt; 684 55.68362  0.000000 55.68362 55.68362</span></span>
+<span><span class="co">#&gt; 685 31.90698  0.000000 31.90698 31.90698</span></span>
+<span><span class="co">#&gt; 686 37.31061  0.000000 37.31061 37.31061</span></span>
+<span><span class="co">#&gt; 687 40.75546  0.000000 40.75546 40.75546</span></span>
+<span><span class="co">#&gt; 688 49.50911  9.907911 30.08996 68.92826</span></span>
+<span><span class="co">#&gt; 689 42.19474  0.000000 42.19474 42.19474</span></span>
+<span><span class="co">#&gt; 690 44.87228  0.000000 44.87228 44.87228</span></span>
+<span><span class="co">#&gt; 691 47.55198  0.000000 47.55198 47.55198</span></span>
+<span><span class="co">#&gt; 692 56.68097  9.896853 37.28349 76.07845</span></span>
+<span><span class="co">#&gt; 693 50.62894  0.000000 50.62894 50.62894</span></span>
+<span><span class="co">#&gt; 694 45.47551  0.000000 45.47551 45.47551</span></span>
+<span><span class="co">#&gt; 695 48.62168  0.000000 48.62168 48.62168</span></span>
+<span><span class="co">#&gt; 696 56.58212 10.214871 36.56134 76.60290</span></span>
+<span><span class="co">#&gt; 697 29.66493  0.000000 29.66493 29.66493</span></span>
+<span><span class="co">#&gt; 698 34.57406  0.000000 34.57406 34.57406</span></span>
+<span><span class="co">#&gt; 699 42.45295  3.970420 34.67107 50.23483</span></span>
+<span><span class="co">#&gt; 700 38.11676  0.000000 38.11676 38.11676</span></span>
+<span><span class="co">#&gt; 701 33.77204  0.000000 33.77204 33.77204</span></span>
+<span><span class="co">#&gt; 702 34.26148  0.000000 34.26148 34.26148</span></span>
+<span><span class="co">#&gt; 703 45.29511  4.046987 37.36316 53.22706</span></span>
+<span><span class="co">#&gt; 704 58.81037  0.000000 58.81037 58.81037</span></span>
+<span><span class="co">#&gt; 705 31.46668  6.411558 18.90026 44.03311</span></span>
+<span><span class="co">#&gt; 706 36.78469  5.118562 26.75250 46.81689</span></span>
+<span><span class="co">#&gt; 707 39.88119  0.000000 39.88119 39.88119</span></span>
+<span><span class="co">#&gt; 708 47.32261 10.169387 27.39098 67.25425</span></span>
+<span><span class="co">#&gt; 709 31.62708  0.000000 31.62708 31.62708</span></span>
+<span><span class="co">#&gt; 710 37.03239  4.683917 27.85208 46.21270</span></span>
+<span><span class="co">#&gt; 711 42.69162  3.966035 34.91833 50.46490</span></span>
+<span><span class="co">#&gt; 712 48.22049  0.000000 48.22049 48.22049</span></span>
+<span><span class="co">#&gt; 713 42.58829  0.000000 42.58829 42.58829</span></span>
+<span><span class="co">#&gt; 714 45.80410  4.649843 36.69057 54.91762</span></span>
+<span><span class="co">#&gt; 715 49.33262  0.000000 49.33262 49.33262</span></span>
+<span><span class="co">#&gt; 716 53.74331  0.000000 53.74331 53.74331</span></span>
+<span><span class="co">#&gt; 717 29.71857  0.000000 29.71857 29.71857</span></span>
+<span><span class="co">#&gt; 718 30.45651  0.000000 30.45651 30.45651</span></span>
+<span><span class="co">#&gt; 719 38.29800  0.000000 38.29800 38.29800</span></span>
+<span><span class="co">#&gt; 720 45.15328  9.913947 25.72230 64.58426</span></span>
+<span><span class="co">#&gt; 721 36.81040  0.000000 36.81040 36.81040</span></span>
+<span><span class="co">#&gt; 722 37.61606  4.675991 28.45129 46.78084</span></span>
+<span><span class="co">#&gt; 723 42.35045  0.000000 42.35045 42.35045</span></span>
+<span><span class="co">#&gt; 724 39.39860  0.000000 39.39860 39.39860</span></span>
+<span><span class="co">#&gt; 725 36.09876  6.365383 23.62284 48.57468</span></span>
+<span><span class="co">#&gt; 726 40.94066  5.098637 30.94751 50.93380</span></span>
+<span><span class="co">#&gt; 727 49.73629  0.000000 49.73629 49.73629</span></span>
+<span><span class="co">#&gt; 728 41.58082  0.000000 41.58082 41.58082</span></span>
+<span><span class="co">#&gt; 729 43.58901  0.000000 43.58901 43.58901</span></span>
+<span><span class="co">#&gt; 730 40.16762  0.000000 40.16762 40.16762</span></span>
+<span><span class="co">#&gt; 731 46.70338  3.993923 38.87544 54.53133</span></span>
+<span><span class="co">#&gt; 732 53.94830 10.072276 34.20701 73.68960</span></span>
+<span><span class="co">#&gt; 733 39.60913  6.008652 27.83239 51.38587</span></span>
+<span><span class="co">#&gt; 734 41.08206  0.000000 41.08206 41.08206</span></span>
+<span><span class="co">#&gt; 735 49.65683  4.096129 41.62857 57.68510</span></span>
+<span><span class="co">#&gt; 736 69.37409  0.000000 69.37409 69.37409</span></span>
+<span><span class="co">#&gt; 737 34.12096  5.805419 22.74255 45.49937</span></span>
+<span><span class="co">#&gt; 738 41.27625  0.000000 41.27625 41.27625</span></span>
+<span><span class="co">#&gt; 739 44.76138  0.000000 44.76138 44.76138</span></span>
+<span><span class="co">#&gt; 740 39.69815  0.000000 39.69815 39.69815</span></span>
+<span><span class="co">#&gt; 741 38.44296  0.000000 38.44296 38.44296</span></span>
+<span><span class="co">#&gt; 742 48.20586  0.000000 48.20586 48.20586</span></span>
+<span><span class="co">#&gt; 743 47.54082  4.054538 39.59407 55.48757</span></span>
+<span><span class="co">#&gt; 744 35.50735  0.000000 35.50735 35.50735</span></span>
+<span><span class="co">#&gt; 745 32.08153  0.000000 32.08153 32.08153</span></span>
+<span><span class="co">#&gt; 746 37.16398  4.708587 27.93532 46.39264</span></span>
+<span><span class="co">#&gt; 747 42.75619  3.982077 34.95146 50.56092</span></span>
+<span><span class="co">#&gt; 748 47.39510  9.984234 27.82636 66.96384</span></span>
+<span><span class="co">#&gt; 749 44.69256  0.000000 44.69256 44.69256</span></span>
+<span><span class="co">#&gt; 750 41.45664  4.821210 32.00725 50.90604</span></span>
+<span><span class="co">#&gt; 751 42.18689  0.000000 42.18689 42.18689</span></span>
+<span><span class="co">#&gt; 752 51.68534 10.155198 31.78152 71.58916</span></span>
+<span><span class="co">#&gt; 753 37.01741  0.000000 37.01741 37.01741</span></span>
+<span><span class="co">#&gt; 754 38.26920  0.000000 38.26920 38.26920</span></span>
+<span><span class="co">#&gt; 755 49.28806  0.000000 49.28806 49.28806</span></span>
+<span><span class="co">#&gt; 756 50.67485 10.012847 31.05003 70.29967</span></span>
+<span><span class="co">#&gt; 757 40.45953  0.000000 40.45953 40.45953</span></span>
+<span><span class="co">#&gt; 758 45.10337  0.000000 45.10337 45.10337</span></span>
+<span><span class="co">#&gt; 759 45.58250  0.000000 45.58250 45.58250</span></span>
+<span><span class="co">#&gt; 760 62.96989  0.000000 62.96989 62.96989</span></span>
+<span><span class="co">#&gt; 761 30.78252  0.000000 30.78252 30.78252</span></span>
+<span><span class="co">#&gt; 762 41.58139  4.771601 32.22922 50.93355</span></span>
+<span><span class="co">#&gt; 763 48.87398  4.080179 40.87697 56.87098</span></span>
+<span><span class="co">#&gt; 764 44.69667  0.000000 44.69667 44.69667</span></span>
+<span><span class="co">#&gt; 765 32.72491  0.000000 32.72491 32.72491</span></span>
+<span><span class="co">#&gt; 766 45.78702  0.000000 45.78702 45.78702</span></span>
+<span><span class="co">#&gt; 767 48.74886  0.000000 48.74886 48.74886</span></span>
+<span><span class="co">#&gt; 768 84.08449  0.000000 84.08449 84.08449</span></span>
+<span><span class="co">#&gt; 769 28.60809  5.958125 16.93038 40.28580</span></span>
+<span><span class="co">#&gt; 770 30.19495  0.000000 30.19495 30.19495</span></span>
+<span><span class="co">#&gt; 771 36.78573  0.000000 36.78573 36.78573</span></span>
+<span><span class="co">#&gt; 772 61.03588  0.000000 61.03588 61.03588</span></span>
+<span><span class="co">#&gt; 773 20.36749  0.000000 20.36749 20.36749</span></span>
+<span><span class="co">#&gt; 774 35.22480  0.000000 35.22480 35.22480</span></span>
+<span><span class="co">#&gt; 775 37.42847  0.000000 37.42847 37.42847</span></span>
+<span><span class="co">#&gt; 776 30.20501  0.000000 30.20501 30.20501</span></span>
+<span><span class="co">#&gt; 777 41.72819  5.919206 30.12676 53.32962</span></span>
+<span><span class="co">#&gt; 778 49.12862  0.000000 49.12862 49.12862</span></span>
+<span><span class="co">#&gt; 779 47.31234  0.000000 47.31234 47.31234</span></span>
+<span><span class="co">#&gt; 780 57.08286 10.144034 37.20091 76.96480</span></span>
+<span><span class="co">#&gt; 781 19.28388  0.000000 19.28388 19.28388</span></span>
+<span><span class="co">#&gt; 782 30.00682  0.000000 30.00682 30.00682</span></span>
+<span><span class="co">#&gt; 783 39.69711  4.096855 31.66742 47.72680</span></span>
+<span><span class="co">#&gt; 784 49.21768  0.000000 49.21768 49.21768</span></span>
+<span><span class="co">#&gt; 785 31.42637  6.501262 18.68413 44.16861</span></span>
+<span><span class="co">#&gt; 786 36.73485  5.143589 26.65360 46.81609</span></span>
+<span><span class="co">#&gt; 787 42.72556  4.123392 34.64386 50.80726</span></span>
+<span><span class="co">#&gt; 788 40.13353  0.000000 40.13353 40.13353</span></span>
+<span><span class="co">#&gt; 789 42.34534  0.000000 42.34534 42.34534</span></span>
+<span><span class="co">#&gt; 790 52.32575  0.000000 52.32575 52.32575</span></span>
+<span><span class="co">#&gt; 791 46.92223  4.185411 38.71898 55.12549</span></span>
+<span><span class="co">#&gt; 792 69.26254  0.000000 69.26254 69.26254</span></span>
+<span><span class="co">#&gt; 793 40.35635  6.620353 27.38070 53.33201</span></span>
+<span><span class="co">#&gt; 794 45.16757  5.186297 35.00261 55.33252</span></span>
+<span><span class="co">#&gt; 795 50.02199  4.137823 41.91201 58.13197</span></span>
+<span><span class="co">#&gt; 796 56.03985 10.197209 36.05369 76.02602</span></span>
+<span><span class="co">#&gt; 797 35.70341  0.000000 35.70341 35.70341</span></span>
+<span><span class="co">#&gt; 798 41.64454  0.000000 41.64454 41.64454</span></span>
+<span><span class="co">#&gt; 799 43.29513  3.961002 35.53171 51.05855</span></span>
+<span><span class="co">#&gt; 800 54.25081  0.000000 54.25081 54.25081</span></span></code></pre></div>
+<p>The result is now a matrix, because that is what the
+<code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code> method returns for <code>mmrm</code> objects.
+Note that this cannot be changed to return a <code>tibble</code> at the
+moment.</p>
+<p>Similarly, we can also use the <code><a href="https://generics.r-lib.org/reference/augment.html" class="external-link">augment()</a></code> method to add
+predicted values to a new data set:</p>
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://generics.r-lib.org/reference/augment.html" class="external-link">augment</a></span><span class="op">(</span><span class="va">model</span>, new_data <span class="op">=</span> <span class="va">fev_data</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">select</span><span class="op">(</span><span class="va">USUBJID</span>, <span class="va">AVISIT</span>, <span class="va">.resid</span>, <span class="va">.pred</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 800 × 4</span></span></span>
+<span><span class="co">#&gt;    USUBJID AVISIT .resid .pred</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> PT1     VIS1       <span style="color: #BB0000;">NA</span>  32.5</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> PT1     VIS2        0  40.0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> PT1     VIS3       <span style="color: #BB0000;">NA</span>  45.7</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> PT1     VIS4        0  20.5</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> PT2     VIS1       <span style="color: #BB0000;">NA</span>  28.0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> PT2     VIS2        0  31.5</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> PT2     VIS3        0  36.9</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> PT2     VIS4        0  48.8</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> PT3     VIS1       <span style="color: #BB0000;">NA</span>  30.7</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> PT3     VIS2        0  36.0</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 790 more rows</span></span></span></code></pre></div>
+<p>Note that here we cannot customize the <code>predict</code> options
+as this is currently not supported by the <code><a href="https://generics.r-lib.org/reference/augment.html" class="external-link">augment()</a></code> method
+in <code>parsnip</code>.</p>
+</div>
+<div class="section level4">
+<h4 id="using-mmrm-in-workflows">Using mmrm in workflows<a class="anchor" aria-label="anchor" href="#using-mmrm-in-workflows"></a>
+</h4>
+<p>We can leverage the <code>workflows</code> package in order to fit
+the same model.</p>
+<ul>
+<li>First we define the specification for linear regression with the
+mmrm engine.</li>
+<li>Second we define the workflow, by defining the outcome and
+predictors that will be used in the formula. We then add the model using
+the formula.</li>
+<li>Lastly, we fit the model</li>
+</ul>
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mmrm_spec</span> <span class="op">&lt;-</span> <span class="fu">linear_reg</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">set_engine</span><span class="op">(</span><span class="st">"mmrm"</span>, method <span class="op">=</span> <span class="st">"Satterthwaite"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">mmrm_wflow</span> <span class="op">&lt;-</span> <span class="fu">workflow</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">add_variables</span><span class="op">(</span>outcomes <span class="op">=</span> <span class="va">FEV1</span>, predictors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">RACE</span>, <span class="va">ARMCD</span>, <span class="va">AVISIT</span>, <span class="va">USUBJID</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">add_model</span><span class="op">(</span><span class="va">mmrm_spec</span>, formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">mmrm_wflow</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">fit</span><span class="op">(</span>data <span class="op">=</span> <span class="va">fev_data</span><span class="op">)</span></span>
+<span><span class="co">#&gt; ══ Workflow [trained] ══════════════════════════════════════════════════════════</span></span>
+<span><span class="co">#&gt; <span style="font-style: italic;">Preprocessor:</span> Variables</span></span>
+<span><span class="co">#&gt; <span style="font-style: italic;">Model:</span> linear_reg()</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ── Preprocessor ────────────────────────────────────────────────────────────────</span></span>
+<span><span class="co">#&gt; Outcomes: FEV1</span></span>
+<span><span class="co">#&gt; Predictors: c(RACE, ARMCD, AVISIT, USUBJID)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ── Model ───────────────────────────────────────────────────────────────────────</span></span>
+<span><span class="co">#&gt; mmrm fit</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Formula:     FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID)</span></span>
+<span><span class="co">#&gt; Data:        data (used 537 observations from 197 subjects with maximum 4 </span></span>
+<span><span class="co">#&gt; timepoints)</span></span>
+<span><span class="co">#&gt; Weights:     weights</span></span>
+<span><span class="co">#&gt; Covariance:  unstructured (10 variance parameters)</span></span>
+<span><span class="co">#&gt; Inference:   REML</span></span>
+<span><span class="co">#&gt; Deviance:    3387.373</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients: </span></span>
+<span><span class="co">#&gt;                   (Intercept) RACEBlack or African American </span></span>
+<span><span class="co">#&gt;                   30.96769899                    1.50464863 </span></span>
+<span><span class="co">#&gt;                     RACEWhite                      ARMCDTRT </span></span>
+<span><span class="co">#&gt;                    5.61309565                    3.77555734 </span></span>
+<span><span class="co">#&gt;                    AVISITVIS2                    AVISITVIS3 </span></span>
+<span><span class="co">#&gt;                    4.82858803                   10.33317002 </span></span>
+<span><span class="co">#&gt;                    AVISITVIS4           ARMCDTRT:AVISITVIS2 </span></span>
+<span><span class="co">#&gt;                   15.05255715                   -0.01737409 </span></span>
+<span><span class="co">#&gt;           ARMCDTRT:AVISITVIS3           ARMCDTRT:AVISITVIS4 </span></span>
+<span><span class="co">#&gt;                   -0.66753189                    0.63094392 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Model Inference Optimization:</span></span>
+<span><span class="co">#&gt; Converged with code 0 and message: convergence: rel_reduction_of_f &lt;= factr*epsmch</span></span></code></pre></div>
+<p>We can separate out the data preparation step from the modeling step
+using the <code>recipes</code> package. Here we are converting the
+<code>ARMCD</code> variable into a dummy variable and creating an
+interaction term with the new dummy variable and each visit.</p>
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mmrm_recipe</span> <span class="op">&lt;-</span> <span class="fu">recipe</span><span class="op">(</span><span class="va">FEV1</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">fev_data</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">step_dummy</span><span class="op">(</span><span class="va">ARMCD</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">step_interact</span><span class="op">(</span>terms <span class="op">=</span> <span class="op">~</span> <span class="fu">starts_with</span><span class="op">(</span><span class="st">"ARMCD"</span><span class="op">)</span><span class="op">:</span><span class="va">AVISIT</span><span class="op">)</span></span></code></pre></div>
+<p>Using <code>prep()</code> and <code>juice()</code> we can see what
+the transformed data that will be used in the model fit looks like.</p>
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mmrm_recipe</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">prep</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">juice</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 800 × 13</span></span></span>
+<span><span class="co">#&gt;    USUBJID AVISIT RACE       SEX   FEV1_BL WEIGHT VISITN VISITN2  FEV1 ARMCD_TRT</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> PT1     VIS1   Black or … Fema…    25.3  0.677      1  -<span style="color: #BB0000;">0.626</span>  <span style="color: #BB0000;">NA</span>           1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> PT1     VIS2   Black or … Fema…    25.3  0.801      2   0.184  40.0         1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> PT1     VIS3   Black or … Fema…    25.3  0.709      3  -<span style="color: #BB0000;">0.836</span>  <span style="color: #BB0000;">NA</span>           1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> PT1     VIS4   Black or … Fema…    25.3  0.809      4   1.60   20.5         1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> PT2     VIS1   Asian      Male     45.0  0.465      1   0.330  <span style="color: #BB0000;">NA</span>           0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> PT2     VIS2   Asian      Male     45.0  0.233      2  -<span style="color: #BB0000;">0.820</span>  31.5         0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> PT2     VIS3   Asian      Male     45.0  0.360      3   0.487  36.9         0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> PT2     VIS4   Asian      Male     45.0  0.507      4   0.738  48.8         0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> PT3     VIS1   Black or … Fema…    43.5  0.682      1   0.576  <span style="color: #BB0000;">NA</span>           0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> PT3     VIS2   Black or … Fema…    43.5  0.892      2  -<span style="color: #BB0000;">0.305</span>  36.0         0</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 790 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 3 more variables: ARMCD_TRT_x_AVISITVIS2 &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   ARMCD_TRT_x_AVISITVIS3 &lt;dbl&gt;, ARMCD_TRT_x_AVISITVIS4 &lt;dbl&gt;</span></span></span></code></pre></div>
+<p>We can pass the covariance structure as well in the
+<code>set_engine()</code> definition. This allows for more flexibility
+on presetting different covariance structures in the pipeline while
+keeping the data preparation step independent.</p>
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mmrm_spec_with_cov</span> <span class="op">&lt;-</span> <span class="fu">linear_reg</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">set_engine</span><span class="op">(</span></span>
+<span>    <span class="st">"mmrm"</span>,</span>
+<span>    method <span class="op">=</span> <span class="st">"Satterthwaite"</span>,</span>
+<span>    covariance <span class="op">=</span> <span class="fu"><a href="../reference/as.cov_struct.html">as.cov_struct</a></span><span class="op">(</span><span class="op">~</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
+<p>We combine these steps into a workflow:</p>
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="op">(</span><span class="va">mmrm_wflow_nocov</span> <span class="op">&lt;-</span> <span class="fu">workflow</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">add_model</span><span class="op">(</span><span class="va">mmrm_spec_with_cov</span>, formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">SEX</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">add_recipe</span><span class="op">(</span><span class="va">mmrm_recipe</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; ══ Workflow ════════════════════════════════════════════════════════════════════</span></span>
+<span><span class="co">#&gt; <span style="font-style: italic;">Preprocessor:</span> Recipe</span></span>
+<span><span class="co">#&gt; <span style="font-style: italic;">Model:</span> linear_reg()</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ── Preprocessor ────────────────────────────────────────────────────────────────</span></span>
+<span><span class="co">#&gt; 2 Recipe Steps</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; • step_dummy()</span></span>
+<span><span class="co">#&gt; • step_interact()</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ── Model ───────────────────────────────────────────────────────────────────────</span></span>
+<span><span class="co">#&gt; Linear Regression Model Specification (regression)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Engine-Specific Arguments:</span></span>
+<span><span class="co">#&gt;   method = Satterthwaite</span></span>
+<span><span class="co">#&gt;   covariance = as.cov_struct(~us(AVISIT | USUBJID))</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Computational engine: mmrm</span></span></code></pre></div>
+<p>Last step is to fit the data with the workflow object</p>
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="op">(</span><span class="va">fit_tidy</span> <span class="op">&lt;-</span> <span class="fu">fit</span><span class="op">(</span><span class="va">mmrm_wflow_nocov</span>, data <span class="op">=</span> <span class="va">fev_data</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; ══ Workflow [trained] ══════════════════════════════════════════════════════════</span></span>
+<span><span class="co">#&gt; <span style="font-style: italic;">Preprocessor:</span> Recipe</span></span>
+<span><span class="co">#&gt; <span style="font-style: italic;">Model:</span> linear_reg()</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ── Preprocessor ────────────────────────────────────────────────────────────────</span></span>
+<span><span class="co">#&gt; 2 Recipe Steps</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; • step_dummy()</span></span>
+<span><span class="co">#&gt; • step_interact()</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ── Model ───────────────────────────────────────────────────────────────────────</span></span>
+<span><span class="co">#&gt; mmrm fit</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Formula:     FEV1 ~ SEX</span></span>
+<span><span class="co">#&gt; Data:        data (used 537 observations from 197 subjects with maximum 4 </span></span>
+<span><span class="co">#&gt; timepoints)</span></span>
+<span><span class="co">#&gt; Weights:     weights</span></span>
+<span><span class="co">#&gt; Covariance:  unstructured (10 variance parameters)</span></span>
+<span><span class="co">#&gt; Inference:   REML</span></span>
+<span><span class="co">#&gt; Deviance:    3699.803</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients: </span></span>
+<span><span class="co">#&gt; (Intercept)   SEXFemale </span></span>
+<span><span class="co">#&gt; 42.80540973  0.04513432 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Model Inference Optimization:</span></span>
+<span><span class="co">#&gt; Converged with code 0 and message: convergence: rel_reduction_of_f &lt;= factr*epsmch</span></span></code></pre></div>
+<p>To retrieve the fit object from within the workflow object run the
+following</p>
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit_tidy</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">hardhat</span><span class="fu">::</span><span class="fu"><a href="https://hardhat.tidymodels.org/reference/hardhat-extract.html" class="external-link">extract_fit_engine</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; mmrm fit</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Formula:     FEV1 ~ SEX</span></span>
+<span><span class="co">#&gt; Data:        data (used 537 observations from 197 subjects with maximum 4 </span></span>
+<span><span class="co">#&gt; timepoints)</span></span>
+<span><span class="co">#&gt; Weights:     weights</span></span>
+<span><span class="co">#&gt; Covariance:  unstructured (10 variance parameters)</span></span>
+<span><span class="co">#&gt; Inference:   REML</span></span>
+<span><span class="co">#&gt; Deviance:    3699.803</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients: </span></span>
+<span><span class="co">#&gt; (Intercept)   SEXFemale </span></span>
+<span><span class="co">#&gt; 42.80540973  0.04513432 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Model Inference Optimization:</span></span>
+<span><span class="co">#&gt; Converged with code 0 and message: convergence: rel_reduction_of_f &lt;= factr*epsmch</span></span></code></pre></div>
+</div>
 </div>
 </div>
 <div class="section level2">
@@ -832,6 +2201,10 @@ of freedom implemented with <code>glmmTMB</code> (see <a href="https://github.co
 Also Ben helped us significantly with an example showing how to use
 <code>TMB</code> for a random effect vector (<a href="https://github.com/bbolker/tmb-case-studies/tree/master/vectorMixed" class="external-link uri">https://github.com/bbolker/tmb-case-studies/tree/master/vectorMixed</a>).</p>
 </div>
+<div class="section level2">
+<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
+</div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
 </div>
@@ -840,12 +2213,12 @@ Also Ben helped us significantly with an example showing how to use
 
     <footer><div class="pkgdown-footer-left">
   <p></p>
-<p>Developed by Daniel Sabanes Bove, Julia Dedic, Doug Kelkhoff, Kevin Kunzmann, Brian Matthew Lang, Liming Li, Ya Wang, Boehringer Ingelheim Ltd., Gilead Sciences, Inc., F. Hoffmann-La Roche AG, Merck Sharp &amp; Dohme, Inc..</p>
+<p>Developed by Daniel Sabanes Bove, Julia Dedic, Doug Kelkhoff, Kevin Kunzmann, Brian Matthew Lang, Liming Li, Christian Stock, Ya Wang, Dan James, Jonathan Sidi, Daniel Leibovitz, Daniel D. Sjoberg, Boehringer Ingelheim Ltd., Gilead Sciences, Inc., F. Hoffmann-La Roche AG, Merck Sharp &amp; Dohme, Inc., AstraZeneca plc.</p>
 </div>
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
     </footer>
