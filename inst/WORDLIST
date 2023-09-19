@@ -37,6 +37,7 @@ eigen
 emmeans
 et
 FEV
+factorizations
 frac
 funder
 galecki
@@ -110,6 +111,7 @@ simeq
 Slasor
 sp
 src
+subfolders
 tabset
 th
 Tidymodels

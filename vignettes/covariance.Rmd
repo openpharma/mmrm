@@ -1,5 +1,5 @@
 ---
-title: "Covariance Structures in `mmrm`"
+title: "Covariance Structures"
 package: mmrm
 bibliography: '`r system.file("REFERENCES.bib", package = "mmrm")`'
 csl: '`r system.file("jss.csl", package = "mmrm")`'
@@ -10,7 +10,7 @@ output:
           toc: true
           toc_float: true
 vignette: |
-  %\VignetteIndexEntry{Covariance Structures in `mmrm`}
+  %\VignetteIndexEntry{Covariance Structures}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options:

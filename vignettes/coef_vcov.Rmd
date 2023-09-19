@@ -1,5 +1,5 @@
 ---
-title: "Coefficients Covariance Matrix Adjustment in `mmrm`"
+title: "Coefficients Covariance Matrix Adjustment"
 package: mmrm
 bibliography: '`r system.file("REFERENCES.bib", package = "mmrm")`'
 output:
@@ -9,7 +9,7 @@ output:
           toc: true
           toc_float: true
 vignette: |
-  %\VignetteIndexEntry{Coefficients Covariance Matrix Adjustment in `mmrm`}
+  %\VignetteIndexEntry{Coefficients Covariance Matrix Adjustment}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options:

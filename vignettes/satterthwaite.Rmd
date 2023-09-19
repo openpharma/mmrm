@@ -1,5 +1,5 @@
 ---
-title: "Details of the Satterthwaite calculations"
+title: "Satterthwaite"
 package: mmrm
 bibliography: '`r system.file("REFERENCES.bib", package = "mmrm")`'
 csl: '`r system.file("jss.csl", package = "mmrm")`'
@@ -10,7 +10,7 @@ output:
           toc: true
           toc_float: true
 vignette: |
-  %\VignetteIndexEntry{Details of the Satterthwaite calculations}
+  %\VignetteIndexEntry{Satterthwaite}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options:

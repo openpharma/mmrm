@@ -45,4 +45,5 @@ README.md
 simulations/chols/*chols
 renv
 renv.lock
-
+*.pyc
+nohup.out
