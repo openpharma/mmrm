@@ -24,10 +24,6 @@ To make it easier for new developers to join, this documentation is created.
 
 `mmrm` is an R package, and the following sections describe all files/folders that are contained in this package as well as the repository.
 
-## `cache`
-
-This folder contains cache files, and is not part of the package.
-
 ## `data`
 
 The `data/` folder is where `mmrm` example data sets is stored.
@@ -35,7 +31,9 @@ See the documentation for [`fev_data`](https://openpharma.github.io/mmrm/main/re
 
 ## `data-raw`
 
-The `data-raw/` folder contains source code to produce simulated example data sets. Currently this is only `bcva_data.R` (and its associated helper file) producing the `bcva_data` data set.
+The `data-raw/` folder contains source code to produce simulated example data sets.
+Currently it contains `bcva_data.R` (and its associated helper file) producing the `bcva_data` data set,
+and the cached results for comparing mmrm and other implementations.
 
 ## `design`
 
