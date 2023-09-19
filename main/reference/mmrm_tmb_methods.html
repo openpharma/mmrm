@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9044</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,35 +31,33 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <h6 class="dropdown-header" data-toc-skip>Introduction</h6>
-    <a class="dropdown-item" href="../articles/introduction.html">Introduction to `mmrm`</a>
-    <a class="dropdown-item" href="../articles/methodological_introduction.html">What are MMRMs? A brief introduction</a>
+    <a class="dropdown-item" href="../articles/introduction.html">Package Introduction</a>
+    <a class="dropdown-item" href="../articles/methodological_introduction.html">Mixed Models for Repeated Measures</a>
+    <a class="dropdown-item" href="../articles/mmrm_review_methods.html">Comparison with other software</a>
     <div class="dropdown-divider"></div>
-    <h6 class="dropdown-header" data-toc-skip>Covariance Structure</h6>
-    <a class="dropdown-item" href="../articles/covariance.html">Covariance Structures in `mmrm`</a>
+    <h6 class="dropdown-header" data-toc-skip>Covariance Structures</h6>
+    <a class="dropdown-item" href="../articles/covariance.html">Covariance Structures</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Degrees of Freedom</h6>
-    <a class="dropdown-item" href="../articles/between_within.html">Between-Within degrees of freedom</a>
-    <a class="dropdown-item" href="../articles/kenward.html">Details of the Kenward-Roger calculations</a>
-    <a class="dropdown-item" href="../articles/satterthwaite.html">Details of the Satterthwaite calculations</a>
+    <a class="dropdown-item" href="../articles/between_within.html">Between-Within</a>
+    <a class="dropdown-item" href="../articles/kenward.html">Kenward-Roger</a>
+    <a class="dropdown-item" href="../articles/satterthwaite.html">Satterthwaite</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Coefficient Covariance</h6>
-    <a class="dropdown-item" href="../articles/coef_vcov.html">Coefficients Covariance Matrix Adjustment in `mmrm`</a>
-    <a class="dropdown-item" href="../articles/empirical_wls.html">Weighted Least Square Empirical Covariance</a>
+    <a class="dropdown-item" href="../articles/coef_vcov.html">Coefficients Covariance Matrix Adjustment</a>
+    <a class="dropdown-item" href="../articles/empirical_wls.html">Details of Weighted Least Square Empirical Covariance</a>
     <div class="dropdown-divider"></div>
-    <a class="dropdown-item" href="../articles/index.html">More articles...</a>
+    <h6 class="dropdown-header" data-toc-skip>Algorithm Details</h6>
+    <a class="dropdown-item" href="../articles/algorithm.html">Model Fitting Algorithm</a>
+    <a class="dropdown-item" href="../articles/predict.html">Prediction and Simulation</a>
+    <div class="dropdown-divider"></div>
+    <h6 class="dropdown-header" data-toc-skip>Developers</h6>
+    <a class="dropdown-item" href="../articles/package_structure.html">Package Structure</a>
   </div>
 </li>
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.2.2">v0.2.2</a> </div></li>
-<!-- end dropdown for versions -->
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-reports">Reports</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-reports">
@@ -3403,7 +3401,7 @@ Springer.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"response")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,".Environment")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55a234a8c418&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55cd5cdab580&gt;</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/terms.html" class="external-link">terms</a></span><span class="op">(</span><span class="va">object</span>, include <span class="op">=</span> <span class="st">"subject_var"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ~RACE + SEX + ARMCD + AVISIT + USUBJID + ARMCD:AVISIT</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"variables")</span>
@@ -3425,14 +3423,14 @@ Springer.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"response")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,".Environment")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55a234a8c418&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55cd5cdab580&gt;</span>
 <span class="r-in"><span><span class="co"># Log likelihood given the estimated parameters:</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/logLik.html" class="external-link">logLik</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] -1693.225</span>
 <span class="r-in"><span><span class="co"># Formula which was used:</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/formula.html" class="external-link">formula</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55a234a8c418&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55cd5cdab580&gt;</span>
 <span class="r-in"><span><span class="co"># Variance-covariance matrix estimate for coefficients:</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/vcov.html" class="external-link">vcov</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                               (Intercept) RACEBlack or African American</span>

@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9044</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,35 +31,33 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <h6 class="dropdown-header" data-toc-skip>Introduction</h6>
-    <a class="dropdown-item" href="../articles/introduction.html">Introduction to `mmrm`</a>
-    <a class="dropdown-item" href="../articles/methodological_introduction.html">What are MMRMs? A brief introduction</a>
+    <a class="dropdown-item" href="../articles/introduction.html">Package Introduction</a>
+    <a class="dropdown-item" href="../articles/methodological_introduction.html">Mixed Models for Repeated Measures</a>
+    <a class="dropdown-item" href="../articles/mmrm_review_methods.html">Comparison with other software</a>
     <div class="dropdown-divider"></div>
-    <h6 class="dropdown-header" data-toc-skip>Covariance Structure</h6>
-    <a class="dropdown-item" href="../articles/covariance.html">Covariance Structures in `mmrm`</a>
+    <h6 class="dropdown-header" data-toc-skip>Covariance Structures</h6>
+    <a class="dropdown-item" href="../articles/covariance.html">Covariance Structures</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Degrees of Freedom</h6>
-    <a class="dropdown-item" href="../articles/between_within.html">Between-Within degrees of freedom</a>
-    <a class="dropdown-item" href="../articles/kenward.html">Details of the Kenward-Roger calculations</a>
-    <a class="dropdown-item" href="../articles/satterthwaite.html">Details of the Satterthwaite calculations</a>
+    <a class="dropdown-item" href="../articles/between_within.html">Between-Within</a>
+    <a class="dropdown-item" href="../articles/kenward.html">Kenward-Roger</a>
+    <a class="dropdown-item" href="../articles/satterthwaite.html">Satterthwaite</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Coefficient Covariance</h6>
-    <a class="dropdown-item" href="../articles/coef_vcov.html">Coefficients Covariance Matrix Adjustment in `mmrm`</a>
-    <a class="dropdown-item" href="../articles/empirical_wls.html">Weighted Least Square Empirical Covariance</a>
+    <a class="dropdown-item" href="../articles/coef_vcov.html">Coefficients Covariance Matrix Adjustment</a>
+    <a class="dropdown-item" href="../articles/empirical_wls.html">Details of Weighted Least Square Empirical Covariance</a>
     <div class="dropdown-divider"></div>
-    <a class="dropdown-item" href="../articles/index.html">More articles...</a>
+    <h6 class="dropdown-header" data-toc-skip>Algorithm Details</h6>
+    <a class="dropdown-item" href="../articles/algorithm.html">Model Fitting Algorithm</a>
+    <a class="dropdown-item" href="../articles/predict.html">Prediction and Simulation</a>
+    <div class="dropdown-divider"></div>
+    <h6 class="dropdown-header" data-toc-skip>Developers</h6>
+    <a class="dropdown-item" href="../articles/package_structure.html">Package Structure</a>
   </div>
 </li>
 <li class="active nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.2.2">v0.2.2</a> </div></li>
-<!-- end dropdown for versions -->
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-reports">Reports</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-reports">
@@ -88,35 +86,35 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.2.2.9044" id="mmrm-0229044">mmrm 0.2.2.9044<a class="anchor" aria-label="anchor" href="#mmrm-0229044"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.3.0" id="mmrm-030">mmrm 0.3.0<a class="anchor" aria-label="anchor" href="#mmrm-030"></a></h2>
 <div class="section level4">
-<h4 id="new-features-0-2-2-9044">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-2-2-9044"></a></h4>
-<ul><li>Add methods <code><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy()</a></code>, <code><a href="https://generics.r-lib.org/reference/glance.html" class="external-link">glance()</a></code> and <code><a href="https://generics.r-lib.org/reference/augment.html" class="external-link">augment()</a></code> to tidy the <code>mmrm</code> fit results into summary tables.</li>
-<li>Add argument <code>covariance</code> to <code><a href="../reference/mmrm.html">mmrm()</a></code> to allow for easier programmatic access to specifying the model’s covariance structure and to expose covariance customization through the <code>tidymodels</code> interface.</li>
-<li>Add Kenward-Roger support for spatial covariance structures.</li>
-<li>Add support for <code>residuals</code> method with a <code>type</code> argument allowing for raw, Pearson and normalized residuals to be calculated from an <code>mmrm</code> fit.</li>
-<li>Add empirical, empirical Jackknife and empirical bias-reduced adjusted coefficients covariance matrix. In addition, the argument <code>method</code> now only specifies the method used for the degrees of freedom, another argument <code>vcov</code> is added to specify the method used to adjust the coefficients covariance matrix.</li>
+<h4 id="new-features-0-3-0">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-3-0"></a></h4>
+<ul><li>The argument <code>method</code> of <code><a href="../reference/mmrm.html">mmrm()</a></code> now only specifies the method used for the degrees of freedom adjustment.</li>
+<li>Add empirical, empirical Jackknife and empirical bias-reduced adjusted coefficients covariance estimates, which can be specified via the new <code>vcov</code> argument of <code><a href="../reference/mmrm.html">mmrm()</a></code>.</li>
 <li>Add residual and between-within degrees of freedom methods.</li>
-<li>Add optional <code>tidymodels</code> framework support.</li>
-<li>Add confirmation if the number of visit levels is too large. Use <code>options(mmrm.max_visits = )</code> to specify the maximum number of visits allowed in non-interactive mode, or asked in interactive sessions.</li>
-<li>Add <code>predict</code> method to obtain conditional mean estimates and prediction intervals, both with or without previous observations.</li>
-<li>Use automatic differentiation to calculate Satterthwaite adjusted degrees of freedom calculation, resulting in 10-fold speed-up of the Satterthwaite calculations after the initial model fit.</li>
-<li>Add methods <code><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix()</a></code> and <code><a href="https://rdrr.io/r/stats/terms.html" class="external-link">terms()</a></code> often available for modeling functions that assist in post-processing of a model object.</li>
+<li>Add Kenward-Roger support for spatial covariance structures.</li>
+<li>Add <code><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix()</a></code> and <code><a href="https://rdrr.io/r/stats/terms.html" class="external-link">terms()</a></code> methods to assist in post-processing.</li>
+<li>Add <code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code> method to obtain conditional mean estimates and prediction intervals.</li>
+<li>Add <code><a href="https://rdrr.io/r/stats/simulate.html" class="external-link">simulate()</a></code> method to simulate observations from the predictive distribution.</li>
+<li>Add <code><a href="https://rdrr.io/r/stats/residuals.html" class="external-link">residuals()</a></code> method to obtain raw, Pearson or normalized residuals.</li>
+<li>Add <code><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy()</a></code>, <code><a href="https://generics.r-lib.org/reference/glance.html" class="external-link">glance()</a></code> and <code><a href="https://generics.r-lib.org/reference/augment.html" class="external-link">augment()</a></code> methods to tidy the fit results into summary tables.</li>
+<li>Add <code>tidymodels</code> framework support via a <code>parsnip</code> interface.</li>
+<li>Add argument <code>covariance</code> to <code><a href="../reference/mmrm.html">mmrm()</a></code> to allow for easier programmatic access to specifying the model’s covariance structure and to expose covariance customization through the <code>tidymodels</code> interface.</li>
 </ul></div>
 <div class="section level4">
-<h4 id="miscellaneous-0-2-2-9044">Miscellaneous<a class="anchor" aria-label="anchor" href="#miscellaneous-0-2-2-9044"></a></h4>
-<ul><li>Removed <code>free_cores()</code> in favor of <code>parallelly::availableCores(omit = 1)</code>.</li>
-<li>The <code><a href="https://rdrr.io/r/stats/model.frame.html" class="external-link">model.frame()</a></code> method has been updated to return a data frame the size of the number of observations utilized in the model for all combinations of the <code>model.frame(include)</code> argument when <code>na.action='na.omit'</code> (the default).</li>
-<li>The <code>model.frame(include=)</code> method argument’s default has been updated from <code>include=NULL</code> to <code>include=c("subject_var", "visit_var", "group_var", "response_var")</code> such that by default all relevant variables are returned.</li>
+<h4 id="bug-fixes-0-3-0">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-3-0"></a></h4>
+<ul><li>Previously <code><a href="../reference/mmrm.html">mmrm()</a></code> follows the global option <code>na.action</code> and if it is set other than <code>"na.omit"</code> an assertion would fail. This is now fixed and hence <code>NA</code> values are always removed prior to model fitting, independent of the global <code>na.action</code> option.</li>
+<li>Previously a <code><a href="https://rdrr.io/r/stats/model.frame.html" class="external-link">model.frame()</a></code> call on an <code>mmrm</code> object with transformed terms, or new data, e.g. <code>model.frame(mmrm(Y ~ log(X) + ar1(VISIT|ID), data = new_data)</code>, would fail. This is now fixed.</li>
+<li>Previously <code><a href="../reference/mmrm.html">mmrm()</a></code> always required a <code>data</code> argument. Now fitting <code>mmrm</code> can also use environment variables instead of requiring <code>data</code> argument. (Note that <code>fit_mmrm</code> is not affected.)</li>
+<li>Previously <code><a href="https://rdrr.io/pkg/emmeans/man/emmeans.html" class="external-link">emmeans()</a></code> failed when using transformed terms or not including the visit variable in the model formula. This is now fixed.</li>
+<li>Previously <code><a href="../reference/mmrm.html">mmrm()</a></code> might provide non-finite values in the Jacobian calculations, leading to errors in the Satterthwaite degrees of freedom calculations. This will raise an error now and thus alert the user that the model fit was not successful.</li>
 </ul></div>
 <div class="section level4">
-<h4 id="bug-fixes-0-2-2-9044">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-2-2-9044"></a></h4>
-<ul><li>Previously <code>mmrm</code> fit follows the global option <code>na.action</code> and if it is set other than “na.omit” error will happen. This is now fixed and <code>NA</code> values are always removed prior to model fitting.</li>
-<li>Previously <code>model.frame</code> call on <code>mmrm</code> object with transformed terms, or new given data, e.g. <code>model.frame(mmrm(Y ~ log(X) + ar1(VISIT|ID), data = &lt;new data&gt;)</code>, will cause errors. This is now fixed and <code>model.frame</code> returns the data correctly. Now <code>na.action</code> argument can be “na.omit” or “na.pass”, <code>subset</code> argument is not used. The <code>full</code> argument is deprecated and the <code>include</code> can be used instead.</li>
-<li>Previously <code>mmrm</code> always requires <code>data</code> argument. Now fitting <code>mmrm</code> can use environment variables, instead of requiring <code>data</code> argument. <code>fit_mmrm</code> is not affected.</li>
-<li>Previously <code>emmeans</code> does not work if fixed effect does not contain visit variable. This is now fixed.</li>
-<li>Previously <code>emmeans</code> does not work if working with transformed terms. This is now fixed.</li>
-<li>Previously <code>mmrm</code> can provide non-finite values in Jacobian calculations. This will raise an error now.</li>
+<h4 id="miscellaneous-0-3-0">Miscellaneous<a class="anchor" aria-label="anchor" href="#miscellaneous-0-3-0"></a></h4>
+<ul><li>Use automatic differentiation to calculate Satterthwaite adjusted degrees of freedom, resulting in 10-fold speed-up of the Satterthwaite calculations after the initial model fit.</li>
+<li>Add an interactive confirmation step if the number of visit levels is too large for non-spatial covariance structures. Use <code>options(mmrm.max_visits = )</code> to specify the maximum number of visits allowed in non-interactive mode.</li>
+<li>Removed <code>free_cores()</code> in favor of <code>parallelly::availableCores(omit = 1)</code>.</li>
+<li>The <code><a href="https://rdrr.io/r/stats/model.frame.html" class="external-link">model.frame()</a></code> method has been updated: The <code>full</code> argument is deprecated and the <code>include</code> argument can be used instead; by default all relevant variables are returned. Furthermore, it returns a <code>data.frame</code> the size of the number of observations utilized in the model for all combinations of the <code>include</code> argument when <code>na.action= "na.omit"</code>.</li>
 </ul></div>
 </div>
     <div class="section level2">

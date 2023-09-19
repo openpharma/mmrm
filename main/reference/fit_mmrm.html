@@ -22,7 +22,7 @@ mmrm()."><meta property="og:image" content="https://openpharma.github.io/mmrm/lo
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9044</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,35 +37,33 @@ mmrm()."><meta property="og:image" content="https://openpharma.github.io/mmrm/lo
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <h6 class="dropdown-header" data-toc-skip>Introduction</h6>
-    <a class="dropdown-item" href="../articles/introduction.html">Introduction to `mmrm`</a>
-    <a class="dropdown-item" href="../articles/methodological_introduction.html">What are MMRMs? A brief introduction</a>
+    <a class="dropdown-item" href="../articles/introduction.html">Package Introduction</a>
+    <a class="dropdown-item" href="../articles/methodological_introduction.html">Mixed Models for Repeated Measures</a>
+    <a class="dropdown-item" href="../articles/mmrm_review_methods.html">Comparison with other software</a>
     <div class="dropdown-divider"></div>
-    <h6 class="dropdown-header" data-toc-skip>Covariance Structure</h6>
-    <a class="dropdown-item" href="../articles/covariance.html">Covariance Structures in `mmrm`</a>
+    <h6 class="dropdown-header" data-toc-skip>Covariance Structures</h6>
+    <a class="dropdown-item" href="../articles/covariance.html">Covariance Structures</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Degrees of Freedom</h6>
-    <a class="dropdown-item" href="../articles/between_within.html">Between-Within degrees of freedom</a>
-    <a class="dropdown-item" href="../articles/kenward.html">Details of the Kenward-Roger calculations</a>
-    <a class="dropdown-item" href="../articles/satterthwaite.html">Details of the Satterthwaite calculations</a>
+    <a class="dropdown-item" href="../articles/between_within.html">Between-Within</a>
+    <a class="dropdown-item" href="../articles/kenward.html">Kenward-Roger</a>
+    <a class="dropdown-item" href="../articles/satterthwaite.html">Satterthwaite</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Coefficient Covariance</h6>
-    <a class="dropdown-item" href="../articles/coef_vcov.html">Coefficients Covariance Matrix Adjustment in `mmrm`</a>
-    <a class="dropdown-item" href="../articles/empirical_wls.html">Weighted Least Square Empirical Covariance</a>
+    <a class="dropdown-item" href="../articles/coef_vcov.html">Coefficients Covariance Matrix Adjustment</a>
+    <a class="dropdown-item" href="../articles/empirical_wls.html">Details of Weighted Least Square Empirical Covariance</a>
     <div class="dropdown-divider"></div>
-    <a class="dropdown-item" href="../articles/index.html">More articles...</a>
+    <h6 class="dropdown-header" data-toc-skip>Algorithm Details</h6>
+    <a class="dropdown-item" href="../articles/algorithm.html">Model Fitting Algorithm</a>
+    <a class="dropdown-item" href="../articles/predict.html">Prediction and Simulation</a>
+    <div class="dropdown-divider"></div>
+    <h6 class="dropdown-header" data-toc-skip>Developers</h6>
+    <a class="dropdown-item" href="../articles/package_structure.html">Package Structure</a>
   </div>
 </li>
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.2.2">v0.2.2</a> </div></li>
-<!-- end dropdown for versions -->
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-reports">Reports</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-reports">
@@ -179,7 +177,7 @@ subject variables.</p>
 <span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">fev_data</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">fit_mmrm</span><span class="op">(</span><span class="va">formula</span>, <span class="va">data</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">fev_data</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    user  system elapsed </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   0.047   0.000   0.046 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   0.044   0.000   0.043 </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

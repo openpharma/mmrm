@@ -39,7 +39,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9044</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,35 +55,33 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <h6 class="dropdown-header" data-toc-skip>Introduction</h6>
-    <a class="dropdown-item" href="../articles/introduction.html">Introduction to `mmrm`</a>
-    <a class="dropdown-item" href="../articles/methodological_introduction.html">What are MMRMs? A brief introduction</a>
+    <a class="dropdown-item" href="../articles/introduction.html">Package Introduction</a>
+    <a class="dropdown-item" href="../articles/methodological_introduction.html">Mixed Models for Repeated Measures</a>
+    <a class="dropdown-item" href="../articles/mmrm_review_methods.html">Comparison with other software</a>
     <div class="dropdown-divider"></div>
-    <h6 class="dropdown-header" data-toc-skip>Covariance Structure</h6>
-    <a class="dropdown-item" href="../articles/covariance.html">Covariance Structures in `mmrm`</a>
+    <h6 class="dropdown-header" data-toc-skip>Covariance Structures</h6>
+    <a class="dropdown-item" href="../articles/covariance.html">Covariance Structures</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Degrees of Freedom</h6>
-    <a class="dropdown-item" href="../articles/between_within.html">Between-Within degrees of freedom</a>
-    <a class="dropdown-item" href="../articles/kenward.html">Details of the Kenward-Roger calculations</a>
-    <a class="dropdown-item" href="../articles/satterthwaite.html">Details of the Satterthwaite calculations</a>
+    <a class="dropdown-item" href="../articles/between_within.html">Between-Within</a>
+    <a class="dropdown-item" href="../articles/kenward.html">Kenward-Roger</a>
+    <a class="dropdown-item" href="../articles/satterthwaite.html">Satterthwaite</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Coefficient Covariance</h6>
-    <a class="dropdown-item" href="../articles/coef_vcov.html">Coefficients Covariance Matrix Adjustment in `mmrm`</a>
-    <a class="dropdown-item" href="../articles/empirical_wls.html">Weighted Least Square Empirical Covariance</a>
+    <a class="dropdown-item" href="../articles/coef_vcov.html">Coefficients Covariance Matrix Adjustment</a>
+    <a class="dropdown-item" href="../articles/empirical_wls.html">Details of Weighted Least Square Empirical Covariance</a>
     <div class="dropdown-divider"></div>
-    <a class="dropdown-item" href="../articles/index.html">More articles...</a>
+    <h6 class="dropdown-header" data-toc-skip>Algorithm Details</h6>
+    <a class="dropdown-item" href="../articles/algorithm.html">Model Fitting Algorithm</a>
+    <a class="dropdown-item" href="../articles/predict.html">Prediction and Simulation</a>
+    <div class="dropdown-divider"></div>
+    <h6 class="dropdown-header" data-toc-skip>Developers</h6>
+    <a class="dropdown-item" href="../articles/package_structure.html">Package Structure</a>
   </div>
 </li>
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.2.2">v0.2.2</a> </div></li>
-<!-- end dropdown for versions -->
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-reports">Reports</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-reports">
@@ -136,44 +134,65 @@ created.</p>
 <h2 id="package-structures">Package Structures<a class="anchor" aria-label="anchor" href="#package-structures"></a>
 </h2>
 <p><code>mmrm</code> is an R package, and the following sections
-describe all files/folders that are contained in this package.</p>
+describe all files/folders that are contained in this package as well as
+the repository.</p>
 <div class="section level3">
-<h3 id="data">data<a class="anchor" aria-label="anchor" href="#data"></a>
+<h3 id="data">
+<code>data</code><a class="anchor" aria-label="anchor" href="#data"></a>
 </h3>
-<p>The <code>data/</code> folder is where <code>mmrm</code> internal
-data is stored. See the <a href="https://openpharma.github.io/mmrm/main/reference/fev_data.html"><code>fev_data</code>
-documentation</a> and the <a href="introduction.html#common-usage">introduction vignette</a> for
-details.</p>
+<p>The <code>data/</code> folder is where <code>mmrm</code> example data
+sets is stored. See the documentation for <a href="https://openpharma.github.io/mmrm/main/reference/fev_data.html"><code>fev_data</code></a>
+and <a href="https://openpharma.github.io/mmrm/main/reference/bcva_data.html"><code>bcva_data</code></a>
+for details.</p>
 </div>
 <div class="section level3">
-<h3 id="design">design<a class="anchor" aria-label="anchor" href="#design"></a>
+<h3 id="data-raw">
+<code>data-raw</code><a class="anchor" aria-label="anchor" href="#data-raw"></a>
 </h3>
-<p>The <code>design/</code> folder is where the prototypes and SAS
-implementations stored. When we have a new idea for a specific
-implementations, we can add our prototypes in a Rmarkdown file to this
-folder. We can then push these prototypes to github and collect feedback
-on the proposed ideas. Currently we only have SAS and TMB folders.</p>
+<p>The <code>data-raw/</code> folder contains source code to produce
+simulated example data sets. Currently it contains
+<code>bcva_data.R</code> (and its associated helper file) producing the
+<code>bcva_data</code> data set, and the cached results for comparing
+mmrm and other implementations.</p>
+</div>
+<div class="section level3">
+<h3 id="design">
+<code>design</code><a class="anchor" aria-label="anchor" href="#design"></a>
+</h3>
+<p>The <code>design/</code> folder is where design documents, prototype
+scripts and SAS code for comparisons are stored. When we have a new idea
+for a specific implementations, we can add our design doc including
+prototype implementations in an <code>Rmd</code> file in this
+folder.</p>
+<p>Note that this folder is not part of the actual R package but only
+part of the git repository. Different folders contain R scripts and
+<code>Rmd</code> files for different topics, for example:</p>
 <div class="section level4">
-<h4 id="sas">SAS<a class="anchor" aria-label="anchor" href="#sas"></a>
+<h4 id="sas">
+<code>SAS</code><a class="anchor" aria-label="anchor" href="#sas"></a>
 </h4>
-<p>The <code>design/SAS/</code> folder contains the programs to run MMRM
-models and corresponding SAS outputs. The results will be used for
-integration tests. See <a href="#how-to-add-a-new-integration-test?">integration tests</a>.</p>
+<p>The <code>design/SAS/</code> folder contains programs to run MMRM
+models in SAS and the corresponding SAS outputs. The results will be
+used for integration tests (see <a href="#how-to-add-a-new-integration-test?">integration tests</a>).</p>
 </div>
 <div class="section level4">
-<h4 id="tmb">TMB<a class="anchor" aria-label="anchor" href="#tmb"></a>
+<h4 id="tmb">
+<code>TMB</code><a class="anchor" aria-label="anchor" href="#tmb"></a>
 </h4>
-<p>The <code>design/TMB/</code> folder is where prototypes of
-<code>mmrm</code> implementations stored. You can add your
-ideas/prototypes here.</p>
+<p>The <code>design/TMB/</code> folder is where prototypes of the first
+<code>mmrm</code> implementations with <code>TMB</code> are stored.</p>
 </div>
 </div>
 <div class="section level3">
-<h3 id="inst">inst<a class="anchor" aria-label="anchor" href="#inst"></a>
+<h3 id="inst">
+<code>inst</code><a class="anchor" aria-label="anchor" href="#inst"></a>
 </h3>
 <p>Files in the <code>inst/</code> folder will be kept after
-installation.</p>
+installation of the R package.</p>
 <ul>
+<li>
+<code>jss.csl</code> is specifying the Journal of Statistical
+Software citation style used by <code>Rdpack</code> references.</li>
 <li>
 <code>REFERENCES.bib</code> keeps a list of all referenced
 literature.</li>
@@ -183,107 +202,198 @@ allowing the package to pass a spell-checker.</li>
 </ul>
 </div>
 <div class="section level3">
-<h3 id="man">man<a class="anchor" aria-label="anchor" href="#man"></a>
+<h3 id="man">
+<code>man</code><a class="anchor" aria-label="anchor" href="#man"></a>
 </h3>
 <p>The <code>man/</code> folder contains all function documentation
-generated by <code>Roxygen</code>. Please do not edit any file in this
-folder otherwise you may run into issues.</p>
+generated by <code>roxygen2</code>. Please do not edit any file in this
+folder, otherwise you may run into problems.</p>
 </div>
 <div class="section level3">
-<h3 id="r">R<a class="anchor" aria-label="anchor" href="#r"></a>
+<h3 id="namespace">
+<code>NAMESPACE</code><a class="anchor" aria-label="anchor" href="#namespace"></a>
+</h3>
+<p>Since we use <code>roxygen2</code> also the <code>NAMESPACE</code>
+file is automatically generated and usually does not need to be edited
+manually.</p>
+<p>Note that there can be exceptions, e.g. when removing a previously
+exported function from the package, in which case a manual deletion of
+the corresponding entry might be necessary to unblock
+<code>roxygen2</code>.</p>
+</div>
+<div class="section level3">
+<h3 id="news-md">
+<code>NEWS.md</code><a class="anchor" aria-label="anchor" href="#news-md"></a>
+</h3>
+<p>This file lists the user facing changes (new features, bug fixes,
+etc.) and should be updated during the development and cleaned before
+each release. It is important for the user experience to understand the
+changes between the releases.</p>
+</div>
+<div class="section level3">
+<h3 id="r">
+<code>R</code><a class="anchor" aria-label="anchor" href="#r"></a>
 </h3>
 <p>This folder contains all the source code written in R, just like
 every other R packages. Please refer to the <a href="https://openpharma.github.io/mmrm/main/reference/">documentation
-page</a> for details.</p>
+page</a> for details of the user facing API.</p>
 </div>
 <div class="section level3">
-<h3 id="src">src<a class="anchor" aria-label="anchor" href="#src"></a>
+<h3 id="readme">
+<code>README</code><a class="anchor" aria-label="anchor" href="#readme"></a>
 </h3>
-<p>src folders includes all the source code written in C++. Files
-starting with <code>test-</code> are tests.</p>
+<p>We use the <code>Rmd</code> file <code>README.Rmd</code> and knit
+this to the corresponding <code>md</code> file. This file specifies the
+landing page on the <code>pkgdown</code> website and the GitHub
+repository and should hence be nice, succinct and clean.</p>
+</div>
+<div class="section level3">
+<h3 id="simulations">
+<code>simulations</code><a class="anchor" aria-label="anchor" href="#simulations"></a>
+</h3>
+<p>This folder contains simulation scripts and results to compare
+<code>mmrm</code> with other software or modifications in
+<code>mmrm</code>. Please refer to the <code>README</code> files in the
+subfolders for details.</p>
+</div>
+<div class="section level3">
+<h3 id="src">
+<code>src</code><a class="anchor" aria-label="anchor" href="#src"></a>
+</h3>
+<p>This folder includes all the source code written in <code>C++</code>,
+either using <code>Rcpp</code> or <code>TMB</code> frameworks.</p>
 <div class="section level4">
-<h4 id="covariance-h">covariance.h<a class="anchor" aria-label="anchor" href="#covariance-h"></a>
+<h4 id="chol_cache-h">
+<code>chol_cache.h</code><a class="anchor" aria-label="anchor" href="#chol_cache-h"></a>
+</h4>
+<p>This file contains classes for caching the Cholesky factorizations
+efficiently.</p>
+</div>
+<div class="section level4">
+<h4 id="covariance-h">
+<code>covariance.h</code><a class="anchor" aria-label="anchor" href="#covariance-h"></a>
 </h4>
 <p>This file includes the implementations of covariance structures with
 suitable parameterization, and the calculation of lower triangular part
 of Cholesky factorization of the covariance matrix.</p>
 <p>For more about the implementations and why Cholesky factorization is
-needed, visit <a href="algorithm.html#covariance-matrix-model">mmrm
-details vignette</a>.</p>
-<p>For more about covariance structures, visit <a href="covariance.html">covariance structures vignette</a>.</p>
+needed, see the <a href="algorithm.html#covariance-matrix-model">model
+fitting algorithm</a> vignette.</p>
+<p>For more about covariance structures, see the <a href="covariance.html">covariance structures</a> vignette.</p>
 </div>
 <div class="section level4">
-<h4 id="init-h">init.h<a class="anchor" aria-label="anchor" href="#init-h"></a>
+<h4 id="derivatives-h">
+<code>derivatives.h</code><a class="anchor" aria-label="anchor" href="#derivatives-h"></a>
 </h4>
-<p>This file includes the initialization of R and C++ communication.</p>
+<p>This file contains classes to enable automatic differentiation
+calculation which are important for the coefficient covariance matrix
+calculations and Kenward-Roger and Satterthwaite degrees of freedom
+calculations.</p>
 </div>
 <div class="section level4">
-<h4 id="mmrm-cpp">mmrm.cpp<a class="anchor" aria-label="anchor" href="#mmrm-cpp"></a>
+<h4 id="empirical-cpp">
+<code>empirical.cpp</code><a class="anchor" aria-label="anchor" href="#empirical-cpp"></a>
+</h4>
+<p>This file implements the coefficient covariance matrix
+calculations.</p>
+</div>
+<div class="section level4">
+<h4 id="exports-cpp">
+<code>exports.cpp</code><a class="anchor" aria-label="anchor" href="#exports-cpp"></a>
+</h4>
+<p>This file contains the <code>Rcpp</code> interfaces to the
+coefficient covariance matrix, Kenward-Roger, Jacobian and prediction
+calculations.</p>
+</div>
+<div class="section level4">
+<h4 id="jacobian-cpp">
+<code>jacobian.cpp</code><a class="anchor" aria-label="anchor" href="#jacobian-cpp"></a>
+</h4>
+<p>This file implements the Jacobian calculations which are needed for
+the Satterthwaite degrees of freedom.</p>
+</div>
+<div class="section level4">
+<h4 id="kr_comp-cpp">
+<code>kr_comp.cpp</code><a class="anchor" aria-label="anchor" href="#kr_comp-cpp"></a>
+</h4>
+<p>This file implements the <code>P</code>, <code>Q</code> and
+<code>R</code> matrix calculations which are needed for the
+Kenward-Roger degrees of freedom.</p>
+</div>
+<div class="section level4">
+<h4 id="makevars">
+<code>Makevars</code><a class="anchor" aria-label="anchor" href="#makevars"></a>
+</h4>
+<p>This file specifies additional flags used in the source code
+compilation. We specify here the use of <code>C++14</code> such that
+<code>std::make_unique()</code> is available. Also we ask
+<code>TMB</code> to use the <code>TMB</code> automatic differentiation
+framework (instead of the default <code>CppAD</code> framework) to be
+more efficient, and disable useless warnings from the <code>Eigen</code>
+library compilation.</p>
+<p>Note that additional flags such as
+<code>-Wno-ignored-attributes</code> cannot be included here because
+they are compiler specific. These can instead be specified in local
+<code>~/.R/Makevars</code> files.</p>
+</div>
+<div class="section level4">
+<h4 id="mmrm-cpp">
+<code>mmrm.cpp</code><a class="anchor" aria-label="anchor" href="#mmrm-cpp"></a>
 </h4>
 <p>This file is the core part where the likelihood is calculated. The
-objective function reads input from R and do the calculations
+objective function reads input from R and performs the calculations
 inside.</p>
 </div>
 <div class="section level4">
-<h4 id="utils-h">utils.h<a class="anchor" aria-label="anchor" href="#utils-h"></a>
+<h4 id="predict-cpp">
+<code>predict.cpp</code><a class="anchor" aria-label="anchor" href="#predict-cpp"></a>
 </h4>
-<p>This files includes utilities that used internally.</p>
+<p>This file implements the prediction calculations.</p>
 </div>
 <div class="section level4">
-<h4 id="tmb-cpp-and-tmb_includes-h">tmb.cpp and tmb_includes.h<a class="anchor" aria-label="anchor" href="#tmb-cpp-and-tmb_includes-h"></a>
+<h4 id="test-files">test files<a class="anchor" aria-label="anchor" href="#test-files"></a>
+</h4>
+<p>Files starting with <code>test-</code> are tests or helper files to
+run tests. (It is important to also aim for high unit test coverage of
+the source code.)</p>
+</div>
+<div class="section level4">
+<h4 id="tmb-cpp-and-tmb_includes-h">
+<code>tmb.cpp</code> and <code>tmb_includes.h</code><a class="anchor" aria-label="anchor" href="#tmb-cpp-and-tmb_includes-h"></a>
 </h4>
 <p>These two files includes the TMB module.</p>
 </div>
 <div class="section level4">
-<h4 id="test--files">test- files<a class="anchor" aria-label="anchor" href="#test--files"></a>
+<h4 id="utils-h">
+<code>utils.h</code><a class="anchor" aria-label="anchor" href="#utils-h"></a>
 </h4>
-<p>All files starting with <code>test-</code> are unit tests for the C++
-codes.</p>
+<p>This files includes utilities that used internally.</p>
 </div>
 </div>
 <div class="section level3">
-<h3 id="tests">tests<a class="anchor" aria-label="anchor" href="#tests"></a>
+<h3 id="tests">
+<code>tests</code><a class="anchor" aria-label="anchor" href="#tests"></a>
 </h3>
 <p>The <code>tests/</code> folder includes all the unit tests for the R
 functions, using the <code>testthat</code> package.</p>
 </div>
 <div class="section level3">
-<h3 id="vignettes">vignettes<a class="anchor" aria-label="anchor" href="#vignettes"></a>
+<h3 id="vignettes">
+<code>vignettes</code><a class="anchor" aria-label="anchor" href="#vignettes"></a>
 </h3>
-<p>The <code>vignettes/</code> folder includes
-<code>Rmarkdown</code>-based documentation to helps the user understand
-more about the usage, detail, etc. These vignettes are rendered into
-<code>.html</code> files which are deployed on the package website.</p>
+<p>The <code>vignettes/</code> folder includes <code>Rmd</code>
+documentation files to helps the user understand more about the usage,
+detail, etc. These vignettes are rendered into <code>.html</code> files
+which are deployed on the package website.</p>
 </div>
 <div class="section level3">
-<h3 id="other-files">other files<a class="anchor" aria-label="anchor" href="#other-files"></a>
+<h3 id="other-files">Other files<a class="anchor" aria-label="anchor" href="#other-files"></a>
 </h3>
-<p>There are other files that can be helpful in package development.</p>
+<p>There are other files that can be helpful in package development and
+are used in <code>mmrm</code>.</p>
 <div class="section level4">
-<h4 id="gitignore">.gitignore<a class="anchor" aria-label="anchor" href="#gitignore"></a>
-</h4>
-<p>This file will specify untracked files/file patterns that git should
-ignore.</p>
-</div>
-<div class="section level4">
-<h4 id="lintr">.lintr<a class="anchor" aria-label="anchor" href="#lintr"></a>
-</h4>
-<p>This file serves as configuration for <code>lintr</code> to do the
-static code analysis. Please install <code>lintr</code> package in your
-developing system to enable the analysis. It will provide you
-information about errors, style issues, etc.</p>
-<p>For more, visit <a href="https://lintr.r-lib.org/" class="external-link">lintr
-documentation</a>.</p>
-</div>
-<div class="section level4">
-<h4 id="pre-commit-config-yaml">.pre-commit-config.yaml<a class="anchor" aria-label="anchor" href="#pre-commit-config-yaml"></a>
-</h4>
-<p>This file includes the configurations that we use for
-<code>pre-commit</code>. <code>pre-commit</code> is a tool that help us
-identify simple issues before we submit our code. For more, visit <a href="https://pre-commit.com/" class="external-link">pre-commit documentation</a>.</p>
-</div>
-<div class="section level4">
-<h4 id="pkgdown-yml">_pkgdown.yml<a class="anchor" aria-label="anchor" href="#pkgdown-yml"></a>
+<h4 id="pkgdown-yml">
+<code>_pkgdown.yml</code><a class="anchor" aria-label="anchor" href="#pkgdown-yml"></a>
 </h4>
 <p>This file is the configuration file for our
 <code>pkgdown</code>-based website. <code>pkgdown</code> is used to
@@ -293,14 +403,43 @@ covert our package documentation (<code>man/</code>,
 documentation</a>.</p>
 </div>
 <div class="section level4">
-<h4 id="staged_dependencies-yaml">staged_dependencies.yaml<a class="anchor" aria-label="anchor" href="#staged_dependencies-yaml"></a>
+<h4 id="gitignore">
+<code>.gitignore</code><a class="anchor" aria-label="anchor" href="#gitignore"></a>
 </h4>
-<p>This file is the configuration file for
-<code>staged.dependencies</code>. <code>staged.dependencies</code> is
-used to ensure that dependencies are consistent across multiple
-repositories which are being developing at the same time.</p>
-<p>For more, visit <a href="https://openpharma.github.io/staged.dependencies/" class="external-link">staged.dependencies
+<p>This file will specify untracked files/file patterns that git should
+ignore.</p>
+</div>
+<div class="section level4">
+<h4 id="lintr">
+<code>.lintr</code><a class="anchor" aria-label="anchor" href="#lintr"></a>
+</h4>
+<p>This file serves as configuration for <code>lintr</code> to do the
+static code analysis. Please install <code>lintr</code> package in your
+developing system to enable the analysis. It will provide you
+information about errors, style issues, etc.</p>
+<p>For more, visit <a href="https://lintr.r-lib.org/" class="external-link">lintr
 documentation</a>.</p>
+</div>
+<div class="section level4">
+<h4 id="pre-commit-config-yaml">
+<code>.pre-commit-config.yaml</code><a class="anchor" aria-label="anchor" href="#pre-commit-config-yaml"></a>
+</h4>
+<p>This file includes the configurations that we use for
+<code>pre-commit</code>. <code>pre-commit</code> is a tool that help us
+identify simple issues before we submit our code. For more, visit <a href="https://pre-commit.com/" class="external-link">pre-commit documentation</a>.</p>
+</div>
+<div class="section level4">
+<h4 id="rbuildignore">
+<code>.Rbuildignore</code><a class="anchor" aria-label="anchor" href="#rbuildignore"></a>
+</h4>
+<p>This file specifies which files and folders in the repository should
+not be included when building the R package.</p>
+<p>Please note that it is important to know that these are regular
+expressions. Hence, when we want to specify an exact file name we need
+to use e.g. the <code>^cache$</code> format, just using
+<code>cache</code> instead could match additional files or folders with
+<code>cache</code> being part of the name. This can lead to
+problems.</p>
 </div>
 </div>
 </div>

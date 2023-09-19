@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="mmrm">
-<title>Implementations of MMRM: a comparison of what's available • mmrm</title>
+<title>Comparison with other software • mmrm</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Implementations of MMRM: a comparison of what's available">
+<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Comparison with other software">
 <meta property="og:description" content="mmrm">
 <meta property="og:image" content="https://openpharma.github.io/mmrm/logo.svg">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -39,7 +39,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9044</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,35 +55,33 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <h6 class="dropdown-header" data-toc-skip>Introduction</h6>
-    <a class="dropdown-item" href="../articles/introduction.html">Introduction to `mmrm`</a>
-    <a class="dropdown-item" href="../articles/methodological_introduction.html">What are MMRMs? A brief introduction</a>
+    <a class="dropdown-item" href="../articles/introduction.html">Package Introduction</a>
+    <a class="dropdown-item" href="../articles/methodological_introduction.html">Mixed Models for Repeated Measures</a>
+    <a class="dropdown-item" href="../articles/mmrm_review_methods.html">Comparison with other software</a>
     <div class="dropdown-divider"></div>
-    <h6 class="dropdown-header" data-toc-skip>Covariance Structure</h6>
-    <a class="dropdown-item" href="../articles/covariance.html">Covariance Structures in `mmrm`</a>
+    <h6 class="dropdown-header" data-toc-skip>Covariance Structures</h6>
+    <a class="dropdown-item" href="../articles/covariance.html">Covariance Structures</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Degrees of Freedom</h6>
-    <a class="dropdown-item" href="../articles/between_within.html">Between-Within degrees of freedom</a>
-    <a class="dropdown-item" href="../articles/kenward.html">Details of the Kenward-Roger calculations</a>
-    <a class="dropdown-item" href="../articles/satterthwaite.html">Details of the Satterthwaite calculations</a>
+    <a class="dropdown-item" href="../articles/between_within.html">Between-Within</a>
+    <a class="dropdown-item" href="../articles/kenward.html">Kenward-Roger</a>
+    <a class="dropdown-item" href="../articles/satterthwaite.html">Satterthwaite</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Coefficient Covariance</h6>
-    <a class="dropdown-item" href="../articles/coef_vcov.html">Coefficients Covariance Matrix Adjustment in `mmrm`</a>
-    <a class="dropdown-item" href="../articles/empirical_wls.html">Weighted Least Square Empirical Covariance</a>
+    <a class="dropdown-item" href="../articles/coef_vcov.html">Coefficients Covariance Matrix Adjustment</a>
+    <a class="dropdown-item" href="../articles/empirical_wls.html">Details of Weighted Least Square Empirical Covariance</a>
     <div class="dropdown-divider"></div>
-    <a class="dropdown-item" href="../articles/index.html">More articles...</a>
+    <h6 class="dropdown-header" data-toc-skip>Algorithm Details</h6>
+    <a class="dropdown-item" href="../articles/algorithm.html">Model Fitting Algorithm</a>
+    <a class="dropdown-item" href="../articles/predict.html">Prediction and Simulation</a>
+    <div class="dropdown-divider"></div>
+    <h6 class="dropdown-header" data-toc-skip>Developers</h6>
+    <a class="dropdown-item" href="../articles/package_structure.html">Package Structure</a>
   </div>
 </li>
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.2.2">v0.2.2</a> </div></li>
-<!-- end dropdown for versions -->
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-reports">Reports</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-reports">
@@ -115,7 +113,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.svg" class="logo" alt=""><h1>Implementations of MMRM: a comparison of what's available</h1>
+      <img src="../logo.svg" class="logo" alt=""><h1>Comparison with other software</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/HEAD/vignettes/mmrm_review_methods.Rmd" class="external-link"><code>vignettes/mmrm_review_methods.Rmd</code></a></small>
@@ -128,25 +126,26 @@
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
 <p>In this vignette we briefly compare the <code><a href="../reference/mmrm.html">mmrm::mmrm</a></code>,
-SAS’s <code>PROC MIXED</code>, <code><a href="https://rdrr.io/pkg/nlme/man/gls.html" class="external-link">nlme::gls</a></code>,
+SAS’s <code>PROC GLIMMIX</code>, <code><a href="https://rdrr.io/pkg/nlme/man/gls.html" class="external-link">nlme::gls</a></code>,
 <code><a href="https://rdrr.io/pkg/lme4/man/lmer.html" class="external-link">lme4::lmer</a></code>, and <code><a href="https://rdrr.io/pkg/glmmTMB/man/glmmTMB.html" class="external-link">glmmTMB::glmmTMB</a></code> functions for
 fitting mixed models for repeated measures (MMRMs). A primary difference
 in these implementations lies in the covariance structures that are
-supported “out of the box”. In particular, <code>PROC MIXED</code> and
+supported “out of the box”. In particular, <code>PROC GLIMMIX</code> and
 <code>mmrm</code> are the only procedures which provide support for many
 of the most common MMRM covariance structures. Most covariance
 structures can be implemented in <code>gls</code>, though users are
 required to define them manually. <code>lmer</code> and
 <code>glmmTMB</code> are more limited. We find that <code>mmmrm</code>
 converges more quickly than other R implementations while also producing
-estimates that are virtually identical to <code>PROC MIXED</code>’s.</p>
+estimates that are virtually identical to
+<code>PROC GLIMMIX</code>’s.</p>
 </div>
 <div class="section level2">
 <h2 id="datasets">Datasets<a class="anchor" aria-label="anchor" href="#datasets"></a>
 </h2>
 <p>Two datasets are used to illustrate model fitting with the
 <code>mmrm</code>, <code>lme4</code>, <code>nlme</code>,
-<code>glmmTMB</code> R packages as well as <code>PROC MIXED</code>.
+<code>glmmTMB</code> R packages as well as <code>PROC GLIMMIX</code>.
 These data are also used to compare these implementations’ operating
 characteristics.</p>
 <div class="section level3">
@@ -217,7 +216,7 @@ is given below:</p>
 <p>Listed below are some of the most commonly used covariance structures
 used when fitting MMRMs. We indicate which matrices are available “out
 of the box” for each implementation considered in this vignette. Note
-that this table is not exhaustive; <code>PROC MIXED</code> and
+that this table is not exhaustive; <code>PROC GLIMMIX</code> and
 <code>glmmTMB</code> support additional spatial covariance
 structures.</p>
 <table class="table">
@@ -232,7 +231,7 @@ structures.</p>
 <thead><tr class="header">
 <th align="center">Covariance structures</th>
 <th align="center"><code>mmrm</code></th>
-<th align="center"><code>PROC MIXED</code></th>
+<th align="center"><code>PROC GLIMMIX</code></th>
 <th align="center"><code>gls</code></th>
 <th align="center"><code>lmer</code></th>
 <th align="center"><code>glmmTMB</code></th>
@@ -328,13 +327,13 @@ the two are modeled.</p>
 <h3 id="ante-dependence-heterogeneous">Ante-dependence (heterogeneous)<a class="anchor" aria-label="anchor" href="#ante-dependence-heterogeneous"></a>
 </h3>
 <div class="section level4">
-<h4 id="proc-mixed">
-<code>PROC MIXED</code><a class="anchor" aria-label="anchor" href="#proc-mixed"></a>
+<h4 id="proc-glimmix">
+<code>PROC GLIMMIX</code><a class="anchor" aria-label="anchor" href="#proc-glimmix"></a>
 </h4>
-<pre><code>PROC MIXED DATA = fev_data cl method=ml;
+<pre><code>PROC GLIMMIX DATA = fev_data;
 CLASS AVISIT(ref = 'VIS1') ARMCD(ref = 'PBO') USUBJID;
 MODEL FEV1 = AVISIT|ARMCD / ddfm=satterthwaite solution chisq;
-<b>REPEATED AVISIT / subject=USUBJID type=ANTE(1)</b> r=1, 2, 3, 4, 5, 6, 7, 8, 9, 10 rcorr;
+<b>RANDOM AVISIT / subject=USUBJID type=ANTE(1)</b>;
 </code></pre>
 </div>
 <div class="section level4">
@@ -364,13 +363,13 @@ MODEL FEV1 = AVISIT|ARMCD / ddfm=satterthwaite solution chisq;
 <h3 id="auto-regressive-heterogeneous">Auto-regressive (heterogeneous)<a class="anchor" aria-label="anchor" href="#auto-regressive-heterogeneous"></a>
 </h3>
 <div class="section level4">
-<h4 id="proc-mixed-1">
-<code>PROC MIXED</code><a class="anchor" aria-label="anchor" href="#proc-mixed-1"></a>
+<h4 id="proc-glimmix-1">
+<code>PROC GLIMMIX</code><a class="anchor" aria-label="anchor" href="#proc-glimmix-1"></a>
 </h4>
-<pre><code>PROC MIXED DATA = fev_data cl method=ml;
+<pre><code>PROC GLIMMIX DATA = fev_data;
 CLASS AVISIT(ref = 'VIS1') ARMCD(ref = 'PBO') USUBJID;
 MODEL FEV1 = AVISIT|ARMCD / ddfm=satterthwaite solution chisq;
-<b>REPEATED AVISIT / subject=USUBJID type=ARH(1)</b> r=1, 2, 3, 4, 5, 6, 7, 8, 9, 10 rcorr;
+<b>RANDOM AVISIT / subject=USUBJID type=ARH(1)</b>;
 </code></pre>
 </div>
 <div class="section level4">
@@ -399,13 +398,13 @@ MODEL FEV1 = AVISIT|ARMCD / ddfm=satterthwaite solution chisq;
 <h3 id="auto-regressive-homogeneous">Auto-regressive (homogeneous)<a class="anchor" aria-label="anchor" href="#auto-regressive-homogeneous"></a>
 </h3>
 <div class="section level4">
-<h4 id="proc-mixed-2">
-<code>PROC MIXED</code><a class="anchor" aria-label="anchor" href="#proc-mixed-2"></a>
+<h4 id="proc-glimmix-2">
+<code>PROC GLIMMIX</code><a class="anchor" aria-label="anchor" href="#proc-glimmix-2"></a>
 </h4>
-<pre><code>PROC MIXED DATA = fev_data cl method=ml;
+<pre><code>PROC GLIMMIX DATA = fev_data;
 CLASS AVISIT(ref = 'VIS1') ARMCD(ref = 'PBO') USUBJID;
 MODEL FEV1 =  ARMCD|AVISIT / ddfm=satterthwaite solution chisq;
-<b>REPEATED AVISIT / subject=USUBJID type=AR(1)</b> r=1, 2, 3, 4, 5, 6, 7, 8, 9, 10 rcorr;
+<b>RANDOM AVISIT / subject=USUBJID type=AR(1)</b>;
 </code></pre>
 </div>
 <div class="section level4">
@@ -443,13 +442,13 @@ MODEL FEV1 =  ARMCD|AVISIT / ddfm=satterthwaite solution chisq;
 <h3 id="compound-symmetry-heterogeneous">Compound symmetry (heterogeneous)<a class="anchor" aria-label="anchor" href="#compound-symmetry-heterogeneous"></a>
 </h3>
 <div class="section level4">
-<h4 id="proc-mixed-3">
-<code>PROC MIXED</code><a class="anchor" aria-label="anchor" href="#proc-mixed-3"></a>
+<h4 id="proc-glimmix-3">
+<code>PROC GLIMMIX</code><a class="anchor" aria-label="anchor" href="#proc-glimmix-3"></a>
 </h4>
-<pre><code>PROC MIXED DATA = fev_data cl method=ml;
+<pre><code>PROC GLIMMIX DATA = fev_data;
 CLASS AVISIT(ref = 'VIS1') ARMCD(ref = 'PBO') USUBJID;
 MODEL FEV1 = AVISIT|ARMCD / ddfm=satterthwaite solution chisq;
-<b>REPEATED AVISIT / subject=USUBJID type=CSH</b> r=1, 2, 3, 4, 5, 6, 7, 8, 9, 10 rcorr;
+<b>RANDOM AVISIT / subject=USUBJID type=CSH</b>;
 </code></pre>
 </div>
 <div class="section level4">
@@ -488,13 +487,13 @@ MODEL FEV1 = AVISIT|ARMCD / ddfm=satterthwaite solution chisq;
 <h3 id="compound-symmetry-homogeneous">Compound symmetry (homogeneous)<a class="anchor" aria-label="anchor" href="#compound-symmetry-homogeneous"></a>
 </h3>
 <div class="section level4">
-<h4 id="proc-mixed-4">
-<code>PROC MIXED</code><a class="anchor" aria-label="anchor" href="#proc-mixed-4"></a>
+<h4 id="proc-glimmix-4">
+<code>PROC GLIMMIX</code><a class="anchor" aria-label="anchor" href="#proc-glimmix-4"></a>
 </h4>
-<pre><code>PROC MIXED DATA = fev_data cl method=ml;
+<pre><code>PROC GLIMMIX DATA = fev_data;
 CLASS AVISIT(ref = 'VIS1') ARMCD(ref = 'PBO') USUBJID;
 MODEL FEV1 = AVISIT|ARMCD / ddfm=satterthwaite solution chisq;
-<b>REPEATED AVISIT / subject=USUBJID type=CS</b> r=1, 2, 3, 4, 5, 6, 7, 8, 9, 10 rcorr;
+<b>RANDOM AVISIT / subject=USUBJID type=CS</b>;
 </code></pre>
 </div>
 <div class="section level4">
@@ -522,13 +521,13 @@ MODEL FEV1 = AVISIT|ARMCD / ddfm=satterthwaite solution chisq;
 <h3 id="spatial-exponential">Spatial exponential<a class="anchor" aria-label="anchor" href="#spatial-exponential"></a>
 </h3>
 <div class="section level4">
-<h4 id="proc-mixed-5">
-<code>PROC MIXED</code><a class="anchor" aria-label="anchor" href="#proc-mixed-5"></a>
+<h4 id="proc-glimmix-5">
+<code>PROC GLIMMIX</code><a class="anchor" aria-label="anchor" href="#proc-glimmix-5"></a>
 </h4>
-<pre><code>PROC MIXED DATA = fev_data cl method=ml;
+<pre><code>PROC GLIMMIX DATA = fev_data;
 CLASS AVISIT(ref = 'VIS1') ARMCD(ref = 'PBO') USUBJID;
 MODEL FEV1 = AVISIT|ARMCD / ddfm=satterthwaite solution chisq;
-<b>REPEATED / subject=USUBJID type=sp(exp)(visitn)</b> rcorr;
+<b>RANDOM / subject=USUBJID type=sp(exp)(visitn)</b> rcorr;
 </code></pre>
 </div>
 <div class="section level4">
@@ -568,13 +567,13 @@ MODEL FEV1 = AVISIT|ARMCD / ddfm=satterthwaite solution chisq;
 <h3 id="toeplitz-heterogeneous">Toeplitz (heterogeneous)<a class="anchor" aria-label="anchor" href="#toeplitz-heterogeneous"></a>
 </h3>
 <div class="section level4">
-<h4 id="proc-mixed-6">
-<code>PROC MIXED</code><a class="anchor" aria-label="anchor" href="#proc-mixed-6"></a>
+<h4 id="proc-glimmix-6">
+<code>PROC GLIMMIX</code><a class="anchor" aria-label="anchor" href="#proc-glimmix-6"></a>
 </h4>
-<pre><code>PROC MIXED DATA = fev_data cl method=ml;
+<pre><code>PROC GLIMMIX DATA = fev_data;
 CLASS AVISIT(ref = 'VIS1') ARMCD(ref = 'PBO') USUBJID;
 MODEL FEV1 = AVISIT|ARMCD / ddfm=satterthwaite solution chisq;
-<b>REPEATED AVISIT / subject=USUBJID type=TOEPH</b> r=1, 2, 3, 4, 5, 6, 7, 8, 9, 10 rcorr;
+<b>RANDOM AVISIT / subject=USUBJID type=TOEPH</b>;
 </code></pre>
 </div>
 <div class="section level4">
@@ -601,13 +600,13 @@ MODEL FEV1 = AVISIT|ARMCD / ddfm=satterthwaite solution chisq;
 <h3 id="toeplitz-homogeneous">Toeplitz (homogeneous)<a class="anchor" aria-label="anchor" href="#toeplitz-homogeneous"></a>
 </h3>
 <div class="section level4">
-<h4 id="proc-mixed-7">
-<code>PROC MIXED</code><a class="anchor" aria-label="anchor" href="#proc-mixed-7"></a>
+<h4 id="proc-glimmix-7">
+<code>PROC GLIMMIX</code><a class="anchor" aria-label="anchor" href="#proc-glimmix-7"></a>
 </h4>
-<pre><code>PROC MIXED DATA = fev_data cl method=ml;
+<pre><code>PROC GLIMMIX DATA = fev_data;
 CLASS AVISIT(ref = 'VIS1') ARMCD(ref = 'PBO') USUBJID;
 MODEL FEV1 = AVISIT|ARMCD / ddfm=satterthwaite solution chisq;
-<b>REPEATED AVISIT / subject=USUBJID</b> <b>type=TOEP</b> r=1, 2, 3, 4, 5, 6, 7, 8, 9, 10 rcorr;
+<b>RANDOM AVISIT / subject=USUBJID</b> <b>type=TOEP</b>;
 </code></pre>
 </div>
 <div class="section level4">
@@ -624,13 +623,13 @@ MODEL FEV1 = AVISIT|ARMCD / ddfm=satterthwaite solution chisq;
 <h3 id="unstructured">Unstructured<a class="anchor" aria-label="anchor" href="#unstructured"></a>
 </h3>
 <div class="section level4">
-<h4 id="proc-mixed-8">
-<code>PROC MIXED</code><a class="anchor" aria-label="anchor" href="#proc-mixed-8"></a>
+<h4 id="proc-glimmix-8">
+<code>PROC GLIMMIX</code><a class="anchor" aria-label="anchor" href="#proc-glimmix-8"></a>
 </h4>
-<pre><code>PROC MIXED DATA = fev_data cl method=ml;
+<pre><code>PROC GLIMMIX DATA = fev_data;
 CLASS AVISIT(ref = 'VIS1') ARMCD(ref = 'PBO') USUBJID;
 MODEL FEV1 = ARMCD|AVISIT / ddfm=satterthwaite solution chisq;
-<b>REPEATED AVISIT / subject=USUBJID</b> <b>type=un</b> r=1, 2, 3, 4, 5, 6, 7, 8, 9, 10 rcorr;
+<b>RANDOM AVISIT / subject=USUBJID</b> <b>type=un</b>;
 </code></pre>
 </div>
 <div class="section level4">
@@ -696,7 +695,7 @@ the impact of missingness on convergence rates.</p>
 <div class="section level4">
 <h4 id="fev-data-1">FEV Data<a class="anchor" aria-label="anchor" href="#fev-data-1"></a>
 </h4>
-<p>The <code>mmrm</code>, <code>PROC MIXED</code>, <code>gls</code>,
+<p>The <code>mmrm</code>, <code>PROC GLIMMIX</code>, <code>gls</code>,
 <code>lmer</code>, and <code>glmmTMB</code> functions are applied to the
 FEV dataset 10 times. The convergence times are recorded for each
 replicate and are reported in the table below.</p>
@@ -711,35 +710,41 @@ replicate and are reported in the table below.</p>
 <tbody>
 <tr class="odd">
 <td align="left">mmrm</td>
-<td align="right">51.73</td>
-<td align="right">51.49</td>
-<td align="right">52.79</td>
+<td align="right">56.15</td>
+<td align="right">55.76</td>
+<td align="right">56.30</td>
 </tr>
 <tr class="even">
-<td align="left">lmer</td>
-<td align="right">208.05</td>
-<td align="right">206.38</td>
-<td align="right">222.01</td>
+<td align="left">PROC GLIMMIX</td>
+<td align="right">100.00</td>
+<td align="right">100.00</td>
+<td align="right">100.00</td>
 </tr>
 <tr class="odd">
-<td align="left">gls</td>
-<td align="right">625.38</td>
-<td align="right">608.06</td>
-<td align="right">650.33</td>
+<td align="left">lmer</td>
+<td align="right">247.02</td>
+<td align="right">245.25</td>
+<td align="right">257.46</td>
 </tr>
 <tr class="even">
+<td align="left">gls</td>
+<td align="right">687.63</td>
+<td align="right">683.50</td>
+<td align="right">692.45</td>
+</tr>
+<tr class="odd">
 <td align="left">glmmTMB</td>
-<td align="right">669.86</td>
-<td align="right">655.51</td>
-<td align="right">681.12</td>
+<td align="right">715.90</td>
+<td align="right">708.70</td>
+<td align="right">721.57</td>
 </tr>
 </tbody>
 </table>
 <p>It is clear from these results that <code>mmrm</code> converges
 significantly faster than other R functions. Though not demonstrated
 here, this is generally true regardless of the sample size and
-covariance structure used. <code>PROC MIXED</code> is the fastest
-procedure on average, however.</p>
+covariance structure used. <code>mmrm</code> is faster than
+<code>PROC GLIMMIX</code>.</p>
 </div>
 <div class="section level4">
 <h4 id="bcva-data-1">BCVA Data<a class="anchor" aria-label="anchor" href="#bcva-data-1"></a>
@@ -757,34 +762,38 @@ times. The convergence times are presented below.</p>
 <tbody>
 <tr class="odd">
 <td align="left">mmrm</td>
-<td align="right">3.10</td>
-<td align="right">3.06</td>
-<td align="right">3.15</td>
+<td align="right">3.36</td>
+<td align="right">3.32</td>
+<td align="right">3.46</td>
 </tr>
 <tr class="even">
 <td align="left">glmmTMB</td>
-<td align="right">17.15</td>
-<td align="right">16.74</td>
-<td align="right">17.68</td>
+<td align="right">18.65</td>
+<td align="right">18.14</td>
+<td align="right">18.87</td>
 </tr>
 <tr class="odd">
-<td align="left">gls</td>
-<td align="right">135.02</td>
-<td align="right">134.35</td>
-<td align="right">143.26</td>
+<td align="left">PROC GLIMMIX</td>
+<td align="right">36.25</td>
+<td align="right">36.17</td>
+<td align="right">36.29</td>
 </tr>
 <tr class="even">
+<td align="left">gls</td>
+<td align="right">164.36</td>
+<td align="right">158.61</td>
+<td align="right">165.93</td>
+</tr>
+<tr class="odd">
 <td align="left">lmer</td>
-<td align="right">149.75</td>
-<td align="right">145.14</td>
-<td align="right">152.33</td>
+<td align="right">165.26</td>
+<td align="right">157.46</td>
+<td align="right">166.42</td>
 </tr>
 </tbody>
 </table>
-<p>We again find that <code>PROC MIXED</code> produces the fastest
-convergence times on average, followed closely by <code>mmrm</code>. The
-latter is the fastest of the R implementations, just as in the FEV
-data.</p>
+<p>We again find that <code>mmrm</code> produces the fastest convergence
+times on average.</p>
 </div>
 </div>
 <div class="section level3">
@@ -793,14 +802,14 @@ data.</p>
 <p>We next estimate the marginal mean treatment effects for each visit
 in the FEV and BCVA datasets using the MMRM fitting procedures. All R
 implementations’ estimates are reported relative to
-<code>PROC MIXED</code>’s estimates. Convergence status is also
+<code>PROC GLIMMIX</code>’s estimates. Convergence status is also
 reported.</p>
 <div class="section level4">
 <h4 id="fev-data-2">FEV Data<a class="anchor" aria-label="anchor" href="#fev-data-2"></a>
 </h4>
-<p><img src="mmrm-review-treatment-fev-1.png" alt="plot of chunk review-treatment-fev" width="100%"></p>
+<p><img src="mmrm-review-treatment-fev-1.png" width="100%"></p>
 <p>The R procedures’ estimates are very similar to those output by
-<code>PROC MIXED</code>, though <code>mmrm</code> and <code>gls</code>
+<code>PROC GLIMMIX</code>, though <code>mmrm</code> and <code>gls</code>
 generate the estimates that are closest to those produced when using
 SAS. All methods converge using their default optimization
 arguments.</p>
@@ -808,9 +817,9 @@ arguments.</p>
 <div class="section level4">
 <h4 id="bcva-data-2">BCVA Data<a class="anchor" aria-label="anchor" href="#bcva-data-2"></a>
 </h4>
-<p><img src="mmrm-review-treatment-bcva-1.png" alt="plot of chunk review-treatment-bcva" width="100%"><img src="mmrm-review-treatment-bcva-2.png" alt="plot of chunk review-treatment-bcva" width="100%"></p>
+<p><img src="mmrm-review-treatment-bcva-1.png" width="100%"><img src="mmrm-review-treatment-bcva-2.png" width="100%"></p>
 <p><code>mmrm</code>, <code>gls</code> and <code>lmer</code> produce
-estimates that are virtually identical to <code>PROC MIXED</code>’s,
+estimates that are virtually identical to <code>PROC GLIMMIX</code>’s,
 while <code>glmmTMB</code> does not. This is likely explained by
 <code>glmmTMB</code>’s failure to converge. Note too that
 <code>lmer</code> fails to converge.</p>
@@ -831,95 +840,94 @@ visit is obtained for one replicated dataset at each level of
 missingness is presented in the table below.</p>
 <table class="table">
 <caption>Number of patients per visit</caption>
-<colgroup>
-<col width="16%">
-<col width="8%">
-<col width="8%">
-<col width="8%">
-<col width="8%">
-<col width="8%">
-<col width="8%">
-<col width="8%">
-<col width="8%">
-<col width="8%">
-<col width="8%">
-</colgroup>
 <thead><tr class="header">
-<th align="left">Missingness</th>
-<th align="right">VIS01</th>
-<th align="right">VIS02</th>
-<th align="right">VIS03</th>
-<th align="right">VIS04</th>
-<th align="right">VIS05</th>
-<th align="right">VIS06</th>
-<th align="right">VIS07</th>
-<th align="right">VIS08</th>
-<th align="right">VIS09</th>
-<th align="right">VIS10</th>
+<th align="left"></th>
+<th align="right">none</th>
+<th align="right">mild</th>
+<th align="right">moderate</th>
+<th align="right">high</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="left">none</td>
+<td align="left">VIS01</td>
 <td align="right">200</td>
-<td align="right">200</td>
-<td align="right">200</td>
-<td align="right">200</td>
-<td align="right">200</td>
-<td align="right">200</td>
-<td align="right">200</td>
-<td align="right">200</td>
-<td align="right">200</td>
-<td align="right">200</td>
+<td align="right">196.7</td>
+<td align="right">197.6</td>
+<td align="right">188.1</td>
 </tr>
 <tr class="even">
-<td align="left">mild</td>
+<td align="left">VIS02</td>
 <td align="right">200</td>
-<td align="right">199</td>
-<td align="right">194</td>
-<td align="right">193</td>
-<td align="right">190</td>
-<td align="right">190</td>
-<td align="right">186</td>
-<td align="right">180</td>
-<td align="right">175</td>
-<td align="right">160</td>
+<td align="right">195.4</td>
+<td align="right">194.4</td>
+<td align="right">182.4</td>
 </tr>
 <tr class="odd">
-<td align="left">moderate</td>
-<td align="right">196</td>
-<td align="right">198</td>
-<td align="right">197</td>
-<td align="right">189</td>
-<td align="right">187</td>
-<td align="right">173</td>
-<td align="right">167</td>
-<td align="right">155</td>
-<td align="right">139</td>
-<td align="right">117</td>
+<td align="left">VIS03</td>
+<td align="right">200</td>
+<td align="right">195.1</td>
+<td align="right">190.7</td>
+<td align="right">175.2</td>
 </tr>
 <tr class="even">
-<td align="left">high</td>
-<td align="right">191</td>
-<td align="right">192</td>
-<td align="right">173</td>
-<td align="right">166</td>
-<td align="right">145</td>
-<td align="right">130</td>
-<td align="right">111</td>
-<td align="right">90</td>
-<td align="right">69</td>
-<td align="right">49</td>
+<td align="left">VIS04</td>
+<td align="right">200</td>
+<td align="right">194.1</td>
+<td align="right">188.4</td>
+<td align="right">162.8</td>
+</tr>
+<tr class="odd">
+<td align="left">VIS05</td>
+<td align="right">200</td>
+<td align="right">191.6</td>
+<td align="right">182.5</td>
+<td align="right">142.7</td>
+</tr>
+<tr class="even">
+<td align="left">VIS06</td>
+<td align="right">200</td>
+<td align="right">188.2</td>
+<td align="right">177.3</td>
+<td align="right">125.4</td>
+</tr>
+<tr class="odd">
+<td align="left">VIS07</td>
+<td align="right">200</td>
+<td align="right">184.6</td>
+<td align="right">168.0</td>
+<td align="right">105.9</td>
+</tr>
+<tr class="even">
+<td align="left">VIS08</td>
+<td align="right">200</td>
+<td align="right">178.5</td>
+<td align="right">155.4</td>
+<td align="right">82.6</td>
+</tr>
+<tr class="odd">
+<td align="left">VIS09</td>
+<td align="right">200</td>
+<td align="right">175.3</td>
+<td align="right">139.9</td>
+<td align="right">58.1</td>
+</tr>
+<tr class="even">
+<td align="left">VIS10</td>
+<td align="right">200</td>
+<td align="right">164.1</td>
+<td align="right">124.0</td>
+<td align="right">39.5</td>
 </tr>
 </tbody>
 </table>
 <p>The convergence rates of all implementations for stratified by
 missingness level is presented in the plot below.</p>
-<p><img src="mmrm-review-convergence-rate-missingness-1.png" alt="plot of chunk review-convergence-rate-missingness" width="100%"></p>
-<p><code>mmrm</code>, <code>gls</code>, and <code>PROC MIXED</code> are
-resilient to missingness, only exhibiting some convergence problems in
-the scenarios with the most missingness. These implementations converged
-in all the other scenarios’ replicates. <code>glmmTMB</code>, on the
-other hand, has convergence issues in the no-, mild-, and
+<p><img src="mmrm-review-convergence-rate-missingness-1.png" width="100%"></p>
+<p><code>mmrm</code>, <code>gls</code>, and <code>PROC GLIMMIX</code>
+are resilient to missingness, only exhibiting some convergence problems
+in the scenarios with the most missingness. These implementations
+converged in all the other scenarios’ replicates. <code>glmmTMB</code>,
+on the other hand, has convergence issues in the no-, mild-, and
 high-missingness datasets, with the worst convergence rate occurring in
 the datasets with the most dropout. Finally, <code>lmer</code> is
 unreliable in all scenarios, suggesting that it’s convergence issues
@@ -944,50 +952,60 @@ type II error rates.</p>
 <div class="section level2">
 <h2 id="session-information">Session Information<a class="anchor" aria-label="anchor" href="#session-information"></a>
 </h2>
-<pre><code><span><span class="co">#&gt; R version 4.2.2 Patched (2022-11-10 r83330)</span></span>
+<pre><code><span><span class="co">#&gt; R version 4.3.1 (2023-06-16)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 20.04.5 LTS</span></span>
-<span><span class="co">#&gt;</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 22.04.2 LTS</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
-<span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.9.0</span></span>
-<span><span class="co">#&gt; LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.9.0</span></span>
-<span><span class="co">#&gt;</span></span>
+<span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
+<span><span class="co">#&gt; LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.20.so;  LAPACK version 3.10.0</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; locale:</span></span>
-<span><span class="co">#&gt;  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C</span></span>
-<span><span class="co">#&gt;  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8</span></span>
-<span><span class="co">#&gt;  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8</span></span>
-<span><span class="co">#&gt;  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C</span></span>
-<span><span class="co">#&gt;  [9] LC_ADDRESS=C               LC_TELEPHONE=C</span></span>
-<span><span class="co">#&gt; [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C</span></span>
-<span><span class="co">#&gt;</span></span>
+<span><span class="co">#&gt;  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              </span></span>
+<span><span class="co">#&gt;  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    </span></span>
+<span><span class="co">#&gt;  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   </span></span>
+<span><span class="co">#&gt;  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 </span></span>
+<span><span class="co">#&gt;  [9] LC_ADDRESS=C               LC_TELEPHONE=C            </span></span>
+<span><span class="co">#&gt; [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; time zone: Etc/UTC</span></span>
+<span><span class="co">#&gt; tzcode source: system (glibc)</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; attached base packages:</span></span>
-<span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base</span></span>
-<span><span class="co">#&gt;</span></span>
+<span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt;  [1] ggplot2_3.4.1           emmeans_1.8.4-1         sasr_0.1.2</span></span>
-<span><span class="co">#&gt;  [4] glmmTMB_1.1.5           nlme_3.1-162            lme4_1.1-31</span></span>
-<span><span class="co">#&gt;  [7] Matrix_1.5-3            mmrm_0.2.2.9028         stringr_1.5.0</span></span>
-<span><span class="co">#&gt; [10] microbenchmark_1.4.9    purrr_1.0.1             dplyr_1.1.0</span></span>
-<span><span class="co">#&gt; [13] clusterGeneration_1.3.7 MASS_7.3-58.2           knitr_1.42</span></span>
-<span><span class="co">#&gt;</span></span>
+<span><span class="co">#&gt;  [1] ggplot2_3.4.3           emmeans_1.8.7           knitr_1.43             </span></span>
+<span><span class="co">#&gt;  [4] sasr_0.1.2              glmmTMB_1.1.7           nlme_3.1-163           </span></span>
+<span><span class="co">#&gt;  [7] lme4_1.1-34             Matrix_1.6-1            mmrm_0.3.0             </span></span>
+<span><span class="co">#&gt; [10] stringr_1.5.0           microbenchmark_1.4.10   purrr_1.0.2            </span></span>
+<span><span class="co">#&gt; [13] dplyr_1.1.2             clusterGeneration_1.3.8 MASS_7.3-60            </span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] reticulate_1.28     tidyselect_1.2.0    xfun_0.37</span></span>
-<span><span class="co">#&gt;  [4] TMB_1.9.2           splines_4.2.2       lattice_0.20-45</span></span>
-<span><span class="co">#&gt;  [7] colorspace_2.1-0    vctrs_0.5.2         generics_0.1.3</span></span>
-<span><span class="co">#&gt; [10] utf8_1.2.3          rlang_1.0.6         nloptr_2.0.3</span></span>
-<span><span class="co">#&gt; [13] pillar_1.8.1        withr_2.5.0         glue_1.6.2</span></span>
-<span><span class="co">#&gt; [16] lifecycle_1.0.3     munsell_0.5.0       gtable_0.3.1</span></span>
-<span><span class="co">#&gt; [19] mvtnorm_1.1-3       coda_0.19-4         evaluate_0.20</span></span>
-<span><span class="co">#&gt; [22] labeling_0.4.2      pbkrtest_0.5.2      parallel_4.2.2</span></span>
-<span><span class="co">#&gt; [25] fansi_1.0.4         highr_0.10          broom_1.0.3</span></span>
-<span><span class="co">#&gt; [28] Rcpp_1.0.10         xtable_1.8-4        backports_1.4.1</span></span>
-<span><span class="co">#&gt; [31] scales_1.2.1        checkmate_2.1.0     jsonlite_1.8.4</span></span>
-<span><span class="co">#&gt; [34] farver_2.1.1        png_0.1-8           stringi_1.7.12</span></span>
-<span><span class="co">#&gt; [37] numDeriv_2016.8-1.1 rbibutils_2.2.13    grid_4.2.2</span></span>
-<span><span class="co">#&gt; [40] Rdpack_2.4          cli_3.6.0           tools_4.2.2</span></span>
-<span><span class="co">#&gt; [43] magrittr_2.0.3      tibble_3.1.8        tidyr_1.3.0</span></span>
-<span><span class="co">#&gt; [46] pkgconfig_2.0.3     estimability_1.4.1  minqa_1.2.5</span></span>
-<span><span class="co">#&gt; [49] R6_2.5.1            boot_1.3-28.1       compiler_4.2.2</span></span></code></pre>
+<span><span class="co">#&gt;  [1] gtable_0.3.3        TMB_1.9.6           xfun_0.40          </span></span>
+<span><span class="co">#&gt;  [4] bslib_0.5.1         lattice_0.21-8      numDeriv_2016.8-1.1</span></span>
+<span><span class="co">#&gt;  [7] vctrs_0.6.3         tools_4.3.1         Rdpack_2.4         </span></span>
+<span><span class="co">#&gt; [10] generics_0.1.3      parallel_4.3.1      sandwich_3.0-2     </span></span>
+<span><span class="co">#&gt; [13] tibble_3.2.1        fansi_1.0.4         highr_0.10         </span></span>
+<span><span class="co">#&gt; [16] pkgconfig_2.0.3     checkmate_2.2.0     desc_1.4.2         </span></span>
+<span><span class="co">#&gt; [19] lifecycle_1.0.3     farver_2.1.1        compiler_4.3.1     </span></span>
+<span><span class="co">#&gt; [22] textshaping_0.3.6   munsell_0.5.0       codetools_0.2-19   </span></span>
+<span><span class="co">#&gt; [25] htmltools_0.5.6     sass_0.4.7          yaml_2.3.7         </span></span>
+<span><span class="co">#&gt; [28] pillar_1.9.0        pkgdown_2.0.7       nloptr_2.0.3       </span></span>
+<span><span class="co">#&gt; [31] jquerylib_0.1.4     cachem_1.0.8        boot_1.3-28.1      </span></span>
+<span><span class="co">#&gt; [34] multcomp_1.4-25     tidyselect_1.2.0    digest_0.6.33      </span></span>
+<span><span class="co">#&gt; [37] mvtnorm_1.2-2       stringi_1.7.12      labeling_0.4.2     </span></span>
+<span><span class="co">#&gt; [40] splines_4.3.1       rprojroot_2.0.3     fastmap_1.1.1      </span></span>
+<span><span class="co">#&gt; [43] grid_4.3.1          colorspace_2.1-0    cli_3.6.1          </span></span>
+<span><span class="co">#&gt; [46] magrittr_2.0.3      survival_3.5-7      utf8_1.2.3         </span></span>
+<span><span class="co">#&gt; [49] TH.data_1.1-2       withr_2.5.0         scales_1.2.1       </span></span>
+<span><span class="co">#&gt; [52] backports_1.4.1     estimability_1.4.1  rmarkdown_2.24     </span></span>
+<span><span class="co">#&gt; [55] reticulate_1.31     png_0.1-8           ragg_1.2.5         </span></span>
+<span><span class="co">#&gt; [58] zoo_1.8-12          memoise_2.0.1       coda_0.19-4        </span></span>
+<span><span class="co">#&gt; [61] evaluate_0.21       rbibutils_2.2.14    rlang_1.1.1        </span></span>
+<span><span class="co">#&gt; [64] Rcpp_1.0.11         xtable_1.8-4        glue_1.6.2         </span></span>
+<span><span class="co">#&gt; [67] minqa_1.2.5         jsonlite_1.8.7      R6_2.5.1           </span></span>
+<span><span class="co">#&gt; [70] systemfonts_1.0.4   fs_1.6.3</span></span></code></pre>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

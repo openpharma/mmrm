@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2.9044</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,35 +31,33 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <h6 class="dropdown-header" data-toc-skip>Introduction</h6>
-    <a class="dropdown-item" href="articles/introduction.html">Introduction to `mmrm`</a>
-    <a class="dropdown-item" href="articles/methodological_introduction.html">What are MMRMs? A brief introduction</a>
+    <a class="dropdown-item" href="articles/introduction.html">Package Introduction</a>
+    <a class="dropdown-item" href="articles/methodological_introduction.html">Mixed Models for Repeated Measures</a>
+    <a class="dropdown-item" href="articles/mmrm_review_methods.html">Comparison with other software</a>
     <div class="dropdown-divider"></div>
-    <h6 class="dropdown-header" data-toc-skip>Covariance Structure</h6>
-    <a class="dropdown-item" href="articles/covariance.html">Covariance Structures in `mmrm`</a>
+    <h6 class="dropdown-header" data-toc-skip>Covariance Structures</h6>
+    <a class="dropdown-item" href="articles/covariance.html">Covariance Structures</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Degrees of Freedom</h6>
-    <a class="dropdown-item" href="articles/between_within.html">Between-Within degrees of freedom</a>
-    <a class="dropdown-item" href="articles/kenward.html">Details of the Kenward-Roger calculations</a>
-    <a class="dropdown-item" href="articles/satterthwaite.html">Details of the Satterthwaite calculations</a>
+    <a class="dropdown-item" href="articles/between_within.html">Between-Within</a>
+    <a class="dropdown-item" href="articles/kenward.html">Kenward-Roger</a>
+    <a class="dropdown-item" href="articles/satterthwaite.html">Satterthwaite</a>
     <div class="dropdown-divider"></div>
     <h6 class="dropdown-header" data-toc-skip>Coefficient Covariance</h6>
-    <a class="dropdown-item" href="articles/coef_vcov.html">Coefficients Covariance Matrix Adjustment in `mmrm`</a>
-    <a class="dropdown-item" href="articles/empirical_wls.html">Weighted Least Square Empirical Covariance</a>
+    <a class="dropdown-item" href="articles/coef_vcov.html">Coefficients Covariance Matrix Adjustment</a>
+    <a class="dropdown-item" href="articles/empirical_wls.html">Details of Weighted Least Square Empirical Covariance</a>
     <div class="dropdown-divider"></div>
-    <a class="dropdown-item" href="articles/index.html">More articles...</a>
+    <h6 class="dropdown-header" data-toc-skip>Algorithm Details</h6>
+    <a class="dropdown-item" href="articles/algorithm.html">Model Fitting Algorithm</a>
+    <a class="dropdown-item" href="articles/predict.html">Prediction and Simulation</a>
+    <div class="dropdown-divider"></div>
+    <h6 class="dropdown-header" data-toc-skip>Developers</h6>
+    <a class="dropdown-item" href="articles/package_structure.html">Package Structure</a>
   </div>
 </li>
 <li class="nav-item">
   <a class="nav-link" href="news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.2.2">v0.2.2</a> </div></li>
-<!-- end dropdown for versions -->
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-reports">Reports</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-reports">
@@ -141,12 +139,12 @@
 <li><p>For references to other help pages use the corresponding markdown syntax, e.g. <code>[function()]</code> to reference other functions.</p></li>
 <li><p>Exported objects must be included in the <code>_pkgdown.yml</code> file to be populated on the <code>pkgdown</code> <a href="https://openpharma.github.io/mmrm/main/reference/index.html">website</a>.</p></li>
 <li><p>In vignettes, you cannot directly reference help pages but only <code>pkgdown</code> web pages. Note that this includes only exported objects. To make it look similar to the help page references, please here also use <code>function()</code> style.</p></li>
-<li><p><code>mmrm_review_methods.Rmd</code> is a large vignette and we precompute this vignette to make the github actions faster. Run the script <code>vignettes/precompile.R</code> to regenerate the precomputed vignette and subsequently update it in github. Before every release we need to run this again. Please note you need to install the package and then compile the vignette because efficiency is better after installation to provide a fair comparison.</p></li>
+<li><p><code>mmrm_review_methods.Rmd</code> is a large vignette and we precompute this vignette to make the GitHub actions faster. Run the script <code>vignettes/precompile.R</code> to regenerate the precomputed vignette and subsequently update it in GitHub. Before every release we need to run this again. Please note you need to install the package and then compile the vignette because efficiency is better after installation to provide a fair comparison.</p></li>
 </ul></div>
 </div>
 <div class="section level2">
 <h2 id="github-conventions">Github conventions<a class="anchor" aria-label="anchor" href="#github-conventions"></a></h2>
-<p>When using github to collaborate, the following conventions are needed:</p>
+<p>When using GitHub to collaborate, the following conventions are needed:</p>
 <ol style="list-style-type: decimal"><li>Github issues is for issues, feature requests, bugs. Before creating a issue, please make sure this issue has not been reported yet.
 <ul><li>If you are going to work on this issue, please assign yourself.</li>
 </ul></li>
@@ -154,14 +152,14 @@
 <ul><li>Branches should be associated with a GitHub issue and linked to an issue id.</li>
 <li>The name of a branch should be of the form: <code>&lt;issue_id&gt;_&lt;short_discription&gt;</code>.</li>
 </ul></li>
-<li>Add changes to the branch and push it to github.
+<li>Add changes to the branch and push it to GitHub.
 <ul><li>Please use clear commit messages.</li>
 <li>Please keep your changes focused on the issue. If there are independent changes, please separate it into another PR linking to another issue.</li>
 </ul></li>
 <li>Please create a Pull Request when you think your code changes are ready:
 <ul><li>Functions are well documented.</li>
 <li>Functions have corresponding unit tests.</li>
-<li>Changes pass all the github action checks.</li>
+<li>Changes pass all the GitHub action checks.</li>
 <li>The checklist in the corresponding issue is completed.</li>
 </ul></li>
 <li>Address all the comments you receive.
@@ -185,7 +183,7 @@
 <div class="section level3">
 <h3 id="issue-labels">Issue labels<a class="anchor" aria-label="anchor" href="#issue-labels"></a></h3>
 <p>The issues are categorized with several labels:</p>
-<table class="table"><colgroup><col width="12%"><col width="87%"></colgroup><thead><tr class="header"><th>Label name</th>
+<table class="table"><colgroup><col width="13%"><col width="86%"></colgroup><thead><tr class="header"><th>Label name</th>
 <th>Description</th>
 </tr></thead><tbody><tr class="odd"><td><code>SPx</code></td>
 <td>
@@ -288,7 +286,7 @@
 <p>There are several communication channels, please use appropriate ones.</p>
 <div class="section level3">
 <h3 id="github">GitHub<a class="anchor" aria-label="anchor" href="#github"></a></h3>
-<p>GitHub issues and pull requests are where implementations are discussed and reviewed. Feature requests, bugs, enhancements, technical implementations can be discussed here. When you have ideas that needs to be documented, it is better to have them in github.</p>
+<p>GitHub issues and pull requests are where implementations are discussed and reviewed. Feature requests, bugs, enhancements, technical implementations can be discussed here. When you have ideas that needs to be documented, it is better to have them in GitHub.</p>
 </div>
 <div class="section level3">
 <h3 id="slack">Slack<a class="anchor" aria-label="anchor" href="#slack"></a></h3>
