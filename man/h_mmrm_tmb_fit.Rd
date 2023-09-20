@@ -15,11 +15,6 @@ h_mmrm_tmb_fit(tmb_object, tmb_opt, formula_parts, tmb_data)
 \code{\link[=h_mmrm_tmb_formula_parts]{h_mmrm_tmb_formula_parts()}}.}
 
 \item{tmb_data}{(\code{mmrm_tmb_data})\cr produced by \code{\link[=h_mmrm_tmb_data]{h_mmrm_tmb_data()}}.}
-
-\item{data}{(\code{data.frame})\cr input data containing the variables used
-in \code{formula}.}
-
-\item{weights}{(\code{vector})\cr weights to be used in the fitting process.}
 }
 \value{
 List of class \code{mmrm_tmb} with:

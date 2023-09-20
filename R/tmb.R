@@ -379,9 +379,6 @@ h_mmrm_tmb_extract_cov <- function(tmb_report, tmb_data, visit_var, is_spatial) 
 #'
 #' @param tmb_object (`list`)\cr created with [TMB::MakeADFun()].
 #' @param tmb_opt (`list`)\cr optimization result.
-#' @param data (`data.frame`)\cr input data containing the variables used
-#'   in `formula`.
-#' @param weights (`vector`)\cr weights to be used in the fitting process.
 #' @param formula_parts (`mmrm_tmb_formula_parts`)\cr produced by
 #'  [h_mmrm_tmb_formula_parts()].
 #' @param tmb_data (`mmrm_tmb_data`)\cr produced by [h_mmrm_tmb_data()].
