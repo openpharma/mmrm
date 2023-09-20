@@ -21,18 +21,21 @@
 #'
 #' @inheritParams check_package_version
 #'
-#' @param callback (`function(...) ANY`)\cr A callback to execute upon package
+#' @param callback (`function(...) ANY`)\cr a callback to execute upon package
 #'   load. Note that no arguments are passed to this function. Any necessary
 #'   data must be provided upon construction.
 #'
-#' @param message (`NULL` or `string`)\cr An optional message to print after
+#' @param message (`NULL` or `string`)\cr an optional message to print after
 #'   the callback is executed upon successful registration.
 #'
 #' @return A logical (invisibly) indicating whether registration was successful.
 #'  If not, a onLoad hook was set for the next time the package is loaded.
 #'
 #' @keywords internal
-register_on_load <- function(pkg, ver = c(NA, NA), callback, message = NULL) {
+register_on_load <- function(pkg,
+                             ver = c(NA_character_, NA_character_),
+                             callback,
+                             message = NULL) {
   if (isNamespaceLoaded(pkg) && check_package_version(pkg, ver)) {
     callback()
     if (is.character(message)) packageStartupMessage(message)
@@ -58,9 +61,9 @@ register_on_load <- function(pkg, ver = c(NA, NA), callback, message = NULL) {
 
 #' Check Suggested Dependency Against Version Requirements
 #'
-#' @param pkg (`string`)\cr A package name.
-#' @param ver Accepts any object of length 2 whose elements can be provided to
-#'   `numeric_version()`, representing a minimum and maximum (inclusive) version
+#' @param pkg (`string`)\cr package name.
+#' @param ver (`character`)\cr of length 2 whose elements can be provided to
+#'   [numeric_version()], representing a minimum and maximum (inclusive) version
 #'   requirement for interoperability. When `NA`, no version requirement is
 #'   imposed. Defaults to no version requirement.
 #'
@@ -68,7 +71,8 @@ register_on_load <- function(pkg, ver = c(NA, NA), callback, message = NULL) {
 #'   the version requirements. A warning is emitted otherwise.
 #'
 #' @keywords internal
-check_package_version <- function(pkg, ver = c(NA, NA)) {
+check_package_version <- function(pkg, ver = c(NA_character_, NA_character_)) {
+  assert_character(ver, len = 2L)
   pkg_ver <- utils::packageVersion(pkg)
   ver <- lapply(ver, numeric_version, strict = FALSE)
 
