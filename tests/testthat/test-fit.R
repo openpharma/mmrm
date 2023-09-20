@@ -242,11 +242,12 @@ test_that("h_summarize_all_fits works when some list elements are try-error obje
 
 test_that("refit_multiple_optimizers works as expected with default arguments", {
   fit <- fit_single_optimizer(
-    formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+    formula = FEV1 ~ ar1(AVISIT | USUBJID),
     data = fev_data,
     weights = rep(1, nrow(fev_data)),
     optimizer = "nlminb"
   )
+  assert_true(attr(fit, "converged"))
 
   # Mock here that it did not converge.
   attr(fit, "converged") <- FALSE
@@ -292,10 +293,10 @@ test_that("refit_multiple_optimizers works with parallel computations and select
 
 # mmrm ----
 
-## unstructured ----
+## convergence ----
 
 test_that("mmrm works as expected for unstructured", {
-  formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
+  formula <- FEV1 ~ us(AVISIT | USUBJID)
   result <- expect_silent(mmrm(formula, fev_data, reml = FALSE))
   expect_class(result, c("mmrm", "mmrm_fit", "mmrm_tmb"))
   expect_true(attr(result, "converged"))
