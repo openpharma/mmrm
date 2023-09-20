@@ -1019,44 +1019,6 @@ test_that("h_mmrm_tmb_fit works as expected for grouped covariance", {
   expect_class(result$tmb_data, "mmrm_tmb_data")
 })
 
-test_that("h_mmrm_tmb_fit errors when an invalid covariance type is used", {
-  formula <- FEV1 ~ RACE + us(AVISIT | USUBJID)
-  formula_parts <- h_mmrm_tmb_formula_parts(formula)
-
-  tmb_data <- h_mmrm_tmb_data(
-    formula_parts,
-    fev_data,
-    weights = rep(1, nrow(fev_data)),
-    reml = FALSE,
-    singular = "error",
-    drop_visit_levels = TRUE
-  )
-  tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL)
-
-  tmb_data$cov_type <- "gaaah"
-  expect_error(
-    TMB::MakeADFun(
-      data = tmb_data,
-      parameters = tmb_parameters,
-      hessian = TRUE,
-      DLL = "mmrm",
-      silent = TRUE
-    ),
-    "Unknown covariance type 'gaaah'"
-  )
-  tmb_data$is_spatial <- TRUE
-  expect_error(
-    TMB::MakeADFun(
-      data = tmb_data,
-      parameters = tmb_parameters,
-      hessian = TRUE,
-      DLL = "mmrm",
-      silent = TRUE
-    ),
-    "Unknown covariance type 'gaaah'"
-  )
-})
-
 # fit_mmrm ----
 
 ## unstructured ----
@@ -1884,5 +1846,43 @@ test_that("fit_mmrm throws informative error for non-spatial cov with non-factor
       weights = rep(1, nrow(tmp_data))
     ),
     "Time variable must be a factor for non-spatial covariance structures"
+  )
+})
+
+test_that("get_covariance_lower_chol errors when an invalid covariance type is used", {
+  formula <- FEV1 ~ RACE + us(AVISIT | USUBJID)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula)
+
+  tmb_data <- h_mmrm_tmb_data(
+    formula_parts,
+    fev_data,
+    weights = rep(1, nrow(fev_data)),
+    reml = FALSE,
+    singular = "error",
+    drop_visit_levels = TRUE
+  )
+  tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL)
+
+  tmb_data$cov_type <- "gaaah"
+  expect_error(
+    TMB::MakeADFun(
+      data = tmb_data,
+      parameters = tmb_parameters,
+      hessian = TRUE,
+      DLL = "mmrm",
+      silent = TRUE
+    ),
+    "Unknown covariance type 'gaaah'"
+  )
+  tmb_data$is_spatial <- TRUE
+  expect_error(
+    TMB::MakeADFun(
+      data = tmb_data,
+      parameters = tmb_parameters,
+      hessian = TRUE,
+      DLL = "mmrm",
+      silent = TRUE
+    ),
+    "Unknown covariance type 'gaaah'"
   )
 })
