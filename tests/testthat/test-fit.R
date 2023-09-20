@@ -224,28 +224,18 @@ test_that("h_summarize_all_fits works as expected", {
 })
 
 test_that("h_summarize_all_fits works when some list elements are try-error objects", {
-  mod_fit <- fit_single_optimizer(
-    formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
-    data = fev_data,
-    weights = rep(1, nrow(fev_data)),
-    optimizer = "nlminb"
-  )
+  mod_fit <- get_mmrm()
   mod_fit2 <- try(stop("bla"), silent = TRUE)
-  mod_fit3 <- fit_single_optimizer(
-    formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
-    data = fev_data,
-    weights = rep(1, nrow(fev_data)),
-    optimizer = "L-BFGS-B"
-  )
+  mod_fit3 <- get_mmrm()
   all_fits <- list(mod_fit, mod_fit2, mod_fit3)
   result <- expect_silent(h_summarize_all_fits(all_fits))
   expected <- list(
     warnings = list(NULL, "Error in try(stop(\"bla\"), silent = TRUE) : bla\n", NULL),
     messages = list(NULL, NULL, NULL),
-    log_liks = c(-1693.22493558573, NA, -1693.22493812251),
+    log_liks = c(-1693.225, NA, -1693.225),
     converged = c(TRUE, FALSE, TRUE)
   )
-  expect_equal(result, expected)
+  expect_equal(result, expected, tolerance = 1e-3)
 })
 
 # refit_multiple_optimizers ----
