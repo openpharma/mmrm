@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,15 +58,6 @@
 <li class="active nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.0">v0.3.0</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.2.2">v0.2.2</a> </div></li>
-<!-- end dropdown for versions -->
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-reports">Reports</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-reports">
@@ -95,9 +86,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.3.0" id="mmrm-030">mmrm 0.3.0<a class="anchor" aria-label="anchor" href="#mmrm-030"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.3.1" id="mmrm-031">mmrm 0.3.1<a class="anchor" aria-label="anchor" href="#mmrm-031"></a></h2>
 <div class="section level4">
-<h4 id="new-features-0-3-0">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-3-0"></a></h4>
+<h4 id="new-features-0-3-1">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-3-1"></a></h4>
 <ul><li>The argument <code>method</code> of <code><a href="../reference/mmrm.html">mmrm()</a></code> now only specifies the method used for the degrees of freedom adjustment.</li>
 <li>Add empirical, empirical Jackknife and empirical bias-reduced adjusted coefficients covariance estimates, which can be specified via the new <code>vcov</code> argument of <code><a href="../reference/mmrm.html">mmrm()</a></code>.</li>
 <li>Add residual and between-within degrees of freedom methods.</li>
@@ -111,7 +102,7 @@
 <li>Add argument <code>covariance</code> to <code><a href="../reference/mmrm.html">mmrm()</a></code> to allow for easier programmatic access to specifying the model’s covariance structure and to expose covariance customization through the <code>tidymodels</code> interface.</li>
 </ul></div>
 <div class="section level4">
-<h4 id="bug-fixes-0-3-0">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-3-0"></a></h4>
+<h4 id="bug-fixes-0-3-1">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-3-1"></a></h4>
 <ul><li>Previously <code><a href="../reference/mmrm.html">mmrm()</a></code> follows the global option <code>na.action</code> and if it is set other than <code>"na.omit"</code> an assertion would fail. This is now fixed and hence <code>NA</code> values are always removed prior to model fitting, independent of the global <code>na.action</code> option.</li>
 <li>Previously a <code><a href="https://rdrr.io/r/stats/model.frame.html" class="external-link">model.frame()</a></code> call on an <code>mmrm</code> object with transformed terms, or new data, e.g. <code>model.frame(mmrm(Y ~ log(X) + ar1(VISIT|ID), data = new_data)</code>, would fail. This is now fixed.</li>
 <li>Previously <code><a href="../reference/mmrm.html">mmrm()</a></code> always required a <code>data</code> argument. Now fitting <code>mmrm</code> can also use environment variables instead of requiring <code>data</code> argument. (Note that <code>fit_mmrm</code> is not affected.)</li>
@@ -119,7 +110,7 @@
 <li>Previously <code><a href="../reference/mmrm.html">mmrm()</a></code> might provide non-finite values in the Jacobian calculations, leading to errors in the Satterthwaite degrees of freedom calculations. This will raise an error now and thus alert the user that the model fit was not successful.</li>
 </ul></div>
 <div class="section level4">
-<h4 id="miscellaneous-0-3-0">Miscellaneous<a class="anchor" aria-label="anchor" href="#miscellaneous-0-3-0"></a></h4>
+<h4 id="miscellaneous-0-3-1">Miscellaneous<a class="anchor" aria-label="anchor" href="#miscellaneous-0-3-1"></a></h4>
 <ul><li>Use automatic differentiation to calculate Satterthwaite adjusted degrees of freedom, resulting in 10-fold speed-up of the Satterthwaite calculations after the initial model fit.</li>
 <li>Add an interactive confirmation step if the number of visit levels is too large for non-spatial covariance structures. Use <code>options(mmrm.max_visits = )</code> to specify the maximum number of visits allowed in non-interactive mode.</li>
 <li>Removed <code>free_cores()</code> in favor of <code>parallelly::availableCores(omit = 1)</code>.</li>
