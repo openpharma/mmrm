@@ -328,7 +328,7 @@ test_that("mmrm works as expected for toeplitz", {
 ## general ----
 
 test_that("mmrm falls back to other optimizers if default does not work", {
-  formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
+  formula <- FEV1 ~ ar1(AVISIT | USUBJID)
 
   # Chosen optimizer does not work.
   fake_optimizer <- function(par, fun, grad, ...) {
@@ -371,11 +371,12 @@ test_that("mmrm fails if no optimizer works", {
 })
 
 test_that("mmrm works for rank deficient original design matrix by default", {
-  formula <- FEV1 ~ RACE + SEX + SEX2 + ARMCD * AVISIT + us(AVISIT | USUBJID)
+  formula <- FEV1 ~ SEX + SEX2 + ar1(AVISIT | USUBJID)
   dat <- fev_data
   dat$SEX2 <- dat$SEX # nolint
   result <- expect_silent(mmrm(formula, dat))
   expect_true(attr(result, "converged"))
+  expect_true(is.na(coef(result)["SEX2Female"]))
 })
 
 test_that("mmrm works if data is not provided as argument", {
