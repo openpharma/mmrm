@@ -97,7 +97,7 @@ LazyData: true
 NeedsCompilation: yes
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
-SystemRequirements: C++14
+SystemRequirements: C++11
 Collate:
     'between-within.R'
     'catch-routine-registration.R'

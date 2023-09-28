@@ -3,6 +3,18 @@
 
 #include "covariance.h"
 #include "utils.h"
+
+#include <memory> // header where this is defined
+#if defined(__cpp_lib_make_unique) && (__cpp_lib_make_unique >= 201304)
+using std::make_unique;
+#else
+template<class T, class... Args>
+std::unique_ptr<T> make_unique(Args&&... args)
+{
+  return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+}
+#endif
+
 // Base class of spatial and non-spatial Cholesky.
 template <class Type>
 struct lower_chol_base {
@@ -108,9 +120,9 @@ struct cache_obj {
     for (int r = 0; r < n_groups; r++) {
       // Use unique pointers here to better manage resource.
       if (is_spatial) {
-        this->cache[r] = std::make_unique<D1>(theta.segment(r * theta_one_group_size, theta_one_group_size), cov_type);
+        this->cache[r] = make_unique<D1>(theta.segment(r * theta_one_group_size, theta_one_group_size), cov_type);
       } else {
-        this->cache[r] = std::make_unique<D2>(theta.segment(r * theta_one_group_size, theta_one_group_size), n_visits, cov_type);
+        this->cache[r] = make_unique<D2>(theta.segment(r * theta_one_group_size, theta_one_group_size), n_visits, cov_type);
       }
     }
   }
