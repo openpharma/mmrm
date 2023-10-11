@@ -74,24 +74,24 @@ register_on_load <- function(pkg,
 check_package_version <- function(pkg, ver = c(NA_character_, NA_character_)) {
   assert_character(ver, len = 2L)
   pkg_ver <- utils::packageVersion(pkg)
-  ver <- lapply(ver, numeric_version, strict = FALSE)
+  ver <- numeric_version(ver, strict = FALSE)
 
   warn_version <- function(pkg, pkg_ver, ver) {
-    ver_na <- is.na(vapply(ver, is.na, logical(1L)))
+    ver_na <- is.na(ver)
     warning(sprintf(
       "Cannot register mmrm for use with %s (v%s). Version %s required.",
       pkg, pkg_ver,
       if (!any(ver_na)) {
-        sprintf("%s to %s", ver[[1]], ver[[2]])
-      } else if (!is.na(ver[[1]])) {
-        paste0(">= ", ver[[1]])
-      } else if (!is.na(ver[[2]])) {
-        paste0("<= ", ver[[1]])
+        sprintf("%s to %s", ver[1], ver[2])
+      } else if (!is.na(ver[1])) {
+        paste0(">= ", ver[1])
+      } else if (!is.na(ver[2])) {
+        paste0("<= ", ver[2])
       }
     ))
   }
 
-  if (identical(pkg_ver < ver[[1]], TRUE) || identical(pkg_ver > ver[[2]], TRUE)) {
+  if (identical(pkg_ver < ver[1], TRUE) || identical(pkg_ver > ver[2], TRUE)) {
     warn_version(pkg, pkg_ver, ver)
     return(invisible(FALSE))
   }
