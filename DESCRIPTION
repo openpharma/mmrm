@@ -13,7 +13,7 @@ Authors@R: c(
     person("Ya", "Wang", , "ya.wang10@gilead.com", role = "aut"),
     person("Craig", "Gower-Page", , "craig.gower-page@roche.com", role = "ctb"),
     person("Dan", "James", , "dan.james@astrazeneca.com", role = "aut"),
-    person("Jonathan", "Sidi", , "yoni.sidi@sagerx.com", role = "aut"),
+    person("Jonathan", "Sidi", , "yoni@pinpointstrategies.io", role = "aut"),
     person("Daniel", "Leibovitz", , "daniel.leibovitz@roche.com", role = "aut"),
     person("Daniel D.", "Sjoberg", , "sjobergd@gene.com", role = "aut",
            comment = c(ORCID = "0000-0003-0862-2018")),
