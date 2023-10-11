@@ -83,9 +83,9 @@ check_package_version <- function(pkg, ver = c(NA_character_, NA_character_)) {
       pkg, pkg_ver,
       if (!any(ver_na)) {
         sprintf("%s to %s", ver[1], ver[2])
-      } else if (!is.na(ver[1])) {
+      } else if (ver_na[2]) {
         paste0(">= ", ver[1])
-      } else if (!is.na(ver[2])) {
+      } else if (ver_na[1]) {
         paste0("<= ", ver[2])
       }
     ))
