@@ -82,18 +82,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.3">v0.3.3</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.2">v0.3.2</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.1">v0.3.1</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.0">v0.3.0</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.2.2">v0.2.2</a> </div></li>
-<!-- end dropdown for versions -->
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-reports">Reports</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-reports">
@@ -966,7 +954,7 @@ type II error rates.</p>
 </h2>
 <pre><code><span><span class="co">#&gt; R version 4.3.1 (2023-06-16)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 22.04.2 LTS</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 22.04.3 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
 <span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -987,36 +975,36 @@ type II error rates.</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt;  [1] ggplot2_3.4.3           emmeans_1.8.7           knitr_1.43             </span></span>
-<span><span class="co">#&gt;  [4] sasr_0.1.2              glmmTMB_1.1.7           nlme_3.1-163           </span></span>
-<span><span class="co">#&gt;  [7] lme4_1.1-34             Matrix_1.6-1            mmrm_0.3.3             </span></span>
+<span><span class="co">#&gt;  [1] ggplot2_3.4.3           emmeans_1.8.8           knitr_1.44             </span></span>
+<span><span class="co">#&gt;  [4] sasr_0.1.2              glmmTMB_1.1.8           nlme_3.1-163           </span></span>
+<span><span class="co">#&gt;  [7] lme4_1.1-34             Matrix_1.6-1.1          mmrm_0.3.3             </span></span>
 <span><span class="co">#&gt; [10] stringr_1.5.0           microbenchmark_1.4.10   purrr_1.0.2            </span></span>
-<span><span class="co">#&gt; [13] dplyr_1.1.2             clusterGeneration_1.3.8 MASS_7.3-60            </span></span>
+<span><span class="co">#&gt; [13] dplyr_1.1.3             clusterGeneration_1.3.8 MASS_7.3-60            </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] gtable_0.3.3        TMB_1.9.6           xfun_0.40          </span></span>
-<span><span class="co">#&gt;  [4] bslib_0.5.1         lattice_0.21-8      numDeriv_2016.8-1.1</span></span>
-<span><span class="co">#&gt;  [7] vctrs_0.6.3         tools_4.3.1         Rdpack_2.4         </span></span>
+<span><span class="co">#&gt;  [1] gtable_0.3.4        TMB_1.9.6           xfun_0.40          </span></span>
+<span><span class="co">#&gt;  [4] bslib_0.5.1         lattice_0.21-9      numDeriv_2016.8-1.1</span></span>
+<span><span class="co">#&gt;  [7] vctrs_0.6.3         tools_4.3.1         Rdpack_2.5         </span></span>
 <span><span class="co">#&gt; [10] generics_0.1.3      parallel_4.3.1      sandwich_3.0-2     </span></span>
-<span><span class="co">#&gt; [13] tibble_3.2.1        fansi_1.0.4         highr_0.10         </span></span>
-<span><span class="co">#&gt; [16] pkgconfig_2.0.3     checkmate_2.2.0     desc_1.4.2         </span></span>
-<span><span class="co">#&gt; [19] lifecycle_1.0.3     farver_2.1.1        compiler_4.3.1     </span></span>
-<span><span class="co">#&gt; [22] textshaping_0.3.6   munsell_0.5.0       codetools_0.2-19   </span></span>
-<span><span class="co">#&gt; [25] htmltools_0.5.6     sass_0.4.7          yaml_2.3.7         </span></span>
-<span><span class="co">#&gt; [28] pillar_1.9.0        pkgdown_2.0.7       nloptr_2.0.3       </span></span>
-<span><span class="co">#&gt; [31] jquerylib_0.1.4     cachem_1.0.8        boot_1.3-28.1      </span></span>
-<span><span class="co">#&gt; [34] multcomp_1.4-25     tidyselect_1.2.0    digest_0.6.33      </span></span>
-<span><span class="co">#&gt; [37] mvtnorm_1.2-2       stringi_1.7.12      labeling_0.4.2     </span></span>
-<span><span class="co">#&gt; [40] splines_4.3.1       rprojroot_2.0.3     fastmap_1.1.1      </span></span>
-<span><span class="co">#&gt; [43] grid_4.3.1          colorspace_2.1-0    cli_3.6.1          </span></span>
-<span><span class="co">#&gt; [46] magrittr_2.0.3      survival_3.5-7      utf8_1.2.3         </span></span>
-<span><span class="co">#&gt; [49] TH.data_1.1-2       withr_2.5.0         scales_1.2.1       </span></span>
-<span><span class="co">#&gt; [52] backports_1.4.1     estimability_1.4.1  rmarkdown_2.24     </span></span>
-<span><span class="co">#&gt; [55] reticulate_1.31     png_0.1-8           ragg_1.2.5         </span></span>
-<span><span class="co">#&gt; [58] zoo_1.8-12          memoise_2.0.1       coda_0.19-4        </span></span>
-<span><span class="co">#&gt; [61] evaluate_0.21       rbibutils_2.2.14    rlang_1.1.1        </span></span>
+<span><span class="co">#&gt; [13] tibble_3.2.1        fansi_1.0.4         pkgconfig_2.0.3    </span></span>
+<span><span class="co">#&gt; [16] checkmate_2.2.0     desc_1.4.2          lifecycle_1.0.3    </span></span>
+<span><span class="co">#&gt; [19] farver_2.1.1        compiler_4.3.1      textshaping_0.3.6  </span></span>
+<span><span class="co">#&gt; [22] munsell_0.5.0       codetools_0.2-19    htmltools_0.5.6.1  </span></span>
+<span><span class="co">#&gt; [25] sass_0.4.7          yaml_2.3.7          pillar_1.9.0       </span></span>
+<span><span class="co">#&gt; [28] pkgdown_2.0.7       nloptr_2.0.3        jquerylib_0.1.4    </span></span>
+<span><span class="co">#&gt; [31] cachem_1.0.8        boot_1.3-28.1       multcomp_1.4-25    </span></span>
+<span><span class="co">#&gt; [34] tidyselect_1.2.0    digest_0.6.33       mvtnorm_1.2-3      </span></span>
+<span><span class="co">#&gt; [37] stringi_1.7.12      labeling_0.4.3      splines_4.3.1      </span></span>
+<span><span class="co">#&gt; [40] rprojroot_2.0.3     fastmap_1.1.1       grid_4.3.1         </span></span>
+<span><span class="co">#&gt; [43] colorspace_2.1-0    cli_3.6.1           magrittr_2.0.3     </span></span>
+<span><span class="co">#&gt; [46] survival_3.5-7      utf8_1.2.3          TH.data_1.1-2      </span></span>
+<span><span class="co">#&gt; [49] withr_2.5.1         scales_1.2.1        backports_1.4.1    </span></span>
+<span><span class="co">#&gt; [52] estimability_1.4.1  rmarkdown_2.25      reticulate_1.32.0  </span></span>
+<span><span class="co">#&gt; [55] png_0.1-8           ragg_1.2.5          zoo_1.8-12         </span></span>
+<span><span class="co">#&gt; [58] memoise_2.0.1       coda_0.19-4         evaluate_0.22      </span></span>
+<span><span class="co">#&gt; [61] rbibutils_2.2.15    mgcv_1.9-0          rlang_1.1.1        </span></span>
 <span><span class="co">#&gt; [64] Rcpp_1.0.11         xtable_1.8-4        glue_1.6.2         </span></span>
-<span><span class="co">#&gt; [67] minqa_1.2.5         jsonlite_1.8.7      R6_2.5.1           </span></span>
+<span><span class="co">#&gt; [67] minqa_1.2.6         jsonlite_1.8.7      R6_2.5.1           </span></span>
 <span><span class="co">#&gt; [70] systemfonts_1.0.4   fs_1.6.3</span></span></code></pre>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
