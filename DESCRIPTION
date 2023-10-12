@@ -1,7 +1,7 @@
 Type: Package
 Package: mmrm
 Title: Mixed Models for Repeated Measures
-Version: 0.3.3
+Version: 0.3.4
 Authors@R: c(
     person("Daniel", "Sabanes Bove", , "daniel.sabanes_bove@roche.com", role = c("aut", "cre")),
     person("Julia", "Dedic", , "julia.dedic@roche.com", role = "aut"),
@@ -72,7 +72,7 @@ Suggests:
     microbenchmark,
     mockery,
     parallelly (>= 1.32.0),
-    parsnip (>= 1.0.4),
+    parsnip (>= 1.1.0),
     purrr,
     rmarkdown,
     sasr,
@@ -97,7 +97,6 @@ LazyData: true
 NeedsCompilation: yes
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
-SystemRequirements: C++11
 Collate:
     'between-within.R'
     'catch-routine-registration.R'

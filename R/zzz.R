@@ -11,7 +11,7 @@
   )
 
   register_on_load(
-    "parsnip", c("1.0.4", NA),
+    "parsnip", c("1.1.0", NA),
     callback = parsnip_add_mmrm,
     message = emit_tidymodels_register_msg
   )
