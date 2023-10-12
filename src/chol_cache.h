@@ -3,6 +3,7 @@
 
 #include "covariance.h"
 #include "utils.h"
+
 // Base class of spatial and non-spatial Cholesky.
 template <class Type>
 struct lower_chol_base {
@@ -98,7 +99,7 @@ struct lower_chol_spatial: virtual lower_chol_base<Type> {
 
 template <class T, class Base, class D1, class D2>
 struct cache_obj {
-  std::map<int, std::unique_ptr<Base>> cache;
+  std::map<int, std::shared_ptr<Base>> cache;
   int n_groups;
   bool is_spatial;
   int n_visits;
@@ -108,9 +109,9 @@ struct cache_obj {
     for (int r = 0; r < n_groups; r++) {
       // Use unique pointers here to better manage resource.
       if (is_spatial) {
-        this->cache[r] = std::make_unique<D1>(theta.segment(r * theta_one_group_size, theta_one_group_size), cov_type);
+        this->cache[r] = std::make_shared<D1>(theta.segment(r * theta_one_group_size, theta_one_group_size), cov_type);
       } else {
-        this->cache[r] = std::make_unique<D2>(theta.segment(r * theta_one_group_size, theta_one_group_size), n_visits, cov_type);
+        this->cache[r] = std::make_shared<D2>(theta.segment(r * theta_one_group_size, theta_one_group_size), n_visits, cov_type);
       }
     }
   }
