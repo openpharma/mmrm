@@ -39,7 +39,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.4</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -88,6 +88,7 @@
           aria-expanded="false" aria-haspopup="true"
           id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
+<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.4">v0.3.4</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.3">v0.3.3</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.2">v0.3.2</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.1">v0.3.1</a>
@@ -337,12 +338,10 @@ Kenward-Roger degrees of freedom.</p>
 <code>Makevars</code><a class="anchor" aria-label="anchor" href="#makevars"></a>
 </h4>
 <p>This file specifies additional flags used in the source code
-compilation. We specify here the use of <code>C++14</code> such that
-<code>std::make_unique()</code> is available. Also we ask
-<code>TMB</code> to use the <code>TMB</code> automatic differentiation
-framework (instead of the default <code>CppAD</code> framework) to be
-more efficient, and disable useless warnings from the <code>Eigen</code>
-library compilation.</p>
+compilation. We ask <code>TMB</code> to use the <code>TMB</code>
+automatic differentiation framework (instead of the default
+<code>CppAD</code> framework) to be more efficient, and disable useless
+warnings from the <code>Eigen</code> library compilation.</p>
 <p>Note that additional flags such as
 <code>-Wno-ignored-attributes</code> cannot be included here because
 they are compiler specific. These can instead be specified in local
