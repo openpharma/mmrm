@@ -27,7 +27,7 @@ jobs:
     uses: insightsengineering/r.pkg.template/.github/workflows/audit.yaml@main
   r-cmd:
     name: R CMD Check 🧬
-    uses: insightsengineering/r.pkg.template/.github/workflows/build-check-install.yaml@show-mmrm-log
+    uses: insightsengineering/r.pkg.template/.github/workflows/build-check-install.yaml@main
     secrets:
       REPO_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     with:
@@ -79,4 +79,3 @@ jobs:
     uses: insightsengineering/r.pkg.template/.github/workflows/style.yaml@main
     with:
       auto-update: true
-
