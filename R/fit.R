@@ -93,7 +93,6 @@ fit_single_optimizer <- function(formula,
     warnings = quiet_fit$warnings,
     messages = quiet_fit$messages,
     divergence = quiet_fit$divergence,
-    optimizer = names(control$optimizers)[1],
     converged = converged,
     class = c("mmrm_fit", class(quiet_fit$result))
   )
@@ -223,19 +222,20 @@ refit_multiple_optimizers <- function(fit,
 #'   at the missing visits.
 #' - The `method` and `vcov` arguments specify the degrees of freedom and coefficients
 #'   covariance matrix adjustment methods, respectively.
-#'   Allowed `vcov` includes: "Asymptotic", "Kenward-Roger", "Kenward-Roger-Linear", "Empirical" (CR0),
-#'   "Empirical-Jackknife" (CR2), and "Empirical-Bias-Reduced" (CR3).
-#'   Allowed `method` includes: "Satterthwaite", "Kenward-Roger", "Between-Within" and "Residual".
-#'   If `method` is "Kenward-Roger" then only "Kenward-Roger" or "Kenward-Roger-Linear" are
-#'   allowed for `vcov`.
+#'   - Allowed `vcov` includes: "Asymptotic", "Kenward-Roger", "Kenward-Roger-Linear", "Empirical" (CR0),
+#'     "Empirical-Jackknife" (CR2), and "Empirical-Bias-Reduced" (CR3).
+#'   - Allowed `method` includes: "Satterthwaite", "Kenward-Roger", "Between-Within" and "Residual".
+#'   - If `method` is "Kenward-Roger" then only "Kenward-Roger" or "Kenward-Roger-Linear" are allowed for `vcov`.
 #' - The `vcov` argument can be `NULL` to use the default covariance method depending on the `method`
 #'   used for degrees of freedom, see the following table:
-#'  | `method`  |  Default `vcov`|
-#'  |-----------|----------|
-#'  |Satterthwaite| Asymptotic|
-#'  |Kenward-Roger| Kenward-Roger|
-#'  |Residual| Empirical|
-#'  |Between-Within| Asymptotic|
+#'
+#'    | `method`  |  Default `vcov`|
+#'    |-----------|----------|
+#'    |Satterthwaite| Asymptotic|
+#'    |Kenward-Roger| Kenward-Roger|
+#'    |Residual| Empirical|
+#'    |Between-Within| Asymptotic|
+#'
 #' - Please note that "Kenward-Roger" for "Unstructured" covariance gives different results
 #'   compared to SAS; Use "Kenward-Roger-Linear" for `vcov` instead for better matching
 #'   of the SAS results.

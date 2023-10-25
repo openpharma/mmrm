@@ -2,11 +2,8 @@
 title: "Package Structure"
 package: mmrm
 output:
-  rmarkdown::html_document:
-          theme: "spacelab"
-          highlight: "kate"
+  rmarkdown::html_vignette:
           toc: true
-          toc_float: true
 vignette: |
   %\VignetteIndexEntry{Package Structure}
   %\VignetteEncoding{UTF-8}

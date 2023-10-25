@@ -1,4 +1,4 @@
-# mmrm 0.3.4
+# mmrm 0.3.5
 
 ### New Features
 
@@ -49,6 +49,10 @@
   returned. Furthermore, it returns a `data.frame` the size of the number of observations 
   utilized in the model for all combinations of the  `include` argument 
   when `na.action= "na.omit"`.
+- Overall, seven vignettes have been added to the package. All vignettes have a slightly
+  different look now to reduce the size of the overall R package on CRAN.
+- The used optimizer is now available via `component(., "optimizer")` instead of previously
+  `attr(., "optimizer")`.
 
 # mmrm 0.2.2
 

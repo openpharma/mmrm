@@ -477,6 +477,7 @@ h_mmrm_tmb_fit <- function(tmb_object,
 #' @inheritParams fit_single_optimizer
 #'
 #' @return List of class `mmrm_tmb`, see [h_mmrm_tmb_fit()] for details.
+#'   In addition, it contains elements `call` and `optimizer`.
 #'
 #' @details
 #' The `formula` typically looks like:
@@ -533,7 +534,8 @@ fit_mmrm <- function(formula,
     silent = TRUE
   )
   h_mmrm_tmb_assert_start(tmb_object)
-  used_optimizer <- control$optimizers[[1]]
+  used_optimizer <- control$optimizers[[1L]]
+  used_optimizer_name <- names(control$optimizers)[1L]
   args <- with(
     tmb_object,
     c(
@@ -557,5 +559,6 @@ fit_mmrm <- function(formula,
   h_mmrm_tmb_check_conv(tmb_opt, fit)
   fit$call <- match.call()
   fit$call$formula <- formula_parts$formula
+  fit$optimizer <- used_optimizer_name
   fit
 }

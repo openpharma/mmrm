@@ -1034,7 +1034,7 @@ test_that("fit_mmrm works as expected in a simple model without covariates and M
     c(
       "cov", "beta_est", "beta_vcov", "beta_vcov_inv_L", "beta_vcov_inv_D",
       "theta_est", "theta_vcov", "neg_log_lik", "formula_parts", "data", "weights",
-      "reml", "opt_details", "tmb_object", "tmb_data", "call"
+      "reml", "opt_details", "tmb_object", "tmb_data", "call", "optimizer"
     )
   )
   # See design/SAS/sas_log_simple.txt for the source of numbers.
@@ -1057,7 +1057,7 @@ test_that("fit_mmrm works as expected in a simple model without covariates and R
     c(
       "cov", "beta_est", "beta_vcov", "beta_vcov_inv_L", "beta_vcov_inv_D", "theta_est", "theta_vcov",
       "neg_log_lik", "formula_parts", "data", "weights", "reml", "opt_details", "tmb_object",
-      "tmb_data", "call"
+      "tmb_data", "call", "optimizer"
     )
   )
   # See design/SAS/sas_log_simple_reml.txt for the source of numbers.

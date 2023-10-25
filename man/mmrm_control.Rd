@@ -55,19 +55,21 @@ at the missing visits.
 \itemize{
 \item The \code{method} and \code{vcov} arguments specify the degrees of freedom and coefficients
 covariance matrix adjustment methods, respectively.
-Allowed \code{vcov} includes: "Asymptotic", "Kenward-Roger", "Kenward-Roger-Linear", "Empirical" (CR0),
+\itemize{
+\item Allowed \code{vcov} includes: "Asymptotic", "Kenward-Roger", "Kenward-Roger-Linear", "Empirical" (CR0),
 "Empirical-Jackknife" (CR2), and "Empirical-Bias-Reduced" (CR3).
-Allowed \code{method} includes: "Satterthwaite", "Kenward-Roger", "Between-Within" and "Residual".
-If \code{method} is "Kenward-Roger" then only "Kenward-Roger" or "Kenward-Roger-Linear" are
-allowed for \code{vcov}.
+\item Allowed \code{method} includes: "Satterthwaite", "Kenward-Roger", "Between-Within" and "Residual".
+\item If \code{method} is "Kenward-Roger" then only "Kenward-Roger" or "Kenward-Roger-Linear" are allowed for \code{vcov}.
+}
 \item The \code{vcov} argument can be \code{NULL} to use the default covariance method depending on the \code{method}
-used for degrees of freedom, see the following table:
-| \code{method}  |  Default \code{vcov}|
-|-----------|----------|
-|Satterthwaite| Asymptotic|
-|Kenward-Roger| Kenward-Roger|
-|Residual| Empirical|
-|Between-Within| Asymptotic|
+used for degrees of freedom, see the following table:\tabular{ll}{
+   \code{method} \tab Default \code{vcov} \cr
+   Satterthwaite \tab Asymptotic \cr
+   Kenward-Roger \tab Kenward-Roger \cr
+   Residual \tab Empirical \cr
+   Between-Within \tab Asymptotic \cr
+}
+
 \item Please note that "Kenward-Roger" for "Unstructured" covariance gives different results
 compared to SAS; Use "Kenward-Roger-Linear" for \code{vcov} instead for better matching
 of the SAS results.

@@ -2,11 +2,8 @@
 title: "Model Fitting Algorithm"
 package: mmrm
 output:
-  rmarkdown::html_document:
-          theme: "spacelab"
-          highlight: "kate"
+  rmarkdown::html_vignette:
           toc: true
-          toc_float: true
 vignette: |
   %\VignetteIndexEntry{Model Fitting Algorithm}
   %\VignetteEncoding{UTF-8}

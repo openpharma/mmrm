@@ -9,7 +9,7 @@ test_that("fit_single_optimizer works as expected with defaults", {
     weights = rep(1, nrow(dat))
   )
   expect_identical(class(result), c("mmrm_fit", "mmrm_tmb"))
-  expect_identical(attr(result, "optimizer"), "L-BFGS-B")
+  expect_identical(component(result, "optimizer"), "L-BFGS-B")
   expect_identical(attr(result, "messages"), NULL)
   expect_identical(attr(result, "warnings"), NULL)
   expect_true(attr(result, "converged"))
@@ -25,7 +25,7 @@ test_that("fit_single_optimizer works as expected with nlminb optimizer but no s
     optimizer = "nlminb"
   )
   expect_identical(class(result), c("mmrm_fit", "mmrm_tmb"))
-  expect_identical(attr(result, "optimizer"), "nlminb")
+  expect_identical(component(result, "optimizer"), "nlminb")
   expect_identical(attr(result, "messages"), NULL)
   expect_identical(attr(result, "warnings"), NULL)
   expect_true(attr(result, "converged"))
@@ -41,7 +41,7 @@ test_that("fit_single_optimizer works as expected with optimizer inputted but no
     optimizer = "BFGS"
   )
   expect_identical(class(result), c("mmrm_fit", "mmrm_tmb"))
-  expect_identical(attr(result, "optimizer"), "BFGS")
+  expect_identical(component(result, "optimizer"), "BFGS")
   expect_identical(attr(result, "messages"), NULL)
   expect_identical(attr(result, "warnings"), NULL)
   expect_true(attr(result, "converged"))
@@ -58,7 +58,7 @@ test_that("fit_single_optimizer works as expected with starting values and optim
     start = 1:10
   )
   expect_identical(class(result), c("mmrm_fit", "mmrm_tmb"))
-  expect_identical(attr(result, "optimizer"), "BFGS")
+  expect_identical(component(result, "optimizer"), "BFGS")
   expect_identical(attr(result, "messages"), NULL)
   expect_identical(attr(result, "warnings"), NULL)
   expect_true(attr(result, "converged"))
@@ -257,7 +257,7 @@ test_that("refit_multiple_optimizers works as expected with default arguments", 
   expect_class(result, "mmrm_fit")
 
   expect_true(attr(result, "converged"))
-  expect_identical("nlminb", attr(result, "optimizer"))
+  expect_identical("nlminb", component(result, "optimizer"))
   expect_true(logLik(result) > logLik(fit))
 })
 
@@ -287,7 +287,7 @@ test_that("refit_multiple_optimizers works with parallel computations and select
   expect_class(result, "mmrm_fit")
 
   expect_true(attr(result, "converged"))
-  expect_subset(attr(result, "optimizer"), choices = c("BFGS", "CG"))
+  expect_subset(component(result, "optimizer"), choices = c("BFGS", "CG"))
   expect_true(logLik(result) > logLik(fit))
 })
 
@@ -353,7 +353,7 @@ test_that("mmrm falls back to other optimizers if default does not work", {
     "Divergence with optimizer"
   )
   expect_true(attr(result, "converged"))
-  expect_true(identical(attr(result, "optimizer"), "L-BFGS-B"))
+  expect_true(identical(component(result, "optimizer"), "L-BFGS-B"))
 })
 
 test_that("mmrm fails if no optimizer works", {

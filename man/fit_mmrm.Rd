@@ -42,6 +42,7 @@ from \code{\link[=h_mmrm_tmb_formula_parts]{h_mmrm_tmb_formula_parts()}}.}
 }
 \value{
 List of class \code{mmrm_tmb}, see \code{\link[=h_mmrm_tmb_fit]{h_mmrm_tmb_fit()}} for details.
+In addition, it contains elements \code{call} and \code{optimizer}.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
