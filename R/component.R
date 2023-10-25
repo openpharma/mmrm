@@ -63,7 +63,7 @@ component <- function(object,
                         "cov_type", "subject_var", "n_theta", "n_subjects", "n_timepoints",
                         "n_obs", "beta_vcov", "beta_vcov_complete",
                         "varcor", "formula", "dataset", "n_groups",
-                        "reml", "convergence", "evaluations", "method",
+                        "reml", "convergence", "evaluations", "method", "optimizer",
                         "conv_message", "call", "theta_est",
                         "beta_est", "beta_est_complete", "beta_aliased",
                         "x_matrix", "y_vector", "neg_log_lik", "jac_list", "theta_vcov",
@@ -97,6 +97,7 @@ component <- function(object,
       list(object$opt_details$evaluations)
     )),
     "method" = object$method,
+    "optimizer" = object$optimizer,
     "beta_est" = object$beta_est,
     "beta_est_complete" =
       if (any(object$tmb_data$x_cols_aliased)) {

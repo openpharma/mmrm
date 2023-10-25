@@ -93,7 +93,6 @@ fit_single_optimizer <- function(formula,
     warnings = quiet_fit$warnings,
     messages = quiet_fit$messages,
     divergence = quiet_fit$divergence,
-    optimizer = names(control$optimizers)[1],
     converged = converged,
     class = c("mmrm_fit", class(quiet_fit$result))
   )

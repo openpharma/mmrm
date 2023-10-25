@@ -10,7 +10,7 @@ test_that("component works as expected for mmrm_tmb objects", {
     c(
       "cov_type", "subject_var", "n_theta", "n_subjects", "n_timepoints",
       "n_obs", "beta_vcov", "beta_vcov_complete", "varcor", "formula", "dataset",
-      "n_groups", "reml", "convergence", "evaluations", "method",
+      "n_groups", "reml", "convergence", "evaluations", "method", "optimizer",
       "conv_message", "call", "theta_est",
       "beta_est", "beta_est_complete", "beta_aliased",
       "x_matrix", "y_vector", "neg_log_lik",
@@ -29,6 +29,7 @@ test_that("component works as expected for mmrm_tmb objects", {
   expect_identical(component(object_mmrm_tmb, "varcor"), component(object_mmrm_tmb)$varcor)
   expect_identical(component(object_mmrm_tmb, "beta_vcov"), object_mmrm_tmb$beta_vcov)
   expect_null(component(object_mmrm_tmb, "method"))
+  expect_string(component(object_mmrm_tmb, "optimizer"))
 })
 
 ## beta_vcov ----
