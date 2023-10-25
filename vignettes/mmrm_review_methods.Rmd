@@ -3,11 +3,8 @@ title: "Comparison with other software"
 package: mmrm
 bibliography: mmrm_review_refs.bib
 output:
-  rmarkdown::html_document:
-          theme: "spacelab"
-          highlight: "kate"
+  rmarkdown::html_vignette:
           toc: true
-          toc_float: true
           toc_depth: 2
 vignette: |
   %\VignetteEncoding{UTF-8}

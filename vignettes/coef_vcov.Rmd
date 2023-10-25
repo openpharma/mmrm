@@ -3,11 +3,8 @@ title: "Coefficients Covariance Matrix Adjustment"
 package: mmrm
 bibliography: '`r system.file("REFERENCES.bib", package = "mmrm")`'
 output:
-  rmarkdown::html_document:
-          theme: "spacelab"
-          highlight: "kate"
+  rmarkdown::html_vignette:
           toc: true
-          toc_float: true
 vignette: |
   %\VignetteIndexEntry{Coefficients Covariance Matrix Adjustment}
   %\VignetteEncoding{UTF-8}
