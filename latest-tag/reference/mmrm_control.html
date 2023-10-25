@@ -20,7 +20,7 @@ control function."><meta property="og:image" content="https://openpharma.github.
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.5</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,6 +68,7 @@ control function."><meta property="og:image" content="https://openpharma.github.
           aria-expanded="false" aria-haspopup="true"
           id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
+<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.5">v0.3.5</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.4">v0.3.4</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.3">v0.3.3</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.2">v0.3.2</a>
@@ -176,20 +177,13 @@ then the distance from <code>VIS1</code> to <code>VIS3</code> will be double, as
 However, please be cautious because this can lead to convergence failure
 when using an unstructured covariance matrix and there are no observations
 at the missing visits.</p><ul><li><p>The <code>method</code> and <code>vcov</code> arguments specify the degrees of freedom and coefficients
-covariance matrix adjustment methods, respectively.
-Allowed <code>vcov</code> includes: "Asymptotic", "Kenward-Roger", "Kenward-Roger-Linear", "Empirical" (CR0),
-"Empirical-Jackknife" (CR2), and "Empirical-Bias-Reduced" (CR3).
-Allowed <code>method</code> includes: "Satterthwaite", "Kenward-Roger", "Between-Within" and "Residual".
-If <code>method</code> is "Kenward-Roger" then only "Kenward-Roger" or "Kenward-Roger-Linear" are
-allowed for <code>vcov</code>.</p></li>
+covariance matrix adjustment methods, respectively.</p><ul><li><p>Allowed <code>vcov</code> includes: "Asymptotic", "Kenward-Roger", "Kenward-Roger-Linear", "Empirical" (CR0),
+"Empirical-Jackknife" (CR2), and "Empirical-Bias-Reduced" (CR3).</p></li>
+<li><p>Allowed <code>method</code> includes: "Satterthwaite", "Kenward-Roger", "Between-Within" and "Residual".</p></li>
+<li><p>If <code>method</code> is "Kenward-Roger" then only "Kenward-Roger" or "Kenward-Roger-Linear" are allowed for <code>vcov</code>.</p></li>
+</ul></li>
 <li><p>The <code>vcov</code> argument can be <code>NULL</code> to use the default covariance method depending on the <code>method</code>
-used for degrees of freedom, see the following table:
-| <code>method</code>  |  Default <code>vcov</code>|
-|-----------|----------|
-|Satterthwaite| Asymptotic|
-|Kenward-Roger| Kenward-Roger|
-|Residual| Empirical|
-|Between-Within| Asymptotic|</p></li>
+used for degrees of freedom, see the following table:</p><table class="table table"><tr><td><code>method</code></td><td>Default <code>vcov</code></td></tr><tr><td>Satterthwaite</td><td>Asymptotic</td></tr><tr><td>Kenward-Roger</td><td>Kenward-Roger</td></tr><tr><td>Residual</td><td>Empirical</td></tr><tr><td>Between-Within</td><td>Asymptotic</td></tr></table></li>
 <li><p>Please note that "Kenward-Roger" for "Unstructured" covariance gives different results
 compared to SAS; Use "Kenward-Roger-Linear" for <code>vcov</code> instead for better matching
 of the SAS results.</p></li>
@@ -264,7 +258,7 @@ of the SAS results.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             gr1, con)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     res</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x56067f1d9770&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x56070dec05d0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: namespace:stats&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"args")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"args")$control</span>
