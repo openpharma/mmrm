@@ -14,13 +14,6 @@ on:
       - main
   workflow_dispatch:
 
-  # Rerun workflows once pkgdown has finished running, to add coverage
-  # and unit test report to gh-pages branch.
-  workflow_run:
-    workflows: ["Docs 📚"]
-    types:
-      - completed
-
 jobs:
   audit:
     name: Audit Dependencies 🕵️‍♂️
@@ -36,7 +29,7 @@ jobs:
         https://raw.githubusercontent.com/insightsengineering/hex-stickers/main/thumbs/mmrm.png
   coverage:
     name: Coverage 📔
-    uses: insightsengineering/r.pkg.template/.github/workflows/test-coverage.yaml@main
+    uses: insightsengineering/r.pkg.template/.github/workflows/test-coverage.yaml@fix-coverage-reports
     secrets:
       REPO_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   linter:
