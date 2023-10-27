@@ -14,13 +14,6 @@ on:
       - main
   workflow_dispatch:
 
-  # Rerun workflows once pkgdown has finished running, to add coverage
-  # and unit test report to gh-pages branch.
-  workflow_run:
-    workflows: ["Docs 📚"]
-    types:
-      - completed
-
 jobs:
   audit:
     name: Audit Dependencies 🕵️‍♂️
