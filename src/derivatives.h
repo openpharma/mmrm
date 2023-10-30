@@ -88,7 +88,6 @@ struct derivatives_nonspatial: public lower_chol_nonspatial<Type>, virtual deriv
   std::map<std::vector<int>, matrix<Type>> sigmad1_cache;
   std::map<std::vector<int>, matrix<Type>> sigmad2_cache;
   std::map<std::vector<int>, matrix<Type>> sigma_inverse_d1_cache;
-  std::map<std::vector<int>, Eigen::SparseMatrix<Type>> sel_mat_cache;
   derivatives_nonspatial() {
     // This default constructor is needed because the use of `[]` in map.
   }
@@ -99,16 +98,6 @@ struct derivatives_nonspatial: public lower_chol_nonspatial<Type>, virtual deriv
     matrix<Type> sigma_d2 = allret["derivative2"];
     this->sigmad1_cache[this->full_visit] = sigma_d1;
     this->sigmad2_cache[this->full_visit] = sigma_d2;
-    this->sel_mat_cache[this->full_visit] = get_select_matrix<Type>(this->full_visit, this->n_visits);
-  }
-  // Cache and return the select matrix.
-  Eigen::SparseMatrix<Type> get_sel_mat(std::vector<int> visits) {
-    if (this->sel_mat_cache.count(visits) > 0) {
-      return this->sel_mat_cache[visits];
-    } else {
-      this->sel_mat_cache[visits] = get_select_matrix<Type>(visits, this->n_visits);
-      return this->sel_mat_cache[visits];
-    }
   }
   // Cache and return the first order derivatives using select matrix.
   matrix<Type> get_sigma_derivative1(std::vector<int> visits, matrix<Type> dist) override {
@@ -116,11 +105,10 @@ struct derivatives_nonspatial: public lower_chol_nonspatial<Type>, virtual deriv
      if (target != this->sigmad1_cache.end()) {
       return target->second;
     } else {
-      Eigen::SparseMatrix<Type> sel_mat = this->get_sel_mat(visits);
       int n_visists_i = visits.size();
       matrix<Type> ret = matrix<Type>(this->n_theta * n_visists_i, n_visists_i);
       for (int i = 0; i < this->n_theta; i++) {
-        ret.block(i  * n_visists_i, 0, n_visists_i, n_visists_i) = sel_mat * this->sigmad1_cache[this->full_visit].block(i  * this->n_visits, 0, this->n_visits, this->n_visits) * sel_mat.transpose();
+        ret.block(i  * n_visists_i, 0, n_visists_i, n_visists_i) = subset_matrix<matrix<Type>, vector<int>>(this->sigmad1_cache[this->full_visit].block(i  * this->n_visits, 0, this->n_visits, this->n_visits), visits, visits);
       }
       this->sigmad1_cache[visits] = ret;
       return ret;
@@ -132,12 +120,11 @@ struct derivatives_nonspatial: public lower_chol_nonspatial<Type>, virtual deriv
      if (target != this->sigmad2_cache.end()) {
       return target->second;
     } else {
-      Eigen::SparseMatrix<Type> sel_mat = this->get_sel_mat(visits);
       int n_visists_i = visits.size();
       int theta_sq = this->n_theta * this->n_theta;
       matrix<Type> ret = matrix<Type>(theta_sq * n_visists_i, n_visists_i);
       for (int i = 0; i < theta_sq; i++) {
-        ret.block(i  * n_visists_i, 0, n_visists_i, n_visists_i) = sel_mat * this->sigmad2_cache[this->full_visit].block(i  * this->n_visits, 0, this->n_visits, this->n_visits) * sel_mat.transpose();
+        ret.block(i  * n_visists_i, 0, n_visists_i, n_visists_i) = subset_matrix<matrix<Type>, vector<int>>(this->sigmad2_cache[this->full_visit].block(i  * this->n_visits, 0, this->n_visits, this->n_visits), visits, visits);
       }
       this->sigmad2_cache[visits] = ret;
       return ret;

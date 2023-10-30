@@ -42,9 +42,7 @@ struct lower_chol_nonspatial: virtual lower_chol_base<Type> {
      if (target != this->chols.end()) {
       return target->second;
     } else {
-      matrix<Type> sel_mat = get_select_matrix<Type>(visits, this->n_visits);
-      matrix<Type> Ltildei = sel_mat * this->chol_full;
-      matrix<Type> cov_i = tcrossprod(Ltildei);
+      matrix<Type> cov_i = this->get_sigma(visits, dist);
       Eigen::LLT<Eigen::Matrix<Type,Eigen::Dynamic,Eigen::Dynamic> > cov_i_chol(cov_i);
       matrix<Type> Li = cov_i_chol.matrixL();
       this->chols[visits] = Li;
@@ -56,8 +54,7 @@ struct lower_chol_nonspatial: virtual lower_chol_base<Type> {
     if (target != this->sigmas.end()) {
       return target->second;
     } else {
-      matrix<Type> sel_mat = get_select_matrix<Type>(visits, this->n_visits);
-      matrix<Type> ret = sel_mat * sigma_full * sel_mat.transpose();
+      matrix<Type> ret = subset_matrix<matrix<Type>, vector<int>>(sigma_full, visits, visits);
       this->sigmas[visits] = ret;
       return ret;
     }

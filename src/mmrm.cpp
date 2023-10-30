@@ -69,9 +69,8 @@ Type objective_function<Type>::operator() ()
     std::vector<int> visit_i(n_visits_i);
     matrix<Type> dist_i(n_visits_i, n_visits_i);
     if (!is_spatial) {
-      auto coords = coordinates.block(start_i, 0, n_visits_i, 1).vec();
       for (int j = 0; j < n_visits_i; j++) {
-        visit_i[j] = int(coords(j));
+        visit_i[j] = int(coordinates(start_i + j, 0));
       }
     } else {
       dist_i = euclidean(matrix<Type>(coordinates.block(start_i, 0, n_visits_i, coordinates.cols())));
