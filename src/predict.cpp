@@ -14,7 +14,6 @@ List predict(List mmrm_data, NumericVector theta, NumericVector beta, NumericMat
   LogicalVector y_na = is_na(y);
   LogicalVector y_vd = ! y_na;
   IntegerVector subject_zero_inds = mmrm_data["subject_zero_inds"];
-  IntegerVector visits_zero_inds = mmrm_data["visits_zero_inds"];
   IntegerVector subject_n_visits = mmrm_data["subject_n_visits"];
   String cov_type = mmrm_data["cov_type"];
   IntegerVector subject_groups = mmrm_data["subject_groups"];
@@ -50,7 +49,9 @@ List predict(List mmrm_data, NumericVector theta, NumericVector beta, NumericMat
     matrix<double> dist_i(n_visits_i, n_visits_i);
     IntegerVector index_zero_i = seq(0, n_visits_i - 1);
     if (!is_spatial) {
-      visit_i = segment(visits_zero_inds, start_i, n_visits_i);
+      for (int i = 0; i < n_visits_i; i++) {
+        visit_i(i) = int(coordinates(i + start_i, 0));
+      }
     } else {
       visit_i = seq(start_i, start_i + n_visits_i - 1);
       dist_i = euclidean(matrix<double>(coordinates_m.block(start_i, 0, n_visits_i, coordinates_m.cols())));
@@ -68,17 +69,15 @@ List predict(List mmrm_data, NumericVector theta, NumericVector beta, NumericMat
     // Subject_group starts with 1.
     int subject_group_i = subject_groups(i) - 1;
     matrix<double> sigma_full = chols_group.cache[subject_group_i]->get_sigma(visit_std, dist_i);
-    matrix<double> na_sel_matrix = get_select_matrix<double>(as<std::vector<int>>(index_zero_i_na), n_visits_i); // select matrix based on already subsetted visits
-    matrix<double> valid_sel_matrix = get_select_matrix<double>(as<std::vector<int>>(index_zero_i_valid), n_visits_i);
-    matrix<double> sigma_12 = na_sel_matrix * sigma_full * valid_sel_matrix.transpose();
+    matrix<double> sigma_12 = subset_matrix(sigma_full, index_zero_i_na, index_zero_i_valid);
     matrix<double> sigma_11;
     if (!is_spatial) {
       sigma_11 = chols_group.cache[subject_group_i]->get_sigma(visit_na, dist_i);
     } else {
-      sigma_11 = na_sel_matrix * sigma_full * na_sel_matrix.transpose();
+      sigma_11 = subset_matrix(sigma_full, index_zero_i_na, index_zero_i_na);
     }
-    matrix<double> x_na = na_sel_matrix * Xi;
-    matrix<double> x_valid = valid_sel_matrix * Xi;
+    matrix<double> x_na = subset_matrix(Xi, index_zero_i_na);
+    matrix<double> x_valid = subset_matrix(Xi, index_zero_i_valid);
     vector<double> y_valid = as_num_vector_tmb(y_i[y_valid_i]);
     IntegerVector na_index = index_zero_i_na + start_i;
     vector<double> y_hat, var_conf, var_y_on_theta;
@@ -92,7 +91,7 @@ List predict(List mmrm_data, NumericVector theta, NumericVector beta, NumericMat
       // There are observations with invalid y.
       matrix<double> sigma_22_inv;
       if (is_spatial) {
-        sigma_22_inv = (valid_sel_matrix * sigma_full * valid_sel_matrix.transpose()).inverse(); // No cache available for spatial covariance.
+        sigma_22_inv = subset_matrix(sigma_full, index_zero_i_valid, index_zero_i_valid).inverse(); // No cache available for spatial covariance.
       } else {
         sigma_22_inv = chols_group.cache[subject_group_i]->get_sigma_inverse(visit_non_na, dist_i); // We have the inverse in cache for non spatial covariance.
       }

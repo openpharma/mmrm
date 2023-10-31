@@ -9,7 +9,6 @@ List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, Nume
   NumericVector y = mmrm_data["y_vector"];
   matrix<double> beta_vcov_matrix = as_num_matrix_tmb(beta_vcov);
   IntegerVector subject_zero_inds = mmrm_data["subject_zero_inds"];
-  IntegerVector visits_zero_inds = mmrm_data["visits_zero_inds"];
   int n_subjects = mmrm_data["n_subjects"];
   int n_observations = x_matrix.rows();
   IntegerVector subject_n_visits = mmrm_data["subject_n_visits"];
@@ -41,7 +40,7 @@ List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, Nume
     matrix<double> dist_i(n_visits_i, n_visits_i);
     if (!is_spatial) {
       for (int i = 0; i < n_visits_i; i++) {
-        visit_i[i] = visits_zero_inds[i + start_i];
+        visit_i[i] = int(coordinates(i + start_i, 0));
       }
     } else {
       dist_i = euclidean(matrix<double>(coords.block(start_i, 0, n_visits_i, coordinates.cols())));

@@ -70,7 +70,7 @@ Type objective_function<Type>::operator() ()
     matrix<Type> dist_i(n_visits_i, n_visits_i);
     if (!is_spatial) {
       for (int j = 0; j < n_visits_i; j++) {
-        visit_i[j] = int(coordinates(start_i + j, 0));
+        visit_i[j] = int(asDouble(coordinates(start_i + j, 0)));
       }
     } else {
       dist_i = euclidean(matrix<Type>(coordinates.block(start_i, 0, n_visits_i, coordinates.cols())));

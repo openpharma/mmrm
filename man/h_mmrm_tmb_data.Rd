@@ -46,7 +46,6 @@ columns in the original design matrix have been left out to obtain a full rank
 \code{x_matrix}.
 \item \code{y_vector}: length \code{n} \code{numeric} specifying the overall response vector.
 \item \code{weights_vector}: length \code{n} \code{numeric} specifying the weights vector.
-\item \code{visits_zero_inds}: length \code{n} \code{integer} containing zero-based visits indices.
 \item \code{n_visits}: \code{int} with the number of visits, which is the dimension of the
 covariance matrix.
 \item \code{n_subjects}: \code{int} with the number of subjects.

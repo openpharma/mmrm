@@ -8,7 +8,6 @@ List get_jacobian(List mmrm_fit, NumericVector theta, NumericMatrix beta_vcov) {
   NumericMatrix x = mmrm_fit["x_matrix"];
   matrix<double> x_matrix = as_num_matrix_tmb(x);
   IntegerVector subject_zero_inds = mmrm_fit["subject_zero_inds"];
-  IntegerVector visits_zero_inds = mmrm_fit["visits_zero_inds"];
   int n_subjects = mmrm_fit["n_subjects"];
   IntegerVector subject_n_visits = mmrm_fit["subject_n_visits"];
   int n_visits = mmrm_fit["n_visits"];
@@ -36,7 +35,7 @@ List get_jacobian(List mmrm_fit, NumericVector theta, NumericMatrix beta_vcov) {
     matrix<double> dist_i(n_visits_i, n_visits_i);
     if (!is_spatial) {
       for (int i = 0; i < n_visits_i; i++) {
-        visit_i[i] = visits_zero_inds[i + start_i];
+        visit_i[i] = int(coordinates(i + start_i, 0));
       }
     } else {
       dist_i = euclidean(matrix<double>(coords.block(start_i, 0, n_visits_i, coordinates.cols())));

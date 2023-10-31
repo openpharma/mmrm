@@ -22,6 +22,17 @@ T1 subset_matrix(T1 input, T2 index1, T2 index2) {
   return ret;
 }
 
+template <typename T1, typename T2>
+T1 subset_matrix(T1 input, T2 index1) {
+  T1 ret(index1.size(), input.cols());
+  for (int i = 0; i < index1.size(); i++) {
+    for (int j = 0; j < input.cols(); j++) {
+      ret(i, j) = input(index1[i], j);
+    }
+  }
+  return ret;
+}
+
 
 // Conversion from Rcpp vector/matrix to eigen vector/matrix
 template <typename T1, typename T2>
