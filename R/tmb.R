@@ -66,7 +66,6 @@ h_mmrm_tmb_formula_parts <- function(
 #'      `x_matrix`.
 #' - `y_vector`: length `n` `numeric` specifying the overall response vector.
 #' - `weights_vector`: length `n` `numeric` specifying the weights vector.
-#' - `visits_zero_inds`: length `n` `integer` containing zero-based visits indices.
 #' - `n_visits`: `int` with the number of visits, which is the dimension of the
 #'      covariance matrix.
 #' - `n_subjects`: `int` with the number of subjects.
@@ -208,13 +207,11 @@ h_mmrm_tmb_data <- function(formula_parts,
   if (formula_parts$is_spatial) {
     lapply(coordinates, assert_numeric)
     coordinates_matrix <- as.matrix(coordinates)
-    visits_zero_inds <- 0L
     n_visits <- max(subject_n_visits)
   } else {
     assert(identical(ncol(coordinates), 1L))
     assert_factor(coordinates[[1L]])
-    visits_zero_inds <- as.integer(coordinates[[1L]]) - 1L
-    coordinates_matrix <- as.matrix(visits_zero_inds, ncol = 1)
+    coordinates_matrix <- as.matrix(as.integer(coordinates[[1L]]) - 1, ncol = 1)
     n_visits <- nlevels(coordinates[[1L]])
     assert_true(all(subject_n_visits <= n_visits))
   }
@@ -227,7 +224,6 @@ h_mmrm_tmb_data <- function(formula_parts,
       coordinates = coordinates_matrix,
       y_vector = y_vector,
       weights_vector = weights_vector,
-      visits_zero_inds = visits_zero_inds,
       n_visits = n_visits,
       n_subjects = n_subjects,
       subject_zero_inds = subject_zero_inds,

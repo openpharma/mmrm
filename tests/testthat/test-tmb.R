@@ -160,14 +160,13 @@ test_that("h_mmrm_tmb_data works as expected", {
     result,
     c(
       "full_frame", "data", "x_matrix", "x_cols_aliased", "coordinates", "y_vector",
-      "weights_vector", "visits_zero_inds", "n_visits", "n_subjects",
+      "weights_vector", "n_visits", "n_subjects",
       "subject_zero_inds", "subject_n_visits", "cov_type", "is_spatial_int", "reml",
       "subject_groups", "n_groups"
     )
   )
   expect_matrix(result$x_matrix, nrows = 537, ncols = 3, any.missing = FALSE)
   expect_numeric(result$y_vector, len = 537, any.missing = FALSE)
-  expect_integer(result$visits_zero_inds, len = 537, lower = 0, upper = 3, any.missing = FALSE)
   expect_identical(result$n_visits, 4L) # 4 visits.
   expect_integer(result$subject_zero_inds, len = 197, unique = TRUE, sorted = TRUE, any.missing = FALSE)
   expect_identical(result$cov_type, "us") # unstructured.
@@ -193,14 +192,13 @@ test_that("h_mmrm_tmb_data works as expected with allow_na_response", {
     result,
     c(
       "full_frame", "data", "x_matrix", "x_cols_aliased", "coordinates", "y_vector",
-      "weights_vector", "visits_zero_inds", "n_visits", "n_subjects",
+      "weights_vector", "n_visits", "n_subjects",
       "subject_zero_inds", "subject_n_visits", "cov_type", "is_spatial_int", "reml",
       "subject_groups", "n_groups"
     )
   )
   expect_matrix(result$x_matrix, nrows = 800, ncols = 3, any.missing = FALSE)
   expect_numeric(result$y_vector, len = 800, any.missing = TRUE)
-  expect_integer(result$visits_zero_inds, len = 800, lower = 0, upper = 3, any.missing = FALSE)
   expect_identical(result$n_visits, 4L) # 4 visits.
   expect_integer(result$subject_zero_inds, len = 200, unique = TRUE, sorted = TRUE, any.missing = FALSE)
   expect_identical(result$cov_type, "us") # unstructured.
@@ -228,14 +226,13 @@ test_that("h_mmrm_tmb_data do not allow NA in covariates with allow_na_response"
     result,
     c(
       "full_frame", "data", "x_matrix", "x_cols_aliased", "coordinates", "y_vector",
-      "weights_vector", "visits_zero_inds", "n_visits", "n_subjects",
+      "weights_vector", "n_visits", "n_subjects",
       "subject_zero_inds", "subject_n_visits", "cov_type", "is_spatial_int", "reml",
       "subject_groups", "n_groups"
     )
   )
   expect_matrix(result$x_matrix, nrows = 780, ncols = 3, any.missing = FALSE)
   expect_numeric(result$y_vector, len = 780, any.missing = TRUE)
-  expect_integer(result$visits_zero_inds, len = 780, lower = 0, upper = 3, any.missing = FALSE)
   expect_identical(result$n_visits, 4L) # 4 visits.
   expect_integer(result$subject_zero_inds, len = 195, unique = TRUE, sorted = TRUE, any.missing = FALSE)
   expect_identical(result$cov_type, "us") # unstructured.
@@ -260,13 +257,12 @@ test_that("h_mmrm_tmb_data works as expected for grouped covariance", {
     result,
     c(
       "full_frame", "data", "x_matrix", "x_cols_aliased", "coordinates", "y_vector",
-      "weights_vector", "visits_zero_inds", "n_visits", "n_subjects", "subject_zero_inds",
+      "weights_vector", "n_visits", "n_subjects", "subject_zero_inds",
       "subject_n_visits", "cov_type", "is_spatial_int", "reml", "subject_groups", "n_groups"
     )
   )
   expect_matrix(result$x_matrix, nrows = 537, ncols = 3, any.missing = FALSE)
   expect_numeric(result$y_vector, len = 537, any.missing = FALSE)
-  expect_integer(result$visits_zero_inds, len = 537, lower = 0, upper = 3, any.missing = FALSE)
   expect_identical(result$n_visits, 4L) # 4 visits.
   expect_integer(result$subject_zero_inds, len = 197, unique = TRUE, sorted = TRUE, any.missing = FALSE)
   expect_identical(result$cov_type, "us") # unstructured.
@@ -291,7 +287,7 @@ test_that("h_mmrm_tmb_data works as expected for mutli-dimensional spatial expon
     result,
     c(
       "full_frame", "data", "x_matrix", "x_cols_aliased", "coordinates", "y_vector",
-      "weights_vector", "visits_zero_inds", "n_visits", "n_subjects", "subject_zero_inds",
+      "weights_vector", "n_visits", "n_subjects", "subject_zero_inds",
       "subject_n_visits", "cov_type", "is_spatial_int", "reml", "subject_groups", "n_groups"
     )
   )

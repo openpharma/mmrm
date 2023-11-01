@@ -32,9 +32,6 @@ context("derivatives_nonspatial struct works as expected") {
     matrix<double> dist(0, 0);
     auto full_sigma = mychol.get_sigma(v_full, dist);
     auto part_sigma = mychol.get_sigma(v1, dist);
-    auto selmat = get_select_matrix<double>(v1, 4);
-    expect_equal_matrix(matrix<double>(selmat), matrix<double>(mychol.get_sel_mat(v1)));
-    expect_equal_matrix(matrix<double>(selmat * full_sigma.block(0,0,4,4) * selmat.transpose()), matrix<double>(part_sigma.block(0,0,3,3)));
     auto full_inverse = matrix<double>(mychol.get_sigma_inverse(v_full, dist));
     matrix<double> expected_inverse(4, 4);
     // expected values from R side solve

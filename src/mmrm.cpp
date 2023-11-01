@@ -31,7 +31,6 @@ Type objective_function<Type>::operator() ()
   DATA_MATRIX(x_matrix);           // Model matrix (dimension n x p).
   DATA_VECTOR(y_vector);           // Response vector (length n).
   DATA_VECTOR(weights_vector);     // Weights vector (length n).
-  DATA_IVECTOR(visits_zero_inds);  // Zero-based Visits vector (length n).
   DATA_MATRIX(coordinates);        // Coordinates matrix.
   DATA_INTEGER(n_visits);          // Number of visits, which is the dimension of the covariance matrix.
   DATA_INTEGER(n_subjects);        // Number of subjects.
@@ -70,8 +69,8 @@ Type objective_function<Type>::operator() ()
     std::vector<int> visit_i(n_visits_i);
     matrix<Type> dist_i(n_visits_i, n_visits_i);
     if (!is_spatial) {
-      for (int i = 0; i < n_visits_i; i++) {
-        visit_i[i] = visits_zero_inds[i + start_i];
+      for (int j = 0; j < n_visits_i; j++) {
+        visit_i[j] = int(asDouble(coordinates(start_i + j, 0)));
       }
     } else {
       dist_i = euclidean(matrix<Type>(coordinates.block(start_i, 0, n_visits_i, coordinates.cols())));

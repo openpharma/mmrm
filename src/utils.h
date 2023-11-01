@@ -9,27 +9,39 @@
 #define as_num_vector_tmb as_vector<vector<double>, NumericVector>
 #define as_num_vector_rcpp as_vector<NumericVector, vector<double>>
 
-// Producing a sparse selection matrix to select rows and columns from
-// covariance matrix.
-template <class Type>
-Eigen::SparseMatrix<Type> get_select_matrix(const vector<int>& visits_i, const int& n_visits) {
-  Eigen::SparseMatrix<Type> result(visits_i.size(), n_visits);
-  for (int i = 0; i < visits_i.size(); i++) {
-    result.insert(i, visits_i(i)) = (Type) 1.0;
-  }
-  return result;
+// Obtain submatrix from index
+
+template <typename T1, typename T2>
+T1 subset_matrix(T1 input, T2 index1, T2 index2) {
+  #if EIGEN_VERSION_AT_LEAST(3,4,0)
+    T1 ret = input(index1, index2);
+  #else
+    T1 ret(index1.size(), index2.size());
+    for (int i = 0; i < index1.size(); i++) {
+      for (int j = 0; j < index2.size(); j++) {
+        ret(i, j) = input(index1[i], index2[j]);
+      }
+    }
+  #endif
+  return ret;
 }
 
-// Producing a sparse selection matrix from visits to select rows and columns from
-// covariance matrix.
-template <class Type>
-Eigen::SparseMatrix<Type> get_select_matrix(const std::vector<int>& visits_i, const int& n_visits) {
-  Eigen::SparseMatrix<Type> result(visits_i.size(), n_visits);
-  for (std::size_t i = 0, max = visits_i.size(); i != max; ++i) {
-    result.insert(i, visits_i[i]) = (Type) 1.0;
-  }
-  return result;
+template <typename T1, typename T2>
+T1 subset_matrix(T1 input, T2 index1) {
+  #if EIGEN_VERSION_AT_LEAST(3,4,0)
+    T1 ret = input(index1, Eigen::placeholders::all);
+  #else
+    T1 ret(index1.size(), input.cols());
+    for (int i = 0; i < index1.size(); i++) {
+      for (int j = 0; j < input.cols(); j++) {
+        ret(i, j) = input(index1[i], j);
+      }
+    }
+  #endif
+  return ret;
 }
+
+
 // Conversion from Rcpp vector/matrix to eigen vector/matrix
 template <typename T1, typename T2>
 T1 as_vector(T2 input) {

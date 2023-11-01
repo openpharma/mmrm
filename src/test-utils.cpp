@@ -3,21 +3,28 @@
 
 using namespace Rcpp;
 
-context("get_select_matrix") {
-  test_that("get_select_matrix works as expected") {
-    vector<int> visits_i1 {{0, 3, 5}};
-    Eigen::SparseMatrix<double> result = get_select_matrix<double>(visits_i1, 7);
-    matrix<double> expected(3, 7);
-    expected <<
-      1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-      0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0,
-      0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0;
-    matrix<double> result_dense(result);
-    expect_equal_matrix(result_dense, expected);
-    std::vector<int> visits_i2 {{0, 3, 5}};
-    Eigen::SparseMatrix<double> result2 = get_select_matrix<double>(visits_i2, 7);
-    matrix<double> result_dense2(result2);
-    expect_equal_matrix(result_dense2, expected);
+context("subset_matrix") {
+  test_that("subset_matrix works as expected") {
+    matrix<double> mat(3, 3);
+    mat <<
+      1.0, 0.0, 0.5,
+      6.0, 2.0, 1.0,
+      3.0, 0.1, 0.2;
+    std::vector<int> index {1, 0};
+    matrix<double> result1 = subset_matrix(mat, index, index);
+    matrix<double> exp1(2, 2);
+    exp1 <<
+      2.0, 6.0,
+      0.0, 1.0;
+    expect_equal_matrix(result1, exp1);
+
+    matrix<double> result2 = subset_matrix(mat, index);
+
+    matrix<double> exp2(2, 3);
+    exp2 <<
+      6.0, 2.0, 1.0,
+      1.0, 0.0, 0.5;
+    expect_equal_matrix(result2, exp2);
   }
 }
 
