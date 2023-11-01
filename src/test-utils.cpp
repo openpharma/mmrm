@@ -3,6 +3,31 @@
 
 using namespace Rcpp;
 
+context("subset_matrix") {
+  test_that("subset_matrix works as expected") {
+    matrix<double> mat(3, 3);
+    mat <<
+      1.0, 0.0, 0.5,
+      6.0, 2.0, 1.0,
+      3.0, 0.1, 0.2;
+    std::vector<int> index {1, 0};
+    matrix<double> result1 = subset_matrix(mat, index, index);
+    matrix<double> exp1(2, 2);
+    exp1 <<
+      2.0, 6.0,
+      0.0, 1.0;
+    expect_equal_matrix(result1, exp1);
+
+    matrix<double> result2 = subset_matrix(mat, index);
+
+    matrix<double> exp2(2, 3);
+    exp2 <<
+      6.0, 2.0, 1.0,
+      1.0, 0.0, 0.5;
+    expect_equal_matrix(result2, exp2);
+  }
+}
+
 context("tcrossprod") {
   test_that("tcrossprod works as expected with complete") {
     matrix<double> lower_chol(2, 2);

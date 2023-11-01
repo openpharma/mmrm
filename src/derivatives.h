@@ -106,9 +106,9 @@ struct derivatives_nonspatial: public lower_chol_nonspatial<Type>, virtual deriv
       return target->second;
     } else {
       int n_visits_i = visits.size();
-      matrix<Type> ret = matrix<Type>(this->n_theta * n_visists_i, n_visists_i);
+      matrix<Type> ret = matrix<Type>(this->n_theta * n_visits_i, n_visits_i);
       for (int i = 0; i < this->n_theta; i++) {
-        ret.block(i  * n_visists_i, 0, n_visists_i, n_visists_i) = subset_matrix<matrix<Type>, vector<int>>(this->sigmad1_cache[this->full_visit].block(i  * this->n_visits, 0, this->n_visits, this->n_visits), visits, visits);
+        ret.block(i  * n_visits_i, 0, n_visits_i, n_visits_i) = subset_matrix<matrix<Type>, vector<int>>(this->sigmad1_cache[this->full_visit].block(i  * this->n_visits, 0, this->n_visits, this->n_visits), visits, visits);
       }
       this->sigmad1_cache[visits] = ret;
       return ret;
@@ -120,11 +120,11 @@ struct derivatives_nonspatial: public lower_chol_nonspatial<Type>, virtual deriv
      if (target != this->sigmad2_cache.end()) {
       return target->second;
     } else {
-      int n_visists_i = visits.size();
+      int n_visits_i = visits.size();
       int theta_sq = this->n_theta * this->n_theta;
-      matrix<Type> ret = matrix<Type>(theta_sq * n_visists_i, n_visists_i);
+      matrix<Type> ret = matrix<Type>(theta_sq * n_visits_i, n_visits_i);
       for (int i = 0; i < theta_sq; i++) {
-        ret.block(i  * n_visists_i, 0, n_visists_i, n_visists_i) = subset_matrix<matrix<Type>, vector<int>>(this->sigmad2_cache[this->full_visit].block(i  * this->n_visits, 0, this->n_visits, this->n_visits), visits, visits);
+        ret.block(i  * n_visits_i, 0, n_visits_i, n_visits_i) = subset_matrix<matrix<Type>, vector<int>>(this->sigmad2_cache[this->full_visit].block(i  * this->n_visits, 0, this->n_visits, this->n_visits), visits, visits);
       }
       this->sigmad2_cache[visits] = ret;
       return ret;
