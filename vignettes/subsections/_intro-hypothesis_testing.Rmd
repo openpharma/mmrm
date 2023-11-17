@@ -80,9 +80,8 @@ fit <- mmrm(
   data = fev_data
 )
 
-if (require(emmeans)) {
-  emmeans(fit, ~ ARMCD | AVISIT)
-}
+library(emmeans)
+emmeans(fit, ~ ARMCD | AVISIT)
 ```
 
 Note that the degrees of freedom choice is inherited here from the initial `mmrm`
