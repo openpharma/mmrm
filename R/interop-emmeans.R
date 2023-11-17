@@ -5,6 +5,9 @@
 #' This package includes methods that allow `mmrm` objects to be used
 #' with the `emmeans` package. `emmeans` computes estimated marginal means
 #' (also called least-square means) for the coefficients of the MMRM.
+#' We can also e.g. obtain differences between groups by applying
+#' [`pairs()`][emmeans::pairs.emmGrid()] on the object returned
+#' by [emmeans::emmeans()].
 #'
 #' @examples
 #' fit <- mmrm(
@@ -13,6 +16,7 @@
 #' )
 #' if (require(emmeans)) {
 #'   emmeans(fit, ~ ARMCD | AVISIT)
+#'   pairs(emmeans(fit, ~ ARMCD | AVISIT), reverse = TRUE)
 #' }
 #' @name emmeans_support
 NULL

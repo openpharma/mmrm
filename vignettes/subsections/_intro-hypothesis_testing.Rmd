@@ -72,17 +72,24 @@ course together with multidimensional contrasts.
 
 This package includes methods that allow `mmrm` objects to be used with the
 `emmeans` package. `emmeans` computes estimated marginal means (also called
-least-square means) for the coefficients of the MMRM.
+least-square means) for the coefficients of the MMRM. For example, in order
+to see the least-square means by visit and by treatment arm:
 
 ```{r emmeans}
-fit <- mmrm(
-  formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
-  data = fev_data
-)
-
 library(emmeans)
-emmeans(fit, ~ ARMCD | AVISIT)
+lsmeans_by_visit <- emmeans(fit, ~ ARMCD | AVISIT)
+lsmeans_by_visit
 ```
 
 Note that the degrees of freedom choice is inherited here from the initial `mmrm`
 fit.
+Furthermore, we can also obtain the differences between the treatment arms for each visit
+by applying `pairs()` on the object returned by `emmeans()` earlier:
+
+```{r pdiff}
+pairs(lsmeans_by_visit, reverse = TRUE)
+```
+
+(This is similar like the `pdiff` option in SAS `PROC MIXED`.)
+Note that we use here the `reverse` argument to obtain treatment minus
+placebo results, instead of placebo minus treatment results.
