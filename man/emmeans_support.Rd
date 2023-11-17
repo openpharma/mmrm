@@ -9,6 +9,9 @@
 This package includes methods that allow \code{mmrm} objects to be used
 with the \code{emmeans} package. \code{emmeans} computes estimated marginal means
 (also called least-square means) for the coefficients of the MMRM.
+We can also e.g. obtain differences between groups by applying
+\code{\link[emmeans:contrast]{pairs()}} on the object returned
+by \code{\link[emmeans:emmeans]{emmeans::emmeans()}}.
 }
 \examples{
 fit <- mmrm(
@@ -17,5 +20,6 @@ fit <- mmrm(
 )
 if (require(emmeans)) {
   emmeans(fit, ~ ARMCD | AVISIT)
+  pairs(emmeans(fit, ~ ARMCD | AVISIT), reverse = TRUE)
 }
 }
