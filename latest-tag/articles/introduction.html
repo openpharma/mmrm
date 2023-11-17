@@ -39,7 +39,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.6</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -88,6 +88,7 @@
           aria-expanded="false" aria-haspopup="true"
           id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
+<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.6">v0.3.6</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.5">v0.3.5</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.4">v0.3.4</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.3">v0.3.3</a>
@@ -1050,42 +1051,63 @@ contrasts.</p>
 <p>This package includes methods that allow <code>mmrm</code> objects to
 be used with the <code>emmeans</code> package. <code>emmeans</code>
 computes estimated marginal means (also called least-square means) for
-the coefficients of the MMRM.</p>
+the coefficients of the MMRM. For example, in order to see the
+least-square means by visit and by treatment arm:</p>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
-<span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
-<span>  data <span class="op">=</span> <span class="va">fev_data</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rvlenth/emmeans" class="external-link">emmeans</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/emmeans/man/emmeans.html" class="external-link">emmeans</a></span><span class="op">(</span><span class="va">fit</span>, <span class="op">~</span> <span class="va">ARMCD</span> <span class="op">|</span> <span class="va">AVISIT</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span><span class="co">#&gt; Loading required package: emmeans</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rvlenth/emmeans" class="external-link">emmeans</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; mmrm() registered as emmeans extension</span></span>
+<span><span class="va">lsmeans_by_visit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/emmeans/man/emmeans.html" class="external-link">emmeans</a></span><span class="op">(</span><span class="va">fit</span>, <span class="op">~</span> <span class="va">ARMCD</span> <span class="op">|</span> <span class="va">AVISIT</span><span class="op">)</span></span>
+<span><span class="va">lsmeans_by_visit</span></span>
 <span><span class="co">#&gt; AVISIT = VIS1:</span></span>
 <span><span class="co">#&gt;  ARMCD emmean    SE  df lower.CL upper.CL</span></span>
-<span><span class="co">#&gt;  PBO     33.3 0.757 149     31.8     34.8</span></span>
-<span><span class="co">#&gt;  TRT     37.1 0.764 144     35.6     38.6</span></span>
+<span><span class="co">#&gt;  PBO     33.3 0.755 148     31.8     34.8</span></span>
+<span><span class="co">#&gt;  TRT     37.1 0.763 143     35.6     38.6</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; AVISIT = VIS2:</span></span>
 <span><span class="co">#&gt;  ARMCD emmean    SE  df lower.CL upper.CL</span></span>
-<span><span class="co">#&gt;  PBO     38.2 0.608 150     37.0     39.4</span></span>
-<span><span class="co">#&gt;  TRT     41.9 0.598 146     40.7     43.1</span></span>
+<span><span class="co">#&gt;  PBO     38.2 0.612 147     37.0     39.4</span></span>
+<span><span class="co">#&gt;  TRT     41.9 0.602 143     40.7     43.1</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; AVISIT = VIS3:</span></span>
 <span><span class="co">#&gt;  ARMCD emmean    SE  df lower.CL upper.CL</span></span>
-<span><span class="co">#&gt;  PBO     43.7 0.462 131     42.8     44.6</span></span>
-<span><span class="co">#&gt;  TRT     46.8 0.507 130     45.8     47.8</span></span>
+<span><span class="co">#&gt;  PBO     43.7 0.462 130     42.8     44.6</span></span>
+<span><span class="co">#&gt;  TRT     46.8 0.509 130     45.7     47.8</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; AVISIT = VIS4:</span></span>
 <span><span class="co">#&gt;  ARMCD emmean    SE  df lower.CL upper.CL</span></span>
 <span><span class="co">#&gt;  PBO     48.4 1.189 134     46.0     50.7</span></span>
 <span><span class="co">#&gt;  TRT     52.8 1.188 133     50.4     55.1</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Results are averaged over the levels of: RACE </span></span>
+<span><span class="co">#&gt; Results are averaged over the levels of: RACE, SEX </span></span>
 <span><span class="co">#&gt; Confidence level used: 0.95</span></span></code></pre></div>
 <p>Note that the degrees of freedom choice is inherited here from the
-initial <code>mmrm</code> fit.</p>
+initial <code>mmrm</code> fit. Furthermore, we can also obtain the
+differences between the treatment arms for each visit by applying
+<code><a href="https://rdrr.io/r/graphics/pairs.html" class="external-link">pairs()</a></code> on the object returned by <code><a href="https://rdrr.io/pkg/emmeans/man/emmeans.html" class="external-link">emmeans()</a></code>
+earlier:</p>
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/pairs.html" class="external-link">pairs</a></span><span class="op">(</span><span class="va">lsmeans_by_visit</span>, reverse <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; AVISIT = VIS1:</span></span>
+<span><span class="co">#&gt;  contrast  estimate    SE  df t.ratio p.value</span></span>
+<span><span class="co">#&gt;  TRT - PBO     3.77 1.074 146   3.514  0.0006</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; AVISIT = VIS2:</span></span>
+<span><span class="co">#&gt;  contrast  estimate    SE  df t.ratio p.value</span></span>
+<span><span class="co">#&gt;  TRT - PBO     3.73 0.859 145   4.346  &lt;.0001</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; AVISIT = VIS3:</span></span>
+<span><span class="co">#&gt;  contrast  estimate    SE  df t.ratio p.value</span></span>
+<span><span class="co">#&gt;  TRT - PBO     3.08 0.690 131   4.467  &lt;.0001</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; AVISIT = VIS4:</span></span>
+<span><span class="co">#&gt;  contrast  estimate    SE  df t.ratio p.value</span></span>
+<span><span class="co">#&gt;  TRT - PBO     4.40 1.681 133   2.617  0.0099</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Results are averaged over the levels of: RACE, SEX</span></span></code></pre></div>
+<p>(This is similar like the <code>pdiff</code> option in SAS
+<code>PROC MIXED</code>.) Note that we use here the <code>reverse</code>
+argument to obtain treatment minus placebo results, instead of placebo
+minus treatment results.</p>
 </div>
 </div>
 <div class="section level2">
@@ -1097,7 +1119,7 @@ initial <code>mmrm</code> fit.</p>
 <p><code>mmrm</code> is compatible to work in a <code>tidymodels</code>
 workflow. The following is an example of how such a workflow would be
 constructed.</p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidymodels.tidymodels.org" class="external-link">tidymodels</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level4">
 <h4 id="direct-fit">Direct fit<a class="anchor" aria-label="anchor" href="#direct-fit"></a>
@@ -1115,7 +1137,7 @@ will be used to fit the model, along with any arguments specific to that
 software. We can set the method to adjust degrees of freedom directly in
 the call.</li>
 </ul>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu">linear_reg</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">set_engine</span><span class="op">(</span><span class="st">"mmrm"</span>, method <span class="op">=</span> <span class="st">"Satterthwaite"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">fit</span><span class="op">(</span><span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>, <span class="va">fev_data</span><span class="op">)</span></span>
@@ -1148,7 +1170,7 @@ the call.</li>
 <span><span class="co">#&gt; Converged with code 0 and message: convergence: rel_reduction_of_f &lt;= factr*epsmch</span></span></code></pre></div>
 <p>We can also pass in the full <code>mmrm_control</code> object into
 the <code>set_engine()</code> call:</p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model_with_control</span> <span class="op">&lt;-</span> <span class="fu">linear_reg</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">set_engine</span><span class="op">(</span><span class="st">"mmrm"</span>, control <span class="op">=</span> <span class="fu"><a href="../reference/mmrm_control.html">mmrm_control</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"Satterthwaite"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">fit</span><span class="op">(</span><span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>, <span class="va">fev_data</span><span class="op">)</span></span></code></pre></div>
@@ -1158,7 +1180,7 @@ the <code>set_engine()</code> call:</p>
 </h4>
 <p>Lastly, we can also obtain predictions with the
 <code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code> method:</p>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">model</span>, new_data <span class="op">=</span> <span class="va">fev_data</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 800 × 1</span></span></span>
 <span><span class="co">#&gt;    .pred</span></span>
@@ -1183,7 +1205,7 @@ calculations. We obtain predicted values without confidence intervals or
 standard errors.</p>
 <p>On the other hand, when using <code>type = "raw"</code> we can
 customize the calculations via the <code>opts</code> list:</p>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span></span>
 <span>  <span class="va">model</span>,</span>
 <span>  new_data <span class="op">=</span> <span class="va">fev_data</span>,</span>
@@ -1191,33 +1213,33 @@ customize the calculations via the <code>opts</code> list:</p>
 <span>  opts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>se.fit <span class="op">=</span> <span class="cn">TRUE</span>, interval <span class="op">=</span> <span class="st">"prediction"</span>, nsim <span class="op">=</span> <span class="fl">10L</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt;          fit        se      lwr      upr</span></span>
-<span><span class="co">#&gt; 1   32.47877  6.146614 20.43163 44.52591</span></span>
+<span><span class="co">#&gt; 1   32.47877  5.822427 21.06702 43.89052</span></span>
 <span><span class="co">#&gt; 2   39.97105  0.000000 39.97105 39.97105</span></span>
-<span><span class="co">#&gt; 3   45.70508  4.250211 37.37482 54.03534</span></span>
+<span><span class="co">#&gt; 3   45.70508  4.211979 37.44975 53.96040</span></span>
 <span><span class="co">#&gt; 4   20.48379  0.000000 20.48379 20.48379</span></span>
-<span><span class="co">#&gt; 5   28.01243  5.476131 17.27941 38.74545</span></span>
+<span><span class="co">#&gt; 5   28.01243  5.504787 17.22324 38.80161</span></span>
 <span><span class="co">#&gt; 6   31.45522  0.000000 31.45522 31.45522</span></span>
 <span><span class="co">#&gt; 7   36.87889  0.000000 36.87889 36.87889</span></span>
 <span><span class="co">#&gt; 8   48.80809  0.000000 48.80809 48.80809</span></span>
-<span><span class="co">#&gt; 9   30.73774  5.651252 19.66149 41.81399</span></span>
+<span><span class="co">#&gt; 9   30.73774  5.560856 19.83866 41.63682</span></span>
 <span><span class="co">#&gt; 10  35.98699  0.000000 35.98699 35.98699</span></span>
-<span><span class="co">#&gt; 11  42.64153  3.969457 34.86154 50.42152</span></span>
+<span><span class="co">#&gt; 11  42.64153  3.965408 34.86947 50.41359</span></span>
 <span><span class="co">#&gt; 12  37.16444  0.000000 37.16444 37.16444</span></span>
 <span><span class="co">#&gt; 13  33.89229  0.000000 33.89229 33.89229</span></span>
 <span><span class="co">#&gt; 14  33.74637  0.000000 33.74637 33.74637</span></span>
-<span><span class="co">#&gt; 15  44.04155  3.828116 36.53858 51.54452</span></span>
+<span><span class="co">#&gt; 15  44.04155  3.903773 36.39029 51.69280</span></span>
 <span><span class="co">#&gt; 16  54.45055  0.000000 54.45055 54.45055</span></span>
 <span><span class="co">#&gt; 17  32.31386  0.000000 32.31386 32.31386</span></span>
-<span><span class="co">#&gt; 18  37.31982  4.561145 28.38014 46.25950</span></span>
+<span><span class="co">#&gt; 18  37.31982  4.476758 28.54553 46.09410</span></span>
 <span><span class="co">#&gt; 19  46.79361  0.000000 46.79361 46.79361</span></span>
 <span><span class="co">#&gt; 20  41.71154  0.000000 41.71154 41.71154</span></span>
-<span><span class="co">#&gt; 21  31.17198  6.189446 19.04089 43.30307</span></span>
-<span><span class="co">#&gt; 22  36.63341  5.118199 26.60192 46.66490</span></span>
+<span><span class="co">#&gt; 21  31.17198  6.125008 19.16718 43.17677</span></span>
+<span><span class="co">#&gt; 22  36.63341  4.929496 26.97177 46.29504</span></span>
 <span><span class="co">#&gt; 23  39.02423  0.000000 39.02423 39.02423</span></span>
-<span><span class="co">#&gt; 24  47.26333 10.080377 27.50616 67.02051</span></span>
+<span><span class="co">#&gt; 24  47.26333 10.139203 27.39086 67.13581</span></span>
 <span><span class="co">#&gt; 25  31.93050  0.000000 31.93050 31.93050</span></span>
 <span><span class="co">#&gt; 26  32.90947  0.000000 32.90947 32.90947</span></span>
-<span><span class="co">#&gt; 27  41.27523  3.796356 33.83451 48.71595</span></span>
+<span><span class="co">#&gt; 27  41.27523  3.886142 33.65853 48.89193</span></span>
 <span><span class="co">#&gt; 28  48.28031  0.000000 48.28031 48.28031</span></span>
 <span><span class="co">#&gt; 29  32.23021  0.000000 32.23021 32.23021</span></span>
 <span><span class="co">#&gt; 30  35.91080  0.000000 35.91080 35.91080</span></span>
@@ -1225,12 +1247,12 @@ customize the calculations via the <code>opts</code> list:</p>
 <span><span class="co">#&gt; 32  53.02877  0.000000 53.02877 53.02877</span></span>
 <span><span class="co">#&gt; 33  47.16898  0.000000 47.16898 47.16898</span></span>
 <span><span class="co">#&gt; 34  46.64287  0.000000 46.64287 46.64287</span></span>
-<span><span class="co">#&gt; 35  50.84665  3.830296 43.33941 58.35389</span></span>
+<span><span class="co">#&gt; 35  50.84665  3.919537 43.16450 58.52880</span></span>
 <span><span class="co">#&gt; 36  58.09713  0.000000 58.09713 58.09713</span></span>
-<span><span class="co">#&gt; 37  33.21881  6.162374 21.14078 45.29684</span></span>
-<span><span class="co">#&gt; 38  37.68412  5.088595 27.71066 47.65759</span></span>
+<span><span class="co">#&gt; 37  33.21881  6.091066 21.28054 45.15708</span></span>
+<span><span class="co">#&gt; 38  37.68412  4.921998 28.03718 47.33106</span></span>
 <span><span class="co">#&gt; 39  44.97613  0.000000 44.97613 44.97613</span></span>
-<span><span class="co">#&gt; 40  47.67506 10.030820 28.01501 67.33510</span></span>
+<span><span class="co">#&gt; 40  47.67506 10.120052 27.84012 67.50999</span></span>
 <span><span class="co">#&gt; 41  44.32755  0.000000 44.32755 44.32755</span></span>
 <span><span class="co">#&gt; 42  38.97813  0.000000 38.97813 38.97813</span></span>
 <span><span class="co">#&gt; 43  43.72862  0.000000 43.72862 43.72862</span></span>
@@ -1238,40 +1260,40 @@ customize the calculations via the <code>opts</code> list:</p>
 <span><span class="co">#&gt; 45  40.34576  0.000000 40.34576 40.34576</span></span>
 <span><span class="co">#&gt; 46  42.76568  0.000000 42.76568 42.76568</span></span>
 <span><span class="co">#&gt; 47  40.11155  0.000000 40.11155 40.11155</span></span>
-<span><span class="co">#&gt; 48  49.71974 10.042579 30.03665 69.40284</span></span>
-<span><span class="co">#&gt; 49  41.46341  6.035880 29.63330 53.29351</span></span>
-<span><span class="co">#&gt; 50  45.73510  5.050138 35.83701 55.63319</span></span>
+<span><span class="co">#&gt; 48  49.71974  9.923822 30.26941 69.17008</span></span>
+<span><span class="co">#&gt; 49  41.46341  5.940691 29.81987 53.10695</span></span>
+<span><span class="co">#&gt; 50  45.73510  4.846716 36.23571 55.23449</span></span>
 <span><span class="co">#&gt; 51  53.31791  0.000000 53.31791 53.31791</span></span>
 <span><span class="co">#&gt; 52  56.07641  0.000000 56.07641 56.07641</span></span>
-<span><span class="co">#&gt; 53  32.16382  6.148785 20.11242 44.21522</span></span>
-<span><span class="co">#&gt; 54  37.14256  5.081214 27.18356 47.10155</span></span>
+<span><span class="co">#&gt; 53  32.16382  6.079309 20.24860 44.07905</span></span>
+<span><span class="co">#&gt; 54  37.14256  4.918031 27.50339 46.78172</span></span>
 <span><span class="co">#&gt; 55  41.90837  0.000000 41.90837 41.90837</span></span>
-<span><span class="co">#&gt; 56  47.46284  9.994257 27.87446 67.05123</span></span>
-<span><span class="co">#&gt; 57  27.78883  6.187842 15.66088 39.91677</span></span>
-<span><span class="co">#&gt; 58  34.13887  5.117329 24.10909 44.16865</span></span>
+<span><span class="co">#&gt; 56  47.46284 10.098476 27.67019 67.25549</span></span>
+<span><span class="co">#&gt; 57  27.78883  6.057902 15.91556 39.66210</span></span>
+<span><span class="co">#&gt; 58  34.13887  4.878323 24.57753 43.70021</span></span>
 <span><span class="co">#&gt; 59  34.65663  0.000000 34.65663 34.65663</span></span>
 <span><span class="co">#&gt; 60  39.07791  0.000000 39.07791 39.07791</span></span>
-<span><span class="co">#&gt; 61  31.18775  5.602581 20.20689 42.16861</span></span>
+<span><span class="co">#&gt; 61  31.18775  5.539476 20.33058 42.04492</span></span>
 <span><span class="co">#&gt; 62  35.89612  0.000000 35.89612 35.89612</span></span>
-<span><span class="co">#&gt; 63  41.31608  3.921156 33.63075 49.00140</span></span>
+<span><span class="co">#&gt; 63  41.31608  3.932748 33.60803 49.02412</span></span>
 <span><span class="co">#&gt; 64  47.67264  0.000000 47.67264 47.67264</span></span>
 <span><span class="co">#&gt; 65  22.65440  0.000000 22.65440 22.65440</span></span>
-<span><span class="co">#&gt; 66  36.35488  4.689887 27.16287 45.54689</span></span>
-<span><span class="co">#&gt; 67  45.20175  3.991518 37.37851 53.02498</span></span>
+<span><span class="co">#&gt; 66  36.35488  4.647211 27.24651 45.46324</span></span>
+<span><span class="co">#&gt; 67  45.20175  4.102618 37.16076 53.24273</span></span>
 <span><span class="co">#&gt; 68  40.85376  0.000000 40.85376 40.85376</span></span>
 <span><span class="co">#&gt; 69  32.60048  0.000000 32.60048 32.60048</span></span>
 <span><span class="co">#&gt; 70  33.64329  0.000000 33.64329 33.64329</span></span>
-<span><span class="co">#&gt; 71  44.00451  3.904690 36.35145 51.65756</span></span>
+<span><span class="co">#&gt; 71  44.00451  3.932627 36.29670 51.71231</span></span>
 <span><span class="co">#&gt; 72  40.92278  0.000000 40.92278 40.92278</span></span>
 <span><span class="co">#&gt; 73  32.14831  0.000000 32.14831 32.14831</span></span>
 <span><span class="co">#&gt; 74  46.43604  0.000000 46.43604 46.43604</span></span>
 <span><span class="co">#&gt; 75  41.34973  0.000000 41.34973 41.34973</span></span>
 <span><span class="co">#&gt; 76  66.30382  0.000000 66.30382 66.30382</span></span>
-<span><span class="co">#&gt; 77  42.79902  5.559419 31.90276 53.69528</span></span>
+<span><span class="co">#&gt; 77  42.79902  5.602172 31.81897 53.77908</span></span>
 <span><span class="co">#&gt; 78  47.95358  0.000000 47.95358 47.95358</span></span>
 <span><span class="co">#&gt; 79  53.97364  0.000000 53.97364 53.97364</span></span>
-<span><span class="co">#&gt; 80  56.89204  9.993549 37.30505 76.47904</span></span>
-<span><span class="co">#&gt; 81  46.35384  5.627231 35.32467 57.38301</span></span>
+<span><span class="co">#&gt; 80  56.89204  9.971995 37.34729 76.43679</span></span>
+<span><span class="co">#&gt; 81  46.35384  5.656315 35.26767 57.44002</span></span>
 <span><span class="co">#&gt; 82  56.64544  0.000000 56.64544 56.64544</span></span>
 <span><span class="co">#&gt; 83  49.70872  0.000000 49.70872 49.70872</span></span>
 <span><span class="co">#&gt; 84  60.40497  0.000000 60.40497 60.40497</span></span>
@@ -1282,7 +1304,7 @@ customize the calculations via the <code>opts</code> list:</p>
 <span><span class="co">#&gt; 89  23.86859  0.000000 23.86859 23.86859</span></span>
 <span><span class="co">#&gt; 90  35.98563  0.000000 35.98563 35.98563</span></span>
 <span><span class="co">#&gt; 91  43.60626  0.000000 43.60626 43.60626</span></span>
-<span><span class="co">#&gt; 92  44.77520  9.854391 25.46095 64.08945</span></span>
+<span><span class="co">#&gt; 92  44.77520  9.823932 25.52064 64.02975</span></span>
 <span><span class="co">#&gt; 93  29.59773  0.000000 29.59773 29.59773</span></span>
 <span><span class="co">#&gt; 94  35.50688  0.000000 35.50688 35.50688</span></span>
 <span><span class="co">#&gt; 95  55.42944  0.000000 55.42944 55.42944</span></span>
@@ -1296,7 +1318,7 @@ customize the calculations via the <code>opts</code> list:</p>
 <span><span class="co">#&gt; 103 51.72211  0.000000 51.72211 51.72211</span></span>
 <span><span class="co">#&gt; 104 69.99128  0.000000 69.99128 69.99128</span></span>
 <span><span class="co">#&gt; 105 22.07169  0.000000 22.07169 22.07169</span></span>
-<span><span class="co">#&gt; 106 36.35845  4.746651 27.05519 45.66172</span></span>
+<span><span class="co">#&gt; 106 36.35845  4.689243 27.16770 45.54920</span></span>
 <span><span class="co">#&gt; 107 46.08393  0.000000 46.08393 46.08393</span></span>
 <span><span class="co">#&gt; 108 52.42288  0.000000 52.42288 52.42288</span></span>
 <span><span class="co">#&gt; 109 37.69466  0.000000 37.69466 37.69466</span></span>
@@ -1305,23 +1327,23 @@ customize the calculations via the <code>opts</code> list:</p>
 <span><span class="co">#&gt; 112 58.22961  0.000000 58.22961 58.22961</span></span>
 <span><span class="co">#&gt; 113 37.22824  0.000000 37.22824 37.22824</span></span>
 <span><span class="co">#&gt; 114 34.39863  0.000000 34.39863 34.39863</span></span>
-<span><span class="co">#&gt; 115 45.88949  4.096691 37.86012 53.91886</span></span>
+<span><span class="co">#&gt; 115 45.88949  3.953178 38.14140 53.63758</span></span>
 <span><span class="co">#&gt; 116 36.34012  0.000000 36.34012 36.34012</span></span>
 <span><span class="co">#&gt; 117 45.44182  0.000000 45.44182 45.44182</span></span>
 <span><span class="co">#&gt; 118 41.54847  0.000000 41.54847 41.54847</span></span>
 <span><span class="co">#&gt; 119 43.92172  0.000000 43.92172 43.92172</span></span>
 <span><span class="co">#&gt; 120 61.83243  0.000000 61.83243 61.83243</span></span>
 <span><span class="co">#&gt; 121 27.25656  0.000000 27.25656 27.25656</span></span>
-<span><span class="co">#&gt; 122 34.77803  4.627758 25.70779 43.84827</span></span>
+<span><span class="co">#&gt; 122 34.77803  4.536882 25.88591 43.67016</span></span>
 <span><span class="co">#&gt; 123 45.65133  0.000000 45.65133 45.65133</span></span>
-<span><span class="co">#&gt; 124 44.56078  9.962358 25.03491 64.08664</span></span>
+<span><span class="co">#&gt; 124 44.56078  9.892351 25.17212 63.94943</span></span>
 <span><span class="co">#&gt; 125 33.19334  0.000000 33.19334 33.19334</span></span>
-<span><span class="co">#&gt; 126 39.72671  4.574143 30.76155 48.69187</span></span>
-<span><span class="co">#&gt; 127 45.59637  3.874711 38.00208 53.19067</span></span>
+<span><span class="co">#&gt; 126 39.72671  4.503686 30.89965 48.55377</span></span>
+<span><span class="co">#&gt; 127 45.59637  3.946927 37.86054 53.33221</span></span>
 <span><span class="co">#&gt; 128 41.66826  0.000000 41.66826 41.66826</span></span>
 <span><span class="co">#&gt; 129 27.12753  0.000000 27.12753 27.12753</span></span>
 <span><span class="co">#&gt; 130 31.74858  0.000000 31.74858 31.74858</span></span>
-<span><span class="co">#&gt; 131 44.57711  4.009727 36.71819 52.43603</span></span>
+<span><span class="co">#&gt; 131 44.57711  4.044603 36.64984 52.50439</span></span>
 <span><span class="co">#&gt; 132 41.60000  0.000000 41.60000 41.60000</span></span>
 <span><span class="co">#&gt; 133 39.45250  0.000000 39.45250 39.45250</span></span>
 <span><span class="co">#&gt; 134 32.61823  0.000000 32.61823 32.61823</span></span>
@@ -1329,44 +1351,44 @@ customize the calculations via the <code>opts</code> list:</p>
 <span><span class="co">#&gt; 136 45.90515  0.000000 45.90515 45.90515</span></span>
 <span><span class="co">#&gt; 137 36.17780  0.000000 36.17780 36.17780</span></span>
 <span><span class="co">#&gt; 138 39.79796  0.000000 39.79796 39.79796</span></span>
-<span><span class="co">#&gt; 139 45.87019  3.815730 38.39150 53.34889</span></span>
+<span><span class="co">#&gt; 139 45.87019  3.898463 38.22935 53.51104</span></span>
 <span><span class="co">#&gt; 140 50.08272  0.000000 50.08272 50.08272</span></span>
-<span><span class="co">#&gt; 141 36.27753  5.766408 24.97558 47.57948</span></span>
+<span><span class="co">#&gt; 141 36.27753  5.666878 25.17065 47.38441</span></span>
 <span><span class="co">#&gt; 142 44.64316  0.000000 44.64316 44.64316</span></span>
-<span><span class="co">#&gt; 143 44.88252  3.945734 37.14902 52.61601</span></span>
+<span><span class="co">#&gt; 143 44.88252  3.981887 37.07816 52.68687</span></span>
 <span><span class="co">#&gt; 144 39.73529  0.000000 39.73529 39.73529</span></span>
 <span><span class="co">#&gt; 145 34.06164  0.000000 34.06164 34.06164</span></span>
 <span><span class="co">#&gt; 146 40.18592  0.000000 40.18592 40.18592</span></span>
 <span><span class="co">#&gt; 147 41.17584  0.000000 41.17584 41.17584</span></span>
 <span><span class="co">#&gt; 148 57.76669  0.000000 57.76669 57.76669</span></span>
 <span><span class="co">#&gt; 149 38.18460  0.000000 38.18460 38.18460</span></span>
-<span><span class="co">#&gt; 150 38.61735  4.685081 29.43476 47.79994</span></span>
+<span><span class="co">#&gt; 150 38.61735  4.541612 29.71596 47.51875</span></span>
 <span><span class="co">#&gt; 151 47.19893  0.000000 47.19893 47.19893</span></span>
-<span><span class="co">#&gt; 152 48.18237 10.071505 28.44258 67.92215</span></span>
+<span><span class="co">#&gt; 152 48.18237  9.951741 28.67731 67.68742</span></span>
 <span><span class="co">#&gt; 153 37.32785  0.000000 37.32785 37.32785</span></span>
-<span><span class="co">#&gt; 154 37.89476  4.598487 28.88189 46.90763</span></span>
+<span><span class="co">#&gt; 154 37.89476  4.508068 29.05911 46.73041</span></span>
 <span><span class="co">#&gt; 155 43.16048  0.000000 43.16048 43.16048</span></span>
 <span><span class="co">#&gt; 156 41.40349  0.000000 41.40349 41.40349</span></span>
 <span><span class="co">#&gt; 157 30.15733  0.000000 30.15733 30.15733</span></span>
 <span><span class="co">#&gt; 158 35.84353  0.000000 35.84353 35.84353</span></span>
 <span><span class="co">#&gt; 159 40.95250  0.000000 40.95250 40.95250</span></span>
-<span><span class="co">#&gt; 160 46.76086  9.716748 27.71638 65.80533</span></span>
-<span><span class="co">#&gt; 161 36.09804  5.601329 25.11964 47.07645</span></span>
+<span><span class="co">#&gt; 160 46.76086  9.734206 27.68216 65.83955</span></span>
+<span><span class="co">#&gt; 161 36.09804  5.546437 25.22723 46.96886</span></span>
 <span><span class="co">#&gt; 162 41.37928  0.000000 41.37928 41.37928</span></span>
 <span><span class="co">#&gt; 163 50.17316  0.000000 50.17316 50.17316</span></span>
 <span><span class="co">#&gt; 164 45.35226  0.000000 45.35226 45.35226</span></span>
 <span><span class="co">#&gt; 165 39.06491  0.000000 39.06491 39.06491</span></span>
-<span><span class="co">#&gt; 166 39.39597  4.630383 30.32059 48.47136</span></span>
-<span><span class="co">#&gt; 167 43.69372  3.877623 36.09372 51.29373</span></span>
+<span><span class="co">#&gt; 166 39.39597  4.522788 30.53147 48.26048</span></span>
+<span><span class="co">#&gt; 167 43.69372  3.909745 36.03076 51.35668</span></span>
 <span><span class="co">#&gt; 168 42.11960  0.000000 42.11960 42.11960</span></span>
 <span><span class="co">#&gt; 169 29.81042  0.000000 29.81042 29.81042</span></span>
 <span><span class="co">#&gt; 170 42.57055  0.000000 42.57055 42.57055</span></span>
 <span><span class="co">#&gt; 171 47.81652  0.000000 47.81652 47.81652</span></span>
 <span><span class="co">#&gt; 172 68.06024  0.000000 68.06024 68.06024</span></span>
 <span><span class="co">#&gt; 173 35.62071  0.000000 35.62071 35.62071</span></span>
-<span><span class="co">#&gt; 174 40.83933  4.588502 31.84604 49.83263</span></span>
-<span><span class="co">#&gt; 175 45.83438  3.864369 38.26036 53.40841</span></span>
-<span><span class="co">#&gt; 176 51.72310  9.839341 32.43834 71.00785</span></span>
+<span><span class="co">#&gt; 174 40.83933  4.513855 31.99234 49.68633</span></span>
+<span><span class="co">#&gt; 175 45.83438  3.920967 38.14943 53.51934</span></span>
+<span><span class="co">#&gt; 176 51.72310  9.852079 32.41338 71.03282</span></span>
 <span><span class="co">#&gt; 177 33.89134  0.000000 33.89134 33.89134</span></span>
 <span><span class="co">#&gt; 178 36.42808  0.000000 36.42808 36.42808</span></span>
 <span><span class="co">#&gt; 179 37.57519  0.000000 37.57519 37.57519</span></span>
@@ -1374,57 +1396,57 @@ customize the calculations via the <code>opts</code> list:</p>
 <span><span class="co">#&gt; 181 19.54516  0.000000 19.54516 19.54516</span></span>
 <span><span class="co">#&gt; 182 31.13541  0.000000 31.13541 31.13541</span></span>
 <span><span class="co">#&gt; 183 40.89955  0.000000 40.89955 40.89955</span></span>
-<span><span class="co">#&gt; 184 42.08852 10.010124 22.46904 61.70801</span></span>
+<span><span class="co">#&gt; 184 42.08852  9.901095 22.68273 61.49431</span></span>
 <span><span class="co">#&gt; 185 22.18809  0.000000 22.18809 22.18809</span></span>
 <span><span class="co">#&gt; 186 41.05857  0.000000 41.05857 41.05857</span></span>
 <span><span class="co">#&gt; 187 37.32452  0.000000 37.32452 37.32452</span></span>
-<span><span class="co">#&gt; 188 47.28633 10.270689 27.15614 67.41651</span></span>
-<span><span class="co">#&gt; 189 35.28933  5.547618 24.41620 46.16247</span></span>
+<span><span class="co">#&gt; 188 47.28633 10.015989 27.65535 66.91730</span></span>
+<span><span class="co">#&gt; 189 35.28933  5.625741 24.26308 46.31558</span></span>
 <span><span class="co">#&gt; 190 43.12432  0.000000 43.12432 43.12432</span></span>
 <span><span class="co">#&gt; 191 41.99349  0.000000 41.99349 41.99349</span></span>
-<span><span class="co">#&gt; 192 49.12250  9.958708 29.60379 68.64121</span></span>
+<span><span class="co">#&gt; 192 49.12250  9.996047 29.53061 68.71439</span></span>
 <span><span class="co">#&gt; 193 44.03080  0.000000 44.03080 44.03080</span></span>
 <span><span class="co">#&gt; 194 38.66417  0.000000 38.66417 38.66417</span></span>
 <span><span class="co">#&gt; 195 53.45993  0.000000 53.45993 53.45993</span></span>
-<span><span class="co">#&gt; 196 53.14026 10.159131 33.22873 73.05180</span></span>
+<span><span class="co">#&gt; 196 53.14026  9.940441 33.65736 72.62317</span></span>
 <span><span class="co">#&gt; 197 29.81948  0.000000 29.81948 29.81948</span></span>
 <span><span class="co">#&gt; 198 30.43859  0.000000 30.43859 30.43859</span></span>
 <span><span class="co">#&gt; 199 40.18095  0.000000 40.18095 40.18095</span></span>
-<span><span class="co">#&gt; 200 48.07272  9.949589 28.57188 67.57355</span></span>
+<span><span class="co">#&gt; 200 48.07272  9.902166 28.66483 67.48060</span></span>
 <span><span class="co">#&gt; 201 26.78578  0.000000 26.78578 26.78578</span></span>
 <span><span class="co">#&gt; 202 34.55115  0.000000 34.55115 34.55115</span></span>
-<span><span class="co">#&gt; 203 44.66449  3.946102 36.93027 52.39871</span></span>
+<span><span class="co">#&gt; 203 44.66449  4.045388 36.73567 52.59330</span></span>
 <span><span class="co">#&gt; 204 40.06421  0.000000 40.06421 40.06421</span></span>
-<span><span class="co">#&gt; 205 36.66313  5.652236 25.58495 47.74131</span></span>
+<span><span class="co">#&gt; 205 36.66313  5.576222 25.73394 47.59233</span></span>
 <span><span class="co">#&gt; 206 43.09329  0.000000 43.09329 43.09329</span></span>
-<span><span class="co">#&gt; 207 46.09670  3.942381 38.36977 53.82362</span></span>
+<span><span class="co">#&gt; 207 46.09670  3.962213 38.33090 53.86249</span></span>
 <span><span class="co">#&gt; 208 45.71567  0.000000 45.71567 45.71567</span></span>
 <span><span class="co">#&gt; 209 40.74992  0.000000 40.74992 40.74992</span></span>
 <span><span class="co">#&gt; 210 44.74635  0.000000 44.74635 44.74635</span></span>
-<span><span class="co">#&gt; 211 47.51420  3.841475 39.98505 55.04336</span></span>
-<span><span class="co">#&gt; 212 53.24620  9.856758 33.92731 72.56509</span></span>
-<span><span class="co">#&gt; 213 40.35635  6.402761 27.80717 52.90553</span></span>
-<span><span class="co">#&gt; 214 45.16757  5.165126 35.04411 55.29103</span></span>
-<span><span class="co">#&gt; 215 50.02199  4.019548 42.14382 57.90016</span></span>
-<span><span class="co">#&gt; 216 56.03985 10.090168 36.26349 75.81622</span></span>
+<span><span class="co">#&gt; 211 47.51420  3.925230 39.82089 55.20751</span></span>
+<span><span class="co">#&gt; 212 53.24620  9.811430 34.01615 72.47624</span></span>
+<span><span class="co">#&gt; 213 40.35635  6.201982 28.20069 52.51201</span></span>
+<span><span class="co">#&gt; 214 45.16757  4.949405 35.46691 54.86822</span></span>
+<span><span class="co">#&gt; 215 50.02199  3.991961 42.19789 57.84609</span></span>
+<span><span class="co">#&gt; 216 56.03985 10.178516 36.09033 75.98938</span></span>
 <span><span class="co">#&gt; 217 40.14674  0.000000 40.14674 40.14674</span></span>
 <span><span class="co">#&gt; 218 48.75859  0.000000 48.75859 48.75859</span></span>
 <span><span class="co">#&gt; 219 46.43462  0.000000 46.43462 46.43462</span></span>
-<span><span class="co">#&gt; 220 53.05319 10.022308 33.40982 72.69655</span></span>
+<span><span class="co">#&gt; 220 53.05319  9.939539 33.57205 72.53433</span></span>
 <span><span class="co">#&gt; 221 29.33990  0.000000 29.33990 29.33990</span></span>
-<span><span class="co">#&gt; 222 36.24424  4.569070 27.28903 45.19946</span></span>
-<span><span class="co">#&gt; 223 42.39946  3.833426 34.88609 49.91284</span></span>
+<span><span class="co">#&gt; 222 36.24424  4.483110 27.45751 45.03098</span></span>
+<span><span class="co">#&gt; 223 42.39946  3.897093 34.76130 50.03763</span></span>
 <span><span class="co">#&gt; 224 47.93165  0.000000 47.93165 47.93165</span></span>
-<span><span class="co">#&gt; 225 36.59443  5.410060 25.99091 47.19795</span></span>
+<span><span class="co">#&gt; 225 36.59443  5.467712 25.87791 47.31095</span></span>
 <span><span class="co">#&gt; 226 41.11632  0.000000 41.11632 41.11632</span></span>
 <span><span class="co">#&gt; 227 47.05889  0.000000 47.05889 47.05889</span></span>
 <span><span class="co">#&gt; 228 52.24599  0.000000 52.24599 52.24599</span></span>
-<span><span class="co">#&gt; 229 45.12054  5.590055 34.16424 56.07685</span></span>
+<span><span class="co">#&gt; 229 45.12054  5.684836 33.97847 56.26262</span></span>
 <span><span class="co">#&gt; 230 54.14236  0.000000 54.14236 54.14236</span></span>
 <span><span class="co">#&gt; 231 50.44618  0.000000 50.44618 50.44618</span></span>
-<span><span class="co">#&gt; 232 58.53593 10.098456 38.74332 78.32854</span></span>
+<span><span class="co">#&gt; 232 58.53593 10.112464 38.71587 78.35600</span></span>
 <span><span class="co">#&gt; 233 37.53657  0.000000 37.53657 37.53657</span></span>
-<span><span class="co">#&gt; 234 44.28282  4.537493 35.38950 53.17614</span></span>
+<span><span class="co">#&gt; 234 44.28282  4.481457 35.49933 53.06631</span></span>
 <span><span class="co">#&gt; 235 49.45840  0.000000 49.45840 49.45840</span></span>
 <span><span class="co">#&gt; 236 59.12866  0.000000 59.12866 59.12866</span></span>
 <span><span class="co">#&gt; 237 40.31268  0.000000 40.31268 40.31268</span></span>
@@ -1433,19 +1455,19 @@ customize the calculations via the <code>opts</code> list:</p>
 <span><span class="co">#&gt; 240 56.13116  0.000000 56.13116 56.13116</span></span>
 <span><span class="co">#&gt; 241 32.82981  0.000000 32.82981 32.82981</span></span>
 <span><span class="co">#&gt; 242 46.53837  0.000000 46.53837 46.53837</span></span>
-<span><span class="co">#&gt; 243 44.46016  3.908785 36.79909 52.12124</span></span>
+<span><span class="co">#&gt; 243 44.46016  3.902965 36.81049 52.10984</span></span>
 <span><span class="co">#&gt; 244 51.81265  0.000000 51.81265 51.81265</span></span>
-<span><span class="co">#&gt; 245 27.76886  5.724520 16.54901 38.98872</span></span>
+<span><span class="co">#&gt; 245 27.76886  5.697339 16.60229 38.93544</span></span>
 <span><span class="co">#&gt; 246 29.91939  0.000000 29.91939 29.91939</span></span>
-<span><span class="co">#&gt; 247 40.70944  3.989268 32.89061 48.52826</span></span>
-<span><span class="co">#&gt; 248 44.37942 10.024406 24.73194 64.02689</span></span>
-<span><span class="co">#&gt; 249 43.47695  5.587551 32.52555 54.42835</span></span>
+<span><span class="co">#&gt; 247 40.70944  3.983213 32.90248 48.51639</span></span>
+<span><span class="co">#&gt; 248 44.37942 10.050403 24.68099 64.07784</span></span>
+<span><span class="co">#&gt; 249 43.47695  5.575773 32.54864 54.40527</span></span>
 <span><span class="co">#&gt; 250 51.05656  0.000000 51.05656 51.05656</span></span>
 <span><span class="co">#&gt; 251 50.50059  0.000000 50.50059 50.50059</span></span>
 <span><span class="co">#&gt; 252 64.11388  0.000000 64.11388 64.11388</span></span>
 <span><span class="co">#&gt; 253 32.21843  0.000000 32.21843 32.21843</span></span>
 <span><span class="co">#&gt; 254 29.64732  0.000000 29.64732 29.64732</span></span>
-<span><span class="co">#&gt; 255 42.48707  3.922243 34.79961 50.17452</span></span>
+<span><span class="co">#&gt; 255 42.48707  3.902964 34.83740 50.13673</span></span>
 <span><span class="co">#&gt; 256 45.09919  0.000000 45.09919 45.09919</span></span>
 <span><span class="co">#&gt; 257 39.75659  0.000000 39.75659 39.75659</span></span>
 <span><span class="co">#&gt; 258 37.28894  0.000000 37.28894 37.28894</span></span>
@@ -1461,15 +1483,15 @@ customize the calculations via the <code>opts</code> list:</p>
 <span><span class="co">#&gt; 268 52.07431  0.000000 52.07431 52.07431</span></span>
 <span><span class="co">#&gt; 269 42.21411  0.000000 42.21411 42.21411</span></span>
 <span><span class="co">#&gt; 270 45.02901  0.000000 45.02901 45.02901</span></span>
-<span><span class="co">#&gt; 271 50.22530  3.825954 42.72657 57.72404</span></span>
-<span><span class="co">#&gt; 272 56.56084  9.797419 37.35825 75.76343</span></span>
+<span><span class="co">#&gt; 271 50.22530  3.909358 42.56310 57.88751</span></span>
+<span><span class="co">#&gt; 272 56.56084  9.775559 37.40110 75.72058</span></span>
 <span><span class="co">#&gt; 273 30.98338  0.000000 30.98338 30.98338</span></span>
 <span><span class="co">#&gt; 274 44.72932  0.000000 44.72932 44.72932</span></span>
 <span><span class="co">#&gt; 275 40.68711  0.000000 40.68711 40.68711</span></span>
 <span><span class="co">#&gt; 276 34.71530  0.000000 34.71530 34.71530</span></span>
 <span><span class="co">#&gt; 277 27.30752  0.000000 27.30752 27.30752</span></span>
 <span><span class="co">#&gt; 278 37.31585  0.000000 37.31585 37.31585</span></span>
-<span><span class="co">#&gt; 279 42.23592  3.812511 34.76354 49.70830</span></span>
+<span><span class="co">#&gt; 279 42.23592  3.909892 34.57267 49.89917</span></span>
 <span><span class="co">#&gt; 280 44.83000  0.000000 44.83000 44.83000</span></span>
 <span><span class="co">#&gt; 281 32.93042  0.000000 32.93042 32.93042</span></span>
 <span><span class="co">#&gt; 282 44.91911  0.000000 44.91911 44.91911</span></span>
@@ -1478,57 +1500,57 @@ customize the calculations via the <code>opts</code> list:</p>
 <span><span class="co">#&gt; 285 46.60130  0.000000 46.60130 46.60130</span></span>
 <span><span class="co">#&gt; 286 40.89786  0.000000 40.89786 40.89786</span></span>
 <span><span class="co">#&gt; 287 46.66708  0.000000 46.66708 46.66708</span></span>
-<span><span class="co">#&gt; 288 53.97575 10.057923 34.26259 73.68892</span></span>
-<span><span class="co">#&gt; 289 34.51394  6.075404 22.60637 46.42152</span></span>
-<span><span class="co">#&gt; 290 40.31956  5.056736 30.40854 50.23058</span></span>
+<span><span class="co">#&gt; 288 53.97575  9.930493 34.51234 73.43916</span></span>
+<span><span class="co">#&gt; 289 34.51394  5.957390 22.83767 46.19021</span></span>
+<span><span class="co">#&gt; 290 40.31956  4.857644 30.79875 49.84037</span></span>
 <span><span class="co">#&gt; 291 43.83270  0.000000 43.83270 43.83270</span></span>
 <span><span class="co">#&gt; 292 44.11604  0.000000 44.11604 44.11604</span></span>
 <span><span class="co">#&gt; 293 38.29612  0.000000 38.29612 38.29612</span></span>
-<span><span class="co">#&gt; 294 42.38074  4.603705 33.35764 51.40383</span></span>
+<span><span class="co">#&gt; 294 42.38074  4.486567 33.58723 51.17425</span></span>
 <span><span class="co">#&gt; 295 51.38570  0.000000 51.38570 51.38570</span></span>
 <span><span class="co">#&gt; 296 56.20979  0.000000 56.20979 56.20979</span></span>
-<span><span class="co">#&gt; 297 35.93809  5.700391 24.76553 47.11065</span></span>
+<span><span class="co">#&gt; 297 35.93809  5.627697 24.90801 46.96818</span></span>
 <span><span class="co">#&gt; 298 43.45819  0.000000 43.45819 43.45819</span></span>
 <span><span class="co">#&gt; 299 38.38741  0.000000 38.38741 38.38741</span></span>
 <span><span class="co">#&gt; 300 56.42818  0.000000 56.42818 56.42818</span></span>
 <span><span class="co">#&gt; 301 39.05050  0.000000 39.05050 39.05050</span></span>
-<span><span class="co">#&gt; 302 44.66707  4.560457 35.72874 53.60540</span></span>
-<span><span class="co">#&gt; 303 49.86836  3.832553 42.35670 57.38003</span></span>
+<span><span class="co">#&gt; 302 44.66707  4.480800 35.88486 53.44927</span></span>
+<span><span class="co">#&gt; 303 49.86836  3.902930 42.21876 57.51797</span></span>
 <span><span class="co">#&gt; 304 54.09200  0.000000 54.09200 54.09200</span></span>
 <span><span class="co">#&gt; 305 31.40521  0.000000 31.40521 31.40521</span></span>
 <span><span class="co">#&gt; 306 46.13330  0.000000 46.13330 46.13330</span></span>
 <span><span class="co">#&gt; 307 45.29845  0.000000 45.29845 45.29845</span></span>
 <span><span class="co">#&gt; 308 28.06936  0.000000 28.06936 28.06936</span></span>
-<span><span class="co">#&gt; 309 39.05960  5.460248 28.35771 49.76149</span></span>
+<span><span class="co">#&gt; 309 39.05960  5.489650 28.30008 49.81911</span></span>
 <span><span class="co">#&gt; 310 42.50283  0.000000 42.50283 42.50283</span></span>
 <span><span class="co">#&gt; 311 46.45368  0.000000 46.45368 46.45368</span></span>
 <span><span class="co">#&gt; 312 64.97366  0.000000 64.97366 64.97366</span></span>
-<span><span class="co">#&gt; 313 30.67876  6.241155 18.44632 42.91120</span></span>
-<span><span class="co">#&gt; 314 35.63991  5.096296 25.65135 45.62847</span></span>
-<span><span class="co">#&gt; 315 41.27878  3.978839 33.48040 49.07716</span></span>
+<span><span class="co">#&gt; 313 30.67876  6.006172 18.90688 42.45064</span></span>
+<span><span class="co">#&gt; 314 35.63991  4.856780 26.12080 45.15902</span></span>
+<span><span class="co">#&gt; 315 41.27878  3.952519 33.53199 49.02558</span></span>
 <span><span class="co">#&gt; 316 43.97847  0.000000 43.97847 43.97847</span></span>
 <span><span class="co">#&gt; 317 35.33466  0.000000 35.33466 35.33466</span></span>
 <span><span class="co">#&gt; 318 39.34378  0.000000 39.34378 39.34378</span></span>
 <span><span class="co">#&gt; 319 41.27633  0.000000 41.27633 41.27633</span></span>
-<span><span class="co">#&gt; 320 50.74572  9.757472 31.62142 69.87001</span></span>
-<span><span class="co">#&gt; 321 34.18429  5.488049 23.42791 44.94067</span></span>
+<span><span class="co">#&gt; 320 50.74572  9.751271 31.63358 69.85786</span></span>
+<span><span class="co">#&gt; 321 34.18429  5.507321 23.39014 44.97844</span></span>
 <span><span class="co">#&gt; 322 39.83058  0.000000 39.83058 39.83058</span></span>
 <span><span class="co">#&gt; 323 43.49673  0.000000 43.49673 43.49673</span></span>
 <span><span class="co">#&gt; 324 44.06114  0.000000 44.06114 44.06114</span></span>
 <span><span class="co">#&gt; 325 41.43742  0.000000 41.43742 41.43742</span></span>
-<span><span class="co">#&gt; 326 40.68384  4.594496 31.67880 49.68889</span></span>
+<span><span class="co">#&gt; 326 40.68384  4.535293 31.79483 49.57285</span></span>
 <span><span class="co">#&gt; 327 46.16954  0.000000 46.16954 46.16954</span></span>
 <span><span class="co">#&gt; 328 54.24024  0.000000 54.24024 54.24024</span></span>
 <span><span class="co">#&gt; 329 36.61831  0.000000 36.61831 36.61831</span></span>
 <span><span class="co">#&gt; 330 42.09272  0.000000 42.09272 42.09272</span></span>
 <span><span class="co">#&gt; 331 50.69556  0.000000 50.69556 50.69556</span></span>
 <span><span class="co">#&gt; 332 51.72563  0.000000 51.72563 51.72563</span></span>
-<span><span class="co">#&gt; 333 32.08271  6.273356 19.78716 44.37826</span></span>
-<span><span class="co">#&gt; 334 36.39974  5.107527 26.38917 46.41031</span></span>
-<span><span class="co">#&gt; 335 41.38610  3.998475 33.54923 49.22297</span></span>
+<span><span class="co">#&gt; 333 32.08271  6.017621 20.28839 43.87703</span></span>
+<span><span class="co">#&gt; 334 36.39974  4.863712 26.86704 45.93244</span></span>
+<span><span class="co">#&gt; 335 41.38610  3.961198 33.62230 49.14991</span></span>
 <span><span class="co">#&gt; 336 53.89947  0.000000 53.89947 53.89947</span></span>
-<span><span class="co">#&gt; 337 31.94884  6.044153 20.10252 43.79516</span></span>
-<span><span class="co">#&gt; 338 36.34138  5.044239 26.45485 46.22791</span></span>
+<span><span class="co">#&gt; 337 31.94884  5.931667 20.32299 43.57469</span></span>
+<span><span class="co">#&gt; 338 36.34138  4.850948 26.83370 45.84906</span></span>
 <span><span class="co">#&gt; 339 39.94420  0.000000 39.94420 39.94420</span></span>
 <span><span class="co">#&gt; 340 56.42482  0.000000 56.42482 56.42482</span></span>
 <span><span class="co">#&gt; 341 41.86385  0.000000 41.86385 41.86385</span></span>
@@ -1536,11 +1558,11 @@ customize the calculations via the <code>opts</code> list:</p>
 <span><span class="co">#&gt; 343 38.68927  0.000000 38.68927 38.68927</span></span>
 <span><span class="co">#&gt; 344 62.88743  0.000000 62.88743 62.88743</span></span>
 <span><span class="co">#&gt; 345 28.85343  0.000000 28.85343 28.85343</span></span>
-<span><span class="co">#&gt; 346 38.89808  4.617791 29.84738 47.94879</span></span>
+<span><span class="co">#&gt; 346 38.89808  4.576075 29.92914 47.86703</span></span>
 <span><span class="co">#&gt; 347 49.29495  0.000000 49.29495 49.29495</span></span>
-<span><span class="co">#&gt; 348 48.90884  9.963862 29.38003 68.43765</span></span>
+<span><span class="co">#&gt; 348 48.90884  9.907125 29.49123 68.32645</span></span>
 <span><span class="co">#&gt; 349 28.74029  0.000000 28.74029 28.74029</span></span>
-<span><span class="co">#&gt; 350 36.38836  4.589491 27.39312 45.38359</span></span>
+<span><span class="co">#&gt; 350 36.38836  4.505578 27.55759 45.21913</span></span>
 <span><span class="co">#&gt; 351 43.59994  0.000000 43.59994 43.59994</span></span>
 <span><span class="co">#&gt; 352 57.38616  0.000000 57.38616 57.38616</span></span>
 <span><span class="co">#&gt; 353 35.36824  0.000000 35.36824 35.36824</span></span>
@@ -1548,53 +1570,53 @@ customize the calculations via the <code>opts</code> list:</p>
 <span><span class="co">#&gt; 355 31.27551  0.000000 31.27551 31.27551</span></span>
 <span><span class="co">#&gt; 356 54.13245  0.000000 54.13245 54.13245</span></span>
 <span><span class="co">#&gt; 357 25.97050  0.000000 25.97050 25.97050</span></span>
-<span><span class="co">#&gt; 358 34.04514  4.600649 25.02804 43.06225</span></span>
-<span><span class="co">#&gt; 359 40.67015  3.877180 33.07102 48.26928</span></span>
-<span><span class="co">#&gt; 360 44.36054  9.891671 24.97322 63.74786</span></span>
-<span><span class="co">#&gt; 361 39.69391  6.038756 27.85817 51.52966</span></span>
-<span><span class="co">#&gt; 362 44.79720  5.040215 34.91856 54.67584</span></span>
+<span><span class="co">#&gt; 358 34.04514  4.530506 25.16551 42.92477</span></span>
+<span><span class="co">#&gt; 359 40.67015  3.935987 32.95576 48.38455</span></span>
+<span><span class="co">#&gt; 360 44.36054  9.881626 24.99291 63.72817</span></span>
+<span><span class="co">#&gt; 361 39.69391  5.928923 28.07344 51.31439</span></span>
+<span><span class="co">#&gt; 362 44.79720  4.850306 35.29078 54.30363</span></span>
 <span><span class="co">#&gt; 363 51.17493  0.000000 51.17493 51.17493</span></span>
 <span><span class="co">#&gt; 364 48.44043  0.000000 48.44043 48.44043</span></span>
 <span><span class="co">#&gt; 365 43.33128  0.000000 43.33128 43.33128</span></span>
-<span><span class="co">#&gt; 366 46.45918  4.627695 37.38907 55.52930</span></span>
+<span><span class="co">#&gt; 366 46.45918  4.480455 37.67765 55.24072</span></span>
 <span><span class="co">#&gt; 367 55.93546  0.000000 55.93546 55.93546</span></span>
 <span><span class="co">#&gt; 368 54.15312  0.000000 54.15312 54.15312</span></span>
-<span><span class="co">#&gt; 369 33.79699  5.449721 23.11573 44.47824</span></span>
+<span><span class="co">#&gt; 369 33.79699  5.494010 23.02893 44.56505</span></span>
 <span><span class="co">#&gt; 370 40.60252  0.000000 40.60252 40.60252</span></span>
 <span><span class="co">#&gt; 371 44.44715  0.000000 44.44715 44.44715</span></span>
 <span><span class="co">#&gt; 372 40.54161  0.000000 40.54161 40.54161</span></span>
 <span><span class="co">#&gt; 373 33.95563  0.000000 33.95563 33.95563</span></span>
-<span><span class="co">#&gt; 374 36.84083  4.557227 27.90882 45.77283</span></span>
+<span><span class="co">#&gt; 374 36.84083  4.476985 28.06610 45.61555</span></span>
 <span><span class="co">#&gt; 375 43.67802  0.000000 43.67802 43.67802</span></span>
 <span><span class="co">#&gt; 376 42.76023  0.000000 42.76023 42.76023</span></span>
-<span><span class="co">#&gt; 377 34.18486  5.579609 23.24903 45.12069</span></span>
+<span><span class="co">#&gt; 377 34.18486  5.668788 23.07424 45.29548</span></span>
 <span><span class="co">#&gt; 378 42.82678  0.000000 42.82678 42.82678</span></span>
 <span><span class="co">#&gt; 379 39.59218  0.000000 39.59218 39.59218</span></span>
-<span><span class="co">#&gt; 380 47.93427 10.008453 28.31806 67.55047</span></span>
+<span><span class="co">#&gt; 380 47.93427 10.050579 28.23549 67.63304</span></span>
 <span><span class="co">#&gt; 381 33.49216  0.000000 33.49216 33.49216</span></span>
 <span><span class="co">#&gt; 382 35.39266  0.000000 35.39266 35.39266</span></span>
-<span><span class="co">#&gt; 383 42.88943  3.826371 35.38988 50.38898</span></span>
+<span><span class="co">#&gt; 383 42.88943  3.887415 35.27024 50.50863</span></span>
 <span><span class="co">#&gt; 384 42.36266  0.000000 42.36266 42.36266</span></span>
 <span><span class="co">#&gt; 385 48.54368  0.000000 48.54368 48.54368</span></span>
 <span><span class="co">#&gt; 386 43.94366  0.000000 43.94366 43.94366</span></span>
-<span><span class="co">#&gt; 387 50.98218  3.964647 43.21162 58.75275</span></span>
+<span><span class="co">#&gt; 387 50.98218  3.925026 43.28927 58.67509</span></span>
 <span><span class="co">#&gt; 388 47.91204  0.000000 47.91204 47.91204</span></span>
 <span><span class="co">#&gt; 389 20.72928  0.000000 20.72928 20.72928</span></span>
 <span><span class="co">#&gt; 390 28.00599  0.000000 28.00599 28.00599</span></span>
 <span><span class="co">#&gt; 391 40.19255  0.000000 40.19255 40.19255</span></span>
 <span><span class="co">#&gt; 392 37.79360  0.000000 37.79360 37.79360</span></span>
-<span><span class="co">#&gt; 393 32.17343  5.703668 20.99445 43.35242</span></span>
+<span><span class="co">#&gt; 393 32.17343  5.657069 21.08578 43.26109</span></span>
 <span><span class="co">#&gt; 394 36.75177  0.000000 36.75177 36.75177</span></span>
-<span><span class="co">#&gt; 395 42.75025  3.947676 35.01295 50.48755</span></span>
-<span><span class="co">#&gt; 396 47.37158  9.941685 27.88623 66.85692</span></span>
+<span><span class="co">#&gt; 395 42.75025  3.960465 34.98788 50.51262</span></span>
+<span><span class="co">#&gt; 396 47.37158  9.973234 27.82440 66.91876</span></span>
 <span><span class="co">#&gt; 397 34.59822  0.000000 34.59822 34.59822</span></span>
 <span><span class="co">#&gt; 398 39.32034  0.000000 39.32034 39.32034</span></span>
 <span><span class="co">#&gt; 399 40.65702  0.000000 40.65702 40.65702</span></span>
-<span><span class="co">#&gt; 400 48.52002  9.754107 29.40232 67.63771</span></span>
-<span><span class="co">#&gt; 401 40.41786  5.599975 29.44211 51.39361</span></span>
+<span><span class="co">#&gt; 400 48.52002  9.751493 29.40744 67.63259</span></span>
+<span><span class="co">#&gt; 401 40.41786  5.649269 29.34549 51.49022</span></span>
 <span><span class="co">#&gt; 402 43.03255  0.000000 43.03255 43.03255</span></span>
 <span><span class="co">#&gt; 403 54.65715  0.000000 54.65715 54.65715</span></span>
-<span><span class="co">#&gt; 404 55.54195 10.016952 35.90908 75.17481</span></span>
+<span><span class="co">#&gt; 404 55.54195 10.010069 35.92257 75.16132</span></span>
 <span><span class="co">#&gt; 405 35.55742  0.000000 35.55742 35.55742</span></span>
 <span><span class="co">#&gt; 406 43.70215  0.000000 43.70215 43.70215</span></span>
 <span><span class="co">#&gt; 407 42.52157  0.000000 42.52157 42.52157</span></span>
@@ -1602,47 +1624,47 @@ customize the calculations via the <code>opts</code> list:</p>
 <span><span class="co">#&gt; 409 32.03460  0.000000 32.03460 32.03460</span></span>
 <span><span class="co">#&gt; 410 29.45107  0.000000 29.45107 29.45107</span></span>
 <span><span class="co">#&gt; 411 45.35138  0.000000 45.35138 45.35138</span></span>
-<span><span class="co">#&gt; 412 45.33026  9.973320 25.78291 64.87760</span></span>
+<span><span class="co">#&gt; 412 45.33026  9.878323 25.96910 64.69141</span></span>
 <span><span class="co">#&gt; 413 38.73784  0.000000 38.73784 38.73784</span></span>
-<span><span class="co">#&gt; 414 39.30063  4.568582 30.34637 48.25488</span></span>
+<span><span class="co">#&gt; 414 39.30063  4.514555 30.45226 48.14899</span></span>
 <span><span class="co">#&gt; 415 41.42283  0.000000 41.42283 41.42283</span></span>
 <span><span class="co">#&gt; 416 47.32385  0.000000 47.32385 47.32385</span></span>
-<span><span class="co">#&gt; 417 40.41284  5.561339 29.51282 51.31287</span></span>
+<span><span class="co">#&gt; 417 40.41284  5.619435 29.39895 51.42673</span></span>
 <span><span class="co">#&gt; 418 47.55310  0.000000 47.55310 47.55310</span></span>
 <span><span class="co">#&gt; 419 49.06509  0.000000 49.06509 49.06509</span></span>
-<span><span class="co">#&gt; 420 53.79511 10.039751 34.11756 73.47266</span></span>
+<span><span class="co">#&gt; 420 53.79511 10.025469 34.14555 73.44467</span></span>
 <span><span class="co">#&gt; 421 29.22591  0.000000 29.22591 29.22591</span></span>
 <span><span class="co">#&gt; 422 40.08175  0.000000 40.08175 40.08175</span></span>
 <span><span class="co">#&gt; 423 45.68142  0.000000 45.68142 45.68142</span></span>
 <span><span class="co">#&gt; 424 41.47403  0.000000 41.47403 41.47403</span></span>
-<span><span class="co">#&gt; 425 37.55612  6.137357 25.52712 49.58512</span></span>
-<span><span class="co">#&gt; 426 41.98123  5.119300 31.94758 52.01487</span></span>
+<span><span class="co">#&gt; 425 37.55612  6.003896 25.78870 49.32354</span></span>
+<span><span class="co">#&gt; 426 41.98123  4.899731 32.37793 51.58452</span></span>
 <span><span class="co">#&gt; 427 42.51970  0.000000 42.51970 42.51970</span></span>
 <span><span class="co">#&gt; 428 69.36099  0.000000 69.36099 69.36099</span></span>
 <span><span class="co">#&gt; 429 42.39760  0.000000 42.39760 42.39760</span></span>
 <span><span class="co">#&gt; 430 43.72376  0.000000 43.72376 43.72376</span></span>
 <span><span class="co">#&gt; 431 49.47601  0.000000 49.47601 49.47601</span></span>
 <span><span class="co">#&gt; 432 51.94188  0.000000 51.94188 51.94188</span></span>
-<span><span class="co">#&gt; 433 31.77722  5.662285 20.67934 42.87509</span></span>
+<span><span class="co">#&gt; 433 31.77722  5.628062 20.74642 42.80802</span></span>
 <span><span class="co">#&gt; 434 40.59100  0.000000 40.59100 40.59100</span></span>
 <span><span class="co">#&gt; 435 39.97833  0.000000 39.97833 39.97833</span></span>
 <span><span class="co">#&gt; 436 31.69049  0.000000 31.69049 31.69049</span></span>
-<span><span class="co">#&gt; 437 33.99809  5.526906 23.16556 44.83063</span></span>
+<span><span class="co">#&gt; 437 33.99809  5.589321 23.04322 44.95296</span></span>
 <span><span class="co">#&gt; 438 37.20517  0.000000 37.20517 37.20517</span></span>
 <span><span class="co">#&gt; 439 46.28740  0.000000 46.28740 46.28740</span></span>
-<span><span class="co">#&gt; 440 49.81365  9.900280 30.40946 69.21784</span></span>
-<span><span class="co">#&gt; 441 35.15913  6.307848 22.79598 47.52229</span></span>
-<span><span class="co">#&gt; 442 40.63997  5.127962 30.58935 50.69059</span></span>
-<span><span class="co">#&gt; 443 46.80529  4.022312 38.92171 54.68888</span></span>
+<span><span class="co">#&gt; 440 49.81365  9.935646 30.34014 69.28716</span></span>
+<span><span class="co">#&gt; 441 35.15913  6.035631 23.32951 46.98875</span></span>
+<span><span class="co">#&gt; 442 40.63997  4.880852 31.07367 50.20626</span></span>
+<span><span class="co">#&gt; 443 46.80529  3.993552 38.97807 54.63251</span></span>
 <span><span class="co">#&gt; 444 41.58720  0.000000 41.58720 41.58720</span></span>
 <span><span class="co">#&gt; 445 32.17365  0.000000 32.17365 32.17365</span></span>
-<span><span class="co">#&gt; 446 37.07479  4.557725 28.14182 46.00777</span></span>
+<span><span class="co">#&gt; 446 37.07479  4.504129 28.24686 45.90272</span></span>
 <span><span class="co">#&gt; 447 40.69375  0.000000 40.69375 40.69375</span></span>
-<span><span class="co">#&gt; 448 47.52336  9.774417 28.36585 66.68086</span></span>
+<span><span class="co">#&gt; 448 47.52336  9.817237 28.28193 66.76479</span></span>
 <span><span class="co">#&gt; 449 32.28771  0.000000 32.28771 32.28771</span></span>
 <span><span class="co">#&gt; 450 41.76205  0.000000 41.76205 41.76205</span></span>
 <span><span class="co">#&gt; 451 40.06768  0.000000 40.06768 40.06768</span></span>
-<span><span class="co">#&gt; 452 47.21582  9.811248 27.98613 66.44552</span></span>
+<span><span class="co">#&gt; 452 47.21582  9.809575 27.98941 66.44224</span></span>
 <span><span class="co">#&gt; 453 29.14213  0.000000 29.14213 29.14213</span></span>
 <span><span class="co">#&gt; 454 39.50989  0.000000 39.50989 39.50989</span></span>
 <span><span class="co">#&gt; 455 43.32349  0.000000 43.32349 43.32349</span></span>
@@ -1650,80 +1672,80 @@ customize the calculations via the <code>opts</code> list:</p>
 <span><span class="co">#&gt; 457 40.93020  0.000000 40.93020 40.93020</span></span>
 <span><span class="co">#&gt; 458 42.19406  0.000000 42.19406 42.19406</span></span>
 <span><span class="co">#&gt; 459 41.21057  0.000000 41.21057 41.21057</span></span>
-<span><span class="co">#&gt; 460 49.76205 10.025584 30.11227 69.41184</span></span>
+<span><span class="co">#&gt; 460 49.76205  9.913167 30.33260 69.19150</span></span>
 <span><span class="co">#&gt; 461 38.54330  0.000000 38.54330 38.54330</span></span>
-<span><span class="co">#&gt; 462 41.44104  4.583564 32.45742 50.42466</span></span>
+<span><span class="co">#&gt; 462 41.44104  4.496818 32.62744 50.25464</span></span>
 <span><span class="co">#&gt; 463 43.96324  0.000000 43.96324 43.96324</span></span>
 <span><span class="co">#&gt; 464 42.67652  0.000000 42.67652 42.67652</span></span>
 <span><span class="co">#&gt; 465 22.79584  0.000000 22.79584 22.79584</span></span>
-<span><span class="co">#&gt; 466 33.91004  4.656178 24.78410 43.03598</span></span>
-<span><span class="co">#&gt; 467 41.58421  3.943686 33.85472 49.31369</span></span>
-<span><span class="co">#&gt; 468 44.31106 10.036149 24.64057 63.98155</span></span>
+<span><span class="co">#&gt; 466 33.91004  4.581846 24.92979 42.89030</span></span>
+<span><span class="co">#&gt; 467 41.58421  3.996766 33.75069 49.41772</span></span>
+<span><span class="co">#&gt; 468 44.31106  9.962983 24.78397 63.83815</span></span>
 <span><span class="co">#&gt; 469 31.43559  0.000000 31.43559 31.43559</span></span>
 <span><span class="co">#&gt; 470 38.85064  0.000000 38.85064 38.85064</span></span>
 <span><span class="co">#&gt; 471 48.24288  0.000000 48.24288 48.24288</span></span>
-<span><span class="co">#&gt; 472 46.15940 10.060249 26.44167 65.87712</span></span>
+<span><span class="co">#&gt; 472 46.15940  9.872112 26.81041 65.50838</span></span>
 <span><span class="co">#&gt; 473 44.71302  0.000000 44.71302 44.71302</span></span>
 <span><span class="co">#&gt; 474 51.85370  0.000000 51.85370 51.85370</span></span>
-<span><span class="co">#&gt; 475 50.77548  3.876699 43.17729 58.37367</span></span>
-<span><span class="co">#&gt; 476 58.11432  9.964061 38.58512 77.64352</span></span>
+<span><span class="co">#&gt; 475 50.77548  3.936385 43.06031 58.49066</span></span>
+<span><span class="co">#&gt; 476 58.11432  9.890766 38.72877 77.49986</span></span>
 <span><span class="co">#&gt; 477 30.56757  0.000000 30.56757 30.56757</span></span>
-<span><span class="co">#&gt; 478 35.65607  4.585596 26.66847 44.64367</span></span>
-<span><span class="co">#&gt; 479 41.25037  3.848559 33.70733 48.79340</span></span>
-<span><span class="co">#&gt; 480 45.88736  9.839488 26.60232 65.17240</span></span>
-<span><span class="co">#&gt; 481 37.37624  6.269796 25.08766 49.66481</span></span>
-<span><span class="co">#&gt; 482 41.66978  5.112281 31.64989 51.68967</span></span>
-<span><span class="co">#&gt; 483 45.99979  4.002525 38.15499 53.84460</span></span>
+<span><span class="co">#&gt; 478 35.65607  4.511284 26.81412 44.49803</span></span>
+<span><span class="co">#&gt; 479 41.25037  3.907063 33.59266 48.90807</span></span>
+<span><span class="co">#&gt; 480 45.88736  9.852240 26.57733 65.19740</span></span>
+<span><span class="co">#&gt; 481 37.37624  6.018730 25.57974 49.17273</span></span>
+<span><span class="co">#&gt; 482 41.66978  4.866972 32.13069 51.20887</span></span>
+<span><span class="co">#&gt; 483 45.99979  3.973244 38.21238 53.78721</span></span>
 <span><span class="co">#&gt; 484 59.90473  0.000000 59.90473 59.90473</span></span>
-<span><span class="co">#&gt; 485 33.87728  6.368406 21.39543 46.35912</span></span>
-<span><span class="co">#&gt; 486 37.28988  5.284402 26.93264 47.64711</span></span>
+<span><span class="co">#&gt; 485 33.87728  6.301911 21.52576 46.22879</span></span>
+<span><span class="co">#&gt; 486 37.28988  4.981003 27.52729 47.05246</span></span>
 <span><span class="co">#&gt; 487 49.76150  0.000000 49.76150 49.76150</span></span>
-<span><span class="co">#&gt; 488 46.60552 10.547592 25.93262 67.27842</span></span>
+<span><span class="co">#&gt; 488 46.60552 10.369796 26.28109 66.92995</span></span>
 <span><span class="co">#&gt; 489 47.21985  0.000000 47.21985 47.21985</span></span>
 <span><span class="co">#&gt; 490 40.34525  0.000000 40.34525 40.34525</span></span>
 <span><span class="co">#&gt; 491 48.29793  0.000000 48.29793 48.29793</span></span>
-<span><span class="co">#&gt; 492 54.57153  9.968798 35.03305 74.11002</span></span>
-<span><span class="co">#&gt; 493 36.13680  5.546742 25.26539 47.00822</span></span>
+<span><span class="co">#&gt; 492 54.57153  9.902718 35.16256 73.98050</span></span>
+<span><span class="co">#&gt; 493 36.13680  5.564932 25.22974 47.04387</span></span>
 <span><span class="co">#&gt; 494 44.39634  0.000000 44.39634 44.39634</span></span>
 <span><span class="co">#&gt; 495 41.71421  0.000000 41.71421 41.71421</span></span>
 <span><span class="co">#&gt; 496 47.37535  0.000000 47.37535 47.37535</span></span>
 <span><span class="co">#&gt; 497 42.03797  0.000000 42.03797 42.03797</span></span>
 <span><span class="co">#&gt; 498 37.56100  0.000000 37.56100 37.56100</span></span>
 <span><span class="co">#&gt; 499 45.11793  0.000000 45.11793 45.11793</span></span>
-<span><span class="co">#&gt; 500 52.86788  9.813960 33.63287 72.10289</span></span>
+<span><span class="co">#&gt; 500 52.86788  9.829297 33.60281 72.13295</span></span>
 <span><span class="co">#&gt; 501 34.62530  0.000000 34.62530 34.62530</span></span>
 <span><span class="co">#&gt; 502 45.28206  0.000000 45.28206 45.28206</span></span>
-<span><span class="co">#&gt; 503 44.51505  3.960666 36.75228 52.27781</span></span>
+<span><span class="co">#&gt; 503 44.51505  3.915206 36.84138 52.18871</span></span>
 <span><span class="co">#&gt; 504 63.57761  0.000000 63.57761 63.57761</span></span>
 <span><span class="co">#&gt; 505 35.80878  0.000000 35.80878 35.80878</span></span>
-<span><span class="co">#&gt; 506 40.93038  4.560870 31.99124 49.86952</span></span>
-<span><span class="co">#&gt; 507 45.85156  3.836468 38.33222 53.37090</span></span>
+<span><span class="co">#&gt; 506 40.93038  4.477400 32.15484 49.70593</span></span>
+<span><span class="co">#&gt; 507 45.85156  3.902116 38.20355 53.49957</span></span>
 <span><span class="co">#&gt; 508 52.67314  0.000000 52.67314 52.67314</span></span>
 <span><span class="co">#&gt; 509 35.88734  0.000000 35.88734 35.88734</span></span>
 <span><span class="co">#&gt; 510 38.73222  0.000000 38.73222 38.73222</span></span>
 <span><span class="co">#&gt; 511 46.70361  0.000000 46.70361 46.70361</span></span>
 <span><span class="co">#&gt; 512 53.65398  0.000000 53.65398 53.65398</span></span>
 <span><span class="co">#&gt; 513 36.71543  0.000000 36.71543 36.71543</span></span>
-<span><span class="co">#&gt; 514 43.89170  4.599427 34.87699 52.90641</span></span>
-<span><span class="co">#&gt; 515 49.56246  3.870543 41.97633 57.14858</span></span>
-<span><span class="co">#&gt; 516 54.83060  9.855157 35.51485 74.14635</span></span>
-<span><span class="co">#&gt; 517 37.85241  5.601026 26.87460 48.83022</span></span>
+<span><span class="co">#&gt; 514 43.89170  4.527946 35.01709 52.76631</span></span>
+<span><span class="co">#&gt; 515 49.56246  3.931437 41.85698 57.26793</span></span>
+<span><span class="co">#&gt; 516 54.83060  9.860846 35.50370 74.15750</span></span>
+<span><span class="co">#&gt; 517 37.85241  5.628394 26.82096 48.88386</span></span>
 <span><span class="co">#&gt; 518 41.54317  0.000000 41.54317 41.54317</span></span>
 <span><span class="co">#&gt; 519 51.67909  0.000000 51.67909 51.67909</span></span>
-<span><span class="co">#&gt; 520 51.76691 10.035614 32.09747 71.43635</span></span>
+<span><span class="co">#&gt; 520 51.76691  9.997927 32.17133 71.36249</span></span>
 <span><span class="co">#&gt; 521 27.40130  0.000000 27.40130 27.40130</span></span>
 <span><span class="co">#&gt; 522 30.33517  0.000000 30.33517 30.33517</span></span>
 <span><span class="co">#&gt; 523 37.73092  0.000000 37.73092 37.73092</span></span>
 <span><span class="co">#&gt; 524 29.11668  0.000000 29.11668 29.11668</span></span>
-<span><span class="co">#&gt; 525 30.03596  5.482852 19.28977 40.78215</span></span>
+<span><span class="co">#&gt; 525 30.03596  5.518054 19.22077 40.85115</span></span>
 <span><span class="co">#&gt; 526 32.08830  0.000000 32.08830 32.08830</span></span>
 <span><span class="co">#&gt; 527 41.66067  0.000000 41.66067 41.66067</span></span>
 <span><span class="co">#&gt; 528 53.90815  0.000000 53.90815 53.90815</span></span>
-<span><span class="co">#&gt; 529 34.02622  5.509356 23.22808 44.82436</span></span>
+<span><span class="co">#&gt; 529 34.02622  5.548124 23.15209 44.90034</span></span>
 <span><span class="co">#&gt; 530 35.06937  0.000000 35.06937 35.06937</span></span>
 <span><span class="co">#&gt; 531 47.17615  0.000000 47.17615 47.17615</span></span>
 <span><span class="co">#&gt; 532 56.49347  0.000000 56.49347 56.49347</span></span>
-<span><span class="co">#&gt; 533 34.02880  5.484073 23.28021 44.77738</span></span>
+<span><span class="co">#&gt; 533 34.02880  5.495593 23.25763 44.79996</span></span>
 <span><span class="co">#&gt; 534 38.88006  0.000000 38.88006 38.88006</span></span>
 <span><span class="co">#&gt; 535 47.54070  0.000000 47.54070 47.54070</span></span>
 <span><span class="co">#&gt; 536 43.53705  0.000000 43.53705 43.53705</span></span>
@@ -1732,8 +1754,8 @@ customize the calculations via the <code>opts</code> list:</p>
 <span><span class="co">#&gt; 539 44.95543  0.000000 44.95543 44.95543</span></span>
 <span><span class="co">#&gt; 540 21.11543  0.000000 21.11543 21.11543</span></span>
 <span><span class="co">#&gt; 541 34.74671  0.000000 34.74671 34.74671</span></span>
-<span><span class="co">#&gt; 542 43.27308  4.599376 34.25847 52.28769</span></span>
-<span><span class="co">#&gt; 543 49.29538  3.861976 41.72605 56.86472</span></span>
+<span><span class="co">#&gt; 542 43.27308  4.511734 34.43024 52.11591</span></span>
+<span><span class="co">#&gt; 543 49.29538  3.923397 41.60567 56.98510</span></span>
 <span><span class="co">#&gt; 544 56.69249  0.000000 56.69249 56.69249</span></span>
 <span><span class="co">#&gt; 545 22.73126  0.000000 22.73126 22.73126</span></span>
 <span><span class="co">#&gt; 546 32.50075  0.000000 32.50075 32.50075</span></span>
@@ -1742,26 +1764,26 @@ customize the calculations via the <code>opts</code> list:</p>
 <span><span class="co">#&gt; 549 55.62582  0.000000 55.62582 55.62582</span></span>
 <span><span class="co">#&gt; 550 45.38998  0.000000 45.38998 45.38998</span></span>
 <span><span class="co">#&gt; 551 52.66743  0.000000 52.66743 52.66743</span></span>
-<span><span class="co">#&gt; 552 56.87348 11.008642 35.29694 78.45003</span></span>
-<span><span class="co">#&gt; 553 30.66032  6.364585 18.18596 43.13467</span></span>
-<span><span class="co">#&gt; 554 37.44228  5.246112 27.16009 47.72447</span></span>
+<span><span class="co">#&gt; 552 56.87348 10.392894 36.50379 77.24318</span></span>
+<span><span class="co">#&gt; 553 30.66032  6.211368 18.48626 42.83438</span></span>
+<span><span class="co">#&gt; 554 37.44228  4.924304 27.79082 47.09374</span></span>
 <span><span class="co">#&gt; 555 34.18931  0.000000 34.18931 34.18931</span></span>
 <span><span class="co">#&gt; 556 45.59740  0.000000 45.59740 45.59740</span></span>
 <span><span class="co">#&gt; 557 28.89198  0.000000 28.89198 28.89198</span></span>
 <span><span class="co">#&gt; 558 38.46147  0.000000 38.46147 38.46147</span></span>
-<span><span class="co">#&gt; 559 42.42099  3.817484 34.93885 49.90312</span></span>
+<span><span class="co">#&gt; 559 42.42099  3.890524 34.79570 50.04627</span></span>
 <span><span class="co">#&gt; 560 49.90357  0.000000 49.90357 49.90357</span></span>
-<span><span class="co">#&gt; 561 39.74586  5.603748 28.76272 50.72900</span></span>
+<span><span class="co">#&gt; 561 39.74586  5.540149 28.88737 50.60435</span></span>
 <span><span class="co">#&gt; 562 44.14167  0.000000 44.14167 44.14167</span></span>
-<span><span class="co">#&gt; 563 49.91712  3.931375 42.21177 57.62248</span></span>
+<span><span class="co">#&gt; 563 49.91712  3.944239 42.18656 57.64769</span></span>
 <span><span class="co">#&gt; 564 55.24278  0.000000 55.24278 55.24278</span></span>
-<span><span class="co">#&gt; 565 36.24790  6.403322 23.69762 48.79819</span></span>
-<span><span class="co">#&gt; 566 41.05912  5.166535 30.93290 51.18534</span></span>
-<span><span class="co">#&gt; 567 45.91354  4.027818 38.01917 53.80792</span></span>
-<span><span class="co">#&gt; 568 51.93141 10.091591 32.15225 71.71056</span></span>
+<span><span class="co">#&gt; 565 36.24790  6.201742 24.09271 48.40310</span></span>
+<span><span class="co">#&gt; 566 41.05912  4.948930 31.35939 50.75884</span></span>
+<span><span class="co">#&gt; 567 45.91354  3.996462 38.08062 53.74646</span></span>
+<span><span class="co">#&gt; 568 51.93141 10.178892 31.98114 71.88167</span></span>
 <span><span class="co">#&gt; 569 27.38001  0.000000 27.38001 27.38001</span></span>
 <span><span class="co">#&gt; 570 33.63251  0.000000 33.63251 33.63251</span></span>
-<span><span class="co">#&gt; 571 44.70168  3.973455 36.91385 52.48951</span></span>
+<span><span class="co">#&gt; 571 44.70168  4.044794 36.77403 52.62933</span></span>
 <span><span class="co">#&gt; 572 39.34410  0.000000 39.34410 39.34410</span></span>
 <span><span class="co">#&gt; 573 26.98575  0.000000 26.98575 26.98575</span></span>
 <span><span class="co">#&gt; 574 24.04175  0.000000 24.04175 24.04175</span></span>
@@ -1770,34 +1792,34 @@ customize the calculations via the <code>opts</code> list:</p>
 <span><span class="co">#&gt; 577 31.55469  0.000000 31.55469 31.55469</span></span>
 <span><span class="co">#&gt; 578 44.42696  0.000000 44.42696 44.42696</span></span>
 <span><span class="co">#&gt; 579 44.10343  0.000000 44.10343 44.10343</span></span>
-<span><span class="co">#&gt; 580 48.06505  9.826979 28.80453 67.32558</span></span>
-<span><span class="co">#&gt; 581 34.87547  5.478299 24.13820 45.61274</span></span>
+<span><span class="co">#&gt; 580 48.06505  9.850282 28.75886 67.37125</span></span>
+<span><span class="co">#&gt; 581 34.87547  5.505592 24.08471 45.66623</span></span>
 <span><span class="co">#&gt; 582 37.87445  0.000000 37.87445 37.87445</span></span>
 <span><span class="co">#&gt; 583 48.31828  0.000000 48.31828 48.31828</span></span>
 <span><span class="co">#&gt; 584 50.21520  0.000000 50.21520 50.21520</span></span>
 <span><span class="co">#&gt; 585 41.94615  0.000000 41.94615 41.94615</span></span>
 <span><span class="co">#&gt; 586 39.62690  0.000000 39.62690 39.62690</span></span>
 <span><span class="co">#&gt; 587 46.69763  0.000000 46.69763 46.69763</span></span>
-<span><span class="co">#&gt; 588 49.44653 10.153923 29.54520 69.34785</span></span>
-<span><span class="co">#&gt; 589 38.01775  5.518603 27.20148 48.83401</span></span>
+<span><span class="co">#&gt; 588 49.44653  9.939626 29.96522 68.92784</span></span>
+<span><span class="co">#&gt; 589 38.01775  5.578402 27.08428 48.95121</span></span>
 <span><span class="co">#&gt; 590 43.75255  0.000000 43.75255 43.75255</span></span>
 <span><span class="co">#&gt; 591 47.38873  0.000000 47.38873 47.38873</span></span>
-<span><span class="co">#&gt; 592 52.70780  9.904625 33.29509 72.12050</span></span>
+<span><span class="co">#&gt; 592 52.70780  9.931874 33.24168 72.17391</span></span>
 <span><span class="co">#&gt; 593 32.43412  0.000000 32.43412 32.43412</span></span>
 <span><span class="co">#&gt; 594 43.07163  0.000000 43.07163 43.07163</span></span>
 <span><span class="co">#&gt; 595 42.99551  0.000000 42.99551 42.99551</span></span>
 <span><span class="co">#&gt; 596 53.82759  0.000000 53.82759 53.82759</span></span>
-<span><span class="co">#&gt; 597 39.45747  6.146787 27.40999 51.50495</span></span>
-<span><span class="co">#&gt; 598 42.93167  5.103661 32.92867 52.93466</span></span>
+<span><span class="co">#&gt; 597 39.45747  5.996935 27.70369 51.21124</span></span>
+<span><span class="co">#&gt; 598 42.93167  4.873176 33.38042 52.48292</span></span>
 <span><span class="co">#&gt; 599 50.64802  0.000000 50.64802 50.64802</span></span>
 <span><span class="co">#&gt; 600 63.44051  0.000000 63.44051 63.44051</span></span>
 <span><span class="co">#&gt; 601 34.48949  0.000000 34.48949 34.48949</span></span>
 <span><span class="co">#&gt; 602 40.08056  0.000000 40.08056 40.08056</span></span>
-<span><span class="co">#&gt; 603 41.86656  3.813626 34.39199 49.34113</span></span>
+<span><span class="co">#&gt; 603 41.86656  3.893079 34.23626 49.49685</span></span>
 <span><span class="co">#&gt; 604 47.46553  0.000000 47.46553 47.46553</span></span>
-<span><span class="co">#&gt; 605 32.03992  5.718498 20.83187 43.24797</span></span>
+<span><span class="co">#&gt; 605 32.03992  5.591766 21.08026 42.99958</span></span>
 <span><span class="co">#&gt; 606 37.11697  0.000000 37.11697 37.11697</span></span>
-<span><span class="co">#&gt; 607 44.12071  4.013915 36.25358 51.98784</span></span>
+<span><span class="co">#&gt; 607 44.12071  4.006402 36.26830 51.97311</span></span>
 <span><span class="co">#&gt; 608 36.25120  0.000000 36.25120 36.25120</span></span>
 <span><span class="co">#&gt; 609 29.20171  0.000000 29.20171 29.20171</span></span>
 <span><span class="co">#&gt; 610 31.53773  0.000000 31.53773 31.53773</span></span>
@@ -1805,10 +1827,10 @@ customize the calculations via the <code>opts</code> list:</p>
 <span><span class="co">#&gt; 612 64.78352  0.000000 64.78352 64.78352</span></span>
 <span><span class="co">#&gt; 613 32.72757  0.000000 32.72757 32.72757</span></span>
 <span><span class="co">#&gt; 614 37.50022  0.000000 37.50022 37.50022</span></span>
-<span><span class="co">#&gt; 615 42.76167  3.803971 35.30602 50.21732</span></span>
+<span><span class="co">#&gt; 615 42.76167  3.895883 35.12588 50.39746</span></span>
 <span><span class="co">#&gt; 616 57.03861  0.000000 57.03861 57.03861</span></span>
 <span><span class="co">#&gt; 617 36.32475  0.000000 36.32475 36.32475</span></span>
-<span><span class="co">#&gt; 618 40.15241  4.541442 31.25134 49.05347</span></span>
+<span><span class="co">#&gt; 618 40.15241  4.478209 31.37528 48.92954</span></span>
 <span><span class="co">#&gt; 619 41.46725  0.000000 41.46725 41.46725</span></span>
 <span><span class="co">#&gt; 620 59.01411  0.000000 59.01411 59.01411</span></span>
 <span><span class="co">#&gt; 621 30.14970  0.000000 30.14970 30.14970</span></span>
@@ -1816,150 +1838,150 @@ customize the calculations via the <code>opts</code> list:</p>
 <span><span class="co">#&gt; 623 52.13900  0.000000 52.13900 52.13900</span></span>
 <span><span class="co">#&gt; 624 58.73839  0.000000 58.73839 58.73839</span></span>
 <span><span class="co">#&gt; 625 35.83185  0.000000 35.83185 35.83185</span></span>
-<span><span class="co">#&gt; 626 41.04423  4.567303 32.09248 49.99598</span></span>
-<span><span class="co">#&gt; 627 45.82688  3.837291 38.30592 53.34783</span></span>
+<span><span class="co">#&gt; 626 41.04423  4.480351 32.26290 49.82556</span></span>
+<span><span class="co">#&gt; 627 45.82688  3.902893 38.17735 53.47641</span></span>
 <span><span class="co">#&gt; 628 56.41409  0.000000 56.41409 56.41409</span></span>
-<span><span class="co">#&gt; 629 37.80184  5.436477 27.14654 48.45714</span></span>
+<span><span class="co">#&gt; 629 37.80184  5.482578 27.05618 48.54749</span></span>
 <span><span class="co">#&gt; 630 43.55593  0.000000 43.55593 43.55593</span></span>
 <span><span class="co">#&gt; 631 44.26320  0.000000 44.26320 44.26320</span></span>
 <span><span class="co">#&gt; 632 59.25579  0.000000 59.25579 59.25579</span></span>
 <span><span class="co">#&gt; 633 28.47314  0.000000 28.47314 28.47314</span></span>
 <span><span class="co">#&gt; 634 47.47581  0.000000 47.47581 47.47581</span></span>
-<span><span class="co">#&gt; 635 44.01685  4.029977 36.11824 51.91546</span></span>
-<span><span class="co">#&gt; 636 49.57489 10.017462 29.94102 69.20875</span></span>
-<span><span class="co">#&gt; 637 39.38085  5.609521 28.38639 50.37531</span></span>
+<span><span class="co">#&gt; 635 44.01685  3.962468 36.25056 51.78314</span></span>
+<span><span class="co">#&gt; 636 49.57489 10.027322 29.92170 69.22808</span></span>
+<span><span class="co">#&gt; 637 39.38085  5.573609 28.45678 50.30492</span></span>
 <span><span class="co">#&gt; 638 46.47483  0.000000 46.47483 46.47483</span></span>
 <span><span class="co">#&gt; 639 51.22677  0.000000 51.22677 51.22677</span></span>
 <span><span class="co">#&gt; 640 45.82777  0.000000 45.82777 45.82777</span></span>
-<span><span class="co">#&gt; 641 33.43408  5.705961 22.25060 44.61756</span></span>
+<span><span class="co">#&gt; 641 33.43408  5.661230 22.33827 44.52989</span></span>
 <span><span class="co">#&gt; 642 39.06783  0.000000 39.06783 39.06783</span></span>
-<span><span class="co">#&gt; 643 42.98333  3.944848 35.25157 50.71509</span></span>
-<span><span class="co">#&gt; 644 48.01822  9.951860 28.51294 67.52351</span></span>
+<span><span class="co">#&gt; 643 42.98333  3.960309 35.22127 50.74540</span></span>
+<span><span class="co">#&gt; 644 48.01822  9.980887 28.45604 67.58040</span></span>
 <span><span class="co">#&gt; 645 29.99542  0.000000 29.99542 29.99542</span></span>
-<span><span class="co">#&gt; 646 35.69583  4.576264 26.72652 44.66514</span></span>
-<span><span class="co">#&gt; 647 41.11547  3.845650 33.57814 48.65281</span></span>
+<span><span class="co">#&gt; 646 35.69583  4.487944 26.89962 44.49204</span></span>
+<span><span class="co">#&gt; 647 41.11547  3.898811 33.47394 48.75700</span></span>
 <span><span class="co">#&gt; 648 54.17796  0.000000 54.17796 54.17796</span></span>
-<span><span class="co">#&gt; 649 39.32289  5.658601 28.23223 50.41354</span></span>
+<span><span class="co">#&gt; 649 39.32289  5.566546 28.41266 50.23312</span></span>
 <span><span class="co">#&gt; 650 44.55743  0.000000 44.55743 44.55743</span></span>
-<span><span class="co">#&gt; 651 47.26282  3.997905 39.42707 55.09857</span></span>
+<span><span class="co">#&gt; 651 47.26282  3.970986 39.47983 55.04581</span></span>
 <span><span class="co">#&gt; 652 62.59579  0.000000 62.59579 62.59579</span></span>
-<span><span class="co">#&gt; 653 31.80300  5.419846 21.18030 42.42571</span></span>
+<span><span class="co">#&gt; 653 31.80300  5.472832 21.07645 42.52956</span></span>
 <span><span class="co">#&gt; 654 35.48396  0.000000 35.48396 35.48396</span></span>
 <span><span class="co">#&gt; 655 44.07768  0.000000 44.07768 44.07768</span></span>
 <span><span class="co">#&gt; 656 46.57837  0.000000 46.57837 46.57837</span></span>
 <span><span class="co">#&gt; 657 47.67979  0.000000 47.67979 47.67979</span></span>
-<span><span class="co">#&gt; 658 47.73388  4.619675 38.67949 56.78828</span></span>
-<span><span class="co">#&gt; 659 50.94631  3.901443 43.29962 58.59300</span></span>
-<span><span class="co">#&gt; 660 58.47218 10.002236 38.86815 78.07620</span></span>
+<span><span class="co">#&gt; 658 47.73388  4.545164 38.82553 56.64224</span></span>
+<span><span class="co">#&gt; 659 50.94631  3.953061 43.19845 58.69417</span></span>
+<span><span class="co">#&gt; 660 58.47218  9.941894 38.98642 77.95793</span></span>
 <span><span class="co">#&gt; 661 22.15439  0.000000 22.15439 22.15439</span></span>
-<span><span class="co">#&gt; 662 35.14301  4.710124 25.91134 44.37469</span></span>
-<span><span class="co">#&gt; 663 42.82000  4.008705 34.96309 50.67692</span></span>
-<span><span class="co">#&gt; 664 46.24563 10.151562 26.34894 66.14233</span></span>
+<span><span class="co">#&gt; 662 35.14301  4.650458 26.02828 44.25774</span></span>
+<span><span class="co">#&gt; 663 42.82000  4.070531 34.84191 50.79810</span></span>
+<span><span class="co">#&gt; 664 46.24563 10.028955 26.58924 65.90203</span></span>
 <span><span class="co">#&gt; 665 34.27765  0.000000 34.27765 34.27765</span></span>
 <span><span class="co">#&gt; 666 36.90059  0.000000 36.90059 36.90059</span></span>
-<span><span class="co">#&gt; 667 43.05627  3.822490 35.56433 50.54821</span></span>
+<span><span class="co">#&gt; 667 43.05627  3.890191 35.43163 50.68090</span></span>
 <span><span class="co">#&gt; 668 40.54285  0.000000 40.54285 40.54285</span></span>
 <span><span class="co">#&gt; 669 29.09494  0.000000 29.09494 29.09494</span></span>
 <span><span class="co">#&gt; 670 37.21768  0.000000 37.21768 37.21768</span></span>
 <span><span class="co">#&gt; 671 43.08491  0.000000 43.08491 43.08491</span></span>
-<span><span class="co">#&gt; 672 46.50100  9.712157 27.46553 65.53648</span></span>
+<span><span class="co">#&gt; 672 46.50100  9.739577 27.41178 65.59022</span></span>
 <span><span class="co">#&gt; 673 27.12174  0.000000 27.12174 27.12174</span></span>
 <span><span class="co">#&gt; 674 34.11916  0.000000 34.11916 34.11916</span></span>
-<span><span class="co">#&gt; 675 45.56320  3.927026 37.86637 53.26003</span></span>
-<span><span class="co">#&gt; 676 48.00823 10.088000 28.23611 67.78034</span></span>
-<span><span class="co">#&gt; 677 35.93048  5.570090 25.01330 46.84766</span></span>
+<span><span class="co">#&gt; 675 45.56320  4.018395 37.68730 53.43911</span></span>
+<span><span class="co">#&gt; 676 48.00823  9.943762 28.51881 67.49764</span></span>
+<span><span class="co">#&gt; 677 35.93048  5.541162 25.07000 46.79096</span></span>
 <span><span class="co">#&gt; 678 40.80230  0.000000 40.80230 40.80230</span></span>
 <span><span class="co">#&gt; 679 45.89269  0.000000 45.89269 45.89269</span></span>
 <span><span class="co">#&gt; 680 43.69153  0.000000 43.69153 43.69153</span></span>
-<span><span class="co">#&gt; 681 28.56569  5.740647 17.31423 39.81715</span></span>
+<span><span class="co">#&gt; 681 28.56569  5.661555 17.46925 39.66214</span></span>
 <span><span class="co">#&gt; 682 29.22869  0.000000 29.22869 29.22869</span></span>
-<span><span class="co">#&gt; 683 40.67646  3.947992 32.93854 48.41438</span></span>
+<span><span class="co">#&gt; 683 40.67646  3.973858 32.88784 48.46508</span></span>
 <span><span class="co">#&gt; 684 55.68362  0.000000 55.68362 55.68362</span></span>
 <span><span class="co">#&gt; 685 31.90698  0.000000 31.90698 31.90698</span></span>
 <span><span class="co">#&gt; 686 37.31061  0.000000 37.31061 37.31061</span></span>
 <span><span class="co">#&gt; 687 40.75546  0.000000 40.75546 40.75546</span></span>
-<span><span class="co">#&gt; 688 49.50911  9.769986 30.36029 68.65793</span></span>
+<span><span class="co">#&gt; 688 49.50911  9.757100 30.38554 68.63267</span></span>
 <span><span class="co">#&gt; 689 42.19474  0.000000 42.19474 42.19474</span></span>
 <span><span class="co">#&gt; 690 44.87228  0.000000 44.87228 44.87228</span></span>
 <span><span class="co">#&gt; 691 47.55198  0.000000 47.55198 47.55198</span></span>
-<span><span class="co">#&gt; 692 56.68097  9.748450 37.57436 75.78758</span></span>
+<span><span class="co">#&gt; 692 56.68097  9.751287 37.56880 75.79314</span></span>
 <span><span class="co">#&gt; 693 50.62894  0.000000 50.62894 50.62894</span></span>
 <span><span class="co">#&gt; 694 45.47551  0.000000 45.47551 45.47551</span></span>
 <span><span class="co">#&gt; 695 48.62168  0.000000 48.62168 48.62168</span></span>
-<span><span class="co">#&gt; 696 56.58212 10.250903 36.49072 76.67352</span></span>
+<span><span class="co">#&gt; 696 56.58212 10.029555 36.92455 76.23969</span></span>
 <span><span class="co">#&gt; 697 29.66493  0.000000 29.66493 29.66493</span></span>
 <span><span class="co">#&gt; 698 34.57406  0.000000 34.57406 34.57406</span></span>
-<span><span class="co">#&gt; 699 42.45295  3.838414 34.92980 49.97610</span></span>
+<span><span class="co">#&gt; 699 42.45295  3.918861 34.77212 50.13378</span></span>
 <span><span class="co">#&gt; 700 38.11676  0.000000 38.11676 38.11676</span></span>
 <span><span class="co">#&gt; 701 33.77204  0.000000 33.77204 33.77204</span></span>
 <span><span class="co">#&gt; 702 34.26148  0.000000 34.26148 34.26148</span></span>
-<span><span class="co">#&gt; 703 45.29511  3.856331 37.73684 52.85338</span></span>
+<span><span class="co">#&gt; 703 45.29511  3.923948 37.60431 52.98590</span></span>
 <span><span class="co">#&gt; 704 58.81037  0.000000 58.81037 58.81037</span></span>
-<span><span class="co">#&gt; 705 31.46668  6.171992 19.36980 43.56357</span></span>
-<span><span class="co">#&gt; 706 36.78469  5.102799 26.78339 46.78600</span></span>
+<span><span class="co">#&gt; 705 31.46668  6.105731 19.49967 43.43370</span></span>
+<span><span class="co">#&gt; 706 36.78469  4.924556 27.13274 46.43664</span></span>
 <span><span class="co">#&gt; 707 39.88119  0.000000 39.88119 39.88119</span></span>
-<span><span class="co">#&gt; 708 47.32261 10.042694 27.63930 67.00593</span></span>
+<span><span class="co">#&gt; 708 47.32261 10.120950 27.48592 67.15931</span></span>
 <span><span class="co">#&gt; 709 31.62708  0.000000 31.62708 31.62708</span></span>
-<span><span class="co">#&gt; 710 37.03239  4.558330 28.09823 45.96655</span></span>
-<span><span class="co">#&gt; 711 42.69162  3.822689 35.19928 50.18395</span></span>
+<span><span class="co">#&gt; 710 37.03239  4.475086 28.26138 45.80340</span></span>
+<span><span class="co">#&gt; 711 42.69162  3.888706 35.06989 50.31334</span></span>
 <span><span class="co">#&gt; 712 48.22049  0.000000 48.22049 48.22049</span></span>
 <span><span class="co">#&gt; 713 42.58829  0.000000 42.58829 42.58829</span></span>
-<span><span class="co">#&gt; 714 45.80410  4.528487 36.92843 54.67977</span></span>
+<span><span class="co">#&gt; 714 45.80410  4.475682 37.03192 54.57628</span></span>
 <span><span class="co">#&gt; 715 49.33262  0.000000 49.33262 49.33262</span></span>
 <span><span class="co">#&gt; 716 53.74331  0.000000 53.74331 53.74331</span></span>
 <span><span class="co">#&gt; 717 29.71857  0.000000 29.71857 29.71857</span></span>
 <span><span class="co">#&gt; 718 30.45651  0.000000 30.45651 30.45651</span></span>
 <span><span class="co">#&gt; 719 38.29800  0.000000 38.29800 38.29800</span></span>
-<span><span class="co">#&gt; 720 45.15328  9.780586 25.98369 64.32288</span></span>
+<span><span class="co">#&gt; 720 45.15328  9.792962 25.95943 64.34713</span></span>
 <span><span class="co">#&gt; 721 36.81040  0.000000 36.81040 36.81040</span></span>
-<span><span class="co">#&gt; 722 37.61606  4.597865 28.60441 46.62771</span></span>
+<span><span class="co">#&gt; 722 37.61606  4.509721 28.77717 46.45495</span></span>
 <span><span class="co">#&gt; 723 42.35045  0.000000 42.35045 42.35045</span></span>
 <span><span class="co">#&gt; 724 39.39860  0.000000 39.39860 39.39860</span></span>
-<span><span class="co">#&gt; 725 36.09876  6.070997 24.19982 47.99769</span></span>
-<span><span class="co">#&gt; 726 40.94066  5.065347 31.01276 50.86855</span></span>
+<span><span class="co">#&gt; 725 36.09876  5.961678 24.41408 47.78343</span></span>
+<span><span class="co">#&gt; 726 40.94066  4.865213 31.40501 50.47630</span></span>
 <span><span class="co">#&gt; 727 49.73629  0.000000 49.73629 49.73629</span></span>
 <span><span class="co">#&gt; 728 41.58082  0.000000 41.58082 41.58082</span></span>
 <span><span class="co">#&gt; 729 43.58901  0.000000 43.58901 43.58901</span></span>
 <span><span class="co">#&gt; 730 40.16762  0.000000 40.16762 40.16762</span></span>
-<span><span class="co">#&gt; 731 46.70338  3.906495 39.04680 54.35997</span></span>
-<span><span class="co">#&gt; 732 53.94830  9.937606 34.47095 73.42566</span></span>
-<span><span class="co">#&gt; 733 39.60913  5.721629 28.39494 50.82331</span></span>
+<span><span class="co">#&gt; 731 46.70338  3.947929 38.96559 54.44118</span></span>
+<span><span class="co">#&gt; 732 53.94830  9.871721 34.60009 73.29652</span></span>
+<span><span class="co">#&gt; 733 39.60913  5.628551 28.57737 50.64088</span></span>
 <span><span class="co">#&gt; 734 41.08206  0.000000 41.08206 41.08206</span></span>
-<span><span class="co">#&gt; 735 49.65683  3.950191 41.91460 57.39907</span></span>
+<span><span class="co">#&gt; 735 49.65683  3.980301 41.85559 57.45808</span></span>
 <span><span class="co">#&gt; 736 69.37409  0.000000 69.37409 69.37409</span></span>
-<span><span class="co">#&gt; 737 34.12096  5.465526 23.40873 44.83320</span></span>
+<span><span class="co">#&gt; 737 34.12096  5.504849 23.33166 44.91027</span></span>
 <span><span class="co">#&gt; 738 41.27625  0.000000 41.27625 41.27625</span></span>
 <span><span class="co">#&gt; 739 44.76138  0.000000 44.76138 44.76138</span></span>
 <span><span class="co">#&gt; 740 39.69815  0.000000 39.69815 39.69815</span></span>
 <span><span class="co">#&gt; 741 38.44296  0.000000 38.44296 38.44296</span></span>
 <span><span class="co">#&gt; 742 48.20586  0.000000 48.20586 48.20586</span></span>
-<span><span class="co">#&gt; 743 47.54082  3.836528 40.02136 55.06028</span></span>
+<span><span class="co">#&gt; 743 47.54082  3.963976 39.77157 55.31007</span></span>
 <span><span class="co">#&gt; 744 35.50735  0.000000 35.50735 35.50735</span></span>
 <span><span class="co">#&gt; 745 32.08153  0.000000 32.08153 32.08153</span></span>
-<span><span class="co">#&gt; 746 37.16398  4.584361 28.17880 46.14917</span></span>
-<span><span class="co">#&gt; 747 42.75619  3.848890 35.21250 50.29988</span></span>
-<span><span class="co">#&gt; 748 47.39510  9.837599 28.11376 66.67644</span></span>
+<span><span class="co">#&gt; 746 37.16398  4.510170 28.32421 46.00375</span></span>
+<span><span class="co">#&gt; 747 42.75619  3.906030 35.10051 50.41187</span></span>
+<span><span class="co">#&gt; 748 47.39510  9.851797 28.08593 66.70427</span></span>
 <span><span class="co">#&gt; 749 44.69256  0.000000 44.69256 44.69256</span></span>
-<span><span class="co">#&gt; 750 41.45664  4.644804 32.35300 50.56029</span></span>
+<span><span class="co">#&gt; 750 41.45664  4.640437 32.36156 50.55173</span></span>
 <span><span class="co">#&gt; 751 42.18689  0.000000 42.18689 42.18689</span></span>
-<span><span class="co">#&gt; 752 51.68534 10.112830 31.86456 71.50612</span></span>
+<span><span class="co">#&gt; 752 51.68534 10.000564 32.08459 71.28608</span></span>
 <span><span class="co">#&gt; 753 37.01741  0.000000 37.01741 37.01741</span></span>
 <span><span class="co">#&gt; 754 38.26920  0.000000 38.26920 38.26920</span></span>
 <span><span class="co">#&gt; 755 49.28806  0.000000 49.28806 49.28806</span></span>
-<span><span class="co">#&gt; 756 50.67485  9.886123 31.29841 70.05130</span></span>
+<span><span class="co">#&gt; 756 50.67485  9.799485 31.46822 69.88149</span></span>
 <span><span class="co">#&gt; 757 40.45953  0.000000 40.45953 40.45953</span></span>
 <span><span class="co">#&gt; 758 45.10337  0.000000 45.10337 45.10337</span></span>
 <span><span class="co">#&gt; 759 45.58250  0.000000 45.58250 45.58250</span></span>
 <span><span class="co">#&gt; 760 62.96989  0.000000 62.96989 62.96989</span></span>
 <span><span class="co">#&gt; 761 30.78252  0.000000 30.78252 30.78252</span></span>
-<span><span class="co">#&gt; 762 41.58139  4.622139 32.52216 50.64061</span></span>
-<span><span class="co">#&gt; 763 48.87398  3.916484 41.19781 56.55014</span></span>
+<span><span class="co">#&gt; 762 41.58139  4.579637 32.60546 50.55731</span></span>
+<span><span class="co">#&gt; 763 48.87398  4.028942 40.97739 56.77056</span></span>
 <span><span class="co">#&gt; 764 44.69667  0.000000 44.69667 44.69667</span></span>
 <span><span class="co">#&gt; 765 32.72491  0.000000 32.72491 32.72491</span></span>
 <span><span class="co">#&gt; 766 45.78702  0.000000 45.78702 45.78702</span></span>
 <span><span class="co">#&gt; 767 48.74886  0.000000 48.74886 48.74886</span></span>
 <span><span class="co">#&gt; 768 84.08449  0.000000 84.08449 84.08449</span></span>
-<span><span class="co">#&gt; 769 28.60809  5.578876 17.67369 39.54249</span></span>
+<span><span class="co">#&gt; 769 28.60809  5.573029 17.68515 39.53103</span></span>
 <span><span class="co">#&gt; 770 30.19495  0.000000 30.19495 30.19495</span></span>
 <span><span class="co">#&gt; 771 36.78573  0.000000 36.78573 36.78573</span></span>
 <span><span class="co">#&gt; 772 61.03588  0.000000 61.03588 61.03588</span></span>
@@ -1967,29 +1989,29 @@ customize the calculations via the <code>opts</code> list:</p>
 <span><span class="co">#&gt; 774 35.22480  0.000000 35.22480 35.22480</span></span>
 <span><span class="co">#&gt; 775 37.42847  0.000000 37.42847 37.42847</span></span>
 <span><span class="co">#&gt; 776 30.20501  0.000000 30.20501 30.20501</span></span>
-<span><span class="co">#&gt; 777 41.72819  5.575619 30.80018 52.65620</span></span>
+<span><span class="co">#&gt; 777 41.72819  5.637841 30.67823 52.77816</span></span>
 <span><span class="co">#&gt; 778 49.12862  0.000000 49.12862 49.12862</span></span>
 <span><span class="co">#&gt; 779 47.31234  0.000000 47.31234 47.31234</span></span>
-<span><span class="co">#&gt; 780 57.08286  9.965479 37.55088 76.61483</span></span>
+<span><span class="co">#&gt; 780 57.08286  9.993472 37.49601 76.66970</span></span>
 <span><span class="co">#&gt; 781 19.28388  0.000000 19.28388 19.28388</span></span>
 <span><span class="co">#&gt; 782 30.00682  0.000000 30.00682 30.00682</span></span>
-<span><span class="co">#&gt; 783 39.69711  3.932195 31.99015 47.40407</span></span>
+<span><span class="co">#&gt; 783 39.69711  3.999962 31.85733 47.53690</span></span>
 <span><span class="co">#&gt; 784 49.21768  0.000000 49.21768 49.21768</span></span>
-<span><span class="co">#&gt; 785 31.42637  6.268065 19.14119 43.71155</span></span>
-<span><span class="co">#&gt; 786 36.73485  5.104066 26.73106 46.73863</span></span>
-<span><span class="co">#&gt; 787 42.72556  4.001168 34.88342 50.56771</span></span>
+<span><span class="co">#&gt; 785 31.42637  6.014824 19.63753 43.21521</span></span>
+<span><span class="co">#&gt; 786 36.73485  4.860542 27.20836 46.26133</span></span>
+<span><span class="co">#&gt; 787 42.72556  3.966563 34.95124 50.49988</span></span>
 <span><span class="co">#&gt; 788 40.13353  0.000000 40.13353 40.13353</span></span>
 <span><span class="co">#&gt; 789 42.34534  0.000000 42.34534 42.34534</span></span>
 <span><span class="co">#&gt; 790 52.32575  0.000000 52.32575 52.32575</span></span>
-<span><span class="co">#&gt; 791 46.92223  4.082404 38.92087 54.92360</span></span>
+<span><span class="co">#&gt; 791 46.92223  4.017040 39.04898 54.79549</span></span>
 <span><span class="co">#&gt; 792 69.26254  0.000000 69.26254 69.26254</span></span>
-<span><span class="co">#&gt; 793 40.35635  6.402761 27.80717 52.90553</span></span>
-<span><span class="co">#&gt; 794 45.16757  5.165126 35.04411 55.29103</span></span>
-<span><span class="co">#&gt; 795 50.02199  4.019548 42.14382 57.90016</span></span>
-<span><span class="co">#&gt; 796 56.03985 10.090168 36.26349 75.81622</span></span>
+<span><span class="co">#&gt; 793 40.35635  6.201982 28.20069 52.51201</span></span>
+<span><span class="co">#&gt; 794 45.16757  4.949405 35.46691 54.86822</span></span>
+<span><span class="co">#&gt; 795 50.02199  3.991961 42.19789 57.84609</span></span>
+<span><span class="co">#&gt; 796 56.03985 10.178516 36.09033 75.98938</span></span>
 <span><span class="co">#&gt; 797 35.70341  0.000000 35.70341 35.70341</span></span>
 <span><span class="co">#&gt; 798 41.64454  0.000000 41.64454 41.64454</span></span>
-<span><span class="co">#&gt; 799 43.29513  3.821525 35.80508 50.78518</span></span>
+<span><span class="co">#&gt; 799 43.29513  3.902234 35.64689 50.94337</span></span>
 <span><span class="co">#&gt; 800 54.25081  0.000000 54.25081 54.25081</span></span></code></pre></div>
 <p>The result is now a matrix, because that is what the
 <code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code> method returns for <code>mmrm</code> objects.
@@ -1997,7 +2019,7 @@ Note that this cannot be changed to return a <code>tibble</code> at the
 moment.</p>
 <p>Similarly, we can also use the <code><a href="https://generics.r-lib.org/reference/augment.html" class="external-link">augment()</a></code> method to add
 predicted values to a new data set:</p>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://generics.r-lib.org/reference/augment.html" class="external-link">augment</a></span><span class="op">(</span><span class="va">model</span>, new_data <span class="op">=</span> <span class="va">fev_data</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">select</span><span class="op">(</span><span class="va">USUBJID</span>, <span class="va">AVISIT</span>, <span class="va">.resid</span>, <span class="va">.pred</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 800 × 4</span></span></span>
@@ -2031,7 +2053,7 @@ predictors that will be used in the formula. We then add the model using
 the formula.</li>
 <li>Lastly, we fit the model</li>
 </ul>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mmrm_spec</span> <span class="op">&lt;-</span> <span class="fu">linear_reg</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">set_engine</span><span class="op">(</span><span class="st">"mmrm"</span>, method <span class="op">=</span> <span class="st">"Satterthwaite"</span><span class="op">)</span></span>
 <span></span>
@@ -2078,13 +2100,13 @@ the formula.</li>
 using the <code>recipes</code> package. Here we are converting the
 <code>ARMCD</code> variable into a dummy variable and creating an
 interaction term with the new dummy variable and each visit.</p>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mmrm_recipe</span> <span class="op">&lt;-</span> <span class="fu">recipe</span><span class="op">(</span><span class="va">FEV1</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">fev_data</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">step_dummy</span><span class="op">(</span><span class="va">ARMCD</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">step_interact</span><span class="op">(</span>terms <span class="op">=</span> <span class="op">~</span> <span class="fu">starts_with</span><span class="op">(</span><span class="st">"ARMCD"</span><span class="op">)</span><span class="op">:</span><span class="va">AVISIT</span><span class="op">)</span></span></code></pre></div>
 <p>Using <code>prep()</code> and <code>juice()</code> we can see what
 the transformed data that will be used in the model fit looks like.</p>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mmrm_recipe</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">prep</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">juice</span><span class="op">(</span><span class="op">)</span></span>
@@ -2108,7 +2130,7 @@ the transformed data that will be used in the model fit looks like.</p>
 <code>set_engine()</code> definition. This allows for more flexibility
 on presetting different covariance structures in the pipeline while
 keeping the data preparation step independent.</p>
-<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mmrm_spec_with_cov</span> <span class="op">&lt;-</span> <span class="fu">linear_reg</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">set_engine</span><span class="op">(</span></span>
 <span>    <span class="st">"mmrm"</span>,</span>
@@ -2116,7 +2138,7 @@ keeping the data preparation step independent.</p>
 <span>    covariance <span class="op">=</span> <span class="fu"><a href="../reference/as.cov_struct.html">as.cov_struct</a></span><span class="op">(</span><span class="op">~</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 <p>We combine these steps into a workflow:</p>
-<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">(</span><span class="va">mmrm_wflow_nocov</span> <span class="op">&lt;-</span> <span class="fu">workflow</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">add_model</span><span class="op">(</span><span class="va">mmrm_spec_with_cov</span>, formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">SEX</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">add_recipe</span><span class="op">(</span><span class="va">mmrm_recipe</span><span class="op">)</span><span class="op">)</span></span>
@@ -2139,7 +2161,7 @@ keeping the data preparation step independent.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Computational engine: mmrm</span></span></code></pre></div>
 <p>Last step is to fit the data with the workflow object</p>
-<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">(</span><span class="va">fit_tidy</span> <span class="op">&lt;-</span> <span class="fu">fit</span><span class="op">(</span><span class="va">mmrm_wflow_nocov</span>, data <span class="op">=</span> <span class="va">fev_data</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ══ Workflow [trained] ══════════════════════════════════════════════════════════</span></span>
 <span><span class="co">#&gt; <span style="font-style: italic;">Preprocessor:</span> Recipe</span></span>
@@ -2170,7 +2192,7 @@ keeping the data preparation step independent.</p>
 <span><span class="co">#&gt; Converged with code 0 and message: convergence: rel_reduction_of_f &lt;= factr*epsmch</span></span></code></pre></div>
 <p>To retrieve the fit object from within the workflow object run the
 following</p>
-<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit_tidy</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">hardhat</span><span class="fu">::</span><span class="fu"><a href="https://hardhat.tidymodels.org/reference/hardhat-extract.html" class="external-link">extract_fit_engine</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; mmrm fit</span></span>
