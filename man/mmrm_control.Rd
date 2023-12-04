@@ -57,7 +57,7 @@ at the missing visits.
 covariance matrix adjustment methods, respectively.
 \itemize{
 \item Allowed \code{vcov} includes: "Asymptotic", "Kenward-Roger", "Kenward-Roger-Linear", "Empirical" (CR0),
-"Empirical-Jackknife" (CR2), and "Empirical-Bias-Reduced" (CR3).
+"Empirical-Jackknife" (CR3), and "Empirical-Bias-Reduced" (CR2).
 \item Allowed \code{method} includes: "Satterthwaite", "Kenward-Roger", "Between-Within" and "Residual".
 \item If \code{method} is "Kenward-Roger" then only "Kenward-Roger" or "Kenward-Roger-Linear" are allowed for \code{vcov}.
 }
