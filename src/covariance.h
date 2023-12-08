@@ -161,7 +161,7 @@ matrix<T> get_covariance_lower_chol(const vector<T>& theta, int n_visits, std::s
   } else if (cov_type == "csh") {
     result = get_compound_symmetry_heterogeneous<T>(theta, n_visits);
   } else {
-    Rf_error(("Unknown covariance type '" + cov_type + "'.").c_str());
+    Rf_error("%s", ("Unknown covariance type '" + cov_type + "'.").c_str());
   }
 
   return result;
@@ -174,7 +174,7 @@ matrix<T> get_spatial_covariance_lower_chol(const vector<T>& theta, const matrix
   if (cov_type == "sp_exp") {
     result = get_spatial_exponential<T>(theta, distance);
   } else {
-    Rf_error(("Unknown spatial covariance type '" + cov_type + "'.").c_str());
+    Rf_error("%s", ("Unknown spatial covariance type '" + cov_type + "'.").c_str());
   }
   return result;
 }
