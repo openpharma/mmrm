@@ -1,0 +1,139 @@
+---
+title: "Anova for MMRM"
+output: html_document
+editor_options:
+  chunk_output_type: console
+  markdown:
+    wrap: 72
+---
+
+
+# Backgroun
+
+This [blog](https://www.r-bloggers.com/2011/03/anova-%E2%80%93-type-iiiiii-ss-explained/) has a nice summary of it.
+The original [post](http://goanna.cs.rmit.edu.au/fscholer/anova.php) is not accessible now.
+
+And we can also refer to this [page](https://agstats.io/tutorials/sas-proc-mixed)
+
+Some available code from [glmmTMB](https://github.com/glmmTMB/glmmTMB/blob/master/glmmTMB/R/Anova.R)
+
+SAS also has some paper on this topic, but from a different angle.
+It uses estimable functions to construct the three types of hypothesis.
+
+See paper https://doi.org/10.1080/03610928008827869 and https://support.sas.com/documentation/onlinedoc/stat/131/introglmest.pdf.
+
+## SAS results
+
+Using `anova.sas` we have the following results.
+Please note that type 1 result is dependent on the order of testing so it is not included here for simplicity.
+Type 2 and 3 tests are independent of the order of model parameter provided to the procedure.
+
+
+| type 2       | df|        ddf       |      F value      |        Pr > F        |
+|--------------|---|------------------|-------------------|----------------------|
+| ARMCD        | 1 | 177.578206251403 | 33.1870413448661  | 3.62415957242791e-08 |
+| AVISIT       | 3 | 336.480231426766 | 116.732733882531  | 7.97333625254255e-52 |
+| AVISIT*ARMCD | 3 | 335.929182055453 | 0.345902681482862 | 0.792143200158668    |
+
+
+| type 3       | df|        ddf       |      F value      |        Pr > F        |
+|--------------|---|------------------|-------------------|----------------------|
+| ARMCD        | 1 | 177.848284237308 | 33.0036689632883  | 3.91621392761811e-08 |
+| AVISIT       | 3 | 335.929182055453 | 116.539400933677  | 9.71251157971289e-52 |
+| AVISIT*ARMCD | 3 | 335.368828514443 | 0.345902681482865 | 0.792143224823356    |
+
+
+## emmeans joint_tests
+
+```{r}
+library(mmrm)
+fit <- mmrm(FEV1 ~ ARMCD + AVISIT + ARMCD * AVISIT + ar1(AVISIT | USUBJID), data = fev_data)
+emmeans::joint_tests(fit)
+```
+
+
+however, the result do not agree well between SAS and R.
+
+Using "satterthwaite df" the F statistic is close, but the d.f. is not.
+
+```
+ model term   df1    df2 F.ratio p.value
+ ARMCD          1 177.85  33.004  <.0001
+ AVISIT         3 309.60 116.540  <.0001
+ ARMCD:AVISIT   3 309.60   0.346  0.7921
+```
+
+## Finding suitable contrasts
+
+similar to emmeans::joint_tests() obtain a contrasts. In `emmeans` the contrasts can be obtained for Type 3, and
+use these contrasts to send to `df_md` we get exactly the same results with SAS.
+
+```{r}
+args <- emmeans:::.zap.args(object = fit, cov.reduce = emmeans:::meanint, omit = "submodel")
+object <- do.call(emmeans:::ref_grid, args)
+by <- NULL
+facs <- setdiff(names(object@levels), c(by, "1"))
+emm <- emmeans::emmeans(fit, facs[2], by = by)
+emmgrid <- emmeans::contrast(emm, interaction = "consec", by = union(by, NULL))
+tst <- emmeans::test(emmgrid, by = by, joint = TRUE, status = TRUE)
+ef <- attr(tst, "est.fcns")
+```
+
+```
+$ARMCD
+     [,1]       [,2] [,3] [,4] [,5]       [,6]       [,7]       [,8]
+[1,]    0 -0.9176629    0    0    0 -0.2294157 -0.2294157 -0.2294157
+
+$`ARMCD:AVISIT`
+     [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8]
+[1,]    0    0    0    0    0   -1    0    0
+[2,]    0    0    0    0    0    0   -1    0
+[3,]    0    0    0    0    0    0    0   -1
+
+$AVISIT
+     [,1] [,2]       [,3]       [,4]       [,5]       [,6]       [,7]
+[1,]    0    0 -0.8944272  0.0000000  0.0000000 -0.4472136  0.0000000
+[2,]    0    0  0.0000000 -0.8944272  0.0000000  0.0000000 -0.4472136
+[3,]    0    0  0.0000000  0.0000000 -0.8944272  0.0000000  0.0000000
+  [,8]
+[1,]  0.0000000
+[2,]  0.0000000
+[3,] -0.4472136
+```
+
+### Obtain the contrasts
+
+```
+df_md(fit, contrasts)
+```
+
+### Initial thoughts
+
+Using doolittle method to obtain the contrasts seems plausible? but this is initial.
+
+```{r}
+doolittle <- function(m) {
+  assert_matrix(m)
+  for (i in seq_len(nrow(m))) {
+    for (j in seq_len(i - 1)) {
+      m[i, ] <- m[i, ] - m[i, j] * m[j, ]
+    }
+    if (m[i, i] == 0) {
+      m[i, ] <- 0
+    } else {
+      m[i, ] <- m[i, ] / m[i, i]
+    }
+  }
+  return(m)
+}
+
+normalize_mat <- function(m) {
+  m / rowSums(m^2)
+}
+
+mx <- model.matrix(fit)
+dl <- doolittle(t(mx) %*% mx)
+df_md(fit, dl[6:8, ])
+df_md(fit, normalize_mat(dl[6:8, ]))
+df_md(fit, dl[2, ]) # d.f. do not match, stat matches a lot ()
+```
