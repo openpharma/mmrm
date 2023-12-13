@@ -27,7 +27,8 @@ zero and then follow the optimizer algorithm, cf. `h_mmrm_tmb_parameters()`.
   - The default in `PROC MIXED` uses `MIVQUEO`. 
     - See the [SAS PROC MIXED manual](https://support.sas.com/documentation/onlinedoc/stat/141/mixed.pdf), p. 6132: "You can use the noniterative MIVQUE0 method to estimate G and R (Rao 1972; LaMotte 1973; Wolfinger, Tobias, and Sall 1994). In fact, by default PROC MIXED uses MIVQUE0 estimates as starting values for the ML and REML procedures."
     - References:
-      - Wolfinger, R. D., Tobias, R. D., and Sall, J. (1994). “Computing Gaussian Likelihoods and Their Derivatives for General Linear Mixed Models.” SIAM Journal on Scientific Computing 15:1294–1310.
+      - Wolfinger, R. D., Tobias, R. D., and Sall, J. (1994). “Computing Gaussian Likelihoods and Their Derivatives for General Linear Mixed Models.” SIAM Journal on Scientific Computing 15:1294–1310. [pdf](https://www.researchgate.net/profile/Russ-Wolfinger/publication/242913395_Computing_Gaussian_Likelihoods_and_Their_Derivatives_for_General_Linear_Mixed_Models/links/570632eb08ae0f37fee0dace/Computing-Gaussian-Likelihoods-and-Their-Derivatives-for-General-Linear-Mixed-Models.pdf)
+        - This seems to be the most relevant and modern paper and talks about the SAS implementation.
       - SAS Technical Report R-105, Computing MIVQUE0 Estimates of Variance Components. https://support.sas.com/documentation/onlinedoc/v82/techreport_r105.pdf
       - Giesbrecht, F. G. (1989). A General Structure for the Class of Mixed Linear Models. Southern Cooperative Series Bulletin 343, Louisiana Agricultural Experiment Station, Baton Rouge.
   - Another option is `OLS`, which sets starting values of all variances at 1 and all
@@ -154,11 +155,13 @@ tail(sort(component(result_mmrm2, "theta_est") - component(result_mmrm3, "theta_
 
 ```{r}
 library(sasr.roche)
-sas_code <- "PROC MIXED DATA = dat cl method=reml ols;
+sas_code <- "PROC MIXED DATA = dat cl method=reml;
       CLASS Trt(ref = 'Active') Visit(ref = 'T0') Patient;
       MODEL FEV1 = Trt Visit Trt*Visit / ddfm=Satterthwaite solution;
       REPEATED Visit / subject=Patient type=un r rcorr;
     RUN;"
+# Optionally can add in the above SAS e.g. after the REPEATED line:
+#       PARMS / OLS;
 df2sd(dat, table = "dat")
 sas_result <- run_sas(sas_code)
 cat(sas_result$LST)
@@ -169,9 +172,9 @@ Only needs 1 iteration (!) and the deviance is 19131 and therefore close to what
 
 So it *is* possible to fit this model on this data set!
 
-Very interestingly, when using the `ols` option to use the same as our starting values,
-it takes much longer to converge. So it seems the `mivque0` starting values are really
-the decisive difference in the `PROC MIXED` algorithm performance in this example.
+Very interestingly, when using the `PARMS / OLS;` option to use the same as our starting values,
+it stops with a "too many function evaluations" error message. So `MIVQUE0` starting values are really
+the decisive difference in the `PROC MIXED` algorithm performance in this example!
 
 ## `nlme` 
 
@@ -218,5 +221,5 @@ result_glmmtmb <- glmmTMB(
 
 # Further ideas
 
-- Is it worth to precondition the estimation, e.g. by dividing both $Y$ and corresponding $X$ rows with the visit-specific standard deviation of $\hat{\epsilon}$? And then rescale results back at the end? 
+Implement the MIVQUE0 algorithm (see above).
 
