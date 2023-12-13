@@ -44,55 +44,56 @@ This is taken from https://github.com/openpharma/mmrm/issues/380.
 ```{r}
 library(MASS)
 library(mvtnorm)
-gen.FEV1 = function(
-    N=1,
-    n=200,
-    mu=-100/52,
-    delta = 50/52 ,
+gen.FEV1 <- function(
+    N = 1,
+    n = 200,
+    mu = -100 / 52,
+    delta = 50 / 52,
     mua = 2000,
     sigmaa = 300,
     sigmab = 60,
     corab = 0.2,
     sigma = 10,
-    times = c(0,2,6,12,24,36,52,70,88,104)
-){
-  nt = length(times)                    # no of repeated measures
-  out = as.data.frame(list(1,1,"Tmp",1,1))
-  names(out) = c("Sim","Pts","Trt","Time","FEV1")                 # out is the output
+    times = c(0, 2, 6, 12, 24, 36, 52, 70, 88, 104)) {
+  nt <- length(times) # no of repeated measures
+  out <- as.data.frame(list(1, 1, "Tmp", 1, 1))
+  names(out) <- c("Sim", "Pts", "Trt", "Time", "FEV1") # out is the output
 
-  outi = as.data.frame(list(rep(0,n*nt),rep(0,n*nt),rep("Trt",n*nt),rep(0,n*nt),rep(0,n*nt)))
-  names(outi) = names(out)                                        # outi is the output for each replication
+  outi <- as.data.frame(list(rep(0, n * nt), rep(0, n * nt), rep("Trt", n * nt), rep(0, n * nt), rep(0, n * nt)))
+  names(outi) <- names(out) # outi is the output for each replication
 
-  outi[,"Pts"] = rep(1:n,each=nt)
-  outi[,"Trt"] = c(rep("Placebo",n*nt/2),rep("Active",n*nt/2))
-  outi[,"Time"] = rep(times,n)                                   # the time of each FEV1 measurement
-  covab = corab * sigmaa * sigmab                                # cov between a and b
-  COV = matrix(c(sigmaa^2,covab,covab,sigmab^2),ncol=2)          # Cov matrix for the slope and intercept
+  outi[, "Pts"] <- rep(1:n, each = nt)
+  outi[, "Trt"] <- c(rep("Placebo", n * nt / 2), rep("Active", n * nt / 2))
+  outi[, "Time"] <- rep(times, n) # the time of each FEV1 measurement
+  covab <- corab * sigmaa * sigmab # cov between a and b
+  COV <- matrix(c(sigmaa^2, covab, covab, sigmab^2), ncol = 2) # Cov matrix for the slope and intercept
 
-  Pts.ID = 1:n
-  Trt = c(rep("Placebo",n/2),rep("Active",n/2))
+  Pts.ID <- 1:n
+  Trt <- c(rep("Placebo", n / 2), rep("Active", n / 2))
 
-  for (i in 1:N)                                                 # Loop over the N simulated studies
-  {outi[,"Sim"] = rep(i,n*nt)
-  for (j in 1:n)                                            # Loop over the n patients
-  {si = rmvnorm(1, mean = c(mua, mu + delta*(Trt[j]=="Active")),sigma=COV)
-  outi[((j-1)*nt+1):(j*nt),"FEV1"] = si[1] + si[2] *times + rnorm(nt,0,sd=sigma)
+  for (i in 1:N) # Loop over the N simulated studies
+  {
+    outi[, "Sim"] <- rep(i, n * nt)
+    for (j in 1:n) # Loop over the n patients
+    {
+      si <- rmvnorm(1, mean = c(mua, mu + delta * (Trt[j] == "Active")), sigma = COV)
+      outi[((j - 1) * nt + 1):(j * nt), "FEV1"] <- si[1] + si[2] * times + rnorm(nt, 0, sd = sigma)
+    }
+    out <- rbind(out, outi) # Append study to the full data
   }
-  out = rbind(out,outi)                                      # Append study to the full data
-  }
 
-  out = out[-1,]                                                # remove temporary row
+  out <- out[-1, ] # remove temporary row
   return(out)
 }
 set.seed(123)
 out <- gen.FEV1()
-out = cbind(out,paste("P",out[,"Pts"],sep=""),paste("T",out[,"Time"],sep=""))
-names(out)[6:7] = c("Patient","Visit")
-out[,"Visit"] = factor(out[,"Visit"], levels = paste0("T", sort(unique(out[, "Time"]))))
-out[,"Patient"] = factor(out[,"Patient"])
-out[,"Trt"] = factor(out[,"Trt"])
+out <- cbind(out, paste("P", out[, "Pts"], sep = ""), paste("T", out[, "Time"], sep = ""))
+names(out)[6:7] <- c("Patient", "Visit")
+out[, "Visit"] <- factor(out[, "Visit"], levels = paste0("T", sort(unique(out[, "Time"]))))
+out[, "Patient"] <- factor(out[, "Patient"])
+out[, "Trt"] <- factor(out[, "Trt"])
 
-dat <- out[out[,"Sim"]==1,]
+dat <- out[out[, "Sim"] == 1, ]
 head(dat)
 summary(dat)
 ```
@@ -103,7 +104,8 @@ Now let's try to fit this.
 
 ```{r}
 result_mmrm1 <- fit_mmrm(
-  FEV1 ~ Trt * Visit + us(Visit | Patient), data = dat, weights = rep(1, nrow(dat)),
+  FEV1 ~ Trt * Visit + us(Visit | Patient),
+  data = dat, weights = rep(1, nrow(dat)),
   control = mmrm_control(optimizer = "BFGS", optimizer_control = list(maxit = 50000))
 )
 result_mmrm1
@@ -113,7 +115,8 @@ So this works but we see a convergence problem at the end (singular variance par
 
 ```{r}
 result_mmrm2 <- fit_mmrm(
-  FEV1 ~ Trt * Visit + us(Visit | Patient), data = dat, weights = rep(1, nrow(dat)),
+  FEV1 ~ Trt * Visit + us(Visit | Patient),
+  data = dat, weights = rep(1, nrow(dat)),
   control = mmrm_control(optimizer = "nlminb", optimizer_control = list(eval.max = 1000, iter.max = 1000))
 )
 result_mmrm2
@@ -137,7 +140,8 @@ Let's try also L-BFGS-B:
 
 ```{r}
 result_mmrm3 <- fit_mmrm(
-  FEV1 ~ Trt * Visit + us(Visit | Patient), data = dat, weights = rep(1, nrow(dat)),
+  FEV1 ~ Trt * Visit + us(Visit | Patient),
+  data = dat, weights = rep(1, nrow(dat)),
   control = mmrm_control(optimizer = "L-BFGS-B", optimizer_control = list(maxit = 50000))
 )
 result_mmrm3
@@ -185,8 +189,8 @@ library(nlme)
 result_gls <- gls(
   model = FEV1 ~ Trt * Visit,
   data = dat,
-  correlation = corSymm(form = ~1|Patient),
-  weights = varIdent(form = ~1|Visit),
+  correlation = corSymm(form = ~ 1 | Patient),
+  weights = varIdent(form = ~ 1 | Visit),
   control = glsControl(opt = "nlminb", maxIter = 10000, msMaxIter = 10000, msVerbose = TRUE),
   method = "REML",
   na.action = "na.omit"
@@ -223,7 +227,7 @@ eps_hat <- residuals(lin_mod)
 
 ```{r}
 eps_hat_df <- data.frame(id = dat$Pts, visit = dat$Visit, eps = eps_hat)
-eps_hat_wide <- tidyr::pivot_wider(eps_hat_df, names_from = visit, values_from = eps) |> dplyr::select(- id)
+eps_hat_wide <- tidyr::pivot_wider(eps_hat_df, names_from = visit, values_from = eps) |> dplyr::select(-id)
 head(eps_hat_wide)
 sigma_emp <- cov(eps_hat_wide)
 ```
@@ -235,7 +239,7 @@ Here we follow the model algorithm vignette.
 ```{r}
 # L = D\tilde{L}
 # where $D$ is the diagonal matrix of standard deviations, and $\tilde{L}$ is a
-# unit diagonal lower triangular matrix. 
+# unit diagonal lower triangular matrix.
 L_mat <- t(chol(sigma_emp))
 D_mat <- diag(diag(L_mat))
 L_tilde_mat <- solve(D_mat, L_mat)
@@ -260,9 +264,10 @@ theta_start <- c(log(diag(D_mat)), L_tilde_entries)
 
 ```{r}
 result_mmrm_init <- fit_mmrm(
-  FEV1 ~ Trt * Visit + us(Visit | Patient), data = dat, weights = rep(1, nrow(dat)),
+  FEV1 ~ Trt * Visit + us(Visit | Patient),
+  data = dat, weights = rep(1, nrow(dat)),
   control = mmrm_control(
-    optimizer = "nlminb", 
+    optimizer = "nlminb",
     optimizer_control = list(eval.max = 1000, iter.max = 1000, trace = 1),
     start = theta_start
   )
