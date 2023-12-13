@@ -22,7 +22,18 @@ zero and then follow the optimizer algorithm, cf. `h_mmrm_tmb_parameters()`.
   - Seems this is happening in [`nlme:::Initialize.corSymm()`](https://github.com/cran/nlme/blob/master/R/corStruct.R#L440)
 - How is `glmmTMB::glmmTMB` doing this?
   - They have a more clever approach, see [`glmmTMB:::startParams()`](https://github.com/glmmTMB/glmmTMB/blob/master/glmmTMB/R/glmmTMB.R#L37)
-- We can check if in our example below this helps them to find the REML estimate more quickly
+- How is `SAS PROC MIXED` doing this?
+  - See [STARTING VALUES FOR PROC MIXED WITH REPEATED MEASURES DATA](https://newprairiepress.org/cgi/viewcontent.cgi?article=1269&context=agstatconference)
+  - The default in `PROC MIXED` uses `MIVQUEO`. 
+    - See the [SAS PROC MIXED manual](https://support.sas.com/documentation/onlinedoc/stat/141/mixed.pdf), p. 6132: "You can use the noniterative MIVQUE0 method to estimate G and R (Rao 1972; LaMotte 1973; Wolfinger, Tobias, and Sall 1994). In fact, by default PROC MIXED uses MIVQUE0 estimates as starting values for the ML and REML procedures."
+    - References:
+      - Wolfinger, R. D., Tobias, R. D., and Sall, J. (1994). “Computing Gaussian Likelihoods and Their Derivatives for General Linear Mixed Models.” SIAM Journal on Scientific Computing 15:1294–1310.
+      - SAS Technical Report R-105, Computing MIVQUE0 Estimates of Variance Components. https://support.sas.com/documentation/onlinedoc/v82/techreport_r105.pdf
+      - Giesbrecht, F. G. (1989). A General Structure for the Class of Mixed Linear Models. Southern Cooperative Series Bulletin 343, Louisiana Agricultural Experiment Station, Baton Rouge.
+  - Another option is `OLS`, which sets starting values of all variances at 1 and all
+covariances at O. (Note: This corresponds to our choice.)
+  - The third option is to use a `PARMS` statement to enter one's "best guess". These maybe
+obtained from previous closely related experiments or some other method.
   
 # Example
 
@@ -143,7 +154,7 @@ tail(sort(component(result_mmrm2, "theta_est") - component(result_mmrm3, "theta_
 
 ```{r}
 library(sasr.roche)
-sas_code <- "PROC MIXED DATA = dat cl method=reml;
+sas_code <- "PROC MIXED DATA = dat cl method=reml ols;
       CLASS Trt(ref = 'Active') Visit(ref = 'T0') Patient;
       MODEL FEV1 = Trt Visit Trt*Visit / ddfm=Satterthwaite solution;
       REPEATED Visit / subject=Patient type=un r rcorr;
@@ -157,6 +168,10 @@ Only needs 1 iteration (!) and the deviance is 19131 and therefore close to what
 `nlminb` optimizer gave us. Also looking at the covariance matrix it seems very close.
 
 So it *is* possible to fit this model on this data set!
+
+Very interestingly, when using the `ols` option to use the same as our starting values,
+it takes much longer to converge. So it seems the `mivque0` starting values are really
+the decisive difference in the `PROC MIXED` algorithm performance in this example.
 
 ## `nlme` 
 
