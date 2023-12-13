@@ -213,13 +213,87 @@ result_glmmtmb <- glmmTMB(
 # Idea
 
 1. First fit a standard linear model, obtain $\hat{\beta}$ and resulting residuals $\hat{\epsilon}$
+
+```{r}
+lin_mod <- lm(FEV1 ~ Trt * Visit, data = dat)
+eps_hat <- residuals(lin_mod)
+```
+
 1. Calculate the empirical covariance matrix $\hat{\Sigma}_{\text{emp}}$ of $\hat{\epsilon}$ as a very rough first initial guess for $\Sigma$
+
+```{r}
+eps_hat_df <- data.frame(id = dat$Pts, visit = dat$Visit, eps = eps_hat)
+eps_hat_wide <- tidyr::pivot_wider(eps_hat_df, names_from = visit, values_from = eps) |> dplyr::select(- id)
+head(eps_hat_wide)
+sigma_emp <- cov(eps_hat_wide)
+```
+
 1. Derive corresponding variance parameters $\hat{\theta}_{\text{emp}}$
+
+Here we follow the model algorithm vignette.
+
+```{r}
+# L = D\tilde{L}
+# where $D$ is the diagonal matrix of standard deviations, and $\tilde{L}$ is a
+# unit diagonal lower triangular matrix. 
+L_mat <- t(chol(sigma_emp))
+D_mat <- diag(diag(L_mat))
+L_tilde_mat <- solve(D_mat, L_mat)
+all.equal(D_mat %*% L_tilde_mat, L_mat, check.attributes = FALSE)
+
+# Hence we start $\theta$ with the natural
+# logarithm of the standard deviations, followed by the *row-wise* filled entries
+# of $\tilde{L} = \{l_{ij}\}_{1 \leq j < i \leq m}$:
+# \[
+# \theta = (
+#   \log(\sigma_1), \dotsc, \log(\sigma_m),
+#   l_{21}, l_{31}, l_{32}, \dotsc, l_{m,m-1}
+# )^\top
+# \]
+
+# note: need to t() here so that we get *row-wise* entries.
+L_tilde_entries <- t(L_tilde_mat)[upper.tri(L_tilde_mat, diag = FALSE)]
+theta_start <- c(log(diag(D_mat)), L_tilde_entries)
+```
+
 1. Initialize the optimization of $\theta$ with $\hat{\theta}_{\text{emp}}$
 
-# Experiment
+```{r}
+result_mmrm_init <- fit_mmrm(
+  FEV1 ~ Trt * Visit + us(Visit | Patient), data = dat, weights = rep(1, nrow(dat)),
+  control = mmrm_control(
+    optimizer = "nlminb", 
+    optimizer_control = list(eval.max = 1000, iter.max = 1000, trace = 1),
+    start = theta_start
+  )
+)
+result_mmrm_init
+```
+
+Amazing! This works very well in this case. 
+
+We double check that we get the same result as starting from the independence matrix:
+
+```{r}
+max(abs(coef(result_mmrm2) - coef(result_mmrm_init)))
+tail(sort(component(result_mmrm2, "theta_est") - component(result_mmrm_init, "theta_est")))
+```
+
+Looks great.
+
+So this gives us a nice plan how to include this in the `mmrm` standard fitting
+algorithm specific for the unstructured covariance model case.
+
+Couple of things to think about:
+
+- What do we do if we don't have a complete empirical covariance matrix, i.e. certain combinations of visits don't occur together in the data at all?
+  - Can we just fill in with some reasonable number and then do the Cholesky decomposition? (this is also connected with the issue that we want to hide those entries from the estimated covariance matrix after fitting)
+  - Or does the Cholesky decomposition work somehow with missing values? (I guess not)
+- Maybe the easiest and most transparent will be to calculate these starting values on the R side and then pass them to TMB, as we did in above prototype experiment
+- We should also allow to override this default for unstructured covariance models and fall back to the independent covariance matrix initialization
 
 # Further ideas
 
-Implement the MIVQUE0 algorithm (see above).
+We could consider implementing the MIVQUE0 algorithm (see references above).
+However, given the immediate success in the experiment above with the super simple empirical covariance matrix I doubt if this would be worth it. 
 
