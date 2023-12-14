@@ -1,8 +1,0 @@
-current_repo:
-  repo: openpharma/mmrm
-  host: https://github.com
-upstream_repos:
-downstream_repos:
-  insightsengineering/tern.mmrm:
-    repo: insightsengineering/tern.mmrm
-    host: https://github.com

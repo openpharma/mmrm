@@ -1,3 +1,10 @@
+# mmrm 0.3.7.9001
+
+### Miscellaneous
+
+- In documentation of `mmrm_control()`, the allowed vcov definition is corrected to "Empirical-Jackknife" (CR3), and "Empirical-Bias-Reduced" (CR2).
+- Fix a compiler warning related to missing format specification in error message function call.
+
 # mmrm 0.3.6
 
 ### New Features
