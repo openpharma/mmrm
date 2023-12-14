@@ -246,7 +246,7 @@ Note: Zapping might be needed to remove very small numbers.
 
 Type III is constructed assuming that we have a balanced design.
 
-According to the SAS/STAT® 13.1 User’s Guide, type II estimable can be achieved through
+According to the SAS/STAT® 13.1 User’s Guide, type III estimable can be achieved through
 
 For fixed effect F1:
 
