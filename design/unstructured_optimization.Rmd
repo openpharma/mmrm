@@ -1,0 +1,419 @@
+---
+title: "Idea for better optimization with unstructured covariance matrix"
+author: "Daniel Sabanes Bove"
+output: html_document
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Objective
+
+The objective is to improve the optimization of variance parameters $\theta$ when using
+an unstructured covariance matrix. Currently we just initialize all $\theta$ elements with
+zero and then follow the optimizer algorithm, cf. `h_mmrm_tmb_parameters()`.
+
+# Packages review
+
+- How is `nlme::gls` doing this?
+  - Seems this is happening in [`nlme:::Initialize.corSymm()`](https://github.com/cran/nlme/blob/master/R/corStruct.R#L440)
+- How is `glmmTMB::glmmTMB` doing this?
+  - They have a more clever approach, see [`glmmTMB:::startParams()`](https://github.com/glmmTMB/glmmTMB/blob/master/glmmTMB/R/glmmTMB.R#L37)
+- How is `SAS PROC MIXED` doing this?
+  - See [STARTING VALUES FOR PROC MIXED WITH REPEATED MEASURES DATA](https://newprairiepress.org/cgi/viewcontent.cgi?article=1269&context=agstatconference)
+  - The default in `PROC MIXED` uses `MIVQUEO`. 
+    - See the [SAS PROC MIXED manual](https://support.sas.com/documentation/onlinedoc/stat/141/mixed.pdf), p. 6132: "You can use the noniterative MIVQUE0 method to estimate G and R (Rao 1972; LaMotte 1973; Wolfinger, Tobias, and Sall 1994). In fact, by default PROC MIXED uses MIVQUE0 estimates as starting values for the ML and REML procedures."
+    - References:
+      - Wolfinger, R. D., Tobias, R. D., and Sall, J. (1994). “Computing Gaussian Likelihoods and Their Derivatives for General Linear Mixed Models.” SIAM Journal on Scientific Computing 15:1294–1310. [pdf](https://www.researchgate.net/profile/Russ-Wolfinger/publication/242913395_Computing_Gaussian_Likelihoods_and_Their_Derivatives_for_General_Linear_Mixed_Models/links/570632eb08ae0f37fee0dace/Computing-Gaussian-Likelihoods-and-Their-Derivatives-for-General-Linear-Mixed-Models.pdf)
+        - This seems to be the most relevant and modern paper and talks about the SAS implementation.
+      - SAS Technical Report R-105, Computing MIVQUE0 Estimates of Variance Components. https://support.sas.com/documentation/onlinedoc/v82/techreport_r105.pdf
+      - Giesbrecht, F. G. (1989). A General Structure for the Class of Mixed Linear Models. Southern Cooperative Series Bulletin 343, Louisiana Agricultural Experiment Station, Baton Rouge.
+  - Another option is `OLS`, which sets starting values of all variances at 1 and all
+covariances at O. (Note: This corresponds to our choice.)
+  - The third option is to use a `PARMS` statement to enter one's "best guess". These maybe
+obtained from previous closely related experiments or some other method.
+  
+# Example
+
+Let's first generate a difficult data set.
+This is taken from https://github.com/openpharma/mmrm/issues/380.
+
+```{r}
+library(MASS)
+library(mvtnorm)
+gen.FEV1 <- function(
+    N = 1,
+    n = 200,
+    mu = -100 / 52,
+    delta = 50 / 52,
+    mua = 2000,
+    sigmaa = 300,
+    sigmab = 60,
+    corab = 0.2,
+    sigma = 10,
+    times = c(0, 2, 6, 12, 24, 36, 52, 70, 88, 104)) {
+  nt <- length(times) # no of repeated measures
+  out <- as.data.frame(list(1, 1, "Tmp", 1, 1))
+  names(out) <- c("Sim", "Pts", "Trt", "Time", "FEV1") # out is the output
+
+  outi <- as.data.frame(list(rep(0, n * nt), rep(0, n * nt), rep("Trt", n * nt), rep(0, n * nt), rep(0, n * nt)))
+  names(outi) <- names(out) # outi is the output for each replication
+
+  outi[, "Pts"] <- rep(1:n, each = nt)
+  outi[, "Trt"] <- c(rep("Placebo", n * nt / 2), rep("Active", n * nt / 2))
+  outi[, "Time"] <- rep(times, n) # the time of each FEV1 measurement
+  covab <- corab * sigmaa * sigmab # cov between a and b
+  COV <- matrix(c(sigmaa^2, covab, covab, sigmab^2), ncol = 2) # Cov matrix for the slope and intercept
+
+  Pts.ID <- 1:n
+  Trt <- c(rep("Placebo", n / 2), rep("Active", n / 2))
+
+  for (i in 1:N) # Loop over the N simulated studies
+  {
+    outi[, "Sim"] <- rep(i, n * nt)
+    for (j in 1:n) # Loop over the n patients
+    {
+      si <- rmvnorm(1, mean = c(mua, mu + delta * (Trt[j] == "Active")), sigma = COV)
+      outi[((j - 1) * nt + 1):(j * nt), "FEV1"] <- si[1] + si[2] * times + rnorm(nt, 0, sd = sigma)
+    }
+    out <- rbind(out, outi) # Append study to the full data
+  }
+
+  out <- out[-1, ] # remove temporary row
+  return(out)
+}
+set.seed(123)
+out <- gen.FEV1()
+out <- cbind(out, paste("P", out[, "Pts"], sep = ""), paste("T", out[, "Time"], sep = ""))
+names(out)[6:7] <- c("Patient", "Visit")
+out[, "Visit"] <- factor(out[, "Visit"], levels = paste0("T", sort(unique(out[, "Time"]))))
+out[, "Patient"] <- factor(out[, "Patient"])
+out[, "Trt"] <- factor(out[, "Trt"])
+
+dat <- out[out[, "Sim"] == 1, ]
+head(dat)
+summary(dat)
+```
+
+Now let's try to fit this.
+
+## `mmrm`
+
+```{r}
+library(mmrm)
+result_mmrm1 <- fit_mmrm(
+  FEV1 ~ Trt * Visit + us(Visit | Patient),
+  data = dat, weights = rep(1, nrow(dat)),
+  control = mmrm_control(optimizer = "BFGS", optimizer_control = list(maxit = 50000))
+)
+result_mmrm1
+```
+
+So this works but we see a convergence problem at the end (singular variance parameters Hessian).
+
+```{r}
+result_mmrm2 <- fit_mmrm(
+  FEV1 ~ Trt * Visit + us(Visit | Patient),
+  data = dat, weights = rep(1, nrow(dat)),
+  control = mmrm_control(optimizer = "nlminb", optimizer_control = list(eval.max = 1000, iter.max = 1000))
+)
+result_mmrm2
+```
+
+So this takes even longer to run, but we get a better result.
+At least the two are consistent with regards to the coefficient estimates:
+
+```{r}
+max(abs(coef(result_mmrm1) - coef(result_mmrm2)))
+```
+
+But we see a problem with estimating the variance parameters, with the largest differences being:
+
+```{r}
+tail(sort(component(result_mmrm1, "theta_est") - component(result_mmrm2, "theta_est")))
+```
+
+And we can also see this in very different covariance matrix estimates.
+Let's try also L-BFGS-B:
+
+```{r}
+result_mmrm3 <- fit_mmrm(
+  FEV1 ~ Trt * Visit + us(Visit | Patient),
+  data = dat, weights = rep(1, nrow(dat)),
+  control = mmrm_control(optimizer = "L-BFGS-B", optimizer_control = list(maxit = 50000))
+)
+result_mmrm3
+```
+
+Similar picture here, the coefficient estimates agree but the variance parameters are far apart:
+
+```{r}
+max(abs(coef(result_mmrm2) - coef(result_mmrm3)))
+tail(sort(component(result_mmrm1, "theta_est") - component(result_mmrm3, "theta_est")))
+tail(sort(component(result_mmrm2, "theta_est") - component(result_mmrm3, "theta_est")))
+```
+
+## `SAS`
+
+```{r, eval = FALSE}
+library(sasr.roche)
+sas_code <- "PROC MIXED DATA = dat cl method=reml;
+      CLASS Trt(ref = 'Active') Visit(ref = 'T0') Patient;
+      MODEL FEV1 = Trt Visit Trt*Visit / ddfm=Satterthwaite solution;
+      REPEATED Visit / subject=Patient type=un r rcorr;
+    RUN;"
+# Optionally can add in the above SAS e.g. after the REPEATED line:
+#       PARMS / OLS;
+df2sd(dat, table = "dat")
+sas_result <- run_sas(sas_code)
+cat(sas_result$LST)
+```
+
+Only needs 1 iteration (!) and the deviance is 19131 and therefore close to what the
+`nlminb` optimizer gave us. Also looking at the covariance matrix it seems very close.
+
+So it *is* possible to fit this model on this data set!
+
+Very interestingly, when using the `PARMS / OLS;` option to use the same as our starting values,
+it stops with a "too many function evaluations" error message. So `MIVQUE0` starting values are really
+the decisive difference in the `PROC MIXED` algorithm performance in this example!
+
+## `nlme` 
+
+With `optim` optimizer this fails. 
+
+```{r, eval = FALSE}
+library(nlme)
+result_gls <- gls(
+  model = FEV1 ~ Trt * Visit,
+  data = dat,
+  correlation = corSymm(form = ~ 1 | Patient),
+  weights = varIdent(form = ~ 1 | Visit),
+  control = glsControl(opt = "nlminb", maxIter = 10000, msMaxIter = 10000, msVerbose = TRUE),
+  method = "REML",
+  na.action = "na.omit"
+)
+```
+
+Hitting `function evaluation limit reached without convergence` but cannot control this.
+So this does not work.
+
+## `glmmTMB`
+
+Also this fails.
+
+```{r, eval = FALSE}
+library(glmmTMB)
+result_glmmtmb <- glmmTMB(
+  FEV1 ~ Trt * Visit + us(0 + Visit | Patient),
+  data = dat,
+  dispformula = ~0,
+  REML = TRUE
+)
+```
+
+# Idea
+
+1. First fit a standard linear model, obtain $\hat{\beta}$ and resulting residuals $\hat{\epsilon}$
+
+```{r}
+lin_mod <- lm(FEV1 ~ Trt * Visit, data = dat)
+eps_hat <- residuals(lin_mod)
+```
+
+1. Calculate the empirical covariance matrix $\hat{\Sigma}_{\text{emp}}$ of $\hat{\epsilon}$ as a very rough first initial guess for $\Sigma$
+
+```{r}
+eps_hat_df <- data.frame(id = dat$Pts, visit = dat$Visit, eps = eps_hat)
+eps_hat_wide <- tidyr::pivot_wider(eps_hat_df, names_from = visit, values_from = eps) |>
+  dplyr::select(-id)
+head(eps_hat_wide)
+sigma_emp <- cov(eps_hat_wide)
+```
+
+1. Derive corresponding variance parameters $\hat{\theta}_{\text{emp}}$
+
+Here we follow the model algorithm vignette.
+
+$L = D\tilde{L}$, where $D$ is the diagonal matrix of standard deviations, 
+and $\tilde{L}$ is a unit diagonal lower triangular matrix.
+
+```{r}
+L_mat <- t(chol(sigma_emp))
+D_mat <- diag(diag(L_mat))
+L_tilde_mat <- solve(D_mat, L_mat)
+all.equal(D_mat %*% L_tilde_mat, L_mat, check.attributes = FALSE)
+```
+
+
+Hence we start $\theta$ with the natural logarithm of the standard deviations, followed by the *row-wise* filled entries
+of 
+
+$\tilde{L} = \{l_{ij}\}_{1 \leq j < i \leq m}$: \[
+\theta = (
+\log(\sigma_1), \dotsc, \log(\sigma_m),
+l_{21}, l_{31}, l_{32}, \dotsc, l_{m,m-1}
+)^\top
+\]
+
+```{r}
+# note: need to t() here so that we get *row-wise* entries.
+L_tilde_entries <- t(L_tilde_mat)[upper.tri(L_tilde_mat, diag = FALSE)]
+theta_start <- c(log(diag(D_mat)), L_tilde_entries)
+```
+
+1. Initialize the optimization of $\theta$ with $\hat{\theta}_{\text{emp}}$
+
+```{r}
+result_mmrm_init <- fit_mmrm(
+  FEV1 ~ Trt * Visit + us(Visit | Patient),
+  data = dat, weights = rep(1, nrow(dat)),
+  control = mmrm_control(
+    optimizer = "nlminb",
+    optimizer_control = list(eval.max = 1000, iter.max = 1000, trace = 1),
+    start = theta_start
+  )
+)
+result_mmrm_init
+```
+
+Amazing! This works very well in this case. 
+
+We double check that we get the same result as starting from the independence matrix:
+
+```{r}
+max(abs(coef(result_mmrm2) - coef(result_mmrm_init)))
+tail(sort(component(result_mmrm2, "theta_est") - component(result_mmrm_init, "theta_est")))
+```
+
+Looks great.
+
+So this gives us a nice plan how to include this in the `mmrm` standard fitting
+algorithm specific for the unstructured covariance model case.
+
+# Production considerations
+
+Couple of things to think about.
+
+## Incomplete empirical covariance matrix
+
+What do we do if we don't have a complete empirical covariance matrix, i.e. certain combinations of visits don't occur together in the data at all?
+This is also connected with the issue https://github.com/openpharma/mmrm/issues/279 that we want to hide those entries from the estimated covariance matrix after fitting.
+
+Let's look at an example:
+
+```{r}
+# Delete half of T2 and half of T6 such that there is no T2/T6 combination.
+eps_hat_wide2 <- eps_hat_wide
+eps_hat_wide2[1:100, "T2"] <- NA
+eps_hat_wide2[101:200, "T6"] <- NA
+sigma_emp2 <- cov(eps_hat_wide2, use = "pairwise.complete.obs")
+```
+
+### Pivoting
+
+One option is to use pivoting for the Cholesky decomposition:
+
+```{r}
+L_mat2 <- t(chol(sigma_emp2, pivot = TRUE))
+```
+
+It gives us a warning then, and we have NAs in the Cholesky factor. 
+Problem is also here that the row order is different than the column order, and we would need to reorder:
+
+```{r}
+oo <- order(attr(L_mat2, "pivot"))
+L_mat2[oo, ]
+```
+
+This is problematic because we would need to adapt the way we parametrize
+the unstructured covariance matrix.
+
+### Imputing the missing values
+
+Can we just fill in with some reasonable number and then do the Cholesky decomposition?
+Let's look at the lower triangular and see what is missing:
+
+```{r}
+sigma_emp2
+lt <- which(lower.tri(sigma_emp2), arr.ind = TRUE)
+na_inds <- lt[is.na(sigma_emp2[lt]), , drop = FALSE]
+na_inds
+```
+
+Then let's impute this. Not sure what is the most principled approach here...
+
+```{r}
+sigma_emp3 <- sigma_emp2
+sigma_emp3[na_inds] <- mean(sigma_emp3[lt], na.rm = TRUE)
+sigma_emp3[na_inds[, c(2, 1), drop = FALSE]] <- sigma_emp3[na_inds]
+```
+
+Let's hope this is positive definite.
+
+```{r, eval = FALSE}
+L_mat3 <- t(chol(sigma_emp3))
+```
+
+Force the PD using Matrix package
+
+```{r}
+sigma_emp3_pd <- Matrix::nearPD(sigma_emp3)$mat
+```
+
+```{r}
+(L_mat3_pd <- t(chol(sigma_emp3_pd)))
+```
+
+Using pivoting as an alternative solution
+
+```{r}
+R_mat2 <- chol(sigma_emp2, pivot = TRUE)
+pivot <- attr(R_mat2, "pivot")
+crossprod(R_mat2[, order(pivot)]) - sigma_emp2
+```
+
+### Just imputing the residuals data set first
+
+So all this is not going anywhere, let's make it simpler and just impute `eps_hat_wide2` directly - we know how to do that:
+
+```{r}
+eps_hat_wide3 <- eps_hat_wide2
+visits_with_na <- which(sapply(eps_hat_wide3, \(x) any(is.na(x))))
+for (v in visits_with_na) {
+  rows_na <- is.na(eps_hat_wide3[[v]])
+  eps_hat_wide3[rows_na, v] <- mean(eps_hat_wide3[!rows_na, v, drop = TRUE])
+}
+sigma_emp3 <- cov(eps_hat_wide3)
+chol(sigma_emp3)
+```
+
+So that can work.
+
+## User interface
+
+Maybe the easiest and most transparent will be to calculate these starting values on the R side and then pass them to TMB, as we did in above prototype experiment.
+
+We should also allow to override this default for unstructured covariance models and fall back to the independent covariance matrix initialization.
+
+- Currently, `mmrm_control()` has a default of `NULL` for the `start` variance parameter values.
+  But if we now want to have two different defaults, we need to change that.
+- We could e.g. take instead a function, say `default_start` by default, but it could also 
+  provide `ols_start`.
+- `h_mmrm_tmb_parameters()` is taking the `start` list element from the control list. We have here
+  the formula via `formula_parts` as well as the data via `tmb_data` available.
+- Here the `start` function can be called for each group and corresponding data (relevant pieces)
+  with the formula (relevant pieces) as well as given the covariance structure type return
+  the starting values.
+
+Then, we are transparent for the user how the starting values are constructed, and 
+we also allow for flexible additional starting value functions in the future.
+
+# Further ideas
+
+We could consider implementing the MIVQUE0 algorithm (see references above).
+However, given the immediate success in the experiment above with the super simple empirical covariance matrix I doubt if this would be worth it. 
+
