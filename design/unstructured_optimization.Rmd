@@ -227,7 +227,8 @@ eps_hat <- residuals(lin_mod)
 
 ```{r}
 eps_hat_df <- data.frame(id = dat$Pts, visit = dat$Visit, eps = eps_hat)
-eps_hat_wide <- tidyr::pivot_wider(eps_hat_df, names_from = visit, values_from = eps) |> dplyr::select(-id)
+eps_hat_wide <- tidyr::pivot_wider(eps_hat_df, names_from = visit, values_from = eps) |> 
+  dplyr::select(-id)
 head(eps_hat_wide)
 sigma_emp <- cov(eps_hat_wide)
 ```
@@ -289,13 +290,114 @@ Looks great.
 So this gives us a nice plan how to include this in the `mmrm` standard fitting
 algorithm specific for the unstructured covariance model case.
 
-Couple of things to think about:
+# Production considerations
 
-- What do we do if we don't have a complete empirical covariance matrix, i.e. certain combinations of visits don't occur together in the data at all?
-  - Can we just fill in with some reasonable number and then do the Cholesky decomposition? (this is also connected with the issue that we want to hide those entries from the estimated covariance matrix after fitting)
-  - Or does the Cholesky decomposition work somehow with missing values? (I guess not)
-- Maybe the easiest and most transparent will be to calculate these starting values on the R side and then pass them to TMB, as we did in above prototype experiment
-- We should also allow to override this default for unstructured covariance models and fall back to the independent covariance matrix initialization
+Couple of things to think about.
+
+## Incomplete empirical covariance matrix
+
+What do we do if we don't have a complete empirical covariance matrix, i.e. certain combinations of visits don't occur together in the data at all?
+This is also connected with the issue https://github.com/openpharma/mmrm/issues/279 that we want to hide those entries from the estimated covariance matrix after fitting.
+
+Let's look at an example:
+
+```{r}
+# Delete half of T2 and half of T6 such that there is no T2/T6 combination.
+eps_hat_wide2 <- eps_hat_wide
+eps_hat_wide2[1:100, "T2"] <- NA
+eps_hat_wide2[101:200, "T6"] <- NA
+sigma_emp2 <- cov(eps_hat_wide2, use = "pairwise.complete.obs")
+```
+
+### Pivoting
+
+One option is to use pivoting for the Cholesky decomposition:
+
+```{r}
+L_mat2 <- t(chol(sigma_emp2, pivot = TRUE))
+```
+
+It gives us a warning then, and we have NAs in the Cholesky factor. 
+Problem is also here that the row order is different than the column order, and we would need to reorder:
+
+```{r}
+oo <- order(attr(L_mat2, "pivot"))
+L_mat2[oo, ]
+```
+
+This is problematic because we would need to adapt the way we parametrize
+the unstructured covariance matrix.
+
+### Imputing the missing values
+
+Can we just fill in with some reasonable number and then do the Cholesky decomposition?
+Let's look at the lower triangular and see what is missing:
+
+```{r}
+sigma_emp2
+lt <- which(lower.tri(sigma_emp2), arr.ind = TRUE)
+na_inds <- lt[is.na(sigma_emp2[lt]), , drop = FALSE]
+na_inds
+```
+
+Then let's impute this. Not sure what is the most principled approach here...
+
+```{r}
+sigma_emp3 <- sigma_emp2
+sigma_emp3[na_inds] <- mean(sigma_emp3[lt], na.rm = TRUE)
+sigma_emp3[na_inds[, c(2, 1), drop = FALSE]] <- sigma_emp3[na_inds]
+```
+
+Let's hope this is positive definite.
+
+```{r}
+L_mat3 <- t(chol(sigma_emp3))
+```
+
+Hm it is not ... So maybe let's go back to pivoting the Cholesky decomposition,
+fill in NAs there and then come up with a complete matrix?
+
+```{r}
+R_mat2 <- chol(sigma_emp2, pivot = TRUE)
+pivot <- attr(R_mat2, "pivot")
+crossprod(R_mat2[, order(pivot)]) - sigma_emp2
+```
+
+### Just imputing the residuals data set first
+
+So all this is not going anywhere, let's make it simpler and just impute `eps_hat_wide2` directly - we know how to do that:
+
+```{r}
+eps_hat_wide3 <- eps_hat_wide2
+visits_with_na <- which(sapply(eps_hat_wide3, \(x) any(is.na(x))))
+for (v in visits_with_na) {
+  rows_na <- is.na(eps_hat_wide3[[v]])
+  eps_hat_wide3[rows_na, v] <- mean(eps_hat_wide3[!rows_na, v, drop = TRUE])
+}
+sigma_emp3 <- cov(eps_hat_wide3)
+chol(sigma_emp3)
+```
+
+So that can work.
+
+## User interface
+
+Maybe the easiest and most transparent will be to calculate these starting values on the R side and then pass them to TMB, as we did in above prototype experiment.
+
+We should also allow to override this default for unstructured covariance models and fall back to the independent covariance matrix initialization.
+
+- Currently, `mmrm_control()` has a default of `NULL` for the `start` variance parameter values.
+  But if we now want to have two different defaults, we need to change that.
+- We could e.g. take instead a function, say `default_start` by default, but it could also 
+  provide `ols_start`.
+- `h_mmrm_tmb_parameters()` is taking the `start` list element from the control list. We have here
+  the formula via `formula_parts` as well as the data via `tmb_data` available.
+- Here the `start` function can be called for each group and corresponding data (relevant pieces)
+  with the formula (relevant pieces) as well as given the covariance structure type return
+  the starting values.
+
+Then, we are transparent for the user how the starting values are constructed, and 
+we also allow for flexible additional starting value functions in the future.
 
 # Further ideas
 
