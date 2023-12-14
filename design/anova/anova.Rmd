@@ -377,6 +377,7 @@ zap_small <- function(x) {
 }
 
 fit <- mmrm(FEV1 ~ RACE + AVISIT + RACE * AVISIT + ar1(AVISIT | USUBJID), data = fev_data)
+mx <- model.matrix(fit)
 
 x0 <- mx[, c(1, 4:6)]
 x1 <- mx[, 2:3, drop = FALSE]
