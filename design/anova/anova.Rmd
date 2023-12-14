@@ -302,7 +302,7 @@ get_l_matrix_type2 <- function(fit, var) {
   cols <- which(asg == idx)
   all_vars <- row.names(fcts)[which(fcts[, idx] == 1)]
   all_levels <- vapply(all_vars, function(x) {
-    length(attr(fit$tmb_data$data[[x]], "levels"))
+    if (is.factor(fit$tmb_data$data[[x]])) length(attr(fit$tmb_data$data[[x]], "levels")) else 2 # only for simplest case of numeric values
   }, FUN.VALUE = 1)
   total_levels <- prod(all_levels)
   lvls <- prod(all_levels - 1)
@@ -369,7 +369,7 @@ df_md(fit, l_mt)
 
 Note: design matrix involved with numerics are still not implemented yet.
 
-### Additional tries
+### Additional tries (some random code of try!)
 ```{r}
 zap_small <- function(x) {
   x[abs(x) < sqrt(.Machine$double.eps)] <- 0
@@ -392,4 +392,13 @@ l2_coef <- MASS::ginv(t(x1) %*% m %*% x1) %*% t(x1) %*% m %*% x2
 l[, 7:12] <- l2_coef
 
 df_md(fit, l) # very close !
+
+fit <- mmrm(FEV1 ~ FEV1_BL * ARMCD + ARMCD + FEV1_BL + AVISIT + AVISIT * ARMCD + ar1(AVISIT|USUBJID), data = fev_data)
+emmeans::joint_tests(fit)
+a <- rep(0, length(coef(fit)))
+a[2] <- 1
+a[7] <- 0.5
+df_md(fit, a)
+
+get_l_matrix_type2(fit, "FEV1_BL")
 ```
