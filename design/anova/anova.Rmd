@@ -8,7 +8,7 @@ editor_options:
 ---
 
 
-# Backgroun
+# Background
 
 This [blog](https://www.r-bloggers.com/2011/03/anova-%E2%80%93-type-iiiiii-ss-explained/) has a nice summary of it.
 The original [post](http://goanna.cs.rmit.edu.au/fscholer/anova.php) is not accessible now.
