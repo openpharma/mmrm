@@ -189,10 +189,10 @@ x2 <- mx[, c(6, 7, 8)]
 
 l <- rep(0, 8) # initial values
 m <- diag(rep(1, nrow(x0))) - x0 %*% MASS::ginv(t(x0) %*% x0) %*% t(x0)
-l1_coef <- MASS::ginv(t(x1) %*% m  %*% x1) %*% t(x1) %*% m %*% x1
+l1_coef <- MASS::ginv(t(x1) %*% m %*% x1) %*% t(x1) %*% m %*% x1
 l[c(2)] <- l1_coef
 
-l2_coef <- MASS::ginv(t(x1) %*% m  %*% x1) %*% t(x1) %*% m %*% x2
+l2_coef <- MASS::ginv(t(x1) %*% m %*% x1) %*% t(x1) %*% m %*% x2
 l[c(6, 7, 8)] <- l2_coef
 
 df_md(fit, l) # very close !
@@ -206,11 +206,11 @@ x1 <- mx[, c(3, 4, 5), drop = FALSE]
 x2 <- mx[, c(6, 7, 8)]
 
 l <- matrix(0, nrow = 3, ncol = 8) # initial values
-m <-  diag(rep(1, nrow(x0))) - x0 %*% MASS::ginv(t(x0) %*% x0) %*% t(x0)
-l1_coef <- MASS::ginv(t(x1) %*% m  %*% x1) %*% t(x1) %*% m %*% x1
+m <- diag(rep(1, nrow(x0))) - x0 %*% MASS::ginv(t(x0) %*% x0) %*% t(x0)
+l1_coef <- MASS::ginv(t(x1) %*% m %*% x1) %*% t(x1) %*% m %*% x1
 l[, c(3, 4, 5)] <- l1_coef
 
-l2_coef <- MASS::ginv(t(x1) %*% m  %*% x1) %*% t(x1) %*% m %*% x2
+l2_coef <- MASS::ginv(t(x1) %*% m %*% x1) %*% t(x1) %*% m %*% x2
 l[, c(6, 7, 8)] <- l2_coef
 
 df_md(fit, l) # also close
@@ -224,7 +224,7 @@ x1 <- mx[, c(6, 7, 8), drop = FALSE]
 
 l <- matrix(0, nrow = 3, ncol = 8) # initial values
 m <- x0 %*% MASS::ginv(t(x0) %*% x0) %*% t(x0)
-l1_coef <- MASS::ginv(t(x1) %*% m  %*% x1) %*% t(x1) %*% m %*% x1
+l1_coef <- MASS::ginv(t(x1) %*% m %*% x1) %*% t(x1) %*% m %*% x1
 l[, c(6, 7, 8)] <- l1_coef
 
 df_md(fit, l) # close to type 3?
@@ -299,7 +299,9 @@ get_l_matrix_type2 <- function(fit, var) {
   idx <- which(var == colnames(fcts))
   cols <- which(asg == idx)
   all_vars <- row.names(fcts)[which(fcts[, idx] == 1)]
-  all_levels <- vapply(all_vars, function(x) {length(attr(fit$tmb_data$data[[x]], "levels"))}, FUN.VALUE = 1)
+  all_levels <- vapply(all_vars, function(x) {
+    length(attr(fit$tmb_data$data[[x]], "levels"))
+  }, FUN.VALUE = 1)
   total_levels <- prod(all_levels)
   lvls <- prod(all_levels - 1)
   l_mx <- matrix(0, nrow = lvls, ncol = ncol(mx))
@@ -327,7 +329,9 @@ get_l_matrix_type3 <- function(fit, var) {
   idx <- which(var == colnames(fcts))
   cols <- which(asg == idx)
   all_vars <- row.names(fcts)[which(fcts[, idx] == 1)]
-  all_levels <- vapply(all_vars, function(x) {length(attr(fit$tmb_data$data[[x]], "levels"))}, FUN.VALUE = 1)
+  all_levels <- vapply(all_vars, function(x) {
+    length(attr(fit$tmb_data$data[[x]], "levels"))
+  }, FUN.VALUE = 1)
   total_levels <- prod(all_levels)
   lvls <- prod(all_levels - 1)
   l_mx <- matrix(0, nrow = lvls, ncol = ncol(mx))
@@ -337,7 +341,9 @@ get_l_matrix_type3 <- function(fit, var) {
     if (ods[i] > ods[idx] && all(fcts[, i] >= fcts[, idx])) {
       new_cols <- which(asg == i)
       a_vars <- row.names(fcts)[which(fcts[, i] == 1)]
-      a_levels <- vapply(a_vars, function(x) {length(attr(fit$tmb_data$data[[x]], "levels"))}, FUN.VALUE = 1)
+      a_levels <- vapply(a_vars, function(x) {
+        length(attr(fit$tmb_data$data[[x]], "levels"))
+      }, FUN.VALUE = 1)
       t_levels <- prod(a_levels)
       l_mx[, which(asg == i)] <- l_mx[, which(asg == idx)] / t_levels * lvls
     }
@@ -361,7 +367,6 @@ Note: design matrix involved with numerics are still not implemented yet.
 
 ### Additional tries
 ```{r}
-
 zap_small <- function(x) {
   x[abs(x) < sqrt(.Machine$double.eps)] <- 0
   x
@@ -375,10 +380,10 @@ x2 <- mx[, c(7:12)]
 
 l <- matrix(0, 2, 12) # initial values
 m <- diag(rep(1, nrow(x0))) - x0 %*% MASS::ginv(t(x0) %*% x0) %*% t(x0)
-l1_coef <- MASS::ginv(t(x1) %*% m  %*% x1) %*% t(x1) %*% m %*% x1
+l1_coef <- MASS::ginv(t(x1) %*% m %*% x1) %*% t(x1) %*% m %*% x1
 l[, 2:3] <- l1_coef
 
-l2_coef <- MASS::ginv(t(x1) %*% m  %*% x1) %*% t(x1) %*% m %*% x2
+l2_coef <- MASS::ginv(t(x1) %*% m %*% x1) %*% t(x1) %*% m %*% x2
 l[, 7:12] <- l2_coef
 
 df_md(fit, l) # very close !
