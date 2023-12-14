@@ -1,4 +1,4 @@
-%xpt2loc(libref = work, filespec = 'data-raw/fev.xpt');
+%xpt2loc(libref = work, filespec = '/home/lil128/Project/mmrm/data-raw/fev.xpt');
 ods output Tests1 = Tests1 Tests2 = Tests2 Tests3 = Tests3;
 
 PROC MIXED DATA = fev cl method=reml;
@@ -7,7 +7,7 @@ PROC MIXED DATA = fev cl method=reml;
   REPEATED AVISIT / subject=USUBJID type=ar(1);
 RUN;
 
-libname mm 'data-raw';
+libname mm '/home/lil128/Project/mmrm/data-raw';
 data mm.test1;
 	set tests1;
 data mm.test2;
