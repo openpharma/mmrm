@@ -393,7 +393,7 @@ l[, 7:12] <- l2_coef
 
 df_md(fit, l) # very close !
 
-fit <- mmrm(FEV1 ~ FEV1_BL * ARMCD + ARMCD + FEV1_BL + AVISIT + AVISIT * ARMCD + ar1(AVISIT|USUBJID), data = fev_data)
+fit <- mmrm(FEV1 ~ FEV1_BL * ARMCD + ARMCD + FEV1_BL + AVISIT + AVISIT * ARMCD + ar1(AVISIT | USUBJID), data = fev_data)
 emmeans::joint_tests(fit)
 a <- rep(0, length(coef(fit)))
 a[2] <- 1
