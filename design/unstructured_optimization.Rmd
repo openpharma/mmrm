@@ -228,7 +228,7 @@ eps_hat <- residuals(lin_mod)
 
 ```{r}
 eps_hat_df <- data.frame(id = dat$Pts, visit = dat$Visit, eps = eps_hat)
-eps_hat_wide <- tidyr::pivot_wider(eps_hat_df, names_from = visit, values_from = eps) |> 
+eps_hat_wide <- tidyr::pivot_wider(eps_hat_df, names_from = visit, values_from = eps) |>
   dplyr::select(-id)
 head(eps_hat_wide)
 sigma_emp <- cov(eps_hat_wide)
