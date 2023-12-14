@@ -354,12 +354,21 @@ sigma_emp3[na_inds[, c(2, 1), drop = FALSE]] <- sigma_emp3[na_inds]
 
 Let's hope this is positive definite.
 
-```{r}
+```{r, eval = FALSE}
 L_mat3 <- t(chol(sigma_emp3))
 ```
 
-Hm it is not ... So maybe let's go back to pivoting the Cholesky decomposition,
-fill in NAs there and then come up with a complete matrix?
+Force the PD using Matrix package
+
+```{r}
+sigma_emp3_pd <- Matrix::nearPD(sigma_emp3)$mat
+```
+
+```{r}
+(L_mat3_pd <- t(chol(sigma_emp3_pd)))
+```
+
+Using pivoting as an alternative solution
 
 ```{r}
 R_mat2 <- chol(sigma_emp2, pivot = TRUE)
