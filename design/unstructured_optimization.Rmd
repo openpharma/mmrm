@@ -103,6 +103,7 @@ Now let's try to fit this.
 ## `mmrm`
 
 ```{r}
+library(mmrm)
 result_mmrm1 <- fit_mmrm(
   FEV1 ~ Trt * Visit + us(Visit | Patient),
   data = dat, weights = rep(1, nrow(dat)),
@@ -157,7 +158,7 @@ tail(sort(component(result_mmrm2, "theta_est") - component(result_mmrm3, "theta_
 
 ## `SAS`
 
-```{r}
+```{r, eval = FALSE}
 library(sasr.roche)
 sas_code <- "PROC MIXED DATA = dat cl method=reml;
       CLASS Trt(ref = 'Active') Visit(ref = 'T0') Patient;
@@ -236,25 +237,28 @@ sigma_emp <- cov(eps_hat_wide)
 
 Here we follow the model algorithm vignette.
 
+$L = D\tilde{L}$, where $D$ is the diagonal matrix of standard deviations, 
+and $\tilde{L}$ is a unit diagonal lower triangular matrix.
+
 ```{r}
-# L = D\tilde{L}
-# where $D$ is the diagonal matrix of standard deviations, and $\tilde{L}$ is a
-# unit diagonal lower triangular matrix.
 L_mat <- t(chol(sigma_emp))
 D_mat <- diag(diag(L_mat))
 L_tilde_mat <- solve(D_mat, L_mat)
 all.equal(D_mat %*% L_tilde_mat, L_mat, check.attributes = FALSE)
+```
 
-# Hence we start $\theta$ with the natural
-# logarithm of the standard deviations, followed by the *row-wise* filled entries
-# of $\tilde{L} = \{l_{ij}\}_{1 \leq j < i \leq m}$:
-# \[
-# \theta = (
-#   \log(\sigma_1), \dotsc, \log(\sigma_m),
-#   l_{21}, l_{31}, l_{32}, \dotsc, l_{m,m-1}
-# )^\top
-# \]
 
+Hence we start $\theta$ with the natural logarithm of the standard deviations, followed by the *row-wise* filled entries
+of 
+
+$\tilde{L} = \{l_{ij}\}_{1 \leq j < i \leq m}$: \[
+\theta = (
+\log(\sigma_1), \dotsc, \log(\sigma_m),
+l_{21}, l_{31}, l_{32}, \dotsc, l_{m,m-1}
+)^\top
+\]
+
+```{r}
 # note: need to t() here so that we get *row-wise* entries.
 L_tilde_entries <- t(L_tilde_mat)[upper.tri(L_tilde_mat, diag = FALSE)]
 theta_start <- c(log(diag(D_mat)), L_tilde_entries)
