@@ -24,23 +24,38 @@ See paper https://doi.org/10.1080/03610928008827869 and https://support.sas.com/
 
 ## SAS results
 
+```{r}
+sas_code <- "
+ods output Tests1 = Tests1 Tests2 = Tests2 Tests3 = Tests3;
+
+PROC MIXED DATA = fev cl method=reml;
+  CLASS AVISIT(ref = 'VIS4') ARMCD(ref = 'PBO') USUBJID;
+  MODEL FEV1 = ARMCD AVISIT ARMCD*AVISIT / ddfm=satterthwaite htype=1,2,3;
+  REPEATED AVISIT / subject=USUBJID type=ar(1);
+RUN;
+"
+
+library(sasr)
+df2sd(fev_data, "fev")
+run_sas(sas_code)
+df3 <- sd2df("tests3")
+df2 <- sd2df("tests2")
+```
 Using `anova.sas` we have the following results.
 Please note that type 1 result is dependent on the order of testing so it is not included here for simplicity.
 Type 2 and 3 tests are independent of the order of model parameter provided to the procedure.
 
+Type 2
 
-| type 2       | df|        ddf       |      F value      |        Pr > F        |
-|--------------|---|------------------|-------------------|----------------------|
-| ARMCD        | 1 | 177.578206251403 | 33.1870413448661  | 3.62415957242791e-08 |
-| AVISIT       | 3 | 336.480231426766 | 116.732733882531  | 7.97333625254255e-52 |
-| AVISIT*ARMCD | 3 | 335.929182055453 | 0.345902681482862 | 0.792143200158668    |
+```{r}
+df2
+```
 
+Type 3
 
-| type 3       | df|        ddf       |      F value      |        Pr > F        |
-|--------------|---|------------------|-------------------|----------------------|
-| ARMCD        | 1 | 177.848284237308 | 33.0036689632883  | 3.91621392761811e-08 |
-| AVISIT       | 3 | 335.929182055453 | 116.539400933677  | 9.71251157971289e-52 |
-| AVISIT*ARMCD | 3 | 335.929182055519 | 0.345902681482967 | 0.792143200158601    |
+```{r}
+df3
+```
 
 
 ## emmeans joint_tests
@@ -54,18 +69,11 @@ emmeans::joint_tests(fit)
 
 however, the result do not agree well between SAS and R.
 
-Using "satterthwaite df" the F statistic is close, but the d.f. is not.
-
-```
- model term   df1    df2 F.ratio p.value
- ARMCD          1 177.85  33.004  <.0001
- AVISIT         3 309.60 116.540  <.0001
- ARMCD:AVISIT   3 309.60   0.346  0.7921
-```
+Using "satterthwaite df" the F statistic is close, the d.f. is not.
 
 ## Finding suitable contrasts
 
-similar to emmeans::joint_tests() obtain a contrasts. In `emmeans` the contrasts can be obtained for Type 3, and
+In `emmeans` the contrasts can be obtained for Type 3, and
 use these contrasts to send to `df_md` we get exactly the same results with SAS.
 
 ```{r}
@@ -79,6 +87,8 @@ tst <- emmeans::test(emmgrid, by = by, joint = TRUE, status = TRUE)
 ef <- attr(tst, "est.fcns")
 df_md(fit, ef$all) # different from joint_tests(fit)
 ```
+
+This is the contrast used. Please note that this contrast is normalized, however the result is still the same.
 
 ```
 $ARMCD
@@ -100,12 +110,6 @@ $AVISIT
 [1,]  0.0000000
 [2,]  0.0000000
 [3,] -0.4472136
-```
-
-### Obtain the contrasts
-
-```
-df_md(fit, contrasts)
 ```
 
 ### Initial thoughts
@@ -140,6 +144,8 @@ df_md(fit, normalize_mat(dl[6:8, ]))
 df_md(fit, dl[2, ]) # d.f. do not match, stat matches a lot ()
 ```
 
+Note: the doolittle method is used to create type 1 contrasts. Not relavent here.
+
 
 # Type II Estimable Functions
 
@@ -166,7 +172,7 @@ fit <- mmrm(FEV1 ~ ARMCD + AVISIT + ARMCD * AVISIT + ar1(AVISIT | USUBJID), data
 
 the design matrix is
 
-```
+```{r}
 mx <- model.matrix(fit)
 ```
 
@@ -229,10 +235,42 @@ m <- x0 %*% MASS::ginv(t(x0) %*% x0) %*% t(x0)
 l1_coef <- MASS::ginv(t(x1) %*% m %*% x1) %*% t(x1) %*% m %*% x1
 l[, c(6, 7, 8)] <- l1_coef
 
-df_md(fit, l) # close to type 3?
+df_md(fit, l)
+```
+
+For the interaction, it is close to type 3 if the model is `ARMCD * AVISIT + ARMCD + AVISIT`.
+But if the model is `ARMCD + AVISIT + ARMCD * AVISIT`, the result is not so close. Why?
+
+```{r}
+sas_code <- "
+ods output Tests1 = Tests1 Tests2 = Tests2 Tests3 = Tests3;
+
+PROC MIXED DATA = fev cl method=reml;
+  CLASS AVISIT(ref = 'VIS4') ARMCD(ref = 'PBO') USUBJID;
+  MODEL FEV1 = ARMCD*AVISIT ARMCD AVISIT / ddfm=satterthwaite htype=1,2,3;
+  REPEATED AVISIT / subject=USUBJID type=ar(1);
+RUN;
+"
+
+run_sas(sas_code)
+df3_2 <- sd2df("tests3")
+df2_2 <- sd2df("tests2")
+```
+
+Type 2
+
+```{r}
+df2_2
+```
+
+Type 3
+
+```{r}
+df3_2
 ```
 
 Note: according to SAS guide, is a effect is not contained in any other effect, type 2,3 and 4 are equivalent.
+So for `AVISIT * ARMCD` the effect should be not affected by the order of arguments.
 
 ## Basic summary
 
@@ -291,7 +329,22 @@ df_md(fit, l) # also close
 # Prototypes
 
 ```{r}
-get_l_matrix_type2 <- function(fit, var) {
+
+count_levels <- function(x) {
+  UseMethod("count_levels")
+}
+count_levels.factor <- function(x) {
+  length(levels(x))
+}
+count_levels.character <- function(x) {
+  length(unique(x))
+}
+count_levels.numeric <- function(x) {
+  1L
+}
+
+get_l_matrix <- function(fit, var, type = c(2, 3), tol = sqrt(.Machine$double.eps)) {
+  type <- match.arg(type)
   mx <- component(fit, "x_matrix")
   asg <- attr(mx, "assign")
   formula <- fit$formula_parts$model_formula
@@ -300,76 +353,95 @@ get_l_matrix_type2 <- function(fit, var) {
   ods <- attr(tms, "order")
   idx <- which(var == colnames(fcts))
   cols <- which(asg == idx)
-  all_vars <- row.names(fcts)[which(fcts[, idx] == 1)]
-  all_levels <- vapply(all_vars, function(x) {
-    if (is.factor(fit$tmb_data$data[[x]])) length(attr(fit$tmb_data$data[[x]], "levels")) else 2 # only for simplest case of numeric values
-  }, FUN.VALUE = 1)
-  total_levels <- prod(all_levels)
-  lvls <- prod(all_levels - 1)
-  l_mx <- matrix(0, nrow = lvls, ncol = ncol(mx))
+  vars <- row.names(fcts)
+  var_types <- vapply(vars, function(x) class(fit$tmb_data$data[[x]]), FUN.VALUE = "")
+  var_levels <- vapply(vars, function(x) count_levels(fit$tmb_data$data[[x]]), FUN.VALUE = 1L)
+  included_vars <- vars[fcts[, idx] == 1]
+  included_types <- var_types[included_vars]
+  total_levels <- prod(var_levels)
+  coef_rows <- length(cols)
+  l_mx <- matrix(0, nrow = coef_rows, ncol = length(asg))
   l_mx[, cols] <- diag(rep(1, length(cols)))
   for (i in seq_len(ncol(fcts))) {
     x1 <- mx[, cols, drop = FALSE]
-    if (ods[i] >= ods[idx] && all(fcts[, i] >= fcts[, idx])) {
-      x0 <- mx[, which(!asg %in% c(i, idx)), drop = FALSE]
-      x2 <- mx[, which(asg == i), drop = FALSE]
-      m <- diag(rep(1, nrow(x0))) - x0 %*% solve(t(x0) %*% x0) %*% t(x0)
-      l_coefs <- solve(t(x1) %*% m %*% x1) %*% t(x1) %*% m %*% x2
-      l_mx[, which(asg == i)] <- l_coefs
+    additional_vars <- vars[which(fcts[, i] > fcts[, idx])]
+    additional_types <- var_types[additional_vars]
+    if (ods[i] >= ods[idx] && all(fcts[, i] >= fcts[, idx]) && all(additional_types != "numeric")) {
+      if (type == 2) {
+        x0 <- mx[, which(!asg %in% c(i, idx)), drop = FALSE]
+        x2 <- mx[, which(asg == i), drop = FALSE]
+        m <- diag(rep(1, nrow(x0))) - x0 %*% solve(t(x0) %*% x0) %*% t(x0)
+        l_coefs <- solve(t(x1) %*% m %*% x1) %*% t(x1) %*% m %*% x2
+        l_mx[, which(asg == i)] <- l_coefs
+      } else if (type == 3) {
+        new_cols <- which(asg == i)
+        additional_levels <- vapply(additional_vars, function(x) count_levels(fit$tmb_data$data[[x]]), FUN.VALUE = 1)
+        t_levels <- prod(additional_levels)
+        l_mx[, which(asg == i)] <- l_mx[, which(asg == idx)] / t_levels
+      }
     }
   }
+  l_mx[abs(l_mx) < tol] <- 0
   l_mx
 }
 
-get_l_matrix_type3 <- function(fit, var) {
-  mx <- component(fit, "x_matrix")
-  asg <- attr(mx, "assign")
-  formula <- fit$formula_parts$model_formula
-  tms <- terms(formula)
-  fcts <- attr(tms, "factors")[-1, , drop = FALSE] # discard the response
-  ods <- attr(tms, "order")
-  idx <- which(var == colnames(fcts))
-  cols <- which(asg == idx)
-  all_vars <- row.names(fcts)[which(fcts[, idx] == 1)]
-  all_levels <- vapply(all_vars, function(x) {
-    length(attr(fit$tmb_data$data[[x]], "levels"))
-  }, FUN.VALUE = 1)
-  total_levels <- prod(all_levels)
-  lvls <- prod(all_levels - 1)
-  l_mx <- matrix(0, nrow = lvls, ncol = ncol(mx))
-  l_mx[, cols] <- diag(rep(1, length(cols)))
-  for (i in seq_len(ncol(fcts))) {
-    if (ods[i] > ods[idx] && all(fcts[, i] >= fcts[, idx])) {
-      new_cols <- which(asg == i)
-      a_vars <- row.names(fcts)[which(fcts[, i] == 1)]
-      a_levels <- vapply(a_vars, function(x) {
-        length(attr(fit$tmb_data$data[[x]], "levels"))
-      }, FUN.VALUE = 1)
-      t_levels <- prod(a_levels)
-      l_mx[, which(asg == i)] <- l_mx[, which(asg == idx)] / t_levels * total_levels
-    }
-  }
-  l_mx
-}
+get_l_matrix(fit, "ARMCD", "2")
+get_l_matrix(fit, "ARMCD", "3")
 
-get_l_matrix_type2(fit, "ARMCD")
-get_l_matrix_type3(fit, "ARMCD")
+get_l_matrix(fit, "AVISIT", "2")
+get_l_matrix(fit, "AVISIT", "3")
 
-get_l_matrix_type2(fit, "AVISIT")
-get_l_matrix_type3(fit, "AVISIT")
-
-get_l_matrix_type2(fit, "ARMCD:AVISIT")
-get_l_matrix_type3(fit, "ARMCD:AVISIT")
+get_l_matrix(fit, "ARMCD:AVISIT", "2")
+get_l_matrix(fit, "ARMCD:AVISIT", "3")
 
 # call df_md on these l matrix to obtain the results.
 
-l_mt <- get_l_matrix_type3(fit, "AVISIT")
-df_md(fit, l_mt)
+df_md(fit, get_l_matrix(fit, "AVISIT", "3"))
+df_md(fit, get_l_matrix(fit, "ARMCD:AVISIT", "3"))
+
+df_md(fit, get_l_matrix(fit, "AVISIT", "2"))
+df_md(fit, get_l_matrix(fit, "ARMCD:AVISIT", "2"))
 ```
 
-Note: design matrix involved with numerics are still not implemented yet.
+## Prototypes of interfaces
+
+To implement the anova of type II and type III, consider extending the `car::Anova` method
+
+```{r}
+Anova.mmrm_tmb <- function(fit, type) {
+  vars <- colnames(attr(terms(fit$formula_parts$model_formula), "factors"))
+  ret <- lapply(
+    vars,
+    function(x) df_md(fit, get_l_matrix(fit, x, type))
+  )
+  ret_df <- do.call(rbind, ret)
+  row.names(ret_df) <- vars
+  ret_df
+}
+fit <- mmrm(FEV1 ~ FEV1_BL + ARMCD + FEV1_BL * AVISIT + ar1(AVISIT | USUBJID), data = fev_data)
+Anova(fit, "2")
+Anova(fit, "3")
+```
+
+
+```{r}
+sas_code <- "
+ods output Tests1 = Tests1 Tests2 = Tests2 Tests3 = Tests3;
+
+PROC MIXED DATA = fev cl method=reml;
+  CLASS AVISIT(ref = 'VIS4') ARMCD(ref = 'PBO') USUBJID;
+  MODEL FEV1 = FEV1_BL ARMCD AVISIT FEV1_BL * AVISIT / ddfm=satterthwaite htype=1,2,3;
+  REPEATED AVISIT / subject=USUBJID type=ar(1);
+RUN;
+"
+
+run_sas(sas_code)
+df3_3 <- sd2df("tests3")
+df2_3 <- sd2df("tests2")
+```
 
 ### Additional tries (some random code of try!)
+
 ```{r}
 zap_small <- function(x) {
   x[abs(x) < sqrt(.Machine$double.eps)] <- 0
@@ -400,5 +472,5 @@ a[2] <- 1
 a[7] <- 0.5
 df_md(fit, a)
 
-get_l_matrix_type2(fit, "FEV1_BL")
+get_l_matrix(fit, "FEV1_BL", 2)
 ```
