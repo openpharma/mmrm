@@ -329,7 +329,6 @@ df_md(fit, l) # also close
 # Prototypes
 
 ```{r}
-
 count_levels <- function(x) {
   UseMethod("count_levels")
 }
