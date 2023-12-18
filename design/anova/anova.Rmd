@@ -457,7 +457,6 @@ RUN;
 res <- run_sas(sas_code)
 df3_3 <- sd2df("tests3")
 df2_3 <- sd2df("tests2")
-
 ```
 
 Apprently, if contrasts is specified as what we expected (identity matrix for FEV1_BL * AVISIT),
