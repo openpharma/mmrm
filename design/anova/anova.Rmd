@@ -247,6 +247,9 @@ The answer might be that the order of levels. using e3 option we can see that th
 However in R we will not have such issue because we always use `factor` and for the interaction we also have
 decided reference level!
 
+It is possible to obtain the contrasts used by SAS by `e3` option and in R we will have very close result if correct contrast
+is used. However, in R we should not do this automatically.
+
 
 #### Changing the order of parameter
 
@@ -478,7 +481,7 @@ This may also address some minor discrepencies in some results between SAS and R
 For R side, we would still use the identity matrix to test the terms.
 It makes sense and should not be changed.
 However, it is still possible to achieve what they have done, e.g. with the following contrast we
-can have identical results
+can have almost identical results.
 
 ```{r}
 a <- matrix(
