@@ -78,7 +78,7 @@ repos:
           design/.*
           )$
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v4.0.0-alpha.5
+    rev: v4.0.0-alpha.7
     hooks:
       - id: prettier
         exclude: >
