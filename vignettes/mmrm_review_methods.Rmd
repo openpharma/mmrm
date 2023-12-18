@@ -194,7 +194,7 @@ MODEL FEV1 = AVISIT|ARMCD / ddfm=satterthwaite solution chisq;
 
 ### `gls`
 <pre><code>gls(
-  formula = FEV1 ~ ARMCD * AVISIT,
+  FEV1 ~ ARMCD * AVISIT,
   data = fev_data,
   correlation = <b>corCAR1(form = ~AVISIT | USUBJID)</b>,
   weights = <b>varIdent(form = ~1|AVISIT)</b>,
@@ -220,7 +220,7 @@ MODEL FEV1 =  ARMCD|AVISIT / ddfm=satterthwaite solution chisq;
 
 ### `gls`
 <pre><code>gls(
-  formula = FEV1 ~ ARMCD * AVISIT,
+  FEV1 ~ ARMCD * AVISIT,
   data = fev_data,
   correlation = <b>corCAR1(form = ~AVISIT | USUBJID)</b>,
   na.action = na.omit
@@ -253,7 +253,7 @@ MODEL FEV1 = AVISIT|ARMCD / ddfm=satterthwaite solution chisq;
 
 ### `gls`
 <pre><code>gls(
-  formula = FEV1 ~ ARMCD * AVISIT,
+  FEV1 ~ ARMCD * AVISIT,
   data = fev_data,
   correlation = <b>corCompSymm(form = ~AVISIT | USUBJID)</b>,
   weights = <b>varIdent(form = ~1|AVISIT)</b>,
@@ -287,7 +287,7 @@ MODEL FEV1 = AVISIT|ARMCD / ddfm=satterthwaite solution chisq;
 
 ### `gls`
 <pre><code>gls(
-  formula = FEV1 ~ ARMCD * AVISIT,
+  FEV1 ~ ARMCD * AVISIT,
   data = fev_data,
   correlation = <b>corCompSymm(form = ~AVISIT | USUBJID)</b>,
   na.action = na.omit
@@ -313,7 +313,7 @@ MODEL FEV1 = AVISIT|ARMCD / ddfm=satterthwaite solution chisq;
 
 ### `gls`
 <pre><code>gls(
-  formula = FEV1 ~ ARMCD * AVISIT,
+  FEV1 ~ ARMCD * AVISIT,
   data = fev_data,
   correlation = <b>corExp(form = ~AVISIT | USUBJID)</b>,
   weights = varIdent(form = ~1|AVISIT),
@@ -388,7 +388,7 @@ MODEL FEV1 = ARMCD|AVISIT / ddfm=satterthwaite solution chisq;
 
 ### `gls`
 <pre><code>gls(
-  formula = FEV1 ~  ARMCD * AVISIT,
+  FEV1 ~  ARMCD * AVISIT,
   data = fev_data,
   correlation = <b>corSymm(form = ~AVISIT | USUBJID)</b>,
   weights = varIdent(form = ~1|AVISIT),
