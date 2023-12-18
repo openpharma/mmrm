@@ -30,18 +30,20 @@ ods output Tests1 = Tests1 Tests2 = Tests2 Tests3 = Tests3;
 
 PROC MIXED DATA = fev cl method=reml;
   CLASS AVISIT(ref = 'VIS4') ARMCD(ref = 'PBO') USUBJID;
-  MODEL FEV1 = ARMCD AVISIT ARMCD*AVISIT / ddfm=satterthwaite htype=1,2,3;
+  MODEL FEV1 = ARMCD*AVISIT ARMCD AVISIT  / ddfm=satterthwaite htype=1,2,3 e3;
   REPEATED AVISIT / subject=USUBJID type=ar(1);
 RUN;
 "
 
 library(sasr)
+library(mmrm)
+library(car)
 df2sd(fev_data, "fev")
-run_sas(sas_code)
+res <- run_sas(sas_code)
 df3 <- sd2df("tests3")
 df2 <- sd2df("tests2")
 ```
-Using `anova.sas` we have the following results.
+
 Please note that type 1 result is dependent on the order of testing so it is not included here for simplicity.
 Type 2 and 3 tests are independent of the order of model parameter provided to the procedure.
 
@@ -69,7 +71,7 @@ emmeans::joint_tests(fit)
 
 however, the result do not agree well between SAS and R.
 
-Using "satterthwaite df" the F statistic is close, the d.f. is not.
+Using "satterthwaite df" the F statistic is close, the ddf is not.
 
 ## Finding suitable contrasts
 
@@ -144,7 +146,7 @@ df_md(fit, normalize_mat(dl[6:8, ]))
 df_md(fit, dl[2, ]) # d.f. do not match, stat matches a lot ()
 ```
 
-Note: the doolittle method is used to create type 1 contrasts. Not relavent here.
+Note: the doolittle method is used to create type 1 contrasts. Not really relavent here.
 
 
 # Type II Estimable Functions
@@ -241,18 +243,25 @@ df_md(fit, l)
 For the interaction, it is close to type 3 if the model is `ARMCD * AVISIT + ARMCD + AVISIT`.
 But if the model is `ARMCD + AVISIT + ARMCD * AVISIT`, the result is not so close. Why?
 
+The answer might be that the order of levels. using e3 option we can see that the contrast are different.
+However in R we will not have such issue because we always use `factor` and for the interaction we also have
+decided reference level!
+
+
+#### Changing the order of parameter
+
 ```{r}
 sas_code <- "
 ods output Tests1 = Tests1 Tests2 = Tests2 Tests3 = Tests3;
 
 PROC MIXED DATA = fev cl method=reml;
   CLASS AVISIT(ref = 'VIS4') ARMCD(ref = 'PBO') USUBJID;
-  MODEL FEV1 = ARMCD*AVISIT ARMCD AVISIT / ddfm=satterthwaite htype=1,2,3;
+  MODEL FEV1 = ARMCD*AVISIT ARMCD AVISIT / ddfm=satterthwaite htype=1,2,3 e3;
   REPEATED AVISIT / subject=USUBJID type=ar(1);
 RUN;
 "
 
-run_sas(sas_code)
+res <- run_sas(sas_code)
 df3_2 <- sd2df("tests3")
 df2_2 <- sd2df("tests2")
 ```
@@ -270,7 +279,9 @@ df3_2
 ```
 
 Note: according to SAS guide, is a effect is not contained in any other effect, type 2,3 and 4 are equivalent.
-So for `AVISIT * ARMCD` the effect should be not affected by the order of arguments.
+So for `AVISIT * ARMCD` the effect should be not affected by the order of arguments. This is only because of different
+contrasts.
+In R we will not have this issue.
 
 ## Basic summary
 
@@ -367,7 +378,8 @@ get_l_matrix <- function(fit, var, type = c(2, 3), tol = sqrt(.Machine$double.ep
     additional_types <- var_types[additional_vars]
     if (ods[i] >= ods[idx] && all(fcts[, i] >= fcts[, idx]) && all(additional_types != "numeric")) {
       if (type == 2) {
-        x0 <- mx[, which(!asg %in% c(i, idx)), drop = FALSE]
+        z <- c(i, idx)
+        x0 <- mx[, which(!asg %in% z), drop = FALSE]
         x2 <- mx[, which(asg == i), drop = FALSE]
         m <- diag(rep(1, nrow(x0))) - x0 %*% solve(t(x0) %*% x0) %*% t(x0)
         l_coefs <- solve(t(x1) %*% m %*% x1) %*% t(x1) %*% m %*% x2
@@ -420,24 +432,70 @@ Anova.mmrm_tmb <- function(fit, type) {
 fit <- mmrm(FEV1 ~ FEV1_BL + ARMCD + FEV1_BL * AVISIT + ar1(AVISIT | USUBJID), data = fev_data)
 Anova(fit, "2")
 Anova(fit, "3")
+
+aa <- get_l_matrix(fit, "AVISIT", "3")
+aa[, 7:9] <- diag(rep(0, 3))
+df_md(fit, aa)
 ```
 
+
+### How about using `CONTRAST` option in SAS?
 
 ```{r}
 sas_code <- "
 ods output Tests1 = Tests1 Tests2 = Tests2 Tests3 = Tests3;
 
 PROC MIXED DATA = fev cl method=reml;
-  CLASS AVISIT(ref = 'VIS4') ARMCD(ref = 'PBO') USUBJID;
-  MODEL FEV1 = FEV1_BL ARMCD AVISIT FEV1_BL * AVISIT / ddfm=satterthwaite htype=1,2,3;
+  CLASS AVISIT(ref = last) ARMCD(ref = 'PBO') USUBJID;
+  MODEL FEV1 = FEV1_BL ARMCD AVISIT FEV1_BL * AVISIT / ddfm=satterthwaite htype=1,2,3 solution chisq e3;
   REPEATED AVISIT / subject=USUBJID type=ar(1);
+  CONTRAST 'fev1_bl*avisit'
+  FEV1_BL*AVISIT 1 0 0 -1, FEV1_BL*AVISIT 0 1 0 -1, FEV1_BL*AVISIT 0 0 1 -1;
 RUN;
 "
 
-run_sas(sas_code)
+res <- run_sas(sas_code)
 df3_3 <- sd2df("tests3")
 df2_3 <- sd2df("tests2")
+
 ```
+
+Apprently, if contrasts is specified as what we expected (identity matrix for FEV1_BL * AVISIT),
+the inference is identical to what we have in R.
+However, SAS uses a different level system (the ref is always putted to last level! and this will affect the inference)
+
+e.g. in SAS we have the following contrast if we specify `VIS4` as the reference
+
+| VIS1 | VIS2 | VIS3 | VIS4 |
+|-|-|-|-|
+| 1 | 0 | 0 | -1 |
+| 0 | 1 | 0 | -1 |
+| 0 | 0 | 1 | -1 |
+
+however in our model the coefficients are estimated with VIS1 as reference.
+This may also address some minor discrepencies in some results between SAS and R.
+
+For R side, we would still use the identity matrix to test the terms.
+It makes sense and should not be changed.
+However, it is still possible to achieve what they have done, e.g. with the following contrast we
+can have identical results
+
+```{r}
+a <- matrix(
+  c(
+    0, 0, -1,
+    1, 0, -1,
+    0, 1, -1
+  ),
+  nrow = 3,
+  byrow = T
+)
+contra <- matrix(0, 3, 9)
+contra[, 7:9] <- a
+df_md(fit, contra)
+```
+
+Now we get very close result too!
 
 ### Additional tries (some random code of try!)
 
@@ -471,5 +529,5 @@ a[2] <- 1
 a[7] <- 0.5
 df_md(fit, a)
 
-get_l_matrix(fit, "FEV1_BL", 2)
+get_l_matrix(fit, "FEV1_BL", "2")
 ```
