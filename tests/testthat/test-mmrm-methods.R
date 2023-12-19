@@ -111,8 +111,8 @@ test_that("h_get_contrast works as expected", {
     matrix(c(0, 1, rep(0, 7)), nrow = 1, byrow = TRUE)
   )
   expect_identical(
-    h_get_contrast(get_mmrm_trans(), "ARMCDTRT", "3"),
-    matrix(c(0, 1, rep(0, 7)), nrow = 1, byrow = TRUE)
+    h_get_contrast(get_mmrm_trans(), "ARMCD", "3"),
+    matrix(c(0, 0, 1, rep(0, 3), rep(0.25, 3)), nrow = 1, byrow = TRUE)
   )
   expect_identical(
     h_get_contrast(get_mmrm_trans(), "ARMCD:AVISIT", "3"),
