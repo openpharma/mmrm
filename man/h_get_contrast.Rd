@@ -2,7 +2,7 @@
 % Please edit documentation in R/mmrm-methods.R
 \name{h_get_contrast}
 \alias{h_get_contrast}
-\title{Obtain contrast for specified effect}
+\title{Obtain Contrast for Specified Effect}
 \usage{
 h_get_contrast(
   object,
@@ -24,6 +24,6 @@ h_get_contrast(
 A \code{matrix} of the contrast.
 }
 \description{
-Obtain contrast for specified effect
+This is support function to obtain contrast matrix for type II/III testing.
 }
 \keyword{internal}

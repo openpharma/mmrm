@@ -20,6 +20,10 @@
 #'    2. If the covariance structure is spatial, the covariance matrix of two time points with unit distance
 #'       will be displayed.
 #'
+#' `Anova` will return `anova` object with one row per variable and columns
+#' `Num Df`(numerator degrees of freedom), `Denom Df`(denominator degrees of freedom),
+#' `F Statistic` and `Pr(>=F)`.
+#'
 #' @name mmrm_methods
 #'
 #' @seealso [`mmrm_tmb_methods`], [`mmrm_tidiers`] for additional methods.
@@ -228,12 +232,17 @@ print.summary.mmrm <- function(x,
   invisible(x)
 }
 
-#' Obtain contrast for specified effect
+#' Obtain Contrast for Specified Effect
+#'
+#' This is support function to obtain contrast matrix for type II/III testing.
+#'
 #' @param object (`mmrm`)\cr the fitted MMRM.
 #' @param effect (`string`) the name of the effect.
 #' @param type (`string`) type of test, "II", "III", '2', or '3'.
 #' @param tol (`numeric`) threshold blow which values are treated as 0.
+#'
 #' @return A `matrix` of the contrast.
+#'
 #' @keywords internal
 h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol = sqrt(.Machine$double.eps)) {
   assert_class(object, "mmrm")
@@ -286,9 +295,10 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
 }
 
 #' @describeIn mmrm_methods Conduct type II/III hypothesis testing on the MMRM fit results.
+#'
 #' @param mod (`mmrm`)\cr the fitted MMRM.
-#' @inheritParams h_get_contrast
 #' @param ...Not used.
+#' @inheritParams h_get_contrast
 #' @exportS3Method
 Anova.mmrm <- function(mod, type = c("II", "III", "2", "3"), tol = sqrt(.Machine$double.eps), ...) { # nolint
   assert_double(tol, finite = TRUE, len = 1L)
