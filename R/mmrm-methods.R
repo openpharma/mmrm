@@ -263,8 +263,7 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
     additional_numeric <- any(var_numeric[additional_vars])
     current_col <- which(asg == i)
     if (ods[i] >= ods[idx] && all(fcts[, i] >= fcts[, idx]) && !additional_numeric) {
-      sub_mat <- switch(
-        type,
+      sub_mat <- switch(type,
         "2" = ,
         "II" = {
           x0 <- mx[, -c(cols, current_col), drop = FALSE]
@@ -304,7 +303,12 @@ Anova.mmrm <- function(mod, type = c("II", "III", "2", "3"), tol = sqrt(.Machine
   class(ret_df) <- c("anova", "data.frame")
   attr(ret_df, "heading") <- sprintf(
     "Analysis of Fixed Effect Table (Type %s F tests)",
-    switch(type, "2" = , "II" = "II", "3" = , "III" = "III")
+    switch(type,
+      "2" = ,
+      "II" = "II",
+      "3" = ,
+      "III" = "III"
+    )
   )
   ret_df
 }
