@@ -285,7 +285,7 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
   l_mx
 }
 
-#' Anova for mmrm models
+#' @describeIn mmrm_methods Conduct type II/III hypothesis testing on the MMRM fit results.
 #' @param mod (`mmrm`)\cr the fitted MMRM.
 #' @inheritParams h_get_contrast
 #' @exportS3Method
