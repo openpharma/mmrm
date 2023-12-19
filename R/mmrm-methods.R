@@ -288,8 +288,9 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
 #' @describeIn mmrm_methods Conduct type II/III hypothesis testing on the MMRM fit results.
 #' @param mod (`mmrm`)\cr the fitted MMRM.
 #' @inheritParams h_get_contrast
+#' @param ...Not used.
 #' @exportS3Method
-Anova.mmrm <- function(mod, type = c("II", "III", "2", "3"), tol = sqrt(.Machine$double.eps)) { # nolint
+Anova.mmrm <- function(mod, type = c("II", "III", "2", "3"), tol = sqrt(.Machine$double.eps), ...) { # nolint
   assert_double(tol, finite = TRUE, len = 1L)
   type <- match.arg(type)
   vars <- colnames(attr(terms(mod$formula_parts$model_formula), "factors"))

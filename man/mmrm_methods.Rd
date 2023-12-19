@@ -16,7 +16,12 @@
   ...
 )
 
-\method{Anova}{mmrm}(mod, type = c("II", "III", "2", "3"), tol = sqrt(.Machine$double.eps))
+\method{Anova}{mmrm}(
+  mod,
+  type = c("II", "III", "2", "3"),
+  tol = sqrt(.Machine$double.eps),
+  ...
+)
 }
 \arguments{
 \item{object}{(\code{mmrm})\cr the fitted MMRM including Jacobian and call etc.}
@@ -28,6 +33,8 @@
 \item{type}{(\code{string}) type of test, "II", "III", '2', or '3'.}
 
 \item{tol}{(\code{numeric}) threshold blow which values are treated as 0.}
+
+\item{...Not}{used.}
 }
 \value{
 Depends on the method, see Details and Functions.
