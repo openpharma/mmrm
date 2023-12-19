@@ -37,7 +37,7 @@ Before we discuss the testing, it is important that we understand the concept of
 The definition of "contained effect" is:
 
 For effect "E2", it is said to contain "E1" if
-1. they both involve the same continuous variable (and no more other continuous variable is involvde)
+1. they both involve the same continuous variable (and no more other continuous variable is involved)
 1. "E2" have equal or more "categorical variable" than "E1"
 
 For example, for the following formula
@@ -63,14 +63,14 @@ columns equal to the number of all parameters.
 
 where $X_0$ stands for columns of $X$ whose associated effect do not contain $F_1$,
 $X_1$ stands for columns of $X$ associated with $F_1$,
-$X_2$ stands for columns of $X$ whose ssociated effect contains $F_1$,
+$X_2$ stands for columns of $X$ whose associated effect contains $F_1$,
 $M = I - X_0(X_0^\top X_0)^{-}X_0^\top$,
 and $Z^{-}$ stands for the g2 inverse of $Z$.
 
-Note: In `mmrm` package, we do not allow singularity ingeneral, so the g2 inverse is the inverse.
-Thuse we can use identity matrix in step 2.
+Note: In `mmrm` package, we do not allow singularity in general, so the g2 inverse is the inverse.
+Thus we can use identity matrix in step 2.
 
-# Type III Hypothese Testing
+# Type III Hypothesis Testing
 
 For type III hypothesis testing, we assume that the hypothesis tested should be the same for all
 designs with the same general form of estimable functions.
@@ -85,7 +85,7 @@ columns equal to the number of all parameters.
 values.
 
 Here equate the values means that, given that the coefficients in step 2 are all 1 (diagonal), in step 3
-this 1 is devided by the total number of new levels.
+this 1 is divided by the total number of new levels.
 
 # Hypothesis Testing in SAS
 
