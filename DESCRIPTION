@@ -42,6 +42,7 @@ BugReports: https://github.com/openpharma/mmrm/issues
 Depends:
     R (>= 4.0)
 Imports:
+    car,
     checkmate (>= 2.0),
     generics,
     lifecycle,

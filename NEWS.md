@@ -1,9 +1,14 @@
 # mmrm 0.3.7.9004
 
+### New Features
+
+- `Anova` is implemented for `mmrm` models. It supports type II and III hypothesis testing.
+
 ### Miscellaneous
 
 - In documentation of `mmrm_control()`, the allowed vcov definition is corrected to "Empirical-Jackknife" (CR3), and "Empirical-Bias-Reduced" (CR2).
 - Fix a compiler warning related to missing format specification in error message function call.
+- If empty matrix is provided to `df_md`, it will return statistics with NA values.
 
 # mmrm 0.3.6
 
