@@ -39,7 +39,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.7.9002</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.7.9003</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -82,22 +82,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.7">v0.3.7</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.6">v0.3.6</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.5">v0.3.5</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.4">v0.3.4</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.3">v0.3.3</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.2">v0.3.2</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.1">v0.3.1</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.0">v0.3.0</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.2.2">v0.2.2</a> </div></li>
-<!-- end dropdown for versions -->
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-reports">Reports</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-reports">
@@ -402,7 +386,7 @@ MODEL FEV1 = AVISIT|ARMCD / ddfm=satterthwaite solution chisq;
 <code>gls</code><a class="anchor" aria-label="anchor" href="#gls"></a>
 </h4>
 <pre><code><span><span class="fu">gls</span><span class="op">(</span></span>
-<span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span>,</span>
+<span>  <span class="va">FEV1</span> <span class="op">~</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">fev_data</span>,</span>
 <span>  correlation <span class="op">=</span> <span class="fu">corCAR1</span><span class="op">(</span>form <span class="op">=</span> <span class="op">~</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
 <span>  weights <span class="op">=</span> <span class="fu">varIdent</span><span class="op">(</span>form <span class="op">=</span> <span class="op">~</span><span class="fl">1</span><span class="op">|</span><span class="va">AVISIT</span><span class="op">)</span>,</span>
@@ -437,7 +421,7 @@ MODEL FEV1 =  ARMCD|AVISIT / ddfm=satterthwaite solution chisq;
 <code>gls</code><a class="anchor" aria-label="anchor" href="#gls-1"></a>
 </h4>
 <pre><code><span><span class="fu">gls</span><span class="op">(</span></span>
-<span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span>,</span>
+<span>  <span class="va">FEV1</span> <span class="op">~</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">fev_data</span>,</span>
 <span>  correlation <span class="op">=</span> <span class="fu">corCAR1</span><span class="op">(</span>form <span class="op">=</span> <span class="op">~</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
 <span>  na.action <span class="op">=</span> <span class="va">na.omit</span></span>
@@ -481,7 +465,7 @@ MODEL FEV1 = AVISIT|ARMCD / ddfm=satterthwaite solution chisq;
 <code>gls</code><a class="anchor" aria-label="anchor" href="#gls-2"></a>
 </h4>
 <pre><code><span><span class="fu">gls</span><span class="op">(</span></span>
-<span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span>,</span>
+<span>  <span class="va">FEV1</span> <span class="op">~</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">fev_data</span>,</span>
 <span>  correlation <span class="op">=</span> <span class="fu">corCompSymm</span><span class="op">(</span>form <span class="op">=</span> <span class="op">~</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
 <span>  weights <span class="op">=</span> <span class="fu">varIdent</span><span class="op">(</span>form <span class="op">=</span> <span class="op">~</span><span class="fl">1</span><span class="op">|</span><span class="va">AVISIT</span><span class="op">)</span>,</span>
@@ -526,7 +510,7 @@ MODEL FEV1 = AVISIT|ARMCD / ddfm=satterthwaite solution chisq;
 <code>gls</code><a class="anchor" aria-label="anchor" href="#gls-3"></a>
 </h4>
 <pre><code><span><span class="fu">gls</span><span class="op">(</span></span>
-<span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span>,</span>
+<span>  <span class="va">FEV1</span> <span class="op">~</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">fev_data</span>,</span>
 <span>  correlation <span class="op">=</span> <span class="fu">corCompSymm</span><span class="op">(</span>form <span class="op">=</span> <span class="op">~</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
 <span>  na.action <span class="op">=</span> <span class="va">na.omit</span></span>
@@ -560,7 +544,7 @@ MODEL FEV1 = AVISIT|ARMCD / ddfm=satterthwaite solution chisq;
 <code>gls</code><a class="anchor" aria-label="anchor" href="#gls-4"></a>
 </h4>
 <pre><code><span><span class="fu">gls</span><span class="op">(</span></span>
-<span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span>,</span>
+<span>  <span class="va">FEV1</span> <span class="op">~</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">fev_data</span>,</span>
 <span>  correlation <span class="op">=</span> <span class="fu">corExp</span><span class="op">(</span>form <span class="op">=</span> <span class="op">~</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
 <span>  weights <span class="op">=</span> <span class="fu">varIdent</span><span class="op">(</span>form <span class="op">=</span> <span class="op">~</span><span class="fl">1</span><span class="op">|</span><span class="va">AVISIT</span><span class="op">)</span>,</span>
@@ -662,7 +646,7 @@ MODEL FEV1 = ARMCD|AVISIT / ddfm=satterthwaite solution chisq;
 <code>gls</code><a class="anchor" aria-label="anchor" href="#gls-5"></a>
 </h4>
 <pre><code><span><span class="fu">gls</span><span class="op">(</span></span>
-<span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span>  <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span>,</span>
+<span>  <span class="va">FEV1</span> <span class="op">~</span>  <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">fev_data</span>,</span>
 <span>  correlation <span class="op">=</span> <span class="fu">corSymm</span><span class="op">(</span>form <span class="op">=</span> <span class="op">~</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
 <span>  weights <span class="op">=</span> <span class="fu">varIdent</span><span class="op">(</span>form <span class="op">=</span> <span class="op">~</span><span class="fl">1</span><span class="op">|</span><span class="va">AVISIT</span><span class="op">)</span>,</span>
@@ -993,7 +977,7 @@ type II error rates.</p>
 <span><span class="co">#&gt; other attached packages:</span></span>
 <span><span class="co">#&gt;  [1] ggplot2_3.4.4           emmeans_1.8.9           knitr_1.45             </span></span>
 <span><span class="co">#&gt;  [4] sasr_0.1.2              glmmTMB_1.1.8           nlme_3.1-164           </span></span>
-<span><span class="co">#&gt;  [7] lme4_1.1-35.1           Matrix_1.6-4            mmrm_0.3.7.9002        </span></span>
+<span><span class="co">#&gt;  [7] lme4_1.1-35.1           Matrix_1.6-4            mmrm_0.3.7.9003        </span></span>
 <span><span class="co">#&gt; [10] stringr_1.5.1           microbenchmark_1.4.10   purrr_1.0.2            </span></span>
 <span><span class="co">#&gt; [13] dplyr_1.1.4             clusterGeneration_1.3.8 MASS_7.3-60            </span></span>
 <span><span class="co">#&gt; </span></span>
