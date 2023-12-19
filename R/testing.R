@@ -64,6 +64,16 @@ df_md <- function(object, contrast) {
     contrast <- matrix(contrast, ncol = length(contrast))
   }
   assert_matrix(contrast, ncols = length(component(object, "beta_est")))
+  if (nrow(contrast) == 0) {
+    return(
+      list(
+        num_df = 0,
+        denom_df = NA_real_,
+        f_stat = NA_real_,
+        p_val = NA_real_
+      )
+    )
+  }
   switch(object$method,
     "Satterthwaite" = h_df_md_sat(object, contrast),
     "Kenward-Roger" = h_df_md_kr(object, contrast),
