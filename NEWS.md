@@ -2,7 +2,7 @@
 
 ### New Features
 
-- `Anova` is implemented for `mmrm` models. It supports type II and III hypothesis testing.
+- `Anova` is implemented for `mmrm` models and available upon loading the `car` package. It supports type II and III hypothesis testing.
 
 ### Miscellaneous
 
