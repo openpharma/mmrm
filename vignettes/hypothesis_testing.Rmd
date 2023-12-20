@@ -25,9 +25,7 @@ functions.
 Given that type I estimable functions are dependent on the specific order of used covariates,
 we focus on the type II and III testing here.
 
-From the `mmrm` model perspective, obtaining estimable functions, is equivalent to obtaining the
-contrasts.
-
+For MMRM, obtaining estimable functions is equivalent to obtaining the contrasts for linear hypothesis tests.
 For more details, see @goodnight1980tests.
 
 # Contained Effect
@@ -36,10 +34,10 @@ Before we discuss the testing, it is important that we understand the concept of
 The definition of "contained effect" is:
 
 For effect "E2", it is said to contain "E1" if
-1. they both involve the same continuous variable (and no more other continuous variable is involved)
-1. "E2" have equal or more "categorical variable" than "E1"
+1. they both involve the same continuous covariates
+1. "E2" have equal or more categorical covariates than "E1"
 
-For example, for the following formula
+For example, for the following model formula
 
 $Y = A + B + A*B$
 
@@ -66,14 +64,14 @@ $X_2$ stands for columns of $X$ whose associated effect contains $F_1$,
 $M = I - X_0(X_0^\top X_0)^{-}X_0^\top$,
 and $Z^{-}$ stands for the g2 inverse of $Z$.
 
-Note: In `mmrm` package, we do not allow singularity in general, so the g2 inverse is the inverse.
-Thus we can use identity matrix in step 2.
+Note: Here we do not allow for singularity in general, so the g2 inverse is just the usual inverse.
+Thus we can use an identity matrix as the submatrix in step 2.
 
 # Type III Hypothesis Testing
 
 For type III hypothesis testing, we assume that the hypothesis tested should be the same for all
 designs with the same general form of estimable functions.
-It can be defined with the following step:
+It can be defined with the following steps:
 
 Create a contrast matrix $L$, with rows equal to the number of parameters associated with the effect,
 columns equal to the number of all parameters.
@@ -107,7 +105,7 @@ we should have closer result.
 
 For type II/III testing, it is true that the order of covariate should not affect the result.
 However, if there is an interaction term, the reference level can be changed.
-With different reference level the result will be slightly different.
+With different reference levels the result will be slightly different.
 
 ### Why `mmrm` Gives More Covariates Than SAS?
 
@@ -120,7 +118,7 @@ MODEL FEV1 = ARMCD SEX ARMCD * SEX ARMCD * FEV1_BL
 Then it is equivalent to the following `mmrm` model
 
 ```
-FEV1 ~ ARMCD * SEX + ARMCD * FEV1_BL - FEV1_BL
+FEV1 ~ ARMCD * SEX + ARMCD:FEV1_BL
 ```
 
 Because SAS will not include the covariate `FEV1_BL` by default, unless manually added.

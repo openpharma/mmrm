@@ -108,11 +108,9 @@ Anova(fit, type = "II")
 
 Note that the degrees of freedom choice is inherited here from the initial `mmrm`
 fit.
-In addition, if you see results different from SAS, it can be because the reference level is
-different.
+In addition, please note that if you see results that are slightly different from SAS, it could be because the reference level is set differently for categorical covariates.
 We can also use type III hypothesis testing:
 
 ```{r car_type3}
-anova_result3 <- Anova(fit, type = "III")
-anova_result3
+Anova(fit, type = "III")
 ```
