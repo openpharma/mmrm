@@ -98,7 +98,7 @@ placebo results, instead of placebo minus treatment results.
 
 This package includes methods that allow `mmrm` objects to be used with the
 `car::Anova` function. `Anova` conducts type II/III hypothesis testing for
-the effect in mmrm models. For example, in order to see if the used variables
+the effect in `mmrm` models. For example, in order to see if the used covariates
 are related to the response:
 
 ```{r car_type2}
