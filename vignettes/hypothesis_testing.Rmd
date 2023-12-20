@@ -126,4 +126,4 @@ FEV1 ~ ARMCD * SEX + ARMCD * FEV1_BL - FEV1_BL
 
 Because SAS will not include the covariate `FEV1_BL` by default, unless manually added.
 However in R we will add `FEV1_BL` by default.
-Please note that in this example we excludes the covariance structure part.
+Please note that in this example we exclude the covariance structure part.
