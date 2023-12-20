@@ -358,9 +358,9 @@ h_valid_formula <- function(formula) {
 register_s3 <- function(pkg, generic, class, envir = parent.frame()) {
   fun <- get(paste0(generic, ".", class), envir = envir)
   if (isNamespaceLoaded(pkg)) {
-      registerS3method(generic, class, fun, envir = asNamespace(pkg))
+    registerS3method(generic, class, fun, envir = asNamespace(pkg))
   }
   setHook(packageEvent(pkg, "onLoad"), function(...) {
-      registerS3method(generic, class, fun, envir = asNamespace(pkg))
+    registerS3method(generic, class, fun, envir = asNamespace(pkg))
   })
 }
