@@ -4,7 +4,7 @@
 \alias{car_add_mmrm}
 \title{Register \code{mmrm} For Use With \code{car::Anova}}
 \usage{
-car_add_mmrm(quietly)
+car_add_mmrm(quietly = FALSE)
 }
 \arguments{
 \item{quietly}{logical: should progress and error messages be suppressed?}
