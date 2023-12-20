@@ -18,7 +18,6 @@ editor_options:
 
 # Introduction to Type I/II/III Hypothesis Testing
 
-
 Type I/II/III hypothesis testing originates from analysis of variance, however, 
 @goodnight1980tests suggest viewing this issue as hypothesis testing of fixed effect
 in linear models, which avoid the "usual assumptions" and defined three types of estimable
