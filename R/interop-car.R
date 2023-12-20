@@ -4,7 +4,7 @@
 #' @return A logical value indicating whether registration was successful.
 #'
 #' @keywords internal
-car_add_mmrm <- function(quietly) {
+car_add_mmrm <- function(quietly = FALSE) {
   if (!requireNamespace("car", quietly = quietly)) {
     return(FALSE)
   }
