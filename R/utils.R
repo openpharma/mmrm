@@ -352,7 +352,7 @@ h_valid_formula <- function(formula) {
 #'
 #' @noRd
 #'
-#' @details This function is from `emmeans:::register_s3_method`.
+#' @details This function is adapted from `emmeans:::register_s3_method()`.
 #'
 #' @keywords internal
 register_s3 <- function(pkg, generic, class, envir = parent.frame()) {
