@@ -79,7 +79,7 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
 #' Conduct type II/III hypothesis testing on the MMRM fit results.
 #'
 #' @param mod (`mmrm`)\cr the fitted MMRM.
-#' @param ...Not used.
+#' @param ... not used.
 #' @inheritParams h_get_contrast
 #'
 #' @keywords internal
