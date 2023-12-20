@@ -39,11 +39,12 @@ articles:
       - between_within
       - kenward
       - satterthwaite
-  - title: Coefficient Covariance
-    navbar: Coefficient Covariance
+  - title: Coefficient Covariance and Testing
+    navbar: Coefficient Covariance and Testing
     contents:
       - coef_vcov
       - empirical_wls
+      - hypothesis_testing
   - title: Algorithm Details
     navbar: Algorithm Details
     contents:

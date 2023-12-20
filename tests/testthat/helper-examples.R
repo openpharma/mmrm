@@ -13,6 +13,15 @@ get_mmrm_transformed <- function() {
   .mmrm_tmb_trans
 }
 
+.mmrm_trans <- mmrm(
+  FEV1 ~ log(FEV1_BL) + ARMCD * AVISIT + ar1(AVISIT | USUBJID),
+  data = fev_data
+)
+
+get_mmrm_trans <- function() {
+  .mmrm_trans
+}
+
 .tmb_formula_rank_deficient <- FEV1 ~ SEX + SEX2 + us(AVISIT | USUBJID)
 .mmrm_tmb_dat_rank_deficient <- cbind(fev_data, SEX2 = fev_data$SEX) # nolint
 .mmrm_tmb_example_rk_deficient <- fit_mmrm(

@@ -1,0 +1,129 @@
+---
+title: "Details of Hypothesis Testing"
+package: mmrm
+bibliography: '`r system.file("REFERENCES.bib", package = "mmrm")`'
+csl: '`r system.file("jss.csl", package = "mmrm")`'
+output:
+  rmarkdown::html_vignette:
+          toc: true
+vignette: |
+  %\VignetteIndexEntry{Details of Hypothesis Testing}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options:
+  chunk_output_type: console
+  markdown:
+    wrap: 72
+---
+
+# Introduction to Type I/II/III Hypothesis Testing
+
+
+Type I/II/III hypothesis testing originates from analysis of variance, however, 
+@goodnight1980tests suggest viewing this issue as hypothesis testing of fixed effect
+in linear models, which avoid the "usual assumptions" and defined three types of estimable
+functions.
+Given that type I estimable functions is dependent on the order of covariate we specify,
+we focus on the type II and III testing here.
+
+From the `mmrm` model perspective, obtaining estimable functions, is equivalent to obtaining the
+contrasts.
+
+For more details, see @goodnight1980tests.
+
+# Contained Effect
+
+Before we discuss the testing, it is important that we understand the concept of "contained effect".
+The definition of "contained effect" is:
+
+For effect "E2", it is said to contain "E1" if
+1. they both involve the same continuous variable (and no more other continuous variable is involved)
+1. "E2" have equal or more "categorical variable" than "E1"
+
+For example, for the following formula
+
+$Y = A + B + A*B$
+
+we have
+
+1. If $A$ and $B$ are both categorical, then $F_{A*B}$ contains $F_{A}$ and $F_{B}$.
+1. If $A$ and $B$ are both numerical, then $F_{A*B}$ do not contain $F_{A}$ or $F_{B}$.
+1. If $A$ is categorical and $B$ is numerical, then $F_{A*B}$ contains $F_{B}$ but not $F_{A}$.
+
+# Type II Hypothesis Testing
+
+For type II hypothesis testing, the contrasts can be obtained through the following steps:
+
+Create a contrast matrix $L$, with rows equal to the number of parameters associated with the effect,
+columns equal to the number of all parameters.
+
+1. All columns of $L$ associated with effect not containing $F_1$ (except $F_1$) are set to 0.
+1. The submatrix of $L$ associated with $F_1$ is set to $(X_1^\top M X_1)^{-}X_1^\top M X_1$
+1. Each of the remaining submatrices of L associated with an effect $F_2$ that contains $F_1$ is $(X_1^\top M X_1)^{-}X_1^\top M X_2$
+
+where $X_0$ stands for columns of $X$ whose associated effect do not contain $F_1$,
+$X_1$ stands for columns of $X$ associated with $F_1$,
+$X_2$ stands for columns of $X$ whose associated effect contains $F_1$,
+$M = I - X_0(X_0^\top X_0)^{-}X_0^\top$,
+and $Z^{-}$ stands for the g2 inverse of $Z$.
+
+Note: In `mmrm` package, we do not allow singularity in general, so the g2 inverse is the inverse.
+Thus we can use identity matrix in step 2.
+
+# Type III Hypothesis Testing
+
+For type III hypothesis testing, we assume that the hypothesis tested should be the same for all
+designs with the same general form of estimable functions.
+It can be defined with the following step:
+
+Create a contrast matrix $L$, with rows equal to the number of parameters associated with the effect,
+columns equal to the number of all parameters.
+
+1. All columns of $L$ associated with effect not containing $F_1$ (except $F_1$) are set to 0.
+1. The submatrix of $L$ associated with $F_1$ is set to identity matrix.
+1. For each of the remaining submatrices of L associated with an effect $F_2$ that contains $F_1$, equate the
+values.
+
+Here equate the values means that, given that the coefficients in step 2 are all 1 (diagonal), in step 3
+this 1 is divided by the total number of new levels.
+
+# Hypothesis Testing in SAS
+
+In `PROC MIXED` we can specify `HTYPE=1,2,3` to enable these hypothesis testings, and we can use option `e1 e2 e3` to
+view the estimable functions.
+
+## Special Considerations
+
+For `PROC MIXED`, it is important that the categorical values have the correct order, especially
+for structured covariance (otherwise the correlation between visits can be messed up).
+We usually use `CLASS variable(REF=)` to define the reference level.
+However, SAS will put the reference level in the last, so if the visit variable is included in fixed effect,
+there can be issues with the comparison between SAS and R, as in R we still use the first level as our reference.
+
+When we conduct the hypothesis testing, we will also face this issue.
+The result will be slightly different because of different reference groups, however, if correct contrast is used
+we should have closer result.
+
+### Why Model Covariate Order Changes My Testing in SAS?
+
+For type II/III testing, it is true that the order of covariate should not affect the result.
+However, if there is an interaction term, the reference level can be changed.
+With different reference level the result will be slightly different.
+
+### Why `mmrm` Gives More Covariates Than SAS?
+
+For `PROC MIXED`, if a model is specified as follows
+
+```
+MODEL FEV1 = ARMCD SEX ARMCD * SEX ARMCD * FEV1_BL
+```
+
+Then it is equivalent to the following `mmrm` model
+
+```
+FEV1 ~ ARMCD * SEX + ARMCD * FEV1_BL - FEV1_BL
+```
+
+Because SAS will not include the covariate `FEV1_BL` by default, unless manually added.
+However in R we will add `FEV1_BL` by default.
+Please note that in this example we excludes the covariance structure part.

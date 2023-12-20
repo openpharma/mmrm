@@ -347,3 +347,20 @@ h_valid_formula <- function(formula) {
     stop("`.` is not allowed in mmrm models!")
   }
 }
+
+#' Register S3 Method
+#'
+#' @noRd
+#'
+#' @details This function is from `emmeans:::register_s3_method`.
+#'
+#' @keywords internal
+register_s3 <- function(pkg, generic, class, envir = parent.frame()) {
+  fun <- get(paste0(generic, ".", class), envir = envir)
+  if (isNamespaceLoaded(pkg)) {
+      registerS3method(generic, class, fun, envir = asNamespace(pkg))
+  }
+  setHook(packageEvent(pkg, "onLoad"), function(...) {
+      registerS3method(generic, class, fun, envir = asNamespace(pkg))
+  })
+}
