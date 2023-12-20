@@ -23,7 +23,7 @@ Type I/II/III hypothesis testing originates from analysis of variance, however,
 @goodnight1980tests suggest viewing this issue as hypothesis testing of fixed effect
 in linear models, which avoid the "usual assumptions" and defined three types of estimable
 functions.
-Given that type I estimable functions is dependent on the order of covariate we specify,
+Given that type I estimable functions are dependent on the specific order of used covariates,
 we focus on the type II and III testing here.
 
 From the `mmrm` model perspective, obtaining estimable functions, is equivalent to obtaining the
