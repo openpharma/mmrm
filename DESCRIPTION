@@ -57,7 +57,7 @@ Imports:
     TMB (>= 1.9.1),
     utils
 Suggests:
-    car,
+    car (>= 3.1.2),
     cli,
     clubSandwich,
     clusterGeneration,
