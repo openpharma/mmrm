@@ -8,7 +8,7 @@
 
 - In documentation of `mmrm_control()`, the allowed vcov definition is corrected to "Empirical-Jackknife" (CR3), and "Empirical-Bias-Reduced" (CR2).
 - Fix a compiler warning related to missing format specification in error message function call.
-- If empty matrix is provided to `df_md`, it will return statistics with NA values.
+- If an empty contrast matrix is provided to `df_md`, it will return statistics with `NA` values.
 
 # mmrm 0.3.6
 
