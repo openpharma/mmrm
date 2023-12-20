@@ -103,8 +103,7 @@ are related to the response:
 
 ```{r car_type2}
 library(car)
-anova_result2 <- Anova(fit, type = "II")
-anova_result2
+Anova(fit, type = "II")
 ```
 
 Note that the degrees of freedom choice is inherited here from the initial `mmrm`
