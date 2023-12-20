@@ -4,7 +4,6 @@
 \alias{mmrm_methods}
 \alias{summary.mmrm}
 \alias{print.summary.mmrm}
-\alias{Anova.mmrm}
 \title{Methods for \code{mmrm} Objects}
 \usage{
 \method{summary}{mmrm}(object, ...)
@@ -15,26 +14,11 @@
   signif.stars = getOption("show.signif.stars"),
   ...
 )
-
-\method{Anova}{mmrm}(
-  mod,
-  type = c("II", "III", "2", "3"),
-  tol = sqrt(.Machine$double.eps),
-  ...
-)
 }
 \arguments{
 \item{object}{(\code{mmrm})\cr the fitted MMRM including Jacobian and call etc.}
 
 \item{...}{not used.}
-
-\item{mod}{(\code{mmrm})\cr the fitted MMRM.}
-
-\item{type}{(\code{string}) type of test, "II", "III", '2', or '3'.}
-
-\item{tol}{(\code{numeric}) threshold blow which values are treated as 0.}
-
-\item{...Not}{used.}
 }
 \value{
 Depends on the method, see Details and Functions.
@@ -69,8 +53,6 @@ will be displayed.
 \item \code{summary(mmrm)}: summarizes the MMRM fit results.
 
 \item \code{print(summary.mmrm)}: prints the MMRM fit summary.
-
-\item \code{Anova(mmrm)}: Conduct type II/III hypothesis testing on the MMRM fit results.
 
 }}
 \examples{

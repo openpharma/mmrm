@@ -7,7 +7,6 @@
 
 #' @useDynLib mmrm, .registration = TRUE
 #' @importFrom Rcpp evalCpp
-#' @importFrom car Anova
 #' @import checkmate
 #' @importFrom lifecycle deprecated
 #' @importFrom Matrix .bdiag
