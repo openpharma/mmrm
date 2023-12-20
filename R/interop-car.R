@@ -35,7 +35,7 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
   asg <- attr(mx, "assign")
   formula <- object$formula_parts$model_formula
   tms <- terms(formula)
-  fcts <- attr(tms, "factors")[-1, , drop = FALSE] # discard the response
+  fcts <- attr(tms, "factors")[-1L, , drop = FALSE] # Discard the response.
   ods <- attr(tms, "order")
   assert_subset(effect, colnames(fcts))
   idx <- which(effect == colnames(fcts))
