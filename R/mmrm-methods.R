@@ -20,10 +20,6 @@
 #'    2. If the covariance structure is spatial, the covariance matrix of two time points with unit distance
 #'       will be displayed.
 #'
-#' `Anova` will return `anova` object with one row per variable and columns
-#' `Num Df`(numerator degrees of freedom), `Denom Df`(denominator degrees of freedom),
-#' `F Statistic` and `Pr(>=F)`.
-#'
 #' @name mmrm_methods
 #'
 #' @seealso [`mmrm_tmb_methods`], [`mmrm_tidiers`] for additional methods.

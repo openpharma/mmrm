@@ -349,13 +349,21 @@ h_valid_formula <- function(formula) {
 }
 
 #' Register S3 Method
+#' Register S3 method to a generic.
 #'
-#' @noRd
+#' @param pkg (`string`) name of the package name.
+#' @param generic (`string`) name of the generic.
+#' @param class (`string`) class name the function want to dispatch.
+#' @param envir (`environment`) the location the method is defined.
 #'
 #' @details This function is adapted from `emmeans:::register_s3_method()`.
 #'
 #' @keywords internal
-register_s3 <- function(pkg, generic, class, envir = parent.frame()) {
+h_register_s3 <- function(pkg, generic, class, envir = parent.frame()) {
+  assert_string(pkg)
+  assert_string(generic)
+  assert_string(class)
+  assert_environment(envir)
   fun <- get(paste0(generic, ".", class), envir = envir)
   if (isNamespaceLoaded(pkg)) {
     registerS3method(generic, class, fun, envir = asNamespace(pkg))

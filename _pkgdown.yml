@@ -33,18 +33,18 @@ articles:
     navbar: Covariance Structures
     contents:
       - covariance
-  - title: Degrees of Freedom
-    navbar: Degrees of Freedom
+  - title: Degrees of Freedom and Inference
+    navbar: Degrees of Freedom and Inference
     contents:
+      - hypothesis_testing
       - between_within
       - kenward
       - satterthwaite
-  - title: Coefficient Covariance and Testing
-    navbar: Coefficient Covariance and Testing
+  - title: Coefficient Covariance
+    navbar: Coefficient Covariance
     contents:
       - coef_vcov
       - empirical_wls
-      - hypothesis_testing
   - title: Algorithm Details
     navbar: Algorithm Details
     contents:

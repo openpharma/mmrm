@@ -43,10 +43,6 @@ in data will be displayed.
 will be displayed.
 }
 }
-
-\code{Anova} will return \code{anova} object with one row per variable and columns
-\verb{Num Df}(numerator degrees of freedom), \verb{Denom Df}(denominator degrees of freedom),
-\verb{F Statistic} and \verb{Pr(>=F)}.
 }
 \section{Functions}{
 \itemize{

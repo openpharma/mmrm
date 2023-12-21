@@ -9,7 +9,7 @@ car_add_mmrm <- function(quietly = FALSE) {
     return(FALSE)
   }
   envir <- asNamespace("mmrm")
-  register_s3("car", "Anova", "mmrm", envir)
+  h_register_s3("car", "Anova", "mmrm", envir)
   TRUE
 }
 
@@ -82,17 +82,27 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
 #' @param ... not used.
 #' @inheritParams h_get_contrast
 #'
+#' @details
+#' `Anova` will return `anova` object with one row per variable and columns
+#' `Num Df`(numerator degrees of freedom), `Denom Df`(denominator degrees of freedom),
+#' `F Statistic` and `Pr(>=F)`.
+#'
 #' @keywords internal
-#' @noRd
 Anova.mmrm <- function(mod, type = c("II", "III", "2", "3"), tol = sqrt(.Machine$double.eps), ...) { # nolint
   assert_double(tol, finite = TRUE, len = 1L)
   type <- match.arg(type)
   vars <- colnames(attr(terms(mod$formula_parts$model_formula), "factors"))
-  ret <- lapply(
+  ret <- vapply(
     vars,
-    function(x) df_md(mod, h_get_contrast(mod, x, type, tol))
+    function(x) df_md(mod, h_get_contrast(mod, x, type, tol)),
+    FUN.VALUE = list(
+      num_df = 0,
+      denom_df = NA_real_,
+      f_stat = NA_real_,
+      p_val = NA_real_
+    )
   )
-  ret_df <- do.call(rbind.data.frame, ret)
+  ret_df <- as.data.frame(t(ret))
   row.names(ret_df) <- vars
   colnames(ret_df) <- c("Num Df", "Denom Df", "F Statistic", "Pr(>=F)")
   class(ret_df) <- c("anova", "data.frame")
