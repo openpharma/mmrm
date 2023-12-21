@@ -88,22 +88,16 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
 #' `F Statistic` and `Pr(>=F)`.
 #'
 #' @keywords internal
-# Please first load `car` and then create the documentation. The Rd file will be different.
+# Please do not load `car` and then create the documentation. The Rd file will be different.
 Anova.mmrm <- function(mod, type = c("II", "III", "2", "3"), tol = sqrt(.Machine$double.eps), ...) { # nolint
   assert_double(tol, finite = TRUE, len = 1L)
   type <- match.arg(type)
   vars <- colnames(attr(terms(mod$formula_parts$model_formula), "factors"))
-  ret <- vapply(
+  ret <- lapply(
     vars,
-    function(x) df_md(mod, h_get_contrast(mod, x, type, tol)),
-    FUN.VALUE = list(
-      num_df = 0,
-      denom_df = NA_real_,
-      f_stat = NA_real_,
-      p_val = NA_real_
-    )
+    function(x) df_md(mod, h_get_contrast(mod, x, type, tol))
   )
-  ret_df <- as.data.frame(t(ret))
+  ret_df <- do.call(rbind.data.frame, ret)
   row.names(ret_df) <- vars
   colnames(ret_df) <- c("Num Df", "Denom Df", "F Statistic", "Pr(>=F)")
   class(ret_df) <- c("anova", "data.frame")

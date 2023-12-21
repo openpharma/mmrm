@@ -80,11 +80,11 @@ For this given example, we would like to test the effect of `RACE`, $E_{RACE}$.
 We initialize the contrast matrix with
 
 $$
-\begin{bmatrix} 
+\begin{matrix} 
 \mu & ARMCD & RACE & RACE & ARMCD:RACE & ARMCD:RACE\\
 0 & 0 & 0 & 0 & 0 & 0\\ 
 0 & 0 & 0 & 0 & 0 & 0\\ 
-\end{bmatrix}
+\end{matrix}
 $$
 
 Please note that this is $2\times 6$ matrix, the rows is the number of coefficients that is associated with `RACE`,
@@ -93,11 +93,11 @@ and the columns is the total number of coefficients `r length(coef(fit))`
 Then following step 2, we filled in identity matrix in the corresponding submatrix
 
 $$
-\begin{bmatrix} 
+\begin{matrix} 
 \mu & ARMCD & RACE & RACE & ARMCD:RACE & ARMCD:RACE\\
 0 & 0 & 1 & 0 & 0 & 0\\ 
 0 & 0 & 0 & 1 & 0 & 0\\ 
-\end{bmatrix}
+\end{matrix}
 $$
 
 In the last step, for the last 2 columns, we fill the values with the calculated result.
@@ -113,11 +113,11 @@ sub_mat
 ```
 
 $$
-\begin{bmatrix} 
+\begin{matrix} 
 \mu & ARMCD & RACE & RACE & ARMCD:RACE & ARMCD:RACE\\
 0 & 0 & 1 & 0 & 0.42618692 & 0.02751985\\ 
 0 & 0 & 0 & 1 & -0.04372702 & 0.58570969\\ 
-\end{bmatrix}
+\end{matrix}
 $$
 
 # Type III Hypothesis Testing
@@ -141,21 +141,21 @@ Using the same example for type II testing, we also would like to test the effec
 We initialize the contrast matrix with
 
 $$
-\begin{bmatrix} 
+\begin{matrix} 
 \mu & ARMCD & RACE & RACE & ARMCD:RACE & ARMCD:RACE\\
 0 & 0 & 0 & 0 & 0 & 0\\ 
 0 & 0 & 0 & 0 & 0 & 0\\ 
-\end{bmatrix}
+\end{matrix}
 $$
 
 Then following step 2, we filled in identity matrix in the corresponding submatrix
 
 $$
-\begin{bmatrix} 
+\begin{matrix} 
 \mu & ARMCD & RACE & RACE & ARMCD:RACE & ARMCD:RACE\\
 0 & 0 & 1 & 0 & 0 & 0\\ 
 0 & 0 & 0 & 1 & 0 & 0\\ 
-\end{bmatrix}
+\end{matrix}
 $$
 
 In the last step, for the last 2 columns, we fill the values to equate the coefficients in the sub matrix.
@@ -164,21 +164,21 @@ We use the coefficients for `RACE`, and divide it by the additional levels
 and we get 0.5 for the coefficients.
 
 $$
-\begin{bmatrix} 
+\begin{matrix} 
 \mu & ARMCD & RACE & RACE & ARMCD:RACE & ARMCD:RACE\\
 0 & 0 & 1 & 0 & 0.5 & 0\\ 
 0 & 0 & 0 & 1 & 0 & 0.5\\ 
-\end{bmatrix}
+\end{matrix}
 $$
 
 Similarly, if we are testing the effect of `ARMCD` we will have the following contrast because
 `RACE` has 3 levels.
 
 $$
-\begin{bmatrix} 
+\begin{matrix} 
 \mu & ARMCD & RACE & RACE & ARMCD:RACE & ARMCD:RACE\\
 0 & 1 & 0 & 0 & \frac{1}{3} & \frac{1}{3}\\ 
-\end{bmatrix}
+\end{matrix}
 $$
 
 # Hypothesis Testing in SAS
