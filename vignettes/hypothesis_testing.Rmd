@@ -188,6 +188,8 @@ view the estimable functions.
 
 ## Special Considerations
 
+### Reference Levels
+
 For `PROC MIXED`, it is important that the categorical values have the correct order, especially
 for structured covariance (otherwise the correlation between visits can be messed up).
 We usually use `CLASS variable(REF=)` to define the reference level.
@@ -195,8 +197,59 @@ However, SAS will put the reference level in the last, so if the visit variable 
 there can be issues with the comparison between SAS and R, as in R we still use the first level as our reference.
 
 When we conduct the hypothesis testing, we will also face this issue.
-The result will be slightly different because of different reference groups, however, if correct contrast is used
-we should have closer result.
+If reference level is different, the testing we have can be different, e.g. if we have 3 levels, $l_1$, $l_2$ and $l_3$.
+In theory we can test either $l_2 - l_1$, $l_3 - l_1$ (using $l_1$ as reference), or test $l_1 - l_3$, $l_2 - l_3$ (using $l_3$ as reference).
+But the result will be slightly different.
+However, if we have identical tests the result will be closer.
+The following example illustrate this.
+
+#### Example of Reference Levels
+
+Assume in SAS we have the following model
+
+```{SAS}
+PROC MIXED DATA = fev cl method=reml;
+  CLASS AVISIT(ref = 'VIS4') ARMCD(ref = 'PBO') USUBJID;
+  MODEL FEV1 = ARMCD AVISIT ARMCD*AVISIT / ddfm=satterthwaite htype=3;
+  REPEATED AVISIT / subject=USUBJID type=ar(1);
+RUN;
+```
+
+And in R we have the following model
+```{r eval=FALSE}
+fit <- mmrm(FEV1 ~ ARMCD + AVISIT + ARMCD * AVISIT + ar1(AVISIT|USUBJID), data = fev_data)
+Anova(fit)
+```
+
+Note that for `AVISIT` there are 4 levels, `VIS1`, `VIS2`, `VIS3` and `VIS4`.
+In SAS `VIS4` is the reference, while in R `VIS1` is the reference.
+
+They both use the following matrix to test the effect of `AVISIT`
+(ignoring other part of contrasts that is not associated with `AVISIT`)
+
+$$
+\begin{matrix} 
+1 & 0 & 0\\ 
+0 & 1 & 0\\
+0 & 0 & 1\\
+\end{matrix}
+$$
+
+But given that the reference level is different, we are testing different things.
+In SAS we are testing `VIS1 - VIS4`, `VIS2 - VIS4` and `VIS3 - VIS4`,
+while in R we are testing `VIS2 - VIS1`, `VIS3 - VIS1` and `VIS4 - VIS1`.
+
+To correctly test `VIS1 - VIS4`, `VIS2 - VIS4` and `VIS3 - VIS4` in R, we need to update the contrast
+to the following matrix(ignoring other part) to get closer result.
+
+$$
+\begin{matrix} 
+0 & 1 & 0\\ 
+0 & 0 & 1\\
+-1 & -1 & -1\\
+\end{matrix}
+$$
+
 
 ### Why Model Covariate Order Changes My Testing in SAS?
 
@@ -215,7 +268,13 @@ MODEL FEV1 = ARMCD SEX ARMCD * SEX ARMCD * FEV1_BL
 Then it is equivalent to the following `mmrm` model
 
 ```
-FEV1 ~ ARMCD * SEX + ARMCD * FEV1_BL
+FEV1 ~ ARMCD * SEX + ARMCD * FEV1_BL - FEV1_BL
+```
+
+or
+
+```
+FEV1 ~ ARMCD * SEX + ARMCD:FEV1_BL
 ```
 
 Because SAS will not include the covariate `FEV1_BL` by default, unless manually added.
