@@ -533,3 +533,38 @@ df_md(fit, a)
 
 get_l_matrix(fit, "FEV1_BL", "2")
 ```
+
+## SAS Results for Integration Test
+
+```{r}
+df2sd(fev_data, "fev")
+sas_code <- "
+ods output Tests1 = Tests1 Tests2 = Tests2 Tests3 = Tests3;
+PROC MIXED DATA = fev cl method=reml;
+  CLASS AVISIT(ref = last) ARMCD(ref = 'PBO') USUBJID;
+  MODEL FEV1 = ARMCD FEV1_BL ARMCD * FEV1_BL / ddfm=satterthwaite htype=1,2,3 solution chisq e3;
+  REPEATED AVISIT / subject=USUBJID type=ar(1);
+RUN;
+"
+res <- run_sas(sas_code)
+df2 <- sd2df("tests2")
+df3 <- sd2df("tests3")
+write.csv(df2, "design/anova/test2_1.csv")
+write.csv(df3, "design/anova/test3_1.csv")
+```
+
+```{r}
+sas_code <- "
+ods output Tests1 = Tests1 Tests2 = Tests2 Tests3 = Tests3;
+PROC MIXED DATA = fev cl method=reml;
+  CLASS AVISIT(ref = last) SEX(ref = 'Male') ARMCD(ref = 'PBO') USUBJID;
+  MODEL FEV1 = ARMCD SEX ARMCD * SEX ARMCD * FEV1_BL / ddfm=satterthwaite htype=1,2,3 solution chisq e3;
+  REPEATED AVISIT / subject=USUBJID type=ar(1);
+RUN;
+"
+res <- run_sas(sas_code)
+df2 <- sd2df("tests2")
+df3 <- sd2df("tests3")
+write.csv(df2, "design/anova/test2_2.csv")
+write.csv(df3, "design/anova/test3_2.csv")
+```
