@@ -207,7 +207,7 @@ The following example illustrate this.
 
 Assume in SAS we have the following model
 
-```{SAS}
+```
 PROC MIXED DATA = fev cl method=reml;
   CLASS AVISIT(ref = 'VIS4') ARMCD(ref = 'PBO') USUBJID;
   MODEL FEV1 = ARMCD AVISIT ARMCD*AVISIT / ddfm=satterthwaite htype=3;
