@@ -217,7 +217,7 @@ RUN;
 
 And in R we have the following model
 ```{r eval=FALSE}
-fit <- mmrm(FEV1 ~ ARMCD + AVISIT + ARMCD * AVISIT + ar1(AVISIT|USUBJID), data = fev_data)
+fit <- mmrm(FEV1 ~ ARMCD + AVISIT + ARMCD * AVISIT + ar1(AVISIT | USUBJID), data = fev_data)
 Anova(fit)
 ```
 
