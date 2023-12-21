@@ -4,7 +4,7 @@
 \alias{Anova.mmrm}
 \title{Conduct type II/III hypothesis testing on the MMRM fit results.}
 \usage{
-Anova.mmrm(
+\method{Anova}{mmrm}(
   mod,
   type = c("II", "III", "2", "3"),
   tol = sqrt(.Machine$double.eps),

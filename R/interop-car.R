@@ -88,6 +88,7 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
 #' `F Statistic` and `Pr(>=F)`.
 #'
 #' @keywords internal
+# Please first load `car` and then create the documentation. The Rd file will be different.
 Anova.mmrm <- function(mod, type = c("II", "III", "2", "3"), tol = sqrt(.Machine$double.eps), ...) { # nolint
   assert_double(tol, finite = TRUE, len = 1L)
   type <- match.arg(type)

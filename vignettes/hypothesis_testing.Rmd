@@ -33,7 +33,7 @@ For more details, see @goodnight1980tests.
 Before we discuss the testing, it is important that we understand the concept of "contained effect".
 The definition of "contained effect" is:
 
-For effect $E_2$, it is said to contain $E1$ if
+For effect $E_2$, it is said to contain $E_1$ if
 1. they both involve the same continuous covariates
 1. $E_2$ have equal or more categorical covariates than $E_1$
 
@@ -41,6 +41,7 @@ For example, for the following model formula
 
 $Y = A + B + A*B$
 
+using $E_A$, $E_B$ and $E_{A*B}$ to denote the effect for $A$, $B$ and $A*B$ respectively,
 we have
 
 1. If $A$ and $B$ are both categorical, then $E_{A*B}$ contains $E_{A}$ and $E_{B}$.
@@ -214,7 +215,7 @@ MODEL FEV1 = ARMCD SEX ARMCD * SEX ARMCD * FEV1_BL
 Then it is equivalent to the following `mmrm` model
 
 ```
-FEV1 ~ ARMCD * SEX + ARMCD:FEV1_BL
+FEV1 ~ ARMCD * SEX + ARMCD * FEV1_BL
 ```
 
 Because SAS will not include the covariate `FEV1_BL` by default, unless manually added.
