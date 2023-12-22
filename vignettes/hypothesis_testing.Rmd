@@ -87,10 +87,10 @@ $$
 \end{matrix}
 $$
 
-Please note that this is $2\times 6$ matrix, the rows is the number of coefficients that is associated with `RACE`,
-and the columns is the total number of coefficients `r length(coef(fit))`
+Please note that this is a $2\times 6$ matrix, the rows is the number of coefficients that is associated with `RACE`,
+and the columns is the total number of coefficients `r length(coef(fit))`.
 
-Then following step 2, we filled in identity matrix in the corresponding submatrix
+Then following step 2, we filled in the identity matrix in the corresponding submatrix
 
 $$
 \begin{matrix} 
@@ -148,7 +148,7 @@ $$
 \end{matrix}
 $$
 
-Then following step 2, we filled in identity matrix in the corresponding submatrix
+Then following step 2, we filled in the identity matrix in the corresponding submatrix
 
 $$
 \begin{matrix} 
@@ -240,7 +240,7 @@ In SAS we are testing `VIS1 - VIS4`, `VIS2 - VIS4` and `VIS3 - VIS4`,
 while in R we are testing `VIS2 - VIS1`, `VIS3 - VIS1` and `VIS4 - VIS1`.
 
 To correctly test `VIS1 - VIS4`, `VIS2 - VIS4` and `VIS3 - VIS4` in R, we need to update the contrast
-to the following matrix(ignoring other part) to get closer result.
+to the following matrix (ignoring the other part) to get a closer result.
 
 $$
 \begin{matrix} 
