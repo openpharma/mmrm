@@ -33,8 +33,8 @@ articles:
     navbar: Covariance Structures
     contents:
       - covariance
-  - title: Degrees of Freedom and Inference
-    navbar: Degrees of Freedom and Inference
+  - title: Degrees of Freedom and Testing
+    navbar: Degrees of Freedom and Testing
     contents:
       - hypothesis_testing
       - between_within
