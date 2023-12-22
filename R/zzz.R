@@ -15,6 +15,11 @@
     callback = parsnip_add_mmrm,
     message = emit_tidymodels_register_msg
   )
+  register_on_load(
+    "car", c("3.1.2", NA),
+    callback = car_add_mmrm,
+    message = "mmrm() registered as car::Anova extension"
+  )
 }
 
 #' Helper Function for Registering Functionality With Suggests Packages

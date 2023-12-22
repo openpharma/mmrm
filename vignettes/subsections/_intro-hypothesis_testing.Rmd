@@ -93,3 +93,24 @@ pairs(lsmeans_by_visit, reverse = TRUE)
 (This is similar like the `pdiff` option in SAS `PROC MIXED`.)
 Note that we use here the `reverse` argument to obtain treatment minus
 placebo results, instead of placebo minus treatment results.
+
+## Support for car
+
+This package includes methods that allow `mmrm` objects to be used with the
+`car::Anova` function. `Anova` conducts type II/III hypothesis testing for
+the effect in `mmrm` models. For example, in order to see if the used covariates
+are related to the response:
+
+```{r car_type2}
+library(car)
+Anova(fit, type = "II")
+```
+
+Note that the degrees of freedom choice is inherited here from the initial `mmrm`
+fit.
+In addition, please note that if you see results that are slightly different from SAS, it could be because the reference level is set differently for categorical covariates.
+We can also use type III hypothesis testing:
+
+```{r car_type3}
+Anova(fit, type = "III")
+```
