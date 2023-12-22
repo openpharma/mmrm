@@ -25,6 +25,9 @@
     <loc>https://openpharma.github.io/mmrm/articles/empirical_wls.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/mmrm/articles/hypothesis_testing.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/mmrm/articles/index.html</loc>
   </url>
   <url>
@@ -58,6 +61,9 @@
     <loc>https://openpharma.github.io/mmrm/news/index.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/mmrm/reference/Anova.mmrm.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/mmrm/reference/COV_TYPES.html</loc>
   </url>
   <url>
@@ -68,6 +74,9 @@
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/reference/cached_mmrm_results.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/reference/car_add_mmrm.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/reference/check_package_version.html</loc>
@@ -190,6 +199,9 @@
     <loc>https://openpharma.github.io/mmrm/reference/h_factor_ref.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/mmrm/reference/h_get_contrast.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/mmrm/reference/h_get_cov_default.html</loc>
   </url>
   <url>
@@ -269,6 +281,9 @@
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/reference/h_record_all_output.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/reference/h_register_s3.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/reference/h_residuals_normalized.html</loc>
