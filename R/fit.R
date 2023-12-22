@@ -251,14 +251,28 @@ refit_multiple_optimizers <- function(fit,
 mmrm_control <- function(n_cores = 1L,
                          method = c("Satterthwaite", "Kenward-Roger", "Residual", "Between-Within"),
                          vcov = NULL,
-                         start = NULL,
+                         start = "default_start",
                          accept_singular = TRUE,
                          drop_visit_levels = TRUE,
                          ...,
                          optimizers = h_get_optimizers(...)) {
   assert_count(n_cores, positive = TRUE)
   assert_character(method)
-  assert_numeric(start, null.ok = TRUE)
+  if (is.null(start)) {
+    start <- "default_start"
+  }
+  if (test_string(start)) {
+    if (exists(start, envir = parent.frame())) {
+      start <- get(start, envir = parent.frame())
+    } else {
+      stop("Can not find function`", start, "` for mmrm_control()!")
+    }
+  }
+  if (test_function(start)) {
+    assert_function(start, args = "...")
+  } else {
+    assert_numeric(start, null.ok = TRUE)
+  }
   assert_flag(accept_singular)
   assert_flag(drop_visit_levels)
   assert_list(optimizers, names = "unique", types = c("function", "partial"))

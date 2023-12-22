@@ -8,7 +8,7 @@ mmrm_control(
   n_cores = 1L,
   method = c("Satterthwaite", "Kenward-Roger", "Residual", "Between-Within"),
   vcov = NULL,
-  start = NULL,
+  start = "default_start",
   accept_singular = TRUE,
   drop_visit_levels = TRUE,
   ...,

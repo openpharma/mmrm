@@ -258,23 +258,12 @@ h_mmrm_tmb_parameters <- function(formula_parts,
   assert_class(tmb_data, "mmrm_tmb_data")
 
   m <- tmb_data$n_visits
-  start_value <- switch(formula_parts$cov_type,
-    us = rep(0, m * (m + 1) / 2),
-    toep = rep(0, m),
-    toeph = rep(0, 2 * m - 1),
-    ar1 = c(0, 0.5),
-    ar1h = c(rep(0, m), 0.5),
-    ad = rep(0, m),
-    adh = rep(0, 2 * m - 1),
-    cs = rep(0, 2),
-    csh = rep(0, m + 1),
-    sp_exp = rep(0, 2)
-  )
-  theta_dim <- length(start_value) * n_groups
-  if (!is.null(start)) {
-    assert_numeric(start, len = theta_dim, any.missing = FALSE, finite = TRUE)
+  if (test_function(start)) {
+    start <- do.call(start, utils::modifyList(formula_parts, tmb_data))
   } else {
-    start <- rep(start_value, n_groups)
+    start_value <- ols_start(formula_parts$cov_type, m, n_groups)
+    theta_dim <- length(start_value)
+    assert_numeric(start, len = theta_dim, any.missing = FALSE, finite = TRUE)
   }
   list(theta = start)
 }

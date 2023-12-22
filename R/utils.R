@@ -347,3 +347,83 @@ h_valid_formula <- function(formula) {
     stop("`.` is not allowed in mmrm models!")
   }
 }
+
+#' Default Starting Value
+#' @param
+default_start <- function(cov_type, ...) {
+  if (identical(cov_type, "us")) {
+    emp_start(cov_type = cov_type, ...)
+  } else {
+    ols_start(cov_type = cov_type, ...)
+  }
+}
+
+#' OLS Starting Value
+#' @param
+#' @param n_visits
+#' @param n_groups
+#' @param ... Not used.
+#' @export
+ols_start <- function(cov_type, n_visits, n_groups, ...) {
+  start_value <- switch(cov_type,
+    us = rep(0, n_visits * (n_visits + 1) / 2),
+    toep = rep(0, n_visits),
+    toeph = rep(0, 2 * n_visits - 1),
+    ar1 = c(0, 0.5),
+    ar1h = c(rep(0, n_visits), 0.5),
+    ad = rep(0, n_visits),
+    adh = rep(0, 2 * n_visits - 1),
+    cs = rep(0, 2),
+    csh = rep(0, n_visits + 1),
+    sp_exp = rep(0, 2)
+  )
+  rep(start_value, n_groups)
+}
+
+#' Empirical Starting Value
+#' @param cov_type
+#' @param full_frame
+#' @param model_formula
+#' @param group_var
+#' @param visit_var
+#' @param subject_var
+#' @details This `emp_start` only works for unstructured covariance structure.
+#' @export
+emp_start <- function(cov_type, full_frame, model_formula, group_var, visit_var, subject_var, ...) {
+  assert_true(identical(cov_type, "us"))
+  fit <- lm(formula = model_formula, data = full_frame)
+  df <- data.frame(
+    id = full_frame[[subject_var]],
+    visit = full_frame[[visit_var]],
+    residual = residuals(fit)
+  )
+  df_wide <- reshape(
+    df,
+    idvar = "id",
+    timevar = "visit",
+    direction = "wide",
+    v.names = "residual"
+  )
+  ids <- df_wide$id
+  df_wide[, sprintf("residual.%s", setdiff(levels(df$visit), unique(df$visit)))] <- NA
+  df_wide <- df_wide[, sprintf("residual.%s", levels(df$visit))]
+  if (is.null(group_var)) {
+    emp_cov <- cov(df_wide, use = "pairwise.complete.obs")
+    h_get_theta_from_cov(emp_cov)
+  } else {
+    ref_groups <- setNames(full_frame[[group_var]], full_frame[[subject_var]])[ids]
+    emp_covs <- lapply(split(df_wide, ref_groups), cov, use = "pairwise.complete.obs")
+    unlist(lapply(emp_covs, h_get_theta_from_cov))
+  }
+}
+#' Obtain Theta from Covariance Matrix
+#' @param covariance (`matrix`)
+#' @keywords internal
+h_get_theta_from_cov <- function(covariance) {
+  covariance[is.na(covariance)] <- 0
+  diag(covariance)[diag(covariance) == 0] <- 1
+  emp_chol <- t(chol(covariance))
+  mat <- t(solve(diag(diag(emp_chol)), emp_chol))
+  ret <- c(log(diag(emp_chol)), mat[upper.tri(mat)])
+  unname(ret)
+}
