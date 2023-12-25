@@ -55,6 +55,15 @@ test_that("df_md uses correct function on Between-Within method fit", {
   expect_identical(df_md(object_bw, contrast_md), h_df_md_bw(object_bw, contrast_md))
 })
 
+test_that("df_md return df=0 and other stat all NA if empty matrix provided", {
+  object_bw <- get_mmrm_bw()
+  contrast_md <- matrix(0, nrow = 0, ncol = length(object_bw$beta_est))
+  expect_identical(
+    df_md(object_bw, contrast_md),
+    list(num_df = 0, denom_df = NA_real_, f_stat = NA_real_, p_val = NA_real_)
+  )
+})
+
 # h_test_1d ----
 
 test_that("h_test_1d works as expected", {

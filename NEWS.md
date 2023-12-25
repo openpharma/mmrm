@@ -1,4 +1,8 @@
-# mmrm 0.3.7.9004
+# mmrm 0.3.7.9005
+
+### New Features
+
+- `Anova` is implemented for `mmrm` models and available upon loading the `car` package. It supports type II and III hypothesis testing.
 
 ### Miscellaneous
 
@@ -6,6 +10,7 @@
 - Fix a compiler warning related to missing format specification in error message function call.
 - The argument `start` for `mmrm_control()` is updated to allow string/function/numeric input for better
 choices of initial values.
+- If an empty contrast matrix is provided to `df_md`, it will return statistics with `NA` values.
 
 # mmrm 0.3.6
 

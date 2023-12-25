@@ -1,7 +1,7 @@
 Type: Package
 Package: mmrm
 Title: Mixed Models for Repeated Measures
-Version: 0.3.7.9004
+Version: 0.3.7.9005
 Authors@R: c(
     person("Daniel", "Sabanes Bove", , "daniel.sabanes_bove@roche.com", role = c("aut", "cre")),
     person("Julia", "Dedic", , "julia.dedic@roche.com", role = "aut"),
@@ -57,6 +57,7 @@ Imports:
     TMB (>= 1.9.1),
     utils
 Suggests:
+    car (>= 3.1.2),
     cli,
     clubSandwich,
     clusterGeneration,
@@ -119,4 +120,5 @@ Collate:
     'tmb.R'
     'interop-emmeans.R'
     'interop-parsnip.R'
+    'interop-car.R'
     'zzz.R'
