@@ -6,6 +6,14 @@
 \usage{
 default_start(cov_type, ...)
 }
+\arguments{
+\item{cov_type}{(\code{string})\cr name of the covariance structure.}
+
+\item{...}{additional arguments passed to inner functions.}
+}
+\value{
+A numeric vector of starting values.
+}
 \description{
-Default Starting Value
+Obtain default starting value based on covariance structure.
 }

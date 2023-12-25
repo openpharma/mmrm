@@ -349,22 +349,38 @@ h_valid_formula <- function(formula) {
 }
 
 #' Default Starting Value
-#' @param
+#'
+#' @description Obtain default starting value based on covariance structure.
+#'
+#' @param cov_type (`string`)\cr name of the covariance structure.
+#' @param ... additional arguments passed to inner functions.
+#'
+#' @return A numeric vector of starting values.
 default_start <- function(cov_type, ...) {
   if (identical(cov_type, "us")) {
     emp_start(cov_type = cov_type, ...)
   } else {
-    ols_start(cov_type = cov_type, ...)
+    std_start(cov_type = cov_type, ...)
   }
 }
 
-#' OLS Starting Value
-#' @param
-#' @param n_visits
-#' @param n_groups
-#' @param ... Not used.
-#' @export
-ols_start <- function(cov_type, n_visits, n_groups, ...) {
+#' Standard Starting Value
+#'
+#' @description Obtain standard start values.
+#'
+#' @inheritParams default_start
+#' @param n_visits (`int`)\cr number of visits.
+#' @param n_groups (`int`)\cr number of groups.
+#' @param ... not used.
+#'
+#' @return A numeric vector of starting values.
+#'
+#' @keywords internal
+std_start <- function(cov_type, n_visits, n_groups, ...) {
+  assert_string(cov_type)
+  assert_subset(cov_type, cov_types(c("abbr", "habbr")))
+  assert_int(n_visits, lower = 1L)
+  assert_int(n_groups, lower = 1L)
   start_value <- switch(cov_type,
     us = rep(0, n_visits * (n_visits + 1) / 2),
     toep = rep(0, n_visits),
@@ -381,14 +397,22 @@ ols_start <- function(cov_type, n_visits, n_groups, ...) {
 }
 
 #' Empirical Starting Value
-#' @param cov_type
-#' @param full_frame
-#' @param model_formula
-#' @param group_var
-#' @param visit_var
-#' @param subject_var
+#'
+#' @description Obtain empirical start value for unstructured covariance
+#'
+#' @inheritParams default_start
+#' @param full_frame (`data.frame`)\cr data used for model fitting.
+#' @param model_formula (`formula`)\cr the formula in mmrm model without covariance structure part.
+#' @param group_var (`string`)\cr group variable.
+#' @param visit_var (`string`)\cr visit variable.
+#' @param subject_var (`string`)\cr subject id variable.
+#' @param ... not used.
+#'
 #' @details This `emp_start` only works for unstructured covariance structure.
-#' @export
+#'
+#' @return A numeric vector of starting values.
+#'
+#' @keywords internal
 emp_start <- function(cov_type, full_frame, model_formula, group_var, visit_var, subject_var, ...) {
   assert_true(identical(cov_type, "us"))
   fit <- lm(formula = model_formula, data = full_frame)
@@ -417,9 +441,14 @@ emp_start <- function(cov_type, full_frame, model_formula, group_var, visit_var,
   }
 }
 #' Obtain Theta from Covariance Matrix
-#' @param covariance (`matrix`)
+#'
+#' @description Obtain unstructured theta from covrariance matrix.
+#'
+#' @param covariance (`matrix`) of covariance matrix values.
+#'
 #' @keywords internal
 h_get_theta_from_cov <- function(covariance) {
+  assert_matrix(covariance, mode = "numeric", ncols = nrow(covariance))
   covariance[is.na(covariance)] <- 0
   diag(covariance)[diag(covariance) == 0] <- 1
   emp_chol <- t(chol(covariance))

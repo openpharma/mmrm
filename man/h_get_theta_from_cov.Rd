@@ -7,9 +7,9 @@
 h_get_theta_from_cov(covariance)
 }
 \arguments{
-\item{covariance}{(\code{matrix})}
+\item{covariance}{(\code{matrix}) of covariance matrix values.}
 }
 \description{
-Obtain Theta from Covariance Matrix
+Obtain unstructured theta from covrariance matrix.
 }
 \keyword{internal}

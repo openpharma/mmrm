@@ -14,9 +14,28 @@ emp_start(
   ...
 )
 }
+\arguments{
+\item{cov_type}{(\code{string})\cr name of the covariance structure.}
+
+\item{full_frame}{(\code{data.frame})\cr data used for model fitting.}
+
+\item{model_formula}{(\code{formula})\cr the formula in mmrm model without covariance structure part.}
+
+\item{group_var}{(\code{string})\cr group variable.}
+
+\item{visit_var}{(\code{string})\cr visit variable.}
+
+\item{subject_var}{(\code{string})\cr subject id variable.}
+
+\item{...}{not used.}
+}
+\value{
+A numeric vector of starting values.
+}
 \description{
-Empirical Starting Value
+Obtain empirical start value for unstructured covariance
 }
 \details{
 This \code{emp_start} only works for unstructured covariance structure.
 }
+\keyword{internal}

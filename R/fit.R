@@ -201,8 +201,8 @@ refit_multiple_optimizers <- function(fit,
 #' @param n_cores (`count`)\cr number of cores to be used.
 #' @param method (`string`)\cr adjustment method for degrees of freedom.
 #' @param vcov (`string`)\cr coefficients covariance matrix adjustment method.
-#' @param start (`numeric` or `NULL`)\cr optional start values for variance
-#'   parameters.
+#' @param start (`numeric`, `string` or `function`)\cr optional start values for variance
+#'   parameters. See details for more information.
 #' @param accept_singular (`flag`)\cr whether singular design matrices are reduced
 #'   to full rank automatically and additional coefficient estimates will be missing.
 #' @param optimizers (`list`)\cr optimizer specification, created with [h_get_optimizers()].
@@ -240,6 +240,14 @@ refit_multiple_optimizers <- function(fit,
 #'   compared to SAS; Use "Kenward-Roger-Linear" for `vcov` instead for better matching
 #'   of the SAS results.
 #'
+#' - The argument `start` is used to facilitate the choice of initial values for fitting the model.
+#'   If `string` is provided, `mmrm_control` will try to find a function within the parent frame.
+#'   If `function` is provided, make sure its parameter is a valid element of `mmrm_tmb_data`
+#'   or `mmrm_tmb_formula_parts`.
+#'   By default, `default_start` will be used. Other implemented methods include `std_start` and
+#'   `emp_start`. `default_start` will use `emp_start` if covariance structure is unstructured and use
+#'   `std_start` otherwise.
+#'
 #' @return List of class `mmrm_control` with the control parameters.
 #' @export
 #'
@@ -262,8 +270,8 @@ mmrm_control <- function(n_cores = 1L,
     start <- "default_start"
   }
   if (test_string(start)) {
-    if (exists(start, envir = parent.frame())) {
-      start <- get(start, envir = parent.frame())
+    if (exists(start, envir = parent.frame(), mode = "function")) {
+      start <- get(start, envir = parent.frame(), mode = "function")
     } else {
       stop("Can not find function`", start, "` for mmrm_control()!")
     }
