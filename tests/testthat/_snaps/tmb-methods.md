@@ -12,9 +12,9 @@
     
     Coefficients: 
                       (Intercept) RACEBlack or African American 
-                       41.2272022                     0.8001225 
+                       41.2272989                     0.8001915 
                         RACEWhite 
-                        5.8791646 
+                        5.8790984 
     
     Model Inference Optimization:
     Converged with code 0 and message: convergence: rel_reduction_of_f <= factr*epsmch
@@ -32,17 +32,17 @@
     
     Coefficients: 
                       (Intercept) RACEBlack or African American 
-                      30.77747548                    1.53049977 
+                       30.7773855                     1.5305744 
                         RACEWhite                     SEXFemale 
-                       5.64356535                    0.32606192 
+                        5.6435744                     0.3260536 
                          ARMCDTRT                    AVISITVIS2 
-                       3.77423004                    4.83958845 
+                        3.7744500                     4.8396230 
                        AVISITVIS3                    AVISITVIS4 
-                      10.34211288                   15.05389826 
+                       10.3421863                    15.0537472 
               ARMCDTRT:AVISITVIS2           ARMCDTRT:AVISITVIS3 
-                      -0.04192625                   -0.69368537 
+                       -0.0421341                    -0.6938367 
               ARMCDTRT:AVISITVIS4 
-                       0.62422703 
+                        0.6240853 
     
     Model Inference Optimization:
     Converged with code 0 and message: convergence: rel_reduction_of_f <= factr*epsmch
@@ -61,7 +61,7 @@
     
     Coefficients: (1 not defined because of singularities)
     (Intercept)   SEXFemale  SEX2Female 
-    42.80540973  0.04513432          NA 
+    42.80585089  0.04521569          NA 
     
     Model Inference Optimization:
     Converged with code 0 and message: convergence: rel_reduction_of_f <= factr*epsmch

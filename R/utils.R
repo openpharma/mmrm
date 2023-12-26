@@ -358,7 +358,7 @@ h_valid_formula <- function(formula) {
 #' @return A numeric vector of starting values.
 default_start <- function(cov_type, ...) {
   if (identical(cov_type, "us")) {
-    emp_start(cov_type = cov_type, ...)
+    emp_start(...)
   } else {
     std_start(cov_type = cov_type, ...)
   }
@@ -400,12 +400,12 @@ std_start <- function(cov_type, n_visits, n_groups, ...) {
 #'
 #' @description Obtain empirical start value for unstructured covariance
 #'
-#' @inheritParams default_start
 #' @param full_frame (`data.frame`)\cr data used for model fitting.
 #' @param model_formula (`formula`)\cr the formula in mmrm model without covariance structure part.
 #' @param group_var (`string`)\cr group variable.
 #' @param visit_var (`string`)\cr visit variable.
 #' @param subject_var (`string`)\cr subject id variable.
+#' @param subject_groups (`factor`)\cr subject group assignment.
 #' @param ... not used.
 #'
 #' @details This `emp_start` only works for unstructured covariance structure.
@@ -413,32 +413,27 @@ std_start <- function(cov_type, n_visits, n_groups, ...) {
 #' @return A numeric vector of starting values.
 #'
 #' @keywords internal
-emp_start <- function(cov_type, full_frame, model_formula, group_var, visit_var, subject_var, ...) {
-  assert_true(identical(cov_type, "us"))
+emp_start <- function(full_frame, model_formula, visit_var, subject_var, n_visits, n_subjects, subject_groups, ...) {
+  assert_formula(model_formula)
+  assert_data_frame(full_frame)
+  assert_subset(all.vars(model_formula), colnames(full_frame))
+  assert_string(visit_var)
+  assert_string(subject_var)
+  assert_factor(full_frame[[visit_var]])
+  assert_factor(full_frame[[subject_var]])
   fit <- lm(formula = model_formula, data = full_frame)
-  df <- data.frame(
-    id = full_frame[[subject_var]],
-    visit = full_frame[[visit_var]],
-    residual = residuals(fit)
+  res <- rep(NA, n_subjects * n_visits)
+  res[
+    n_visits * as.integer(droplevels(full_frame[[subject_var]])) - n_visits + as.integer(full_frame[[visit_var]])
+  ] <- residuals(fit)
+  res_mat <- matrix(res, ncol = n_visits, nrow = n_subjects, byrow = TRUE)
+  emp_covs <- lapply(
+    unname(split(seq_len(n_subjects), subject_groups)),
+    function(x) {
+      cov(res_mat[x, , drop = FALSE], use = "pairwise.complete.obs")
+    }
   )
-  df_wide <- reshape(
-    df,
-    idvar = "id",
-    timevar = "visit",
-    direction = "wide",
-    v.names = "residual"
-  )
-  ids <- df_wide$id
-  df_wide[, sprintf("residual.%s", setdiff(levels(df$visit), unique(df$visit)))] <- NA
-  df_wide <- df_wide[, sprintf("residual.%s", levels(df$visit))]
-  if (is.null(group_var)) {
-    emp_cov <- cov(df_wide, use = "pairwise.complete.obs")
-    h_get_theta_from_cov(emp_cov)
-  } else {
-    ref_groups <- setNames(full_frame[[group_var]], full_frame[[subject_var]])[ids]
-    emp_covs <- lapply(split(df_wide, ref_groups), cov, use = "pairwise.complete.obs")
-    unlist(lapply(emp_covs, h_get_theta_from_cov))
-  }
+  unlist(lapply(emp_covs, h_get_theta_from_cov))
 }
 #' Obtain Theta from Covariance Matrix
 #'
@@ -446,11 +441,16 @@ emp_start <- function(cov_type, full_frame, model_formula, group_var, visit_var,
 #'
 #' @param covariance (`matrix`) of covariance matrix values.
 #'
+#' @details
+#' If the covariance matrix has `NA` in some of the elements, they will be replaced by
+#' 0 (non-diagonal) and 1 (diagonal). This ensures that the matrix is positive definite.
+#'
 #' @keywords internal
 h_get_theta_from_cov <- function(covariance) {
   assert_matrix(covariance, mode = "numeric", ncols = nrow(covariance))
   covariance[is.na(covariance)] <- 0
   diag(covariance)[diag(covariance) == 0] <- 1
+  covariance <- Matrix::nearPD(covariance)$mat
   emp_chol <- t(chol(covariance))
   mat <- t(solve(diag(diag(emp_chol)), emp_chol))
   ret <- c(log(diag(emp_chol)), mat[upper.tri(mat)])

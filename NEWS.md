@@ -3,13 +3,13 @@
 ### New Features
 
 - `Anova` is implemented for `mmrm` models and available upon loading the `car` package. It supports type II and III hypothesis testing.
+- The argument `start` for `mmrm_control()` is updated to allow string/function/numeric input for better
+choices of initial values.
 
 ### Miscellaneous
 
 - In documentation of `mmrm_control()`, the allowed vcov definition is corrected to "Empirical-Jackknife" (CR3), and "Empirical-Bias-Reduced" (CR2).
 - Fix a compiler warning related to missing format specification in error message function call.
-- The argument `start` for `mmrm_control()` is updated to allow string/function/numeric input for better
-choices of initial values.
 - If an empty contrast matrix is provided to `df_md`, it will return statistics with `NA` values.
 
 # mmrm 0.3.6

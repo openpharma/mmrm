@@ -102,7 +102,7 @@
     VIS1 251.6  88.5 27.9  87.7
     VIS2  88.5 159.5 13.4  48.7
     VIS3  27.9  13.4 90.7   2.3
-    VIS4  87.7  48.7  2.3 542.6
+    VIS4  87.7  48.7  2.3 542.5
     
 
 # print.summary.mmrm works as expected for rank deficient fits
@@ -178,10 +178,10 @@
     VIS4 -47.0 -22.4 17.7 132.0
     Group: TRT
           VIS1 VIS2 VIS3  VIS4
-    VIS1 106.8 42.6  2.8 -46.3
-    VIS2  42.6 40.7  4.6  -4.8
-    VIS3   2.8  4.6 26.0  20.5
-    VIS4 -46.3 -4.8 20.5 172.9
+    VIS1 106.7 42.6  2.7 -46.3
+    VIS2  42.6 40.7  4.6  -4.7
+    VIS3   2.7  4.6 26.0  20.5
+    VIS4 -46.3 -4.7 20.5 172.9
     
 
 # print.summary.mmrm works as expected for spatial fits

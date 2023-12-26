@@ -261,8 +261,9 @@ h_mmrm_tmb_parameters <- function(formula_parts,
   if (test_function(start)) {
     start <- do.call(start, utils::modifyList(formula_parts, tmb_data))
   } else {
-    start_value <- ols_start(formula_parts$cov_type, m, n_groups)
+    start_value <- std_start(formula_parts$cov_type, m, n_groups)
     theta_dim <- length(start_value)
+    if (is.null(start)) start <- start_value
     assert_numeric(start, len = theta_dim, any.missing = FALSE, finite = TRUE)
   }
   list(theta = start)
