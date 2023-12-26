@@ -5,29 +5,30 @@
 \title{Empirical Starting Value}
 \usage{
 emp_start(
-  cov_type,
   full_frame,
   model_formula,
-  group_var,
   visit_var,
   subject_var,
+  n_visits,
+  n_subjects,
+  subject_groups,
   ...
 )
 }
 \arguments{
-\item{cov_type}{(\code{string})\cr name of the covariance structure.}
-
 \item{full_frame}{(\code{data.frame})\cr data used for model fitting.}
 
 \item{model_formula}{(\code{formula})\cr the formula in mmrm model without covariance structure part.}
-
-\item{group_var}{(\code{string})\cr group variable.}
 
 \item{visit_var}{(\code{string})\cr visit variable.}
 
 \item{subject_var}{(\code{string})\cr subject id variable.}
 
+\item{subject_groups}{(\code{factor})\cr subject group assignment.}
+
 \item{...}{not used.}
+
+\item{group_var}{(\code{string})\cr group variable.}
 }
 \value{
 A numeric vector of starting values.

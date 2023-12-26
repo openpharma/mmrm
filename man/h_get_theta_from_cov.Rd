@@ -12,4 +12,8 @@ h_get_theta_from_cov(covariance)
 \description{
 Obtain unstructured theta from covrariance matrix.
 }
+\details{
+If the covariance matrix has \code{NA} in some of the elements, they will be replaced by
+0 (non-diagonal) and 1 (diagonal). This ensures that the matrix is positive definite.
+}
 \keyword{internal}

@@ -201,7 +201,7 @@ refit_multiple_optimizers <- function(fit,
 #' @param n_cores (`count`)\cr number of cores to be used.
 #' @param method (`string`)\cr adjustment method for degrees of freedom.
 #' @param vcov (`string`)\cr coefficients covariance matrix adjustment method.
-#' @param start (`numeric`, `string` or `function`)\cr optional start values for variance
+#' @param start (`null`, `numeric`, `string` or `function`)\cr optional start values for variance
 #'   parameters. See details for more information.
 #' @param accept_singular (`flag`)\cr whether singular design matrices are reduced
 #'   to full rank automatically and additional coefficient estimates will be missing.
@@ -244,6 +244,7 @@ refit_multiple_optimizers <- function(fit,
 #'   If `string` is provided, `mmrm_control` will try to find a function within the parent frame.
 #'   If `function` is provided, make sure its parameter is a valid element of `mmrm_tmb_data`
 #'   or `mmrm_tmb_formula_parts`.
+#'   If `NULL` is provided, `default_start` will be used.
 #'   By default, `default_start` will be used. Other implemented methods include `std_start` and
 #'   `emp_start`. `default_start` will use `emp_start` if covariance structure is unstructured and use
 #'   `std_start` otherwise.
