@@ -356,6 +356,8 @@ h_valid_formula <- function(formula) {
 #' @param ... additional arguments passed to inner functions.
 #'
 #' @return A numeric vector of starting values.
+#'
+#' @keywords internal
 default_start <- function(cov_type, ...) {
   if (identical(cov_type, "us")) {
     emp_start(...)

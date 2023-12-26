@@ -439,6 +439,15 @@ test_that("mmrm works for constructed control", {
   ))
 })
 
+test_that("mmrm works for start = NULL", {
+  expect_silent(mmrm(
+    FEV1 ~ ARMCD + ar1(AVISIT | SEX / USUBJID),
+    data = fev_data,
+    reml = TRUE,
+    control = mmrm_control(optimizer = c("BFGS", "CG"), start = NULL)
+  ))
+})
+
 test_that("mmrm still works for deprecated 'automatic' optimizer", {
   expect_warning(
     mmrm(

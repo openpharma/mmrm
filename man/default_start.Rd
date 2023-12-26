@@ -17,3 +17,4 @@ A numeric vector of starting values.
 \description{
 Obtain default starting value based on covariance structure.
 }
+\keyword{internal}
