@@ -437,7 +437,7 @@ emp_start <- function(full_frame, model_formula, visit_var, subject_var, n_visit
 }
 #' Obtain Theta from Covariance Matrix
 #'
-#' @description Obtain unstructured theta from covrariance matrix.
+#' @description Obtain unstructured theta from covariance matrix.
 #'
 #' @param covariance (`matrix`) of covariance matrix values.
 #'
@@ -456,6 +456,17 @@ h_get_theta_from_cov <- function(covariance) {
   ret <- c(log(diag(emp_chol)), mat[upper.tri(mat)])
   unname(ret)
 }
+
+#' Starting Value Functions
+#'
+#' An internal constant of available start value functions.
+#'
+#' @keywords internal
+start_funs <- list(
+  default_start = default_start,
+  emp_start = emp_start,
+  std_start = std_start
+)
 
 #' Register S3 Method
 #' Register S3 method to a generic.

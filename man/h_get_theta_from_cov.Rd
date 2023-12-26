@@ -10,7 +10,7 @@ h_get_theta_from_cov(covariance)
 \item{covariance}{(\code{matrix}) of covariance matrix values.}
 }
 \description{
-Obtain unstructured theta from covrariance matrix.
+Obtain unstructured theta from covariance matrix.
 }
 \details{
 If the covariance matrix has \code{NA} in some of the elements, they will be replaced by

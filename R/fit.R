@@ -273,6 +273,8 @@ mmrm_control <- function(n_cores = 1L,
   if (test_string(start)) {
     if (exists(start, envir = parent.frame(), mode = "function")) {
       start <- get(start, envir = parent.frame(), mode = "function")
+    } else if (test_subset(start, names(start_funs))) {
+      start <- start_funs[[start]]
     } else {
       stop("Can not find function`", start, "` for mmrm_control()!")
     }
