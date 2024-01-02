@@ -452,7 +452,11 @@ h_get_theta_from_cov <- function(covariance) {
   assert_matrix(covariance, mode = "numeric", ncols = nrow(covariance))
   covariance[is.na(covariance)] <- 0
   diag(covariance)[diag(covariance) == 0] <- 1
-  covariance <- Matrix::nearPD(covariance)$mat
+  # empirical is not always positive definite in some special cases of numeric singularity.
+  qr_res <- qr(covariance)
+  if (qr_res$rank < ncol(covariance)) {
+    covariance <- Matrix::nearPD(covariance)$mat
+  }
   emp_chol <- t(chol(covariance))
   mat <- t(solve(diag(diag(emp_chol)), emp_chol))
   ret <- c(log(diag(emp_chol)), mat[upper.tri(mat)])
