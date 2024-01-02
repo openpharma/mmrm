@@ -201,7 +201,7 @@ refit_multiple_optimizers <- function(fit,
 #' @param n_cores (`count`)\cr number of cores to be used.
 #' @param method (`string`)\cr adjustment method for degrees of freedom.
 #' @param vcov (`string`)\cr coefficients covariance matrix adjustment method.
-#' @param start (`null`, `numeric`, `string` or `function`)\cr optional start values for variance
+#' @param start (`NULL`, `numeric`, `string` or `function`)\cr optional start values for variance
 #'   parameters. See details for more information.
 #' @param accept_singular (`flag`)\cr whether singular design matrices are reduced
 #'   to full rank automatically and additional coefficient estimates will be missing.

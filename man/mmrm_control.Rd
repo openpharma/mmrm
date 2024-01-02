@@ -22,7 +22,7 @@ mmrm_control(
 
 \item{vcov}{(\code{string})\cr coefficients covariance matrix adjustment method.}
 
-\item{start}{(\code{null}, \code{numeric}, \code{string} or \code{function})\cr optional start values for variance
+\item{start}{(\code{NULL}, \code{numeric}, \code{string} or \code{function})\cr optional start values for variance
 parameters. See details for more information.}
 
 \item{accept_singular}{(\code{flag})\cr whether singular design matrices are reduced
