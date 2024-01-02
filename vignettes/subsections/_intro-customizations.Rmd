@@ -35,7 +35,7 @@ We will see this below.
 The starting values will affect the optimization result. A better starting value
 usually can make the optimization more efficient.
 In `mmrm` we provide two starting value functions, one is `std_start` and the other is `emp_start`.
-`std_start` will try to use identity matrix as the covariance, however there are convergence problems
+`std_start` will try to use the identity matrix as the covariance, however there are convergence problems
 for `ar1` and `ar1h` if identity matrix is provided, thus for these two covariance structure
 we use $\rho=0.5$ instead.
 `emp_start` will try to use empirical covariance as the starting value for unstructured covariance structure.
