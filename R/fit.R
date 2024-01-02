@@ -243,8 +243,8 @@ refit_multiple_optimizers <- function(fit,
 #' - The argument `start` is used to facilitate the choice of initial values for fitting the model.
 #'   If `function` is provided, make sure its parameter is a valid element of `mmrm_tmb_data`
 #'   or `mmrm_tmb_formula_parts` and it returns a numeric vector.
-#'   If `NULL` is provided, `std_start` will be used.
-#'   By default, `std_start` will be used. Other implemented methods include `std_start` and
+#'   By default and if `NULL` is provided, `std_start` will be used.
+#'   Other implemented methods include `std_start` and
 #'   `emp_start`.
 #'
 #' @return List of class `mmrm_control` with the control parameters.
