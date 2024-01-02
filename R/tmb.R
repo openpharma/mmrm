@@ -260,15 +260,15 @@ h_mmrm_tmb_parameters <- function(formula_parts,
   m <- tmb_data$n_visits
   start_value0 <- std_start(formula_parts$cov_type, m, n_groups)
   theta_dim <- length(start_value0)
-  if (is.null(start)) {
-    start_value <- start_value0
+  start_values <- if (is.null(start)) {
+    start_value0
   } else if (test_function(start)) {
-    start_value <- do.call(start, utils::modifyList(formula_parts, tmb_data))
+    do.call(start, utils::modifyList(formula_parts, tmb_data))
   } else {
-    start_value <- start
+    start
   }
-  assert_numeric(start_value, len = theta_dim, any.missing = FALSE, finite = TRUE)
-  list(theta = start_value)
+  assert_numeric(start_values, len = theta_dim, any.missing = FALSE, finite = TRUE)
+  list(theta = start_values)
 }
 
 #' Asserting Sane Start Values for `TMB` Fit
