@@ -448,6 +448,59 @@ test_that("mmrm works for start = NULL", {
   ))
 })
 
+## start values ----
+
+test_that("start can be emp_start or std_start and they works", {
+  expect_silent(
+    mmrm(
+      formula = FEV1 ~ ARMCD + us(AVISIT | USUBJID),
+      data = fev_data,
+      start = emp_start
+    )
+  )
+  expect_silent(
+    mmrm(
+      formula = FEV1 ~ ARMCD + us(AVISIT | USUBJID),
+      data = fev_data,
+      start = std_start
+    )
+  )
+})
+
+test_that("mmrm fails if start do not provide correct parameter", {
+  wrong_start <- function(...) {
+    c(NA_real_, 0L)
+  }
+  expect_error(
+    mmrm(
+      formula = FEV1 ~ ARMCD + us(AVISIT | USUBJID),
+      data = fev_data,
+      start = wrong_start
+    )
+  )
+  expect_error(
+    mmrm(
+      formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+      data = fev_data,
+      start = wrong_start
+    )
+  )
+})
+
+test_that("mmrm fails if start function fails", {
+  wrong_start <- function(...) {
+    stop("this is wrong")
+  }
+  expect_error(
+    mmrm(
+      formula = FEV1 ~ ARMCD + us(AVISIT | USUBJID),
+      data = fev_data,
+      start = wrong_start
+    ),
+    "this is wrong"
+  )
+})
+
 test_that("mmrm still works for deprecated 'automatic' optimizer", {
   expect_warning(
     mmrm(

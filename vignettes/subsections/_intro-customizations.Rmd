@@ -30,6 +30,20 @@ Note that this control list can either be passed via the `control` argument
 to `mmrm`, or selected controls can be directly specified in the `mmrm` call.
 We will see this below.
 
+### Starting Values
+
+The starting values will affect the optimization result. A better starting value
+usually can make the optimization more efficient.
+In `mmrm` we provide two starting value functions, one is `std_start` and the other is `emp_start`.
+`std_start` will try to use identity matrix as the covariance, however there are convergence problems
+for `ar1` and `ar1h` if identity matrix is provided, thus for these two covariance structure
+we use $\rho=0.5$ instead.
+`emp_start` will try to use empirical covariance as the starting value for unstructured covariance structure.
+If some timepoints are missing from data, identity matrix will be used for that submatrix.
+The correlation between existing and non-existing timepoints are set to 0.
+
+As the starting values will affect the result, please be cautious on choosing the starting values.
+
 ## REML or ML
 
 Users can specify if REML should be used (default) or if ML should be used in
