@@ -38,7 +38,7 @@ In `mmrm` we provide two starting value functions, one is `std_start` and the ot
 `std_start` will try to use the identity matrix as the covariance, however there are convergence problems
 for `ar1` and `ar1h` if identity matrix is provided, thus for these two covariance structure
 we use $\rho=0.5$ instead.
-`emp_start` will try to use empirical covariance as the starting value for unstructured covariance structure.
+`emp_start` will try to use the empirical covariance matrix of the residuals of the ordinary least squares model as the starting value for unstructured covariance structure.
 If some timepoints are missing from data, identity matrix will be used for that submatrix.
 The correlation between existing and non-existing timepoints are set to 0.
 
