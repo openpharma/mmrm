@@ -9,8 +9,6 @@ emp_start(
   model_formula,
   visit_var,
   subject_var,
-  n_visits,
-  n_subjects,
   subject_groups,
   ...
 )
@@ -27,8 +25,6 @@ emp_start(
 \item{subject_groups}{(\code{factor})\cr subject group assignment.}
 
 \item{...}{not used.}
-
-\item{group_var}{(\code{string})\cr group variable.}
 }
 \value{
 A numeric vector of starting values.
