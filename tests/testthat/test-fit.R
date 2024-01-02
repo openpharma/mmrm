@@ -450,7 +450,7 @@ test_that("mmrm works for start = NULL", {
 
 ## start values ----
 
-test_that("start can be emp_start or std_start and they works", {
+test_that("start can be emp_start or std_start and they work", {
   expect_silent(
     mmrm(
       formula = FEV1 ~ ARMCD + us(AVISIT | USUBJID),
