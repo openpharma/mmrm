@@ -467,7 +467,7 @@ test_that("start can be emp_start or std_start and they work", {
   )
 })
 
-test_that("mmrm fails if start do not provide correct parameter", {
+test_that("mmrm fails if start function does not provide correct values", {
   wrong_start <- function(...) {
     c(NA_real_, 0L)
   }
