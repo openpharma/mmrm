@@ -39,4 +39,3 @@ Obtain empirical start value for unstructured covariance
 \details{
 This \code{emp_start} only works for unstructured covariance structure.
 }
-\keyword{internal}

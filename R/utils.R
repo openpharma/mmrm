@@ -348,36 +348,18 @@ h_valid_formula <- function(formula) {
   }
 }
 
-#' Default Starting Value
-#'
-#' @description Obtain default starting value based on covariance structure.
-#'
-#' @param cov_type (`string`)\cr name of the covariance structure.
-#' @param ... additional arguments passed to inner functions.
-#'
-#' @return A numeric vector of starting values.
-#'
-#' @keywords internal
-default_start <- function(cov_type, ...) {
-  if (identical(cov_type, "us")) {
-    emp_start(...)
-  } else {
-    std_start(cov_type = cov_type, ...)
-  }
-}
-
 #' Standard Starting Value
 #'
 #' @description Obtain standard start values.
 #'
-#' @inheritParams default_start
+#' @param cov_type (`string`)\cr name of the covariance structure.
 #' @param n_visits (`int`)\cr number of visits.
 #' @param n_groups (`int`)\cr number of groups.
 #' @param ... not used.
 #'
 #' @return A numeric vector of starting values.
 #'
-#' @keywords internal
+#' @export
 std_start <- function(cov_type, n_visits, n_groups, ...) {
   assert_string(cov_type)
   assert_subset(cov_type, cov_types(c("abbr", "habbr")))
@@ -414,7 +396,7 @@ std_start <- function(cov_type, n_visits, n_groups, ...) {
 #'
 #' @return A numeric vector of starting values.
 #'
-#' @keywords internal
+#' @export
 emp_start <- function(full_frame, model_formula, visit_var, subject_var, n_visits, n_subjects, subject_groups, ...) {
   assert_formula(model_formula)
   assert_data_frame(full_frame)
@@ -462,17 +444,6 @@ h_get_theta_from_cov <- function(covariance) {
   ret <- c(log(diag(emp_chol)), mat[upper.tri(mat)])
   unname(ret)
 }
-
-#' Starting Value Functions
-#'
-#' An internal constant of available start value functions.
-#'
-#' @keywords internal
-start_funs <- list(
-  default_start = default_start,
-  emp_start = emp_start,
-  std_start = std_start
-)
 
 #' Register S3 Method
 #' Register S3 method to a generic.

@@ -201,7 +201,7 @@ refit_multiple_optimizers <- function(fit,
 #' @param n_cores (`count`)\cr number of cores to be used.
 #' @param method (`string`)\cr adjustment method for degrees of freedom.
 #' @param vcov (`string`)\cr coefficients covariance matrix adjustment method.
-#' @param start (`NULL`, `numeric`, `string` or `function`)\cr optional start values for variance
+#' @param start (`NULL`, `numeric` or `function`)\cr optional start values for variance
 #'   parameters. See details for more information.
 #' @param accept_singular (`flag`)\cr whether singular design matrices are reduced
 #'   to full rank automatically and additional coefficient estimates will be missing.
@@ -241,13 +241,11 @@ refit_multiple_optimizers <- function(fit,
 #'   of the SAS results.
 #'
 #' - The argument `start` is used to facilitate the choice of initial values for fitting the model.
-#'   If `string` is provided, `mmrm_control` will try to find a function within the parent frame.
 #'   If `function` is provided, make sure its parameter is a valid element of `mmrm_tmb_data`
-#'   or `mmrm_tmb_formula_parts`.
-#'   If `NULL` is provided, `default_start` will be used.
-#'   By default, `default_start` will be used. Other implemented methods include `std_start` and
-#'   `emp_start`. `default_start` will use `emp_start` if covariance structure is unstructured and use
-#'   `std_start` otherwise.
+#'   or `mmrm_tmb_formula_parts` and it returns a numeric vector.
+#'   If `NULL` is provided, `std_start` will be used.
+#'   By default, `std_start` will be used. Other implemented methods include `std_start` and
+#'   `emp_start`.
 #'
 #' @return List of class `mmrm_control` with the control parameters.
 #' @export
@@ -260,7 +258,7 @@ refit_multiple_optimizers <- function(fit,
 mmrm_control <- function(n_cores = 1L,
                          method = c("Satterthwaite", "Kenward-Roger", "Residual", "Between-Within"),
                          vcov = NULL,
-                         start = "default_start",
+                         start = std_start,
                          accept_singular = TRUE,
                          drop_visit_levels = TRUE,
                          ...,
@@ -268,16 +266,7 @@ mmrm_control <- function(n_cores = 1L,
   assert_count(n_cores, positive = TRUE)
   assert_character(method)
   if (is.null(start)) {
-    start <- "default_start"
-  }
-  if (test_string(start)) {
-    if (exists(start, envir = parent.frame(), mode = "function")) {
-      start <- get(start, envir = parent.frame(), mode = "function")
-    } else if (test_subset(start, names(start_funs))) {
-      start <- start_funs[[start]]
-    } else {
-      stop("Can not find function`", start, "` for mmrm_control()!")
-    }
+    start <- std_start
   }
   if (test_function(start)) {
     assert_function(start, args = "...")

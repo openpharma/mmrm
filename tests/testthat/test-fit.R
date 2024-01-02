@@ -365,7 +365,7 @@ test_that("mmrm fails if no optimizer works", {
   data_small <- fev_data[1:30, ]
   # Note: Here we are using parallel computations.
   expect_error(
-    mmrm(formula, data_small, reml = FALSE, start = "std_start"),
+    mmrm(formula, data_small, reml = FALSE),
     "No optimizer led to a successful model fit"
   )
 })

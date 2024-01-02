@@ -21,4 +21,3 @@ A numeric vector of starting values.
 \description{
 Obtain standard start values.
 }
-\keyword{internal}

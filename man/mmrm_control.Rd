@@ -8,7 +8,7 @@ mmrm_control(
   n_cores = 1L,
   method = c("Satterthwaite", "Kenward-Roger", "Residual", "Between-Within"),
   vcov = NULL,
-  start = "default_start",
+  start = std_start,
   accept_singular = TRUE,
   drop_visit_levels = TRUE,
   ...,
@@ -22,7 +22,7 @@ mmrm_control(
 
 \item{vcov}{(\code{string})\cr coefficients covariance matrix adjustment method.}
 
-\item{start}{(\code{NULL}, \code{numeric}, \code{string} or \code{function})\cr optional start values for variance
+\item{start}{(\code{NULL}, \code{numeric} or \code{function})\cr optional start values for variance
 parameters. See details for more information.}
 
 \item{accept_singular}{(\code{flag})\cr whether singular design matrices are reduced
@@ -74,13 +74,11 @@ used for degrees of freedom, see the following table:\tabular{ll}{
 compared to SAS; Use "Kenward-Roger-Linear" for \code{vcov} instead for better matching
 of the SAS results.
 \item The argument \code{start} is used to facilitate the choice of initial values for fitting the model.
-If \code{string} is provided, \code{mmrm_control} will try to find a function within the parent frame.
 If \code{function} is provided, make sure its parameter is a valid element of \code{mmrm_tmb_data}
-or \code{mmrm_tmb_formula_parts}.
-If \code{NULL} is provided, \code{default_start} will be used.
-By default, \code{default_start} will be used. Other implemented methods include \code{std_start} and
-\code{emp_start}. \code{default_start} will use \code{emp_start} if covariance structure is unstructured and use
-\code{std_start} otherwise.
+or \code{mmrm_tmb_formula_parts} and it returns a numeric vector.
+If \code{NULL} is provided, \code{std_start} will be used.
+By default, \code{std_start} will be used. Other implemented methods include \code{std_start} and
+\code{emp_start}.
 }
 }
 \examples{
