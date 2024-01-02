@@ -386,7 +386,6 @@ std_start <- function(cov_type, n_visits, n_groups, ...) {
 #'
 #' @param full_frame (`data.frame`)\cr data used for model fitting.
 #' @param model_formula (`formula`)\cr the formula in mmrm model without covariance structure part.
-#' @param group_var (`string`)\cr group variable.
 #' @param visit_var (`string`)\cr visit variable.
 #' @param subject_var (`string`)\cr subject id variable.
 #' @param subject_groups (`factor`)\cr subject group assignment.
@@ -397,18 +396,21 @@ std_start <- function(cov_type, n_visits, n_groups, ...) {
 #' @return A numeric vector of starting values.
 #'
 #' @export
-emp_start <- function(full_frame, model_formula, visit_var, subject_var, n_visits, n_subjects, subject_groups, ...) {
+emp_start <- function(full_frame, model_formula, visit_var, subject_var, subject_groups, ...) {
   assert_formula(model_formula)
   assert_data_frame(full_frame)
   assert_subset(all.vars(model_formula), colnames(full_frame))
   assert_string(visit_var)
   assert_string(subject_var)
   assert_factor(full_frame[[visit_var]])
+  n_visits <- length(levels(full_frame[[visit_var]]))
   assert_factor(full_frame[[subject_var]])
+  subjects <- droplevels(full_frame[[subject_var]])
+  n_subjects <- length(levels(subjects))
   fit <- lm(formula = model_formula, data = full_frame)
   res <- rep(NA, n_subjects * n_visits)
   res[
-    n_visits * as.integer(droplevels(full_frame[[subject_var]])) - n_visits + as.integer(full_frame[[visit_var]])
+    n_visits * as.integer(subjects) - n_visits + as.integer(full_frame[[visit_var]])
   ] <- residuals(fit)
   res_mat <- matrix(res, ncol = n_visits, nrow = n_subjects, byrow = TRUE)
   emp_covs <- lapply(
