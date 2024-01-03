@@ -25,5 +25,5 @@ Obtain standard start values.
 \code{std_start} will try to provide variance parameter from identity matrix.
 However, for \code{ar1} and \code{ar1h} the corresponding values are not ideal because the
 \eqn{\rho} is usually a positive number thus using 0 as starting value can lead to
-incorrect optimization result, and we use 0.5 as the intial value of \eqn{\rho}.
+incorrect optimization result, and we use 0.5 as the initial value of \eqn{\rho}.
 }
