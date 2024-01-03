@@ -476,14 +476,16 @@ test_that("mmrm fails if start function does not provide correct values", {
       formula = FEV1 ~ ARMCD + us(AVISIT | USUBJID),
       data = fev_data,
       start = wrong_start
-    )
+    ),
+    "Assertion on 'start_values' failed: Must have length 10, but has length 2."
   )
   expect_error(
     mmrm(
       formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
       data = fev_data,
       start = wrong_start
-    )
+    ),
+    "Assertion on 'start_values' failed: Contains missing values \\(element 1\\)"
   )
 })
 
