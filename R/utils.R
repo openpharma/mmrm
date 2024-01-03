@@ -357,6 +357,12 @@ h_valid_formula <- function(formula) {
 #' @param n_groups (`int`)\cr number of groups.
 #' @param ... not used.
 #'
+#' @details
+#' `std_start` will try to provide variance parameter from identity matrix.
+#' However, for `ar1` and `ar1h` the corresponding values are not ideal because the
+#' \eqn{\rho} is usually a positive number thus using 0 as starting value can lead to
+#' incorrect optimization result, and we use 0.5 as the intial value of \eqn{\rho}.
+#'
 #' @return A numeric vector of starting values.
 #'
 #' @export
@@ -391,7 +397,11 @@ std_start <- function(cov_type, n_visits, n_groups, ...) {
 #' @param subject_groups (`factor`)\cr subject group assignment.
 #' @param ... not used.
 #'
-#' @details This `emp_start` only works for unstructured covariance structure.
+#' @details
+#' This `emp_start` only works for unstructured covariance structure.
+#' It uses linear regression to first obtain the coefficients and use the residuals
+#' to obtain the empirical variance-covariance, and it is then used to obtain the
+#' starting values.
 #'
 #' @return A numeric vector of starting values.
 #'

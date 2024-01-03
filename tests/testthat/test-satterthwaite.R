@@ -68,7 +68,7 @@ test_that("h_df_1d_sat works as expected", {
   expect_equal(result$est, 42.8338, tolerance = 1e-4)
   expect_equal(result$se, 0.3509, tolerance = 1e-4)
   expect_identical(round(result$df), 171)
-  expect_equal(result$t_stat, 122.07, tolerance = 1e-3)
+  expect_equal(result$t_stat, 122.07, tolerance = 1e-4)
   expect_true(result$p_val < 0.0001)
 })
 

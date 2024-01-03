@@ -80,7 +80,7 @@ test_that("h_df_1d_bw works as expected for a model with only intercept", {
   expect_equal(result$est, 42.8338, tolerance = 1e-4)
   expect_equal(result$se, 0.3509, tolerance = 1e-4)
   expect_identical(result$df, 340L)
-  expect_equal(result$t_stat, 122.07, tolerance = 1e-3)
+  expect_equal(result$t_stat, 122.07, tolerance = 1e-4)
   expect_true(result$p_val < 0.0001)
 })
 

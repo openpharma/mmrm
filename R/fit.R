@@ -244,8 +244,7 @@ refit_multiple_optimizers <- function(fit,
 #'   If `function` is provided, make sure its parameter is a valid element of `mmrm_tmb_data`
 #'   or `mmrm_tmb_formula_parts` and it returns a numeric vector.
 #'   By default and if `NULL` is provided, `std_start` will be used.
-#'   Other implemented methods include `std_start` and
-#'   `emp_start`.
+#'   Other implemented methods include `emp_start`.
 #'
 #' @return List of class `mmrm_control` with the control parameters.
 #' @export

@@ -34,4 +34,7 @@ Obtain empirical start value for unstructured covariance
 }
 \details{
 This \code{emp_start} only works for unstructured covariance structure.
+It uses linear regression to first obtain the coefficients and use the residuals
+to obtain the empirical variance-covariance, and it is then used to obtain the
+starting values.
 }

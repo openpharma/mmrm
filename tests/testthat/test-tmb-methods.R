@@ -749,7 +749,7 @@ test_that("residuals works as expected with grouped covariance structure", {
 
   result_norm <- expect_silent(residuals(object, type = "normalized"))
   expect_double(result_norm, len = length(object$tmb_data$y_vector))
-  expect_equal(head(result_norm, 5), c(-0.73835, -1.88475, -1.53172, -1.02026, 0.54335), tolerance = 1e-3)
+  expect_equal(head(result_norm, 5), c(-0.73835, -1.88475, -1.53172, -1.02026, 0.54335), tolerance = 1e-4)
 })
 
 test_that("residuals works as expected with weighted model fit", {

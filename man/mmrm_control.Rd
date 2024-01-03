@@ -77,8 +77,7 @@ of the SAS results.
 If \code{function} is provided, make sure its parameter is a valid element of \code{mmrm_tmb_data}
 or \code{mmrm_tmb_formula_parts} and it returns a numeric vector.
 By default and if \code{NULL} is provided, \code{std_start} will be used.
-Other implemented methods include \code{std_start} and
-\code{emp_start}.
+Other implemented methods include \code{emp_start}.
 }
 }
 \examples{

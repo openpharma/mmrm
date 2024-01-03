@@ -3,7 +3,7 @@
 ### New Features
 
 - `Anova` is implemented for `mmrm` models and available upon loading the `car` package. It supports type II and III hypothesis testing.
-- The argument `start` for `mmrm_control()` is updated to allow string/function/numeric input for better
+- The argument `start` for `mmrm_control()` is updated to allow function/numeric input for better
 choices of initial values.
 
 ### Miscellaneous
