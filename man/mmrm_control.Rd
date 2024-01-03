@@ -76,7 +76,7 @@ of the SAS results.
 \item The argument \code{start} is used to facilitate the choice of initial values for fitting the model.
 If \code{function} is provided, make sure its parameter is a valid element of \code{mmrm_tmb_data}
 or \code{mmrm_tmb_formula_parts} and it returns a numeric vector.
-By default and if \code{NULL} is provided, \code{std_start} will be used.
+By default or if \code{NULL} is provided, \code{std_start} will be used.
 Other implemented methods include \code{emp_start}.
 }
 }

@@ -243,7 +243,7 @@ refit_multiple_optimizers <- function(fit,
 #' - The argument `start` is used to facilitate the choice of initial values for fitting the model.
 #'   If `function` is provided, make sure its parameter is a valid element of `mmrm_tmb_data`
 #'   or `mmrm_tmb_formula_parts` and it returns a numeric vector.
-#'   By default and if `NULL` is provided, `std_start` will be used.
+#'   By default or if `NULL` is provided, `std_start` will be used.
 #'   Other implemented methods include `emp_start`.
 #'
 #' @return List of class `mmrm_control` with the control parameters.
@@ -267,11 +267,11 @@ mmrm_control <- function(n_cores = 1L,
   if (is.null(start)) {
     start <- std_start
   }
-  if (test_function(start)) {
-    assert_function(start, args = "...")
-  } else {
-    assert_numeric(start, null.ok = TRUE)
-  }
+  assert(
+    check_function(start, args = "..."),
+    check_numeric(start, null.ok = FALSE),
+    combine = "or"
+  )
   assert_flag(accept_singular)
   assert_flag(drop_visit_levels)
   assert_list(optimizers, names = "unique", types = c("function", "partial"))
