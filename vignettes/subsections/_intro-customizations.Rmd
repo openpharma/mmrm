@@ -95,9 +95,17 @@ mmrm(fev1 ~ trt * time + us(time | pts), data = out, start = emp_start)
 ```
 
 However, if we use `std_start`, there will be convergence problems.
+Here we also increase the maximum iteration number to 50000 to improve the convergence.
+However this does not work and it gives errors.
 
 ```{r mmrm_using_std_start, eval = FALSE}
-mmrm(fev1 ~ trt * time + us(time | pts), data = out, start = std_start)
+mmrm(
+  fev1 ~ trt * time + us(time | pts),
+  data = out,
+  start = std_start,
+  optimizer = "BFGS",
+  optimizer_control = list(maxit = 50000)
+)
 ```
 
 
