@@ -4,17 +4,10 @@
 \alias{emp_start}
 \title{Empirical Starting Value}
 \usage{
-emp_start(
-  full_frame,
-  model_formula,
-  visit_var,
-  subject_var,
-  subject_groups,
-  ...
-)
+emp_start(data, model_formula, visit_var, subject_var, subject_groups, ...)
 }
 \arguments{
-\item{full_frame}{(\code{data.frame})\cr data used for model fitting.}
+\item{data}{(\code{data.frame})\cr data used for model fitting.}
 
 \item{model_formula}{(\code{formula})\cr the formula in mmrm model without covariance structure part.}
 
@@ -37,4 +30,9 @@ This \code{emp_start} only works for unstructured covariance structure.
 It uses linear regression to first obtain the coefficients and use the residuals
 to obtain the empirical variance-covariance, and it is then used to obtain the
 starting values.
+}
+\note{
+\code{data} is used instead of \code{full_frame} because \code{full_frame} is already
+transformed if model contains tranformations, e.g. \code{log(FEV1) ~ exp(FEV1_BL)} will
+drop \code{FEV1} and \code{FEV1_BL} but add \code{log(FEV1)} and \code{exp(FEV1_BL)} in \code{full_frame}.
 }
