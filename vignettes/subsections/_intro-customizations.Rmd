@@ -96,7 +96,6 @@ mmrm(fev1 ~ trt * time + us(time | pts), data = out, start = emp_start)
 
 However, if we use `std_start`, there will be convergence problems.
 We can also force a specific optimization algorithm and add control details, here e.g. choosing `nlminb` with increased maximum number of function evaluations and iterations.
-However this does not work and it gives errors.
 
 ```{r mmrm_using_std_start, eval = FALSE}
 mmrm(
