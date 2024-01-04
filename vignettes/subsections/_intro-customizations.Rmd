@@ -30,6 +30,84 @@ Note that this control list can either be passed via the `control` argument
 to `mmrm`, or selected controls can be directly specified in the `mmrm` call.
 We will see this below.
 
+### Starting Values
+
+The starting values will affect the optimization result. A better starting value
+usually can make the optimization more efficient.
+In `mmrm` we provide two starting value functions, one is `std_start` and the other is `emp_start`.
+`std_start` will try to use the identity matrix as the covariance, however there are convergence problems
+for `ar1` and `ar1h` if the identity matrix is provided, thus for these two covariance structures
+we use $\rho=0.5$ instead.
+`emp_start` will try to use the empirical covariance matrix of the residuals of the ordinary least squares model as the starting value for unstructured covariance structure.
+If some timepoints are missing from data, identity matrix will be used for that submatrix.
+The correlation between existing and non-existing timepoints are set to 0.
+
+As the starting values will affect the result, please be cautious on choosing the starting values.
+#### Example of Default Starting Value Fails
+
+Here we provide an example where the `std_start` fails.
+In the following code chunk, we will create a dummy dataset for mmrm analysis.
+
+```{r data_generation}
+gen_data <- function(
+    n = 100,
+    mu = -100 / 52,
+    delta = 50 / 52,
+    mua = 2000,
+    sigmaa = 300,
+    sigmab = 60,
+    corab = 0.2,
+    sigma = 10,
+    times = c(0, 2, 6, 12, 24, 36, 52, 70, 88, 104)) {
+  nt <- length(times)
+  out <- data.frame(
+    pts = rep(seq_len(n * 2), each = nt),
+    trt = rep(c("Treatment", "Placebo"), rep(n * nt, 2)),
+    time = rep(times, n * 2)
+  )
+
+  covab <- corab * sigmaa * sigmab # cov between a and b
+  cov <- matrix(c(sigmaa^2, covab, covab, sigmab^2), ncol = 2) # Cov matrix for the slope and intercept
+  si <- rbind(
+    MASS::mvrnorm(n, mu = c(mua, mu + delta), Sigma = cov),
+    MASS::mvrnorm(n, mu = c(mua, mu + delta), Sigma = cov)
+  )
+  idx <- rep(seq_len(n * 2), each = nt)
+  out$fev1 <- si[idx, 1] + si[idx, 2] * times + rnorm(n * nt * 2, sd = sigma)
+  out$trt <- factor(out$trt)
+  out$time <- factor(out$time)
+  out$pts <- factor(out$pts)
+  return(out)
+}
+set.seed(123)
+out <- gen_data()
+```
+
+In the generated data, the variance is not in the same scale across visits.
+
+```{r show_variance}
+vapply(split(out$fev1, out$time), sd, FUN.VALUE = 1)
+```
+
+Using `emp_start` as the starting value, `mmrm` will converge fast.
+```{r mmrm_using_emp_start}
+mmrm(fev1 ~ trt * time + us(time | pts), data = out, start = emp_start)
+```
+
+However, if we use `std_start`, there will be convergence problems.
+We can also force a specific optimization algorithm and add control details, here e.g. choosing `nlminb` with increased maximum number of function evaluations and iterations.
+
+```{r mmrm_using_std_start, eval = FALSE}
+mmrm(
+  fev1 ~ trt * time + us(time | pts),
+  data = out,
+  start = std_start,
+  optimizer = "nlminb",
+  optimizer_control = list(eval.max = 1000, iter.max = 1000)
+)
+```
+
+
 ## REML or ML
 
 Users can specify if REML should be used (default) or if ML should be used in

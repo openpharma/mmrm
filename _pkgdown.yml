@@ -68,6 +68,10 @@ reference:
       - df_1d
       - df_md
       - component
+  - title: Start Values
+    contents:
+      - std_start
+      - emp_start
   - title: Methods
     contents:
       - mmrm_methods

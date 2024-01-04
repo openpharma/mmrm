@@ -8,7 +8,7 @@ mmrm_control(
   n_cores = 1L,
   method = c("Satterthwaite", "Kenward-Roger", "Residual", "Between-Within"),
   vcov = NULL,
-  start = NULL,
+  start = std_start,
   accept_singular = TRUE,
   drop_visit_levels = TRUE,
   ...,
@@ -22,8 +22,8 @@ mmrm_control(
 
 \item{vcov}{(\code{string})\cr coefficients covariance matrix adjustment method.}
 
-\item{start}{(\code{numeric} or \code{NULL})\cr optional start values for variance
-parameters.}
+\item{start}{(\code{NULL}, \code{numeric} or \code{function})\cr optional start values for variance
+parameters. See details for more information.}
 
 \item{accept_singular}{(\code{flag})\cr whether singular design matrices are reduced
 to full rank automatically and additional coefficient estimates will be missing.}
@@ -73,6 +73,11 @@ used for degrees of freedom, see the following table:\tabular{ll}{
 \item Please note that "Kenward-Roger" for "Unstructured" covariance gives different results
 compared to SAS; Use "Kenward-Roger-Linear" for \code{vcov} instead for better matching
 of the SAS results.
+\item The argument \code{start} is used to facilitate the choice of initial values for fitting the model.
+If \code{function} is provided, make sure its parameter is a valid element of \code{mmrm_tmb_data}
+or \code{mmrm_tmb_formula_parts} and it returns a numeric vector.
+By default or if \code{NULL} is provided, \code{std_start} will be used.
+Other implemented methods include \code{emp_start}.
 }
 }
 \examples{

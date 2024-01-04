@@ -219,3 +219,98 @@ test_that("h_factor ref allows NA in x", {
   f <- expect_silent(h_factor_ref(x, ref))
   expect_identical(levels(f), ref)
 })
+
+# std_start ----
+
+test_that("std_start works", {
+  expect_identical(
+    std_start("us", 4, 3),
+    rep(0, 30)
+  )
+  expect_identical(
+    std_start("toep", 5, 3),
+    rep(0, 15)
+  )
+  expect_identical(
+    std_start("toeph", 4, 2),
+    rep(0, 14)
+  )
+  expect_identical(
+    std_start("ar1", 4, 3),
+    rep(c(0, 0.5), 3)
+  )
+  expect_identical(
+    std_start("ar1h", 4, 3),
+    rep(c(rep(0, 4), 0.5), 3)
+  )
+  expect_identical(
+    std_start("ad", 5, 3),
+    rep(0, 15)
+  )
+  expect_identical(
+    std_start("adh", 5, 3),
+    rep(0, 27)
+  )
+  expect_identical(
+    std_start("cs", 4, 3),
+    rep(0, 6)
+  )
+  expect_identical(
+    std_start("csh", 4, 4),
+    rep(0, 20)
+  )
+  expect_identical(
+    std_start("sp_exp", 5, 5),
+    rep(0, 10)
+  )
+})
+
+# h_get_theta_from_cov ----
+
+test_that("h_get_theta_from_cov works", {
+  theta <- c(0, log(2), 3)
+  mat_chol <- matrix(c(1, 0, 6, 2), nrow = 2L, byrow = TRUE)
+  mat <- mat_chol %*% t(mat_chol)
+  expect_equal(
+    h_get_theta_from_cov(mat),
+    theta
+  )
+})
+
+test_that("h_get_theta_from_cov use 0/1 to impute the NA values", {
+  theta <- c(0, log(2), 3)
+  theta2 <- c(theta[1:2], rep(0, 2), theta[3], rep(0, 5))
+  mat_chol <- matrix(c(1, 0, 6, 2), nrow = 2L, byrow = TRUE)
+  mat <- mat_chol %*% t(mat_chol)
+  mat2 <- matrix(NA_real_, nrow = 4L, ncol = 4L)
+  mat2[1:2, 1:2] <- mat
+  expect_equal(
+    h_get_theta_from_cov(mat2),
+    theta2
+  )
+})
+
+# emp_start ----
+
+test_that("emp_start works", {
+  full_frame <- fev_data[!is.na(fev_data$FEV1), ]
+  model_formula <- FEV1 ~ AVISIT
+  group_var <- NULL
+  visit_var <- "AVISIT"
+  subject_var <- "USUBJID"
+  n_visits <- 4L
+  n_subjects <- 197L
+  subject_groups <- factor(rep(0, 197))
+  fit <- lm(model_formula, data = full_frame)
+  res <- residuals(fit)
+  res_mat <- matrix(
+    res[as.character(seq(1, 800))],
+    byrow = TRUE,
+    ncol = 4L
+  )
+  emp_mat <- cov(res_mat, use = "pairwise.complete.obs")
+  expect_equal(
+    emp_start(full_frame, model_formula, visit_var, subject_var, n_visits, n_subjects, subject_groups),
+    h_get_theta_from_cov(emp_mat)
+  )
+})
