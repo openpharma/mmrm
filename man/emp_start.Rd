@@ -31,3 +31,8 @@ It uses linear regression to first obtain the coefficients and use the residuals
 to obtain the empirical variance-covariance, and it is then used to obtain the
 starting values.
 }
+\note{
+\code{data} is used instead of \code{full_frame} because \code{full_frame} is already
+transformed if model contains tranformations, e.g. \code{log(FEV1) ~ exp(FEV1_BL)} will
+drop \code{FEV1} and \code{FEV1_BL} but add \code{log(FEV1)} and \code{exp(FEV1_BL)} in \code{full_frame}.
+}
