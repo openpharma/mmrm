@@ -102,8 +102,8 @@ mmrm(
   fev1 ~ trt * time + us(time | pts),
   data = out,
   start = std_start,
-   optimizer = "nlminb", 
-   optimizer_control = list(eval.max = 1000, iter.max = 1000)
+  optimizer = "nlminb",
+  optimizer_control = list(eval.max = 1000, iter.max = 1000)
 )
 ```
 
