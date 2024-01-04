@@ -8,7 +8,7 @@ test_that("mmrm_control works as expected", {
   expected <- structure(
     list(
       optimizers = result$optimizers,
-      start = NULL,
+      start = std_start,
       accept_singular = TRUE,
       method = "Satterthwaite",
       vcov = "Asymptotic",
