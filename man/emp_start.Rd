@@ -4,17 +4,10 @@
 \alias{emp_start}
 \title{Empirical Starting Value}
 \usage{
-emp_start(
-  full_frame,
-  model_formula,
-  visit_var,
-  subject_var,
-  subject_groups,
-  ...
-)
+emp_start(data, model_formula, visit_var, subject_var, subject_groups, ...)
 }
 \arguments{
-\item{full_frame}{(\code{data.frame})\cr data used for model fitting.}
+\item{data}{(\code{data.frame})\cr data used for model fitting.}
 
 \item{model_formula}{(\code{formula})\cr the formula in mmrm model without covariance structure part.}
 

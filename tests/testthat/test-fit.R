@@ -503,6 +503,36 @@ test_that("mmrm fails if start function fails", {
   )
 })
 
+test_that("mmrm works for transformed response using emp_start", {
+  expect_silent(
+    mmrm(
+      formula = log(FEV1) ~ ARMCD + exp(FEV1_BL) + us(AVISIT | USUBJID),
+      data = fev_data,
+      start = std_start
+    )
+  )
+  expect_silent(
+    mmrm(
+      formula = log(FEV1) ~ ARMCD + exp(FEV1_BL) + us(AVISIT | USUBJID),
+      data = fev_data,
+      start = emp_start
+    )
+  )
+})
+
+test_that("mmrm works for character covariate using emp_start", {
+  fev_data2 <- fev_data
+  fev_data2$ARMCD <- as.character(fev_data2$ARMCD)
+  fev_data2$USUBJID <- as.character(fev_data2$USUBJID)
+  expect_silent(
+    mmrm(
+      formula = log(FEV1) ~ ARMCD + exp(FEV1_BL) + us(AVISIT | USUBJID),
+      data = fev_data2,
+      start = emp_start
+    )
+  )
+})
+
 test_that("mmrm still works for deprecated 'automatic' optimizer", {
   expect_warning(
     mmrm(
