@@ -404,7 +404,7 @@ std_start <- function(cov_type, n_visits, n_groups, ...) {
 #' starting values.
 #'
 #' @note `data` is used instead of `full_frame` because `full_frame` is already
-#' transformed if model contains tranformations, e.g. `log(FEV1) ~ exp(FEV1_BL)` will
+#' transformed if model contains transformations, e.g. `log(FEV1) ~ exp(FEV1_BL)` will
 #' drop `FEV1` and `FEV1_BL` but add `log(FEV1)` and `exp(FEV1_BL)` in `full_frame`.
 #'
 #' @return A numeric vector of starting values.
