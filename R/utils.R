@@ -421,7 +421,7 @@ emp_start <- function(data, model_formula, visit_var, subject_var, subject_group
   assert_factor(data[[subject_var]])
   subjects <- droplevels(data[[subject_var]])
   n_subjects <- length(levels(subjects))
-  fit <- lm(formula = model_formula, data = data)
+  fit <- stats::lm(formula = model_formula, data = data)
   res <- rep(NA, n_subjects * n_visits)
   res[
     n_visits * as.integer(subjects) - n_visits + as.integer(data[[visit_var]])
@@ -430,7 +430,7 @@ emp_start <- function(data, model_formula, visit_var, subject_var, subject_group
   emp_covs <- lapply(
     unname(split(seq_len(n_subjects), subject_groups)),
     function(x) {
-      cov(res_mat[x, , drop = FALSE], use = "pairwise.complete.obs")
+      stats::cov(res_mat[x, , drop = FALSE], use = "pairwise.complete.obs")
     }
   )
   unlist(lapply(emp_covs, h_get_theta_from_cov))
