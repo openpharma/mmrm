@@ -39,7 +39,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.7.9005</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.7.9006</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -83,22 +83,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.7">v0.3.7</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.6">v0.3.6</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.5">v0.3.5</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.4">v0.3.4</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.3">v0.3.3</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.2">v0.3.2</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.1">v0.3.1</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.0">v0.3.0</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.2.2">v0.2.2</a> </div></li>
-<!-- end dropdown for versions -->
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-reports">Reports</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-reports">
@@ -142,10 +126,9 @@
 <div class="section level2">
 <h2 id="common-usage">Common usage<a class="anchor" aria-label="anchor" href="#common-usage"></a>
 </h2>
-<p>A minimal call of <a href="https://openpharma.github.io/mmrm/main/reference/mmrm.html"><code>mmrm()</code></a>,
-consisting of only formula and data arguments will produce an object of
-class <code>mmrm</code>, <code>mmrm_fit</code>, and
-<code>mmrm_tmb</code>.</p>
+<p>A minimal call of <code><a href="../reference/mmrm.html">mmrm()</a></code>, consisting of only formula and
+data arguments will produce an object of class <code>mmrm</code>,
+<code>mmrm_fit</code>, and <code>mmrm_tmb</code>.</p>
 <p>Here we fit a mmrm model with <code>us</code> (unstructured)
 covariance structure specified, as well as the defaults of
 <code>reml = TRUE</code> and <code>control = mmrm_control()</code>.</p>
@@ -298,8 +281,10 @@ covariance structure. If some timepoints are missing from data, identity
 matrix will be used for that submatrix. The correlation between existing
 and non-existing timepoints are set to 0.</p>
 <p>As the starting values will affect the result, please be cautious on
-choosing the starting values. #### Example of Default Starting Value
-Fails</p>
+choosing the starting values.</p>
+<div class="section level5">
+<h5 id="example-of-default-starting-value-fails">Example of Default Starting Value Fails<a class="anchor" aria-label="anchor" href="#example-of-default-starting-value-fails"></a>
+</h5>
 <p>Here we provide an example where the <code>std_start</code> fails. In
 the following code chunk, we will create a dummy dataset for mmrm
 analysis.</p>
@@ -387,6 +372,7 @@ maximum number of function evaluations and iterations.</p>
 <span>  optimizer <span class="op">=</span> <span class="st">"nlminb"</span>,</span>
 <span>  optimizer_control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>eval.max <span class="op">=</span> <span class="fl">1000</span>, iter.max <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+</div>
 </div>
 </div>
 <div class="section level3">
