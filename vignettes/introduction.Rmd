@@ -22,7 +22,7 @@ library(mmrm)
 
 # Common usage
 
-A minimal call of [`mmrm()`](https://openpharma.github.io/mmrm/main/reference/mmrm.html), consisting of only formula and data arguments will produce an object of class `mmrm`, `mmrm_fit`, and `mmrm_tmb`.
+A minimal call of `mmrm()`, consisting of only formula and data arguments will produce an object of class `mmrm`, `mmrm_fit`, and `mmrm_tmb`.
 
 Here we fit a mmrm model with `us` (unstructured) covariance structure specified, as well as the defaults of `reml = TRUE` and `control = mmrm_control()`.
 
