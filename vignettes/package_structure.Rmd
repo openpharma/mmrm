@@ -43,7 +43,7 @@ Different folders contain R scripts and `Rmd` files for different topics, for ex
 ### `SAS`
 
 The `design/SAS/` folder contains programs to run MMRM models in SAS and the corresponding SAS outputs.
-The results will be used for integration tests (see [integration tests](#how-to-add-a-new-integration-test?)).
+The results will be used for integration tests (see [integration tests](../CONTRIBUTING.html#add-integration-tests)).
 
 ### `TMB`
 

@@ -194,7 +194,7 @@ f(\theta; \hat{\beta}) = - \log L(\hat{\beta}; Y) = \frac{N}{2} \log(2\pi) +
 \]
 The objective function $f(\theta; \hat{\beta})$ is then minimized with numerical optimizers
 utilizing quasi-Newton-Raphson algorithms based on the gradient (or additionally with Hessian, see
-[optimizer](../introduction.html#Optimizer)).
+[optimizer](introduction.html#optimizer)).
 Here the use of the Template Model Builder package `TMB` is helpful because
 
 1. `TMB` allows to perform the calculations in C++, which maximizes the speed.

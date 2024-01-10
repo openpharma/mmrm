@@ -132,7 +132,7 @@ or it is marginal?
 
 Under conditional simulation setting, the variance-covariance matrix, 
 and the expectation of $Y_i$ are already given in 
-[Mathematical Derivations](#Mathematical-Derivations).
+[Mathematical Derivations](#mathematical-derivations).
 
 Please note that in implementation of `predict` function, we only use the diagonal 
 elements of $A_i$, however, here we need to make use of the full matrix $A_i$

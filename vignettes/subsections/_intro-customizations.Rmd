@@ -43,6 +43,7 @@ If some timepoints are missing from data, identity matrix will be used for that 
 The correlation between existing and non-existing timepoints are set to 0.
 
 As the starting values will affect the result, please be cautious on choosing the starting values.
+
 #### Example of Default Starting Value Fails
 
 Here we provide an example where the `std_start` fails.

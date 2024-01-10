@@ -29,7 +29,7 @@ Here we describe the variance-covariance matrix adjustment of coefficients.
 To estimate the covariance matrix of coefficients, there are many ways.
 In `mmrm` package, we implemented asymptotic, empirical, Jackknife and Kenward-Roger methods.
 For simplicity, the following derivation are all for unweighted mmrm.
-For weighted mmrm, we can follow the [details of weighted least square estimator](https://openpharma.github.io/mmrm/main/articles/algorithm.html#weighted-least-squares-estimator).
+For weighted mmrm, we can follow the [details of weighted least square estimator](algorithm.html#weighted-least-squares-estimator).
 
 ## Asymptotic Covariance
 
