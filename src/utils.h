@@ -34,7 +34,7 @@ T1 subset_matrix(T1 input, T2 index1) {
     T1 ret(index1.size(), input.cols());
     for (decltype(index1.size()) i = 0; i < index1.size(); i++) {
       for (int j = 0; j < input.cols(); j++) {
-        ret(i, j) = input(i, j);
+        ret(i, j) = input(index1[i], j);
       }
     }
   #endif
