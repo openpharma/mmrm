@@ -17,8 +17,8 @@ T1 subset_matrix(T1 input, T2 index1, T2 index2) {
     T1 ret = input(index1, index2);
   #else
     T1 ret(index1.size(), index2.size());
-    for (int i = 0; i < index1.size(); i++) {
-      for (int j = 0; j < index2.size(); j++) {
+    for (decltype(index1.size()) i = 0; i < index1.size(); i++) {
+      for (decltype(index2.size()) j = 0; j < index2.size(); j++) {
         ret(i, j) = input(index1[i], index2[j]);
       }
     }
@@ -32,7 +32,7 @@ T1 subset_matrix(T1 input, T2 index1) {
     T1 ret = input(index1, Eigen::placeholders::all);
   #else
     T1 ret(index1.size(), input.cols());
-    for (int i = 0; i < index1.size(); i++) {
+    for (decltype(index1.size()) i = 0; i < index1.size(); i++) {
       for (int j = 0; j < input.cols(); j++) {
         ret(i, j) = input(index1[i], j);
       }
