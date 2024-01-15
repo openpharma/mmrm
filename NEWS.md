@@ -15,7 +15,7 @@ choices of initial values.
 ### Bug Fixes
 
 - Previously if the first optimizer fails, the best successful fit among the rest optimizer
-will be returned. However the index of is incorrect, and this issue is fixed now.
+will be returned. However the index of it was incorrect, and this issue is fixed now.
 
 # mmrm 0.3.6
 
