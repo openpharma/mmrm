@@ -448,6 +448,24 @@ test_that("mmrm works for start = NULL", {
   ))
 })
 
+test_that("mmrm returns the correct best fit", {
+  opts <- list(
+    a = h_partial_fun_args(fail_optimizer, message = "this is wrong"),
+    b = h_partial_fun_args(fail_optimizer, message = "this is wrong too"),
+    c = h_partial_fun_args(silly_optimizer, value_add = 0, message = "silly success")
+  )
+  fit <- expect_silent(mmrm(
+    FEV1 ~ ARMCD + ar1(AVISIT | SEX / USUBJID),
+    data = fev_data,
+    reml = TRUE,
+    control = mmrm_control(optimizers = opts)
+  ))
+  expect_identical(
+    fit$opt_details,
+    list(convergence = 0, message = "silly success")
+  )
+})
+
 ## start values ----
 
 test_that("start can be emp_start or std_start and they work", {
