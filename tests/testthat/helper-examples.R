@@ -128,3 +128,13 @@ silly_optimizer <- function(par, objective, gr, value_add, message, control, ...
     message = message
   )
 }
+
+fail_optimizer <- function(par, objective, gr, message, control, ...) {
+  result <- par
+  list(
+    par = result,
+    objective = objective(result),
+    convergence = 1,
+    message = message
+  )
+}

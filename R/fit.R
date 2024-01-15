@@ -189,7 +189,7 @@ refit_multiple_optimizers <- function(fit,
     )
   }
   best_optimizer <- which.max(all_fits_summary$log_liks[is_ok])
-  all_fits[[best_optimizer]]
+  all_fits[[which(is_ok)[best_optimizer]]]
 }
 
 #' Control Parameters for Fitting an MMRM

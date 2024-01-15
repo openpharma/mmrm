@@ -12,6 +12,11 @@ choices of initial values.
 - Fix a compiler warning related to missing format specification in error message function call.
 - If an empty contrast matrix is provided to `df_md`, it will return statistics with `NA` values.
 
+### Bug Fixes
+
+- Previously if the first optimizer fails, the best successful fit among the rest optimizer
+will be returned. However the index of it was incorrect, and this issue is fixed now.
+
 # mmrm 0.3.6
 
 ### New Features
