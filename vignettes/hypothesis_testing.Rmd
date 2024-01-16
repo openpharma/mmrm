@@ -34,6 +34,7 @@ Before we discuss the testing, it is important that we understand the concept of
 The definition of "contained effect" is:
 
 For effect $E_2$, it is said to contain $E_1$ if
+
 1. the involved numerical covariate(s) are identical for these two effects
 1. all the categorical covariate(s) associated with $E_1$ are also associated with $E_2$
 
