@@ -50,7 +50,7 @@ is_non_standard_clang <- function() {
   }
 }
 
-skip_if_cran_devel_clang <- function() {
+skip_if_r_devel_linux_clang <- function() {
   do_skip <- is_r_devel() &&
     is_linux() &&
     is_using_clang() &&
