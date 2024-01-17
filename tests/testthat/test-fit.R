@@ -215,6 +215,7 @@ test_that("h_summarize_all_fits works as expected", {
 })
 
 test_that("h_summarize_all_fits works when some list elements are try-error objects", {
+  skip_if_r_devel_linux_clang()
   mod_fit <- get_mmrm()
   mod_fit2 <- try(stop("bla"), silent = TRUE)
   mod_fit3 <- get_mmrm()
