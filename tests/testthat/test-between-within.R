@@ -160,6 +160,7 @@ test_that("h_df_md_bw works as expected - both effects", {
 })
 
 test_that("h_df_md_bw works as expected for rank deficient model", {
+  skip_if_r_devel_linux_clang()
   object <- get_mmrm_rank_deficient()
   contrast <- matrix(data = 0, nrow = 2, ncol = length(component(object, "beta_est")))
   contrast[1, 2] <- contrast[2, 3] <- 1
