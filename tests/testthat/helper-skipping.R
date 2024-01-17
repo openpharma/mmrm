@@ -49,13 +49,17 @@ is_non_standard_clang <- function() {
     os_version <- as.integer(gsub(pattern = "[^0-9]", replacement = "", x = os))
     assert_int(os_version)
     which_os <- match(os_version, fedora_clang_defaults$os)
-    if (is.na(which_os)) return(FALSE)
+    if (is.na(which_os)) {
+      return(FALSE)
+    }
     clang_major_version > fedora_clang_defaults$clang[which_os]
   } else if (grepl("Debian", os)) {
     os_codename <- gsub(pattern = "debian gnu/linux ([a-z]+)/*[a-z]*", replacement = "\\1", x = os)
     assert_string(os_codename)
     which_os <- match(os_codename, debian_clang_defaults$os)
-    if (is.na(which_os)) return(FALSE)
+    if (is.na(which_os)) {
+      return(FALSE)
+    }
     clang_major_version > debian_clang_defaults$clang[which_os]
   } else {
     FALSE
