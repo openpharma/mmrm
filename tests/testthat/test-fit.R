@@ -203,15 +203,7 @@ test_that("h_summarize_all_fits works as expected", {
   all_fits <- list(mod_fit, mod_fit2)
   result <- expect_silent(h_summarize_all_fits(all_fits))
 
-  # NOTE:
-  # Test currently fails on R-devel on Fedora with clang for the first optimizer
-  # mmrm v0.1.5 @ r-devel-linux-x86_64-fedora-clang
-  #   `actual$log_liks`: -2155.280410081641 -1693.224938122514
-  #   `expected$log_liks`: -1693.224935585730 -1693.224938122510
-  #
-  # As this failure only appears on R-devel on Fedora with clang, we are
-  # temporarily skipping this test on CRAN until we can reproduce the behavior.
-  skip_on_cran()
+  skip_if_r_devel_linux_clang()
 
   expected <- list(
     warnings = list(NULL, NULL),
@@ -219,7 +211,6 @@ test_that("h_summarize_all_fits works as expected", {
     log_liks = c(-1693.22493558573, -1693.22493812251),
     converged = c(TRUE, TRUE)
   )
-
   expect_equal(result, expected)
 })
 
