@@ -82,6 +82,7 @@ test_that("emm_basis method works also for rank deficient fit", {
 # emmeans ----
 
 test_that("emmeans works as expected", {
+  skip_if_r_devel_linux_clang()
   skip_if_not_installed("emmeans", minimum_version = "1.6")
 
   fit <- get_mmrm()
@@ -115,6 +116,7 @@ test_that("emmeans works as expected for transformed variables and fixed effect 
 })
 
 test_that("emmeans gives values close to what is expected", {
+  skip_if_r_devel_linux_clang()
   skip_if_not_installed("emmeans", minimum_version = "1.6")
 
   fit <- get_mmrm()
@@ -136,6 +138,7 @@ test_that("emmeans gives values close to what is expected", {
 })
 
 test_that("emmeans works as expected also for rank deficient fit when singular coefficients are not involved", {
+  skip_if_r_devel_linux_clang()
   skip_if_not_installed("emmeans", minimum_version = "1.6")
 
   fit <- get_mmrm_rank_deficient()

@@ -753,6 +753,7 @@ test_that("residuals works as expected with grouped covariance structure", {
 })
 
 test_that("residuals works as expected with weighted model fit", {
+  skip_if_r_devel_linux_clang()
   object <- get_mmrm_weighted()
 
   result_resp <- expect_silent(residuals(object, type = "response"))
@@ -781,6 +782,7 @@ test_that("residuals works as expected with a model using spatial covariance str
 })
 
 test_that("pearson residuals helper function works as expected", {
+  skip_if_r_devel_linux_clang()
   object <- get_mmrm()
   resid_response <- residuals(object, type = "response")
   result_pearson <- h_residuals_pearson(object)
@@ -789,6 +791,7 @@ test_that("pearson residuals helper function works as expected", {
 })
 
 test_that("normalized residuals helper function works as expected", {
+  skip_if_r_devel_linux_clang()
   object <- get_mmrm()
   result_norm <- h_residuals_normalized(object)
   expect_double(result_norm, len = length(object$tmb_data$y_vector))
@@ -842,6 +845,7 @@ test_that("simulate with marginal method results are correctly centered", {
 })
 
 test_that("simulate with conditional method works as expected for weighted models", {
+  skip_if_r_devel_linux_clang()
   object <- get_mmrm_weighted()
   set.seed(535)
   sims <- simulate(object, nsim = 1000, method = "conditional")
@@ -881,6 +885,7 @@ test_that("simulate with conditional method works for differently ordered/number
 })
 
 test_that("simulate with marginal method works for differently ordered/numbered data", {
+  skip_if_r_devel_linux_clang()
   object <- get_mmrm()
   # Look at a permuted small subset of the original data.
   df_subset <- dplyr::slice(object$data, 1:10)
@@ -916,6 +921,7 @@ test_that("simulate with conditional method is compatible with confidence interv
 })
 
 test_that("simulate with marginal method is compatible with prediction intervals", {
+  skip_if_r_devel_linux_clang()
   object <- get_mmrm()
   set.seed(123)
   intervals <- predict(
@@ -1055,6 +1061,7 @@ test_that("h_get_sim_per_subj throws error for nsub == 0", {
 # h_get_prediction_variance ----
 
 test_that("h_get_prediction_variance works as expected", {
+  skip_if_r_devel_linux_clang()
   fit <- get_mmrm()
   data <- fev_data[c(1:4, 97:100), ]
   full_frame <- model.frame(fit,
