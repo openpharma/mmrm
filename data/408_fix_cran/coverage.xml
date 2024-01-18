@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "https://raw.githubusercontent.com/cobertura/cobertura/master/cobertura/src/site/htdocs/xml/coverage-04.dtd">
-<coverage line-rate="0.966232961586121" branch-rate="0" lines-covered="3119" lines-valid="3228" branches-covered="0" branches-valid="0" complexity="0" version="3.6.4" timestamp="2024-01-17 20:29:20.116744">
+<coverage line-rate="0.966523341523342" branch-rate="0" lines-covered="3147" lines-valid="3256" branches-covered="0" branches-valid="0" complexity="0" version="3.6.4" timestamp="2024-01-18 13:52:28.710979">
   <sources>
     <source>/__w/mmrm/mmrm/mmrm</source>
   </sources>
   <packages>
-    <package name="mmrm" line-rate="0.966232961586121" branch-rate="0" complexity="0">
+    <package name="mmrm" line-rate="0.966523341523342" branch-rate="0" complexity="0">
       <classes>
         <class name="between-within.R" filename="R/between-within.R" line-rate="1" branch-rate="0" complexity="0">
           <methods>
@@ -2207,6 +2207,92 @@
             <line number="256" hits="10" branch="false"/>
             <line number="257" hits="10" branch="false"/>
             <line number="258" hits="10" branch="false"/>
+          </lines>
+        </class>
+        <class name="skipping.R" filename="R/skipping.R" line-rate="1" branch-rate="0" complexity="0">
+          <methods>
+            <method name="is_r_devel" signature="" line-rate="1" branch-rate="0" complexity="0">
+              <lines>
+                <line number="5" hits="19" branch="false"/>
+              </lines>
+            </method>
+            <method name="is_linux" signature="" line-rate="1" branch-rate="0" complexity="0">
+              <lines>
+                <line number="10" hits="1" branch="false"/>
+              </lines>
+            </method>
+            <method name="is_using_clang" signature="" line-rate="1" branch-rate="0" complexity="0">
+              <lines>
+                <line number="15" hits="1" branch="false"/>
+              </lines>
+            </method>
+            <method name="parse_clang_major" signature="" line-rate="1" branch-rate="0" complexity="0">
+              <lines>
+                <line number="38" hits="1" branch="false"/>
+                <line number="39" hits="1" branch="false"/>
+                <line number="40" hits="1" branch="false"/>
+              </lines>
+            </method>
+            <method name="is_non_standard_clang" signature="" line-rate="1" branch-rate="0" complexity="0">
+              <lines>
+                <line number="48" hits="15" branch="false"/>
+                <line number="49" hits="15" branch="false"/>
+                <line number="50" hits="15" branch="false"/>
+                <line number="51" hits="6" branch="false"/>
+                <line number="52" hits="6" branch="false"/>
+                <line number="53" hits="6" branch="false"/>
+                <line number="54" hits="3" branch="false"/>
+                <line number="55" hits="3" branch="false"/>
+                <line number="56" hits="9" branch="false"/>
+                <line number="57" hits="6" branch="false"/>
+                <line number="58" hits="6" branch="false"/>
+                <line number="59" hits="6" branch="false"/>
+                <line number="60" hits="3" branch="false"/>
+                <line number="61" hits="3" branch="false"/>
+                <line number="63" hits="3" branch="false"/>
+              </lines>
+            </method>
+            <method name="is_r_devel_linux_clang" signature="" line-rate="1" branch-rate="0" complexity="0">
+              <lines>
+                <line number="70" hits="18" branch="false"/>
+                <line number="71" hits="18" branch="false"/>
+                <line number="72" hits="18" branch="false"/>
+                <line number="73" hits="18" branch="false"/>
+                <line number="74" hits="18" branch="false"/>
+                <line number="75" hits="18" branch="false"/>
+                <line number="76" hits="18" branch="false"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="5" hits="19" branch="false"/>
+            <line number="10" hits="1" branch="false"/>
+            <line number="15" hits="1" branch="false"/>
+            <line number="38" hits="1" branch="false"/>
+            <line number="39" hits="1" branch="false"/>
+            <line number="40" hits="1" branch="false"/>
+            <line number="48" hits="15" branch="false"/>
+            <line number="49" hits="15" branch="false"/>
+            <line number="50" hits="15" branch="false"/>
+            <line number="51" hits="6" branch="false"/>
+            <line number="52" hits="6" branch="false"/>
+            <line number="53" hits="6" branch="false"/>
+            <line number="54" hits="3" branch="false"/>
+            <line number="55" hits="3" branch="false"/>
+            <line number="56" hits="9" branch="false"/>
+            <line number="57" hits="6" branch="false"/>
+            <line number="58" hits="6" branch="false"/>
+            <line number="59" hits="6" branch="false"/>
+            <line number="60" hits="3" branch="false"/>
+            <line number="61" hits="3" branch="false"/>
+            <line number="63" hits="3" branch="false"/>
+            <line number="70" hits="18" branch="false"/>
+            <line number="71" hits="18" branch="false"/>
+            <line number="72" hits="18" branch="false"/>
+            <line number="73" hits="18" branch="false"/>
+            <line number="74" hits="18" branch="false"/>
+            <line number="75" hits="18" branch="false"/>
+            <line number="76" hits="18" branch="false"/>
           </lines>
         </class>
         <class name="testing.R" filename="R/testing.R" line-rate="0.9375" branch-rate="0" complexity="0">
