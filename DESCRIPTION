@@ -114,6 +114,7 @@ Collate:
     'utils-nse.R'
     'utils-formula.R'
     'satterthwaite.R'
+    'skipping.R'
     'tidiers.R'
     'testing.R'
     'tmb-methods.R'
