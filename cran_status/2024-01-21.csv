@@ -1,0 +1,3 @@
+"Flavor","CheckId","InstallId","BuildId"
+"r-devel-linux-x86_64-debian-clang","f65fd9057d0495c35f5413a22d5a9a09","e789a358a3f60f6c94c0752e08613a06","8d69f6eaf0b375ff4e8a516a4c56c16c"
+"r-devel-linux-x86_64-fedora-clang","9554ad4a32f1e4975c6568c9752eb6db","90c129d581b12c87e9b57f974e18ac07","8d69f6eaf0b375ff4e8a516a4c56c16c"
