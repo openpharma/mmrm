@@ -132,8 +132,8 @@ test_that("confint works for different `parm` input", {
 })
 
 test_that("confint give same result as emmeans if no ", {
-  object <- mmrm(FEV1 ~ ARMCD + us(AVISIT |USUBJID), data = fev_data)
-  emm <- emmeans(object, ~ ARMCD)
+  object <- mmrm(FEV1 ~ ARMCD + us(AVISIT | USUBJID), data = fev_data)
+  emm <- emmeans(object, ~ARMCD)
   emm_pair <- pairs(emm, reverse = TRUE)
   conf <- confint(emm_pair)
   conf_coef <- confint(object, 2)

@@ -241,8 +241,9 @@ print.summary.mmrm <- function(x,
 confint.mmrm <- function(object, parm, level = 0.95, ...) {
   cf <- coef(object)
   pnames <- names(cf)
-  if (missing(parm))
+  if (missing(parm)) {
     parm <- pnames
+  }
   assert(
     check_subset(parm, pnames),
     check_integerish(parm, lower = 1L, upper = length(cf))
