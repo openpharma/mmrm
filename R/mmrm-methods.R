@@ -257,6 +257,7 @@ confint.mmrm <- function(object, parm, level = 0.95, ...) {
   ses <- coef_table[parm, "Std. Error"]
   fac <- stats::qt(a, df = df)
   ci <- array(NA, dim = c(length(parm), 2L), dimnames = list(parm, pct))
-  ci[] <- cf[parm] + (ses * fac) %o% c(1, -1)
+  sefac <- ses * fac
+  ci[] <- cf[parm] + c(sefac, -sefac)
   ci
 }
