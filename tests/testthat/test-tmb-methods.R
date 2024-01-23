@@ -721,6 +721,7 @@ test_that("print.mmrm_tmb works as expected for rank deficient fits", {
 # residuals.mmrm_tmb ----
 
 test_that("residuals works as expected", {
+  skip_if_r_devel_linux_clang()
   object <- get_mmrm()
 
   result_resp <- expect_silent(residuals(object, type = "response"))
