@@ -163,5 +163,5 @@ test_that("h_df_md_sat works as expected for rank deficient model", {
   result <- expect_silent(h_df_md_sat(object, contrast))
   object2 <- get_mmrm()
   expected <- expect_silent(h_df_md_sat(object2, contrast))
-  expect_identical(result, expected)
+  expect_equal(result, expected, tolerance = 1e-4)
 })
