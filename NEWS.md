@@ -4,6 +4,7 @@
 
 - `Anova` is implemented for `mmrm` models and available upon loading the `car` package. It supports type II and III hypothesis testing.
 - The argument `start` for `mmrm_control()` is updated to allow better choices of initial values.
+- `confint` on `mmrm` models will give t-based confidence intervals now, instead of the normal approximation.  
 
 ### Bug Fixes
 
