@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "https://raw.githubusercontent.com/cobertura/cobertura/master/cobertura/src/site/htdocs/xml/coverage-04.dtd">
-<coverage line-rate="0.966430551278103" branch-rate="0" lines-covered="3138" lines-valid="3247" branches-covered="0" branches-valid="0" complexity="0" version="3.6.4" timestamp="2024-01-23 01:46:32.859761">
+<coverage line-rate="0.966440886699507" branch-rate="0" lines-covered="3139" lines-valid="3248" branches-covered="0" branches-valid="0" complexity="0" version="3.6.4" timestamp="2024-01-23 12:28:52.925978">
   <sources>
     <source>/__w/mmrm/mmrm/mmrm</source>
   </sources>
   <packages>
-    <package name="mmrm" line-rate="0.966430551278103" branch-rate="0" complexity="0">
+    <package name="mmrm" line-rate="0.966440886699507" branch-rate="0" complexity="0">
       <classes>
         <class name="between-within.R" filename="R/between-within.R" line-rate="1" branch-rate="0" complexity="0">
           <methods>
@@ -1806,6 +1806,7 @@
                 <line number="259" hits="12" branch="false"/>
                 <line number="260" hits="12" branch="false"/>
                 <line number="261" hits="12" branch="false"/>
+                <line number="262" hits="12" branch="false"/>
               </lines>
             </method>
           </methods>
@@ -1949,6 +1950,7 @@
             <line number="259" hits="12" branch="false"/>
             <line number="260" hits="12" branch="false"/>
             <line number="261" hits="12" branch="false"/>
+            <line number="262" hits="12" branch="false"/>
           </lines>
         </class>
         <class name="residual.R" filename="R/residual.R" line-rate="0" branch-rate="0" complexity="0">
