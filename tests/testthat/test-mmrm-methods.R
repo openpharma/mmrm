@@ -140,3 +140,39 @@ test_that("confint give same result as emmeans if no interaction term", {
   expect_equal(conf$lower.CL, conf_coef[, 1])
   expect_equal(conf$upper.CL, conf_coef[, 2])
 })
+
+test_that("confint give same result as SAS on unstructured", {
+  object <- mmrm(FEV1 ~ ARMCD + SEX + us(AVISIT | USUBJID), data = fev_data, reml = FALSE)
+  conf_coef <- confint(object)
+  cis <- matrix(
+    c(40.0071, 42.1609, 2.5714, 5.0838, -1.3968, 1.1204),
+    ncol = 2, byrow = TRUE
+  )
+  expect_equal(conf_coef, cis, ignore_attr = TRUE, tolerance = 1e-4)
+
+  object <- mmrm(FEV1 ~ ARMCD + SEX + us(AVISIT | USUBJID), data = fev_data, reml = TRUE)
+  conf_coef <- confint(object)
+  cis <- matrix(
+    c(39.9890, 42.1634, 2.5584, 5.0945, -1.4108, 1.1301),
+    ncol = 2, byrow = TRUE
+  )
+  expect_equal(conf_coef, cis, ignore_attr = TRUE, tolerance = 1e-4)
+})
+
+test_that("confint give same result as SAS on ar1", {
+  object <- mmrm(FEV1 ~ ARMCD + SEX + ar1(AVISIT | USUBJID), data = fev_data, reml = FALSE)
+  conf_coef <- confint(object)
+  cis <- matrix(
+    c(38.5271, 41.8057, 2.3353, 6.1039, -1.6559, 2.1193),
+    ncol = 2, byrow = TRUE
+  )
+  expect_equal(conf_coef, cis, ignore_attr = TRUE, tolerance = 1e-4)
+
+  object <- mmrm(FEV1 ~ ARMCD + SEX + ar1(AVISIT | USUBJID), data = fev_data, reml = TRUE)
+  conf_coef <- confint(object)
+  cis <- matrix(
+    c(38.5119, 41.8167, 2.3216, 6.1206, -1.6664, 2.1392),
+    ncol = 2, byrow = TRUE
+  )
+  expect_equal(conf_coef, cis, ignore_attr = TRUE, tolerance = 1e-4)
+})
