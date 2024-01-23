@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "https://raw.githubusercontent.com/cobertura/cobertura/master/cobertura/src/site/htdocs/xml/coverage-04.dtd">
-<coverage line-rate="0.966748017083588" branch-rate="0" lines-covered="3169" lines-valid="3278" branches-covered="0" branches-valid="0" complexity="0" version="3.6.4" timestamp="2024-01-23 17:35:00.780592">
+<coverage line-rate="0.966748017083588" branch-rate="0" lines-covered="3169" lines-valid="3278" branches-covered="0" branches-valid="0" complexity="0" version="3.6.4" timestamp="2024-01-23 19:13:05.2614">
   <sources>
     <source>/__w/mmrm/mmrm/mmrm</source>
   </sources>
@@ -2257,7 +2257,7 @@
           <methods>
             <method name="is_r_devel" signature="" line-rate="1" branch-rate="0" complexity="0">
               <lines>
-                <line number="5" hits="19" branch="false"/>
+                <line number="5" hits="21" branch="false"/>
               </lines>
             </method>
             <method name="is_linux" signature="" line-rate="1" branch-rate="0" complexity="0">
@@ -2300,18 +2300,18 @@
             </method>
             <method name="is_r_devel_linux_clang" signature="" line-rate="1" branch-rate="0" complexity="0">
               <lines>
-                <line number="74" hits="18" branch="false"/>
-                <line number="75" hits="18" branch="false"/>
-                <line number="76" hits="18" branch="false"/>
-                <line number="77" hits="18" branch="false"/>
-                <line number="78" hits="18" branch="false"/>
-                <line number="79" hits="18" branch="false"/>
-                <line number="80" hits="18" branch="false"/>
+                <line number="74" hits="20" branch="false"/>
+                <line number="75" hits="20" branch="false"/>
+                <line number="76" hits="20" branch="false"/>
+                <line number="77" hits="20" branch="false"/>
+                <line number="78" hits="20" branch="false"/>
+                <line number="79" hits="20" branch="false"/>
+                <line number="80" hits="20" branch="false"/>
               </lines>
             </method>
           </methods>
           <lines>
-            <line number="5" hits="19" branch="false"/>
+            <line number="5" hits="21" branch="false"/>
             <line number="10" hits="1" branch="false"/>
             <line number="15" hits="1" branch="false"/>
             <line number="38" hits="1" branch="false"/>
@@ -2334,13 +2334,13 @@
             <line number="63" hits="3" branch="false"/>
             <line number="65" hits="3" branch="false"/>
             <line number="67" hits="3" branch="false"/>
-            <line number="74" hits="18" branch="false"/>
-            <line number="75" hits="18" branch="false"/>
-            <line number="76" hits="18" branch="false"/>
-            <line number="77" hits="18" branch="false"/>
-            <line number="78" hits="18" branch="false"/>
-            <line number="79" hits="18" branch="false"/>
-            <line number="80" hits="18" branch="false"/>
+            <line number="74" hits="20" branch="false"/>
+            <line number="75" hits="20" branch="false"/>
+            <line number="76" hits="20" branch="false"/>
+            <line number="77" hits="20" branch="false"/>
+            <line number="78" hits="20" branch="false"/>
+            <line number="79" hits="20" branch="false"/>
+            <line number="80" hits="20" branch="false"/>
           </lines>
         </class>
         <class name="testing.R" filename="R/testing.R" line-rate="0.9375" branch-rate="0" complexity="0">
