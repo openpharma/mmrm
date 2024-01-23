@@ -233,7 +233,7 @@ print.summary.mmrm <- function(x,
 }
 
 
-#' @describeIn mmrm_methods obtain the confidence interval for the MMRM fit results.
+#' @describeIn mmrm_methods obtain the confidence intervals for the coefficients.
 #' @exportS3Method
 #' @examples
 #' # Confidence Interval:

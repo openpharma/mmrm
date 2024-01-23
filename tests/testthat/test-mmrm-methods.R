@@ -131,7 +131,7 @@ test_that("confint works for different `parm` input", {
   )
 })
 
-test_that("confint give same result as emmeans if no ", {
+test_that("confint give same result as emmeans if no interaction term", {
   object <- mmrm(FEV1 ~ ARMCD + us(AVISIT | USUBJID), data = fev_data)
   emm <- emmeans(object, ~ARMCD)
   emm_pair <- pairs(emm, reverse = TRUE)

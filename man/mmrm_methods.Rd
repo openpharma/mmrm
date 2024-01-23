@@ -57,7 +57,7 @@ of least square means from \code{emmeans}.
 
 \item \code{print(summary.mmrm)}: prints the MMRM fit summary.
 
-\item \code{confint(mmrm)}: obtain the confidence interval for the MMRM fit results.
+\item \code{confint(mmrm)}: obtain the confidence intervals for the coefficients.
 
 }}
 \examples{
