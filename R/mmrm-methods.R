@@ -20,6 +20,10 @@
 #'    2. If the covariance structure is spatial, the covariance matrix of two time points with unit distance
 #'       will be displayed.
 #'
+#' `confint` is used to obtain the confidence intervals for the coefficients.
+#' Please note that this is different from the confidence interval of difference
+#' of least square means from `emmeans`.
+#'
 #' @name mmrm_methods
 #'
 #' @seealso [`mmrm_tmb_methods`], [`mmrm_tidiers`] for additional methods.
@@ -226,4 +230,34 @@ print.summary.mmrm <- function(x,
   }
   cat("\n")
   invisible(x)
+}
+
+
+#' @describeIn mmrm_methods obtain the confidence intervals for the coefficients.
+#' @exportS3Method
+#' @examples
+#' # Confidence Interval:
+#' confint(object)
+confint.mmrm <- function(object, parm, level = 0.95, ...) {
+  cf <- coef(object)
+  pnames <- names(cf)
+  if (missing(parm)) {
+    parm <- pnames
+  }
+  assert(
+    check_subset(parm, pnames),
+    check_integerish(parm, lower = 1L, upper = length(cf))
+  )
+  if (is.numeric(parm)) parm <- pnames[parm]
+  assert_number(level, lower = 0, upper = 1)
+  a <- (1 - level) / 2
+  pct <- paste(format(100 * c(a, 1 - a), trim = TRUE, scientific = FALSE, digits = 3), "%")
+  coef_table <- h_coef_table(object)
+  df <- coef_table[parm, "df"]
+  ses <- coef_table[parm, "Std. Error"]
+  fac <- stats::qt(a, df = df)
+  ci <- array(NA, dim = c(length(parm), 2L), dimnames = list(parm, pct))
+  sefac <- ses * fac
+  ci[] <- cf[parm] + c(sefac, -sefac)
+  ci
 }

@@ -4,6 +4,7 @@
 \alias{mmrm_methods}
 \alias{summary.mmrm}
 \alias{print.summary.mmrm}
+\alias{confint.mmrm}
 \title{Methods for \code{mmrm} Objects}
 \usage{
 \method{summary}{mmrm}(object, ...)
@@ -14,6 +15,8 @@
   signif.stars = getOption("show.signif.stars"),
   ...
 )
+
+\method{confint}{mmrm}(object, parm, level = 0.95, ...)
 }
 \arguments{
 \item{object}{(\code{mmrm})\cr the fitted MMRM including Jacobian and call etc.}
@@ -43,6 +46,10 @@ in data will be displayed.
 will be displayed.
 }
 }
+
+\code{confint} is used to obtain the confidence intervals for the coefficients.
+Please note that this is different from the confidence interval of difference
+of least square means from \code{emmeans}.
 }
 \section{Functions}{
 \itemize{
@@ -50,12 +57,16 @@ will be displayed.
 
 \item \code{print(summary.mmrm)}: prints the MMRM fit summary.
 
+\item \code{confint(mmrm)}: obtain the confidence intervals for the coefficients.
+
 }}
 \examples{
 formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
 object <- mmrm(formula, fev_data)
 # Summary:
 summary(object)
+# Confidence Interval:
+confint(object)
 }
 \seealso{
 \code{\link{mmrm_tmb_methods}}, \code{\link{mmrm_tidiers}} for additional methods.

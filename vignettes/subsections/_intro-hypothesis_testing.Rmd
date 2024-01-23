@@ -94,6 +94,15 @@ pairs(lsmeans_by_visit, reverse = TRUE)
 Note that we use here the `reverse` argument to obtain treatment minus
 placebo results, instead of placebo minus treatment results.
 
+To further obtain the confidence interval of the least square mean differences, we can apply
+`confint()` on the result returned by `pairs()` .
+
+This is similar to the `LSMEANS` in SAS, with `CL` and `DIFF` options.
+
+```{r pdiffci}
+confint(pairs(lsmeans_by_visit, reverse = TRUE))
+```
+
 ## Support for car
 
 This package includes methods that allow `mmrm` objects to be used with the

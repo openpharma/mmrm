@@ -3,7 +3,6 @@
 \docType{package}
 \name{mmrm-package}
 \alias{mmrm-package}
-\alias{_PACKAGE}
 \title{\code{mmrm} Package}
 \description{
 \code{mmrm} implements mixed models with repeated measures (MMRM) in R.
