@@ -142,6 +142,7 @@ test_that("confint give same result as emmeans if no interaction term", {
 })
 
 test_that("confint give same result as SAS on unstructured", {
+  # SAS result file is "design/SAS/sas_coef_ci_ml_un.txt"
   object <- mmrm(FEV1 ~ ARMCD + SEX + us(AVISIT | USUBJID), data = fev_data, reml = FALSE)
   conf_coef <- confint(object)
   cis <- matrix(
@@ -150,6 +151,7 @@ test_that("confint give same result as SAS on unstructured", {
   )
   expect_equal(conf_coef, cis, ignore_attr = TRUE, tolerance = 1e-4)
 
+  # SAS result file is "design/SAS/sas_coef_ci_reml_un.txt"
   object <- mmrm(FEV1 ~ ARMCD + SEX + us(AVISIT | USUBJID), data = fev_data, reml = TRUE)
   conf_coef <- confint(object)
   cis <- matrix(
@@ -160,6 +162,7 @@ test_that("confint give same result as SAS on unstructured", {
 })
 
 test_that("confint give same result as SAS on ar1", {
+  # SAS result file is "design/SAS/sas_coef_ci_ml_ar1.txt"
   object <- mmrm(FEV1 ~ ARMCD + SEX + ar1(AVISIT | USUBJID), data = fev_data, reml = FALSE)
   conf_coef <- confint(object)
   cis <- matrix(
@@ -168,6 +171,7 @@ test_that("confint give same result as SAS on ar1", {
   )
   expect_equal(conf_coef, cis, ignore_attr = TRUE, tolerance = 1e-4)
 
+  # SAS result file is "design/SAS/sas_coef_ci_reml_ar1.txt"
   object <- mmrm(FEV1 ~ ARMCD + SEX + ar1(AVISIT | USUBJID), data = fev_data, reml = TRUE)
   conf_coef <- confint(object)
   cis <- matrix(
