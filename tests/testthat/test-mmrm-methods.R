@@ -103,3 +103,40 @@ test_that("print.summary.mmrm works as expected for spatial fits", {
   result <- summary(object)
   expect_snapshot_output(print(result, digits = 1), cran = FALSE)
 })
+
+# confint ----
+
+test_that("confint works for different significance levels", {
+  object <- get_mmrm()
+  expect_silent(confint(object, level = 1))
+  expect_silent(confint(object, level = 0))
+  expect_silent(confint(object, level = 0.5))
+})
+
+test_that("confint works for different `parm` input", {
+  object <- get_mmrm()
+  res <- expect_silent(confint(object, parm = c(1, 2, 3)))
+  expect_identical(row.names(res), names(coef(object))[c(1, 2, 3)])
+
+  res <- expect_silent(confint(object, parm = c("ARMCDTRT", "AVISITVIS4")))
+  expect_identical(row.names(res), c("ARMCDTRT", "AVISITVIS4"))
+
+  expect_error(
+    confint(object, parm = 100),
+    "Element 1 is not <= 11"
+  )
+  expect_error(
+    confint(object, parm = c("a", "b")),
+    "Must be a subset of"
+  )
+})
+
+test_that("confint give same result as emmeans if no ", {
+  object <- mmrm(FEV1 ~ ARMCD + us(AVISIT |USUBJID), data = fev_data)
+  emm <- emmeans(object, ~ ARMCD)
+  emm_pair <- pairs(emm, reverse = TRUE)
+  conf <- confint(emm_pair)
+  conf_coef <- confint(object, 2)
+  expect_equal(conf$lower.CL, conf_coef[, 1])
+  expect_equal(conf$upper.CL, conf_coef[, 2])
+})
