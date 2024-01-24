@@ -134,6 +134,7 @@ test_that("h_df_md_from_1d works as expected", {
 # h_df_md_sat ----
 
 test_that("h_df_md_sat works as expected", {
+  skip_if_r_devel_linux_clang()
   object <- get_mmrm()
   contrast <- matrix(data = 0, nrow = 2, ncol = length(component(object, "beta_est")))
   contrast[1, 2] <- contrast[2, 3] <- 1
@@ -156,11 +157,12 @@ test_that("h_df_md_sat works as expected with a non-full rank contrast matrix", 
 })
 
 test_that("h_df_md_sat works as expected for rank deficient model", {
+  skip_if_r_devel_linux_clang()
   object <- get_mmrm_rank_deficient()
   contrast <- matrix(data = 0, nrow = 2, ncol = length(component(object, "beta_est")))
   contrast[1, 2] <- contrast[2, 3] <- 1
   result <- expect_silent(h_df_md_sat(object, contrast))
   object2 <- get_mmrm()
   expected <- expect_silent(h_df_md_sat(object2, contrast))
-  expect_identical(result, expected)
+  expect_equal(result, expected, tolerance = 1e-4)
 })

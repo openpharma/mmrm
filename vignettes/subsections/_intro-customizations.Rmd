@@ -91,7 +91,8 @@ vapply(split(out$fev1, out$time), sd, FUN.VALUE = 1)
 ```
 
 Using `emp_start` as the starting value, `mmrm` will converge fast.
-```{r mmrm_using_emp_start}
+
+```{r mmrm_using_emp_start, eval = !mmrm:::is_r_devel_linux_clang()}
 mmrm(fev1 ~ trt * time + us(time | pts), data = out, start = emp_start)
 ```
 
@@ -107,7 +108,6 @@ mmrm(
   optimizer_control = list(eval.max = 1000, iter.max = 1000)
 )
 ```
-
 
 ## REML or ML
 

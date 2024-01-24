@@ -1,24 +1,22 @@
-# mmrm 0.3.7.9010
+# mmrm 0.3.8
 
 ### New Features
 
 - `Anova` is implemented for `mmrm` models and available upon loading the `car` package. It supports type II and III hypothesis testing.
-- The argument `start` for `mmrm_control()` is updated to allow function/numeric input for better
-choices of initial values.
+- The argument `start` for `mmrm_control()` is updated to allow better choices of initial values.
 - `confint` on `mmrm` models will give t-based confidence intervals now, instead of the normal approximation.  
-
-### Miscellaneous
-
-- In documentation of `mmrm_control()`, the allowed vcov definition is corrected to "Empirical-Jackknife" (CR3), and "Empirical-Bias-Reduced" (CR2).
-- Fix a compiler warning related to missing format specification in error message function call.
-- If an empty contrast matrix is provided to `df_md`, it will return statistics with `NA` values.
 
 ### Bug Fixes
 
-- Previously if the first optimizer fails, the best successful fit among the rest optimizer
-will be returned. However the index of it was incorrect, and this issue is fixed now.
+- Previously if the first optimizer failed, the best successful fit among the remaining optimizers was not returned correctly. This is fixed now.
 
-# mmrm 0.3.6
+### Miscellaneous
+
+- In documentation of `mmrm_control()`, the allowed `vcov` definition is corrected to "Empirical-Jackknife" (CR3), and "Empirical-Bias-Reduced" (CR2).
+- Fixed a compiler warning related to missing format specification.
+- If an empty contrast matrix is provided to `df_md`, it will return statistics with `NA` values.
+
+# mmrm 0.3.7
 
 ### New Features
 
