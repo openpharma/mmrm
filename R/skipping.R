@@ -49,7 +49,8 @@ parse_clang_major <- function(clang_string) {
 # Obtain the clang major version. Must only be used if compiled with clang.
 get_clang_major <- function() {
   assert_true(is_using_clang())
-  clang_string <- system2("clang", args = "--version", stdout = TRUE)[1L]
+  clang_compiler <- get_compiler()
+  clang_string <- system2(clang_compiler, args = "--version", stdout = TRUE)[1L]
   parse_clang_major(clang_string)
 }
 
