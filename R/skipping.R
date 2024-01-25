@@ -10,9 +10,15 @@ is_linux <- function() {
   tolower(Sys.info()[["sysname"]]) == "linux"
 }
 
+# Get the compiler information. Workaround for older R versions
+# where R_compiled_by() is not available.
+get_compiler <- function() {
+  system2("R", args = "CMD config CC", stdout = TRUE)
+}
+
 # Predicate whether currently running on R compiled with clang.
 is_using_clang <- function() {
-  grepl("clang", R_compiled_by()["C"])
+  grepl("clang", get_compiler())
 }
 
 # A `data.frame` giving default clang versions for each OS version of the
@@ -38,6 +44,13 @@ parse_clang_major <- function(clang_string) {
   assert_string(clang_string, pattern = "clang")
   clang_version <- gsub(pattern = "[^0-9.]", replacement = "", x = clang_string)
   as.integer(gsub(pattern = "([0-9]+).+", replacement = "\\1", x = clang_version))
+}
+
+# Obtain the clang major version. Must only be used if compiled with clang.
+get_clang_major <- function() {
+  assert_true(is_using_clang())
+  clang_string <- system2("clang", args = "--version", stdout = TRUE)[1L]
+  parse_clang_major(clang_string)
 }
 
 # Predicate whether a non-standard clang version is used, specifically
@@ -76,6 +89,6 @@ is_r_devel_linux_clang <- function() {
     is_using_clang() &&
     is_non_standard_clang(
       os_string = utils::osVersion,
-      clang_major_version = parse_clang_major(R_compiled_by()["C"])
+      clang_major_version = get_clang_major())
     )
 }
