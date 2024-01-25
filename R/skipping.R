@@ -13,7 +13,8 @@ is_linux <- function() {
 # Get the compiler information. Workaround for older R versions
 # where R_compiled_by() is not available.
 get_compiler <- function() {
-  system2("R", args = "CMD config CC", stdout = TRUE)
+  r_cmd <- file.path(R.home("bin"), "R")
+  system2(r_cmd, args = "CMD config CC", stdout = TRUE)
 }
 
 # Predicate whether currently running on R compiled with clang.
