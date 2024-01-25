@@ -10,10 +10,23 @@ test_that("is_linux works as expected", {
   expect_flag(is_linux())
 })
 
+# get_compiler ----
+
+test_that("get_compiler works as expected", {
+  expect_string(get_compiler())
+})
+
 # is_using_clang ----
 
 test_that("is_using_clang works as expected", {
   expect_flag(is_using_clang())
+})
+
+test_that("is_using_clang gives the same information as R_compiled_by in recent R versions", {
+  skip_if(getRversion() < 4.3)
+  result <- is_using_clang()
+  expected <- grepl("clang", R_compiled_by()["C"])  # Only available from R 4.3 onward.
+  expect_identical(result, expected)
 })
 
 # parse_clang_major ----
@@ -22,6 +35,14 @@ test_that("parse_clang_major works as expected", {
   result <- parse_clang_major("Debian clang version 17.0.6 (3)")
   expected <- 17L
   expect_identical(result, expected)
+})
+
+# get_clang_major ----
+
+test_that("get_clang_major works as expected", {
+  skip_if(!is_using_clang())
+  result <- get_clang_major()
+  expect_int(result)
 })
 
 # is_non_standard_clang ----
