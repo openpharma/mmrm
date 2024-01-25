@@ -23,7 +23,7 @@ test_that("is_using_clang works as expected", {
 })
 
 test_that("is_using_clang gives the same information as R_compiled_by in recent R versions", {
-  skip_if(getRversion() < 4.3)
+  skip_if(getRversion() < "4.3")
   result <- is_using_clang()
   expected <- grepl("clang", R_compiled_by()["C"]) # Only available from R 4.3 onward.
   expect_identical(result, expected)
