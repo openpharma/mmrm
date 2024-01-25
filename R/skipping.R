@@ -89,6 +89,6 @@ is_r_devel_linux_clang <- function() {
     is_using_clang() &&
     is_non_standard_clang(
       os_string = utils::osVersion,
-      clang_major_version = get_clang_major())
+      clang_major_version = get_clang_major()
     )
 }
