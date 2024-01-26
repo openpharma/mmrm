@@ -7,6 +7,7 @@ articles:
   coef_vcov: coef_vcov.html
   covariance: covariance.html
   empirical_wls: empirical_wls.html
+  hypothesis_testing: hypothesis_testing.html
   introduction: introduction.html
   kenward: kenward.html
   methodological_introduction: methodological_introduction.html
@@ -14,7 +15,7 @@ articles:
   package_structure: package_structure.html
   predict: predict.html
   satterthwaite: satterthwaite.html
-last_built: 2023-12-08T20:08Z
+last_built: 2024-01-26T14:44Z
 urls:
   reference: https://openpharma.github.io/mmrm/reference
   article: https://openpharma.github.io/mmrm/articles

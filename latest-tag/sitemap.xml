@@ -25,6 +25,9 @@
     <loc>https://openpharma.github.io/mmrm/articles/empirical_wls.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/mmrm/articles/hypothesis_testing.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/mmrm/articles/index.html</loc>
   </url>
   <url>
@@ -58,6 +61,9 @@
     <loc>https://openpharma.github.io/mmrm/news/index.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/mmrm/reference/Anova.mmrm.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/mmrm/reference/COV_TYPES.html</loc>
   </url>
   <url>
@@ -68,6 +74,9 @@
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/reference/cached_mmrm_results.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/reference/car_add_mmrm.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/reference/check_package_version.html</loc>
@@ -101,6 +110,9 @@
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/reference/emmeans_support.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/reference/emp_start.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/reference/fev_data.html</loc>
@@ -190,6 +202,9 @@
     <loc>https://openpharma.github.io/mmrm/reference/h_factor_ref.html</loc>
   </url>
   <url>
+    <loc>https://openpharma.github.io/mmrm/reference/h_get_contrast.html</loc>
+  </url>
+  <url>
     <loc>https://openpharma.github.io/mmrm/reference/h_get_cov_default.html</loc>
   </url>
   <url>
@@ -209,6 +224,9 @@
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/reference/h_get_sim_per_subj.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/reference/h_get_theta_from_cov.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/reference/h_gradient.html</loc>
@@ -269,6 +287,9 @@
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/reference/h_record_all_output.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/reference/h_register_s3.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/reference/h_residuals_normalized.html</loc>
@@ -350,6 +371,9 @@
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/reference/register_on_load.html</loc>
+  </url>
+  <url>
+    <loc>https://openpharma.github.io/mmrm/reference/std_start.html</loc>
   </url>
   <url>
     <loc>https://openpharma.github.io/mmrm/reference/tmb_cov_type.html</loc>
