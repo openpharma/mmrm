@@ -17,7 +17,7 @@ get_compiler <- function() {
   system2(r_cmd, args = "CMD config CC", stdout = TRUE)
 }
 
-# Predicate whether currently running on R compiled with clang.
+# Predicate whether currently using a clang compiler.
 is_using_clang <- function() {
   grepl("clang", get_compiler())
 }
