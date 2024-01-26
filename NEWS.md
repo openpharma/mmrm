@@ -1,3 +1,9 @@
+# mmrm 0.3.10
+
+### Miscellaneous
+
+- Fix internal test skipping functions for MacOS R. 
+
 # mmrm 0.3.9
 
 ### Miscellaneous
