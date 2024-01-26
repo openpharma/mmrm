@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.7.9009</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.10</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,22 +59,6 @@
 <li class="nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.7">v0.3.7</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.6">v0.3.6</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.5">v0.3.5</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.4">v0.3.4</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.3">v0.3.3</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.2">v0.3.2</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.1">v0.3.1</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.0">v0.3.0</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.2.2">v0.2.2</a> </div></li>
-<!-- end dropdown for versions -->
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-reports">Reports</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-reports">
@@ -118,7 +102,10 @@
 <span>  digits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"digits"</span><span class="op">)</span> <span class="op">-</span> <span class="fl">3</span><span class="op">)</span>,</span>
 <span>  signif.stars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"show.signif.stars"</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for mmrm</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">parm</span>, level <span class="op">=</span> <span class="fl">0.95</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -150,12 +137,16 @@ in data will be displayed.</p></li>
 <li><p>If the covariance structure is spatial, the covariance matrix of two time points with unit distance
 will be displayed.</p></li>
 </ol></li>
-</ol></div>
+</ol><p><code>confint</code> is used to obtain the confidence intervals for the coefficients.
+Please note that this is different from the confidence interval of difference
+of least square means from <code>emmeans</code>.</p>
+    </div>
     <div class="section level2">
     <h2 id="functions">Functions<a class="anchor" aria-label="anchor" href="#functions"></a></h2>
     
 <ul><li><p><code>summary(mmrm)</code>: summarizes the MMRM fit results.</p></li>
 <li><p><code>print(summary.mmrm)</code>: prints the MMRM fit summary.</p></li>
+<li><p><code>confint(mmrm)</code>: obtain the confidence intervals for the coefficients.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -217,6 +208,20 @@ will be displayed.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> VIS3  4.9747  2.7855 14.8979  0.9082</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> VIS4 13.3867  7.4745  0.9082 95.5568</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="co"># Confidence Interval:</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                    2.5 %    97.5 %</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (Intercept)                   29.0301757 32.524775</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> RACEBlack or African American  0.2977051  2.763294</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> RACEWhite                      4.3288700  6.958261</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SEXFemale                     -0.7241923  1.376316</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT                       1.6512897  5.897170</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS2                     3.2549236  6.424253</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS3                     8.7170213 11.967204</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AVISITVIS4                    12.4581459 17.649651</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT:AVISITVIS2           -2.2748504  2.190998</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT:AVISITVIS3           -3.0393757  1.652005</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ARMCDTRT:AVISITVIS4           -3.0375371  4.285991</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
