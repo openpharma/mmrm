@@ -1,3 +1,15 @@
+# mmrm 0.3.10
+
+### Miscellaneous
+
+- Fix internal test skipping functions for MacOS R. 
+
+# mmrm 0.3.9
+
+### Miscellaneous
+
+- Fix internal test skipping functions for R versions older than 4.3. 
+
 # mmrm 0.3.8
 
 ### New Features
