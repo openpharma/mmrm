@@ -514,7 +514,8 @@ print.mmrm_tmb <- function(x,
   cat(ifelse(component(x, "convergence") == 0, "\nConverged", "\nFailed to converge"))
   cat(
     " with code", component(x, "convergence"),
-    "and message:", tolower(component(x, "conv_message"))
+    "and message:",
+    if (is.null(component(x, "conv_message"))) "No message provided." else tolower(component(x, "conv_message"))
   )
   cat("\n")
   invisible(x)
