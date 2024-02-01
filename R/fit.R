@@ -441,15 +441,15 @@ mmrm <- function(formula,
     drop_visit_levels = control$drop_visit_levels,
     allow_na_response = FALSE
   )
-  fit <- list()
+  fit <- structure("", class = "try-error")
   names_all_optimizers <- names(control$optimizers)
-  while ((length(fit) == 0) && length(control$optimizers) > 0) {
+  while (is(fit, "try-error") && length(control$optimizers) > 0) {
     fit <- fit_single_optimizer(
       tmb_data = tmb_data,
       formula_parts = formula_parts,
       control = control
     )
-    if (length(fit) == 0) {
+    if (is(fit, "try-error")) {
       warning(paste0(
         "Divergence with optimizer ", names(control$optimizers[1L]), " due to problems: ",
         toString(attr(fit, "divergence"))

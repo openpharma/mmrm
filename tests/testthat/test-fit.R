@@ -458,6 +458,18 @@ test_that("mmrm returns the correct best fit", {
   )
 })
 
+test_that("divergent optimizer will not be marked as success", {
+  fev <- fev_data
+  fev$FEV1[seq(1, 800, 4)] <- 0
+  expect_error(
+    expect_warning(
+      mmrm(FEV1 ~ AVISIT + us(AVISIT | USUBJID), data = fev),
+      "Divergence with optimizer"
+    ),
+    "No optimizer led to a successful model fit."
+  )
+})
+
 ## start values ----
 
 test_that("start can be emp_start or std_start and they work", {
