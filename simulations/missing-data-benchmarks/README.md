@@ -79,16 +79,19 @@ This directory contains the following folders:
 
 - `R/`: Contains the R scripts for the simulation study.
   - `dgp/`: Code relating to DGP definition.
-  - `method/`: Wrapper functions for MMRM estimators.
   - `eval/`: Functions for measuring empirical metrics and operating
-    characteristics.
+     characteristics.
+  - `meal.R`: Main R script to test the simulation study, only runs 2 repetitions.
+  - `meals/`: Main R scripts for running the simulation studies. 
+     Specify here the number of repetitions via `n_reps` at the end of each script.
+  - `method/`: Wrapper functions for MMRM estimators.
   - `viz/`: Visualization functions for plotting empirical metrics and operating
     characteristics.
-  - `meals/`: Main R scripts for running the simulation studies.
+- `results/`: Contains the partial simulation results.
+- `scripts/`: Batch job scripts that start the `R/meals/` scripts on the HPC.
 - `tests/`: Contains the testing files for the scripts in R. These tests can be
   ran by running `simChef::run_tests()` in your R console from the root of the
   simulation study directory.
-- `results/`: Contains the partial simulation results.
 
 The [`simChef`](https://github.com/Yu-Group/simChef) R package was used to
 backbone for this simulation study. We recommend reviewing this package's
@@ -98,6 +101,7 @@ documentation prior to reviewing the simulation code.
 
 All simulation results can be reproduced by running the R scripts in `R/meals/`
 with the appropriately set sample sizes. We recommend performing these
-simulations in a high-powered computing environment, as they are time consuming.
+simulations in a high-powered computing environment, as they are time consuming,
+via using the batch job scripts.
 Note too that the `sasr` R package and a SAS Studio account are required to
 reproduce these simulations.

@@ -48,8 +48,8 @@ mmrm_wrapper_fun <- function(
     fit_time <- microbenchmark::microbenchmark(
       fit <- safe_mmrm(
         formula = bcva_change ~ base_bcva + strata + trt * visit_num +
-          us(visit_num | participant), data = df,
-        optimizer = c("BFGS", "L-BFGS-B") # NOTE: Errors when using L-BFGS-B first
+          us(visit_num | participant), 
+        data = df
       ),
       times = 1L
     )
@@ -58,8 +58,8 @@ mmrm_wrapper_fun <- function(
     fit_time <- microbenchmark::microbenchmark(
       fit <- safe_mmrm(
         formula = bcva_change ~ base_bcva + strata + trt * visit_num +
-          csh(visit_num | participant), data = df,
-        optimizer = c("BFGS", "L-BFGS-B") # NOTE: Errors when using L-BFGS-B first
+          csh(visit_num | participant), 
+        data = df
       ),
       times = 1L
     )
@@ -68,8 +68,8 @@ mmrm_wrapper_fun <- function(
     fit_time <- microbenchmark::microbenchmark(
       fit <- safe_mmrm(
         formula = bcva_change ~ base_bcva + strata + trt * visit_num +
-          toeph(visit_num | participant), data = df,
-        optimizer = c("BFGS", "L-BFGS-B") # NOTE: Errors when using L-BFGS-B first
+          toeph(visit_num | participant), 
+        data = df
       ),
       times = 1L
     )

@@ -1,10 +1,10 @@
 #' nlme wrapper function
 #'
-#' @description This function takes as input the ouput of a data-generating
+#' @description This function takes as input the output of a data-generating
 #'   process function, and fits a gls model. A gls model fit is returned.
 #'
 #' @param participant A numeric vector of participant IDs.
-#' @param visit_num A numeric vector correpsonding to the visit number.
+#' @param visit_num A numeric vector corresponding to the visit number.
 #' @param base_bcva A numeric corresponding to the participant's baseline BCVA
 #'   value.
 #' @param strata A factor vector representing the participant's strata value.
