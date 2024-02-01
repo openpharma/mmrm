@@ -1,0 +1,125 @@
+```{r, include = FALSE}
+library(mmrm)
+```
+
+This package supports estimation of one- and multi-dimensional contrasts
+(t-test and F-test calculation) with the [`df_1d()`](https://openpharma.github.io/mmrm/main/reference/df_1d.html) and
+[`df_md()`](https://openpharma.github.io/mmrm/main/reference/df_md.html) functions.
+Both functions utilize the chosen adjustment method from the initial `mmrm` call
+for the calculation of degrees of freedom and (for Kenward-Roger methods) the
+variance estimates for the test-statistics.
+
+## One-dimensional contrasts
+
+Compute the test of a one-dimensional (vector) contrast for a `mmrm` object with
+Satterthwaite degrees of freedom.
+
+```{r 1d_satterthwaite}
+fit <- mmrm(
+  formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data
+)
+
+contrast <- numeric(length(component(fit, "beta_est")))
+contrast[3] <- 1
+
+df_1d(fit, contrast)
+```
+
+This works similarly when choosing a Kenward-Roger adjustment:
+
+```{r 1d_kr}
+fit_kr <- mmrm(
+  formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data,
+  method = "Kenward-Roger"
+)
+
+df_1d(fit_kr, contrast)
+```
+
+We see that because this is a one-dimensional contrast, the degrees of freedoms
+are identical for Satterthwaite and Kenward-Roger. However, the standard errors
+are different and therefore the p-values are different.
+
+Additional options for the degrees of freedom `method` are Residual and Between-Within.
+
+## Multi-dimensional contrasts
+
+Compute the test of a multi-dimensional (matrix) contrast for the above defined
+`mmrm` object with Satterthwaite degrees of freedom:
+
+```{r md_satterthwaite}
+contrast <- matrix(data = 0, nrow = 2, ncol = length(component(fit, "beta_est")))
+contrast[1, 2] <- contrast[2, 3] <- 1
+
+df_md(fit, contrast)
+```
+
+And for the Kenward-Roger adjustment:
+
+```{r md_kr}
+df_md(fit_kr, contrast)
+```
+
+We see that for the multi-dimensional contrast we get slightly different
+denominator degrees of freedom for the two adjustment methods.
+
+Also the simpler Residual and Between-Within `method` choices can be used of
+course together with multidimensional contrasts.
+
+## Support for emmeans
+
+This package includes methods that allow `mmrm` objects to be used with the
+`emmeans` package. `emmeans` computes estimated marginal means (also called
+least-square means) for the coefficients of the MMRM. For example, in order
+to see the least-square means by visit and by treatment arm:
+
+```{r emmeans}
+library(emmeans)
+lsmeans_by_visit <- emmeans(fit, ~ ARMCD | AVISIT)
+lsmeans_by_visit
+```
+
+Note that the degrees of freedom choice is inherited here from the initial `mmrm`
+fit.
+Furthermore, we can also obtain the differences between the treatment arms for each visit
+by applying `pairs()` on the object returned by `emmeans()` earlier:
+
+```{r pdiff}
+pairs(lsmeans_by_visit, reverse = TRUE)
+```
+
+(This is similar like the `pdiff` option in SAS `PROC MIXED`.)
+Note that we use here the `reverse` argument to obtain treatment minus
+placebo results, instead of placebo minus treatment results.
+
+To further obtain the confidence interval of the least square mean differences, we can apply
+`confint()` on the result returned by `pairs()` .
+
+This is similar to the `LSMEANS` in SAS, with `CL` and `DIFF` options.
+
+```{r pdiffci}
+confint(pairs(lsmeans_by_visit, reverse = TRUE))
+```
+
+## Support for car
+
+This package includes methods that allow `mmrm` objects to be used with the
+`car::Anova` function. `Anova` conducts type II/III hypothesis testing for
+the effect in `mmrm` models. For example, in order to see if the used covariates
+are related to the response:
+
+```{r car_type2}
+library(car)
+Anova(fit, type = "II")
+```
+
+Note that the degrees of freedom choice is inherited here from the initial `mmrm`
+fit.
+In addition, please note that if you see results that are slightly different from SAS, it could be because the reference level is set differently for categorical covariates.
+We can also use type III hypothesis testing:
+
+```{r car_type3}
+Anova(fit, type = "III")
+```

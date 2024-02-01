@@ -9,7 +9,7 @@ test_that("fit_single_optimizer works as expected with defaults", {
     weights = rep(1, nrow(dat))
   )
   expect_identical(class(result), c("mmrm_fit", "mmrm_tmb"))
-  expect_identical(attr(result, "optimizer"), "L-BFGS-B")
+  expect_identical(component(result, "optimizer"), "L-BFGS-B")
   expect_identical(attr(result, "messages"), NULL)
   expect_identical(attr(result, "warnings"), NULL)
   expect_true(attr(result, "converged"))
@@ -25,7 +25,7 @@ test_that("fit_single_optimizer works as expected with nlminb optimizer but no s
     optimizer = "nlminb"
   )
   expect_identical(class(result), c("mmrm_fit", "mmrm_tmb"))
-  expect_identical(attr(result, "optimizer"), "nlminb")
+  expect_identical(component(result, "optimizer"), "nlminb")
   expect_identical(attr(result, "messages"), NULL)
   expect_identical(attr(result, "warnings"), NULL)
   expect_true(attr(result, "converged"))
@@ -41,7 +41,7 @@ test_that("fit_single_optimizer works as expected with optimizer inputted but no
     optimizer = "BFGS"
   )
   expect_identical(class(result), c("mmrm_fit", "mmrm_tmb"))
-  expect_identical(attr(result, "optimizer"), "BFGS")
+  expect_identical(component(result, "optimizer"), "BFGS")
   expect_identical(attr(result, "messages"), NULL)
   expect_identical(attr(result, "warnings"), NULL)
   expect_true(attr(result, "converged"))
@@ -58,7 +58,7 @@ test_that("fit_single_optimizer works as expected with starting values and optim
     start = 1:10
   )
   expect_identical(class(result), c("mmrm_fit", "mmrm_tmb"))
-  expect_identical(attr(result, "optimizer"), "BFGS")
+  expect_identical(component(result, "optimizer"), "BFGS")
   expect_identical(attr(result, "messages"), NULL)
   expect_identical(attr(result, "warnings"), NULL)
   expect_true(attr(result, "converged"))
@@ -146,6 +146,45 @@ test_that("fit_single_optimizer deals correctly with unobserved visits message",
   expect_true(attr(result, "converged"))
 })
 
+test_that("fit_single_optimizer fails if formula contains `.`", {
+  expect_error(
+    fit_single_optimizer(FEV1 ~ ., data = fev_data, weights = rep(1, 800)),
+    "`.` is not allowed in mmrm models!"
+  )
+})
+
+test_that("fit_single_optimizer signals non-convergence but does not fail for finite values error", {
+  fake_optimizer <- function(par, fun, grad, ...) {
+    stop("L-BFGS-B needs finite values of 'fn'")
+  }
+  result <- expect_silent(fit_single_optimizer(
+    formula = FEV1 ~ AVISIT + us(AVISIT | USUBJID),
+    data = fev_data,
+    weights = rep(1, nrow(fev_data)),
+    control = mmrm_control(
+      optimizer_fun = fake_optimizer
+    )
+  ))
+  expect_false(attr(result, "converged"))
+  expect_identical(attr(result, "divergence"), "L-BFGS-B needs finite values of 'fn'")
+})
+
+test_that("fit_single_optimizer signals non-convergence but does not fail for NA/NaN Hessian error", {
+  fake_optimizer <- function(par, fun, grad, ...) {
+    stop("NA/NaN Hessian evaluation")
+  }
+  result <- expect_silent(fit_single_optimizer(
+    formula = FEV1 ~ AVISIT + us(AVISIT | USUBJID),
+    data = fev_data,
+    weights = rep(1, nrow(fev_data)),
+    control = mmrm_control(
+      optimizer_fun = fake_optimizer
+    )
+  ))
+  expect_false(attr(result, "converged"))
+  expect_identical(attr(result, "divergence"), "NA/NaN Hessian evaluation")
+})
+
 # h_summarize_all_fits ----
 
 test_that("h_summarize_all_fits works as expected", {
@@ -164,15 +203,7 @@ test_that("h_summarize_all_fits works as expected", {
   all_fits <- list(mod_fit, mod_fit2)
   result <- expect_silent(h_summarize_all_fits(all_fits))
 
-  # NOTE:
-  # Test currently fails on R-devel on Fedora with clang for the first optimizer
-  # mmrm v0.1.5 @ r-devel-linux-x86_64-fedora-clang
-  #   `actual$log_liks`: -2155.280410081641 -1693.224938122514
-  #   `expected$log_liks`: -1693.224935585730 -1693.224938122510
-  #
-  # As this failure only appears on R-devel on Fedora with clang, we are
-  # temporarily skipping this test on CRAN until we can reproduce the behavior.
-  skip_on_cran()
+  skip_if_r_devel_linux_clang()
 
   expected <- list(
     warnings = list(NULL, NULL),
@@ -180,54 +211,45 @@ test_that("h_summarize_all_fits works as expected", {
     log_liks = c(-1693.22493558573, -1693.22493812251),
     converged = c(TRUE, TRUE)
   )
-
   expect_equal(result, expected)
 })
 
 test_that("h_summarize_all_fits works when some list elements are try-error objects", {
-  mod_fit <- fit_single_optimizer(
-    formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
-    data = fev_data,
-    weights = rep(1, nrow(fev_data)),
-    optimizer = "nlminb"
-  )
+  skip_if_r_devel_linux_clang()
+  mod_fit <- get_mmrm()
   mod_fit2 <- try(stop("bla"), silent = TRUE)
-  mod_fit3 <- fit_single_optimizer(
-    formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
-    data = fev_data,
-    weights = rep(1, nrow(fev_data)),
-    optimizer = "L-BFGS-B"
-  )
+  mod_fit3 <- get_mmrm()
   all_fits <- list(mod_fit, mod_fit2, mod_fit3)
   result <- expect_silent(h_summarize_all_fits(all_fits))
   expected <- list(
     warnings = list(NULL, "Error in try(stop(\"bla\"), silent = TRUE) : bla\n", NULL),
     messages = list(NULL, NULL, NULL),
-    log_liks = c(-1693.22493558573, NA, -1693.22493812251),
+    log_liks = c(-1693.225, NA, -1693.225),
     converged = c(TRUE, FALSE, TRUE)
   )
-  expect_equal(result, expected)
+  expect_equal(result, expected, tolerance = 1e-3)
 })
 
 # refit_multiple_optimizers ----
 
 test_that("refit_multiple_optimizers works as expected with default arguments", {
   fit <- fit_single_optimizer(
-    formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+    formula = FEV1 ~ ar1(AVISIT | USUBJID),
     data = fev_data,
     weights = rep(1, nrow(fev_data)),
     optimizer = "nlminb"
   )
+  assert_true(attr(fit, "converged"))
 
   # Mock here that it did not converge.
   attr(fit, "converged") <- FALSE
   fit$neg_log_lik <- fit$neg_log_lik + 10
 
-  result <- expect_silent(refit_multiple_optimizers(fit = fit))
+  result <- expect_silent(refit_multiple_optimizers(fit = fit, optimizer = "nlminb"))
   expect_class(result, "mmrm_fit")
 
   expect_true(attr(result, "converged"))
-  expect_false(identical("nlminb", attr(result, "optimizer")))
+  expect_identical("nlminb", component(result, "optimizer"))
   expect_true(logLik(result) > logLik(fit))
 })
 
@@ -257,16 +279,16 @@ test_that("refit_multiple_optimizers works with parallel computations and select
   expect_class(result, "mmrm_fit")
 
   expect_true(attr(result, "converged"))
-  expect_subset(attr(result, "optimizer"), choices = c("BFGS", "CG"))
+  expect_subset(component(result, "optimizer"), choices = c("BFGS", "CG"))
   expect_true(logLik(result) > logLik(fit))
 })
 
 # mmrm ----
 
-## unstructured ----
+## convergence ----
 
 test_that("mmrm works as expected for unstructured", {
-  formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
+  formula <- FEV1 ~ us(AVISIT | USUBJID)
   result <- expect_silent(mmrm(formula, fev_data, reml = FALSE))
   expect_class(result, c("mmrm", "mmrm_fit", "mmrm_tmb"))
   expect_true(attr(result, "converged"))
@@ -298,20 +320,32 @@ test_that("mmrm works as expected for toeplitz", {
 ## general ----
 
 test_that("mmrm falls back to other optimizers if default does not work", {
-  skip_on_cran()
+  formula <- FEV1 ~ ar1(AVISIT | USUBJID)
 
-  formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
-  data_small <- fev_data[1:50, ]
-  # Default does not work.
+  # Chosen optimizer does not work.
+  fake_optimizer <- function(par, fun, grad, ...) {
+    stop("NA/NaN Hessian evaluation")
+  }
   expect_error(
-    mmrm(formula, data_small, optimizer = "L-BFGS-B"),
-    "Model convergence problem"
+    expect_warning(
+      mmrm(formula, fev_data, optimizer_fun = fake_optimizer),
+      "Divergence with optimizer"
+    ),
+    "Consider trying multiple or different optimizers"
   )
+
   # But another one works.
   # Note: We disable parallel processing here to comply with CRAN checks.
-  result <- expect_silent(mmrm(formula, data_small, n_cores = 1L))
+  expect_warning(
+    result <- mmrm(
+      formula, fev_data,
+      n_cores = 1L,
+      optimizer_fun = c(fake = fake_optimizer, h_get_optimizers("L-BFGS-B"))
+    ),
+    "Divergence with optimizer"
+  )
   expect_true(attr(result, "converged"))
-  expect_false(identical(attr(result, "optimizer"), "L-BFGS-B"))
+  expect_true(identical(component(result, "optimizer"), "L-BFGS-B"))
 })
 
 test_that("mmrm fails if no optimizer works", {
@@ -329,10 +363,31 @@ test_that("mmrm fails if no optimizer works", {
 })
 
 test_that("mmrm works for rank deficient original design matrix by default", {
-  formula <- FEV1 ~ RACE + SEX + SEX2 + ARMCD * AVISIT + us(AVISIT | USUBJID)
+  formula <- FEV1 ~ SEX + SEX2 + ar1(AVISIT | USUBJID)
   dat <- fev_data
   dat$SEX2 <- dat$SEX # nolint
   result <- expect_silent(mmrm(formula, dat))
+  expect_true(attr(result, "converged"))
+  expect_true(is.na(coef(result)["SEX2Female"]))
+})
+
+test_that("mmrm works if data is not provided as argument", {
+  result <- expect_silent(
+    with(
+      fev_data,
+      mmrm(FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID))
+    )
+  )
+  expect_true(attr(result, "converged"))
+})
+
+test_that("mmrm works if formula contains variables not in data", {
+  set.seed(123L)
+  y <- rnorm(800)
+  wt <- exp(rnorm(800))
+  result <- expect_silent(
+    mmrm(y ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID), weights = wt, data = fev_data)
+  )
   expect_true(attr(result, "converged"))
 })
 
@@ -374,6 +429,118 @@ test_that("mmrm works for constructed control", {
     reml = TRUE,
     control = mmrm_control(optimizer = c("BFGS", "CG"))
   ))
+})
+
+test_that("mmrm works for start = NULL", {
+  expect_silent(mmrm(
+    FEV1 ~ ARMCD + ar1(AVISIT | SEX / USUBJID),
+    data = fev_data,
+    reml = TRUE,
+    control = mmrm_control(optimizer = c("BFGS", "CG"), start = NULL)
+  ))
+})
+
+test_that("mmrm returns the correct best fit", {
+  opts <- list(
+    a = h_partial_fun_args(fail_optimizer, message = "this is wrong"),
+    b = h_partial_fun_args(fail_optimizer, message = "this is wrong too"),
+    c = h_partial_fun_args(silly_optimizer, value_add = 0, message = "silly success")
+  )
+  fit <- expect_silent(mmrm(
+    FEV1 ~ ARMCD + ar1(AVISIT | SEX / USUBJID),
+    data = fev_data,
+    reml = TRUE,
+    control = mmrm_control(optimizers = opts)
+  ))
+  expect_identical(
+    fit$opt_details,
+    list(convergence = 0, message = "silly success")
+  )
+})
+
+## start values ----
+
+test_that("start can be emp_start or std_start and they work", {
+  expect_silent(
+    mmrm(
+      formula = FEV1 ~ ARMCD + us(AVISIT | USUBJID),
+      data = fev_data,
+      start = emp_start
+    )
+  )
+  expect_silent(
+    mmrm(
+      formula = FEV1 ~ ARMCD + us(AVISIT | USUBJID),
+      data = fev_data,
+      start = std_start
+    )
+  )
+})
+
+test_that("mmrm fails if start function does not provide correct values", {
+  wrong_start <- function(...) {
+    c(NA_real_, 0L)
+  }
+  expect_error(
+    mmrm(
+      formula = FEV1 ~ ARMCD + us(AVISIT | USUBJID),
+      data = fev_data,
+      start = wrong_start
+    ),
+    "Assertion on 'start_values' failed: Must have length 10, but has length 2."
+  )
+  expect_error(
+    mmrm(
+      formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+      data = fev_data,
+      start = wrong_start
+    ),
+    "Assertion on 'start_values' failed: Contains missing values \\(element 1\\)"
+  )
+})
+
+test_that("mmrm fails if start function fails", {
+  wrong_start <- function(...) {
+    stop("this is wrong")
+  }
+  expect_error(
+    mmrm(
+      formula = FEV1 ~ ARMCD + us(AVISIT | USUBJID),
+      data = fev_data,
+      start = wrong_start
+    ),
+    "this is wrong"
+  )
+})
+
+test_that("mmrm works for transformed response using emp_start", {
+  expect_silent(
+    mmrm(
+      formula = log(FEV1) ~ ARMCD + exp(FEV1_BL) + us(AVISIT | USUBJID),
+      data = fev_data,
+      start = std_start
+    )
+  )
+  expect_silent(
+    mmrm(
+      formula = log(FEV1) ~ ARMCD + exp(FEV1_BL) + us(AVISIT | USUBJID),
+      data = fev_data,
+      start = emp_start
+    )
+  )
+})
+
+test_that("mmrm works for character covariate using emp_start", {
+  fev_data2 <- fev_data
+  fev_data2$ARMCD <- as.character(fev_data2$ARMCD)
+  fev_data2$USUBJID <- as.character(fev_data2$USUBJID)
+  expect_silent(
+    mmrm(
+      formula = log(FEV1) ~ ARMCD + exp(FEV1_BL) + us(AVISIT | USUBJID),
+      data = fev_data2,
+      start = emp_start
+    )
+  )
 })
 
 test_that("mmrm still works for deprecated 'automatic' optimizer", {
@@ -431,6 +598,115 @@ test_that("mmrm fails when using formula covariance with covariance argument", {
   )
 })
 
+test_that("mmrm works when using formula directly in covariance", {
+  expect_silent(
+    mmrm(
+      formula = FEV1 ~ ARMCD,
+      covariance = ~ us(AVISIT | USUBJID),
+      data = fev_data,
+    )
+  )
+})
+
+
+test_that("mmrm works for different na.actions", {
+  na_action <- getOption("na.action")
+  on.exit(options(na.action = na_action))
+  options(na.action = "na.omit")
+  formula <- FEV1 ~ ARMCD + us(AVISIT | USUBJID)
+
+  res1 <- expect_silent(mmrm(formula, fev_data))
+  expect_class(res1, "mmrm")
+
+  options(na.action = "na.pass")
+  expect_warning(
+    res2 <- mmrm(formula, fev_data),
+    "na.action is always set to `na.omit` for `mmrm` fit!"
+  )
+  expect_class(res2, "mmrm")
+
+  options(na.action = "na.fail")
+  expect_warning(
+    res3 <- mmrm(formula, fev_data),
+    "na.action is always set to `na.omit` for `mmrm` fit!"
+  )
+  expect_class(res3, "mmrm")
+
+  options(na.action = "na.exclude")
+  expect_warning(
+    res4 <- mmrm(formula, fev_data),
+    "na.action is always set to `na.omit` for `mmrm` fit!"
+  )
+  expect_class(res4, "mmrm")
+})
+
+test_that("mmrm still works for a model that only contains an interaction term", {
+  expect_silent(
+    mmrm(
+      FEV1 ~ ARMCD:SEX + ar1(AVISIT | SEX / USUBJID),
+      data = fev_data,
+      reml = TRUE
+    )
+  )
+})
+
+test_that("mmrm fails if formula contains `.`", {
+  expect_error(
+    mmrm(FEV1 ~ ., data = fev_data, weights = rep(1, 800)),
+    "`.` is not allowed in mmrm models!"
+  )
+})
+
+test_that("mmrm can proceed to second optimizer if first one has divergence error", {
+  fake_optimizer <- function(par, fun, grad, ...) {
+    stop("NA/NaN Hessian evaluation")
+  }
+  expect_warning(
+    result <- mmrm(
+      formula = FEV1 ~ ARMCD + us(AVISIT | USUBJID),
+      data = fev_data,
+      control = mmrm_control(optimizers = c(fake = fake_optimizer, h_get_optimizers()))
+    ),
+    "Divergence with optimizer fake due to problems"
+  )
+  expect_true(attr(result, "converged"))
+})
+
+test_that("mmrm behaves correctly when some of alternative optimizers have divergence errors", {
+  fake_optimizer <- function(par, fun, grad, ...) {
+    stop("NA/NaN Hessian evaluation")
+  }
+  normal_optimizers <- h_get_optimizers()
+  expect_warning(
+    result <- mmrm(
+      formula = FEV1 ~ ARMCD + us(AVISIT | USUBJID),
+      data = fev_data,
+      control = mmrm_control(
+        optimizers = c(fake = fake_optimizer, normal_optimizers[1:2], fake2 = fake_optimizer)
+      )
+    ),
+    "Divergence with optimizer fake due to problems"
+  )
+  expect_true(attr(result, "converged"))
+})
+
+test_that("mmrm works as expected when the only provided optimizer fails with divergence error", {
+  fake_optimizer <- function(par, fun, grad, ...) {
+    stop("NA/NaN Hessian evaluation")
+  }
+  expect_error(
+    expect_warning(
+      result <- mmrm(
+        formula = FEV1 ~ ARMCD + us(AVISIT | USUBJID),
+        data = fev_data,
+        optimizer_fun = fake_optimizer
+      ),
+      "Divergence with optimizer"
+    ),
+    "Consider trying multiple or different optimizers"
+  )
+})
+
 ## vcov and method combination ----
 
 test_that("mmrm works for vcov: Asymptotic and method: Sattherthwaite", {
@@ -447,6 +723,21 @@ test_that("mmrm works for vcov: Asymptotic and method: Sattherthwaite", {
   expect_class(result$call, "call")
   expect_true(result$reml)
   expect_list(result$jac_list, types = "matrix")
+})
+
+test_that("mmrm works for vcov: Asymptotic and method: Between-Within", {
+  result <- expect_silent(
+    mmrm(
+      formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+      data = fev_data,
+      method = "Between-Within",
+      vcov = "Asymptotic"
+    )
+  )
+  expect_class(result, c("mmrm", "mmrm_fit", "mmrm_tmb"))
+  expect_true(attr(result, "converged"))
+  expect_class(result$call, "call")
+  expect_true(result$reml)
 })
 
 test_that("mmrm fails for vcov: Kenward-Roger and method: Sattherthwaite", {
@@ -519,6 +810,8 @@ test_that("mmrm works for vcov: Empirical and method: Satterthwaite", {
   expect_class(result$call, "call")
   expect_true(result$reml)
   expect_matrix(result$beta_vcov_adj)
+  # Here we don't need the Jacobian list.
+  expect_null(result$jac_list)
 })
 
 test_that("mmrm works for vcov: Jackknife and method: Satterthwaite", {
@@ -535,6 +828,8 @@ test_that("mmrm works for vcov: Jackknife and method: Satterthwaite", {
   expect_class(result$call, "call")
   expect_true(result$reml)
   expect_matrix(result$beta_vcov_adj)
+  # Here we don't need the Jacobian list.
+  expect_null(result$jac_list)
 })
 
 test_that("mmrm fails for vcov: Asymptotic and method: Kenward-Roger", {

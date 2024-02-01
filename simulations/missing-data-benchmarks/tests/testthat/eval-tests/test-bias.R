@@ -1,5 +1,4 @@
 test_that("bias_fun computes DGP-specific bias", {
-
   ## generate some data from two different DGPs
   set.seed(510)
   no_eff_us <- rct_dgp_fun(
@@ -111,11 +110,15 @@ test_that("bias_fun computes DGP-specific bias", {
     .dgp_name = rep(c("no_eff", "eff"), each = 4),
     .method_name = rep(c("mmrm", "glmmtmb", "nlme", "proc_mixed"), 2),
     n_obs = 100,
-    fit = list(mmrm_no_eff$fit, glmmtmb_no_eff$fit, nlme_no_eff$fit,
-               proc_mixed_no_eff$fit, mmrm_eff$fit, glmmtmb_eff$fit,
-               nlme_eff$fit, proc_mixed_eff$fit),
-    data = list(NULL, NULL, no_eff_us_df, NULL,
-                NULL, NULL, eff_us_df, NULL),
+    fit = list(
+      mmrm_no_eff$fit, glmmtmb_no_eff$fit, nlme_no_eff$fit,
+      proc_mixed_no_eff$fit, mmrm_eff$fit, glmmtmb_eff$fit,
+      nlme_eff$fit, proc_mixed_eff$fit
+    ),
+    data = list(
+      NULL, NULL, no_eff_us_df, NULL,
+      NULL, NULL, eff_us_df, NULL
+    ),
     fit_time = rep(1, 8)
   )
 
@@ -140,5 +143,4 @@ test_that("bias_fun computes DGP-specific bias", {
 
   # ensure that the bias column is numeric
   expect_equal(is.numeric(bias_tbl$bias), TRUE)
-
 })

@@ -1,0 +1,128 @@
+```{r, include = FALSE}
+library(mmrm)
+```
+
+Similar to model objects created in other packages, components of `mmrm` and
+`mmrm_tmb` objects can be accessed with standard methods.  Additionally,
+[`component()`](https://openpharma.github.io/mmrm/main/reference/component.html) is provided to allow deeper and more precise access for those
+interested in digging through model output.
+Complete documentation of standard model output methods supported for `mmrm_tmb`
+objects [can be found at the package website.](https://openpharma.github.io/mmrm/main/reference/mmrm_tmb_methods.html)
+
+## Summary
+
+The `summary` method for `mmrm` objects provides easy access to frequently needed
+model components.
+
+```{r extraction-summary-fit}
+fit <- mmrm(
+  formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data
+)
+fit_summary <- summary(fit)
+```
+
+From this summary object, you can easily retrieve the coefficients table.
+
+```{r extraction-summary-fit-coef}
+fit_summary$coefficients
+```
+
+Other model parameters and metadata available in the summary object is as follows:
+
+```{r extraction-summary-fit-str}
+str(fit_summary)
+```
+
+## Residuals
+
+The `residuals` method for `mmrm` objects can be used to provide three different types of residuals:
+
+1. Response or raw residuals - the difference between the observed and fitted or predicted value. MMRMs can allow for heteroscedasticity, so these residuals should be interpreted with caution.
+
+```{r residuals-response}
+fit <- mmrm(
+  formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data
+)
+residuals_resp <- residuals(fit, type = "response")
+```
+
+2. Pearson residuals - the raw residuals scaled by the estimated standard deviation of the response. This residual type is better suited to identifying outlying observations and the appropriateness of the covariance structure, compared to the raw residuals.
+
+```{r residuals-pearson}
+residuals_pearson <- residuals(fit, type = "pearson")
+```
+
+3. Normalized or scaled residuals - the raw residuals are 'de-correlated' based on the Cholesky decomposition of the variance-covariance matrix. These residuals should approximately follow the standard normal distribution, and therefore can be used to check for normality (@galecki2013linear).
+
+```{r residuals-norm}
+residuals_norm <- residuals(fit, type = "normalized")
+```
+
+## `broom` extensions
+
+`mmrm` also contains S3 methods methods for `tidy`, `glance` and `augment` which were
+introduced by [`broom`](https://broom.tidymodels.org/). Note that these methods
+will work also without loading the `broom` package.
+Please see `?mmrm_tidiers` for the detailed documentation.
+
+For example, we can apply the `tidy` method to return a summary table of coefficient estimates:
+
+```{r}
+fit |>
+  tidy()
+```
+
+We can also specify some details to request confidence intervals of specific confidence level:
+
+```{r}
+fit |>
+  tidy(conf.int = TRUE, conf.level = 0.9)
+```
+
+Or we can apply the `glance` method to return a summary table of goodness of fit statistics:
+
+```{r}
+fit |>
+  glance()
+```
+
+Finally, we can use the `augment` method to return a merged `tibble` of the data, fitted values and residuals:
+
+```{r}
+fit |>
+  augment()
+```
+
+Also here we can specify details for the prediction intervals and type of residuals via the arguments:
+
+```{r}
+fit |>
+  augment(interval = "confidence", type.residuals = "normalized")
+```
+
+## Other components
+
+Specific model quantities not supported by methods can be retrieved with the
+[`component()`](https://openpharma.github.io/mmrm/main/reference/component.html)
+function. The default will output all supported components.
+
+For example, a user may want information about convergence:
+
+```{r extraction-summary-component}
+component(fit, name = c("convergence", "evaluations", "conv_message"))
+```
+
+or the original low-level call:
+
+```{r}
+component(fit, name = "call")
+```
+
+the user could also ask for all provided components by not specifying the `name`
+argument.
+
+```{r, eval=FALSE}
+component(fit)
+```

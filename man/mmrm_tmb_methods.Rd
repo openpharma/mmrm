@@ -4,7 +4,10 @@
 \alias{mmrm_tmb_methods}
 \alias{coef.mmrm_tmb}
 \alias{fitted.mmrm_tmb}
+\alias{predict.mmrm_tmb}
 \alias{model.frame.mmrm_tmb}
+\alias{model.matrix.mmrm_tmb}
+\alias{terms.mmrm_tmb}
 \alias{logLik.mmrm_tmb}
 \alias{formula.mmrm_tmb}
 \alias{vcov.mmrm_tmb}
@@ -15,13 +18,35 @@
 \alias{BIC.mmrm_tmb}
 \alias{print.mmrm_tmb}
 \alias{residuals.mmrm_tmb}
+\alias{simulate.mmrm_tmb}
 \title{Methods for \code{mmrm_tmb} Objects}
 \usage{
 \method{coef}{mmrm_tmb}(object, complete = TRUE, ...)
 
 \method{fitted}{mmrm_tmb}(object, ...)
 
-\method{model.frame}{mmrm_tmb}(formula, full = FALSE, ...)
+\method{predict}{mmrm_tmb}(
+  object,
+  newdata,
+  se.fit = FALSE,
+  interval = c("none", "confidence", "prediction"),
+  level = 0.95,
+  nsim = 1000L,
+  ...
+)
+
+\method{model.frame}{mmrm_tmb}(
+  formula,
+  data,
+  include = c("subject_var", "visit_var", "group_var", "response_var"),
+  full,
+  na.action = "na.omit",
+  ...
+)
+
+\method{model.matrix}{mmrm_tmb}(object, data, include = NULL, ...)
+
+\method{terms}{mmrm_tmb}(x, include = "response_var", ...)
 
 \method{logLik}{mmrm_tmb}(object, ...)
 
@@ -40,6 +65,15 @@
 \method{print}{mmrm_tmb}(x, ...)
 
 \method{residuals}{mmrm_tmb}(object, type = c("response", "pearson", "normalized"), ...)
+
+\method{simulate}{mmrm_tmb}(
+  object,
+  nsim = 1,
+  seed = NULL,
+  newdata,
+  ...,
+  method = c("conditional", "marginal")
+)
 }
 \arguments{
 \item{object}{(\code{mmrm_tmb})\cr the fitted MMRM object.}
@@ -47,11 +81,29 @@
 \item{complete}{(\code{flag})\cr whether to include potential non-estimable
 coefficients.}
 
-\item{...}{not used.}
+\item{...}{mostly not used;
+Exception is \code{model.matrix()} passing \code{...} to the default method.}
+
+\item{newdata}{(\code{data.frame})\cr optional new data, otherwise data from \code{object} is used.}
+
+\item{se.fit}{(\code{flag})\cr indicator if standard errors are required.}
+
+\item{interval}{(\code{string})\cr type of interval calculation. Can be abbreviated.}
+
+\item{level}{(\code{number})\cr tolerance/confidence level.}
+
+\item{nsim}{(\code{count})\cr number of simulations to use.}
 
 \item{formula}{(\code{mmrm_tmb})\cr same as \code{object}.}
 
-\item{full}{(\code{flag})\cr whether to include subject, visit and weight variables.}
+\item{data}{(\code{data.frame})\cr object in which to construct the frame.}
+
+\item{include}{(\code{character})\cr names of variable types to include.
+Must be \code{NULL} or one or more of \code{c("subject_var", "visit_var", "group_var", "response_var")}.}
+
+\item{full}{(\code{flag})\cr indicator whether to return full model frame (deprecated).}
+
+\item{na.action}{(\code{string})\cr na action.}
 
 \item{x}{(\code{mmrm_tmb})\cr same as \code{object}.}
 
@@ -64,6 +116,12 @@ is the classical AIC.}
 
 \item{type}{(\code{string})\cr unscaled (\code{response}), \code{pearson} or \code{normalized}. Default is \code{response},
 and this is the only type available for use with models with a spatial covariance structure.}
+
+\item{seed}{unused argument from \code{\link[stats:simulate]{stats::simulate()}}.}
+
+\item{method}{(\code{string})\cr simulation method to use. If "conditional",
+simulated values are sampled given the estimated covariance matrix of \code{object}.
+If "marginal", the variance of the estimated covariance matrix is taken into account.}
 }
 \value{
 Depends on the method, see Functions.
@@ -71,13 +129,30 @@ Depends on the method, see Functions.
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
+\details{
+\code{include} argument controls the variables the returned model frame will include.
+Possible options are "response_var", "subject_var", "visit_var" and "group_var", representing the
+response variable, subject variable, visit variable or group variable.
+\code{character} values in new data will always be factorized according to the data in the fit
+to avoid mismatched in levels or issues in \code{model.matrix}.
+}
 \section{Functions}{
 \itemize{
 \item \code{coef(mmrm_tmb)}: obtains the estimated coefficients.
 
 \item \code{fitted(mmrm_tmb)}: obtains the fitted values.
 
+\item \code{predict(mmrm_tmb)}: predict conditional means for new data;
+optionally with standard errors and confidence or prediction intervals.
+Returns a vector of predictions if \code{se.fit == FALSE} and
+\code{interval == "none"}; otherwise it returns a data.frame with multiple
+columns and one row per input data row.
+
 \item \code{model.frame(mmrm_tmb)}: obtains the model frame.
+
+\item \code{model.matrix(mmrm_tmb)}: obtains the model matrix.
+
+\item \code{terms(mmrm_tmb)}: obtains the terms object.
 
 \item \code{logLik(mmrm_tmb)}: obtains the attained log likelihood value.
 
@@ -107,6 +182,11 @@ penalty parameter \code{k}.
 
 \item \code{residuals(mmrm_tmb)}: to obtain residuals - either unscaled ('response'), 'pearson' or 'normalized'.
 
+\item \code{simulate(mmrm_tmb)}: simulate responses from a fitted model according
+to the simulation \code{method}, returning a \code{data.frame} of dimension \verb{[n, m]}
+where n is the number of rows in \code{newdata},
+and m is the number \code{nsim} of simulated responses.
+
 }}
 \examples{
 formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
@@ -115,9 +195,15 @@ object <- fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)))
 coef(object)
 # Fitted values:
 fitted(object)
+predict(object, newdata = fev_data)
 # Model frame:
 model.frame(object)
-model.frame(object, full = TRUE)
+model.frame(object, include = "subject_var")
+# Model matrix:
+model.matrix(object)
+# terms:
+terms(object)
+terms(object, include = "subject_var")
 # Log likelihood given the estimated parameters:
 logLik(object)
 # Formula which was used:
@@ -147,4 +233,7 @@ residuals(object, type = "normalized")
 \itemize{
 \item \insertRef{galecki2013linear}{mmrm}
 }
+}
+\seealso{
+\code{\link{mmrm_methods}}, \code{\link{mmrm_tidiers}} for additional methods.
 }

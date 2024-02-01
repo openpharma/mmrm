@@ -68,6 +68,10 @@ test_that("as.cov_struct can derive a covariance structure from a formula", {
     as.cov_struct(~ x + toeph(visit | group / subject) + z),
     cov_struct("toeph", "visit", "subject", "group")
   )
+  expect_identical(
+    as.cov_struct(~ x:z + toeph(visit | group / subject) + m:n),
+    cov_struct("toeph", "visit", "subject", "group")
+  )
 })
 
 # tmb_cov_type ----
@@ -127,4 +131,22 @@ test_that("print.cov_struct pretty-formats covariance structure object", {
     print(cov_struct("sp_exp", c("VIS IT", "VISIT"), "SUBJECT", "GROUP")),
     "`VIS IT`, VISIT | GROUP / SUBJECT"
   )
+})
+
+# h_reconcile_cov_struct ----
+
+test_that("h_reconcile_cov_struct works if covariance is a formula", {
+  cov <- expect_silent(h_reconcile_cov_struct(a ~ b, ~ ar1(a | b)))
+  expected <- cov_struct("ar1", "a", "b")
+  expect_identical(cov, expected)
+})
+
+test_that("h_reconcile_cov_struct works if covariance is a cov_struct", {
+  expected <- cov_struct("ar1", "a", "b")
+  cov <- expect_silent(h_reconcile_cov_struct(a ~ b, expected))
+  expect_identical(cov, expected)
+})
+
+test_that("h_reconcile_cov_struct errors if multiple covarinace spotted", {
+  expect_error(h_reconcile_cov_struct(a ~ b + ar1(a | b), ~ ar1(a | b)))
 })

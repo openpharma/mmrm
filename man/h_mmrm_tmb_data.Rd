@@ -9,8 +9,10 @@ h_mmrm_tmb_data(
   data,
   weights,
   reml,
-  accept_singular,
-  drop_visit_levels
+  singular = c("drop", "error", "keep"),
+  drop_visit_levels,
+  allow_na_response = FALSE,
+  drop_levels = TRUE
 )
 }
 \arguments{
@@ -24,23 +26,26 @@ from \code{\link[=h_mmrm_tmb_formula_parts]{h_mmrm_tmb_formula_parts()}}.}
 \item{reml}{(\code{flag})\cr whether restricted maximum likelihood (REML) estimation is used,
 otherwise maximum likelihood (ML) is used.}
 
-\item{accept_singular}{(\code{flag})\cr whether below full rank design matrices are reduced
-to full rank \code{x_matrix} and remaining coefficients will be missing as per
-\code{x_cols_aliased}. Otherwise the function fails for rank deficient design matrices.}
+\item{singular}{(\code{string})\cr choices of method deal with rank-deficient matrices. "error" to
+stop the function return the error, "drop" to drop these columns, and "keep" to keep all the columns.}
 
 \item{drop_visit_levels}{(\code{flag})\cr whether to drop levels for visit variable, if visit variable is a factor.}
+
+\item{allow_na_response}{(\code{flag})\cr whether NA in response is allowed.}
+
+\item{drop_levels}{(\code{flag})\cr whether drop levels for covariates. If not dropped could lead to singular matrix.}
 }
 \value{
 List of class \code{mmrm_tmb_data} with elements:
 \itemize{
 \item \code{full_frame}: \code{data.frame} with \code{n} rows containing all variables needed in the model.
+\item \code{data}: \code{data.frame} of input dataset.
 \item \code{x_matrix}: \code{matrix} with \code{n} rows and \code{p} columns specifying the overall design matrix.
 \item \code{x_cols_aliased}: \code{logical} with potentially more than \code{p} elements indicating which
 columns in the original design matrix have been left out to obtain a full rank
 \code{x_matrix}.
 \item \code{y_vector}: length \code{n} \code{numeric} specifying the overall response vector.
 \item \code{weights_vector}: length \code{n} \code{numeric} specifying the weights vector.
-\item \code{visits_zero_inds}: length \code{n} \code{integer} containing zero-based visits indices.
 \item \code{n_visits}: \code{int} with the number of visits, which is the dimension of the
 covariance matrix.
 \item \code{n_subjects}: \code{int} with the number of subjects.

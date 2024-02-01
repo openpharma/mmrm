@@ -25,7 +25,6 @@ test_that(paste(
 test_that(paste(
   "assemble_df turns the participant variable into a factor when asked"
 ), {
-
   dgp_output <- rct_dgp_fun(
     n_obs = 100,
     outcome_covar_mat = diag(3),
@@ -47,7 +46,6 @@ test_that(paste(
 test_that(paste(
   "assemble_df turns the visit_num variable into a factor when asked"
 ), {
-
   dgp_output <- rct_dgp_fun(
     n_obs = 10,
     outcome_covar_mat = diag(15),

@@ -1,0 +1,143 @@
+---
+title: "predict intervals"
+author: "Liming Li"
+output: html_document
+editor_options:
+  chunk_output_type: console
+---
+
+# model
+
+we have the following model
+
+\[
+  y = X\beta + \epsilon
+\]
+
+and for prediction, we have
+
+\[
+  \hat{y_{new}} = X_{new}\hat\beta
+\]
+
+
+where
+\[
+  \epsilon \sim N(0, \Sigma)
+\]
+and
+\[
+  \hat\beta \sim N(\beta, cov(\beta))
+\]
+
+# confidence interval
+
+confidence interval is calculated as the variance of $\hat{y}$
+
+\[
+  Var(\hat{y_{new}}) = X_{new} cov(\beta) X_{new}^\top
+\]
+
+and we can use normal approximation (1.96 +- sd) to obtain the interval.
+
+# prediction interval
+
+for prediction interval, we have
+
+\[
+  y_{new} = X_{new}\hat\beta + \epsilon
+\]
+
+\[
+  Var(y_new|\theta) = X_{new} cov(\beta) X_{new}^\top + \Sigma
+\]
+where $\Sigma$ and $\beta$ are all function of $\theta$
+
+\[
+  E(y_{new}|\theta) = X_{new} \beta
+\]
+
+and
+
+\[
+  Var(y_{new}) = Var(E(y_{new}|\theta)) + E(Var(y_{new}|\theta))
+\]
+
+## Sampling approach
+
+To obtain $Var(y_{new})$, we need to integrate over $\theta$ to obtain the expected variance and vairance of expectation.
+
+However, if we use simulation based approach, we can:
+
+1. Sample $\theta$
+2. Obtain $Var(y_{new}|\theta)$ and $E(y_{new}|\theta)$
+3. Summarize over $\theta$
+
+to obtain the variance.
+
+# Implementations in `SAS`
+
+```{r}
+library(mmrm)
+library(sasr)
+df2sd(fev_data, "fev_data")
+```
+
+```{r}
+predict_sas <- function(cov = "un", ddfm = "Satterthewaite") {
+  res <- run_sas(
+    sprintf("PROC MIXED DATA = fev_data method=reml;
+      CLASS RACE(ref = 'Asian') AVISIT(ref = 'VIS4') SEX(ref = 'Male') ARMCD(ref = 'PBO') USUBJID;
+      MODEL FEV1 = ARMCD / ddfm=%s solution chisq outpm=predm outp=pred;
+      REPEATED AVISIT / subject=USUBJID type=%s r rcorr;
+      LSMEANS ARMCD / pdiff=all cl alpha=0.05 slice=AVISIT;
+    RUN;", ddfm, cov)
+  )
+  cat(res$LOG)
+  outpm <- sd2df("predm")
+  outp <- sd2df("pred")
+  res <- data.frame(
+    FEV1 = fev_data$FEV1,
+    PM = outpm$Pred,
+    PMSD = outpm$StdErrPred,
+    P = outp$Pred,
+    PSD = outp$StdErrPred
+  )
+  write.csv(res, sprintf("design/predict_interval/%s_%s.csv", cov, ddfm))
+}
+
+predict_sas_sp <- function(cov = "sp_exp", ddfm = "Satterthewaite") {
+  res <- run_sas(
+    sprintf("PROC MIXED DATA = fev_data method=reml;
+      CLASS RACE(ref = 'Asian') AVISIT(ref = 'VIS4') SEX(ref = 'Male') ARMCD(ref = 'PBO') USUBJID;
+      MODEL FEV1 = ARMCD / ddfm=%s solution chisq outpm=predm outp=pred;
+      REPEATED AVISIT / subject=USUBJID type=%s r rcorr;
+      LSMEANS ARMCD / pdiff=all cl alpha=0.05 slice=AVISIT;
+    RUN;", ddfm, cov)
+  )
+  cat(res$LOG)
+  outpm <- sd2df("predm")
+  outp <- sd2df("pred")
+  res <- data.frame(
+    FEV1 = fev_data$FEV1,
+    PM = outpm$Pred,
+    PMSD = outpm$StdErrPred,
+    P = outp$Pred,
+    PSD = outp$StdErrPred
+  )
+  write.csv(res, sprintf("design/predict_interval/%s_%s.csv", cov, ddfm))
+}
+```
+
+```{r}
+predict_sas("un", "satterthwaite")
+predict_sas("un", "kenwardroger_linear")
+predict_sas("cs", "satterthwaite")
+predict_sas("cs", "kenwardroger")
+predict_sas("ar(1)", "satterthwaite")
+predict_sas("ar(1)", "kenwardroger")
+predict_sas("toep", "satterthwaite")
+predict_sas("toep", "kenwardroger")
+predict_sas("sp(exp)(VISITN VISITN2)", "satterthwaite")
+predict_sas("sp(exp)(VISITN VISITN2)", "kenwardroger")
+```

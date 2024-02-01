@@ -9,7 +9,7 @@ get_mmrm_trt_visit_num_ests <- function(fit) {
 }
 
 # extract ATE estimates at each visit from glmmTMB fit
-get_glmmtmb_trt_visit_num_ests <- function(fit) {
+get_glmm_trt_visit_num_ests <- function(fit) {
   marginal_means <- emmeans::emmeans(
     fit,
     spec = trt.vs.ctrl ~ trt | visit_num,
@@ -31,7 +31,7 @@ get_nlme_trt_visit_num_ests <- function(fit, data) {
 }
 
 # extract ATE estimates at each visit from PROC MIXED fit
-get_proc_mixed_trt_visit_num_ests <- function(fit) {
+get_mixed_trt_visit_num_ests <- function(fit) {
   fit$Estimate
 }
 
@@ -41,14 +41,15 @@ get_proc_mixed_trt_visit_num_ests <- function(fit) {
 # should reflect this.
 get_trt_visit_num_ests <- function(method, fit, dt, converged) {
   if (get_convergence(method, fit, converged)) {
-    if (stringr::str_detect(method, "mmrm"))
+    if (stringr::str_detect(method, "mmrm")) {
       get_mmrm_trt_visit_num_ests(fit)
-    else if (stringr::str_detect(method, "glmmtmb"))
-      get_glmmtmb_trt_visit_num_ests(fit)
-    else if (stringr::str_detect(method, "nlme"))
+    } else if (stringr::str_detect(method, "glmmtmb")) {
+      get_glmm_trt_visit_num_ests(fit)
+    } else if (stringr::str_detect(method, "nlme")) {
       get_nlme_trt_visit_num_ests(fit, dt)
-    else if (stringr::str_detect(method, "proc_mixed"))
-      get_proc_mixed_trt_visit_num_ests(fit)
+    } else if (stringr::str_detect(method, "proc_mixed")) {
+      get_mixed_trt_visit_num_ests(fit)
+    }
   } else {
     rep(NA, 10) # hard code 10, the number of visits in all simulations
   }
@@ -60,7 +61,7 @@ get_mmrm_convergence <- function(converged) {
 }
 
 # extract convergence status from glmmTMB fit
-get_glmmtmb_convergence <- function(fit) {
+get_glmm_convergence <- function(fit) {
   fit$fit$convergence == 0
 }
 
@@ -70,20 +71,21 @@ get_nlme_convergence <- function(converged) {
 }
 
 # extract convergence status from PROC MIXED fit
-get_proc_mixed_convergence <- function(converged) {
+get_mixed_convergence <- function(converged) {
   converged
 }
 
 # general function for extracting convergence status from fits
 get_convergence <- function(method, fit, converged) {
-  if (stringr::str_detect(method, "mmrm"))
+  if (stringr::str_detect(method, "mmrm")) {
     get_mmrm_convergence(converged)
-  else if (stringr::str_detect(method, "glmmtmb"))
-    get_glmmtmb_convergence(fit)
-  else if (stringr::str_detect(method, "nlme"))
+  } else if (stringr::str_detect(method, "glmmtmb")) {
+    get_glmm_convergence(fit)
+  } else if (stringr::str_detect(method, "nlme")) {
     get_nlme_convergence(converged)
-  else if (stringr::str_detect(method, "proc_mixed"))
-    get_proc_mixed_convergence(converged)
+  } else if (stringr::str_detect(method, "proc_mixed")) {
+    get_mixed_convergence(converged)
+  }
 }
 
 
@@ -98,7 +100,7 @@ get_mmrm_trt_visit_num_ses <- function(fit) {
 }
 
 # extract standard errors for ATE estimates at each visit from glmmTMB fit
-get_glmmtmb_trt_visit_num_ses <- function(fit) {
+get_glmm_trt_visit_num_ses <- function(fit) {
   marginal_means <- emmeans::emmeans(
     fit,
     spec = trt.vs.ctrl ~ trt | visit_num,
@@ -120,7 +122,7 @@ get_nlme_trt_visit_num_ses <- function(fit, data) {
 }
 
 # extract standard errors for ATE estimates at each visit from PROC MIXED fit
-get_proc_mixed_trt_visit_num_ses <- function(fit) {
+get_mixed_trt_visit_num_ses <- function(fit) {
   fit$StdErr
 }
 
@@ -130,14 +132,15 @@ get_proc_mixed_trt_visit_num_ses <- function(fit) {
 # failed convergences should reflect this.
 get_trt_visit_num_ses <- function(method, fit, dt, converged) {
   if (get_convergence(method, fit, converged)) {
-    if (stringr::str_detect(method, "mmrm"))
+    if (stringr::str_detect(method, "mmrm")) {
       get_mmrm_trt_visit_num_ses(fit)
-    else if (stringr::str_detect(method, "glmmtmb"))
-      get_glmmtmb_trt_visit_num_ses(fit)
-    else if (stringr::str_detect(method, "nlme"))
+    } else if (stringr::str_detect(method, "glmmtmb")) {
+      get_glmm_trt_visit_num_ses(fit)
+    } else if (stringr::str_detect(method, "nlme")) {
       get_nlme_trt_visit_num_ses(fit, dt)
-    else if (stringr::str_detect(method, "proc_mixed"))
-      get_proc_mixed_trt_visit_num_ses(fit)
+    } else if (stringr::str_detect(method, "proc_mixed")) {
+      get_mixed_trt_visit_num_ses(fit)
+    }
   } else {
     rep(NA, 10) # hard code 10, the number of visits in all simulations
   }
@@ -156,7 +159,7 @@ get_mmrm_trt_visit_num_pvals <- function(fit) {
 
 # extract p-values for 2-sided hypothesis tests about ATEs at each visit from
 # glmmTMB fit
-get_glmmtmb_trt_visit_num_pvals <- function(fit) {
+get_glmm_trt_visit_num_pvals <- function(fit) {
   marginal_means <- emmeans::emmeans(
     fit,
     spec = trt.vs.ctrl ~ trt | visit_num,
@@ -180,7 +183,7 @@ get_nlme_trt_visit_num_pvals <- function(fit, data) {
 
 # extract p-values for 2-sided hypothesis tests about ATEs at each visit from
 # PROC MIXED fit
-get_proc_mixed_trt_visit_num_pvals <- function(fit) {
+get_mixed_trt_visit_num_pvals <- function(fit) {
   quantiles <- pt(fit$tValue, fit$DF)
   sapply(quantiles, function(q) 2 * min(q, 1 - q))
 }
@@ -191,14 +194,15 @@ get_proc_mixed_trt_visit_num_pvals <- function(fit) {
 # returned for failed convergences should reflect this.
 get_trt_visit_num_pvals <- function(method, fit, dt, converged) {
   if (get_convergence(method, fit, converged)) {
-    if (stringr::str_detect(method, "mmrm"))
+    if (stringr::str_detect(method, "mmrm")) {
       get_mmrm_trt_visit_num_pvals(fit)
-    else if (stringr::str_detect(method, "glmmtmb"))
-      get_glmmtmb_trt_visit_num_pvals(fit)
-    else if (stringr::str_detect(method, "nlme"))
+    } else if (stringr::str_detect(method, "glmmtmb")) {
+      get_glmm_trt_visit_num_pvals(fit)
+    } else if (stringr::str_detect(method, "nlme")) {
       get_nlme_trt_visit_num_pvals(fit, dt)
-    else if (stringr::str_detect(method, "proc_mixed"))
-      get_proc_mixed_trt_visit_num_pvals(fit)
+    } else if (stringr::str_detect(method, "proc_mixed")) {
+      get_mixed_trt_visit_num_pvals(fit)
+    }
   } else {
     rep(NA, 10) # hard code 10, the number of visits in all simulations
   }

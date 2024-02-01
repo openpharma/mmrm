@@ -1,15 +1,13 @@
 ---
-title: "Details of the Kenward-Roger calculations"
+title: "Kenward-Roger"
 package: mmrm
 bibliography: '`r system.file("REFERENCES.bib", package = "mmrm")`'
+csl: '`r system.file("jss.csl", package = "mmrm")`'
 output:
-  rmarkdown::html_document:
-          theme: "spacelab"
-          highlight: "kate"
+  rmarkdown::html_vignette:
           toc: true
-          toc_float: true
 vignette: |
-  %\VignetteIndexEntry{Details of the Kenward-Roger calculations}
+  %\VignetteIndexEntry{Kenward-Roger}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options:

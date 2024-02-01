@@ -1,10 +1,9 @@
 test_that("variance_fun computes DGP-specific variance", {
-
   ## generate some data from two different DGPs
   set.seed(510)
   no_eff_us <- rct_dgp_fun(
     n_obs = 1000,
-    outcome_covar_mat= compute_unstructured_matrix()
+    outcome_covar_mat = compute_unstructured_matrix()
   )
   eff_us <- rct_dgp_fun(
     n_obs = 1000,
@@ -111,11 +110,15 @@ test_that("variance_fun computes DGP-specific variance", {
     .dgp_name = rep(c("no_eff", "eff"), each = 4),
     .method_name = rep(c("mmrm", "glmmtmb", "nlme", "proc_mixed"), 2),
     n_obs = 100,
-    fit = list(mmrm_no_eff$fit, glmmtmb_no_eff$fit, nlme_no_eff$fit,
-               proc_mixed_no_eff$fit, mmrm_eff$fit, glmmtmb_eff$fit,
-               nlme_eff$fit, proc_mixed_eff$fit),
-    data = list(NULL, NULL, no_eff_us_df, NULL,
-                NULL, NULL, eff_us_df, NULL),
+    fit = list(
+      mmrm_no_eff$fit, glmmtmb_no_eff$fit, nlme_no_eff$fit,
+      proc_mixed_no_eff$fit, mmrm_eff$fit, glmmtmb_eff$fit,
+      nlme_eff$fit, proc_mixed_eff$fit
+    ),
+    data = list(
+      NULL, NULL, no_eff_us_df, NULL,
+      NULL, NULL, eff_us_df, NULL
+    ),
     fit_time = rep(1, 8)
   )
 
@@ -136,5 +139,4 @@ test_that("variance_fun computes DGP-specific variance", {
 
   # ensure that the variance column is numeric
   expect_equal(is.numeric(variance_tbl$variance), TRUE)
-
 })

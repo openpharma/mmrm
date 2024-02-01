@@ -1,0 +1,256 @@
+---
+title: "Details of Weighted Least Square Empirical Covariance"
+package: mmrm
+bibliography: '`r system.file("REFERENCES.bib", package = "mmrm")`'
+csl: '`r system.file("jss.csl", package = "mmrm")`'
+output:
+  rmarkdown::html_vignette:
+          toc: true
+vignette: |
+  %\VignetteIndexEntry{Details of Weighted Least Square Empirical Covariance}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options:
+  chunk_output_type: console
+  markdown:
+    wrap: 72
+---
+
+# Weighted Least Square (WLS) Empirical Covariance
+
+Following the notation we have without weights, @bell2002bias and @pustejovsky2018small suggest
+
+\[
+  v = s C^\top(X^\top W X)^{-1}\sum_{i}{X_i^\top W_i A_i \epsilon_i \epsilon_i^\top A_i W_i X_i} (X^\top W X)^{-1} C
+\]
+
+where $A_i$ takes $I_i$, $(I_i - H_{ii})^{-\frac{1}{2}}$, or $(I_i - H_{ii})^{-1}$ is unchanged, but
+$H$ is changed
+
+\[
+  H = X (X^\top W X)^{-1} X^\top W
+\]
+
+For the degrees of freedom, we have
+
+\[
+  G_{ij} = g_i^\top \Phi g_j
+\]
+
+where
+
+\[
+  g_i = s^{\frac{1}{2}} (I - H)_i^\top A_i W_i X_i (X^\top X)^{-1} C
+\]
+
+# Difference of Implementations
+
+Comparing the previous section with our implementation, we can find out the differences.
+Since they have nearly the same symbols, to differentiate the different part, we use
+subscript $1$ to denote the implementation suggested by @bell2002bias and @pustejovsky2018small,
+and use $2$ to denote the our implementation of covariance estimator in `mmrm`, we have
+
+\[
+  v_{1} = s C^\top(X^\top W X)^{-1}\sum_{i}{X_i^\top W_i A_{1, i} \epsilon_i \epsilon_i^\top A_{1, i} W_i X_i} (X^\top W X)^{-1} C
+\]
+
+\[
+  v_{2} = s C^\top(X^\top W X)^{-1}\sum_{i}{X_i^\top L_i A_{2, i} L_i^\top \epsilon_i \epsilon_i^\top L_i A_{2, i} L_i^\top X_i} (X^\top W X)^{-1} C
+\]
+
+Here we will prove that they are identical.
+
+## Proof of Identity
+
+### Proof for Covariance Estimator
+
+First of all, we assume that all $A_i$ matrix, in any form, are positive-definite.
+Comparing $v_{1}$ and $v_{2}$, we see that the different part is
+
+\[
+  M_{1, d, i} = W_i A_{1, i}
+\]
+and
+\[
+  M_{2, d, i} = L_i A_{2, i} L_i^\top
+\]
+
+Substitute $H_{1}$ and $H_{2}$ with its expression, we have
+
+\[
+  M_{1, d, i} = W_i (I_i - X_i (X^\top W X)^{-1} X_i^\top W_i)^d
+\]
+
+\[
+  M_{2, d, i} = L_i (I_i - L_i^\top X_i (X^\top W X)^{-1} X_i^\top L_i)^d L_i^\top
+\]
+
+Where $d$ takes $0$, $-1/2$ and $-1$ respectively.
+
+Apparently, if $d=0$, these two are identical because $W_i = L_i L_i^\top$.
+
+When $d = -1$, we have
+
+\[
+  M_{2, -1, i} = L_i (I_i - L_i^\top X_i (X^\top W X)^{-1} X_i^\top L_i)^{-1} L_i^\top \\
+  = (L_i^{-1})^{-1} (I_i - L_i^\top X_i (X^\top W X)^{-1} X_i^\top L_i)^{-1} ((L_i^\top)^{-1})^{-1} \\
+  = [((L_i^\top)^{-1})(I_i - L_i^\top X_i (X^\top W X)^{-1} X_i^\top L_i)(L_i^{-1})]^{-1} \\
+  = [(L_i^\top)^{-1}L_i^{-1} - X_i (X^\top W X)^{-1} X_i^\top]^{-1} \\
+  = (W_i^{-1} -  X_i (X^\top W X)^{-1} X_i^\top)^{-1}
+\]
+
+\[
+  M_{1, -1, i} = W_i (I_i - X_i (X^\top W X)^{-1} X_i^\top W_i)^{-1} \\
+  = (W_i^{-1})^{-1} (I_i - X_i (X^\top W X)^{-1} X_i^\top W_i)^{-1} \\
+  = [(I_i - X_i (X^\top W X)^{-1} X_i^\top W_i)((W_i^{-1}))]^{-1} \\
+  = (W_i^{-1} -  X_i (X^\top W X)^{-1} X_i^\top)^{-1}
+\]
+
+Obviously, $M_{2, -1, i} = M_{1, -1, i}$, and use the following notation
+
+\[
+  M_{2, -1, i} = L_i B_{2, i} L_i^\top
+\]
+
+\[
+  M_{1, -1, i} = W_i B_{1, i}
+\]
+
+we have
+
+\[
+  B_{1, i} = W_i^{-1} L_i B_{2, i} L_i^\top \\
+  = (L_i^\top)^{-1} B_{2, i} L_i^\top
+\]
+
+
+When $d = -1/2$, we have the following
+
+\[
+  M_{2, -1/2, i} = L_i (I_i - L_i^\top X_i (X^\top W X)^{-1} X_i^\top L_i)^{-1/2} L_i^\top \\
+  = L_i B_{2, i}^{1/2} L_i^\top
+\]
+
+\[
+  M_{1, -1/2, i} = W_i (I_i - X_i (X^\top W X)^{-1} X_i^\top W_i)^{-1/2} \\
+  = W_i B_{1, i}^{1/2}
+\]
+
+Apparently if $B_{1, i}^{1/2} \ne (L_i^\top)^{-1} B_{2, i}^{1/2} L_i^\top$,
+we should also have
+\[
+  B_{1, i}^{1/2} B_{1, i}^{1/2} \ne (L_i^\top)^{-1} B_{2, i}^{1/2} L_i^\top (L_i^\top)^{-1} B_{2, i}^{1/2} L_i^\top
+\]
+
+leading to
+
+\[
+  B_{1, i} \ne (L_i^\top)^{-1} B_{2, i} L_i^\top
+\]
+
+which is contradictory with our previous result.
+Thus, these covariance estimator are identical.
+
+### Proof for Degrees of Freedom
+
+To prove
+\[
+  G_{1, ij} = g_{1, i}^\top \Phi g_{1, j}
+\]
+and
+\[
+  G_{2, ij} = g_{2, i}^\top g_{2, j}
+\]
+are identical, we only need to prove that
+
+\[
+  L^{-1} g_{1, i} = g_{mmrm_i}
+\]
+
+where $\Phi = W^{-1}$ according to our previous expression.
+
+We first expand $L^{-1} g_{1, i}$ and $g_{mmrm_i}$
+
+\[
+  L^{-1} g_{1, i} = L^{-1} (I - X(X^\top W X)^{-1}X^\top W) S_i^\top A_{1, i}^d W_i X_i (X^\top W X)^{-1} C
+\]
+
+\[
+  g_{2, i} = (I - L_i^\top X(X^\top W X)^{-1}X^\top L_i) S_i^\top A_{2, i}^d L_i^\top X_i (X^\top W X)^{-1} C
+\]
+
+where $S_i$ is the row selection matrix.
+
+We will prove the inner part equal
+\[
+  L^{-1} (I - X(X^\top W X)^{-1}X^\top W) S_i^\top A_{1, i}^d W_i = (I - L^\top X(X^\top W X)^{-1}X^\top L) S_i^\top A_{2, i}^d L_i^\top
+\]
+
+With the previous proof of covariance estimators, we already have
+
+\[
+  M_{1, d, i} = W_i A_{1, i}^d = L_i A_{2, i}^d L_i^\top = M_{2, d, i}
+\]
+we then need to prove
+\[
+  L^{-1} (I - X(X^\top W X)^{-1}X^\top W) S_i^\top = (I - L^\top X(X^\top W X)^{-1}X^\top L) S_i^\top L_i^{-1}
+\]
+
+and note the relationship between $(I - X(X^\top W X)^{-1}X^\top W)$ and $(I - L^\top X(X^\top W X)^{-1}X^\top L)$
+has already been proved in covariance estimator section, we only need to prove
+
+\[
+  L^{-1} (I - X(X^\top W X)^{-1}X^\top W) S_i^\top = (I - L^\top X(X^\top W X)^{-1}X^\top L) S_i^\top L_i^{-1}
+\]
+
+Apparently
+
+\[
+  L^{-1} (I - X(X^\top W X)^{-1}X^\top W) S_i^\top = L^{-1} S_i^\top - L^{-1} X(X^\top W X)^{-1}X_i^\top W_i
+\]
+
+\[
+  (I - L^\top X(X^\top W X)^{-1}X^\top L) S_i^\top L_i^{-1} = S_i^\top L_i^{-1} - L^\top X(X^\top W X)^{-1}X_i^\top
+\]
+
+And obviously
+\[
+  L^{-1} S_i^\top = S_i^\top L_i^{-1}
+\]
+
+
+\[
+  L^{-1} X(X^\top W X)^{-1}X_i W_i = L^\top X(X^\top W X)^{-1}X_i^\top
+\]
+
+because of the following
+\[
+  (X(X^\top W X)^{-1}X_i W_i)_{i} = X_i(X^\top W X)^{-1}X_i W_i \\
+  = W_i X_i(X^\top W X)^{-1}X_i^\top \\
+  = (W X(X^\top W X)^{-1}X_i^\top)_{i}
+\]
+
+# Special Considerations in Implementations
+
+## Pseudo Inverse of a Matrix
+
+Empirical covariance matrix is involved with the inverse of a matrix, or symmetric square root of a matrix.
+To calculate this, we usually requires that the matrix is positive-definite.
+However, @young2016improved suggest that this is not always assured in practice.
+
+Thus, following @pustejovsky2018small, we use the pseudo inverse to avoid this.
+We follow the following logic (see the corresponding `C++` function `pseudoInverseSqrt`) to obtain the pseudo inverse:
+
+1. Conduct singular value decomposition.
+2. Use `cpow` to obtain the square root of the reciprocals of singular values, if the value is larger than a computational threshold;
+otherwise replace the value with 0.
+3. Reconstruct the pseudo inverse matrix from modified singular values and U/V matrix.
+
+In `Eigen` package, the pseudo inverse method is already implemented in [`Eigen::CompleteOrthogonalDecomposition< MatrixType_ >::pseudoInverse`](https://eigen.tuxfamily.org/dox/classEigen_1_1CompleteOrthogonalDecomposition.html#ab5e8b3f2c7b602772e1f1d7ce63d446e),
+but it is not used for the following reason:
+
+1. The pseudo inverse method is not stable and can lead to `NAN` in calculations.
+2. To find out the symmetric square root, singular value decomposition is still needed, so not using the method but instead
+calculating directly the square root of the pseudo inverse can be simpler.
+
+# References

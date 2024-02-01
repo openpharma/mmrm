@@ -1,0 +1,21 @@
+```{r, include = FALSE}
+library(mmrm)
+```
+
+## Low-level mmrm
+
+The lower level function which is called by [`mmrm()`](https://openpharma.github.io/mmrm/main/reference/mmrm.html) is [`fit_mmrm()`](https://openpharma.github.io/mmrm/main/reference/fit_mmrm.html). This
+function is exported and can be used directly. It is similar to [`mmrm()`](https://openpharma.github.io/mmrm/main/reference/mmrm.html) but lacks
+some post-processing and support for Satterthwaite and Kenward-Roger calculations.
+It may be useful for other packages that want to fit the model without
+the adjustment calculations.
+
+```{r low-level-hmmrmtmb}
+fit_mmrm(
+  formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data,
+  weights = rep(1, nrow(fev_data)),
+  reml = TRUE,
+  control = mmrm_control()
+)
+```

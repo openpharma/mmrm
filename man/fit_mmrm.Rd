@@ -10,6 +10,8 @@ fit_mmrm(
   weights,
   reml = TRUE,
   covariance = NULL,
+  tmb_data,
+  formula_parts,
   control = mmrm_control()
 )
 }
@@ -30,11 +32,17 @@ or value that can be coerced to a covariance structure using
 \code{\link[=as.cov_struct]{as.cov_struct()}}. If no value is provided, a structure is derived from
 the provided formula.}
 
+\item{tmb_data}{(\code{mmrm_tmb_data})\cr object.}
+
+\item{formula_parts}{(\code{mmrm_tmb_formula_parts})\cr list with formula parts
+from \code{\link[=h_mmrm_tmb_formula_parts]{h_mmrm_tmb_formula_parts()}}.}
+
 \item{control}{(\code{mmrm_control})\cr list of control options produced by
 \code{\link[=mmrm_control]{mmrm_control()}}.}
 }
 \value{
 List of class \code{mmrm_tmb}, see \code{\link[=h_mmrm_tmb_fit]{h_mmrm_tmb_fit()}} for details.
+In addition, it contains elements \code{call} and \code{optimizer}.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}

@@ -39,3 +39,11 @@ testthat-problems.rds
 README.md
 **/sascfg_personal.py
 .Rprofile
+/doc/
+/Meta/
+/vignettes/sascgf_personal.py
+simulations/chols/*chols
+renv
+renv.lock
+*.pyc
+nohup.out

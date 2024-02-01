@@ -1,15 +1,13 @@
 ---
-title: "Details of the Satterthwaite calculations"
+title: "Satterthwaite"
 package: mmrm
 bibliography: '`r system.file("REFERENCES.bib", package = "mmrm")`'
+csl: '`r system.file("jss.csl", package = "mmrm")`'
 output:
-  rmarkdown::html_document:
-          theme: "spacelab"
-          highlight: "kate"
+  rmarkdown::html_vignette:
           toc: true
-          toc_float: true
 vignette: |
-  %\VignetteIndexEntry{Details of the Satterthwaite calculations}
+  %\VignetteIndexEntry{Satterthwaite}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options:
@@ -87,14 +85,18 @@ $\hat\nu(\hat\theta)$.
 
 #### Jacobian calculation
 
-Currently, we evaluate the gradient of $\Phi(\theta)$ (which is created
-as an R function using `h_covbeta_fun()`) with regards to $\theta$
-evaluated at $\hat\theta$, i.e. the Jacobian $\mathcal{J}(\hat\theta)$,
-numerically using the `jacobian` function from the `numDeriv` package
-and organize it as a list (of length $k$ where $k$ is the dimension of
-the variance parameter vector $\theta$) of $c\times p$ matrices where
-$p$ is the dimension of $\beta$. This is implemented in function
-`h_jac_list()`.
+Currently, we evaluate the gradient of $\Phi(\theta)$ through function `h_jac_list()`.
+It uses automatic differentiation provided in `TMB`.
+
+We first obtain the Jacobian of the inverse of the covariance matrix of coefficient ($\Phi(\theta)^{-1}$), following
+the [Kenward-Roger calculations](kenward.html#special-considerations-for-mmrm-models).
+Please note that we only need $P_h$ matrices.
+
+Then, to obtain the Jacobian of the covariance matrix of coefficient, following the [algorithm](kenward.html#derivative-of-the-sigma-1),
+we use $\Phi(\theta)$ estimated in the fit to obtain the Jacobian.
+
+The result is a list (of length $k$ where $k$ is the dimension of the variance parameter $\theta$) of matrices of $p \times p$,
+where $p$ is the dimension of $\beta$.
 
 ### Multi-dimensional contrast
 

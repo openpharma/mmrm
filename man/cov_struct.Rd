@@ -42,8 +42,8 @@ cov_struct("spatial", c("VISITA", "VISITB"), group = "GRP", subject = "SBJ")
 
 }
 \seealso{
-Other \code{cov_struct}: 
+Other covariance types: 
 \code{\link{as.cov_struct}()},
 \code{\link{covariance_types}}
 }
-\concept{\code{cov_struct}}
+\concept{covariance types}

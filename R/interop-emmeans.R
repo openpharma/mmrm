@@ -5,6 +5,9 @@
 #' This package includes methods that allow `mmrm` objects to be used
 #' with the `emmeans` package. `emmeans` computes estimated marginal means
 #' (also called least-square means) for the coefficients of the MMRM.
+#' We can also e.g. obtain differences between groups by applying
+#' [`pairs()`][emmeans::pairs.emmGrid()] on the object returned
+#' by [emmeans::emmeans()].
 #'
 #' @examples
 #' fit <- mmrm(
@@ -13,6 +16,7 @@
 #' )
 #' if (require(emmeans)) {
 #'   emmeans(fit, ~ ARMCD | AVISIT)
+#'   pairs(emmeans(fit, ~ ARMCD | AVISIT), reverse = TRUE)
 #' }
 #' @name emmeans_support
 NULL
@@ -24,13 +28,15 @@ NULL
 #' @noRd
 recover_data.mmrm <- function(object, ...) { # nolint
   fun_call <- stats::getCall(object)
-  model_frame <- stats::model.frame(object)
+  # subject_var is excluded because it should not contain fixed effect.
+  # visit_var is not excluded because emmeans can provide marginal mean
+  # by each visit.
+  model_frame <- stats::model.frame(object, include = c("visit_var", "response_var", "group_var"))
   model_terms <- stats::delete.response(stats::terms(model_frame))
-  na_action <- attr(model_frame, "na.action")
   emmeans::recover_data(
     fun_call,
     trms = model_terms,
-    na.action = na_action,
+    na.action = "na.omit",
     frame = model_frame,
     ...
   )
@@ -56,7 +62,7 @@ emm_basis.mmrm <- function(object, # nolint
     beta_hat[kept] <- component(object, "beta_est")
     orig_model_mat <- stats::model.matrix(
       trms,
-      stats::model.frame(object),
+      stats::model.frame(object, include = c("visit_var", "response_var", "group_var")),
       contrasts.arg = contrasts
     )
     estimability::nonest.basis(orig_model_mat)
@@ -67,7 +73,6 @@ emm_basis.mmrm <- function(object, # nolint
   dffun <- function(k, dfargs) {
     mmrm::df_md(dfargs$object, contrast = k)$denom_df
   }
-
   list(
     X = model_mat,
     bhat = beta_hat,

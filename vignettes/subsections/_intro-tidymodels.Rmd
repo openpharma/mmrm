@@ -1,0 +1,136 @@
+```{r, include = FALSE}
+library(mmrm)
+```
+
+## Tidymodels
+
+`mmrm` is compatible to work in a `tidymodels` workflow. The following is an example of how such a workflow would be constructed.
+
+```{r, warning=FALSE, message=FALSE}
+library(tidymodels)
+```
+
+### Direct fit
+
+First we define the direct method to fit an `mmrm` model using the `parsnip` package functions `linear_reg()` and `set_engine()`.
+
+- `linear_reg()` defines a model that can predict numeric values from predictors using a linear function
+- `set_engine()` is used to specify which package or system will be used to fit the model, along with any arguments specific to that software. We can set the method to adjust degrees of freedom directly in the call.
+
+```{r}
+model <- linear_reg() |>
+  set_engine("mmrm", method = "Satterthwaite") |>
+  fit(FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID), fev_data)
+model
+```
+
+We can also pass in the full `mmrm_control` object into the `set_engine()` call:
+
+```{r}
+model_with_control <- linear_reg() |>
+  set_engine("mmrm", control = mmrm_control(method = "Satterthwaite")) |>
+  fit(FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID), fev_data)
+```
+
+### Predictions
+
+Lastly, we can also obtain predictions with the `predict()` method:
+
+```{r}
+predict(model, new_data = fev_data)
+```
+
+Note that we need to explicitly pass `new_data` because the method definition
+does not allow to default it to the data set we used for the model fitting automatically.
+
+By using the `type = "numeric"` default of `predict()` as above we cannot further customize the calculations. We obtain predicted values without confidence intervals or standard errors.
+
+On the other hand, when using `type = "raw"` we can customize the calculations via the `opts` list:
+
+```{r}
+predict(
+  model,
+  new_data = fev_data,
+  type = "raw",
+  opts = list(se.fit = TRUE, interval = "prediction", nsim = 10L)
+)
+```
+
+The result is now a matrix, because that is what the `predict()` method returns for `mmrm` objects. Note that this cannot be changed to return a `tibble` at the moment.
+
+Similarly, we can also use the `augment()` method to add predicted values to a new data set:
+
+```{r}
+augment(model, new_data = fev_data) |>
+  select(USUBJID, AVISIT, .resid, .pred)
+```
+
+Note that here we cannot customize the `predict` options as this is currently not supported by the `augment()` method in `parsnip`.
+
+### Using mmrm in workflows
+
+We can leverage the `workflows` package in order to fit the same model.
+
+- First we define the specification for linear regression with the mmrm engine.
+- Second we define the workflow, by defining the outcome and predictors that will be used in the formula. We then add the model using the formula.
+- Lastly, we fit the model
+
+```{r}
+mmrm_spec <- linear_reg() |>
+  set_engine("mmrm", method = "Satterthwaite")
+
+mmrm_wflow <- workflow() |>
+  add_variables(outcomes = FEV1, predictors = c(RACE, ARMCD, AVISIT, USUBJID)) |>
+  add_model(mmrm_spec, formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID))
+
+mmrm_wflow |>
+  fit(data = fev_data)
+```
+
+We can separate out the data preparation step from the modeling step using the `recipes` package. Here we are converting the `ARMCD` variable into a dummy variable and creating an interaction term with the new dummy variable and each visit.
+
+```{r}
+mmrm_recipe <- recipe(FEV1 ~ ., data = fev_data) |>
+  step_dummy(ARMCD) |>
+  step_interact(terms = ~ starts_with("ARMCD"):AVISIT)
+```
+
+Using `prep()` and `juice()` we can see what the transformed data that will be used in the model fit looks like.
+
+```{r}
+mmrm_recipe |>
+  prep() |>
+  juice()
+```
+
+We can pass the covariance structure as well in the `set_engine()` definition. This allows for more flexibility on presetting different covariance structures in the pipeline while keeping the data preparation step independent.
+
+```{r}
+mmrm_spec_with_cov <- linear_reg() |>
+  set_engine(
+    "mmrm",
+    method = "Satterthwaite",
+    covariance = as.cov_struct(~ us(AVISIT | USUBJID))
+  )
+```
+
+We combine these steps into a workflow:
+
+```{r}
+(mmrm_wflow_nocov <- workflow() |>
+  add_model(mmrm_spec_with_cov, formula = FEV1 ~ SEX) |>
+  add_recipe(mmrm_recipe))
+```
+
+Last step is to fit the data with the workflow object
+
+```{r}
+(fit_tidy <- fit(mmrm_wflow_nocov, data = fev_data))
+```
+
+To retrieve the fit object from within the workflow object run the following
+
+```{r}
+fit_tidy |>
+  hardhat::extract_fit_engine()
+```

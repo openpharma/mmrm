@@ -25,6 +25,35 @@ abbreviations.
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#maturing}{\figure{lifecycle-maturing.svg}{options: alt='[Maturing]'}}}{\strong{[Maturing]}}
 }
+\note{
+The \strong{ante-dependence} covariance structure in this package refers to
+homogeneous ante-dependence, while the ante-dependence covariance structure
+from SAS \verb{PROC MIXED} refers to heterogeneous ante-dependence and the
+homogeneous version is not available in SAS.
+
+For all non-spatial covariance structures, the time variable must
+be coded as a factor.
+\subsection{Spatial Covariance structures:}{
+
+\tabular{clll}{
+
+\strong{Structure}
+\tab \strong{Description}
+\tab \strong{Parameters}
+\tab \strong{\eqn{(i, j)} element}
+\cr
+
+sp_exp
+\tab spatial exponential
+\tab \eqn{2}
+\tab \eqn{\sigma^{2}\rho^{-d_{ij}}}
+
+}
+
+where \eqn{d_{ij}} denotes the Euclidean distance between time points
+\eqn{i} and \eqn{j}.
+}
+}
 \section{Abbreviations for Covariance Structures}{
 
 \subsection{Common Covariance Structures:}{
@@ -94,38 +123,12 @@ us
 
 where \eqn{i} and \eqn{j} denote \eqn{i}-th and \eqn{j}-th time points,
 respectively, out of total \eqn{m} time points, \eqn{1 \leq i, j \leq m}.
-
-Note the \strong{ante-dependence} covariance structure in this package refers to
-homogeneous ante-dependence, while the ante-dependence covariance structure
-from SAS \verb{PROC MIXED} refers to heterogeneous ante-dependence and the
-homogeneous version is not available in SAS.
-}
-
-\subsection{Spatial Covariance structures:}{
-
-\tabular{clll}{
-
-\strong{Structure}
-\tab \strong{Description}
-\tab \strong{Parameters}
-\tab \strong{\eqn{(i, j)} element}
-\cr
-
-sp_exp
-\tab spatial exponential
-\tab \eqn{2}
-\tab \eqn{\sigma^{2}\rho^{-d_{ij}}}
-
-}
-
-where \eqn{d_{ij}} denotes the Euclidean distance between time points
-\eqn{i} and \eqn{j}.
 }
 }
 
 \seealso{
-Other \code{cov_struct}: 
+Other covariance types: 
 \code{\link{as.cov_struct}()},
 \code{\link{cov_struct}()}
 }
-\concept{\code{cov_struct}}
+\concept{covariance types}

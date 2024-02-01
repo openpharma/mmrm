@@ -7,10 +7,53 @@ template:
     ganalytics: UA-125641273-1
 
 navbar:
-  right:
-    - icon: fa-github
+  structure:
+    left: [intro, reference, articles, tutorials, news, reports]
+    right: [search, github]
+  components:
+    reports:
+      text: Reports
+      menu:
+        - text: Coverage report
+          href: coverage-report/
+        - text: Unit test report
+          href: unit-test-report/
+    github:
+      icon: fa-github
       href: https://github.com/openpharma/mmrm
 
+articles:
+  - title: Introduction
+    navbar: Introduction
+    contents:
+      - introduction
+      - methodological_introduction
+      - mmrm_review_methods
+  - title: Covariance Structures
+    navbar: Covariance Structures
+    contents:
+      - covariance
+  - title: Degrees of Freedom and Testing
+    navbar: Degrees of Freedom and Testing
+    contents:
+      - hypothesis_testing
+      - between_within
+      - kenward
+      - satterthwaite
+  - title: Coefficient Covariance
+    navbar: Coefficient Covariance
+    contents:
+      - coef_vcov
+      - empirical_wls
+  - title: Algorithm Details
+    navbar: Algorithm Details
+    contents:
+      - algorithm
+      - predict
+  - title: Developers
+    navbar: Developers
+    contents:
+      - package_structure
 reference:
   - title: Package
     contents:
@@ -25,9 +68,14 @@ reference:
       - df_1d
       - df_md
       - component
+  - title: Start Values
+    contents:
+      - std_start
+      - emp_start
   - title: Methods
     contents:
       - mmrm_methods
+      - mmrm_tidiers
       - mmrm_tmb_methods
   - title: Covariance Structures
     contents:
@@ -42,6 +90,4 @@ reference:
   - title: Datasets
     contents:
       - fev_data
-  - title: Deprecated
-    contents:
-      - free_cores
+      - bcva_data

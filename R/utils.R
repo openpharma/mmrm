@@ -1,13 +1,16 @@
 #' Capture all Output
 #'
 #' This function silences all warnings, errors & messages and instead returns a list
-#' containing the results (if it didn't error) + the warning and error messages as
-#' character vectors.
+#' containing the results (if it didn't error), as well as the warnings, errors
+#' and messages and divergence signals as character vectors.
 #'
 #' @param expr (`expression`)\cr to be executed.
 #' @param remove (`list`)\cr optional list with elements `warnings`, `errors`,
 #'   `messages` which can be character vectors, which will be removed from the
 #'   results if specified.
+#' @param divergence (`list`)\cr optional list similar as `remove`, but these
+#'   character vectors will be moved to the `divergence` result and signal
+#'   that the fit did not converge.
 #'
 #' @return
 #' A list containing
@@ -16,9 +19,12 @@
 #' - `warnings`: `NULL` or a character vector if warnings were thrown.
 #' - `errors`: `NULL` or a string if an error was thrown.
 #' - `messages`: `NULL` or a character vector if messages were produced.
+#' - `divergence`: `NULL` or a character vector if divergence messages were caught.
 #'
 #' @keywords internal
-h_record_all_output <- function(expr, remove = list()) {
+h_record_all_output <- function(expr,
+                                remove = list(),
+                                divergence = list()) {
   # Note: We don't need to and cannot assert `expr` here.
   assert_list(remove)
   env <- new.env()
@@ -43,65 +49,16 @@ h_record_all_output <- function(expr, remove = list()) {
   )
   list(
     result = result,
-    warnings = setdiff(env$warning, remove$warnings),
-    errors = setdiff(env$error, remove$errors),
-    messages = setdiff(env$message, remove$messages)
+    warnings = setdiff(env$warning, c(remove$warnings, divergence$warnings)),
+    errors = setdiff(env$error, c(remove$errors, divergence$errors)),
+    messages = setdiff(env$message, c(remove$messages, divergence$messages)),
+    divergence = c(
+      intersect(env$warning, divergence$warnings),
+      intersect(env$error, divergence$errors),
+      intersect(env$message, divergence$messages)
+    )
   )
 }
-
-#' Get an approximate number of free cores.
-#'
-#' @description `r lifecycle::badge("deprecated")` use
-#' `parallelly::availableCores(omit = 1)` instead
-#'
-#' @return The approximate number of free cores, which is an integer between 1 and one less than
-#' the total cores.
-#'
-#' @details
-#' - This uses the maximum load average at 1, 5 and 15 minutes on Linux and Mac
-#' machines to approximate the number of busy cores. For Windows, the load percentage is
-#' multiplied with the total number of cores.
-#' - We then subtract this from the number of all detected cores. One additional core
-#' is not used for extra safety.
-#'
-#' @note If executed during a unit test and on CRAN then always returns 1 to avoid any
-#' parallelization.
-#'
-#' @export
-free_cores <- function() {
-  lifecycle::deprecate_warn(
-    "0.1.6", "free_cores()",
-    "parallelly::availableCores(omit = 'number of cores to reserve, e.g. 1')"
-  )
-  all_cores <- parallel::detectCores(all.tests = TRUE)
-  busy_cores <-
-    if (.Platform$OS.type == "windows") {
-      load_percent_string <- system("wmic cpu get loadpercentage", intern = TRUE)
-      # This gives e.g.: c("LoadPercentage", "10", "")
-      # So we just take the number here.
-      load_percent <- as.integer(min(load_percent_string[2L], 100))
-      if (test_int(load_percent, lower = 0, upper = 100)) {
-        ceiling(all_cores * load_percent / 100)
-      } else {
-        all_cores
-      }
-    } else if (.Platform$OS.type == "unix") {
-      uptime_string <- system("uptime", intern = TRUE)
-      # This gives e.g.:
-      # "11:00  up  1:57, 3 users, load averages: 2.71 2.64 2.62"
-      # Here we just want the last three numbers.
-      uptime_split <- strsplit(uptime_string, split = ",|\\s")[[1]] # Split at comma or white space.
-      uptime_split <- uptime_split[uptime_split != ""]
-      load_averages <- as.numeric(utils::tail(uptime_split, 3))
-      ceiling(max(load_averages))
-    }
-  assert_number(all_cores, lower = 1, finite = TRUE)
-  assert_number(busy_cores, lower = 0, upper = all_cores)
-  # For safety, we subtract 1 more core from all cores.
-  as.integer(max(1, all_cores - busy_cores - 1))
-}
-
-
 
 #' Trace of a Matrix
 #'
@@ -253,17 +210,19 @@ h_partial_fun_args <- function(fun, ..., additional_attr = list()) {
 #' @param method (`string`)\cr degrees of freedom method.
 #'
 #' @details The default covariance method is different for different degrees of freedom method.
-#' If degrees of freedom is "Satterthwaite", "Asymptotic" is returned.
-#' If degrees of freedom is "Kenward-Roger", then "Kenward-Roger" is returned.
+#' For "Satterthwaite" or "Between-Within", "Asymptotic" is returned.
+#' For "Kenward-Roger" only, "Kenward-Roger" is returned.
+#' For "Residual" only, "Empirical" is returned.
 #'
 #' @keywords internal
-h_get_cov_default <- function(method = c("Satterthwaite", "Kenward-Roger", "Residual")) {
+h_get_cov_default <- function(method = c("Satterthwaite", "Kenward-Roger", "Residual", "Between-Within")) {
   assert_string(method)
   method <- match.arg(method)
   switch(method,
     "Residual" = "Empirical",
     "Satterthwaite" = "Asymptotic",
-    "Kenward-Roger" = "Kenward-Roger"
+    "Kenward-Roger" = "Kenward-Roger",
+    "Between-Within" = "Asymptotic"
   )
 }
 
@@ -295,4 +254,234 @@ fill_names <- function(x) {
 #' @keywords internal
 drop_elements <- function(x, n) {
   x[seq_along(x) > n]
+}
+
+#' Ask for Confirmation on Large Visit Levels
+#'
+#' @description Ask the user for confirmation if there are too many visit levels
+#' for non-spatial covariance structure in interactive sessions.
+#'
+#' @param x (`numeric`)\cr number of visit levels.
+#'
+#' @keywords internal
+h_confirm_large_levels <- function(x) {
+  assert_count(x)
+  allowed_lvls <- x <= getOption("mmrm.max_visits", 100)
+  if (allowed_lvls) {
+    return(TRUE)
+  }
+  if (!interactive()) {
+    stop("Visit levels too large!", call. = FALSE)
+  }
+  proceed <- utils::askYesNo(
+    paste(
+      "Visit levels is possibly too large.",
+      "This requires large memory. Are you sure to continue?",
+      collapse = " "
+    )
+  )
+  if (!identical(proceed, TRUE)) {
+    stop("Visit levels too large!", call. = FALSE)
+  }
+  return(TRUE)
+}
+
+#' Default Value on NULL
+#' Return default value when first argument is NULL.
+#'
+#' @param x Object.
+#' @param y Object.
+#'
+#' @details If `x` is NULL, returns `y`. Otherwise return `x`.
+#'
+#' @keywords internal
+h_default_value <- function(x, y) {
+  if (is.null(x)) {
+    y
+  } else {
+    x
+  }
+}
+
+#' Convert Character to Factor Following Reference
+#'
+#' @param x (`character` or `factor`)\cr  input.
+#' @param ref (`factor`)\cr reference.
+#' @param var_name (`string`)\cr variable name of input `x`.
+#'
+#' @details Use `ref` to convert `x` into factor with the same levels.
+#' This is needed even if `x` and `ref` are both `character` because
+#' in `model.matrix` if `x` only has one level there could be errors.
+#'
+#' @keywords internal
+h_factor_ref <- function(x, ref, var_name = vname(x)) {
+  assert_multi_class(ref, c("character", "factor"))
+  assert_multi_class(x, c("character", "factor"))
+  # NA can be possible values
+  uni_values <- as.character(stats::na.omit(unique(x)))
+  # no NA in reference
+  uni_ref <- as.character(unique(ref))
+  assert_character(uni_values, .var.name = var_name)
+  assert_subset(uni_values, uni_ref, .var.name = var_name)
+  factor(x, levels = h_default_value(levels(ref), sort(uni_ref)))
+}
+
+#' Warn on na.action
+#' @keywords internal
+h_warn_na_action <- function() {
+  if (!identical(getOption("na.action"), "na.omit")) {
+    warning("na.action is always set to `na.omit` for `mmrm` fit!")
+  }
+}
+
+#' Validate mmrm Formula
+#' @param formula (`formula`)\cr to check.
+#'
+#' @details In mmrm models, `.` is not allowed as it introduces ambiguity of covariates
+#' to be used, so it is not allowed to be in formula.
+#'
+#' @keywords internal
+h_valid_formula <- function(formula) {
+  assert_formula(formula)
+  if ("." %in% all.vars(formula)) {
+    stop("`.` is not allowed in mmrm models!")
+  }
+}
+
+#' Standard Starting Value
+#'
+#' @description Obtain standard start values.
+#'
+#' @param cov_type (`string`)\cr name of the covariance structure.
+#' @param n_visits (`int`)\cr number of visits.
+#' @param n_groups (`int`)\cr number of groups.
+#' @param ... not used.
+#'
+#' @details
+#' `std_start` will try to provide variance parameter from identity matrix.
+#' However, for `ar1` and `ar1h` the corresponding values are not ideal because the
+#' \eqn{\rho} is usually a positive number thus using 0 as starting value can lead to
+#' incorrect optimization result, and we use 0.5 as the initial value of \eqn{\rho}.
+#'
+#' @return A numeric vector of starting values.
+#'
+#' @export
+std_start <- function(cov_type, n_visits, n_groups, ...) {
+  assert_string(cov_type)
+  assert_subset(cov_type, cov_types(c("abbr", "habbr")))
+  assert_int(n_visits, lower = 1L)
+  assert_int(n_groups, lower = 1L)
+  start_value <- switch(cov_type,
+    us = rep(0, n_visits * (n_visits + 1) / 2),
+    toep = rep(0, n_visits),
+    toeph = rep(0, 2 * n_visits - 1),
+    ar1 = c(0, 0.5),
+    ar1h = c(rep(0, n_visits), 0.5),
+    ad = rep(0, n_visits),
+    adh = rep(0, 2 * n_visits - 1),
+    cs = rep(0, 2),
+    csh = rep(0, n_visits + 1),
+    sp_exp = rep(0, 2)
+  )
+  rep(start_value, n_groups)
+}
+
+#' Empirical Starting Value
+#'
+#' @description Obtain empirical start value for unstructured covariance
+#'
+#' @param data (`data.frame`)\cr data used for model fitting.
+#' @param model_formula (`formula`)\cr the formula in mmrm model without covariance structure part.
+#' @param visit_var (`string`)\cr visit variable.
+#' @param subject_var (`string`)\cr subject id variable.
+#' @param subject_groups (`factor`)\cr subject group assignment.
+#' @param ... not used.
+#'
+#' @details
+#' This `emp_start` only works for unstructured covariance structure.
+#' It uses linear regression to first obtain the coefficients and use the residuals
+#' to obtain the empirical variance-covariance, and it is then used to obtain the
+#' starting values.
+#'
+#' @note `data` is used instead of `full_frame` because `full_frame` is already
+#' transformed if model contains transformations, e.g. `log(FEV1) ~ exp(FEV1_BL)` will
+#' drop `FEV1` and `FEV1_BL` but add `log(FEV1)` and `exp(FEV1_BL)` in `full_frame`.
+#'
+#' @return A numeric vector of starting values.
+#'
+#' @export
+emp_start <- function(data, model_formula, visit_var, subject_var, subject_groups, ...) {
+  assert_formula(model_formula)
+  assert_data_frame(data)
+  assert_subset(all.vars(model_formula), colnames(data))
+  assert_string(visit_var)
+  assert_string(subject_var)
+  assert_factor(data[[visit_var]])
+  n_visits <- length(levels(data[[visit_var]]))
+  assert_factor(data[[subject_var]])
+  subjects <- droplevels(data[[subject_var]])
+  n_subjects <- length(levels(subjects))
+  fit <- stats::lm(formula = model_formula, data = data)
+  res <- rep(NA, n_subjects * n_visits)
+  res[
+    n_visits * as.integer(subjects) - n_visits + as.integer(data[[visit_var]])
+  ] <- residuals(fit)
+  res_mat <- matrix(res, ncol = n_visits, nrow = n_subjects, byrow = TRUE)
+  emp_covs <- lapply(
+    unname(split(seq_len(n_subjects), subject_groups)),
+    function(x) {
+      stats::cov(res_mat[x, , drop = FALSE], use = "pairwise.complete.obs")
+    }
+  )
+  unlist(lapply(emp_covs, h_get_theta_from_cov))
+}
+#' Obtain Theta from Covariance Matrix
+#'
+#' @description Obtain unstructured theta from covariance matrix.
+#'
+#' @param covariance (`matrix`) of covariance matrix values.
+#'
+#' @details
+#' If the covariance matrix has `NA` in some of the elements, they will be replaced by
+#' 0 (non-diagonal) and 1 (diagonal). This ensures that the matrix is positive definite.
+#'
+#' @keywords internal
+h_get_theta_from_cov <- function(covariance) {
+  assert_matrix(covariance, mode = "numeric", ncols = nrow(covariance))
+  covariance[is.na(covariance)] <- 0
+  diag(covariance)[diag(covariance) == 0] <- 1
+  # empirical is not always positive definite in some special cases of numeric singularity.
+  qr_res <- qr(covariance)
+  if (qr_res$rank < ncol(covariance)) {
+    covariance <- Matrix::nearPD(covariance)$mat
+  }
+  emp_chol <- t(chol(covariance))
+  mat <- t(solve(diag(diag(emp_chol)), emp_chol))
+  ret <- c(log(diag(emp_chol)), mat[upper.tri(mat)])
+  unname(ret)
+}
+
+#' Register S3 Method
+#' Register S3 method to a generic.
+#'
+#' @param pkg (`string`) name of the package name.
+#' @param generic (`string`) name of the generic.
+#' @param class (`string`) class name the function want to dispatch.
+#' @param envir (`environment`) the location the method is defined.
+#'
+#' @details This function is adapted from `emmeans:::register_s3_method()`.
+#'
+#' @keywords internal
+h_register_s3 <- function(pkg, generic, class, envir = parent.frame()) {
+  assert_string(pkg)
+  assert_string(generic)
+  assert_string(class)
+  assert_environment(envir)
+  fun <- get(paste0(generic, ".", class), envir = envir)
+  if (isNamespaceLoaded(pkg)) {
+    registerS3method(generic, class, fun, envir = asNamespace(pkg))
+  }
+  setHook(packageEvent(pkg, "onLoad"), function(...) {
+    registerS3method(generic, class, fun, envir = asNamespace(pkg))
+  })
 }

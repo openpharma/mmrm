@@ -1,18 +1,22 @@
 # A function for plotting any given meal's mean fit time results.
 mean_fit_time_plot_fun <- function(eval_results) {
-
   fit_time_tbl <- eval_results$mean_fit_time %>%
     mutate(
       true_covar = ifelse(stringr::str_detect(.dgp_name, "_us"),
-                          "Unstructured",
-                          ifelse(stringr::str_detect(.dgp_name, "_csh"),
-                                 "Comp. Sym. (Het.)", "Toeplitz (Hom.)")),
+        "Unstructured",
+        ifelse(stringr::str_detect(.dgp_name, "_csh"),
+          "Comp. Sym. (Het.)", "Toeplitz (Hom.)"
+        )
+      ),
       effect_size = ifelse(stringr::str_detect(.dgp_name, "no_effect"),
-                           "No Effect",
-                           ifelse(stringr::str_detect(.dgp_name, "small_effect"),
-                                  "Small Effect", "Moderate Effect")),
+        "No Effect",
+        ifelse(stringr::str_detect(.dgp_name, "small_effect"),
+          "Small Effect", "Moderate Effect"
+        )
+      ),
       effect_size = factor(
-        effect_size, levels = c("No Effect", "Small Effect", "Moderate Effect")
+        effect_size,
+        levels = c("No Effect", "Small Effect", "Moderate Effect")
       )
     )
 

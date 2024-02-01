@@ -10,9 +10,13 @@ parsnip_add_mmrm(quietly = FALSE)
 \item{quietly}{logical: should progress and error messages be suppressed?}
 }
 \value{
-A logical value indicating whether registration was successful
+A logical value indicating whether registration was successful.
 }
 \description{
 Register \code{mmrm} For Use With \code{tidymodels}
+}
+\details{
+We can use \code{parsnip::show_model_info("linear_reg")} to check the
+registration with \code{parsnip} and thus the wider \code{tidymodels} ecosystem.
 }
 \keyword{internal}

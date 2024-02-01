@@ -1,0 +1,125 @@
+---
+title: "Between-Within"
+package: mmrm
+bibliography: '`r system.file("REFERENCES.bib", package = "mmrm")`'
+csl: '`r system.file("jss.csl", package = "mmrm")`'
+output:
+  rmarkdown::html_vignette:
+          toc: true
+vignette: |
+  %\VignetteIndexEntry{Between-Within}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options:
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(mmrm)
+```
+
+For determining the degrees of freedom (DF) required for the testing of fixed effects, 
+one option is to use the "between-within" method, originally proposed by @schluchter1990small as a small-sample adjustment.
+
+## General definition
+
+Using this method, the DF are determined by the grouping level at which the term is estimated. Generally, assuming $G$ levels of grouping:
+
+$DF_g=N_g-(N_{g-1}+p_g), g=1, ..., G+1$
+
+where $N_g$ is the number of groups at the $g$-th grouping level and $p_g$ is the number of parameters estimated at that level.
+
+$N_0=1$ if the model includes an intercept term and $N_0=0$ otherwise. Note however
+that the DF for the intercept term itself (when it is included) are calculated at the $G+1$ level, 
+i.e. for the intercept we use $DF_{G+1}$ degrees of freedom.
+
+We note that general contrasts $C\beta$ have not been considered in the literature so far. 
+Here we therefore use a pragmatic approach and define that for a general contrast matrix $C$
+we take the minimum DF across the involved coefficients as the DF.
+
+## MMRM special case
+
+In our case of an MMRM (with only fixed effect terms), there is only a single grouping level (subject), 
+so $G=1$. This means there are 3 potential "levels" of parameters (@galecki2013linear):
+
+* Level 0: The intercept term, assuming the model has been fitted with one. 
+  - We use $DF_2$ degrees of freedom as defined below.
+* Level 1: Effects that change between subjects, but not across observations within subjects.
+  - These are the "between parameters".
+  - The corresponding degrees of freedom are $DF_1 = N_1 - (N_0 + p_1)$.
+  - In words this can be read as:\
+    "Between" DF = "number of subjects" - ("1 if intercept otherwise 0" + "number of between parameters").
+* Level 2: Effects that change within subjects.
+  - These are the "within parameters".
+  - The corresponding degrees of freedom are $DF_2 = N_2 - (N_1 + p_2)$.
+  - In words this can be read as:\
+    "Within" DF = "number of observations" - ("number of subjects" + "number of within parameters").
+
+## Example
+
+Let's look at a concrete example and what the "between-within" degrees of freedom method gives as results:
+
+```{r}
+fit <- mmrm(
+  formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data,
+  control = mmrm_control(method = "Between-Within")
+)
+summary(fit)
+```
+
+Let's try to calculate the degrees of freedom manually now.
+
+In `fev_data` there are 197 subjects with at least one non-missing `FEV1` observation, and 537 non-missing observations in total. Therefore we obtain the following numbers of groups $N_g$ at the levels $g=1,2$:
+
+* $N_1 = 197$
+* $N_2 = 537$
+
+And we note that $N_0 = 1$ because we use an intercept term.
+
+Now let's look at the design matrix:
+
+```{r}
+head(model.matrix(fit), 1)
+```
+
+Leaving the intercept term aside, we therefore have the following number of parameters for the
+corresponding effects:
+
+* `RACE`: 2
+* `SEX`: 1
+* `ARMCD`: 1
+* `AVISIT`: 3
+* `ARMCD:AVISIT`: 3
+
+In the model above, `RACE`, `SEX` and `ARMCD` are between-subjects effects and belong to level 1; they do not vary within subject across the repeated observations. 
+On the other hand, `AVISIT` is a within-subject effect; it represents study visit, so naturally its value changes over repeated observations for each subject. Similarly, the interaction of `ARMCD` and `AVISIT` also belongs to level 2.
+
+Therefore we obtain the following numbers of parameters $p_g$ at the levels $g=1,2$:
+
+* $p_1 = 2 + 1 + 1 = 4$
+* $p_2 = 3 + 3 = 6$
+
+And we obtain therefore the degrees of freedom $DF_g$ at the levels $g=1,2$:
+
+* $DF_1 = N_1 - (N_0 + p_1) = 197 - (1 + 4) = 192$
+* $DF_2 = N_2 - (N_1 + p_2) = 537 - (197 + 6) = 334$
+
+So we can finally see that those degrees of freedom are exactly as displayed in the summary table above.
+
+## Differences compared to SAS
+
+The implementation described above is not identical to that of SAS. Differences include:
+
+* In SAS, when using an unstructured covariance matrix, all effects are assigned the between-subjects degrees of freedom.
+* In SAS, the within-subjects degrees of freedom are affected by the number of subjects in which the effect takes different values. 
+* In SAS, if there are multiple within-subject effects containing classification variables, the within-subject degrees of freedom are partitioned into components corresponding to the subject-by-effect interactions.
+* In SAS, the final effect you list in the `CONTRAST`/`ESTIMATE` statement is used to define the DF for general contrasts.
+
+Code contributions for adding the SAS version of between-within degrees of freedom to the `mmrm` package are welcome!
+
+## References

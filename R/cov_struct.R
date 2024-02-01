@@ -26,7 +26,7 @@
 #' }
 #'
 #' @keywords internal
-COV_TYPES <- local({  # nolint
+COV_TYPES <- local({ # nolint
   type <- function(name, abbr, habbr, heterogeneous, spatial) {
     args <- as.list(match.call()[-1])
     do.call(data.frame, args)
@@ -35,12 +35,12 @@ COV_TYPES <- local({  # nolint
   as.data.frame(
     col.names = names(formals(type)),
     rbind(
-      type("unstructured",              "us",     NA,      FALSE, FALSE),
-      type("Toeplitz",                  "toep",   "toeph", TRUE,  FALSE),
-      type("auto-regressive order one", "ar1",    "ar1h",  TRUE,  FALSE),
-      type("ante-dependence",           "ad",     "adh",   TRUE,  FALSE),
-      type("compound symmetry",         "cs",     "csh",   TRUE,  FALSE),
-      type("spatial exponential",       "sp_exp", NA,      FALSE, TRUE)
+      type("unstructured", "us", NA, FALSE, FALSE),
+      type("Toeplitz", "toep", "toeph", TRUE, FALSE),
+      type("auto-regressive order one", "ar1", "ar1h", TRUE, FALSE),
+      type("ante-dependence", "ad", "adh", TRUE, FALSE),
+      type("compound symmetry", "cs", "csh", TRUE, FALSE),
+      type("spatial exponential", "sp_exp", NA, FALSE, TRUE)
     )
   )
 })
@@ -128,10 +128,13 @@ COV_TYPES <- local({  # nolint
 #' where \eqn{i} and \eqn{j} denote \eqn{i}-th and \eqn{j}-th time points,
 #' respectively, out of total \eqn{m} time points, \eqn{1 \leq i, j \leq m}.
 #'
-#' Note the **ante-dependence** covariance structure in this package refers to
+#' @note The **ante-dependence** covariance structure in this package refers to
 #' homogeneous ante-dependence, while the ante-dependence covariance structure
 #' from SAS `PROC MIXED` refers to heterogeneous ante-dependence and the
 #' homogeneous version is not available in SAS.
+#'
+#' @note For all non-spatial covariance structures, the time variable must
+#' be coded as a factor.
 #'
 #' ## Spatial Covariance structures:
 #'
@@ -153,13 +156,12 @@ COV_TYPES <- local({  # nolint
 #' where \eqn{d_{ij}} denotes the Euclidean distance between time points
 #' \eqn{i} and \eqn{j}.
 #'
-#' @family `cov_struct`
+#' @family covariance types
 #' @name covariance_types
 #' @export
 cov_types <- function(
-  form = c("name", "abbr", "habbr"),
-  filter = c("heterogeneous", "spatial")
-) {
+    form = c("name", "abbr", "habbr"),
+    filter = c("heterogeneous", "spatial")) {
   form <- match.arg(form, several.ok = TRUE)
   filter <- if (missing(filter)) c() else match.arg(filter, several.ok = TRUE)
   df <- COV_TYPES[form][rowSums(!COV_TYPES[filter]) == 0, ]
@@ -226,15 +228,18 @@ tmb_cov_type <- function(cov) {
 #' cov_struct("csh", "AVISITN", "USUBJID")
 #' cov_struct("spatial", c("VISITA", "VISITB"), group = "GRP", subject = "SBJ")
 #'
-#' @family `cov_struct`
+#' @family covariance types
 #' @export
-cov_struct <- function(type = cov_types(), visits, subject, group = character(),
-  heterogeneous = FALSE) {
-
+cov_struct <- function(
+    type = cov_types(), visits, subject, group = character(),
+    heterogeneous = FALSE) {
   # if heterogeneous isn't provided, derive from provided type
   if (missing(heterogeneous)) {
     heterogeneous <- switch(type,
-      toeph = , ar1h = , adh = , csh = TRUE,
+      toeph = ,
+      ar1h = ,
+      adh = ,
+      csh = TRUE,
       heterogeneous
     )
   }
@@ -266,16 +271,22 @@ cov_struct <- function(type = cov_types(), visits, subject, group = character(),
 #'   are provided.
 #'
 #' @keywords internal
-reconcile_cov_struct <- function(formula = NULL, covariance = NULL) {
-  if (!is.null(covariance) && length(extract_covariance_terms(formula)) > 0) {
+h_reconcile_cov_struct <- function(formula = NULL, covariance = NULL) {
+  assert_multi_class(covariance, c("formula", "cov_struct"), null.ok = TRUE)
+  assert_formula(formula, null.ok = FALSE)
+  if (inherits(covariance, "formula")) {
+    covariance <- as.cov_struct(covariance)
+  }
+  if (!is.null(covariance) && length(h_extract_covariance_terms(formula)) > 0) {
     stop(paste0(
       "Redundant covariance structure definition in `formula` and ",
       "`covariance` arguments"
     ))
   }
 
-  if (!is.null(covariance))
+  if (!is.null(covariance)) {
     return(covariance)
+  }
 
   as.cov_struct(formula, warn_partial = FALSE)
 }
@@ -323,7 +334,8 @@ validate_cov_struct <- function(x) {
 #'
 #' @export
 format.cov_struct <- function(x, ...) {
-  sprintf("<covariance structure>\n%s%s:\n\n  %s | %s%s\n",
+  sprintf(
+    "<covariance structure>\n%s%s:\n\n  %s | %s%s\n",
     if (x$heterogeneous) "heterogeneous " else "",
     cov_type_name(x$type),
     format_symbols(x$visits),
@@ -379,14 +391,14 @@ print.cov_struct <- function(x, ...) {
 #'
 #' @examples
 #' # provide a covariance structure as a right-sided formula
-#' as.cov_struct( ~ csh(visit | group / subject) )
+#' as.cov_struct(~ csh(visit | group / subject))
 #'
 #' # when part of a full formula, suppress warnings using `warn_partial = FALSE`
-#' as.cov_struct( y ~ x + csh(visit | group / subject), warn_partial = FALSE)
+#' as.cov_struct(y ~ x + csh(visit | group / subject), warn_partial = FALSE)
 #'
-#' @family `cov_struct`
+#' @family covariance types
 #' @export
-as.cov_struct <- function(x, ...) {  # nolint
+as.cov_struct <- function(x, ...) { # nolint
   UseMethod("as.cov_struct")
 }
 
@@ -408,7 +420,7 @@ as.cov_struct.cov_struct <- function(x, ...) {
 #'
 #' @export
 as.cov_struct.formula <- function(x, warn_partial = TRUE, ...) {
-  x_calls <- extract_covariance_terms(x)
+  x_calls <- h_extract_covariance_terms(x)
 
   if (length(x_calls) < 1) {
     stop(

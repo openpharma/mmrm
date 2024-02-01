@@ -1,0 +1,321 @@
+```{r, include = FALSE}
+library(mmrm)
+```
+
+From the high-level [`mmrm()`](https://openpharma.github.io/mmrm/main/reference/mmrm.html)
+interface, common changes to the default function call can be specified.
+
+## Control Function
+
+For fine control, [`mmrm_control()`](https://openpharma.github.io/mmrm/main/reference/mmrm_control.html)
+is provided. This function allows the user to choose the adjustment method for
+the degrees of freedom and the coefficients covariance matrix, specify optimization routines,
+number of cores to be used on Unix systems for trying several optimizers in parallel,
+provide a vector of starting parameter values, decide the action to be taken when the
+defined design matrix is singular, not drop unobserved visit levels.
+For example:
+
+```{r low-level-control, results = 'hide'}
+mmrm_control(
+  method = "Kenward-Roger",
+  optimizer = c("L-BFGS-B", "BFGS"),
+  n_cores = 2,
+  start = c(0, 1, 1, 0, 1, 0),
+  accept_singular = FALSE,
+  drop_visit_levels = FALSE
+)
+```
+
+Note that this control list can either be passed via the `control` argument
+to `mmrm`, or selected controls can be directly specified in the `mmrm` call.
+We will see this below.
+
+### Starting Values
+
+The starting values will affect the optimization result. A better starting value
+usually can make the optimization more efficient.
+In `mmrm` we provide two starting value functions, one is `std_start` and the other is `emp_start`.
+`std_start` will try to use the identity matrix as the covariance, however there are convergence problems
+for `ar1` and `ar1h` if the identity matrix is provided, thus for these two covariance structures
+we use $\rho=0.5$ instead.
+`emp_start` will try to use the empirical covariance matrix of the residuals of the ordinary least squares model as the starting value for unstructured covariance structure.
+If some timepoints are missing from data, identity matrix will be used for that submatrix.
+The correlation between existing and non-existing timepoints are set to 0.
+
+As the starting values will affect the result, please be cautious on choosing the starting values.
+
+#### Example of Default Starting Value Fails
+
+Here we provide an example where the `std_start` fails.
+In the following code chunk, we will create a dummy dataset for mmrm analysis.
+
+```{r data_generation}
+gen_data <- function(
+    n = 100,
+    mu = -100 / 52,
+    delta = 50 / 52,
+    mua = 2000,
+    sigmaa = 300,
+    sigmab = 60,
+    corab = 0.2,
+    sigma = 10,
+    times = c(0, 2, 6, 12, 24, 36, 52, 70, 88, 104)) {
+  nt <- length(times)
+  out <- data.frame(
+    pts = rep(seq_len(n * 2), each = nt),
+    trt = rep(c("Treatment", "Placebo"), rep(n * nt, 2)),
+    time = rep(times, n * 2)
+  )
+
+  covab <- corab * sigmaa * sigmab # cov between a and b
+  cov <- matrix(c(sigmaa^2, covab, covab, sigmab^2), ncol = 2) # Cov matrix for the slope and intercept
+  si <- rbind(
+    MASS::mvrnorm(n, mu = c(mua, mu + delta), Sigma = cov),
+    MASS::mvrnorm(n, mu = c(mua, mu + delta), Sigma = cov)
+  )
+  idx <- rep(seq_len(n * 2), each = nt)
+  out$fev1 <- si[idx, 1] + si[idx, 2] * times + rnorm(n * nt * 2, sd = sigma)
+  out$trt <- factor(out$trt)
+  out$time <- factor(out$time)
+  out$pts <- factor(out$pts)
+  return(out)
+}
+set.seed(123)
+out <- gen_data()
+```
+
+In the generated data, the variance is not in the same scale across visits.
+
+```{r show_variance}
+vapply(split(out$fev1, out$time), sd, FUN.VALUE = 1)
+```
+
+Using `emp_start` as the starting value, `mmrm` will converge fast.
+
+```{r mmrm_using_emp_start, eval = !mmrm:::is_r_devel_linux_clang()}
+mmrm(fev1 ~ trt * time + us(time | pts), data = out, start = emp_start)
+```
+
+However, if we use `std_start`, there will be convergence problems.
+We can also force a specific optimization algorithm and add control details, here e.g. choosing `nlminb` with increased maximum number of function evaluations and iterations.
+
+```{r mmrm_using_std_start, eval = FALSE}
+mmrm(
+  fev1 ~ trt * time + us(time | pts),
+  data = out,
+  start = std_start,
+  optimizer = "nlminb",
+  optimizer_control = list(eval.max = 1000, iter.max = 1000)
+)
+```
+
+## REML or ML
+
+Users can specify if REML should be used (default) or if ML should be used in
+optimization.
+
+```{r common-changes-reml}
+fit_ml <- mmrm(
+  formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data,
+  reml = FALSE
+)
+fit_ml
+```
+
+## Optimizer
+
+Users can specify which optimizer should be used, changing from the default of
+four optimizers, which starts with `L-BFGS-B` and proceeds through the
+other choices if optimization fails to converge. Other choices are `BFGS`, `CG`, `nlminb` and other user-defined custom optimizers.
+
+`L-BFGS-B`, `BFGS` and `CG` are all implemented with `stats::optim()` and the Hessian
+is not used, while `nlminb` is using `stats::nlminb()` which in turn uses both the
+gradient and the Hessian (by default but can be switch off) for the optimization.
+
+```{r common-changes-optim}
+fit_opt <- mmrm(
+  formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data,
+  optimizer = "BFGS"
+)
+fit_opt
+```
+
+## Covariance Structure
+
+Covariance structures supported by the `mmrm` are being continuously developed.
+For a complete list and description please visit the [covariance vignette](covariance.html).
+Below we see the function call for homogeneous compound symmetry (`cs`).
+
+```{r common-changes-cov}
+fit_cs <- mmrm(
+  formula = FEV1 ~ RACE + ARMCD * AVISIT + cs(AVISIT | USUBJID),
+  data = fev_data,
+  reml = FALSE
+)
+fit_cs
+```
+
+The time points have to be unique for each subject. That is,
+there cannot be time points with multiple observations for any subject.
+The rationale is that these observations would need to be correlated, but it
+is not possible within the currently implemented covariance structure framework
+to do that correctly. Moreover, for non-spatial covariance structures, the time
+variable must be coded as a factor.
+
+## Weighting
+
+Users can perform weighted MMRM by specifying a numeric vector `weights` with positive values.
+
+```{r common-changes-weights}
+fit_wt <- mmrm(
+  formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data,
+  weights = fev_data$WEIGHT
+)
+fit_wt
+```
+
+## Grouped Covariance Structure
+
+Grouped covariance structures are supported by the`mmrm` package.
+Covariance matrices for each group are identically structured (unstructured, compound symmetry, etc) but the estimates are allowed to vary across groups.
+We use the form `cs(time | group / subject)` to specify the group variable.
+
+Here is an example of how we use `ARMCD` as group variable.
+
+```{r group-cov}
+fit_cs <- mmrm(
+  formula = FEV1 ~ RACE + ARMCD * AVISIT + cs(AVISIT | ARMCD / USUBJID),
+  data = fev_data,
+  reml = FALSE
+)
+VarCorr(fit_cs)
+```
+
+We can see that the estimated covariance matrices are different in different `ARMCD` groups.
+
+## Adjustment Method
+
+In additional to the residual and Between-Within degrees of freedom, both Satterthwaite and Kenward-Roger adjustment methods are available.
+The default is Satterthwaite adjustment of the degrees of freedom.
+To use e.g. the Kenward-Roger adjustment of the degrees of freedom as well as the coefficients covariance matrix, use the `method` argument:
+
+A list of all allowed `method` is
+
+1. "Kenward-Roger"
+1. "Satterthwaite"
+1. "Residual"
+1. "Between-Within"
+
+```{r kr}
+fit_kr <- mmrm(
+  formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data,
+  method = "Kenward-Roger"
+)
+```
+
+Note that this requires `reml = TRUE`, i.e. Kenward-Roger adjustment is not
+possible when using maximum likelihood inference.
+While this adjustment choice is not visible in the `print()` result of the fitted model
+(because the initial model fit is not affected by the choice of the
+adjustment method), looking at the `summary` we see the method and the
+correspondingly adjusted standard errors and degrees of freedom:
+
+```{r kr_summary}
+summary(fit_kr)
+```
+
+For one-dimensional contrasts as in the coefficients table above,
+the degrees of freedom are the same for Kenward-Roger and Satterthwaite.
+However, Kenward-Roger uses adjusted standard errors, hence the p-values
+are different.
+
+Note that if you would like to match SAS results for an unstructured
+covariance model, you can use the linear Kenward-Roger approximation:
+
+```{r kr_lin}
+fit_kr_lin <- mmrm(
+  formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data,
+  method = "Kenward-Roger",
+  vcov = "Kenward-Roger-Linear"
+)
+```
+
+This is due to the different parametrization of the unstructured covariance
+matrix, see the
+[Kenward-Roger vignette](kenward.html#parameterization-methods-and-kenward-roger)
+for details.
+
+## Variance-covariance for Coefficients
+
+There are multiple variance-covariance estimator available for the coefficients, including:
+
+1. "Asymptotic"
+1. "Empirical" (Cluster Robust Sandwich)
+1. "Empirical-Jackknife"
+1. "Empirical-Bias-Reduced"
+1. "Kenward-Roger"
+1. "Kenward-Roger-Linear"
+
+Please note that, not all combinations of variance-covariance for coefficients and method of
+degrees of freedom are possible, e.g. "Kenward-Roger" and "Kenward-Roger-Linear" are available only
+when the degrees of freedom method is "Kenward-Roger".
+
+Details can be found in [Coefficients Covariance Matrix Adjustment vignette](coef_vcov.html) and
+[Weighted Least Square Empirical Covariance](empirical_wls.html).
+
+An example of using other variance-covariance is:
+
+```{r}
+fit_emp <- mmrm(
+  formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data,
+  method = "Satterthwaite",
+  vcov = "Empirical"
+)
+```
+
+## Keeping Unobserved Visits
+
+Sometimes not all possible time points are observed in a given data set.
+When using a structured covariance matrix, e.g. with auto-regressive structure,
+then it can be relevant to keep the correct distance between the observed time
+points.
+
+Consider the following example where we have deliberately removed the `VIS3`
+observations from our initial example data set `fev_data` to obtain `sparse_data`.
+We first fit the model where we do not drop the visit level explicitly, using the
+`drop_visit_levels = FALSE` choice. Second we fit the model by default without
+this option.
+
+```{r sparse}
+sparse_data <- fev_data[fev_data$AVISIT != "VIS3", ]
+sparse_result <- mmrm(
+  FEV1 ~ RACE + ar1(AVISIT | USUBJID),
+  data = sparse_data,
+  drop_visit_levels = FALSE
+)
+
+dropped_result <- mmrm(
+  FEV1 ~ RACE + ar1(AVISIT | USUBJID),
+  data = sparse_data
+)
+```
+
+We see that we get a message about the dropped visit level by default.
+Now we can compare the estimated correlation matrices:
+
+```{r sparse_cor}
+cov2cor(VarCorr(sparse_result))
+cov2cor(VarCorr(dropped_result))
+```
+
+We see that when using the default, second result, we just drop the `VIS3` from
+the covariance matrix. As a consequence, we model the correlation between `VIS2`
+and `VIS4` the same as the correlation between `VIS1` and `VIS2`. Hence we get a smaller
+correlation estimate here compared to the first result, which includes `VIS3`
+explicitly.

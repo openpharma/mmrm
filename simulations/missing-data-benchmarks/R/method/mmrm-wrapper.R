@@ -17,15 +17,13 @@
 #' @return A fitted mmrm model object stored in a list. This lists also includes
 #'   an indicator for convergence status, and the fit time in seconds.
 mmrm_wrapper_fun <- function(
-  participant,
-  visit_num,
-  base_bcva,
-  strata,
-  trt,
-  bcva_change,
-  covar_type
-) {
-
+    participant,
+    visit_num,
+    base_bcva,
+    strata,
+    trt,
+    bcva_change,
+    covar_type) {
   ## assemble the vectors into a data.frame
   df <- assemble_df(
     participant,
@@ -48,32 +46,29 @@ mmrm_wrapper_fun <- function(
     fit_time <- microbenchmark::microbenchmark(
       fit <- safe_mmrm(
         formula = bcva_change ~ base_bcva + strata + trt * visit_num +
-          us(visit_num | participant), 
-        data = df
+          us(visit_num | participant), data = df,
+        optimizer = c("BFGS", "L-BFGS-B") # NOTE: Errors when using L-BFGS-B first
       ),
       times = 1L
     )
-
   } else if (covar_type == "csh") {
     fit_time <- microbenchmark::microbenchmark(
       fit <- safe_mmrm(
         formula = bcva_change ~ base_bcva + strata + trt * visit_num +
-          csh(visit_num | participant), 
-        data = df
+          csh(visit_num | participant), data = df,
+        optimizer = c("BFGS", "L-BFGS-B") # NOTE: Errors when using L-BFGS-B first
       ),
       times = 1L
     )
-
   } else if (covar_type == "toeph") {
     fit_time <- microbenchmark::microbenchmark(
       fit <- safe_mmrm(
         formula = bcva_change ~ base_bcva + strata + trt * visit_num +
-          toeph(visit_num | participant), 
-        data = df
+          toeph(visit_num | participant), data = df,
+        optimizer = c("BFGS", "L-BFGS-B") # NOTE: Errors when using L-BFGS-B first
       ),
       times = 1L
     )
-
   } else {
     stop("This covariance matrix is not supported by this wrapper function.")
   }

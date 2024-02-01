@@ -4,21 +4,26 @@
 \alias{register_on_load}
 \title{Helper Function for Registering Functionality With Suggests Packages}
 \usage{
-register_on_load(pkg, ver = c(NA, NA), callback, message = NULL)
+register_on_load(
+  pkg,
+  ver = c(NA_character_, NA_character_),
+  callback,
+  message = NULL
+)
 }
 \arguments{
-\item{pkg}{(\code{string})\cr A package name.}
+\item{pkg}{(\code{string})\cr package name.}
 
-\item{ver}{Accepts any object of length 2 whose elements can be provided to
-\code{numeric_version()}, representing a minimum and maximum (inclusive) version
+\item{ver}{(\code{character})\cr of length 2 whose elements can be provided to
+\code{\link[=numeric_version]{numeric_version()}}, representing a minimum and maximum (inclusive) version
 requirement for interoperability. When \code{NA}, no version requirement is
 imposed. Defaults to no version requirement.}
 
-\item{callback}{(\code{function(...) ANY})\cr A callback to execute upon package
+\item{callback}{(\code{function(...) ANY})\cr a callback to execute upon package
 load. Note that no arguments are passed to this function. Any necessary
 data must be provided upon construction.}
 
-\item{message}{(\code{NULL} or \code{string})\cr An optional message to print after
+\item{message}{(\code{NULL} or \code{string})\cr an optional message to print after
 the callback is executed upon successful registration.}
 }
 \value{

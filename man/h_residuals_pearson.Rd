@@ -4,12 +4,10 @@
 \alias{h_residuals_pearson}
 \title{Calculate Pearson Residuals}
 \usage{
-h_residuals_pearson(object, resids_unscaled)
+h_residuals_pearson(object)
 }
 \arguments{
 \item{object}{(\code{mmrm_tmb})\cr the fitted MMRM.}
-
-\item{resids_unscaled}{(\code{numeric})\cr the response residuals.}
 }
 \value{
 Vector of residuals.

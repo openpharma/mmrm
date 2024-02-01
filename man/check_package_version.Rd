@@ -4,13 +4,13 @@
 \alias{check_package_version}
 \title{Check Suggested Dependency Against Version Requirements}
 \usage{
-check_package_version(pkg, ver = c(NA, NA))
+check_package_version(pkg, ver = c(NA_character_, NA_character_))
 }
 \arguments{
-\item{pkg}{(\code{string})\cr A package name.}
+\item{pkg}{(\code{string})\cr package name.}
 
-\item{ver}{Accepts any object of length 2 whose elements can be provided to
-\code{numeric_version()}, representing a minimum and maximum (inclusive) version
+\item{ver}{(\code{character})\cr of length 2 whose elements can be provided to
+\code{\link[=numeric_version]{numeric_version()}}, representing a minimum and maximum (inclusive) version
 requirement for interoperability. When \code{NA}, no version requirement is
 imposed. Defaults to no version requirement.}
 }

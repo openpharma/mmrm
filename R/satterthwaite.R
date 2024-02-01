@@ -1,74 +1,23 @@
-#' Covariance Matrix for Coefficients Given Variance Parameters
-#'
-#' @description Obtain the covariance matrix function which accepts variance parameters as input.
-#' Used in [h_jac_list()] to to calculate the Jacobian matrix using numerical differentiation.
-#'
-#' @param model (`mmrm_tmb`)\cr initial model fit.
-#'
-#' @return Function with argument `theta` that calculates the covariance matrix
-#'   for the coefficient vector `beta`.
-#'
-#' @keywords internal
-h_covbeta_fun <- function(model) {
-  assert_class(model, "mmrm_tmb")
-
-  function(theta) {
-    reported <- model$tmb_object$report(theta)
-    reported$beta_vcov
-  }
-}
-
-#' Formatting a Column from Jacobian Matrix as Matrix
-#'
-#' @description Convert a column of Jacobian matrix into square matrix.
-#'
-#' @param jac_matrix (`matrix`)\cr full Jacobian matrix.
-#' @param col (`int`)\cr column index.
-#'
-#' @return The column `col` of `jac_matrix` as a square matrix.
-#'   Here the values in the column are used to fill the result column
-#'   by column.
-#'
-#' @keywords internal
-h_jac_col_as_matrix <- function(jac_matrix, col) {
-  assert_int(col)
-  assert_matrix(jac_matrix, min.cols = col)
-  p <- sqrt(nrow(jac_matrix))
-  assert_integerish(p)
-
-  jac_col <- jac_matrix[, col, drop = TRUE]
-  matrix(jac_col, nrow = p, ncol = p)
-}
-
 #' Obtain List of Jacobian Matrix Entries for Covariance Matrix
 #'
 #' @description Obtain the Jacobian matrices given the covariance function and variance parameters.
 #'
-#' @param covbeta_fun (`function`)\cr function calculating the covariance
-#'   matrix of coefficients given variance parameters (`theta`), see
-#'   [h_covbeta_fun()] to obtain this from a `mmrm_tmb` object.
+#' @param tmb_data (`mmrm_tmb_data`)\cr produced by [h_mmrm_tmb_data()].
 #' @param theta_est (`numeric`)\cr variance parameters point estimate.
+#' @param beta_vcov (`matrix`)\cr vairance covariance matrix of coefficients.
 #'
 #' @return List with one element per variance parameter containing a matrix
 #'   of the same dimensions as the covariance matrix. The values are the derivatives
 #'   with regards to this variance parameter.
 #'
 #' @keywords internal
-h_jac_list <- function(covbeta_fun,
-                       theta_est) {
-  assert_function(covbeta_fun, args = "theta")
-  assert_numeric(theta_est, any.missing = FALSE, min.len = 1L)
-
-  jac_matrix <- numDeriv::jacobian(
-    func = covbeta_fun,
-    x = theta_est,
-    method = "Richardson"
-  )
-  lapply(
-    seq_len(ncol(jac_matrix)),
-    FUN = h_jac_col_as_matrix,
-    jac_matrix = jac_matrix
-  )
+h_jac_list <- function(tmb_data,
+                       theta_est,
+                       beta_vcov) {
+  assert_class(tmb_data, "mmrm_tmb_data")
+  assert_numeric(theta_est)
+  assert_matrix(beta_vcov)
+  .Call(`_mmrm_get_jacobian`, PACKAGE = "mmrm", tmb_data, theta_est, beta_vcov)
 }
 
 #' Quadratic Form Calculations
@@ -149,46 +98,9 @@ h_gradient <- function(jac_list, contrast) {
   )
 }
 
-#' Creating Results List for One-Dimensional Contrast
-#'
-#' @description Creates a list of results for one-dimensional contrasts using the estimated
-#' values from quadratic form.
-#'
-#' @param est (`number`)\cr estimate.
-#' @param var (`number`)\cr variance of estimate.
-#' @param v_num (`number`)\cr numerator for Satterthwaite d.f.
-#' @param v_denom (`number`)\cr denominator for Satterthwaite d.f.
-#'
-#' @return List with `est`, `se`, `df`, `t_stat` and `p_val` (2-sided p-value).
-#'
-#' @keywords internal
-h_df_1d_list <- function(est,
-                         var,
-                         v_num,
-                         v_denom) {
-  assert_number(est)
-  assert_number(var, lower = .Machine$double.xmin)
-  assert_number(v_num, lower = .Machine$double.xmin)
-  assert_number(v_denom, lower = .Machine$double.xmin)
-
-  se <- sqrt(var)
-  t_stat <- est / se
-  df <- v_num / v_denom
-  p_val <- 2 * stats::pt(q = abs(t_stat), df = df, lower.tail = FALSE)
-
-  list(
-    est = est,
-    se = se,
-    df = df,
-    t_stat = t_stat,
-    p_val = p_val
-  )
-}
-
 #' Calculation of Satterthwaite Degrees of Freedom for One-Dimensional Contrast
 #'
-#' @description Calculates the estimate, standard error, degrees of freedom,
-#' t statistic and p-value for one-dimensional contrast. Used in [df_1d()] if method is
+#' @description Used in [df_1d()] if method is
 #' "Satterthwaite".
 #'
 #' @param object (`mmrm`)\cr the MMRM fit.
@@ -202,32 +114,20 @@ h_df_1d_sat <- function(object, contrast) {
   assert_class(object, "mmrm")
   contrast <- as.numeric(contrast)
   assert_numeric(contrast, len = length(component(object, "beta_est")))
-  est <- sum(contrast * component(object, "beta_est"))
-  var <- h_quad_form_vec(contrast, component(object, "beta_vcov"))
-  if (identical(object$vcov, "Asymptotic")) {
+
+  df <- if (identical(object$vcov, "Asymptotic")) {
     grad <- h_gradient(component(object, "jac_list"), contrast)
-    v_num <- 2 * var^2
+    v_num <- 2 * h_quad_form_vec(contrast, component(object, "beta_vcov"))^2
     v_denom <- h_quad_form_vec(grad, component(object, "theta_vcov"))
-    h_df_1d_list(
-      est = est,
-      var = var,
-      v_num = v_num,
-      v_denom = v_denom
-    )
-  } else if (object$vcov %in% c("Empirical", "Empirical-Jackknife")) {
+    v_num / v_denom
+  } else if (object$vcov %in% c("Empirical", "Empirical-Jackknife", "Empirical-Bias-Reduced")) {
     contrast_matrix <- Matrix::.bdiag(rep(list(matrix(contrast, nrow = 1)), component(object, "n_subjects")))
     contrast_matrix <- as.matrix(contrast_matrix)
     g_matrix <- h_quad_form_mat(contrast_matrix, object$empirical_df_mat)
-    df <- h_tr(g_matrix)^2 / sum(g_matrix^2)
-    se <- sqrt(var)
-    list(
-      est = est,
-      se = se,
-      df = df,
-      t_stat = est / se,
-      p_val = 2 * pt(abs(est / se), df = df, lower.tail = FALSE)
-    )
+    h_tr(g_matrix)^2 / sum(g_matrix^2)
   }
+
+  h_test_1d(object, contrast, df)
 }
 
 #' Calculating Denominator Degrees of Freedom for the Multi-Dimensional Case
@@ -259,38 +159,6 @@ h_md_denom_df <- function(t_stat_df) {
   }
 }
 
-#' Creating Results List for Multi-Dimensional Contrast
-#'
-#' @description Calculate the p-value using the F statistic and the numerator/denominator
-#' degrees of freedom and return a list.
-#'
-#' @param f_stat (`number`)\cr F-statistic.
-#' @param num_df (`number`)\cr numerator degrees of freedom.
-#' @param denom_df (`number`)\cr denominator degrees of freedom.
-#'
-#' @return List with `num_df`, `denom_df`, `f_stat` and `p_val` (2-sided p-value).
-#'
-#' @keywords internal
-h_df_md_list <- function(f_stat, num_df, denom_df) {
-  assert_number(f_stat, lower = .Machine$double.xmin)
-  assert_number(num_df, lower = 1)
-  assert_number(denom_df, lower = 2)
-
-  p_val <- stats::pf(
-    q = f_stat,
-    df1 = num_df,
-    df2 = denom_df,
-    lower.tail = FALSE
-  )
-
-  list(
-    num_df = num_df,
-    denom_df = denom_df,
-    f_stat = f_stat,
-    p_val = p_val
-  )
-}
-
 #' Creating F-Statistic Results from One-Dimensional Contrast
 #'
 #' @description Creates multi-dimensional result from one-dimensional contrast from [df_1d()].
@@ -298,23 +166,23 @@ h_df_md_list <- function(f_stat, num_df, denom_df) {
 #' @param object (`mmrm`)\cr model fit.
 #' @param contrast (`numeric`)\cr one-dimensional contrast.
 #'
-#' @return The one-dimensional results are calculated and then returned as per
-#'   [h_df_md_list()].
+#' @return The one-dimensional degrees of freedom are calculated and then
+#'   based on that the p-value is calculated.
 #'
 #' @keywords internal
 h_df_md_from_1d <- function(object, contrast) {
   res_1d <- h_df_1d_sat(object, contrast)
-  h_df_md_list(
-    f_stat = res_1d$t_stat^2,
+  list(
     num_df = 1,
-    denom_df = res_1d$df
+    denom_df = res_1d$df,
+    f_stat = res_1d$t_stat^2,
+    p_val = stats::pf(q = res_1d$t_stat^2, df1 = 1, df2 = res_1d$df, lower.tail = FALSE)
   )
 }
 
 #' Calculation of Satterthwaite Degrees of Freedom for Multi-Dimensional Contrast
 #'
-#' @description Calculates the degrees of freedom, F statistic and p value for multi-dimensional contrast.
-#' Used in [df_md()] if method is "Satterthwaite".
+#' @description Used in [df_md()] if method is "Satterthwaite".
 #'
 #' @param object (`mmrm`)\cr the MMRM fit.
 #' @param contrast (`matrix`)\cr numeric contrast matrix, if given a `numeric`
@@ -354,7 +222,7 @@ h_df_md_sat <- function(object, contrast) {
   t_squared <- t_squared_nums / t_squared_denoms
   f_stat <- sum(t_squared) / rank_cont_cov
   t_stat_df_nums <- 2 * eigen_cont_cov_vals^2
-  if (identical(object$vcov, "Asymptotic")) {
+  t_stat_df <- if (identical(object$vcov, "Asymptotic")) {
     grads_vctrs_cont_prod <- lapply(
       rank_seq,
       function(m) h_gradient(component(object, "jac_list"), contrast = vctrs_cont_prod[m, ])
@@ -365,9 +233,9 @@ h_df_md_sat <- function(object, contrast) {
       center = component(object, "theta_vcov"),
       numeric(1)
     )
-    t_stat_df <- t_stat_df_nums / t_stat_df_denoms
+    t_stat_df_nums / t_stat_df_denoms
   } else {
-    t_stat_df <- vapply(
+    vapply(
       rank_seq,
       function(m) {
         contrast_matrix <- Matrix::.bdiag(
@@ -382,9 +250,10 @@ h_df_md_sat <- function(object, contrast) {
   }
   denom_df <- h_md_denom_df(t_stat_df)
 
-  h_df_md_list(
-    f_stat = f_stat,
+  list(
     num_df = rank_cont_cov,
-    denom_df = denom_df
+    denom_df = denom_df,
+    f_stat = f_stat,
+    p_val = stats::pf(q = f_stat, df1 = rank_cont_cov, df2 = denom_df, lower.tail = FALSE)
   )
 }

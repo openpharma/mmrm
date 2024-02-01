@@ -8,7 +8,7 @@ test_that("mmrm_control works as expected", {
   expected <- structure(
     list(
       optimizers = result$optimizers,
-      start = NULL,
+      start = std_start,
       accept_singular = TRUE,
       method = "Satterthwaite",
       vcov = "Asymptotic",
@@ -152,27 +152,92 @@ test_that("h_mmrm_tmb_data works as expected", {
     fev_data,
     fev_data$WEIGHT,
     reml = FALSE,
-    accept_singular = FALSE,
+    singular = "error",
     drop_visit_levels = TRUE
   ))
   expect_class(result, "mmrm_tmb_data")
   expect_named(
     result,
     c(
-      "full_frame", "x_matrix", "x_cols_aliased", "coordinates", "y_vector",
-      "weights_vector", "visits_zero_inds", "n_visits", "n_subjects",
+      "full_frame", "data", "x_matrix", "x_cols_aliased", "coordinates", "y_vector",
+      "weights_vector", "n_visits", "n_subjects",
       "subject_zero_inds", "subject_n_visits", "cov_type", "is_spatial_int", "reml",
       "subject_groups", "n_groups"
     )
   )
   expect_matrix(result$x_matrix, nrows = 537, ncols = 3, any.missing = FALSE)
   expect_numeric(result$y_vector, len = 537, any.missing = FALSE)
-  expect_integer(result$visits_zero_inds, len = 537, lower = 0, upper = 3, any.missing = FALSE)
   expect_identical(result$n_visits, 4L) # 4 visits.
   expect_integer(result$subject_zero_inds, len = 197, unique = TRUE, sorted = TRUE, any.missing = FALSE)
   expect_identical(result$cov_type, "us") # unstructured.
   expect_identical(result$reml, 0L) # ML.
   expect_identical(result$subject_groups, factor(rep(0L, 197))) # all in the same group
+  expect_identical(result$n_groups, 1L) # number of groups
+})
+
+test_that("h_mmrm_tmb_data works as expected with allow_na_response", {
+  formula <- FEV1 ~ RACE + us(AVISIT | USUBJID)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula)
+  result <- expect_silent(h_mmrm_tmb_data(
+    formula_parts,
+    fev_data,
+    fev_data$WEIGHT,
+    reml = FALSE,
+    singular = "error",
+    drop_visit_levels = TRUE,
+    allow_na_response = TRUE
+  ))
+  expect_class(result, "mmrm_tmb_data")
+  expect_named(
+    result,
+    c(
+      "full_frame", "data", "x_matrix", "x_cols_aliased", "coordinates", "y_vector",
+      "weights_vector", "n_visits", "n_subjects",
+      "subject_zero_inds", "subject_n_visits", "cov_type", "is_spatial_int", "reml",
+      "subject_groups", "n_groups"
+    )
+  )
+  expect_matrix(result$x_matrix, nrows = 800, ncols = 3, any.missing = FALSE)
+  expect_numeric(result$y_vector, len = 800, any.missing = TRUE)
+  expect_identical(result$n_visits, 4L) # 4 visits.
+  expect_integer(result$subject_zero_inds, len = 200, unique = TRUE, sorted = TRUE, any.missing = FALSE)
+  expect_identical(result$cov_type, "us") # unstructured.
+  expect_identical(result$reml, 0L) # ML.
+  expect_identical(result$subject_groups, factor(rep(0L, 200L))) # all in the same group
+  expect_identical(result$n_groups, 1L) # number of groups
+})
+
+test_that("h_mmrm_tmb_data do not allow NA in covariates with allow_na_response", {
+  formula <- FEV1 ~ RACE + us(AVISIT | USUBJID)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula)
+  fev_data2 <- fev_data
+  fev_data2$RACE[1:20] <- NA
+  result <- expect_silent(h_mmrm_tmb_data(
+    formula_parts,
+    fev_data2,
+    fev_data$WEIGHT,
+    reml = FALSE,
+    singular = "error",
+    drop_visit_levels = TRUE,
+    allow_na_response = TRUE
+  ))
+  expect_class(result, "mmrm_tmb_data")
+  expect_named(
+    result,
+    c(
+      "full_frame", "data", "x_matrix", "x_cols_aliased", "coordinates", "y_vector",
+      "weights_vector", "n_visits", "n_subjects",
+      "subject_zero_inds", "subject_n_visits", "cov_type", "is_spatial_int", "reml",
+      "subject_groups", "n_groups"
+    )
+  )
+  expect_matrix(result$x_matrix, nrows = 780, ncols = 3, any.missing = FALSE)
+  expect_numeric(result$y_vector, len = 780, any.missing = TRUE)
+  expect_identical(result$n_visits, 4L) # 4 visits.
+  expect_integer(result$subject_zero_inds, len = 195, unique = TRUE, sorted = TRUE, any.missing = FALSE)
+  expect_identical(result$cov_type, "us") # unstructured.
+  expect_identical(result$reml, 0L) # ML.
+  expect_identical(result$subject_groups, factor(rep(0L, 195L))) # all in the same group
   expect_identical(result$n_groups, 1L) # number of groups
 })
 
@@ -184,21 +249,20 @@ test_that("h_mmrm_tmb_data works as expected for grouped covariance", {
     fev_data,
     reml = FALSE,
     weights = rep(1, nrow(fev_data)),
-    accept_singular = FALSE,
+    singular = "error",
     drop_visit_levels = TRUE
   ))
   expect_class(result, "mmrm_tmb_data")
   expect_named(
     result,
     c(
-      "full_frame", "x_matrix", "x_cols_aliased", "coordinates", "y_vector",
-      "weights_vector", "visits_zero_inds", "n_visits", "n_subjects", "subject_zero_inds",
+      "full_frame", "data", "x_matrix", "x_cols_aliased", "coordinates", "y_vector",
+      "weights_vector", "n_visits", "n_subjects", "subject_zero_inds",
       "subject_n_visits", "cov_type", "is_spatial_int", "reml", "subject_groups", "n_groups"
     )
   )
   expect_matrix(result$x_matrix, nrows = 537, ncols = 3, any.missing = FALSE)
   expect_numeric(result$y_vector, len = 537, any.missing = FALSE)
-  expect_integer(result$visits_zero_inds, len = 537, lower = 0, upper = 3, any.missing = FALSE)
   expect_identical(result$n_visits, 4L) # 4 visits.
   expect_integer(result$subject_zero_inds, len = 197, unique = TRUE, sorted = TRUE, any.missing = FALSE)
   expect_identical(result$cov_type, "us") # unstructured.
@@ -215,15 +279,15 @@ test_that("h_mmrm_tmb_data works as expected for mutli-dimensional spatial expon
     fev_data,
     reml = FALSE,
     weights = rep(1, nrow(fev_data)),
-    accept_singular = FALSE,
+    singular = "error",
     drop_visit_levels = TRUE
   ))
   expect_class(result, "mmrm_tmb_data")
   expect_named(
     result,
     c(
-      "full_frame", "x_matrix", "x_cols_aliased", "coordinates", "y_vector",
-      "weights_vector", "visits_zero_inds", "n_visits", "n_subjects", "subject_zero_inds",
+      "full_frame", "data", "x_matrix", "x_cols_aliased", "coordinates", "y_vector",
+      "weights_vector", "n_visits", "n_subjects", "subject_zero_inds",
       "subject_n_visits", "cov_type", "is_spatial_int", "reml", "subject_groups", "n_groups"
     )
   )
@@ -248,7 +312,7 @@ test_that("h_mmrm_tmb_data works also for character ID variable", {
     dat,
     weights = rep(1, nrow(dat)),
     reml = FALSE,
-    accept_singular = FALSE,
+    singular = "error",
     drop_visit_levels = TRUE
   ))
   expected <- expect_silent(h_mmrm_tmb_data(
@@ -256,7 +320,7 @@ test_that("h_mmrm_tmb_data works also for character ID variable", {
     fev_data,
     weights = rep(1, nrow(fev_data)),
     reml = FALSE,
-    accept_singular = FALSE,
+    singular = "error",
     drop_visit_levels = TRUE
   ))
   expect_identical(result, expected)
@@ -271,7 +335,7 @@ test_that("h_mmrm_tmb_data correctly processes design matrix below full rank cor
     dat,
     weights = rep(1, nrow(dat)),
     reml = FALSE,
-    accept_singular = TRUE,
+    singular = "drop",
     drop_visit_levels = TRUE
   ))
   assert_true(qr(result$x_matrix)$rank == ncol(result$x_matrix))
@@ -289,7 +353,7 @@ test_that("h_mmrm_tmb_data gives error for rank deficient design matrix when not
       dat,
       weights = rep(1, nrow(dat)),
       reml = FALSE,
-      accept_singular = FALSE,
+      singular = "error",
       drop_visit_levels = TRUE
     ),
     paste(
@@ -329,7 +393,7 @@ test_that("h_mmrm_tmb_data catches case with multiple time points per subject ea
       data = dat,
       weights = rep_len(1, nrow(dat)),
       reml = TRUE,
-      accept_singular = TRUE,
+      singular = "error",
       drop_visit_levels = TRUE
     ),
     paste0(
@@ -349,7 +413,7 @@ test_that("h_mmrm_tmb_data has no side effect of overwrite the weights in global
     data = fev_data,
     weights = rep_len(1, nrow(fev_data)),
     reml = TRUE,
-    accept_singular = TRUE,
+    singular = "error",
     drop_visit_levels = TRUE
   )
   expect_identical(weights, "this is global weights")
@@ -365,11 +429,84 @@ test_that("h_mmrm_tmb_data will not be affecte by `weights` in data", {
     data = fev_data,
     weights = rep_len(1, nrow(fev_data)),
     reml = TRUE,
-    accept_singular = TRUE,
+    singular = "error",
     drop_visit_levels = TRUE
   )
   expect_identical(res$weights_vector, rep_len(1, nrow(res$x_matrix)))
   expect_identical(fev_data$weights, weights)
+})
+
+test_that("h_mmrm_tmb_data works even if na.action is not na.omit", {
+  na_action <- getOption("na.action")
+  on.exit(options(na.action = na_action))
+  options(na.action = "na.omit")
+  formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula)
+  res1 <- h_mmrm_tmb_data(
+    formula_parts,
+    data = fev_data,
+    weights = rep_len(1, nrow(fev_data)),
+    reml = TRUE,
+    singular = "error",
+    drop_visit_levels = TRUE
+  )
+  options(na.action = "na.pass")
+  expect_warning(
+    res2 <- h_mmrm_tmb_data(
+      formula_parts,
+      data = fev_data,
+      weights = rep_len(1, nrow(fev_data)),
+      reml = TRUE,
+      singular = "error",
+      drop_visit_levels = TRUE
+    ),
+    "na.action is always set to `na.omit` for `mmrm` fit!"
+  )
+  expect_identical(res1, res2)
+
+  options(na.action = "na.fail")
+  expect_warning(
+    res3 <- h_mmrm_tmb_data(
+      formula_parts,
+      data = fev_data,
+      weights = rep_len(1, nrow(fev_data)),
+      reml = TRUE,
+      singular = "error",
+      drop_visit_levels = TRUE
+    ),
+    "na.action is always set to `na.omit` for `mmrm` fit!"
+  )
+  expect_identical(res1, res3)
+
+  options(na.action = "na.exclude")
+  expect_warning(
+    res4 <- h_mmrm_tmb_data(
+      formula_parts,
+      data = fev_data,
+      weights = rep_len(1, nrow(fev_data)),
+      reml = TRUE,
+      singular = "error",
+      drop_visit_levels = TRUE
+    ),
+    "na.action is always set to `na.omit` for `mmrm` fit!"
+  )
+  expect_identical(res1, res4)
+})
+
+test_that("h_mmrm_tmb_data errors if too many visit levels", {
+  skip_if(interactive())
+  formula <- FEV1 ~ RACE + us(AVISIT | USUBJID)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula)
+  options("mmrm.max_visits" = 2)
+  on.exit(options("mmrm.max_visits" = NULL))
+  result <- expect_error(h_mmrm_tmb_data(
+    formula_parts,
+    fev_data,
+    fev_data$WEIGHT,
+    reml = FALSE,
+    singular = "error",
+    drop_visit_levels = TRUE
+  ), "Visit levels too large!")
 })
 
 # h_mmrm_tmb_parameters ----
@@ -382,7 +519,7 @@ test_that("h_mmrm_tmb_parameters works as expected without start values", {
     fev_data,
     weights = rep(1, nrow(fev_data)),
     reml = TRUE,
-    accept_singular = FALSE,
+    singular = "error",
     drop_visit_levels = TRUE
   )
   result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
@@ -398,7 +535,7 @@ test_that("h_mmrm_tmb_parameters works as expected with start values", {
     fev_data,
     weights = rep(1, nrow(fev_data)),
     reml = TRUE,
-    accept_singular = FALSE,
+    singular = "error",
     drop_visit_levels = TRUE
   )
   start <- 1:10
@@ -415,7 +552,7 @@ test_that("h_mmrm_tmb_parameters works as expected with antedependence", {
     fev_data,
     weights = rep(1, nrow(fev_data)),
     reml = TRUE,
-    accept_singular = FALSE,
+    singular = "error",
     drop_visit_levels = TRUE
   )
   result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
@@ -431,7 +568,7 @@ test_that("h_mmrm_tmb_parameters works as expected with heterogeneous antedepend
     fev_data,
     weights = rep(1, nrow(fev_data)),
     reml = TRUE,
-    accept_singular = FALSE,
+    singular = "error",
     drop_visit_levels = TRUE
   )
   result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
@@ -447,7 +584,7 @@ test_that("h_mmrm_tmb_parameters works as expected with Toeplitz", {
     fev_data,
     weights = rep(1, nrow(fev_data)),
     reml = TRUE,
-    accept_singular = FALSE,
+    singular = "error",
     drop_visit_levels = TRUE
   )
   result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
@@ -463,7 +600,7 @@ test_that("h_mmrm_tmb_parameters works as expected with heterogeneous Toeplitz",
     fev_data,
     weights = rep(1, nrow(fev_data)),
     reml = TRUE,
-    accept_singular = FALSE,
+    singular = "error",
     drop_visit_levels = TRUE
   )
   result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
@@ -479,7 +616,7 @@ test_that("h_mmrm_tmb_parameters works as expected with autoregressive", {
     fev_data,
     weights = rep(1, nrow(fev_data)),
     reml = TRUE,
-    accept_singular = FALSE,
+    singular = "error",
     drop_visit_levels = TRUE
   )
   result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
@@ -495,7 +632,7 @@ test_that("h_mmrm_tmb_parameters works as expected with heterogeneous autoregres
     fev_data,
     weights = rep(1, nrow(fev_data)),
     reml = TRUE,
-    accept_singular = FALSE,
+    singular = "error",
     drop_visit_levels = TRUE
   )
   result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
@@ -511,7 +648,7 @@ test_that("h_mmrm_tmb_parameters works as expected with compound symmetry", {
     fev_data,
     weights = rep(1, nrow(fev_data)),
     reml = TRUE,
-    accept_singular = FALSE,
+    singular = "error",
     drop_visit_levels = TRUE
   )
   result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
@@ -527,7 +664,7 @@ test_that("h_mmrm_tmb_parameters works as expected with heterogeneous compound s
     fev_data,
     weights = rep(1, nrow(fev_data)),
     reml = TRUE,
-    accept_singular = FALSE,
+    singular = "error",
     drop_visit_levels = TRUE
   )
   result <- expect_silent(h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL))
@@ -542,7 +679,7 @@ test_that("h_mmrm_tmb_parameters works as expected with spatial exponential", {
     formula_parts,
     fev_data,
     reml = TRUE,
-    accept_singular = FALSE,
+    singular = "error",
     weights = rep(1, nrow(fev_data)),
     drop_visit_levels = TRUE
   )
@@ -638,6 +775,42 @@ test_that("h_mmrm_tmb_check_conv warns if convergence code signals non-convergen
   )
 })
 
+test_that("h_mmrm_tmb_check_conv warns if theta_vcov contains missing value", {
+  tmb_opt <- list(
+    par = 1:5,
+    objective = 10,
+    convergence = 0,
+    message = NULL
+  )
+  mmrm_tmb <- structure(
+    list(theta_vcov = diag(NA, nrow = 2)),
+    class = "mmrm_tmb"
+  )
+  expect_warning(
+    h_mmrm_tmb_check_conv(tmb_opt, mmrm_tmb),
+    "Model convergence problem: theta_vcov contains non-finite values."
+  )
+})
+
+test_that("h_mmrm_tmb_check_conv warns if theta_vcov is singular", {
+  tmb_opt <- list(
+    par = 1:5,
+    objective = 10,
+    convergence = 0,
+    message = NULL
+  )
+  chol_m <- matrix(c(1, 0, 0, 2, 3, 0, 0, 0, 0), nrow = 3)
+
+  mmrm_tmb <- structure(
+    list(theta_vcov = chol_m %*% t(chol_m)),
+    class = "mmrm_tmb"
+  )
+  expect_warning(
+    h_mmrm_tmb_check_conv(tmb_opt, mmrm_tmb),
+    "Model convergence problem: theta_vcov is numerically singular."
+  )
+})
+
 # h_mmrm_tmb_extract_cov ----
 
 test_that("h_mmrm_tmb_extract_cov works as expected", {
@@ -648,7 +821,7 @@ test_that("h_mmrm_tmb_extract_cov works as expected", {
     fev_data,
     reml = FALSE,
     weights = rep(1, nrow(fev_data)),
-    accept_singular = FALSE,
+    singular = "error",
     drop_visit_levels = TRUE
   )
   tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL)
@@ -686,7 +859,7 @@ test_that("h_mmrm_tmb_extract_cov works as expected for group covariance", {
     fev_data,
     reml = FALSE,
     weights = rep(1, nrow(fev_data)),
-    accept_singular = FALSE,
+    singular = "error",
     drop_visit_levels = TRUE
   )
   tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL, n_groups = 2L)
@@ -731,7 +904,7 @@ test_that("h_mmrm_tmb_fit works as expected", {
     fev_data,
     weights = weights,
     reml = FALSE,
-    accept_singular = FALSE,
+    singular = "error",
     drop_visit_levels = TRUE
   )
   tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL)
@@ -752,15 +925,13 @@ test_that("h_mmrm_tmb_fit works as expected", {
   result <- expect_silent(h_mmrm_tmb_fit(
     tmb_object,
     tmb_opt,
-    fev_data,
-    weights,
     formula_parts,
     tmb_data
   ))
   expect_class(result, "mmrm_tmb")
   expect_named(result, c(
-    "cov", "beta_est", "beta_vcov", "theta_est", "theta_vcov",
-    "neg_log_lik", "formula_parts", "data", "weights",
+    "cov", "beta_est", "beta_vcov", "beta_vcov_inv_L", "beta_vcov_inv_D",
+    "theta_est", "theta_vcov", "neg_log_lik", "formula_parts", "data", "weights",
     "reml", "opt_details", "tmb_object", "tmb_data"
   ))
   expect_identical(rownames(result$cov), c("VIS1", "VIS2", "VIS3", "VIS4"))
@@ -768,6 +939,19 @@ test_that("h_mmrm_tmb_fit works as expected", {
   expect_named(result$beta_est, colnames(tmb_data$x_matrix))
   expect_identical(rownames(result$beta_vcov), colnames(tmb_data$x_matrix))
   expect_identical(colnames(result$beta_vcov), colnames(tmb_data$x_matrix))
+
+  # Check LDL^T decomposition of inverse beta_vcov.
+  expect_matrix(result$beta_vcov_inv_L, nrows = nrow(result$beta_vcov), ncols = ncol(result$beta_vcov))
+  expect_numeric(result$beta_vcov_inv_L[lower.tri(result$beta_vcov_inv_L)], any.missing = FALSE)
+  expect_true(all(result$beta_vcov_inv_L[lower.tri(result$beta_vcov_inv_L)] != 0))
+  expect_true(all(diag(result$beta_vcov_inv_L) == 1))
+  expect_true(all(result$beta_vcov_inv_L[upper.tri(result$beta_vcov_inv_L)] == 0))
+  expect_numeric(result$beta_vcov_inv_D, lower = .Machine$double.xmin, len = nrow(result$beta_vcov))
+  expect_equal(
+    with(result, unname(beta_vcov) %*% beta_vcov_inv_L %*% diag(beta_vcov_inv_D) %*% t(beta_vcov_inv_L)),
+    diag(nrow(result$beta_vcov))
+  )
+
   expect_matrix(result$theta_vcov, nrows = length(result$theta_est), ncols = length(result$theta_est))
   expect_number(result$neg_log_lik)
   expect_list(result$formula_parts)
@@ -787,7 +971,7 @@ test_that("h_mmrm_tmb_fit works as expected for grouped covariance", {
     fev_data,
     reml = TRUE,
     weights = weights,
-    accept_singular = TRUE,
+    singular = "drop",
     drop_visit_levels = TRUE
   )
   tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL, n_groups = tmb_data$n_groups)
@@ -806,13 +990,13 @@ test_that("h_mmrm_tmb_fit works as expected for grouped covariance", {
     )
   )
   result <- expect_silent(h_mmrm_tmb_fit(
-    tmb_object, tmb_opt, fev_data, weights, formula_parts, tmb_data
+    tmb_object, tmb_opt, formula_parts, tmb_data
   ))
   expect_class(result, "mmrm_tmb")
   expect_named(result, c(
-    "cov", "beta_est", "beta_vcov", "theta_est", "theta_vcov",
-    "neg_log_lik", "formula_parts", "data", "weights", "reml", "opt_details", "tmb_object",
-    "tmb_data"
+    "cov", "beta_est", "beta_vcov", "beta_vcov_inv_L", "beta_vcov_inv_D",
+    "theta_est", "theta_vcov", "neg_log_lik", "formula_parts", "data", "weights",
+    "reml", "opt_details", "tmb_object", "tmb_data"
   ))
   expect_identical(rownames(result$cov$PBO), c("VIS1", "VIS2", "VIS3", "VIS4"))
   expect_identical(colnames(result$cov$PBO), c("VIS1", "VIS2", "VIS3", "VIS4"))
@@ -831,49 +1015,11 @@ test_that("h_mmrm_tmb_fit works as expected for grouped covariance", {
   expect_class(result$tmb_data, "mmrm_tmb_data")
 })
 
-test_that("h_mmrm_tmb_fit errors when an invalid covariance type is used", {
-  formula <- FEV1 ~ RACE + us(AVISIT | USUBJID)
-  formula_parts <- h_mmrm_tmb_formula_parts(formula)
-
-  tmb_data <- h_mmrm_tmb_data(
-    formula_parts,
-    fev_data,
-    weights = rep(1, nrow(fev_data)),
-    reml = FALSE,
-    accept_singular = FALSE,
-    drop_visit_levels = TRUE
-  )
-  tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL)
-
-  tmb_data$cov_type <- "gaaah"
-  expect_error(
-    TMB::MakeADFun(
-      data = tmb_data,
-      parameters = tmb_parameters,
-      hessian = TRUE,
-      DLL = "mmrm",
-      silent = TRUE
-    ),
-    "Unknown covariance type 'gaaah'"
-  )
-  tmb_data$is_spatial <- TRUE
-  expect_error(
-    TMB::MakeADFun(
-      data = tmb_data,
-      parameters = tmb_parameters,
-      hessian = TRUE,
-      DLL = "mmrm",
-      silent = TRUE
-    ),
-    "Unknown covariance type 'gaaah'"
-  )
-})
-
-# h_mmrm_tmb ----
+# fit_mmrm ----
 
 ## unstructured ----
 
-test_that("h_mmrm_tmb works as expected in a simple model without covariates and ML", {
+test_that("fit_mmrm works as expected in a simple model without covariates and ML", {
   formula <- FEV1 ~ us(AVISIT | USUBJID)
   data <- fev_data
   result <- expect_silent(fit_mmrm(formula, data, weights = rep(1, nrow(data)), reml = FALSE))
@@ -882,9 +1028,9 @@ test_that("h_mmrm_tmb works as expected in a simple model without covariates and
   expect_named(
     result,
     c(
-      "cov", "beta_est", "beta_vcov", "theta_est", "theta_vcov",
-      "neg_log_lik", "formula_parts", "data", "weights", "reml", "opt_details", "tmb_object",
-      "tmb_data", "call"
+      "cov", "beta_est", "beta_vcov", "beta_vcov_inv_L", "beta_vcov_inv_D",
+      "theta_est", "theta_vcov", "neg_log_lik", "formula_parts", "data", "weights",
+      "reml", "opt_details", "tmb_object", "tmb_data", "call", "optimizer"
     )
   )
   # See design/SAS/sas_log_simple.txt for the source of numbers.
@@ -896,7 +1042,7 @@ test_that("h_mmrm_tmb works as expected in a simple model without covariates and
   expect_equal(result_cov_tri, expected_cov_tri, tolerance = 1e-3)
 })
 
-test_that("h_mmrm_tmb works as expected in a simple model without covariates and REML", {
+test_that("fit_mmrm works as expected in a simple model without covariates and REML", {
   formula <- FEV1 ~ us(AVISIT | USUBJID)
   data <- fev_data
   result <- expect_silent(fit_mmrm(formula, data, weights = rep(1, nrow(data)), reml = TRUE))
@@ -905,9 +1051,9 @@ test_that("h_mmrm_tmb works as expected in a simple model without covariates and
   expect_named(
     result,
     c(
-      "cov", "beta_est", "beta_vcov", "theta_est", "theta_vcov",
+      "cov", "beta_est", "beta_vcov", "beta_vcov_inv_L", "beta_vcov_inv_D", "theta_est", "theta_vcov",
       "neg_log_lik", "formula_parts", "data", "weights", "reml", "opt_details", "tmb_object",
-      "tmb_data", "call"
+      "tmb_data", "call", "optimizer"
     )
   )
   # See design/SAS/sas_log_simple_reml.txt for the source of numbers.
@@ -923,7 +1069,7 @@ test_that("h_mmrm_tmb works as expected in a simple model without covariates and
 
 ### homogeneous ----
 
-test_that("h_mmrm_tmb works with ad covariance structure and ML", {
+test_that("fit_mmrm works with ad covariance structure and ML", {
   formula <- FEV1 ~ ad(AVISIT | USUBJID)
   data <- fev_data
   result <- expect_silent(fit_mmrm(formula, data, weights = rep(1, nrow(data)), reml = FALSE))
@@ -937,7 +1083,7 @@ test_that("h_mmrm_tmb works with ad covariance structure and ML", {
   expect_equal(result_theta, expected_theta, tolerance = 1e-4)
 })
 
-test_that("h_mmrm_tmb works with ad covariance structure and REML", {
+test_that("fit_mmrm works with ad covariance structure and REML", {
   formula <- FEV1 ~ ad(AVISIT | USUBJID)
   data <- fev_data
   result <- expect_silent(fit_mmrm(formula, data, weights = rep(1, nrow(data)), reml = TRUE))
@@ -953,7 +1099,7 @@ test_that("h_mmrm_tmb works with ad covariance structure and REML", {
 
 ### heterogeneous ----
 
-test_that("h_mmrm_tmb works with adh covariance structure and ML", {
+test_that("fit_mmrm works with adh covariance structure and ML", {
   formula <- FEV1 ~ adh(AVISIT | USUBJID)
   data <- fev_data
   result <- expect_silent(fit_mmrm(formula, data, weights = rep(1, nrow(data)), reml = FALSE))
@@ -970,7 +1116,7 @@ test_that("h_mmrm_tmb works with adh covariance structure and ML", {
   expect_equal(result_theta, expected_theta, tolerance = 1e-4)
 })
 
-test_that("h_mmrm_tmb works with adh covariance structure and REML", {
+test_that("fit_mmrm works with adh covariance structure and REML", {
   formula <- FEV1 ~ adh(AVISIT | USUBJID)
   data <- fev_data
   result <- expect_silent(fit_mmrm(formula, data, weights = rep(1, nrow(data)), reml = TRUE))
@@ -989,7 +1135,7 @@ test_that("h_mmrm_tmb works with adh covariance structure and REML", {
 
 ### grouped heterogeneous----
 
-test_that("h_mmrm_tmb works with grouped adh covariance structure and ML", {
+test_that("fit_mmrm works with grouped adh covariance structure and ML", {
   formula <- FEV1 ~ adh(AVISIT | ARMCD / USUBJID)
   result <- fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = FALSE)
   expect_class(result, "mmrm_tmb")
@@ -1007,7 +1153,7 @@ test_that("h_mmrm_tmb works with grouped adh covariance structure and ML", {
   expect_equal(result_theta, expected_theta, tolerance = 1e-4)
 })
 
-test_that("h_mmrm_tmb works with grouped adh covariance structure and REML", {
+test_that("fit_mmrm works with grouped adh covariance structure and REML", {
   formula <- FEV1 ~ adh(AVISIT | ARMCD / USUBJID)
   result <- fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = TRUE)
   expect_class(result, "mmrm_tmb")
@@ -1029,7 +1175,7 @@ test_that("h_mmrm_tmb works with grouped adh covariance structure and REML", {
 
 ### homogeneous ----
 
-test_that("h_mmrm_tmb works with toep covariance structure and ML", {
+test_that("fit_mmrm works with toep covariance structure and ML", {
   formula <- FEV1 ~ toep(AVISIT | USUBJID)
   data <- fev_data
   # We have seen transient NA/NaN function evaluation warnings here.
@@ -1048,7 +1194,7 @@ test_that("h_mmrm_tmb works with toep covariance structure and ML", {
   expect_equal(result_low_tri, expected_low_tri, tolerance = 1e-4)
 })
 
-test_that("h_mmrm_tmb works with toep covariance structure and REML", {
+test_that("fit_mmrm works with toep covariance structure and REML", {
   formula <- FEV1 ~ toep(AVISIT | USUBJID)
   data <- fev_data
   # We have seen transient NA/NaN function evaluation warnings here.
@@ -1069,7 +1215,7 @@ test_that("h_mmrm_tmb works with toep covariance structure and REML", {
 
 ### heterogeneous ----
 
-test_that("h_mmrm_tmb works with toeph covariance structure and ML", {
+test_that("fit_mmrm works with toeph covariance structure and ML", {
   formula <- FEV1 ~ toeph(AVISIT | USUBJID)
   data <- fev_data
   # We have seen transient NA/NaN function evaluation warnings here.
@@ -1088,7 +1234,7 @@ test_that("h_mmrm_tmb works with toeph covariance structure and ML", {
   expect_equal(result_low_tri, expected_low_tri, tolerance = 1e-4)
 })
 
-test_that("h_mmrm_tmb works with toeph covariance structure and REML", {
+test_that("fit_mmrm works with toeph covariance structure and REML", {
   formula <- FEV1 ~ toeph(AVISIT | USUBJID)
   data <- fev_data
   # We have seen transient NA/NaN function evaluation warnings here.
@@ -1109,7 +1255,7 @@ test_that("h_mmrm_tmb works with toeph covariance structure and REML", {
 
 ### grouped heterogeneous ----
 
-test_that("h_mmrm_tmb works with grouped toeph covariance structure and ML", {
+test_that("fit_mmrm works with grouped toeph covariance structure and ML", {
   formula <- FEV1 ~ toeph(AVISIT | ARMCD / USUBJID)
   data <- fev_data
   # We have seen transient NA/NaN function evaluation warnings here.
@@ -1137,7 +1283,7 @@ test_that("h_mmrm_tmb works with grouped toeph covariance structure and ML", {
   expect_equal(result_trt_rho, expected_trt_rho, tolerance = 1e-2)
 })
 
-test_that("h_mmrm_tmb works with grouped toeph covariance structure and REML", {
+test_that("fit_mmrm works with grouped toeph covariance structure and REML", {
   formula <- FEV1 ~ toeph(AVISIT | ARMCD / USUBJID)
   data <- fev_data
   # We have seen transient NA/NaN function evaluation warnings here.
@@ -1168,7 +1314,7 @@ test_that("h_mmrm_tmb works with grouped toeph covariance structure and REML", {
 
 ### homogeneous ----
 
-test_that("h_mmrm_tmb works with ar1 covariance structure and ML", {
+test_that("fit_mmrm works with ar1 covariance structure and ML", {
   formula <- FEV1 ~ ar1(AVISIT | USUBJID)
   result <- fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = FALSE)
   expect_class(result, "mmrm_tmb")
@@ -1184,7 +1330,7 @@ test_that("h_mmrm_tmb works with ar1 covariance structure and ML", {
   expect_equal(result_rho, expected_rho, tolerance = 1e-3)
 })
 
-test_that("h_mmrm_tmb works with ar1 covariance structure and REML", {
+test_that("fit_mmrm works with ar1 covariance structure and REML", {
   formula <- FEV1 ~ ar1(AVISIT | USUBJID)
   result <- fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = TRUE)
   expect_class(result, "mmrm_tmb")
@@ -1202,7 +1348,7 @@ test_that("h_mmrm_tmb works with ar1 covariance structure and REML", {
 
 ### heterogeneous ----
 
-test_that("h_mmrm_tmb works with ar1h covariance structure and ML", {
+test_that("fit_mmrm works with ar1h covariance structure and ML", {
   formula <- FEV1 ~ ar1h(AVISIT | USUBJID)
   result <- fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = FALSE)
   expect_class(result, "mmrm_tmb")
@@ -1218,7 +1364,7 @@ test_that("h_mmrm_tmb works with ar1h covariance structure and ML", {
   expect_equal(result_rho, expected_rho, tolerance = 1e-3)
 })
 
-test_that("h_mmrm_tmb works with ar1h covariance structure and REML", {
+test_that("fit_mmrm works with ar1h covariance structure and REML", {
   formula <- FEV1 ~ ar1h(AVISIT | USUBJID)
   result <- fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = TRUE)
   expect_class(result, "mmrm_tmb")
@@ -1235,7 +1381,7 @@ test_that("h_mmrm_tmb works with ar1h covariance structure and REML", {
 })
 
 ### grouped homogeneous----
-test_that("h_mmrm_tmb works with grouped ar1 covariance structure and ML", {
+test_that("fit_mmrm works with grouped ar1 covariance structure and ML", {
   formula <- FEV1 ~ ar1(AVISIT | ARMCD / USUBJID)
   result <- fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = FALSE)
   expect_class(result, "mmrm_tmb")
@@ -1251,7 +1397,7 @@ test_that("h_mmrm_tmb works with grouped ar1 covariance structure and ML", {
   expect_equal(result_rho, expected_rho, tolerance = 1e-3)
 })
 
-test_that("h_mmrm_tmb works with grouped ar1 covariance structure and REML", {
+test_that("fit_mmrm works with grouped ar1 covariance structure and REML", {
   formula <- FEV1 ~ ar1(AVISIT | ARMCD / USUBJID)
   result <- fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = TRUE)
   expect_class(result, "mmrm_tmb")
@@ -1268,7 +1414,7 @@ test_that("h_mmrm_tmb works with grouped ar1 covariance structure and REML", {
 })
 
 ### grouped heterogeneous----
-test_that("h_mmrm_tmb works with grouped ar1h covariance structure and ML", {
+test_that("fit_mmrm works with grouped ar1h covariance structure and ML", {
   formula <- FEV1 ~ ar1h(AVISIT | ARMCD / USUBJID)
   result <- fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = FALSE)
   expect_class(result, "mmrm_tmb")
@@ -1284,7 +1430,7 @@ test_that("h_mmrm_tmb works with grouped ar1h covariance structure and ML", {
   expect_equal(result_rho, expected_rho, tolerance = 1e-3)
 })
 
-test_that("h_mmrm_tmb works with grouped ar1h covariance structure and REML", {
+test_that("fit_mmrm works with grouped ar1h covariance structure and REML", {
   formula <- FEV1 ~ ar1h(AVISIT | ARMCD / USUBJID)
   result <- fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = TRUE)
   expect_class(result, "mmrm_tmb")
@@ -1309,7 +1455,7 @@ test_that("h_mmrm_tmb works with grouped ar1h covariance structure and REML", {
 
 ### homogeneous ----
 
-test_that("h_mmrm_tmb works with cs covariance structure and ML", {
+test_that("fit_mmrm works with cs covariance structure and ML", {
   formula <- FEV1 ~ cs(AVISIT | USUBJID)
   # We can get transient warnings here.
   result <- suppressWarnings(fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = FALSE))
@@ -1326,7 +1472,7 @@ test_that("h_mmrm_tmb works with cs covariance structure and ML", {
   expect_equal(result_rho, expected_rho, tolerance = 1e-2)
 })
 
-test_that("h_mmrm_tmb works with cs covariance structure and REML", {
+test_that("fit_mmrm works with cs covariance structure and REML", {
   formula <- FEV1 ~ cs(AVISIT | USUBJID)
   # We can get transient warnings here.
   result <- suppressWarnings(fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = TRUE))
@@ -1345,7 +1491,7 @@ test_that("h_mmrm_tmb works with cs covariance structure and REML", {
 
 ### heterogeneous ----
 
-test_that("h_mmrm_tmb works with csh covariance structure and ML", {
+test_that("fit_mmrm works with csh covariance structure and ML", {
   formula <- FEV1 ~ csh(AVISIT | USUBJID)
   result <- fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = FALSE)
   expect_class(result, "mmrm_tmb")
@@ -1361,7 +1507,7 @@ test_that("h_mmrm_tmb works with csh covariance structure and ML", {
   expect_equal(result_rho, expected_rho, tolerance = 1e-3)
 })
 
-test_that("h_mmrm_tmb works with csh covariance structure and REML", {
+test_that("fit_mmrm works with csh covariance structure and REML", {
   formula <- FEV1 ~ csh(AVISIT | USUBJID)
   result <- fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = TRUE)
   expect_class(result, "mmrm_tmb")
@@ -1379,7 +1525,7 @@ test_that("h_mmrm_tmb works with csh covariance structure and REML", {
 
 ## weighted mmrm ----
 
-test_that("h_mmrm_tmb works with weights and ML", {
+test_that("fit_mmrm works with weights and ML", {
   formula <- FEV1 ~ adh(AVISIT | USUBJID)
   data <- fev_data
   weights <- fev_data$WEIGHT
@@ -1397,7 +1543,7 @@ test_that("h_mmrm_tmb works with weights and ML", {
   expect_equal(result_theta, expected_theta, tolerance = 1e-4)
 })
 
-test_that("h_mmrm_tmb works with weights and REML", {
+test_that("fit_mmrm works with weights and REML", {
   formula <- FEV1 ~ adh(AVISIT | USUBJID)
   data <- fev_data
   weights <- fev_data$WEIGHT
@@ -1417,7 +1563,7 @@ test_that("h_mmrm_tmb works with weights and REML", {
 
 ### grouped homogeneous ----
 
-test_that("h_mmrm_tmb works with group cs covariance structure and ML", {
+test_that("fit_mmrm works with group cs covariance structure and ML", {
   formula <- FEV1 ~ cs(AVISIT | ARMCD / USUBJID)
   # We can get transient warnings here.
   result <- suppressWarnings(fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = FALSE))
@@ -1434,7 +1580,7 @@ test_that("h_mmrm_tmb works with group cs covariance structure and ML", {
   expect_equal(result_rho, expected_rho, tolerance = 1e-2)
 })
 
-test_that("h_mmrm_tmb works with cs covariance structure and REML", {
+test_that("fit_mmrm works with cs covariance structure and REML", {
   formula <- FEV1 ~ cs(AVISIT | ARMCD / USUBJID)
   # We can get transient warnings here.
   result <- suppressWarnings(fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = TRUE))
@@ -1453,7 +1599,7 @@ test_that("h_mmrm_tmb works with cs covariance structure and REML", {
 
 ### grouped heterogeneous----
 
-test_that("h_mmrm_tmb works with grouped csh covariance structure and ML", {
+test_that("fit_mmrm works with grouped csh covariance structure and ML", {
   formula <- FEV1 ~ csh(AVISIT | ARMCD / USUBJID)
   result <- fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = FALSE)
   expect_class(result, "mmrm_tmb")
@@ -1469,7 +1615,7 @@ test_that("h_mmrm_tmb works with grouped csh covariance structure and ML", {
   expect_equal(result_rho, expected_rho, tolerance = 1e-3)
 })
 
-test_that("h_mmrm_tmb works with grouped csh covariance structure and REML", {
+test_that("fit_mmrm works with grouped csh covariance structure and REML", {
   formula <- FEV1 ~ csh(AVISIT | ARMCD / USUBJID)
   result <- fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = TRUE)
   expect_class(result, "mmrm_tmb")
@@ -1488,7 +1634,7 @@ test_that("h_mmrm_tmb works with grouped csh covariance structure and REML", {
 
 ### grouped homogeneous ----
 
-test_that("h_mmrm_tmb works with group cs covariance structure and ML", {
+test_that("fit_mmrm works with group cs covariance structure and ML", {
   formula <- FEV1 ~ cs(AVISIT | ARMCD / USUBJID)
   # We can get transient warnings here.
   result <- suppressWarnings(fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = FALSE))
@@ -1505,7 +1651,7 @@ test_that("h_mmrm_tmb works with group cs covariance structure and ML", {
   expect_equal(result_rho, expected_rho, tolerance = 1e-2)
 })
 
-test_that("h_mmrm_tmb works with cs covariance structure and REML", {
+test_that("fit_mmrm works with cs covariance structure and REML", {
   formula <- FEV1 ~ cs(AVISIT | ARMCD / USUBJID)
   # We can get transient warnings here.
   result <- suppressWarnings(fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = TRUE))
@@ -1524,7 +1670,7 @@ test_that("h_mmrm_tmb works with cs covariance structure and REML", {
 
 ### grouped heterogeneous----
 
-test_that("h_mmrm_tmb works with grouped csh covariance structure and ML", {
+test_that("fit_mmrm works with grouped csh covariance structure and ML", {
   formula <- FEV1 ~ csh(AVISIT | ARMCD / USUBJID)
   result <- fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = FALSE)
   expect_class(result, "mmrm_tmb")
@@ -1540,7 +1686,7 @@ test_that("h_mmrm_tmb works with grouped csh covariance structure and ML", {
   expect_equal(result_rho, expected_rho, tolerance = 1e-3)
 })
 
-test_that("h_mmrm_tmb works with grouped csh covariance structure and REML", {
+test_that("fit_mmrm works with grouped csh covariance structure and REML", {
   formula <- FEV1 ~ csh(AVISIT | ARMCD / USUBJID)
   result <- fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = TRUE)
   expect_class(result, "mmrm_tmb")
@@ -1558,7 +1704,7 @@ test_that("h_mmrm_tmb works with grouped csh covariance structure and REML", {
 
 ## spatial exponential ----
 
-test_that("h_mmrm_tmb works with sp_exp covariance structure and ML", {
+test_that("fit_mmrm works with sp_exp covariance structure and ML", {
   formula <- FEV1 ~ sp_exp(VISITN | USUBJID)
   result <- fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = FALSE)
   expect_class(result, "mmrm_tmb")
@@ -1569,7 +1715,7 @@ test_that("h_mmrm_tmb works with sp_exp covariance structure and ML", {
   expect_equal(exp(result$theta_est[1]), 88.7005, tolerance = 1e-3)
 })
 
-test_that("h_mmrm_tmb works with sp_exp covariance structure and ML(2-dimension)", {
+test_that("fit_mmrm works with sp_exp covariance structure and ML(2-dimension)", {
   formula <- FEV1 ~ sp_exp(VISITN, VISITN2 | USUBJID)
   result <- fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = FALSE)
   expect_class(result, "mmrm_tmb")
@@ -1580,7 +1726,7 @@ test_that("h_mmrm_tmb works with sp_exp covariance structure and ML(2-dimension)
   expect_equal(exp(result$theta_est[1]), 87.6472, tolerance = 1e-3)
 })
 
-test_that("h_mmrm_tmb works with sp_exp covariance structure and REML", {
+test_that("fit_mmrm works with sp_exp covariance structure and REML", {
   formula <- FEV1 ~ sp_exp(VISITN | USUBJID)
   result <- fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = TRUE)
   expect_class(result, "mmrm_tmb")
@@ -1591,7 +1737,7 @@ test_that("h_mmrm_tmb works with sp_exp covariance structure and REML", {
   expect_equal(exp(result$theta_est[1]), 88.9768, tolerance = 1e-3)
 })
 
-test_that("h_mmrm_tmb works with sp_exp covariance structure and REML(2-dimension)", {
+test_that("fit_mmrm works with sp_exp covariance structure and REML(2-dimension)", {
   formula <- FEV1 ~ sp_exp(VISITN, VISITN2 | USUBJID)
   result <- fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)), reml = TRUE)
   expect_class(result, "mmrm_tmb")
@@ -1618,7 +1764,7 @@ test_that("fit_mmrm saves data name in call element as expected", {
   fit <- fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)))
   saved_call <- fit$call
   expect_class(saved_call, "call")
-  expect_identical(saved_call$data, "fev_data")
+  expect_identical(saved_call$data, as.name("fev_data"))
 })
 
 test_that("fit_mmrm works even when time point variable has unused factor levels", {
@@ -1682,4 +1828,57 @@ test_that("fit_mmrm works with below full rank original design matrix by default
   dat$SEX2 <- dat$SEX # nolint
   result <- expect_silent(fit_mmrm(formula, dat, weights = rep(1, nrow(dat))))
   expect_match(names(which(result$tmb_data$x_cols_aliased)), "SEX2")
+})
+
+test_that("fit_mmrm throws informative error for non-spatial cov with non-factor", {
+  tmp_data <- fev_data
+  levels(tmp_data$AVISIT) <- c(1, 2, 3, 4)
+  tmp_data$AVISIT <- as.numeric(tmp_data$AVISIT)
+
+  expect_error(
+    fit_mmrm(
+      FEV1 ~ FEV1_BL + RACE + us(AVISIT | USUBJID),
+      data = tmp_data,
+      weights = rep(1, nrow(tmp_data))
+    ),
+    "Time variable must be a factor for non-spatial covariance structures"
+  )
+})
+
+test_that("get_covariance_lower_chol errors when an invalid covariance type is used", {
+  formula <- FEV1 ~ RACE + us(AVISIT | USUBJID)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula)
+
+  tmb_data <- h_mmrm_tmb_data(
+    formula_parts,
+    fev_data,
+    weights = rep(1, nrow(fev_data)),
+    reml = FALSE,
+    singular = "error",
+    drop_visit_levels = TRUE
+  )
+  tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL)
+
+  tmb_data$cov_type <- "gaaah"
+  expect_error(
+    TMB::MakeADFun(
+      data = tmb_data,
+      parameters = tmb_parameters,
+      hessian = TRUE,
+      DLL = "mmrm",
+      silent = TRUE
+    ),
+    "Unknown covariance type 'gaaah'"
+  )
+  tmb_data$is_spatial <- TRUE
+  expect_error(
+    TMB::MakeADFun(
+      data = tmb_data,
+      parameters = tmb_parameters,
+      hessian = TRUE,
+      DLL = "mmrm",
+      silent = TRUE
+    ),
+    "Unknown covariance type 'gaaah'"
+  )
 })

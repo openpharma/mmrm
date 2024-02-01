@@ -20,7 +20,13 @@
 #'    2. If the covariance structure is spatial, the covariance matrix of two time points with unit distance
 #'       will be displayed.
 #'
+#' `confint` is used to obtain the confidence intervals for the coefficients.
+#' Please note that this is different from the confidence interval of difference
+#' of least square means from `emmeans`.
+#'
 #' @name mmrm_methods
+#'
+#' @seealso [`mmrm_tmb_methods`], [`mmrm_tidiers`] for additional methods.
 #'
 #' @examples
 #' formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
@@ -88,7 +94,6 @@ summary.mmrm <- function(object, ...) {
     "n_subjects", "n_timepoints", "n_obs",
     "beta_vcov", "varcor"
   ))
-
   components$method <- object$method
   components$vcov <- object$vcov
   structure(
@@ -122,16 +127,16 @@ h_print_call <- function(call, n_obs, n_subjects, n_timepoints) {
     rhs <- tmp[[2]]
     pass <- nchar(deparse(rhs))
   }
-  if (!is.null(tmp <- call$data)) {
+  if (!is.null(call$data)) {
     cat(
-      "Data:       ", tmp, "(used", n_obs, "observations from",
+      "Data:       ", deparse(call$data), "(used", n_obs, "observations from",
       n_subjects, "subjects with maximum", n_timepoints, "timepoints)",
       fill = TRUE
     )
   }
-  # Only if call$weights is a string then it was explicitly given by the user.
-  if (test_string(tmp <- call$weights)) {
-    cat("Weights:    ", tmp, fill = TRUE)
+  # Display the expression of weights
+  if (!is.null(call$weights)) {
+    cat("Weights:    ", deparse(call$weights), fill = TRUE)
   }
 }
 
@@ -140,13 +145,13 @@ h_print_call <- function(call, n_obs, n_subjects, n_timepoints) {
 #' This is used in [print.summary.mmrm()].
 #'
 #' @param cov_type (`string`)\cr covariance structure abbreviation.
-#' @param n_theta (`int`)\cr number of variance parameters.
-#' @param n_groups (`int`)\cr number of groups.
+#' @param n_theta (`count`)\cr number of variance parameters.
+#' @param n_groups (`count`)\cr number of groups.
 #' @keywords internal
 h_print_cov <- function(cov_type, n_theta, n_groups) {
   assert_string(cov_type)
-  assert_int(n_theta, lower = 1L)
-  assert_int(n_groups, lower = 1L)
+  assert_count(n_theta, positive = TRUE)
+  assert_count(n_groups, positive = TRUE)
   cov_definition <- switch(cov_type,
     us = "unstructured",
     toep = "Toeplitz",
@@ -225,4 +230,34 @@ print.summary.mmrm <- function(x,
   }
   cat("\n")
   invisible(x)
+}
+
+
+#' @describeIn mmrm_methods obtain the confidence intervals for the coefficients.
+#' @exportS3Method
+#' @examples
+#' # Confidence Interval:
+#' confint(object)
+confint.mmrm <- function(object, parm, level = 0.95, ...) {
+  cf <- coef(object)
+  pnames <- names(cf)
+  if (missing(parm)) {
+    parm <- pnames
+  }
+  assert(
+    check_subset(parm, pnames),
+    check_integerish(parm, lower = 1L, upper = length(cf))
+  )
+  if (is.numeric(parm)) parm <- pnames[parm]
+  assert_number(level, lower = 0, upper = 1)
+  a <- (1 - level) / 2
+  pct <- paste(format(100 * c(a, 1 - a), trim = TRUE, scientific = FALSE, digits = 3), "%")
+  coef_table <- h_coef_table(object)
+  df <- coef_table[parm, "df"]
+  ses <- coef_table[parm, "Std. Error"]
+  fac <- stats::qt(a, df = df)
+  ci <- array(NA, dim = c(length(parm), 2L), dimnames = list(parm, pct))
+  sefac <- ses * fac
+  ci[] <- cf[parm] + c(sefac, -sefac)
+  ci
 }

@@ -48,6 +48,9 @@ means estimates by using `emmeans`.
   - Groups: shared covariance structure for all subjects or
     group-specific covariance estimates.
   - Variances: homogeneous or heterogeneous across time points.
+- Inference:
+  - Supports REML and ML.
+  - Supports weights.
 - Hypothesis testing:
   - [Least square
     means](https://openpharma.github.io/mmrm/main/reference/emmeans_support.html):
@@ -58,27 +61,55 @@ means estimates by using `emmeans`.
     adjusted degrees of freedom.
   - [Kenward-Roger](https://openpharma.github.io/mmrm/main/articles/kenward.html)
     adjusted degrees of freedom and coefficients covariance matrix.
-- Model inference:
-  - Supports REML and ML.
-  - Supports weights.
-- Fast implementation using C++ and automatic differentiation to obtain
-  precise gradient information for model fitting. See
-  [here](https://openpharma.github.io/mmrm/main/articles/algorithm.html)
-  for details of the model fitting algorithm used in `mmrm`.
+  - [Coefficient
+    Covariance](https://openpharma.github.io/mmrm/main/articles/coef_vcov.html)
+- `C++` backend:
+  - Fast implementation using `C++` and automatic differentiation to
+    obtain precise gradient information for model fitting.
+  - Model fitting algorithm
+    [details](https://openpharma.github.io/mmrm/main/articles/algorithm.html)
+    used in `mmrm`.
+- Package ecosystems integration:
+  - Integration with [tidymodels](https://www.tidymodels.org/) package
+    ecosystem
+    - Dedicated [parsnip](https://parsnip.tidymodels.org/) engine for
+      linear regression
+    - Integration with [recipes](https://recipes.tidymodels.org/)
+  - Integration with [tern](https://insightsengineering.github.io/tern/)
+    package ecosystems
+    - The [tern.mmrm](https://insightsengineering.github.io/tern.mmrm/)
+      package can be used to run the `mmrm` fit and generate tabulation
+      and plots of least square means per visit and treatment arm,
+      tabulation of model diagnostics, diagnostic graphs, and other
+      standard model outputs.
 
 ## Installation
 
-**CRAN**
+### Release
 
-You can install the current stable version from CRAN with:
+You can install the current release version from *CRAN* with:
 
 ``` r
 install.packages("mmrm")
 ```
 
-**GitHub**
+### Development
 
-You can install the current development version from GitHub with:
+You can install the current development version from *R-Universe* with:
+
+``` r
+install.packages(
+  "mmrm",
+  repos = c("https://openpharma.r-universe.dev", "https://cloud.r-project.org")
+)
+```
+
+This is preferred, because for Windows and MacOS systems you can install
+pre-compiled binary versions of the packages, avoiding the need for
+compilation.
+
+Alternatively, you can install the current development version from
+*GitHub* with:
 
 ``` r
 if (!require("remotes")) {
@@ -86,6 +117,9 @@ if (!require("remotes")) {
 }
 remotes::install_github("openpharma/mmrm")
 ```
+
+Note that this installation from source can take a substantial amount of
+time, because compilation of the `C++` sources is required.
 
 ## Getting Started
 
@@ -107,7 +141,14 @@ trial context, here given by `AVISIT`) within the subjects (here
 `USUBJID`). While by default this uses restricted maximum likelihood
 (REML), it is also possible to use ML, see `?mmrm`.
 
-You can look at the results high-level:
+Printing the object will show you output which should be familiar to
+anyone who has used any popular modeling functions such as
+`stats::lm()`, `stats::glm()`, `glmmTMB::glmmTMB()`, and
+`lme4::nlmer()`. From this print out we see the function call, the data
+used, the covariance structure with number of variance parameters, as
+well as the likelihood method, and model deviance achieved. Additionally
+the user is provided a printout of the estimated coefficients and the
+model convergence information:
 
 ``` r
 fit
@@ -117,7 +158,7 @@ fit
 #> Data:        fev_data (used 537 observations from 197 subjects with maximum 4 
 #> timepoints)
 #> Covariance:  unstructured (10 variance parameters)
-#> Method:      REML
+#> Inference:   REML
 #> Deviance:    3386.45
 #> 
 #> Coefficients: 
@@ -151,6 +192,7 @@ summary(fit)
 #> timepoints)
 #> Covariance:  unstructured (10 variance parameters)
 #> Method:      Satterthwaite
+#> Vcov Method: Asymptotic
 #> Inference:   REML
 #> 
 #> Model selection criteria:

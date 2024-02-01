@@ -4,33 +4,73 @@
 #define INCLUDE_RCPP
 #include "tmb_includes.h"
 
-// Producing a sparse selection matrix to select rows and columns from
-// covariance matrix.
-template <class Type>
-Eigen::SparseMatrix<Type> get_select_matrix(const vector<int>& visits_i, const int& n_visits) {
-  Eigen::SparseMatrix<Type> result(visits_i.size(), n_visits);
-  for (int i = 0; i < visits_i.size(); i++) {
-    result.insert(i, visits_i(i)) = (Type) 1.0;
-  }
-  return result;
+#define as_num_matrix_tmb as_matrix<matrix<double>, NumericMatrix>
+#define as_num_matrix_rcpp as_matrix<NumericMatrix, matrix<double>>
+#define as_num_vector_tmb as_vector<vector<double>, NumericVector>
+#define as_num_vector_rcpp as_vector<NumericVector, vector<double>>
+
+// Obtain submatrix from index
+
+template <typename T1, typename T2>
+T1 subset_matrix(T1 input, T2 index1, T2 index2) {
+  #if EIGEN_VERSION_AT_LEAST(3,4,0)
+    T1 ret = input(index1, index2);
+  #else
+    T1 ret(index1.size(), index2.size());
+    for (decltype(index1.size()) i = 0; i < index1.size(); i++) {
+      for (decltype(index2.size()) j = 0; j < index2.size(); j++) {
+        ret(i, j) = input(index1[i], index2[j]);
+      }
+    }
+  #endif
+  return ret;
 }
 
-// Producing a sparse selection matrix from visits to select rows and columns from
-// covariance matrix.
-template <class Type>
-Eigen::SparseMatrix<Type> get_select_matrix(const std::vector<int>& visits_i, const int& n_visits) {
-  Eigen::SparseMatrix<Type> result(visits_i.size(), n_visits);
-  for (std::size_t i = 0, max = visits_i.size(); i != max; ++i) {
-    result.insert(i, visits_i[i]) = (Type) 1.0;
-  }
-  return result;
+template <typename T1, typename T2>
+T1 subset_matrix(T1 input, T2 index1) {
+  #if EIGEN_VERSION_AT_LEAST(3,4,0)
+    T1 ret = input(index1, Eigen::placeholders::all);
+  #else
+    T1 ret(index1.size(), input.cols());
+    for (decltype(index1.size()) i = 0; i < index1.size(); i++) {
+      for (int j = 0; j < input.cols(); j++) {
+        ret(i, j) = input(index1[i], j);
+      }
+    }
+  #endif
+  return ret;
 }
+
+
 // Conversion from Rcpp vector/matrix to eigen vector/matrix
-vector<double> as_vector(Rcpp::NumericVector input);
-vector<int> as_vector(Rcpp::IntegerVector input);
-Rcpp::NumericVector as_nv(vector<double> input);
-Rcpp::NumericMatrix as_mv(matrix<double> input);
-matrix<double> as_matrix(Rcpp::NumericMatrix input);
+template <typename T1, typename T2>
+T1 as_vector(T2 input) {
+  T1 ret(input.size());
+  for (int i = 0; i < input.size(); i++) {
+    ret(i) = input(i);
+  }
+  return ret;
+}
+
+template <typename T1, typename T2>
+T1 as_matrix(T2 input) {
+  T1 ret(input.rows(), input.cols());
+  for (int i = 0; i < input.rows(); i++) {
+    for (int j = 0; j < input.cols(); j++) {
+      ret(i,j) = input(i,j);
+    }
+  }
+  return ret;
+}
+
+template <typename T>
+T segment(T input, int start, int n) {
+  T ret(n);
+  for (int i = 0, j = start; i < n; i++, j++) {
+    ret(i) = input(j);
+  }
+  return ret;
+}
 
 // Calculate tcrossprod(lower_chol) = lower_chol * t(lower_chol).
 // If complete, then adds the upper triangular part to the result as well.
@@ -115,6 +155,30 @@ matrix<T> euclidean(const matrix<T>& coordinates) {
     }
   }
   return result;
+}
+
+// Element wise power function of a matrix
+template <class T>
+Eigen::Matrix<T, -1, -1> cpow(const Eigen::Matrix<T, -1, -1> & input, double p) {
+  Eigen::Matrix<T, -1, -1> ret = Eigen::Matrix<T, -1, -1>(input.rows(), input.cols());
+  for (int i = 0; i < ret.rows(); i ++) {
+    for (int j = 0; j < ret.cols(); j++) {
+      ret(i, j) = std::pow(input(i, j), p);
+    }
+  }
+  return ret;
+}
+
+// Calculate the square root of the pseudo inverse of a matrix
+// adapted from the method for calculating the pseudo-Inverse as recommended by the Eigen developers
+template<typename T>
+matrix<T> pseudoInverseSqrt(const matrix<T> &input, double epsilon = std::numeric_limits<double>::epsilon()) {
+  Eigen::Matrix<T, -1, -1> eigen_mat = as_matrix<Eigen::Matrix<T, -1, -1>, matrix<T>>(input);
+	Eigen::JacobiSVD< Eigen::Matrix<T, -1, -1> > svd(eigen_mat ,Eigen::ComputeFullU | Eigen::ComputeFullV);
+	double tolerance = epsilon * std::max(input.cols(), input.rows()) *svd.singularValues().array().abs()(0);
+  auto singular_vals = Matrix<T,-1,-1>((svd.singularValues().array() > tolerance).select(svd.singularValues().array().inverse(), 0).matrix());
+	Eigen::Matrix<T, -1, -1> ret_eigen = svd.matrixV() *  cpow(singular_vals, 0.5).asDiagonal() * svd.matrixU().adjoint();
+  return as_matrix<matrix<T>, Eigen::Matrix<T, -1, -1>>(ret_eigen);
 }
 
 #endif

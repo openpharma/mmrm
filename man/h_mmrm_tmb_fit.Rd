@@ -4,17 +4,12 @@
 \alias{h_mmrm_tmb_fit}
 \title{Build \code{TMB} Fit Result List}
 \usage{
-h_mmrm_tmb_fit(tmb_object, tmb_opt, data, weights, formula_parts, tmb_data)
+h_mmrm_tmb_fit(tmb_object, tmb_opt, formula_parts, tmb_data)
 }
 \arguments{
 \item{tmb_object}{(\code{list})\cr created with \code{\link[TMB:MakeADFun]{TMB::MakeADFun()}}.}
 
 \item{tmb_opt}{(\code{list})\cr optimization result.}
-
-\item{data}{(\code{data.frame})\cr input data containing the variables used
-in \code{formula}.}
-
-\item{weights}{(\code{vector})\cr weights to be used in the fitting process.}
 
 \item{formula_parts}{(\code{mmrm_tmb_formula_parts})\cr produced by
 \code{\link[=h_mmrm_tmb_formula_parts]{h_mmrm_tmb_formula_parts()}}.}
@@ -27,6 +22,8 @@ List of class \code{mmrm_tmb} with:
 \item \code{cov}: estimated covariance matrix, or named list of estimated group specific covariance matrices.
 \item \code{beta_est}: vector of coefficient estimates.
 \item \code{beta_vcov}: Variance-covariance matrix for coefficient estimates.
+\item \code{beta_vcov_inv_L}: Lower triangular matrix \code{L} of the inverse variance-covariance matrix decomposition.
+\item \code{beta_vcov_inv_D}: vector of diagonal matrix \code{D} of the inverse variance-covariance matrix decomposition.
 \item \code{theta_est}: vector of variance parameter estimates.
 \item \code{theta_vcov}: variance-covariance matrix for variance parameter estimates.
 \item \code{neg_log_lik}: obtained negative log-likelihood.
@@ -42,5 +39,10 @@ List of class \code{mmrm_tmb} with:
 \description{
 This helper does some simple post-processing of the \code{TMB} object and
 optimization results, including setting names, inverting matrices etc.
+}
+\details{
+Instead of inverting or decomposing \code{beta_vcov}, it can be more efficient to use its robust
+Cholesky decomposition \code{LDL^T}, therefore we return the corresponding two components \code{L} and \code{D}
+as well since they have been available on the \verb{C++} side already.
 }
 \keyword{internal}

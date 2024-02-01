@@ -7,12 +7,16 @@
 #'
 #' @inheritParams mmrm
 #' @param control (`mmrm_control`)\cr object.
+#' @param tmb_data (`mmrm_tmb_data`)\cr object.
+#' @param formula_parts (`mmrm_tmb_formula_parts`)\cr object.
 #' @param ... Additional arguments to pass to [mmrm_control()].
 #'
 #' @details
 #' `fit_single_optimizer` will fit the `mmrm` model using the `control` provided.
 #' If there are multiple optimizers provided in `control`, only the first optimizer
 #' will be used.
+#' If `tmb_data` and `formula_parts` are both provided, `formula`, `data`, `weights`,
+#' `reml`, and `covariance` are ignored.
 #'
 #' @return The `mmrm_fit` object, with additional attributes containing warnings,
 #'   messages, optimizer used and convergence status in addition to the
@@ -32,37 +36,63 @@ fit_single_optimizer <- function(formula,
                                  weights,
                                  reml = TRUE,
                                  covariance = NULL,
+                                 tmb_data,
+                                 formula_parts,
                                  ...,
                                  control = mmrm_control(...)) {
-  assert_formula(formula)
-  assert_data_frame(data)
-  assert_vector(weights)
-  assert_flag(reml)
-  assert_class(control, "mmrm_control")
-  assert_list(control$optimizers, names = "unique", types = c("function", "partial"))
-  quiet_fit <- h_record_all_output(
-    fit_mmrm(
-      formula = formula,
-      data = data,
-      weights = weights,
-      reml = reml,
-      covariance = covariance,
-      control = control
-    ),
-    remove = list(
-      warning = c("NA/NaN function evaluation") # Transient visit to invalid parameters.
+  to_remove <- list(
+    # Transient visit to invalid parameters.
+    warnings = c("NA/NaN function evaluation")
+  )
+  as_diverged <- list(
+    errors = c(
+      "NA/NaN Hessian evaluation",
+      "L-BFGS-B needs finite values of 'fn'"
     )
   )
+  if (missing(tmb_data) || missing(formula_parts)) {
+    h_valid_formula(formula)
+    assert_data_frame(data)
+    assert_numeric(weights, any.missing = FALSE, lower = .Machine$double.xmin)
+    assert_flag(reml)
+    assert_class(control, "mmrm_control")
+    assert_list(control$optimizers, names = "unique", types = c("function", "partial"))
+    quiet_fit <- h_record_all_output(
+      fit_mmrm(
+        formula = formula,
+        data = data,
+        weights = weights,
+        reml = reml,
+        covariance = covariance,
+        control = control
+      ),
+      remove = to_remove,
+      divergence = as_diverged
+    )
+  } else {
+    assert_class(tmb_data, "mmrm_tmb_data")
+    assert_class(formula_parts, "mmrm_tmb_formula_parts")
+    quiet_fit <- h_record_all_output(
+      fit_mmrm(
+        formula_parts = formula_parts,
+        tmb_data = tmb_data,
+        control = control
+      ),
+      remove = to_remove,
+      divergence = as_diverged
+    )
+  }
   if (length(quiet_fit$errors)) {
     stop(quiet_fit$errors)
   }
   converged <- (length(quiet_fit$warnings) == 0L) &&
-    (quiet_fit$result$opt_details$convergence == 0)
+    (length(quiet_fit$divergence) == 0L) &&
+    isTRUE(quiet_fit$result$opt_details$convergence == 0)
   structure(
     quiet_fit$result,
     warnings = quiet_fit$warnings,
     messages = quiet_fit$messages,
-    optimizer = names(control$optimizers)[1],
+    divergence = quiet_fit$divergence,
     converged = converged,
     class = c("mmrm_fit", class(quiet_fit$result))
   )
@@ -122,11 +152,6 @@ refit_multiple_optimizers <- function(fit,
   assert_class(fit, "mmrm_fit")
   assert_class(control, "mmrm_control")
 
-  # Extract the components of the original fit.
-  old_formula <- formula(fit)
-  old_data <- fit$data
-  old_weights <- fit$weights
-
   n_cores_used <- ifelse(
     .Platform$OS.type == "windows",
     1L,
@@ -145,10 +170,8 @@ refit_multiple_optimizers <- function(fit,
     FUN = fit_single_optimizer,
     control = controls,
     MoreArgs = list(
-      formula = old_formula,
-      data = old_data,
-      weights = old_weights,
-      reml = fit$reml
+      tmb_data = fit$tmb_data,
+      formula_parts = fit$formula_parts
     ),
     mc.cores = n_cores_used,
     mc.silent = TRUE,
@@ -166,7 +189,7 @@ refit_multiple_optimizers <- function(fit,
     )
   }
   best_optimizer <- which.max(all_fits_summary$log_liks[is_ok])
-  all_fits[[best_optimizer]]
+  all_fits[[which(is_ok)[best_optimizer]]]
 }
 
 #' Control Parameters for Fitting an MMRM
@@ -175,12 +198,11 @@ refit_multiple_optimizers <- function(fit,
 #' Fine-grained specification of the MMRM fit details is possible using this
 #' control function.
 #'
-#' @param n_cores (`int`)\cr number of cores to be used.
-#' @param method (`string`)\cr adjustment method for degrees of freedom and
-#'   coefficients covariance matrix.
+#' @param n_cores (`count`)\cr number of cores to be used.
+#' @param method (`string`)\cr adjustment method for degrees of freedom.
 #' @param vcov (`string`)\cr coefficients covariance matrix adjustment method.
-#' @param start (`numeric` or `NULL`)\cr optional start values for variance
-#'   parameters.
+#' @param start (`NULL`, `numeric` or `function`)\cr optional start values for variance
+#'   parameters. See details for more information.
 #' @param accept_singular (`flag`)\cr whether singular design matrices are reduced
 #'   to full rank automatically and additional coefficient estimates will be missing.
 #' @param optimizers (`list`)\cr optimizer specification, created with [h_get_optimizers()].
@@ -189,25 +211,40 @@ refit_multiple_optimizers <- function(fit,
 #' @param ... additional arguments passed to [h_get_optimizers()].
 #'
 #' @details
-#' The `drop_visit_levels` flag will decide whether unobserved visits will be kept for analysis.
-#' For example, if the data only has observations at visits `VIS1`, `VIS3` and `VIS4`, by default
-#' they are treated to be equally spaced, the distance from `VIS1` to `VIS3`, and from `VIS3` to `VIS4`,
-#' are identical. However, you can manually convert this visit into a factor, with
-#' `levels = c("VIS1", "VIS2", "VIS3", "VIS4")`, and also use `drop_visits_levels = FALSE`,
-#' then the distance from `VIS1` to `VIS3` will be double, as `VIS2` is a valid visit.
-#' However, please be cautious because this can lead to convergence failure
-#' when using an unstructured covariance matrix and there are no observations
-#' at the missing visits.
-#' The `method` and `vcov` arguments specify the degrees of freedom and coefficients covariance matrix
-#' adjustment methods, respectively.
-#' If `method` is "Kenward-Roger" then only "Kenward-Roger" or "Kenward-Roger-Linear" are allowed for `vcov`.
-#' The `vcov` argument can be `NULL` to use the default covariance method depending on the `method`
-#' used for degrees of freedom, see the following table:
-#' | `method`  |  Default `vcov`|
-#' |-----------|----------|
-#' |Satterthwaite| Asymptotic|
-#' |Kenward-Roger| Kenward-Roger|
-#' |Residual| Empirical|
+#  - The `drop_visit_levels` flag will decide whether unobserved visits will be kept for analysis.
+#'   For example, if the data only has observations at visits `VIS1`, `VIS3` and `VIS4`, by default
+#'   they are treated to be equally spaced, the distance from `VIS1` to `VIS3`, and from `VIS3` to `VIS4`,
+#'   are identical. However, you can manually convert this visit into a factor, with
+#'   `levels = c("VIS1", "VIS2", "VIS3", "VIS4")`, and also use `drop_visits_levels = FALSE`,
+#'   then the distance from `VIS1` to `VIS3` will be double, as `VIS2` is a valid visit.
+#'   However, please be cautious because this can lead to convergence failure
+#'   when using an unstructured covariance matrix and there are no observations
+#'   at the missing visits.
+#' - The `method` and `vcov` arguments specify the degrees of freedom and coefficients
+#'   covariance matrix adjustment methods, respectively.
+#'   - Allowed `vcov` includes: "Asymptotic", "Kenward-Roger", "Kenward-Roger-Linear", "Empirical" (CR0),
+#'     "Empirical-Jackknife" (CR3), and "Empirical-Bias-Reduced" (CR2).
+#'   - Allowed `method` includes: "Satterthwaite", "Kenward-Roger", "Between-Within" and "Residual".
+#'   - If `method` is "Kenward-Roger" then only "Kenward-Roger" or "Kenward-Roger-Linear" are allowed for `vcov`.
+#' - The `vcov` argument can be `NULL` to use the default covariance method depending on the `method`
+#'   used for degrees of freedom, see the following table:
+#'
+#'    | `method`  |  Default `vcov`|
+#'    |-----------|----------|
+#'    |Satterthwaite| Asymptotic|
+#'    |Kenward-Roger| Kenward-Roger|
+#'    |Residual| Empirical|
+#'    |Between-Within| Asymptotic|
+#'
+#' - Please note that "Kenward-Roger" for "Unstructured" covariance gives different results
+#'   compared to SAS; Use "Kenward-Roger-Linear" for `vcov` instead for better matching
+#'   of the SAS results.
+#'
+#' - The argument `start` is used to facilitate the choice of initial values for fitting the model.
+#'   If `function` is provided, make sure its parameter is a valid element of `mmrm_tmb_data`
+#'   or `mmrm_tmb_formula_parts` and it returns a numeric vector.
+#'   By default or if `NULL` is provided, `std_start` will be used.
+#'   Other implemented methods include `emp_start`.
 #'
 #' @return List of class `mmrm_control` with the control parameters.
 #' @export
@@ -218,16 +255,23 @@ refit_multiple_optimizers <- function(fit,
 #'   optimizer_args = list(method = "L-BFGS-B")
 #' )
 mmrm_control <- function(n_cores = 1L,
-                         method = c("Satterthwaite", "Kenward-Roger", "Residual"),
+                         method = c("Satterthwaite", "Kenward-Roger", "Residual", "Between-Within"),
                          vcov = NULL,
-                         start = NULL,
+                         start = std_start,
                          accept_singular = TRUE,
                          drop_visit_levels = TRUE,
                          ...,
                          optimizers = h_get_optimizers(...)) {
-  assert_int(n_cores, lower = 1L)
+  assert_count(n_cores, positive = TRUE)
   assert_character(method)
-  assert_numeric(start, null.ok = TRUE)
+  if (is.null(start)) {
+    start <- std_start
+  }
+  assert(
+    check_function(start, args = "..."),
+    check_numeric(start, null.ok = FALSE),
+    combine = "or"
+  )
   assert_flag(accept_singular)
   assert_flag(drop_visit_levels)
   assert_list(optimizers, names = "unique", types = c("function", "partial"))
@@ -238,11 +282,20 @@ mmrm_control <- function(n_cores = 1L,
   }
   assert_subset(
     vcov,
-    c("Asymptotic", "Empirical", "Empirical-Jackknife", "Kenward-Roger", "Kenward-Roger-Linear")
+    c(
+      "Asymptotic",
+      "Empirical",
+      "Empirical-Bias-Reduced",
+      "Empirical-Jackknife",
+      "Kenward-Roger",
+      "Kenward-Roger-Linear"
+    )
   )
-
   if (xor(identical(method, "Kenward-Roger"), vcov %in% c("Kenward-Roger", "Kenward-Roger-Linear"))) {
-    stop("Kenward-Roger degrees of freedom must work together with Kenward-Roger or Kenward-Roger-Linear covariance!")
+    stop(paste(
+      "Kenward-Roger degrees of freedom must work together with Kenward-Roger",
+      "or Kenward-Roger-Linear covariance!"
+    ))
   }
   structure(
     list(
@@ -257,7 +310,6 @@ mmrm_control <- function(n_cores = 1L,
     class = "mmrm_control"
   )
 }
-
 
 #' Fit an MMRM
 #'
@@ -291,7 +343,8 @@ mmrm_control <- function(n_cores = 1L,
 #' there cannot be time points with multiple observations for any subject.
 #' The rationale is that these observations would need to be correlated, but it
 #' is not possible within the currently implemented covariance structure framework
-#' to do that correctly.
+#' to do that correctly. Moreover, for non-spatial covariance structures, the time
+#' variable must be a factor variable.
 #'
 #' When optimizer is not set, first the default optimizer
 #' (`L-BFGS-B`) is used to fit the model. If that converges, this is returned.
@@ -319,6 +372,15 @@ mmrm_control <- function(n_cores = 1L,
 #' matrix.
 #'
 #' Use of the package `emmeans` is supported, see [`emmeans_support`].
+#'
+#' NA values are always omitted regardless of `na.action` setting.
+#'
+#' When the number of visit levels is large, it usually requires large memory to create the
+#' covariance matrix. By default, the maximum allowed visit levels is 100, and if there are more
+#' visit levels, a confirmation is needed if run interactively.
+#' You can use `options(mmrm.max_visits = <target>)` to increase the maximum allowed number of visit
+#' levels. In non-interactive sessions the confirmation is not raised and will directly give you an error if
+#' the number of visit levels exceeds the maximum.
 #'
 #' @export
 #'
@@ -357,31 +419,50 @@ mmrm <- function(formula,
   if (control$method %in% c("Kenward-Roger", "Kenward-Roger-Linear") && !reml) {
     stop("Kenward-Roger only works for REML")
   }
-  attr(data, which = "dataname") <- toString(match.call()$data)
+  h_valid_formula(formula)
+  covariance <- h_reconcile_cov_struct(formula, covariance)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula, covariance)
+
+  if (!missing(data)) {
+    attr(data, which = "dataname") <- toString(match.call()$data)
+  } else {
+    # na.action set to na.pass to allow data to be full; will be futher trimmed later
+    data <- model.frame(formula_parts$full_formula, na.action = "na.pass")
+  }
 
   if (is.null(weights)) {
     weights <- rep(1, nrow(data))
   } else {
     attr(weights, which = "dataname") <- deparse(match.call()$weights)
   }
-
-  fit <- fit_single_optimizer(
-    formula = formula,
-    data = data,
-    weights = weights,
-    covariance = covariance,
-    reml = reml,
-    control = control
+  tmb_data <- h_mmrm_tmb_data(
+    formula_parts, data, weights, reml,
+    singular = if (control$accept_singular) "drop" else "error",
+    drop_visit_levels = control$drop_visit_levels,
+    allow_na_response = FALSE
   )
-
+  fit <- list()
+  names_all_optimizers <- names(control$optimizers)
+  while ((length(fit) == 0) && length(control$optimizers) > 0) {
+    fit <- fit_single_optimizer(
+      tmb_data = tmb_data,
+      formula_parts = formula_parts,
+      control = control
+    )
+    if (length(fit) == 0) {
+      warning(paste0(
+        "Divergence with optimizer ", names(control$optimizers[1L]), " due to problems: ",
+        toString(attr(fit, "divergence"))
+      ))
+    }
+    control$optimizers <- control$optimizers[-1]
+  }
   if (!attr(fit, "converged")) {
-    use_multiple <- length(control$optimizers) > 1L
-    if (use_multiple) {
-      control_remain <- control
-      control_remain$optimizers <- control$optimizers[-1]
+    more_optimizers <- length(control$optimizers) >= 1L
+    if (more_optimizers) {
       fit <- refit_multiple_optimizers(
         fit = fit,
-        control = control_remain
+        control = control
       )
     } else {
       all_problems <- unlist(
@@ -389,9 +470,9 @@ mmrm <- function(formula,
         use.names = FALSE
       )
       stop(paste0(
-        "Chosen optimizer '", toString(names(control$optimizers)), "' led to problems during model fit:\n",
+        "Chosen optimizers '", toString(names_all_optimizers), "' led to problems during model fit:\n",
         paste(paste0(seq_along(all_problems), ") ", all_problems), collapse = ";\n"), "\n",
-        "Consider trying multiple optimizers."
+        "Consider trying multiple or different optimizers."
       ))
     }
   }
@@ -399,13 +480,10 @@ mmrm <- function(formula,
   if (!is.null(fit_msg)) {
     message(paste(fit_msg, collapse = "\n"))
   }
+  fit$call <- match.call()
+  fit$call$formula <- formula
   fit$method <- control$method
   fit$vcov <- control$vcov
-  if (identical(fit$method, "Satterthwaite") && identical(fit$vcov, "Asymptotic")) {
-    covbeta_fun <- h_covbeta_fun(fit)
-    fit$jac_list <- h_jac_list(covbeta_fun, fit$theta_est)
-  }
-
   if (control$vcov %in% c("Kenward-Roger", "Kenward-Roger-Linear")) {
     fit$kr_comp <- h_get_kr_comp(fit$tmb_data, fit$theta_est)
     fit$beta_vcov_adj <- h_var_adj(
@@ -416,17 +494,23 @@ mmrm <- function(formula,
       r = fit$kr_comp$R,
       linear = (control$vcov == "Kenward-Roger-Linear")
     )
-  } else if (control$vcov %in% c("Empirical", "Empirical-Jackknife")) {
+  } else if (control$vcov %in% c("Empirical", "Empirical-Bias-Reduced", "Empirical-Jackknife")) {
     empirical_comp <- h_get_empirical(
-      fit$tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov, control$vcov == "Empirical-Jackknife"
+      fit$tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov, control$vcov
     )
     fit$beta_vcov_adj <- empirical_comp$cov
     fit$empirical_df_mat <- empirical_comp$df_mat
     dimnames(fit$beta_vcov_adj) <- dimnames(fit$beta_vcov)
   } else if (identical(control$vcov, "Asymptotic")) {
+    # Note that we only need the Jacobian list under Asymptotic covariance method,
+    # cf. the Satterthwaite vignette.
+    if (identical(fit$method, "Satterthwaite")) {
+      fit$jac_list <- h_jac_list(fit$tmb_data, fit$theta_est, fit$beta_vcov)
+    }
   } else {
     stop("Unrecognized coefficent variance-covariance method!")
   }
+
   class(fit) <- c("mmrm", class(fit))
   fit
 }

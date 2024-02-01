@@ -6,9 +6,9 @@
 \usage{
 mmrm_control(
   n_cores = 1L,
-  method = c("Satterthwaite", "Kenward-Roger", "Residual"),
+  method = c("Satterthwaite", "Kenward-Roger", "Residual", "Between-Within"),
   vcov = NULL,
-  start = NULL,
+  start = std_start,
   accept_singular = TRUE,
   drop_visit_levels = TRUE,
   ...,
@@ -16,15 +16,14 @@ mmrm_control(
 )
 }
 \arguments{
-\item{n_cores}{(\code{int})\cr number of cores to be used.}
+\item{n_cores}{(\code{count})\cr number of cores to be used.}
 
-\item{method}{(\code{string})\cr adjustment method for degrees of freedom and
-coefficients covariance matrix.}
+\item{method}{(\code{string})\cr adjustment method for degrees of freedom.}
 
 \item{vcov}{(\code{string})\cr coefficients covariance matrix adjustment method.}
 
-\item{start}{(\code{numeric} or \code{NULL})\cr optional start values for variance
-parameters.}
+\item{start}{(\code{NULL}, \code{numeric} or \code{function})\cr optional start values for variance
+parameters. See details for more information.}
 
 \item{accept_singular}{(\code{flag})\cr whether singular design matrices are reduced
 to full rank automatically and additional coefficient estimates will be missing.}
@@ -45,7 +44,6 @@ Fine-grained specification of the MMRM fit details is possible using this
 control function.
 }
 \details{
-The \code{drop_visit_levels} flag will decide whether unobserved visits will be kept for analysis.
 For example, if the data only has observations at visits \code{VIS1}, \code{VIS3} and \code{VIS4}, by default
 they are treated to be equally spaced, the distance from \code{VIS1} to \code{VIS3}, and from \code{VIS3} to \code{VIS4},
 are identical. However, you can manually convert this visit into a factor, with
@@ -54,15 +52,32 @@ then the distance from \code{VIS1} to \code{VIS3} will be double, as \code{VIS2}
 However, please be cautious because this can lead to convergence failure
 when using an unstructured covariance matrix and there are no observations
 at the missing visits.
-The \code{method} and \code{vcov} arguments specify the degrees of freedom and coefficients covariance matrix
-adjustment methods, respectively.
-If \code{method} is "Kenward-Roger" then only "Kenward-Roger" or "Kenward-Roger-Linear" are allowed for \code{vcov}.
-The \code{vcov} argument can be \code{NULL} to use the default covariance method depending on the \code{method}
+\itemize{
+\item The \code{method} and \code{vcov} arguments specify the degrees of freedom and coefficients
+covariance matrix adjustment methods, respectively.
+\itemize{
+\item Allowed \code{vcov} includes: "Asymptotic", "Kenward-Roger", "Kenward-Roger-Linear", "Empirical" (CR0),
+"Empirical-Jackknife" (CR3), and "Empirical-Bias-Reduced" (CR2).
+\item Allowed \code{method} includes: "Satterthwaite", "Kenward-Roger", "Between-Within" and "Residual".
+\item If \code{method} is "Kenward-Roger" then only "Kenward-Roger" or "Kenward-Roger-Linear" are allowed for \code{vcov}.
+}
+\item The \code{vcov} argument can be \code{NULL} to use the default covariance method depending on the \code{method}
 used for degrees of freedom, see the following table:\tabular{ll}{
    \code{method} \tab Default \code{vcov} \cr
    Satterthwaite \tab Asymptotic \cr
    Kenward-Roger \tab Kenward-Roger \cr
    Residual \tab Empirical \cr
+   Between-Within \tab Asymptotic \cr
+}
+
+\item Please note that "Kenward-Roger" for "Unstructured" covariance gives different results
+compared to SAS; Use "Kenward-Roger-Linear" for \code{vcov} instead for better matching
+of the SAS results.
+\item The argument \code{start} is used to facilitate the choice of initial values for fitting the model.
+If \code{function} is provided, make sure its parameter is a valid element of \code{mmrm_tmb_data}
+or \code{mmrm_tmb_formula_parts} and it returns a numeric vector.
+By default or if \code{NULL} is provided, \code{std_start} will be used.
+Other implemented methods include \code{emp_start}.
 }
 }
 \examples{

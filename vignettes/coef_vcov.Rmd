@@ -1,15 +1,12 @@
 ---
-title: "Coefficients Covariance Matrix Adjustment in `mmrm`"
+title: "Coefficients Covariance Matrix Adjustment"
 package: mmrm
 bibliography: '`r system.file("REFERENCES.bib", package = "mmrm")`'
 output:
-  rmarkdown::html_document:
-          theme: "spacelab"
-          highlight: "kate"
+  rmarkdown::html_vignette:
           toc: true
-          toc_float: true
 vignette: |
-  %\VignetteIndexEntry{Coefficients Covariance Matrix Adjustment in `mmrm`}
+  %\VignetteIndexEntry{Coefficients Covariance Matrix Adjustment}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options:
@@ -32,7 +29,7 @@ Here we describe the variance-covariance matrix adjustment of coefficients.
 To estimate the covariance matrix of coefficients, there are many ways.
 In `mmrm` package, we implemented asymptotic, empirical, Jackknife and Kenward-Roger methods.
 For simplicity, the following derivation are all for unweighted mmrm.
-For weighted mmrm, we can follow the [details of weighted least square estimator](https://openpharma.github.io/mmrm/main/articles/algorithm.html#weighted-least-squares-estimator).
+For weighted mmrm, we can follow the [details of weighted least square estimator](algorithm.html#weighted-least-squares-estimator).
 
 ## Asymptotic Covariance
 
@@ -52,7 +49,7 @@ Where $W$ is the block diagonal matrix of inverse of covariance matrix of $\epsi
 
 ## Empirical Covariance
 
-Empirical covariance, also known as the robust sandwich estimator, is derived by replacing the covariance matrix of $\epsilon$ by observed
+Empirical covariance, also known as the robust sandwich estimator, or "CR0", is derived by replacing the covariance matrix of $\epsilon$ by observed
 covariance matrix.
 
 \[
@@ -60,13 +57,14 @@ covariance matrix.
   = (X^\top W X)^{-1}(\sum_{i}{X_i^\top L_{i} L_{i}^\top \hat\epsilon_i\hat\epsilon_i^\top L_{i} L_{i}^\top X_i})(X^\top W X)^{-1}
 \]
 
-Where $W_i$ is the block diagonal part for subject $i$ of $W$ matrix, $\hat\epsilon_i$ is the observed residuals for subject i, $L_i$
-is the Cholesky factor of $W_i$.
+Where $W_i$ is the block diagonal part for subject $i$ of $W$ matrix, $\hat\epsilon_i$ is the observed residuals for subject i,
+$L_i$ is the Cholesky factor of $\Sigma_i^{-1}$ ($W_i = L_i L_i^\top$).
 
+See the detailed explanation of these formulas in the [Weighted Least Square Empirical Covariance](empirical_wls.html) vignette.
 
 ## Jackknife Covariance
 
-Jackknife method in `mmrm` is the "leave-one-cluster-out" method.
+Jackknife method in `mmrm` is the "leave-one-cluster-out" method. It is also known as "CR3".
 Following @mccaffrey2003bias, we have
 
 \[
@@ -78,6 +76,18 @@ where
 \[H_{ii} = X_i(X^\top X)^{-1}X_i^\top\]
 
 Please note that in the paper there is an additional scale parameter $\frac{n-1}{n}$ where $n$ is the number of subjects, here we do not include this parameter.
+
+## Bias-Reduced Covariance
+
+Bias-reduced method, also known as "CR2", provides unbiased under correct working model.
+Following @mccaffrey2003bias, we have
+\[
+  cov(\hat\beta) = (X^\top W X)^{-1}(\sum_{i}{X_i^\top L_{i} (I_{i} - H_{ii})^{-1/2} L_{i}^\top \hat\epsilon_i\hat\epsilon_i^\top L_{i} (I_{i} - H_{ii})^{-1} L_{i}^\top X_i})(X^\top W X)^{-1}
+\]
+
+where
+
+\[H_{ii} = X_i(X^\top X)^{-1}X_i^\top\]
 
 ## Kenward-Roger Covariance
 
