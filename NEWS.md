@@ -6,7 +6,7 @@
 
 ### Bug Fixes
 
-- Previously if an optimizer fails `h_record_all_output` will return a `list()` or `try-error`. Now only `try-error` will be returned.
+- Previously if a secondary optimizer fails `mmrm` will fail. This is fixed now.
 
 # mmrm 0.3.9
 
