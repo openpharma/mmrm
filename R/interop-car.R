@@ -64,7 +64,9 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
         },
         "3" = ,
         "III" = {
-          additional_levels <- vapply(data[additional_vars], function(x) nlevels(x), FUN.VALUE = 1L)
+          additional_levels <- vapply(data[additional_vars], function(x) {
+            if (is.factor(x)) nlevels(x) else length(unique(x))
+          }, FUN.VALUE = 1L)
           t_levels <- prod(additional_levels)
           l_mx[, cols] / t_levels
         }

@@ -7,6 +7,7 @@
 ### Bug Fixes
 
 - Previously if a secondary optimizer fails `mmrm` will fail. This is fixed now.
+- Previously character covariate variable will make `Anova` fail. This is fixed now.
 
 # mmrm 0.3.9
 
