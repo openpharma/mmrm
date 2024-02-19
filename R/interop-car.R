@@ -40,7 +40,7 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
   assert_subset(effect, colnames(fcts))
   idx <- which(effect == colnames(fcts))
   cols <- which(asg == idx)
-  data <- component(object, "full_frame")
+  data <- model.frame(object)
   var_numeric <- vapply(data, is.numeric, FUN.VALUE = TRUE)
   coef_rows <- length(cols)
   l_mx <- matrix(0, nrow = coef_rows, ncol = length(asg))
@@ -64,7 +64,9 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
         },
         "3" = ,
         "III" = {
-          additional_levels <- vapply(data[additional_vars], function(x) nlevels(x), FUN.VALUE = 1L)
+          additional_levels <- vapply(data[additional_vars], function(x) {
+            if (is.factor(x)) nlevels(x) else length(unique(x))
+          }, FUN.VALUE = 1L)
           t_levels <- prod(additional_levels)
           l_mx[, cols] / t_levels
         }
