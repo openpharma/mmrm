@@ -15,6 +15,8 @@ A \code{tibble} with 800 rows and 7 variables:
 \item \code{FEV1_BL}: FEV1 at baseline (\%).
 \item \code{FEV1}: FEV1 at study visits.
 \item \code{WEIGHT}: weighting variable.
+\item \code{VISITN}: integer order of the visit.
+\item \code{VISITN2}: coordinates of the visit for distance calculation.
 }
 }
 \source{
