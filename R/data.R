@@ -17,6 +17,8 @@
 #'   - `FEV1_BL`: FEV1 at baseline (%).
 #'   - `FEV1`: FEV1 at study visits.
 #'   - `WEIGHT`: weighting variable.
+#'   - `VISITN`: integer order of the visit.
+#'   - `VISITN2`: coordinates of the visit for distance calculation.
 #'
 #' @source This is an artificial dataset.
 "fev_data"
