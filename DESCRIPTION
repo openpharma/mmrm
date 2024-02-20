@@ -90,7 +90,6 @@ VignetteBuilder:
     knitr
 RdMacros:
     Rdpack
-biocViews:
 Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-US
