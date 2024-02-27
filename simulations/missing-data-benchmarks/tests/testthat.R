@@ -1,5 +1,6 @@
 # load required libraries
 library(simChef)
+library(checkmate)
 library(testthat)
 library(mmrm)
 library(glmmTMB)
@@ -10,6 +11,9 @@ library(dplyr)
 library(tidyr)
 library(stringr)
 library(emmeans)
+
+# flag whether SAS tests should be run
+run_sas_tests <- FALSE
 
 # source the R scripts
 sim_functions_files <- list.files(

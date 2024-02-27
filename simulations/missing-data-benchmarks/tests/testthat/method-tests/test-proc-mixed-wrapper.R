@@ -2,6 +2,8 @@ test_that(paste(
   "proc_mixed_wrapper_fun produces treatment effect estimates close to ground",
   "truth in large samples with unstructure covariance matrix"
 ), {
+  skip_if_not(run_sas_tests)
+
   set.seed(61234)
   dgp_output <- rct_dgp_fun(
     n_obs = 10000,
@@ -26,6 +28,7 @@ test_that(paste(
   "truth in large samples with heterogeneous compound symmetry covariance",
   "matrix"
 ), {
+  skip_if_not(run_sas_tests)
   set.seed(61234)
   dgp_output <- rct_dgp_fun(
     n_obs = 10000,
@@ -49,6 +52,7 @@ test_that(paste(
   "proc_mixed_wrapper_fun produces treatment effect estimates close to ground",
   "truth in large samples with heterogeneous Toeplitz covariance matrix"
 ), {
+  skip_if_not(run_sas_tests)
   set.seed(61234)
   dgp_output <- rct_dgp_fun(
     n_obs = 10000,
@@ -71,6 +75,7 @@ test_that(paste(
 test_that(paste(
   "proc_mixed_wrapper_fun produces a fit time"
 ), {
+  skip_if_not(run_sas_tests)
   set.seed(61234)
   dgp_output <- rct_dgp_fun(
     n_obs = 10000,

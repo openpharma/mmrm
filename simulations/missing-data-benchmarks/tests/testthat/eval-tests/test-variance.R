@@ -66,6 +66,9 @@ test_that("variance_fun computes DGP-specific variance", {
     bcva_change = eff_us$bcva_change,
     covar_type = "us"
   )
+
+  skip_if_not(run_sas_tests)
+
   proc_mixed_no_eff <- proc_mixed_wrapper_fun(
     participant = no_eff_us$participant,
     trt = no_eff_us$trt,
