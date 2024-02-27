@@ -26,12 +26,13 @@ h_record_all_output <- function(expr,
                                 remove = list(),
                                 divergence = list()) {
   # Note: We don't need to and cannot assert `expr` here.
-  assert_list(remove)
+  assert_list(remove, types = "character")
+  assert_list(divergence, types = "character")
   env <- new.env()
   result <- withCallingHandlers(
     withRestarts(
       expr,
-      muffleStop = function() list()
+      muffleStop = function(e) structure(e$message, class = "try-error")
     ),
     message = function(m) {
       msg_without_newline <- gsub(m$message, pattern = "\n$", replacement = "")
@@ -44,7 +45,7 @@ h_record_all_output <- function(expr,
     },
     error = function(e) {
       env$error <- c(env$error, e$message)
-      invokeRestart("muffleStop")
+      invokeRestart("muffleStop", e)
     }
   )
   list(

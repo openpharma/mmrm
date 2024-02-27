@@ -58,6 +58,24 @@ test_that("Anova works as expected", {
   )
 })
 
+## Anova with character covariates
+
+test_that("Anova works if covariate are character", {
+  skip_if_not_installed("car")
+  fev2 <- fev_data
+  fev2$ARMCD <- as.character(fev2$ARMCD)
+  fit <- mmrm(FEV1 ~ ARMCD * AVISIT + ar1(AVISIT | USUBJID), data = fev2)
+  fit2 <- mmrm(FEV1 ~ ARMCD * AVISIT + ar1(AVISIT | USUBJID), data = fev_data)
+  expect_identical(
+    Anova(fit, "III"),
+    Anova(fit2, "III")
+  )
+  expect_identical(
+    Anova(fit, "II"),
+    Anova(fit2, "II")
+  )
+})
+
 # Anova Integration Test ----
 
 test_that("Anova give similar results to SAS", {
