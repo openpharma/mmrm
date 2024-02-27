@@ -33,7 +33,7 @@ studies. We rely on `simChef` for all numerical experiments. A case study
 demonstrating its use is available
 [here](https://github.com/PhilBoileau/simChef-case-study). The
 `simulations/csh-benchmarks/` directory provides an `mmrm`-specific example.
-Please review these resources prior to begining your own numerical experiments.
+Please review these resources prior to beginning your own numerical experiments.
 
 
 # Benchmarking `mmrm()`
@@ -272,7 +272,7 @@ is converted to a [`pandas`
 prior to being transformed into a SAS data set. Factor variables in the original
 `data.frame` are converted to `Categorical` variables in Python, which are then
 read recognized as strings by SAS. Hence, if a factor has levels `c(1, 2, ...,
-10)`, they are reorderd as `"1", "10", "2", ..., "9"` SAS before being renamed
+10)`, they are reorderd as `"1", "10", "2", ..., "9"` in SAS before being renamed
 as `"1", "2", ..., "10"`.
 
 
