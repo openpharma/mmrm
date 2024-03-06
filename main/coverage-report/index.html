@@ -5,7 +5,7 @@
 <style>body{background-color:white;}</style>
 <script src="lib/htmlwidgets-1.6.4/htmlwidgets.js"></script>
 <link href="lib/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
-<script src="lib/datatables-binding-0.31/datatables.js"></script>
+<script src="lib/datatables-binding-0.32/datatables.js"></script>
 <script src="lib/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <link href="lib/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
 <link href="lib/dt-core-1.13.6/css/jquery.dataTables.extra.css" rel="stylesheet" />
@@ -94,7 +94,7 @@ table.table-condensed {
   font-size: 11px;
 }</style>
   <div class="col-md-8 col-md-offset-2">
-    <h2>mmrm coverage - 96.75%</h2>
+    <h2>mmrm coverage - 96.99%</h2>
     <div class="tabbable">
       <ul class="nav nav-tabs" data-tabsetid="covr">
         <li class="active">
@@ -106,8 +106,8 @@ table.table-condensed {
       </ul>
       <div class="tab-content" data-tabsetid="covr">
         <div class="tab-pane active" title="Files" data-value="Files" id="tab-covr-1">
-          <div class="datatables html-widget html-fill-item" id="htmlwidget-30e8ae01f8d34e3f28e8" style="width:100%;height:500px;"></div>
-          <script type="application/json" data-for="htmlwidget-30e8ae01f8d34e3f28e8">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["<a href=\"#\">R/residual.R<\/a>","<a href=\"#\">src/testthat-helpers.h<\/a>","<a href=\"#\">R/zzz.R<\/a>","<a href=\"#\">src/test-chol_cache.cpp<\/a>","<a href=\"#\">R/satterthwaite.R<\/a>","<a href=\"#\">src/test-derivatives.cpp<\/a>","<a href=\"#\">R/testing.R<\/a>","<a href=\"#\">R/utils.R<\/a>","<a href=\"#\">src/test-covariance.cpp<\/a>","<a href=\"#\">R/interop-car.R<\/a>","<a href=\"#\">src/test-utils.cpp<\/a>","<a href=\"#\">R/tidiers.R<\/a>","<a href=\"#\">R/kenwardroger.R<\/a>","<a href=\"#\">src/jacobian.cpp<\/a>","<a href=\"#\">R/interop-parsnip.R<\/a>","<a href=\"#\">R/fit.R<\/a>","<a href=\"#\">R/cov_struct.R<\/a>","<a href=\"#\">R/tmb-methods.R<\/a>","<a href=\"#\">src/covariance.h<\/a>","<a href=\"#\">R/tmb.R<\/a>","<a href=\"#\">R/mmrm-methods.R<\/a>","<a href=\"#\">src/derivatives.h<\/a>","<a href=\"#\">src/predict.cpp<\/a>","<a href=\"#\">src/utils.h<\/a>","<a href=\"#\">src/mmrm.cpp<\/a>","<a href=\"#\">src/empirical.cpp<\/a>","<a href=\"#\">R/component.R<\/a>","<a href=\"#\">src/chol_cache.h<\/a>","<a href=\"#\">R/between-within.R<\/a>","<a href=\"#\">src/kr_comp.cpp<\/a>","<a href=\"#\">src/exports.cpp<\/a>","<a href=\"#\">R/interop-emmeans.R<\/a>","<a href=\"#\">R/utils-formula.R<\/a>","<a href=\"#\">R/utils-nse.R<\/a>","<a href=\"#\">R/skipping.R<\/a>","<a href=\"#\">R/empirical.R<\/a>"],[32,57,140,67,259,130,158,488,151,116,232,199,191,62,83,516,461,696,182,552,263,224,123,184,155,91,146,138,131,71,84,84,94,132,31,27],[8,13,59,54,103,101,59,165,103,66,167,65,89,45,49,198,85,256,91,254,127,115,90,81,75,69,56,55,53,53,46,32,26,15,8,7],[0,8,39,49,94,94,55,155,98,63,160,63,87,44,48,195,84,253,90,254,127,115,90,81,75,69,56,55,53,53,46,32,26,15,8,7],[8,5,20,5,9,7,4,10,5,3,7,2,2,1,1,3,1,3,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],["0","75","1","6","523","5","143","295","7","23","2","7","334","117969","1","98","233","2279","15039","209","13","7358","561783","1816379","3670390","39381","3382","165890","19","274891","4879","13","237","352","11","34"],["0.00%","61.54%","66.10%","90.74%","91.26%","93.07%","93.22%","93.94%","95.15%","95.45%","95.81%","96.92%","97.75%","97.78%","97.96%","98.48%","98.82%","98.83%","98.90%","100.00%","100.00%","100.00%","100.00%","100.00%","100.00%","100.00%","100.00%","100.00%","100.00%","100.00%","100.00%","100.00%","100.00%","100.00%","100.00%","100.00%"]],"container":"<table class=\"row-border\">\n  <thead>\n    <tr>\n      <th>File<\/th>\n      <th>Lines<\/th>\n      <th>Relevant<\/th>\n      <th>Covered<\/th>\n      <th>Missed<\/th>\n      <th>Hits / Line<\/th>\n      <th>Coverage<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"searching":false,"dom":"t","paging":false,"columnDefs":[{"targets":6,"createdCell":"function(td, cellData, rowData, row, col) {\n  var percent = cellData.replace(\"%\", \"\");\n  if (percent > 90) {\n    var grad = \"linear-gradient(90deg, #edfde7 \" + cellData + \", white \" + cellData + \")\";\n  } else if (percent > 75) {\n    var grad = \"linear-gradient(90deg, #f9ffe5 \" + cellData + \", white \" + cellData + \")\";\n  } else {\n    var grad = \"linear-gradient(90deg, #fcece9 \" + cellData + \", white \" + cellData + \")\";\n  }\n  $(td).css(\"background\", grad);\n}\n"},{"className":"dt-right","targets":[1,2,3,4]},{"name":"File","targets":0},{"name":"Lines","targets":1},{"name":"Relevant","targets":2},{"name":"Covered","targets":3},{"name":"Missed","targets":4},{"name":"Hits / Line","targets":5},{"name":"Coverage","targets":6}],"order":[],"autoWidth":false,"orderClasses":false},"callback":"function(table) {\ntable.on('click.dt', 'a', function() {\n  files = $('div#files div');\n  files.not('div.hidden').addClass('hidden');\n  id = $(this).text();\n  files.filter('div[id=\\'' + id + '\\']').removeClass('hidden');\n  $('ul.nav a[data-value=Source]').text(id).tab('show');\n});\n}"},"evals":["options.columnDefs.0.createdCell","callback"],"jsHooks":[]}</script>
+          <div class="datatables html-widget html-fill-item" id="htmlwidget-7b654051169b7451aba5" style="width:100%;height:500px;"></div>
+          <script type="application/json" data-for="htmlwidget-7b654051169b7451aba5">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["<a href=\"#\">src/testthat-helpers.h<\/a>","<a href=\"#\">R/zzz.R<\/a>","<a href=\"#\">src/test-chol_cache.cpp<\/a>","<a href=\"#\">R/satterthwaite.R<\/a>","<a href=\"#\">src/test-derivatives.cpp<\/a>","<a href=\"#\">R/testing.R<\/a>","<a href=\"#\">R/utils.R<\/a>","<a href=\"#\">src/test-covariance.cpp<\/a>","<a href=\"#\">R/interop-car.R<\/a>","<a href=\"#\">src/test-utils.cpp<\/a>","<a href=\"#\">R/tidiers.R<\/a>","<a href=\"#\">R/kenwardroger.R<\/a>","<a href=\"#\">src/jacobian.cpp<\/a>","<a href=\"#\">R/interop-parsnip.R<\/a>","<a href=\"#\">R/fit.R<\/a>","<a href=\"#\">R/cov_struct.R<\/a>","<a href=\"#\">R/tmb-methods.R<\/a>","<a href=\"#\">src/covariance.h<\/a>","<a href=\"#\">R/tmb.R<\/a>","<a href=\"#\">R/mmrm-methods.R<\/a>","<a href=\"#\">src/derivatives.h<\/a>","<a href=\"#\">src/predict.cpp<\/a>","<a href=\"#\">src/utils.h<\/a>","<a href=\"#\">src/mmrm.cpp<\/a>","<a href=\"#\">src/empirical.cpp<\/a>","<a href=\"#\">R/component.R<\/a>","<a href=\"#\">src/chol_cache.h<\/a>","<a href=\"#\">R/between-within.R<\/a>","<a href=\"#\">src/kr_comp.cpp<\/a>","<a href=\"#\">src/exports.cpp<\/a>","<a href=\"#\">R/interop-emmeans.R<\/a>","<a href=\"#\">R/utils-formula.R<\/a>","<a href=\"#\">R/utils-nse.R<\/a>","<a href=\"#\">R/residual.R<\/a>","<a href=\"#\">R/skipping.R<\/a>","<a href=\"#\">R/empirical.R<\/a>"],[57,140,67,259,130,158,488,151,116,232,199,191,62,83,516,461,696,182,552,263,224,123,184,155,91,146,138,131,71,84,84,94,132,32,31,27],[13,59,54,103,101,59,165,103,66,167,65,89,45,49,198,85,256,91,254,127,115,90,75,75,69,56,55,53,53,46,32,26,15,8,8,7],[8,39,49,94,94,55,155,98,63,160,63,87,44,48,195,84,253,90,254,127,115,90,75,75,69,56,55,53,53,46,32,26,15,8,8,7],[5,20,5,9,7,4,10,5,3,7,2,2,1,1,3,1,3,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],["75","1","6","523","5","144","295","7","23","2","7","334","117969","1","98","233","2279","15039","209","13","7358","561783","1771976","3670390","39381","3394","165890","19","274891","4879","13","237","352","1","11","34"],["61.54%","66.10%","90.74%","91.26%","93.07%","93.22%","93.94%","95.15%","95.45%","95.81%","96.92%","97.75%","97.78%","97.96%","98.48%","98.82%","98.83%","98.90%","100.00%","100.00%","100.00%","100.00%","100.00%","100.00%","100.00%","100.00%","100.00%","100.00%","100.00%","100.00%","100.00%","100.00%","100.00%","100.00%","100.00%","100.00%"]],"container":"<table class=\"row-border\">\n  <thead>\n    <tr>\n      <th>File<\/th>\n      <th>Lines<\/th>\n      <th>Relevant<\/th>\n      <th>Covered<\/th>\n      <th>Missed<\/th>\n      <th>Hits / Line<\/th>\n      <th>Coverage<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"searching":false,"dom":"t","paging":false,"columnDefs":[{"targets":6,"createdCell":"function(td, cellData, rowData, row, col) {\n  var percent = cellData.replace(\"%\", \"\");\n  if (percent > 90) {\n    var grad = \"linear-gradient(90deg, #edfde7 \" + cellData + \", white \" + cellData + \")\";\n  } else if (percent > 75) {\n    var grad = \"linear-gradient(90deg, #f9ffe5 \" + cellData + \", white \" + cellData + \")\";\n  } else {\n    var grad = \"linear-gradient(90deg, #fcece9 \" + cellData + \", white \" + cellData + \")\";\n  }\n  $(td).css(\"background\", grad);\n}\n"},{"className":"dt-right","targets":[1,2,3,4]},{"name":"File","targets":0},{"name":"Lines","targets":1},{"name":"Relevant","targets":2},{"name":"Covered","targets":3},{"name":"Missed","targets":4},{"name":"Hits / Line","targets":5},{"name":"Coverage","targets":6}],"order":[],"autoWidth":false,"orderClasses":false},"callback":"function(table) {\ntable.on('click.dt', 'a', function() {\n  files = $('div#files div');\n  files.not('div.hidden').addClass('hidden');\n  id = $(this).text();\n  files.filter('div[id=\\'' + id + '\\']').removeClass('hidden');\n  $('ul.nav a[data-value=Source]').text(id).tab('show');\n});\n}"},"evals":["options.columnDefs.0.createdCell","callback"],"jsHooks":[]}</script>
         </div>
         <div class="tab-pane" title="Source" data-value="Source" id="tab-covr-2">
           <div id="files">
@@ -10395,56 +10395,56 @@ table.table-condensed {
                   </tr>
                   <tr class="covered">
                     <td class="num">41</td>
-                    <td class="coverage">4894<em>x</em></td>
+                    <td class="coverage">4895<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  vec &lt;- as.vector(vec)</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">42</td>
-                    <td class="coverage">4894<em>x</em></td>
+                    <td class="coverage">4895<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  assert_numeric(vec, any.missing = FALSE)</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">43</td>
-                    <td class="coverage">4894<em>x</em></td>
+                    <td class="coverage">4895<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  assert_matrix(</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">44</td>
-                    <td class="coverage">4894<em>x</em></td>
+                    <td class="coverage">4895<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    center,</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">45</td>
-                    <td class="coverage">4894<em>x</em></td>
+                    <td class="coverage">4895<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    mode = "numeric",</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">46</td>
-                    <td class="coverage">4894<em>x</em></td>
+                    <td class="coverage">4895<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    any.missing = FALSE,</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">47</td>
-                    <td class="coverage">4894<em>x</em></td>
+                    <td class="coverage">4895<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    nrows = length(vec),</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">48</td>
-                    <td class="coverage">4894<em>x</em></td>
+                    <td class="coverage">4895<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    ncols = length(vec)</pre>
                     </td>
@@ -10465,7 +10465,7 @@ table.table-condensed {
                   </tr>
                   <tr class="covered">
                     <td class="num">51</td>
-                    <td class="coverage">4894<em>x</em></td>
+                    <td class="coverage">4895<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  sum(vec * (center %*% vec))</pre>
                     </td>
@@ -10556,49 +10556,49 @@ table.table-condensed {
                   </tr>
                   <tr class="covered">
                     <td class="num">64</td>
-                    <td class="coverage">117<em>x</em></td>
+                    <td class="coverage">119<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  assert_matrix(mat, mode = "numeric", any.missing = FALSE, min.cols = 1L)</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">65</td>
-                    <td class="coverage">117<em>x</em></td>
+                    <td class="coverage">119<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  assert_matrix(</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">66</td>
-                    <td class="coverage">117<em>x</em></td>
+                    <td class="coverage">119<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    center,</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">67</td>
-                    <td class="coverage">117<em>x</em></td>
+                    <td class="coverage">119<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    mode = "numeric",</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">68</td>
-                    <td class="coverage">117<em>x</em></td>
+                    <td class="coverage">119<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    any.missing = FALSE,</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">69</td>
-                    <td class="coverage">117<em>x</em></td>
+                    <td class="coverage">119<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    nrows = ncol(center),</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">70</td>
-                    <td class="coverage">117<em>x</em></td>
+                    <td class="coverage">119<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    ncols = ncol(center)</pre>
                     </td>
@@ -10612,7 +10612,7 @@ table.table-condensed {
                   </tr>
                   <tr class="covered">
                     <td class="num">72</td>
-                    <td class="coverage">117<em>x</em></td>
+                    <td class="coverage">119<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  mat %*% tcrossprod(center, mat)</pre>
                     </td>
@@ -18791,21 +18791,21 @@ table.table-condensed {
                   </tr>
                   <tr class="covered">
                     <td class="num">100</td>
-                    <td class="coverage">413<em>x</em></td>
+                    <td class="coverage">414<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  assert_class(object, "mmrm")</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">101</td>
-                    <td class="coverage">413<em>x</em></td>
+                    <td class="coverage">414<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  assert_numeric(contrast, len = length(component(object, "beta_est")))</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">102</td>
-                    <td class="coverage">413<em>x</em></td>
+                    <td class="coverage">414<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  assert_number(df, lower = .Machine$double.xmin)</pre>
                     </td>
@@ -18819,35 +18819,35 @@ table.table-condensed {
                   </tr>
                   <tr class="covered">
                     <td class="num">104</td>
-                    <td class="coverage">413<em>x</em></td>
+                    <td class="coverage">414<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  est &lt;- sum(contrast * component(object, "beta_est"))</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">105</td>
-                    <td class="coverage">413<em>x</em></td>
+                    <td class="coverage">414<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  var &lt;- h_quad_form_vec(contrast, component(object, "beta_vcov"))</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">106</td>
-                    <td class="coverage">413<em>x</em></td>
+                    <td class="coverage">414<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  se &lt;- sqrt(var)</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">107</td>
-                    <td class="coverage">413<em>x</em></td>
+                    <td class="coverage">414<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  t_stat &lt;- est / se</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">108</td>
-                    <td class="coverage">413<em>x</em></td>
+                    <td class="coverage">414<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  p_val &lt;- 2 * stats::pt(q = abs(t_stat), df = df, lower.tail = FALSE)</pre>
                     </td>
@@ -18861,42 +18861,42 @@ table.table-condensed {
                   </tr>
                   <tr class="covered">
                     <td class="num">110</td>
-                    <td class="coverage">413<em>x</em></td>
+                    <td class="coverage">414<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  list(</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">111</td>
-                    <td class="coverage">413<em>x</em></td>
+                    <td class="coverage">414<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    est = est,</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">112</td>
-                    <td class="coverage">413<em>x</em></td>
+                    <td class="coverage">414<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    se = se,</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">113</td>
-                    <td class="coverage">413<em>x</em></td>
+                    <td class="coverage">414<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    df = df,</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">114</td>
-                    <td class="coverage">413<em>x</em></td>
+                    <td class="coverage">414<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    t_stat = t_stat,</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">115</td>
-                    <td class="coverage">413<em>x</em></td>
+                    <td class="coverage">414<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    p_val = p_val</pre>
                     </td>
@@ -19043,35 +19043,35 @@ table.table-condensed {
                   </tr>
                   <tr class="covered">
                     <td class="num">136</td>
-                    <td class="coverage">14<em>x</em></td>
+                    <td class="coverage">15<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  assert_class(object, "mmrm")</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">137</td>
-                    <td class="coverage">14<em>x</em></td>
+                    <td class="coverage">15<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  assert_matrix(contrast, ncols = length(component(object, "beta_est")))</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">138</td>
-                    <td class="coverage">14<em>x</em></td>
+                    <td class="coverage">15<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  num_df &lt;- nrow(contrast)</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">139</td>
-                    <td class="coverage">14<em>x</em></td>
+                    <td class="coverage">15<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  assert_number(df, lower = .Machine$double.xmin)</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">140</td>
-                    <td class="coverage">14<em>x</em></td>
+                    <td class="coverage">15<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  assert_number(f_stat_factor, lower = .Machine$double.xmin)</pre>
                     </td>
@@ -19085,56 +19085,56 @@ table.table-condensed {
                   </tr>
                   <tr class="covered">
                     <td class="num">142</td>
-                    <td class="coverage">14<em>x</em></td>
+                    <td class="coverage">15<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  prec_contrast &lt;- solve(h_quad_form_mat(contrast, component(object, "beta_vcov")))</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">143</td>
-                    <td class="coverage">14<em>x</em></td>
+                    <td class="coverage">15<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  contrast_est &lt;- component(object, "beta_est") %*% t(contrast)</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">144</td>
-                    <td class="coverage">14<em>x</em></td>
+                    <td class="coverage">15<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  f_statistic &lt;- as.numeric(f_stat_factor / num_df * h_quad_form_mat(contrast_est, prec_contrast))</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">145</td>
-                    <td class="coverage">14<em>x</em></td>
+                    <td class="coverage">15<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  p_val &lt;- stats::pf(</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">146</td>
-                    <td class="coverage">14<em>x</em></td>
+                    <td class="coverage">15<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    q = f_statistic,</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">147</td>
-                    <td class="coverage">14<em>x</em></td>
+                    <td class="coverage">15<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    df1 = num_df,</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">148</td>
-                    <td class="coverage">14<em>x</em></td>
+                    <td class="coverage">15<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    df2 = df,</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">149</td>
-                    <td class="coverage">14<em>x</em></td>
+                    <td class="coverage">15<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    lower.tail = FALSE</pre>
                     </td>
@@ -19155,35 +19155,35 @@ table.table-condensed {
                   </tr>
                   <tr class="covered">
                     <td class="num">152</td>
-                    <td class="coverage">14<em>x</em></td>
+                    <td class="coverage">15<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  list(</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">153</td>
-                    <td class="coverage">14<em>x</em></td>
+                    <td class="coverage">15<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    num_df = num_df,</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">154</td>
-                    <td class="coverage">14<em>x</em></td>
+                    <td class="coverage">15<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    denom_df = df,</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">155</td>
-                    <td class="coverage">14<em>x</em></td>
+                    <td class="coverage">15<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    f_stat = f_statistic,</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">156</td>
-                    <td class="coverage">14<em>x</em></td>
+                    <td class="coverage">15<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    p_val = p_val</pre>
                     </td>
@@ -22646,21 +22646,21 @@ table.table-condensed {
                   </tr>
                   <tr class="covered">
                     <td class="num">30</td>
-                    <td class="coverage">42<em>x</em></td>
+                    <td class="coverage">44<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  assert_flag(complete)</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">31</td>
-                    <td class="coverage">42<em>x</em></td>
+                    <td class="coverage">44<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  nm &lt;- if (complete) "beta_est_complete" else "beta_est"</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">32</td>
-                    <td class="coverage">42<em>x</em></td>
+                    <td class="coverage">44<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  component(object, name = nm)</pre>
                     </td>
@@ -29724,16 +29724,16 @@ table.table-condensed {
                       <pre class="language-r">h_df_1d_res &lt;- function(object, contrast) {</pre>
                     </td>
                   </tr>
-                  <tr class="missed">
+                  <tr class="covered">
                     <td class="num">10</td>
-                    <td class="coverage">!</td>
+                    <td class="coverage">1<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  assert_class(object, "mmrm")</pre>
                     </td>
                   </tr>
-                  <tr class="missed">
+                  <tr class="covered">
                     <td class="num">11</td>
-                    <td class="coverage">!</td>
+                    <td class="coverage">1<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  assert_numeric(contrast, len = length(component(object, "beta_est")))</pre>
                     </td>
@@ -29745,9 +29745,9 @@ table.table-condensed {
                       <pre class="language-r"></pre>
                     </td>
                   </tr>
-                  <tr class="missed">
+                  <tr class="covered">
                     <td class="num">13</td>
-                    <td class="coverage">!</td>
+                    <td class="coverage">1<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  df &lt;- component(object, "n_obs") - length(component(object, "beta_est"))</pre>
                     </td>
@@ -29759,9 +29759,9 @@ table.table-condensed {
                       <pre class="language-r"></pre>
                     </td>
                   </tr>
-                  <tr class="missed">
+                  <tr class="covered">
                     <td class="num">15</td>
-                    <td class="coverage">!</td>
+                    <td class="coverage">1<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  h_test_1d(object, contrast, df)</pre>
                     </td>
@@ -29836,16 +29836,16 @@ table.table-condensed {
                       <pre class="language-r">h_df_md_res &lt;- function(object, contrast) {</pre>
                     </td>
                   </tr>
-                  <tr class="missed">
+                  <tr class="covered">
                     <td class="num">26</td>
-                    <td class="coverage">!</td>
+                    <td class="coverage">1<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  assert_class(object, "mmrm")</pre>
                     </td>
                   </tr>
-                  <tr class="missed">
+                  <tr class="covered">
                     <td class="num">27</td>
-                    <td class="coverage">!</td>
+                    <td class="coverage">1<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  assert_matrix(contrast, mode = "numeric", any.missing = FALSE, ncols = length(component(object, "beta_est")))</pre>
                     </td>
@@ -29857,9 +29857,9 @@ table.table-condensed {
                       <pre class="language-r"></pre>
                     </td>
                   </tr>
-                  <tr class="missed">
+                  <tr class="covered">
                     <td class="num">29</td>
-                    <td class="coverage">!</td>
+                    <td class="coverage">1<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  df &lt;- component(object, "n_obs") - length(component(object, "beta_est"))</pre>
                     </td>
@@ -29871,9 +29871,9 @@ table.table-condensed {
                       <pre class="language-r"></pre>
                     </td>
                   </tr>
-                  <tr class="missed">
+                  <tr class="covered">
                     <td class="num">31</td>
-                    <td class="coverage">!</td>
+                    <td class="coverage">1<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  h_test_md(object, contrast, df)</pre>
                     </td>
@@ -33109,14 +33109,14 @@ table.table-condensed {
                   </tr>
                   <tr class="covered">
                     <td class="num">72</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  assert_class(object, "mmrm_tmb")</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">73</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  name &lt;- match.arg(name, several.ok = TRUE)</pre>
                     </td>
@@ -33130,28 +33130,28 @@ table.table-condensed {
                   </tr>
                   <tr class="covered">
                     <td class="num">75</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">  list_components &lt;- sapply(</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">76</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    X = name,</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">77</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    FUN = switch,</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">78</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    "call" = object$call,</pre>
                     </td>
@@ -33165,42 +33165,42 @@ table.table-condensed {
                   </tr>
                   <tr class="covered">
                     <td class="num">80</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    "cov_type" = object$formula_parts$cov_type,</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">81</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    "subject_var" = object$formula_parts$subject_var,</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">82</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    "formula" = deparse(object$call$formula),</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">83</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    "dataset" = object$call$data,</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">84</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    "reml" = object$reml,</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">85</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    "conv_message" = object$opt_details$message,</pre>
                     </td>
@@ -33214,49 +33214,49 @@ table.table-condensed {
                   </tr>
                   <tr class="covered">
                     <td class="num">87</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    "convergence" = object$opt_details$convergence,</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">88</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    "neg_log_lik" = object$neg_log_lik,</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">89</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    "n_theta" = length(object$theta_est),</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">90</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    "n_subjects" = object$tmb_data$n_subjects,</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">91</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    "n_timepoints" = object$tmb_data$n_visits,</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">92</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    "n_obs" = length(object$tmb_data$y_vector),</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">93</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    "n_groups" = ifelse(is.list(object$cov), length(object$cov), 1L),</pre>
                     </td>
@@ -33270,21 +33270,21 @@ table.table-condensed {
                   </tr>
                   <tr class="covered">
                     <td class="num">95</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    "evaluations" = unlist(ifelse(is.null(object$opt_details$evaluations),</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">96</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">      list(object$opt_details$counts),</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">97</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">      list(object$opt_details$evaluations)</pre>
                     </td>
@@ -33298,35 +33298,35 @@ table.table-condensed {
                   </tr>
                   <tr class="covered">
                     <td class="num">99</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    "method" = object$method,</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">100</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    "optimizer" = object$optimizer,</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">101</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    "beta_est" = object$beta_est,</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">102</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    "beta_est_complete" =</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">103</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">      if (any(object$tmb_data$x_cols_aliased)) {</pre>
                     </td>
@@ -33368,7 +33368,7 @@ table.table-condensed {
                   </tr>
                   <tr class="covered">
                     <td class="num">109</td>
-                    <td class="coverage">38<em>x</em></td>
+                    <td class="coverage">40<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">        object$beta_est</pre>
                     </td>
@@ -33382,28 +33382,28 @@ table.table-condensed {
                   </tr>
                   <tr class="covered">
                     <td class="num">111</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    "beta_aliased" = object$tmb_data$x_cols_aliased,</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">112</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    "theta_est" = object$theta_est,</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">113</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    "y_vector" = object$tmb_data$y_vector,</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">114</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    "jac_list" = object$jac_list,</pre>
                     </td>
@@ -33417,21 +33417,21 @@ table.table-condensed {
                   </tr>
                   <tr class="covered">
                     <td class="num">116</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    "beta_vcov" =</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">117</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">      if (is.null(object$vcov) || identical(object$vcov, "Asymptotic")) {</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">118</td>
-                    <td class="coverage">849<em>x</em></td>
+                    <td class="coverage">851<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">        object$beta_vcov</pre>
                     </td>
@@ -33459,14 +33459,14 @@ table.table-condensed {
                   </tr>
                   <tr class="covered">
                     <td class="num">122</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    "beta_vcov_complete" =</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">123</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">      if (any(object$tmb_data$x_cols_aliased)) {</pre>
                     </td>
@@ -33529,28 +33529,28 @@ table.table-condensed {
                   </tr>
                   <tr class="covered">
                     <td class="num">132</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    "varcor" = object$cov,</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">133</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    "x_matrix" = object$tmb_data$x_matrix,</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">134</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    "theta_vcov" = object$theta_vcov,</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">135</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    "full_frame" = object$tmb_data$full_frame,</pre>
                     </td>
@@ -33564,28 +33564,28 @@ table.table-condensed {
                   </tr>
                   <tr class="covered">
                     <td class="num">137</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    "..foo.." =</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">138</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">      stop(sprintf(</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">139</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">        "component '%s' is not available",</pre>
                     </td>
                   </tr>
                   <tr class="covered">
                     <td class="num">140</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">        name, paste0(class(object), collapse = ", ")</pre>
                     </td>
@@ -33599,7 +33599,7 @@ table.table-condensed {
                   </tr>
                   <tr class="covered">
                     <td class="num">142</td>
-                    <td class="coverage">4282<em>x</em></td>
+                    <td class="coverage">4296<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    simplify = FALSE</pre>
                     </td>
@@ -38414,9 +38414,9 @@ table.table-condensed {
                       <pre class="language-r">  #if EIGEN_VERSION_AT_LEAST(3,4,0)</pre>
                     </td>
                   </tr>
-                  <tr class="never">
+                  <tr class="covered">
                     <td class="num">17</td>
-                    <td class="coverage"></td>
+                    <td class="coverage">311557<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    T1 ret = input(index1, index2);</pre>
                     </td>
@@ -38428,30 +38428,30 @@ table.table-condensed {
                       <pre class="language-r">  #else</pre>
                     </td>
                   </tr>
-                  <tr class="covered">
+                  <tr class="never">
                     <td class="num">19</td>
-                    <td class="coverage">311557<em>x</em></td>
+                    <td class="coverage"></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    T1 ret(index1.size(), index2.size());</pre>
                     </td>
                   </tr>
-                  <tr class="covered">
+                  <tr class="never">
                     <td class="num">20</td>
-                    <td class="coverage">852038<em>x</em></td>
+                    <td class="coverage"></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    for (decltype(index1.size()) i = 0; i &lt; index1.size(); i++) {</pre>
                     </td>
                   </tr>
-                  <tr class="covered">
+                  <tr class="never">
                     <td class="num">21</td>
-                    <td class="coverage">1752045<em>x</em></td>
+                    <td class="coverage"></td>
                     <td class="col-sm-12">
                       <pre class="language-r">      for (decltype(index2.size()) j = 0; j &lt; index2.size(); j++) {</pre>
                     </td>
                   </tr>
-                  <tr class="covered">
+                  <tr class="never">
                     <td class="num">22</td>
-                    <td class="coverage">1211564<em>x</em></td>
+                    <td class="coverage"></td>
                     <td class="col-sm-12">
                       <pre class="language-r">        ret(i, j) = input(index1[i], index2[j]);</pre>
                     </td>
@@ -38519,9 +38519,9 @@ table.table-condensed {
                       <pre class="language-r">  #if EIGEN_VERSION_AT_LEAST(3,4,0)</pre>
                     </td>
                   </tr>
-                  <tr class="never">
+                  <tr class="covered">
                     <td class="num">32</td>
-                    <td class="coverage"></td>
+                    <td class="coverage">246596<em>x</em></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    T1 ret = input(index1, Eigen::all);</pre>
                     </td>
@@ -38533,30 +38533,30 @@ table.table-condensed {
                       <pre class="language-r">  #else</pre>
                     </td>
                   </tr>
-                  <tr class="covered">
+                  <tr class="never">
                     <td class="num">34</td>
-                    <td class="coverage">246596<em>x</em></td>
+                    <td class="coverage"></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    T1 ret(index1.size(), input.cols());</pre>
                     </td>
                   </tr>
-                  <tr class="covered">
+                  <tr class="never">
                     <td class="num">35</td>
-                    <td class="coverage">738409<em>x</em></td>
+                    <td class="coverage"></td>
                     <td class="col-sm-12">
                       <pre class="language-r">    for (decltype(index1.size()) i = 0; i &lt; index1.size(); i++) {</pre>
                     </td>
                   </tr>
-                  <tr class="covered">
+                  <tr class="never">
                     <td class="num">36</td>
-                    <td class="coverage">5083134<em>x</em></td>
+                    <td class="coverage"></td>
                     <td class="col-sm-12">
                       <pre class="language-r">      for (int j = 0; j &lt; input.cols(); j++) {</pre>
                     </td>
                   </tr>
-                  <tr class="covered">
+                  <tr class="never">
                     <td class="num">37</td>
-                    <td class="coverage">4591321<em>x</em></td>
+                    <td class="coverage"></td>
                     <td class="col-sm-12">
                       <pre class="language-r">        ret(i, j) = input(index1[i], j);</pre>
                     </td>
