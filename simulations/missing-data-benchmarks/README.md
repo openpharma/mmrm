@@ -81,7 +81,7 @@ This directory contains the following folders:
   - `dgp/`: Code relating to DGP definition.
   - `eval/`: Functions for measuring empirical metrics and operating
      characteristics.
-  - `format-replicate-results/`: Functions to post-process existing tibble of fitted model objects to extract the `emmeans` results.
+  - `format-replicate-results/`: Functions to post-process existing tibble of fitted model objects to extract the `emmeans` results and fitted covariance matrices.
   - `meal.R`: Main R script to test the simulation study, only runs 2 repetitions.
   - `meals/`: Main R scripts for running the simulation studies. 
      Specify here the number of repetitions via `n_reps` at the end of each script.

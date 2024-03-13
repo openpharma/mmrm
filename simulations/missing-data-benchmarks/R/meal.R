@@ -131,7 +131,7 @@ type_2_error_rate_eval <- create_evaluator(
   .eval_fun = type_2_error_rate_fun, true_params = true_params
 )
 
-# specify the resul summarizers
+# specify the result "summarizers"
 
 # create the experiment
 experiment <- create_experiment(

@@ -1,9 +1,7 @@
 # format the fit results
-format_fit_results <- function(fit_results, missingness, sample_size) {
+format_fit_results <- function(fit_results) {
   fit_results %>%
     transmute(
-      missingness = missingness,
-      sample_size = sample_size,
       effect_size = str_extract(.dgp_name, "^([^_])+"),
       rep = .rep,
       dgp_name = .dgp_name,
@@ -28,6 +26,5 @@ format_fit_results <- function(fit_results, missingness, sample_size) {
           get_cov_mat_estimate(method_name, f, conv_status)
         }
       )
-    ) %>%
-    unnest(cols = emmeans_output)
+    )
 }
