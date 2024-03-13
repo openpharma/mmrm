@@ -46,7 +46,7 @@ proc_mixed_wrapper_fun <- function(
   ## specify the SAS code: only return covariance matrix estimates for
   ## repeated measures
   if (covar_type == "csh") {
-    sas_code <- "ODS OUTPUT LSMEANS = lsmeans_out DIFFS = diffs_out
+    sas_code <- "ODS OUTPUT LSMEANS = lsmeans_out DIFFS = diffs_out R = covmat_out
       ModelInfo = model_info ConvergenceStatus = conv_status;
     PROC MIXED DATA = sas_df METHOD = reml;
       CLASS trt(ref = '0') visit_num strata participant;
@@ -55,7 +55,7 @@ proc_mixed_wrapper_fun <- function(
       LSMEANS visit_num*trt / pdiff slice=visit_num cl alpha = 0.05 OBSMARGINS;
     RUN;"
   } else if (covar_type == "toeph") {
-    sas_code <- "ODS OUTPUT LSMEANS = lsmeans_out DIFFS = diffs_out
+    sas_code <- "ODS OUTPUT LSMEANS = lsmeans_out DIFFS = diffs_out R = covmat_out
       ModelInfo = model_info ConvergenceStatus = conv_status;
     PROC MIXED DATA = sas_df METHOD = reml;
       CLASS trt(ref = '0') visit_num strata participant;
@@ -64,7 +64,7 @@ proc_mixed_wrapper_fun <- function(
       LSMEANS visit_num*trt / pdiff slice=visit_num cl alpha = 0.05 OBSMARGINS;
     RUN;"
   } else if (covar_type == "us") {
-    sas_code <- "ODS OUTPUT LSMEANS = lsmeans_out DIFFS = diffs_out
+    sas_code <- "ODS OUTPUT LSMEANS = lsmeans_out DIFFS = diffs_out R = covmat_out
       ModelInfo = model_info ConvergenceStatus = conv_status;
     PROC MIXED DATA = sas_df METHOD = reml;
       CLASS trt(ref = '0') visit_num strata participant;
@@ -96,6 +96,12 @@ proc_mixed_wrapper_fun <- function(
       ## extract the model information
       mod_inf_df <- sasr::sd2df("model_info")
 
+      ## extract the estimated covariance matrix
+      covmat_df <- sasr::sd2df("covmat_out")
+      ## remove the first two columns which are just "Index" and "Row",
+      ## the remaining part is the matrix we need
+      covmat <- as.matrix(covmat_df[, -c(1, 2)])
+
       ## extract the ATEs across visits
       ates_df <- sasr::sd2df("diffs_out") %>%
         dplyr::filter(visit_num == `_visit_num`) %>%
@@ -107,11 +113,13 @@ proc_mixed_wrapper_fun <- function(
       mod_inf_df <- data.frame(NA)
       lsmeans_df <- data.frame(NA)
       ates_df <- data.frame(NA)
+      covmat <- matrix(NA)
     }
   } else {
     mod_inf_df <- data.frame(NA)
     lsmeans_df <- data.frame(NA)
     ates_df <- data.frame(NA)
+    covmat <- matrix(NA)
     converged <- FALSE
   }
 
@@ -121,7 +129,7 @@ proc_mixed_wrapper_fun <- function(
     as.numeric()
 
   return(list(
-    "fit" = ates_df,
+    "fit" = structure(ates_df, covmat = covmat),
     "fit_time" = fit_time,
     "output" = sas_result$result$LST,
     "lsmeans_df" = lsmeans_df,

@@ -349,7 +349,7 @@ get_nlme_cov_mat_estimate <- function(fit) {
 
 # extract covariance matrix estimate from proc mixed fit
 get_mixed_cov_mat_estimate <- function(fit) {
-  # todo
+  attr(fit, "covmat")
 }
 
 # general function for covariance matrix estimate

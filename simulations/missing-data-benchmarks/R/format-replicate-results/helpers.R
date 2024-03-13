@@ -21,6 +21,12 @@ format_fit_results <- function(fit_results, missingness, sample_size) {
         .f = function(f, dgp_name, method_name, dt, conv_status) {
           get_emmeans_output(method_name, f, dt, conv_status)
         }
+      ),
+      covmat_estimates = pmap(
+        .l = list(fit, .method_name, converged),
+        .f = function(f, method_name, conv_status) {
+          get_cov_mat_estimate(method_name, f, conv_status)
+        }
       )
     ) %>%
     unnest(cols = emmeans_output)
