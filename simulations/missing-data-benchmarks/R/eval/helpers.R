@@ -323,3 +323,49 @@ get_emmeans_output <- function(method, fit, dt, converged) {
     NA
   }
 }
+
+# get_cov_mat_estimate ----
+
+# extract covariance matrix estimate from mmrm fit
+get_mmrm_cov_mat_estimate <- function(fit) {
+  mmrm::VarCorr(fit)
+}
+
+# extract covariance matrix estimate from glmmTMB fit
+get_glmm_cov_mat_estimate <- function(fit) {
+  mat_with_attrs <- glmmTMB::VarCorr(fit)[[c("cond", "participant")]]
+  dim <- nrow(mat_with_attrs)
+  ind <- seq_len(dim)
+  mat_with_attrs[ind, ind]
+}
+
+# extract covariance matrix estimate from nlme fit
+get_nlme_cov_mat_estimate <- function(fit) {
+  mat_with_attrs <- nlme::getVarCov(fit)
+  dim <- nrow(mat_with_attrs)
+  ind <- seq_len(dim)
+  mat_with_attrs[ind, ind]
+}
+
+# extract covariance matrix estimate from proc mixed fit
+get_mixed_cov_mat_estimate <- function(fit) {
+  # todo
+}
+
+# general function for covariance matrix estimate
+get_cov_mat_estimate <- function(method, fit, converged) {
+  if (get_convergence(method, fit, converged)) {
+    if (str_detect(method, "mmrm")) {
+      get_mmrm_cov_mat_estimate(fit)
+    } else if (str_detect(method, "glmmtmb")) {
+      get_glmm_cov_mat_estimate(fit)
+    } else if (str_detect(method, "nlme")) {
+      get_nlme_cov_mat_estimate(fit)
+    } else if (str_detect(method, "proc_mixed")) {
+      get_mixed_cov_mat_estimate(fit)
+    }
+  } else {
+    NA
+  }
+}
+
