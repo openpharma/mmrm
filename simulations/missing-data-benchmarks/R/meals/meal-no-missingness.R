@@ -179,6 +179,6 @@ experiment <- create_experiment(
 # run the experiment
 set.seed(62342)
 results <- experiment$run(
-  n_reps = 100,
+  n_reps = 1000,
   save = TRUE
 )
