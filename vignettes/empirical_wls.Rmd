@@ -246,7 +246,7 @@ We follow the following logic (see the corresponding `C++` function `pseudoInver
 otherwise replace the value with 0.
 3. Reconstruct the pseudo inverse matrix from modified singular values and U/V matrix.
 
-In `Eigen` package, the pseudo inverse method is already implemented in [`Eigen::CompleteOrthogonalDecomposition< MatrixType_ >::pseudoInverse`](https://eigen.tuxfamily.org/dox/classEigen_1_1CompleteOrthogonalDecomposition.html#ab5e8b3f2c7b602772e1f1d7ce63d446e),
+In `Eigen` package, the pseudo inverse method is already implemented in [`Eigen::CompleteOrthogonalDecomposition< MatrixType_ >::pseudoInverse`](https://libeigen.gitlab.io/docs/classEigen_1_1CompleteOrthogonalDecomposition.html#a6260bd1050a28dd59733233d93eb6bed),
 but it is not used for the following reason:
 
 1. The pseudo inverse method is not stable and can lead to `NAN` in calculations.
