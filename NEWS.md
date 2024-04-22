@@ -1,5 +1,10 @@
 # mmrm 0.3.11.9000
 
+### New Features
+
+- Add parameter `conditional` for `predict` method to control whether the prediction is conditional
+on the observation or not.
+
 # mmrm 0.3.11
 
 ### Bug Fixes

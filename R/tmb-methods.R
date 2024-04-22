@@ -54,6 +54,7 @@ fitted.mmrm_tmb <- function(object, ...) {
 #' @param interval (`string`)\cr type of interval calculation. Can be abbreviated.
 #' @param level (`number`)\cr tolerance/confidence level.
 #' @param nsim (`count`)\cr number of simulations to use.
+#' @param conditional (`flag`)\cr indicator if the prediction is conditional on the observation or not.
 #'
 #' @importFrom stats predict
 #' @exportS3Method
@@ -66,6 +67,7 @@ predict.mmrm_tmb <- function(object,
                              interval = c("none", "confidence", "prediction"),
                              level = 0.95,
                              nsim = 1000L,
+                             conditional = TRUE,
                              ...) {
   if (missing(newdata)) {
     newdata <- object$data
@@ -75,6 +77,7 @@ predict.mmrm_tmb <- function(object,
   assert_flag(se.fit)
   assert_number(level, lower = 0, upper = 1)
   assert_count(nsim, positive = TRUE)
+  assert_flag(conditional)
   interval <- match.arg(interval)
   # make sure new data has the same levels as original data
   full_frame <- model.frame(
@@ -92,6 +95,9 @@ predict.mmrm_tmb <- function(object,
     allow_na_response = TRUE,
     drop_levels = FALSE
   )
+  if (!conditional) {
+    tmb_data$y_vector[] <- NA_real_
+  }
   if (any(object$tmb_data$x_cols_aliased)) {
     warning(
       "In fitted object there are co-linear variables and therefore dropped terms, ",

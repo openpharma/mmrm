@@ -173,6 +173,19 @@ test_that("predict will return NA if data contains NA in covariates", {
   )
 })
 
+test_that("predict can give unconditional predictions", {
+  fit <- get_mmrm()
+  expect_silent(p <- predict(fit, newdata = fev_data, conditional = FALSE))
+  m <- stats::model.matrix(
+    fit$formula_parts$model_formula,
+    model.frame(fit, data = fev_data, include = "response_var", na.action = "na.pass")
+  )
+  expect_identical(
+    p,
+    (m %*% fit$beta_est)[, 1]
+  )
+})
+
 ## integration test with SAS ----
 
 test_that("predict gives same result with sas in unstructured satterthwaite/Kenward-Roger", {
