@@ -351,6 +351,16 @@ h_factor_ref_data <- function(x, ref, vars) {
   x
 }
 
+#' Obtain Right Hand Side Variables of `mmrm_tmb_formula_parts` Object
+#'
+#' @param object (`mmrm_tmb_formula_parts`)\cr object.
+#'
+#' @keywords internal
+h_mmrm_vars <- function(object) {
+  assert_class(object, "mmrm_tmb_formula_parts")
+  setdiff(all.vars(object$formula[[3]]), object$subject_var)
+}
+
 #' Warn on na.action
 #' @keywords internal
 h_warn_na_action <- function() {

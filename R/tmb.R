@@ -135,34 +135,29 @@ h_mmrm_tmb_data <- function(formula_parts,
   # Weights is always the last column.
   weights_name <- colnames(data)[ncol(data)]
   # If `y` is allowed to be NA, then first replace y with 1:n, then replace it with original y.
-  full_formula <- formula_parts$full_formula
-  model_formula <- formula_parts$model_formula
   if (allow_na_response) {
     y_original <- eval(formula_parts$full_formula[[2]], envir = data)
     vn <- deparse(formula_parts$full_formula[[2]])
-    temp_var <- make.names(c(colnames(data), "temp_var"))
-    temp_var <- tail(temp_var, 1)
-    data[[temp_var]] <- seq_len(nrow(data))
-    full_formula[[2]] <- as.name(temp_var)
-    model_formula[[2]] <- as.name(temp_var)
   } else {
     h_warn_na_action()
   }
   full_frame <- eval(
     bquote(stats::model.frame(
-      full_formula,
+      formula_parts$full_formula,
       data = data,
       weights = .(as.symbol(weights_name)),
-      na.action = "na.omit"
+      na.action = "na.pass"
     ))
   )
   if (drop_levels) {
     full_frame <- droplevels(full_frame, except = formula_parts$visit_var)
   }
-  # If `y` is allowed to be NA, replace it with original y.
   if (allow_na_response) {
-    full_frame[[temp_var]] <- y_original[full_frame[[temp_var]]]
+    keep_ind <- complete.cases(full_frame[, colnames(full_frame) != vn])
+  } else {
+    keep_ind <- complete.cases(full_frame)
   }
+  full_frame <- full_frame[keep_ind, ]
   if (drop_visit_levels && !formula_parts$is_spatial && is.factor(full_frame[[formula_parts$visit_var]])) {
     old_levels <- levels(full_frame[[formula_parts$visit_var]])
     full_frame[[formula_parts$visit_var]] <- droplevels(full_frame[[formula_parts$visit_var]])
@@ -173,7 +168,7 @@ h_mmrm_tmb_data <- function(formula_parts,
     }
   }
 
-  x_matrix <- stats::model.matrix(model_formula, data = full_frame)
+  x_matrix <- stats::model.matrix(formula_parts$model_formula, data = full_frame)
   x_cols_aliased <- stats::setNames(rep(FALSE, ncol(x_matrix)), nm = colnames(x_matrix))
   qr_x_mat <- qr(x_matrix)
   if (qr_x_mat$rank < ncol(x_matrix)) {

@@ -330,3 +330,11 @@ test_that("emp_start works", {
     h_get_theta_from_cov(emp_mat)
   )
 })
+
+# h_mmrm_vars ----
+
+test_that("h_mmrm_vars works", {
+  fit <- get_mmrm()
+  expect_silent(v <- h_mmrm_vars(fit$formula_parts))
+  expect_identical(v, c("RACE", "SEX", "ARMCD", "AVISIT"))
+})
