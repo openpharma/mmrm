@@ -56,6 +56,7 @@ h_mmrm_tmb_formula_parts <- function(
 #' @param drop_visit_levels (`flag`)\cr whether to drop levels for visit variable, if visit variable is a factor.
 #' @param allow_na_response (`flag`)\cr whether NA in response is allowed.
 #' @param drop_levels (`flag`)\cr whether drop levels for covariates. If not dropped could lead to singular matrix.
+#' @param na.action (`string`)\cr na action.
 #'
 #' @return List of class `mmrm_tmb_data` with elements:
 #' - `full_frame`: `data.frame` with `n` rows containing all variables needed in the model.
@@ -93,7 +94,8 @@ h_mmrm_tmb_data <- function(formula_parts,
                             singular = c("drop", "error", "keep"),
                             drop_visit_levels,
                             allow_na_response = FALSE,
-                            drop_levels = TRUE) {
+                            drop_levels = TRUE,
+                            na.action = "na.omit") {
   assert_class(formula_parts, "mmrm_tmb_formula_parts")
   assert_data_frame(data)
   varname <- formula_parts[grepl("_var", names(formula_parts))]
@@ -147,7 +149,7 @@ h_mmrm_tmb_data <- function(formula_parts,
       formula_parts$full_formula,
       data = data,
       weights = .(as.symbol(weights_name)),
-      na.action = stats::na.omit
+      na.action = na.action
     ))
   )
   if (drop_levels) {

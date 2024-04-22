@@ -80,20 +80,23 @@ predict.mmrm_tmb <- function(object,
   assert_flag(conditional)
   interval <- match.arg(interval)
   # make sure new data has the same levels as original data
-  full_frame <- model.frame(
-    object,
-    data = newdata,
-    include = c("subject_var", "visit_var", "group_var", "response_var"),
-    na.action = "na.pass"
-  )
+  all_vars <- all.vars(object$formula_parts$formula)
+  assert_names(colnames(newdata), must.include = all_vars)
+  full_frame <- object$tmb_data$full_frame
+  for (v in setdiff(all_vars, object$formula_parts$subject_var)) {
+    if (is.factor(full_frame[[v]]) || is.character(full_frame[[v]])) {
+      newdata[[v]] <- h_factor_ref(newdata[[v]], full_frame[[v]])
+    }
+  }
   tmb_data <- h_mmrm_tmb_data(
-    object$formula_parts, full_frame,
-    weights = rep(1, nrow(full_frame)),
+    object$formula_parts, newdata,
+    weights = rep(1, nrow(newdata)),
     reml = TRUE,
     singular = "keep",
     drop_visit_levels = FALSE,
     allow_na_response = TRUE,
-    drop_levels = FALSE
+    drop_levels = FALSE,
+    na.action = "na.pass"
   )
   if (!conditional) {
     tmb_data$y_vector[] <- NA_real_
@@ -616,20 +619,23 @@ simulate.mmrm_tmb <- function(object,
   method <- match.arg(method)
 
   # Ensure new data has the same levels as original data.
-  full_frame <- model.frame(
-    object,
-    data = newdata,
-    include = c("subject_var", "visit_var", "group_var", "response_var"),
-    na.action = "na.pass"
-  )
+  all_vars <- all.vars(object$formula_parts$formula)
+  assert_names(colnames(newdata), must.include = all_vars)
+  full_frame <- object$tmb_data$full_frame
+  for (v in setdiff(all_vars, object$formula_parts$subject_var)) {
+    if (is.factor(full_frame[[v]]) || is.character(full_frame[[v]])) {
+      newdata[[v]] <- h_factor_ref(newdata[[v]], full_frame[[v]])
+    }
+  }
   tmb_data <- h_mmrm_tmb_data(
-    object$formula_parts, full_frame,
-    weights = rep(1, nrow(full_frame)),
+    object$formula_parts, newdata,
+    weights = rep(1, nrow(newdata)),
     reml = TRUE,
     singular = "keep",
     drop_visit_levels = FALSE,
     allow_na_response = TRUE,
-    drop_levels = FALSE
+    drop_levels = FALSE,
+    na.action = "na.pass"
   )
   ret <- if (method == "conditional") {
     predict_res <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)

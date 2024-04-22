@@ -186,6 +186,26 @@ test_that("predict can give unconditional predictions", {
   )
 })
 
+test_that("predict can change based on coefficients", {
+  fit <- get_mmrm()
+  new_beta <- coef(fit) + 0.1
+  fit$beta_est <- new_beta
+  m <- stats::model.matrix(
+    fit$formula_parts$model_formula,
+    model.frame(fit, data = fev_data, include = "response_var", na.action = "na.pass")
+  )
+  expect_silent(p <- predict(fit, newdata = fev_data, conditional = FALSE))
+  expect_identical(
+    p,
+    (m %*% new_beta)[, 1]
+  )
+})
+
+test_that("predict can work if response is an expression", {
+  fit <- mmrm(log(FEV1) + FEV1 ~ ARMCD * AVISIT + ar1(AVISIT | USUBJID), data = fev_data)
+  expect_silent(p <- predict(fit, newdata = fev_data, conditional = FALSE))
+})
+
 ## integration test with SAS ----
 
 test_that("predict gives same result with sas in unstructured satterthwaite/Kenward-Roger", {
@@ -877,6 +897,13 @@ test_that("response residuals helper function works as expected", {
 })
 
 # simulate.mmrm_tmb ----
+
+test_that("simulate works if the model reponse is an expression", {
+  object <- mmrm(log(FEV1) + FEV1 ~ ARMCD * AVISIT + ar1(AVISIT | USUBJID), data = fev_data)
+  set.seed(1001)
+  sims <- simulate(object, nsim = 2, method = "conditional")
+  expect_data_frame(sims, any.missing = FALSE, nrows = nrow(object$data), ncols = 2)
+})
 
 test_that("simulate with conditional method returns a df of correct dimension", {
   object <- get_mmrm()
