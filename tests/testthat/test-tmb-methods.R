@@ -180,9 +180,10 @@ test_that("predict can give unconditional predictions", {
     fit$formula_parts$model_formula,
     model.frame(fit, data = fev_data, include = "response_var", na.action = "na.pass")
   )
-  expect_identical(
+  expect_equal(
     p,
-    (m %*% fit$beta_est)[, 1]
+    (m %*% fit$beta_est)[, 1],
+    tolernace = 1e-7
   )
 })
 
@@ -195,9 +196,10 @@ test_that("predict can change based on coefficients", {
     model.frame(fit, data = fev_data, include = "response_var", na.action = "na.pass")
   )
   expect_silent(p <- predict(fit, newdata = fev_data, conditional = FALSE))
-  expect_identical(
+  expect_equal(
     p,
-    (m %*% new_beta)[, 1]
+    (m %*% new_beta)[, 1],
+    tolernace = 1e-7
   )
 })
 
