@@ -183,7 +183,7 @@ test_that("predict can give unconditional predictions", {
   expect_equal(
     p,
     (m %*% fit$beta_est)[, 1],
-    tolernace = 1e-7
+    tolerance = 1e-7
   )
 })
 
@@ -199,7 +199,7 @@ test_that("predict can change based on coefficients", {
   expect_equal(
     p,
     (m %*% new_beta)[, 1],
-    tolernace = 1e-7
+    tolerance = 1e-7
   )
 })
 

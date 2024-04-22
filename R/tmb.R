@@ -56,7 +56,6 @@ h_mmrm_tmb_formula_parts <- function(
 #' @param drop_visit_levels (`flag`)\cr whether to drop levels for visit variable, if visit variable is a factor.
 #' @param allow_na_response (`flag`)\cr whether NA in response is allowed.
 #' @param drop_levels (`flag`)\cr whether drop levels for covariates. If not dropped could lead to singular matrix.
-#' @param na.action (`string`)\cr na action.
 #'
 #' @return List of class `mmrm_tmb_data` with elements:
 #' - `full_frame`: `data.frame` with `n` rows containing all variables needed in the model.
@@ -94,8 +93,7 @@ h_mmrm_tmb_data <- function(formula_parts,
                             singular = c("drop", "error", "keep"),
                             drop_visit_levels,
                             allow_na_response = FALSE,
-                            drop_levels = TRUE,
-                            na.action = "na.omit") {
+                            drop_levels = TRUE) {
   assert_class(formula_parts, "mmrm_tmb_formula_parts")
   assert_data_frame(data)
   varname <- formula_parts[grepl("_var", names(formula_parts))]
@@ -137,19 +135,25 @@ h_mmrm_tmb_data <- function(formula_parts,
   # Weights is always the last column.
   weights_name <- colnames(data)[ncol(data)]
   # If `y` is allowed to be NA, then first replace y with 1:n, then replace it with original y.
+  full_formula <- formula_parts$full_formula
+  model_formula <- formula_parts$model_formula
   if (allow_na_response) {
     y_original <- eval(formula_parts$full_formula[[2]], envir = data)
     vn <- deparse(formula_parts$full_formula[[2]])
-    data[[vn]] <- seq_len(nrow(data))
+    temp_var <- make.names(c(colnames(data), "temp_var"))
+    temp_var <- tail(temp_var, 1)
+    data[[temp_var]] <- seq_len(nrow(data))
+    full_formula[[2]] <- as.name(temp_var)
+    model_formula[[2]] <- as.name(temp_var)
   } else {
     h_warn_na_action()
   }
   full_frame <- eval(
     bquote(stats::model.frame(
-      formula_parts$full_formula,
+      full_formula,
       data = data,
       weights = .(as.symbol(weights_name)),
-      na.action = na.action
+      na.action = "na.omit"
     ))
   )
   if (drop_levels) {
@@ -157,7 +161,7 @@ h_mmrm_tmb_data <- function(formula_parts,
   }
   # If `y` is allowed to be NA, replace it with original y.
   if (allow_na_response) {
-    full_frame[[vn]] <- y_original[full_frame[[vn]]]
+    full_frame[[temp_var]] <- y_original[full_frame[[temp_var]]]
   }
   if (drop_visit_levels && !formula_parts$is_spatial && is.factor(full_frame[[formula_parts$visit_var]])) {
     old_levels <- levels(full_frame[[formula_parts$visit_var]])
@@ -168,7 +172,8 @@ h_mmrm_tmb_data <- function(formula_parts,
       message("In ", formula_parts$visit_var, " there are dropped visits: ", toString(dropped))
     }
   }
-  x_matrix <- stats::model.matrix(formula_parts$model_formula, data = full_frame)
+
+  x_matrix <- stats::model.matrix(model_formula, data = full_frame)
   x_cols_aliased <- stats::setNames(rep(FALSE, ncol(x_matrix)), nm = colnames(x_matrix))
   qr_x_mat <- qr(x_matrix)
   if (qr_x_mat$rank < ncol(x_matrix)) {
@@ -188,7 +193,6 @@ h_mmrm_tmb_data <- function(formula_parts,
       attr(x_matrix, "contrasts") <- contrasts_attr
     }
   }
-
   y_vector <- as.numeric(stats::model.response(full_frame))
   weights_vector <- as.numeric(stats::model.weights(full_frame))
   n_subjects <- length(unique(full_frame[[formula_parts$subject_var]]))

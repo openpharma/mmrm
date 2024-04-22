@@ -12,8 +12,7 @@ h_mmrm_tmb_data(
   singular = c("drop", "error", "keep"),
   drop_visit_levels,
   allow_na_response = FALSE,
-  drop_levels = TRUE,
-  na.action = "na.omit"
+  drop_levels = TRUE
 )
 }
 \arguments{
@@ -35,8 +34,6 @@ stop the function return the error, "drop" to drop these columns, and "keep" to 
 \item{allow_na_response}{(\code{flag})\cr whether NA in response is allowed.}
 
 \item{drop_levels}{(\code{flag})\cr whether drop levels for covariates. If not dropped could lead to singular matrix.}
-
-\item{na.action}{(\code{string})\cr na action.}
 }
 \value{
 List of class \code{mmrm_tmb_data} with elements:

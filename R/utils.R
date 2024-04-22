@@ -327,6 +327,30 @@ h_factor_ref <- function(x, ref, var_name = vname(x)) {
   factor(x, levels = h_default_value(levels(ref), sort(uni_ref)))
 }
 
+#' Convert Character to Factor Following Reference in a Data Frame
+#'
+#' @param x (`data.frame`)\cr  input.
+#' @param ref (`data.frame`)\cr reference.
+#' @param vars (`character`)\cr variable names to convert.
+#'
+#' @details Use `ref` to convert `x` into data frame whose factors
+#' are of the same levels.
+#'
+#' @keywords internal
+h_factor_ref_data <- function(x, ref, vars) {
+  assert_character(vars)
+  assert_data_frame(x)
+  assert_data_frame(ref)
+  assert_names(colnames(x), must.include = vars)
+  assert_names(colnames(ref), must.include = vars)
+  for (v in vars) {
+    if (is.factor(ref[[v]]) || is.character(ref[[v]])) {
+      x[[v]] <- h_factor_ref(x[[v]], ref[[v]])
+    }
+  }
+  x
+}
+
 #' Warn on na.action
 #' @keywords internal
 h_warn_na_action <- function() {

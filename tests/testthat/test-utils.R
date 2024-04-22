@@ -220,6 +220,22 @@ test_that("h_factor ref allows NA in x", {
   expect_identical(levels(f), ref)
 })
 
+# h_factor_ref_data ----
+
+test_that("h_factor_ref_data works", {
+  df1 <- data.frame(
+    a = c("a", "b"),
+    b = c("a", "b")
+  )
+  df2 <- data.frame(
+    a = factor(c("a", "b", "c")),
+    b = factor(c("a", "d", NA_character_))
+  )
+  f <- expect_silent(h_factor_ref_data(df1, df2, c("a")))
+  expect_identical(levels(f$a), levels(df2$a))
+  expect_identical(f$b, c("a", "b"))
+})
+
 # std_start ----
 
 test_that("std_start works", {
