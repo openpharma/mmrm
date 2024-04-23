@@ -13,6 +13,9 @@ library(dplyr)
 library(purrr)
 library(tidyr)
 library(emmeans)
+library(clusterGeneration)
+library(ssh)
+library(microbenchmark)
 
 # source the R scripts
 sim_functions_files <- list.files(
@@ -185,10 +188,19 @@ experiment <- create_experiment(
   add_evaluator(type_1_error_rate_eval, name = "type_1_error_rate") %>%
   add_evaluator(type_2_error_rate_eval, name = "type_2_error_rate")
 
+# Input here the name of the SAS container.
+hostname <- "sabanesd-kjii4i-eu.ocean"
+ssh::ssh_connect(hostname)
+
+# We can also be specific if there are multiple SAS containers we want to connect to.
+cfg_name <- "sascfg_personal_2.py"
+sasr.roche::setup_sasr_ocean(hostname, sascfg = cfg_name)
+options(sascfg = cfg_name)
+
 # run the experiment
 set.seed(713452)
 results <- experiment$run(
-  n_reps = 1000,
+  n_reps = 10,
   save = TRUE,
   verbose = 2,
   checkpoint_n_reps = 25
