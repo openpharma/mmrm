@@ -13,6 +13,9 @@ h_factor_ref(x, ref, var_name = vname(x))
 
 \item{var_name}{(\code{string})\cr variable name of input \code{x}.}
 }
+\value{
+Factor vector with updated levels.
+}
 \description{
 Convert Character to Factor Following Reference
 }

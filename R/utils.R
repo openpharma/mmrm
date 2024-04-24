@@ -215,6 +215,7 @@ h_partial_fun_args <- function(fun, ..., additional_attr = list()) {
 #' For "Kenward-Roger" only, "Kenward-Roger" is returned.
 #' For "Residual" only, "Empirical" is returned.
 #'
+#' @return String of the default covariance method.
 #' @keywords internal
 h_get_cov_default <- function(method = c("Satterthwaite", "Kenward-Roger", "Residual", "Between-Within")) {
   assert_string(method)
@@ -264,6 +265,7 @@ drop_elements <- function(x, n) {
 #'
 #' @param x (`numeric`)\cr number of visit levels.
 #'
+#' @return Logical value `TRUE`.
 #' @keywords internal
 h_confirm_large_levels <- function(x) {
   assert_count(x)
@@ -314,6 +316,7 @@ h_default_value <- function(x, y) {
 #' This is needed even if `x` and `ref` are both `character` because
 #' in `model.matrix` if `x` only has one level there could be errors.
 #'
+#' @return Factor vector with updated levels.
 #' @keywords internal
 h_factor_ref <- function(x, ref, var_name = vname(x)) {
   assert_multi_class(ref, c("character", "factor"))
@@ -335,6 +338,7 @@ h_factor_ref <- function(x, ref, var_name = vname(x)) {
 #' @details Use fitted mmrm object to convert input data frame whose factors
 #' are of the same levels as the reference fitted object.
 #'
+#' @return Data frame with updated levels in specified columns.
 #' @keywords internal
 h_factor_ref_data <- function(object, data) {
   assert_data_frame(data)
@@ -469,6 +473,7 @@ emp_start <- function(data, model_formula, visit_var, subject_var, subject_group
 #' If the covariance matrix has `NA` in some of the elements, they will be replaced by
 #' 0 (non-diagonal) and 1 (diagonal). This ensures that the matrix is positive definite.
 #'
+#' @return Numeric vector of the theta values.
 #' @keywords internal
 h_get_theta_from_cov <- function(covariance) {
   assert_matrix(covariance, mode = "numeric", ncols = nrow(covariance))

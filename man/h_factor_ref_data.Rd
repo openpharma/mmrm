@@ -11,6 +11,9 @@ h_factor_ref_data(object, data)
 
 \item{data}{(\code{data.frame})\cr input data.}
 }
+\value{
+Data frame with updated levels in specified columns.
+}
 \description{
 Convert Character to Factor Following Reference \code{MMRM} Fit.
 }
