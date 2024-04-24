@@ -18,6 +18,7 @@
 #' - `subject_var`: `string` with the subject variable name.
 #' - `group_var`: `string` with the group variable name. If no group specified,
 #'   this element is `NULL`.
+#' - `model_var`: `character` with the variables names of the formula, except `subject_var`.
 #'
 #' @keywords internal
 h_mmrm_tmb_formula_parts <- function(
@@ -37,7 +38,8 @@ h_mmrm_tmb_formula_parts <- function(
       is_spatial = covariance$type == "sp_exp",
       visit_var = covariance$visits,
       subject_var = covariance$subject,
-      group_var = if (length(covariance$group) < 1) NULL else covariance$group
+      group_var = if (length(covariance$group) < 1) NULL else covariance$group,
+      model_var = setdiff(all.vars(formula[[3]]), covariance$subject)
     ),
     class = "mmrm_tmb_formula_parts"
   )
@@ -135,10 +137,7 @@ h_mmrm_tmb_data <- function(formula_parts,
   # Weights is always the last column.
   weights_name <- colnames(data)[ncol(data)]
   # If `y` is allowed to be NA, then first replace y with 1:n, then replace it with original y.
-  if (allow_na_response) {
-    y_original <- eval(formula_parts$full_formula[[2]], envir = data)
-    vn <- deparse(formula_parts$full_formula[[2]])
-  } else {
+  if (!allow_na_response) {
     h_warn_na_action()
   }
   full_frame <- eval(
@@ -153,7 +152,8 @@ h_mmrm_tmb_data <- function(formula_parts,
     full_frame <- droplevels(full_frame, except = formula_parts$visit_var)
   }
   if (allow_na_response) {
-    keep_ind <- complete.cases(full_frame[, colnames(full_frame) != vn])
+    # response is always the first column
+    keep_ind <- complete.cases(full_frame[, -1L, drop = FALSE])
   } else {
     keep_ind <- complete.cases(full_frame)
   }

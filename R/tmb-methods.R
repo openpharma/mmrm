@@ -83,7 +83,7 @@ predict.mmrm_tmb <- function(object,
   newdata <- h_factor_ref_data(
     newdata,
     object$tmb_data$full_frame,
-    h_mmrm_vars(object$formula_parts)
+    object$formula_parts$model_var
   )
   tmb_data <- h_mmrm_tmb_data(
     object$formula_parts, newdata,
@@ -618,7 +618,7 @@ simulate.mmrm_tmb <- function(object,
   newdata <- h_factor_ref_data(
     newdata,
     object$tmb_data$full_frame,
-    h_mmrm_vars(object$formula_parts)
+    object$formula_parts$model_var
   )
   tmb_data <- h_mmrm_tmb_data(
     object$formula_parts, newdata,

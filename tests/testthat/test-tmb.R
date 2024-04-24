@@ -35,7 +35,8 @@ test_that("h_mmrm_tmb_formula_parts works as expected", {
       is_spatial = FALSE,
       visit_var = "AVISIT",
       subject_var = "USUBJID",
-      group_var = NULL
+      group_var = NULL,
+      model_var = c("RACE", "SEX", "ARMCD", "AVISIT")
     ),
     class = "mmrm_tmb_formula_parts"
   )
@@ -53,7 +54,8 @@ test_that("h_mmrm_tmb_formula_parts works as expected", {
       is_spatial = FALSE,
       visit_var = "AVISIT",
       subject_var = "USUBJID",
-      group_var = "ARMCD"
+      group_var = "ARMCD",
+      model_var = c("RACE", "SEX", "ARMCD", "AVISIT")
     ),
     class = "mmrm_tmb_formula_parts"
   )
@@ -115,7 +117,8 @@ test_that("h_mmrm_tmb_formula_parts works without covariates", {
       is_spatial = FALSE,
       visit_var = "AVISIT",
       subject_var = "USUBJID",
-      group_var = NULL
+      group_var = NULL,
+      model_var = c("AVISIT")
     ),
     class = "mmrm_tmb_formula_parts"
   )
@@ -135,7 +138,8 @@ test_that("h_mmrm_tmb_formula_parts works as expected for antedependence", {
       is_spatial = FALSE,
       visit_var = "AVISIT",
       subject_var = "USUBJID",
-      group_var = NULL
+      group_var = NULL,
+      model_var = c("RACE", "SEX", "ARMCD", "AVISIT")
     ),
     class = "mmrm_tmb_formula_parts"
   )
