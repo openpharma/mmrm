@@ -9,6 +9,9 @@ h_confirm_large_levels(x)
 \arguments{
 \item{x}{(\code{numeric})\cr number of visit levels.}
 }
+\value{
+Logical value \code{TRUE}.
+}
 \description{
 Ask the user for confirmation if there are too many visit levels
 for non-spatial covariance structure in interactive sessions.

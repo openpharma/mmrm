@@ -30,6 +30,7 @@ spatial
 \item \code{subject_var}: \code{string} with the subject variable name.
 \item \code{group_var}: \code{string} with the group variable name. If no group specified,
 this element is \code{NULL}.
+\item \code{model_var}: \code{character} with the variables names of the formula, except \code{subject_var}.
 }
 }
 \description{
