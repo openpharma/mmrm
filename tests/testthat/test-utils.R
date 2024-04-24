@@ -223,17 +223,20 @@ test_that("h_factor ref allows NA in x", {
 # h_factor_ref_data ----
 
 test_that("h_factor_ref_data works", {
-  df1 <- data.frame(
-    a = c("a", "b"),
-    b = c("a", "b")
+  df <- data.frame(
+    RACE = c("White", "White"),
+    SEX = factor(c("Female", "Male"), levels = c("Female", "Male")),
+    AVISIT = factor(c("VIS1", "VIS2"), levels = c("VIS2", "VIS1")),
+    ARMCD = factor(c("PBO", "TRT"), levels = c("TRT", "PBO")),
+    non_related = c("AA", "BB")
   )
-  df2 <- data.frame(
-    a = factor(c("a", "b", "c")),
-    b = factor(c("a", "d", NA_character_))
-  )
-  f <- expect_silent(h_factor_ref_data(df1, df2, c("a")))
-  expect_identical(levels(f$a), levels(df2$a))
-  expect_identical(f$b, c("a", "b"))
+  fit <- get_mmrm()
+  f <- expect_silent(h_factor_ref_data(fit, df))
+  assert_factor(f$RACE, levels = levels(fit$tmb_data$full_frame$RACE))
+  assert_factor(f$SEX, levels = levels(fit$tmb_data$full_frame$SEX))
+  assert_factor(f$AVISIT, levels = levels(fit$tmb_data$full_frame$AVISIT))
+  assert_factor(f$ARMCD, levels = levels(fit$tmb_data$full_frame$ARMCD))
+  assert_character(f$non_related)
 })
 
 # std_start ----

@@ -327,28 +327,27 @@ h_factor_ref <- function(x, ref, var_name = vname(x)) {
   factor(x, levels = h_default_value(levels(ref), sort(uni_ref)))
 }
 
-#' Convert Character to Factor Following Reference in a Data Frame
+#' Convert Character to Factor Following Reference `MMRM` Fit.
 #'
-#' @param x (`data.frame`)\cr  input.
-#' @param ref (`data.frame`)\cr reference.
-#' @param vars (`character`)\cr variable names to convert.
+#' @param object (`mmrm_tmb`)\cr the fitted MMRM object.
+#' @param data (`data.frame`)\cr input data.
 #'
-#' @details Use `ref` to convert `x` into data frame whose factors
-#' are of the same levels.
+#' @details Use fitted mmrm object to convert input data frame whose factors
+#' are of the same levels as the reference fitted object.
 #'
 #' @keywords internal
-h_factor_ref_data <- function(x, ref, vars) {
-  assert_character(vars)
-  assert_data_frame(x)
-  assert_data_frame(ref)
-  assert_names(colnames(x), must.include = vars)
-  assert_names(colnames(ref), must.include = vars)
+h_factor_ref_data <- function(object, data) {
+  assert_data_frame(data)
+  assert_class(object, "mmrm_tmb")
+  ref <- object$tmb_data$full_frame
+  vars <- object$formula_parts$model_var
+
   for (v in vars) {
     if (is.factor(ref[[v]]) || is.character(ref[[v]])) {
-      x[[v]] <- h_factor_ref(x[[v]], ref[[v]])
+      data[[v]] <- h_factor_ref(data[[v]], ref[[v]])
     }
   }
-  x
+  data
 }
 
 #' Warn on na.action

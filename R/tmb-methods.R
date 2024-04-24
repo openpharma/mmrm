@@ -80,11 +80,7 @@ predict.mmrm_tmb <- function(object,
   assert_flag(conditional)
   interval <- match.arg(interval)
   # make sure new data has the same levels as original data
-  newdata <- h_factor_ref_data(
-    newdata,
-    object$tmb_data$full_frame,
-    object$formula_parts$model_var
-  )
+  newdata <- h_factor_ref_data(object, newdata)
   tmb_data <- h_mmrm_tmb_data(
     object$formula_parts, newdata,
     weights = rep(1, nrow(newdata)),
@@ -615,11 +611,7 @@ simulate.mmrm_tmb <- function(object,
   method <- match.arg(method)
 
   # Ensure new data has the same levels as original data.
-  newdata <- h_factor_ref_data(
-    newdata,
-    object$tmb_data$full_frame,
-    object$formula_parts$model_var
-  )
+  newdata <- h_factor_ref_data(object, newdata)
   tmb_data <- h_mmrm_tmb_data(
     object$formula_parts, newdata,
     weights = rep(1, nrow(newdata)),
