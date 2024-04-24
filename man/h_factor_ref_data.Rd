@@ -2,22 +2,20 @@
 % Please edit documentation in R/utils.R
 \name{h_factor_ref_data}
 \alias{h_factor_ref_data}
-\title{Convert Character to Factor Following Reference in a Data Frame}
+\title{Convert Character to Factor Following Reference \code{MMRM} Fit.}
 \usage{
-h_factor_ref_data(x, ref, vars)
+h_factor_ref_data(object, data)
 }
 \arguments{
-\item{x}{(\code{data.frame})\cr  input.}
+\item{object}{(\code{mmrm_tmb})\cr the fitted MMRM object.}
 
-\item{ref}{(\code{data.frame})\cr reference.}
-
-\item{vars}{(\code{character})\cr variable names to convert.}
+\item{data}{(\code{data.frame})\cr input data.}
 }
 \description{
-Convert Character to Factor Following Reference in a Data Frame
+Convert Character to Factor Following Reference \code{MMRM} Fit.
 }
 \details{
-Use \code{ref} to convert \code{x} into data frame whose factors
-are of the same levels.
+Use fitted mmrm object to convert input data frame whose factors
+are of the same levels as the reference fitted object.
 }
 \keyword{internal}
