@@ -1,5 +1,5 @@
 ################################################################################
-# Simulation with No Missingness
+# Simulation with Low Levels of Missingness
 ################################################################################
 
 # load required libraries
@@ -16,6 +16,7 @@ library(emmeans)
 library(clusterGeneration)
 library(ssh)
 library(microbenchmark)
+library(future)
 
 # source the R scripts
 sim_functions_files <- list.files(
@@ -36,57 +37,66 @@ n_obs <- 600
 no_effect_us_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
   n_obs = n_obs,
-  outcome_covar_mat = us_cov_mat
+  outcome_covar_mat = us_cov_mat,
+  missingness = "low"
 )
 no_effect_csh_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
   n_obs = n_obs,
-  outcome_covar_mat = csh_cov_mat
+  outcome_covar_mat = csh_cov_mat,
+  missingness = "low"
 )
 no_effect_toeph_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
   n_obs = n_obs,
-  outcome_covar_mat = toep_cov_mat
+  outcome_covar_mat = toep_cov_mat,
+  missingness = "low"
 )
 
 # dgps with small treatment effect
 small_effect_us_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
-  outcome_covar_mat = us_cov_mat,
   n_obs = n_obs,
-  trt_visit_coef = 0.25
+  outcome_covar_mat = us_cov_mat,
+  trt_visit_coef = 0.25,
+  missingness = "low"
 )
 small_effect_csh_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
-  outcome_covar_mat = csh_cov_mat,
   n_obs = n_obs,
-  trt_visit_coef = 0.25
+  outcome_covar_mat = csh_cov_mat,
+  trt_visit_coef = 0.25,
+  missingness = "low"
 )
 small_effect_toeph_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
-  outcome_covar_mat = toep_cov_mat,
   n_obs = n_obs,
-  trt_visit_coef = 0.25
+  outcome_covar_mat = toep_cov_mat,
+  trt_visit_coef = 0.25,
+  missingness = "low"
 )
 
 # dgps with moderate treatment effect
 mod_effect_us_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
-  outcome_covar_mat = us_cov_mat,
   n_obs = n_obs,
-  trt_visit_coef = 0.5
+  outcome_covar_mat = us_cov_mat,
+  trt_visit_coef = 0.5,
+  missingness = "low"
 )
 mod_effect_csh_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
-  outcome_covar_mat = csh_cov_mat,
   n_obs = n_obs,
-  trt_visit_coef = 0.5
+  outcome_covar_mat = csh_cov_mat,
+  trt_visit_coef = 0.5,
+  missingness = "low"
 )
 mod_effect_toeph_dgp <- create_dgp(
   .dgp_fun = rct_dgp_fun,
-  outcome_covar_mat = toep_cov_mat,
   n_obs = n_obs,
-  trt_visit_coef = 0.5
+  outcome_covar_mat = toep_cov_mat,
+  trt_visit_coef = 0.5,
+  missingness = "low"
 )
 
 # specify the methods
@@ -110,15 +120,15 @@ nlme_us_meth <- create_method(.method_fun = nlme_wrapper_fun, covar_type = "us")
 nlme_csh_meth <- create_method(
   .method_fun = nlme_wrapper_fun, covar_type = "csh"
 )
-proc_mixed_us_meth <- create_method(
-  .method_fun = proc_mixed_wrapper_fun, covar_type = "us"
-)
-proc_mixed_csh_meth <- create_method(
-  .method_fun = proc_mixed_wrapper_fun, covar_type = "csh"
-)
-proc_mixed_toeph_meth <- create_method(
-  .method_fun = proc_mixed_wrapper_fun, covar_type = "toeph"
-)
+# proc_mixed_us_meth <- create_method(
+#   .method_fun = proc_mixed_wrapper_fun, covar_type = "us"
+# )
+# proc_mixed_csh_meth <- create_method(
+#   .method_fun = proc_mixed_wrapper_fun, covar_type = "csh"
+# )
+# proc_mixed_toeph_meth <- create_method(
+#   .method_fun = proc_mixed_wrapper_fun, covar_type = "toeph"
+# )
 
 # specify the evaluation metrics
 mean_time_eval <- create_evaluator(.eval_fun = mean_time_fun)
@@ -146,10 +156,18 @@ type_2_error_rate_eval <- create_evaluator(
   .eval_fun = type_2_error_rate_fun, true_params = true_params
 )
 
+# Define parallelization
+n_workers <- parallelly::availableCores() - 1L
+future_globals <- ls()
+options(future.globals.onReference = NULL)
+# options(future.globals.onReference = "error")
+plan(future::multicore, workers = n_workers)
+
 # create the experiment
 experiment <- create_experiment(
-  name = "mmrm-benchmark-no-missingness-n-600",
-  save_dir = "results/no-miss/n-600"
+  name = "mmrm-benchmark-low-missingness-n-600-R",
+  save_dir = "results/low-miss/n-600-R",
+  future.globals = future_globals
 ) %>%
   add_dgp(no_effect_us_dgp, name = "no_effect_us") %>%
   add_dgp(no_effect_csh_dgp, name = "no_effect_csh") %>%
@@ -168,9 +186,10 @@ experiment <- create_experiment(
   add_method(glmmtmb_toeph_meth, name = "glmmtmb_toeph") %>%
   add_method(nlme_us_meth, name = "nlme_us") %>%
   add_method(nlme_csh_meth, name = "nlme_csh") %>%
-  add_method(proc_mixed_us_meth, name = "proc_mixed_us") %>%
-  add_method(proc_mixed_csh_meth, name = "proc_mixed_csh") %>%
-  add_method(proc_mixed_toeph_meth, name = "proc_mixed_toeph") %>%
+  # We don't run the SAS routines here.
+  # add_method(proc_mixed_us_meth, name = "proc_mixed_us") %>%
+  # add_method(proc_mixed_csh_meth, name = "proc_mixed_csh") %>%
+  # add_method(proc_mixed_toeph_meth, name = "proc_mixed_toeph") %>%
   add_evaluator(mean_time_eval, name = "mean_fit_time") %>%
   add_evaluator(bias_eval, name = "bias") %>%
   add_evaluator(variance_eval, name = "variance") %>%
@@ -179,20 +198,27 @@ experiment <- create_experiment(
   add_evaluator(type_1_error_rate_eval, name = "type_1_error_rate") %>%
   add_evaluator(type_2_error_rate_eval, name = "type_2_error_rate")
 
-# Input here the name of the SAS container.
-hostname <- "sabanesd-trvhpl-eu.ocean"
-ssh::ssh_connect(hostname)
+# No need for SAS here
 
-# We can also be specific if there are multiple SAS containers we want to connect to.
-cfg_name <- "sascfg_personal_4.py"
-sasr.roche::setup_sasr_ocean(hostname, sascfg = cfg_name)
-options(sascfg = cfg_name)
+# # Input here the name of the SAS container.
+# hostname <- "sabanesd-3qamsv-eu.ocean"
+# ssh::ssh_connect(hostname)
+#
+# # We can also be specific if there are multiple SAS containers we want to connect to.
+# cfg_name <- "sascfg_personal_3.py"
+# sasr.roche::setup_sasr_ocean(hostname, sascfg = cfg_name)
+# options(sascfg = cfg_name)
 
 # run the experiment
-set.seed(62342)
+set.seed(56129)
 results <- experiment$run(
-  n_reps = 10,
+  n_reps = 1000,
   save = TRUE,
+  use_cached = TRUE,
   verbose = 2,
-  checkpoint_n_reps = 25
+  checkpoint_n_reps = 10
 )
+
+# source("R/format-replicate-results/helpers.R")
+#
+# format_fit_and_save(experiment)

@@ -99,26 +99,26 @@ mod_effect_toeph_dgp <- create_dgp(
 )
 
 # specify the methods
-mmrm_us_meth <- create_method(.method_fun = mmrm_wrapper_fun, covar_type = "us")
-mmrm_csh_meth <- create_method(
-  .method_fun = mmrm_wrapper_fun, covar_type = "csh"
-)
-mmrm_toeph_meth <- create_method(
-  .method_fun = mmrm_wrapper_fun, covar_type = "toeph"
-)
-glmmtmb_us_meth <- create_method(
-  .method_fun = glmmtmb_wrapper_fun, covar_type = "us"
-)
-glmmtmb_csh_meth <- create_method(
-  .method_fun = glmmtmb_wrapper_fun, covar_type = "csh"
-)
-glmmtmb_toeph_meth <- create_method(
-  .method_fun = glmmtmb_wrapper_fun, covar_type = "toeph"
-)
-nlme_us_meth <- create_method(.method_fun = nlme_wrapper_fun, covar_type = "us")
-nlme_csh_meth <- create_method(
-  .method_fun = nlme_wrapper_fun, covar_type = "csh"
-)
+# mmrm_us_meth <- create_method(.method_fun = mmrm_wrapper_fun, covar_type = "us")
+# mmrm_csh_meth <- create_method(
+#   .method_fun = mmrm_wrapper_fun, covar_type = "csh"
+# )
+# mmrm_toeph_meth <- create_method(
+#   .method_fun = mmrm_wrapper_fun, covar_type = "toeph"
+# )
+# glmmtmb_us_meth <- create_method(
+#   .method_fun = glmmtmb_wrapper_fun, covar_type = "us"
+# )
+# glmmtmb_csh_meth <- create_method(
+#   .method_fun = glmmtmb_wrapper_fun, covar_type = "csh"
+# )
+# glmmtmb_toeph_meth <- create_method(
+#   .method_fun = glmmtmb_wrapper_fun, covar_type = "toeph"
+# )
+# nlme_us_meth <- create_method(.method_fun = nlme_wrapper_fun, covar_type = "us")
+# nlme_csh_meth <- create_method(
+#   .method_fun = nlme_wrapper_fun, covar_type = "csh"
+# )
 proc_mixed_us_meth <- create_method(
   .method_fun = proc_mixed_wrapper_fun, covar_type = "us"
 )
@@ -157,8 +157,8 @@ type_2_error_rate_eval <- create_evaluator(
 
 # create the experiment
 experiment <- create_experiment(
-  name = "mmrm-benchmark-low-missingness-n-600",
-  save_dir = "results/low-miss/n-600"
+  name = "mmrm-benchmark-low-missingness-n-600-SAS",
+  save_dir = "results/low-miss/n-600-SAS"
 ) %>%
   add_dgp(no_effect_us_dgp, name = "no_effect_us") %>%
   add_dgp(no_effect_csh_dgp, name = "no_effect_csh") %>%
@@ -169,14 +169,14 @@ experiment <- create_experiment(
   add_dgp(mod_effect_us_dgp, name = "mod_effect_us") %>%
   add_dgp(mod_effect_csh_dgp, name = "mod_effect_csh") %>%
   add_dgp(mod_effect_toeph_dgp, name = "mod_effect_toeph") %>%
-  add_method(mmrm_us_meth, name = "mmrm_us") %>%
-  add_method(mmrm_csh_meth, name = "mmrm_csh") %>%
-  add_method(mmrm_toeph_meth, name = "mmrm_toeph") %>%
-  add_method(glmmtmb_us_meth, name = "glmmtmb_us") %>%
-  add_method(glmmtmb_csh_meth, name = "glmmtmb_csh") %>%
-  add_method(glmmtmb_toeph_meth, name = "glmmtmb_toeph") %>%
-  add_method(nlme_us_meth, name = "nlme_us") %>%
-  add_method(nlme_csh_meth, name = "nlme_csh") %>%
+  # add_method(mmrm_us_meth, name = "mmrm_us") %>%
+  # add_method(mmrm_csh_meth, name = "mmrm_csh") %>%
+  # add_method(mmrm_toeph_meth, name = "mmrm_toeph") %>%
+  # add_method(glmmtmb_us_meth, name = "glmmtmb_us") %>%
+  # add_method(glmmtmb_csh_meth, name = "glmmtmb_csh") %>%
+  # add_method(glmmtmb_toeph_meth, name = "glmmtmb_toeph") %>%
+  # add_method(nlme_us_meth, name = "nlme_us") %>%
+  # add_method(nlme_csh_meth, name = "nlme_csh") %>%
   add_method(proc_mixed_us_meth, name = "proc_mixed_us") %>%
   add_method(proc_mixed_csh_meth, name = "proc_mixed_csh") %>%
   add_method(proc_mixed_toeph_meth, name = "proc_mixed_toeph") %>%
@@ -188,20 +188,31 @@ experiment <- create_experiment(
   add_evaluator(type_1_error_rate_eval, name = "type_1_error_rate") %>%
   add_evaluator(type_2_error_rate_eval, name = "type_2_error_rate")
 
-# Input here the name of the SAS container.
-hostname <- "sabanesd-3qamsv-eu.ocean"
-ssh::ssh_connect(hostname)
-
-# We can also be specific if there are multiple SAS containers we want to connect to.
-cfg_name <- "sascfg_personal_3.py"
-sasr.roche::setup_sasr_ocean(hostname, sascfg = cfg_name)
-options(sascfg = cfg_name)
+# # Input here the name of the SAS container.
+# hostname <- "sabanesd-byknxg-eu.ocean"
+#
+# # Do this to register host
+# session <- ssh::ssh_connect(hostname)
+# ssh_disconnect(session)
+#
+# # We can also be specific if there are multiple SAS containers we want to connect to.
+# cfg_name <- "sascfg_personal_3.py"
+# sasr.roche::setup_sasr_ocean(hostname, sascfg = cfg_name)
+# options(sascfg = cfg_name)
+#
+# # Test if it works.
+# df <- data.frame(a = 1, b = 2)
+# sasr::df2sd(df)
 
 # run the experiment
-set.seed(56129)
-results <- experiment$run(
-  n_reps = 10,
-  save = TRUE,
-  verbose = 2,
-  checkpoint_n_reps = 25
-)
+# set.seed(56129)
+# results <- experiment$run(
+#   n_reps = 1000,
+#   save = TRUE,
+#   verbose = 2,
+#   checkpoint_n_reps = 10
+# )
+
+source("R/format-replicate-results/helpers.R")
+
+format_fit_and_save(experiment)

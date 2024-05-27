@@ -28,3 +28,17 @@ format_fit_results <- function(fit_results) {
       )
     )
 }
+
+# The whole process
+format_fit_and_save <- function(experiment) {
+  gc()
+  fit_results <- experiment$get_cached_results("fit")
+  formatted_fit_results <- format_fit_results(fit_results)
+  formatted_fit_results_file <- file.path(experiment$get_save_dir(), "formatted_fit_results.rds")
+  saveRDS(formatted_fit_results, file = formatted_fit_results_file)
+  formatted_fit_results
+}
+
+
+
+

@@ -128,13 +128,16 @@ proc_mixed_wrapper_fun <- function(
     stringr::str_extract("(?<=user cpu time)\\s*[0-9.]+") %>%
     as.numeric()
 
-  return(list(
-    "fit" = structure(ates_df, covmat = covmat),
-    "fit_time" = fit_time,
-    "output" = sas_result$result$LST,
-    "lsmeans_df" = lsmeans_df,
-    "converged" = converged,
-    "mod_inf_df" = mod_inf_df,
-    "log" = sas_result$result$LOG
-  ))
+  list(
+    fit = structure(ates_df, covmat = covmat),
+    # Note: this is not really used below, but otherwise the downstream
+    # evaluation might fail if there is no `data` column.
+    data = df,
+    fit_time = fit_time,
+    output = sas_result$result$LST,
+    lsmeans_df = lsmeans_df,
+    converged = converged,
+    mod_inf_df = mod_inf_df,
+    log = sas_result$result$LOG
+  )
 }

@@ -19,6 +19,7 @@ test_that(paste(
     covar_type = "us"
   )
 
+  expect_true("data" %in% names(proc_mixed_fit))
   trt_effect_ests <- proc_mixed_fit$fit$Estimate
   expect_equal(trt_effect_ests, c(0, 0, 0), tolerance = 0.05)
 })
