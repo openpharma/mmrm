@@ -17,6 +17,7 @@ library(clusterGeneration)
 library(ssh)
 library(microbenchmark)
 library(future)
+library(future.batchtools)
 
 # source the R scripts
 sim_functions_files <- list.files(
@@ -158,10 +159,14 @@ type_2_error_rate_eval <- create_evaluator(
 
 # Define parallelization
 future_globals <- ls()
-n_workers <- parallelly::availableCores() - 1L
+
 options(future.globals.onReference = NULL)
 # options(future.globals.onReference = "error")
-plan(future::multicore, workers = n_workers)
+
+plan(batchtools_lsf)
+
+# n_workers <- parallelly::availableCores() - 1L
+# plan(future::multicore, workers = n_workers)
 
 # create the experiment
 experiment <- create_experiment(
@@ -219,7 +224,7 @@ experiment <- create_experiment(
 # run the experiment
 set.seed(713452)
 results <- experiment$run(
-  n_reps = 1000,
+  n_reps = 10,
   save = TRUE,
   use_cached = TRUE,
   verbose = 2,
