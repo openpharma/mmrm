@@ -163,8 +163,11 @@ future_globals <- ls()
 options(future.globals.onReference = NULL)
 # options(future.globals.onReference = "error")
 
-plan(batchtools_lsf, resources = list(memory = 16000))
-
+plan(
+  batchtools_lsf,
+  workers = 1000,
+  resources = list(memory = 8000, walltime = 3 * 60 * 60)
+)
 
 # n_workers <- parallelly::availableCores() - 1L
 # plan(future::multicore, workers = n_workers)
@@ -229,7 +232,7 @@ results <- experiment$run(
   save = TRUE,
   use_cached = TRUE,
   verbose = 2,
-  checkpoint_n_reps = 100
+  checkpoint_n_reps = 2000 # i.e. disable
 )
 
 # source("R/format-replicate-results/helpers.R")
