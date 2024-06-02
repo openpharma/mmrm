@@ -11,7 +11,7 @@ library(emmeans)
 # load the required helper functions
 # This is just an example how to use these functions.
 
-source("R/format-replicate-results/helpers.R")
+source("R/customizations/format-fit-results.R")
 source("R/eval/helpers.R")
 
 # load a fit_results.rds file

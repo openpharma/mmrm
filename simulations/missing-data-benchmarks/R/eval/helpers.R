@@ -242,19 +242,26 @@ format_emmeans_df <- function(emmeans_df) {
 
 # extract model fits output at each visit from mmrm fit
 get_mmrm_emmeans_output <- function(fit) {
-  # extract emmeans output
-  marginal_means <- emmeans(
-    fit,
-    spec = trt.vs.ctrl ~ trt | visit_num,
-    weights = "proportional"
-  )
-  emmeans_df <- as.data.frame(marginal_means$contrasts)
+  result <- try({
+    # extract emmeans output
+    marginal_means <- emmeans(
+      fit,
+      spec = trt.vs.ctrl ~ trt | visit_num,
+      weights = "proportional"
+    )
+    emmeans_df <- as.data.frame(marginal_means$contrasts)
 
-  # compute lower and upper 95% CI
-  emmeans_df <- get_95_ci(emmeans_df)
+    # compute lower and upper 95% CI
+    emmeans_df <- get_95_ci(emmeans_df)
 
-  # format to resemble SAS output
-  format_emmeans_df(emmeans_df)
+    # format to resemble SAS output
+    format_emmeans_df(emmeans_df)
+  })
+  if (!inherits(result, "try-error")) {
+    result
+  } else {
+    NA
+  }
 }
 
 # extract model fit outputs at each visit from glmmTMB fit

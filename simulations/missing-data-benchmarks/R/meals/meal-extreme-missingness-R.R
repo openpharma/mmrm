@@ -1,5 +1,6 @@
 ################################################################################
-# Simulation with Extreme Levels of Missingness
+# Custom modification of simChef for
+# simulation with Extreme Levels of Missingness
 ################################################################################
 
 # load required libraries
@@ -21,7 +22,7 @@ library(future.batchtools)
 
 # source the R scripts
 sim_functions_files <- list.files(
-  c("R/dgp", "R/method", "R/eval", "R/viz"),
+  c("R/dgp", "R/method", "R/eval", "R/viz", "R/customizations"),
   pattern = "*.R$", full.names = TRUE, ignore.case = TRUE
 )
 sapply(sim_functions_files, source)
@@ -157,6 +158,9 @@ type_2_error_rate_eval <- create_evaluator(
   .eval_fun = type_2_error_rate_fun, true_params = true_params
 )
 
+# fixInNamespace
+fixInNamespace("readLog", "batchtools")
+
 # Define parallelization
 future_globals <- ls()
 
@@ -225,16 +229,40 @@ experiment <- create_experiment(
 # df <- data.frame(a = 1, b = 2)
 # sasr::df2sd(df)
 
-# run the experiment
-set.seed(713452)
-results <- experiment$run(
-  n_reps = 1000,
-  save = TRUE,
-  use_cached = TRUE,
-  verbose = 2,
-  checkpoint_n_reps = 2000 # i.e. disable
-)
 
-# source("R/format-replicate-results/helpers.R")
-#
-# format_fit_and_save(experiment)
+# run the experiment
+# we break it down into 10 batches so that we stay within the memory limits
+
+exp_dir <- experiment$get_save_dir()
+
+for (i in 7:10) {
+  # run this batch
+  set.seed(23412 + i * 10)
+  results <- experiment$onlystart(
+    n_reps = 100,
+    verbose = 2
+  )
+
+  # format results
+  formatted_fit_results <- format_fit_results(results)
+
+  # correct repetition information
+  formatted_fit_results$rep <- as.integer(formatted_fit_results$rep) + 100L * (i - 1L)
+
+  # save this batch
+  file_name <- paste0("formatted_fit_results_", i, ".rds")
+  file_name <- file.path(exp_dir, file_name)
+  saveRDS(formatted_fit_results, file = file_name)
+
+  # clean memory
+  rm(formatted_fit_results)
+  rm(results)
+  gc()
+}
+
+# Finally aggregate all tibbles together:
+all_files <- grep(pattern = "^formatted_fit_results_", x = dir(exp_dir), value = TRUE)
+all_files <- file.path(exp_dir, all_files)
+all_results <- lapply(all_files, readRDS)
+result <- do.call(rbind, all_results)
+saveRDS(result, file = file.path(exp_dir, "result.rds"))
