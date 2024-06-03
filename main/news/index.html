@@ -59,24 +59,6 @@
 <li class="active nav-item">
   <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.11">v0.3.11</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.10">v0.3.10</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.7">v0.3.7</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.6">v0.3.6</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.5">v0.3.5</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.4">v0.3.4</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.3">v0.3.3</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.2">v0.3.2</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.1">v0.3.1</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.0">v0.3.0</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.2.2">v0.2.2</a> </div></li>
-<!-- end dropdown for versions -->
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-reports">Reports</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-reports">
@@ -179,7 +161,7 @@
 <ul><li>Previously <code><a href="../reference/mmrm.html">mmrm()</a></code> follows the global option <code>na.action</code> and if it is set other than <code>"na.omit"</code> an assertion would fail. This is now fixed and hence <code>NA</code> values are always removed prior to model fitting, independent of the global <code>na.action</code> option.</li>
 <li>Previously a <code><a href="https://rdrr.io/r/stats/model.frame.html" class="external-link">model.frame()</a></code> call on an <code>mmrm</code> object with transformed terms, or new data, e.g. <code>model.frame(mmrm(Y ~ log(X) + ar1(VISIT|ID), data = new_data)</code>, would fail. This is now fixed.</li>
 <li>Previously <code><a href="../reference/mmrm.html">mmrm()</a></code> always required a <code>data</code> argument. Now fitting <code>mmrm</code> can also use environment variables instead of requiring <code>data</code> argument. (Note that <code>fit_mmrm</code> is not affected.)</li>
-<li>Previously <code><a href="https://rdrr.io/pkg/emmeans/man/emmeans.html" class="external-link">emmeans()</a></code> failed when using transformed terms or not including the visit variable in the model formula. This is now fixed.</li>
+<li>Previously <code><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html" class="external-link">emmeans()</a></code> failed when using transformed terms or not including the visit variable in the model formula. This is now fixed.</li>
 <li>Previously <code><a href="../reference/mmrm.html">mmrm()</a></code> might provide non-finite values in the Jacobian calculations, leading to errors in the Satterthwaite degrees of freedom calculations. This will raise an error now and thus alert the user that the model fit was not successful.</li>
 </ul></div>
 <div class="section level4">
