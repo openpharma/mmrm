@@ -54,6 +54,7 @@ fitted.mmrm_tmb <- function(object, ...) {
 #' @param interval (`string`)\cr type of interval calculation. Can be abbreviated.
 #' @param level (`number`)\cr tolerance/confidence level.
 #' @param nsim (`count`)\cr number of simulations to use.
+#' @param conditional (`flag`)\cr indicator if the prediction is conditional on the observation or not.
 #'
 #' @importFrom stats predict
 #' @exportS3Method
@@ -66,6 +67,7 @@ predict.mmrm_tmb <- function(object,
                              interval = c("none", "confidence", "prediction"),
                              level = 0.95,
                              nsim = 1000L,
+                             conditional = TRUE,
                              ...) {
   if (missing(newdata)) {
     newdata <- object$data
@@ -75,23 +77,22 @@ predict.mmrm_tmb <- function(object,
   assert_flag(se.fit)
   assert_number(level, lower = 0, upper = 1)
   assert_count(nsim, positive = TRUE)
+  assert_flag(conditional)
   interval <- match.arg(interval)
   # make sure new data has the same levels as original data
-  full_frame <- model.frame(
-    object,
-    data = newdata,
-    include = c("subject_var", "visit_var", "group_var", "response_var"),
-    na.action = "na.pass"
-  )
+  newdata <- h_factor_ref_data(object, newdata)
   tmb_data <- h_mmrm_tmb_data(
-    object$formula_parts, full_frame,
-    weights = rep(1, nrow(full_frame)),
+    object$formula_parts, newdata,
+    weights = rep(1, nrow(newdata)),
     reml = TRUE,
     singular = "keep",
     drop_visit_levels = FALSE,
     allow_na_response = TRUE,
     drop_levels = FALSE
   )
+  if (!conditional) {
+    tmb_data$y_vector[] <- NA_real_
+  }
   if (any(object$tmb_data$x_cols_aliased)) {
     warning(
       "In fitted object there are co-linear variables and therefore dropped terms, ",
@@ -610,15 +611,10 @@ simulate.mmrm_tmb <- function(object,
   method <- match.arg(method)
 
   # Ensure new data has the same levels as original data.
-  full_frame <- model.frame(
-    object,
-    data = newdata,
-    include = c("subject_var", "visit_var", "group_var", "response_var"),
-    na.action = "na.pass"
-  )
+  newdata <- h_factor_ref_data(object, newdata)
   tmb_data <- h_mmrm_tmb_data(
-    object$formula_parts, full_frame,
-    weights = rep(1, nrow(full_frame)),
+    object$formula_parts, newdata,
+    weights = rep(1, nrow(newdata)),
     reml = TRUE,
     singular = "keep",
     drop_visit_levels = FALSE,

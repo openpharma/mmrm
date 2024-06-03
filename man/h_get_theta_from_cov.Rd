@@ -9,6 +9,9 @@ h_get_theta_from_cov(covariance)
 \arguments{
 \item{covariance}{(\code{matrix}) of covariance matrix values.}
 }
+\value{
+Numeric vector of the theta values.
+}
 \description{
 Obtain unstructured theta from covariance matrix.
 }

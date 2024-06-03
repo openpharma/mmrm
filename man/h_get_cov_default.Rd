@@ -11,6 +11,9 @@ h_get_cov_default(
 \arguments{
 \item{method}{(\code{string})\cr degrees of freedom method.}
 }
+\value{
+String of the default covariance method.
+}
 \description{
 Obtain the default covariance method depending on
 the degrees of freedom method used.

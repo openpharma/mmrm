@@ -1,3 +1,13 @@
+# mmrm 0.3.11.9000
+
+### New Features
+
+- Add parameter `conditional` for `predict` method to control whether the prediction is conditional on the observation or not.
+
+### Bug Fixes
+
+- Previously if the left hand side of a model formula is an expression, `predict` and `simulate` will fail. This is fixed now.
+
 # mmrm 0.3.11
 
 ### Bug Fixes

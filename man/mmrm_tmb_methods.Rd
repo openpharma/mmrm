@@ -32,6 +32,7 @@
   interval = c("none", "confidence", "prediction"),
   level = 0.95,
   nsim = 1000L,
+  conditional = TRUE,
   ...
 )
 
@@ -93,6 +94,8 @@ Exception is \code{model.matrix()} passing \code{...} to the default method.}
 \item{level}{(\code{number})\cr tolerance/confidence level.}
 
 \item{nsim}{(\code{count})\cr number of simulations to use.}
+
+\item{conditional}{(\code{flag})\cr indicator if the prediction is conditional on the observation or not.}
 
 \item{formula}{(\code{mmrm_tmb})\cr same as \code{object}.}
 
