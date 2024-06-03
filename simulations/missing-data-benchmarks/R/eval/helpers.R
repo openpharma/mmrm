@@ -242,19 +242,26 @@ format_emmeans_df <- function(emmeans_df) {
 
 # extract model fits output at each visit from mmrm fit
 get_mmrm_emmeans_output <- function(fit) {
-  # extract emmeans output
-  marginal_means <- emmeans(
-    fit,
-    spec = trt.vs.ctrl ~ trt | visit_num,
-    weights = "proportional"
-  )
-  emmeans_df <- as.data.frame(marginal_means$contrasts)
+  result <- try({
+    # extract emmeans output
+    marginal_means <- emmeans(
+      fit,
+      spec = trt.vs.ctrl ~ trt | visit_num,
+      weights = "proportional"
+    )
+    emmeans_df <- as.data.frame(marginal_means$contrasts)
 
-  # compute lower and upper 95% CI
-  emmeans_df <- get_95_ci(emmeans_df)
+    # compute lower and upper 95% CI
+    emmeans_df <- get_95_ci(emmeans_df)
 
-  # format to resemble SAS output
-  format_emmeans_df(emmeans_df)
+    # format to resemble SAS output
+    format_emmeans_df(emmeans_df)
+  })
+  if (!inherits(result, "try-error")) {
+    result
+  } else {
+    NA
+  }
 }
 
 # extract model fit outputs at each visit from glmmTMB fit
@@ -323,3 +330,49 @@ get_emmeans_output <- function(method, fit, dt, converged) {
     NA
   }
 }
+
+# get_cov_mat_estimate ----
+
+# extract covariance matrix estimate from mmrm fit
+get_mmrm_cov_mat_estimate <- function(fit) {
+  mmrm::VarCorr(fit)
+}
+
+# extract covariance matrix estimate from glmmTMB fit
+get_glmm_cov_mat_estimate <- function(fit) {
+  mat_with_attrs <- glmmTMB::VarCorr(fit)[[c("cond", "participant")]]
+  dim <- nrow(mat_with_attrs)
+  ind <- seq_len(dim)
+  mat_with_attrs[ind, ind]
+}
+
+# extract covariance matrix estimate from nlme fit
+get_nlme_cov_mat_estimate <- function(fit) {
+  mat_with_attrs <- nlme::getVarCov(fit)
+  dim <- nrow(mat_with_attrs)
+  ind <- seq_len(dim)
+  mat_with_attrs[ind, ind]
+}
+
+# extract covariance matrix estimate from proc mixed fit
+get_mixed_cov_mat_estimate <- function(fit) {
+  attr(fit, "covmat")
+}
+
+# general function for covariance matrix estimate
+get_cov_mat_estimate <- function(method, fit, converged) {
+  if (get_convergence(method, fit, converged)) {
+    if (str_detect(method, "mmrm")) {
+      get_mmrm_cov_mat_estimate(fit)
+    } else if (str_detect(method, "glmmtmb")) {
+      get_glmm_cov_mat_estimate(fit)
+    } else if (str_detect(method, "nlme")) {
+      get_nlme_cov_mat_estimate(fit)
+    } else if (str_detect(method, "proc_mixed")) {
+      get_mixed_cov_mat_estimate(fit)
+    }
+  } else {
+    NA
+  }
+}
+

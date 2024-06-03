@@ -13,10 +13,14 @@ library(dplyr)
 library(purrr)
 library(tidyr)
 library(emmeans)
+library(clusterGeneration)
+library(ssh)
+library(microbenchmark)
+library(future.batchtools)
 
 # source the R scripts
 sim_functions_files <- list.files(
-  c("R/dgp", "R/method", "R/eval", "R/viz"),
+  c("R/dgp", "R/method", "R/eval", "R/viz", "R/customizations"),
   pattern = "*.R$", full.names = TRUE, ignore.case = TRUE
 )
 sapply(sim_functions_files, source)
@@ -116,15 +120,15 @@ nlme_us_meth <- create_method(.method_fun = nlme_wrapper_fun, covar_type = "us")
 nlme_csh_meth <- create_method(
   .method_fun = nlme_wrapper_fun, covar_type = "csh"
 )
-proc_mixed_us_meth <- create_method(
-  .method_fun = proc_mixed_wrapper_fun, covar_type = "us"
-)
-proc_mixed_csh_meth <- create_method(
-  .method_fun = proc_mixed_wrapper_fun, covar_type = "csh"
-)
-proc_mixed_toeph_meth <- create_method(
-  .method_fun = proc_mixed_wrapper_fun, covar_type = "toeph"
-)
+# proc_mixed_us_meth <- create_method(
+#   .method_fun = proc_mixed_wrapper_fun, covar_type = "us"
+# )
+# proc_mixed_csh_meth <- create_method(
+#   .method_fun = proc_mixed_wrapper_fun, covar_type = "csh"
+# )
+# proc_mixed_toeph_meth <- create_method(
+#   .method_fun = proc_mixed_wrapper_fun, covar_type = "toeph"
+# )
 
 # specify the evaluation metrics
 mean_time_eval <- create_evaluator(.eval_fun = mean_time_fun)
@@ -152,10 +156,26 @@ type_2_error_rate_eval <- create_evaluator(
   .eval_fun = type_2_error_rate_fun, true_params = true_params
 )
 
+# fixInNamespace
+fixInNamespace("readLog", "batchtools")
+
+# Define parallelization
+future_globals <- ls()
+
+options(future.globals.onReference = NULL)
+# options(future.globals.onReference = "error")
+
+plan(
+  batchtools_lsf,
+  workers = 100,
+  resources = list(memory = 10000, walltime = 5 * 60 * 60) # queue = "short",
+)
+
 # create the experiment
 experiment <- create_experiment(
-  name = "mmrm-benchmark-low-missingness-n-600",
-  save_dir = "results/low-miss/n-600"
+  name = "mmrm-benchmark-low-missingness-n-600-R",
+  save_dir = "results/low-miss/n-600-R",
+  future.globals = future_globals
 ) %>%
   add_dgp(no_effect_us_dgp, name = "no_effect_us") %>%
   add_dgp(no_effect_csh_dgp, name = "no_effect_csh") %>%
@@ -174,9 +194,10 @@ experiment <- create_experiment(
   add_method(glmmtmb_toeph_meth, name = "glmmtmb_toeph") %>%
   add_method(nlme_us_meth, name = "nlme_us") %>%
   add_method(nlme_csh_meth, name = "nlme_csh") %>%
-  add_method(proc_mixed_us_meth, name = "proc_mixed_us") %>%
-  add_method(proc_mixed_csh_meth, name = "proc_mixed_csh") %>%
-  add_method(proc_mixed_toeph_meth, name = "proc_mixed_toeph") %>%
+  # We don't run the SAS routines here.
+  # add_method(proc_mixed_us_meth, name = "proc_mixed_us") %>%
+  # add_method(proc_mixed_csh_meth, name = "proc_mixed_csh") %>%
+  # add_method(proc_mixed_toeph_meth, name = "proc_mixed_toeph") %>%
   add_evaluator(mean_time_eval, name = "mean_fit_time") %>%
   add_evaluator(bias_eval, name = "bias") %>%
   add_evaluator(variance_eval, name = "variance") %>%
@@ -185,11 +206,53 @@ experiment <- create_experiment(
   add_evaluator(type_1_error_rate_eval, name = "type_1_error_rate") %>%
   add_evaluator(type_2_error_rate_eval, name = "type_2_error_rate")
 
+# No need for SAS here
+
+# # Input here the name of the SAS container.
+# hostname <- "sabanesd-3qamsv-eu.ocean"
+# ssh::ssh_connect(hostname)
+#
+# # We can also be specific if there are multiple SAS containers we want to connect to.
+# cfg_name <- "sascfg_personal_3.py"
+# sasr.roche::setup_sasr_ocean(hostname, sascfg = cfg_name)
+# options(sascfg = cfg_name)
+
 # run the experiment
-set.seed(56129)
-results <- experiment$run(
-  n_reps = 100,
-  save = TRUE,
-  verbose = 2,
-  checkpoint_n_reps = 25
-)
+# we break it down into 10 batches so that we stay within the memory limits
+
+exp_dir <- experiment$get_save_dir()
+if (!dir.exists(exp_dir)) {
+  dir.create(exp_dir)
+}
+
+for (i in 1:10) {
+  # run this batch
+  set.seed(1341 + i * 10)
+  results <- experiment$onlystart(
+    n_reps = 100,
+    verbose = 2
+  )
+
+  # format results
+  formatted_fit_results <- format_fit_results(results)
+
+  # correct repetition information
+  formatted_fit_results$rep <- as.integer(formatted_fit_results$rep) + 100L * (i - 1L)
+
+  # save this batch
+  file_name <- paste0("formatted_fit_results_", i, ".rds")
+  file_name <- file.path(exp_dir, file_name)
+  saveRDS(formatted_fit_results, file = file_name)
+
+  # clean memory
+  rm(formatted_fit_results)
+  rm(results)
+  gc()
+}
+
+# Finally aggregate all tibbles together:
+all_files <- grep(pattern = "^formatted_fit_results_", x = dir(exp_dir), value = TRUE)
+all_files <- file.path(exp_dir, all_files)
+all_results <- lapply(all_files, readRDS)
+result <- do.call(rbind, all_results)
+saveRDS(result, file = file.path(exp_dir, "result.rds"))

@@ -1,0 +1,6 @@
+#BSUB -J <%= if (exists("job.name", mode = "character")) job.name else job.hash %>
+#BSUB -q short
+#BSUB -n 1
+#BSUB -o <%= log.file %>
+singularity exec https://ross.science.roche.com/singularity-cbs/coderoche/r_container/bee_4.2.1.sif Rscript --vanilla 'batchtools::doJobCollection("<%= uri %>")'
+

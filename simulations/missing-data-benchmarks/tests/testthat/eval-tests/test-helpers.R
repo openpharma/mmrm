@@ -507,3 +507,107 @@ test_that("get_mixed_emmeans_like_output extracts emmeans contrasts", {
   expected_cols <- c("visit_num", "estimate", "stderr", "df", "tvalue", "pvalue", "lower", "upper")
   expect_named(result, expected_cols)
 })
+
+# get_cov_mat_estimate ----
+
+test_that("get_mmrm_cov_mat_estimate works as expected", {
+  # generate data
+  set.seed(51235)
+  dgp_output <- rct_dgp_fun(
+    n_obs = 100,
+    outcome_covar_mat = diag(3),
+    trt_visit_coef = 0.5
+  )
+
+  # fit the mmrm with mmrm
+  mmrm_fit <- mmrm_wrapper_fun(
+    participant = dgp_output$participant,
+    visit_num = dgp_output$visit_num,
+    base_bcva = dgp_output$base_bcva,
+    strata = dgp_output$strata,
+    trt = dgp_output$trt,
+    bcva_change = dgp_output$bcva_change,
+    covar_type = "us"
+  )
+
+  result <- expect_silent(get_mmrm_cov_mat_estimate(mmrm_fit$fit))
+  expect_matrix(result, nrows = 3, ncols = 3)
+  expect_silent(chol(result))
+})
+
+test_that("get_glmm_cov_mat_estimate works as expected", {
+  # generate data
+  set.seed(51235)
+  dgp_output <- rct_dgp_fun(
+    n_obs = 100,
+    outcome_covar_mat = diag(3),
+    trt_visit_coef = 0.5
+  )
+
+  # fit the mmrm with mmrm
+  glmmtmb_fit <- glmmtmb_wrapper_fun(
+    participant = dgp_output$participant,
+    visit_num = dgp_output$visit_num,
+    base_bcva = dgp_output$base_bcva,
+    strata = dgp_output$strata,
+    trt = dgp_output$trt,
+    bcva_change = dgp_output$bcva_change,
+    covar_type = "us"
+  )
+
+  result <- expect_silent(get_glmm_cov_mat_estimate(glmmtmb_fit$fit))
+  expect_matrix(result, nrows = 3, ncols = 3)
+  expect_silent(chol(result))
+})
+
+test_that("get_nlme_cov_mat_estimate works as expected", {
+  # generate data
+  set.seed(51235)
+  dgp_output <- rct_dgp_fun(
+    n_obs = 100,
+    outcome_covar_mat = diag(3),
+    trt_visit_coef = 0.5
+  )
+
+  # fit the mmrm with mmrm
+  nlme_fit <- nlme_wrapper_fun(
+    participant = dgp_output$participant,
+    visit_num = dgp_output$visit_num,
+    base_bcva = dgp_output$base_bcva,
+    strata = dgp_output$strata,
+    trt = dgp_output$trt,
+    bcva_change = dgp_output$bcva_change,
+    covar_type = "us"
+  )
+
+  result <- expect_silent(get_nlme_cov_mat_estimate(nlme_fit$fit))
+  expect_matrix(result, nrows = 3, ncols = 3)
+  expect_silent(chol(result))
+})
+
+test_that("get_mixed_cov_mat_estimate works as expected", {
+  skip_if_not(run_sas_tests)
+  # generate data
+  set.seed(51235)
+  dgp_output <- rct_dgp_fun(
+    n_obs = 100,
+    outcome_covar_mat = diag(3),
+    trt_visit_coef = 0.5
+  )
+
+  # fit the mmrm with mmrm
+  proc_mixed_fit <- proc_mixed_wrapper_fun(
+    participant = dgp_output$participant,
+    visit_num = dgp_output$visit_num,
+    base_bcva = dgp_output$base_bcva,
+    strata = dgp_output$strata,
+    trt = dgp_output$trt,
+    bcva_change = dgp_output$bcva_change,
+    covar_type = "us"
+  )
+
+  # extract estimates
+  result <- expect_silent(get_mixed_cov_mat_estimate(proc_mixed_fit$fit))
+  expect_matrix(result, nrows = 3, ncols = 3)
+  expect_silent(chol(result))
+})
