@@ -3,7 +3,7 @@
 # R specific hooks: https://github.com/lorenzwalthert/precommit
 repos:
   - repo: https://github.com/lorenzwalthert/precommit
-    rev: v0.4.0
+    rev: v0.4.2
     hooks:
       - id: style-files
         args:
@@ -89,7 +89,7 @@ repos:
           README.md
           )$
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v4.6.0
     hooks:
       - id: check-added-large-files
         args: ["--maxkb=200"]
