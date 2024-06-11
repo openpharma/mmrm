@@ -16,7 +16,7 @@ downloads](https://cranlogs.r-pkg.org/badges/mmrm)](https://cranlogs.r-pkg.org/b
 [![CRAN total
 downloads](https://cranlogs.r-pkg.org/badges/grand-total/mmrm)](https://cranlogs.r-pkg.org/badges/grand-total/mmrm)
 [![Code
-Coverage](https://raw.githubusercontent.com/openpharma/mmrm/_xml_coverage_reports/data/main/badge.svg)](https://raw.githubusercontent.com/openpharma/mmrm/_xml_coverage_reports/data/main/coverage.xml)
+Coverage](https://raw.githubusercontent.com/openpharma/mmrm/_xml_coverage_reports/data/main/badge.svg)](https://openpharma.github.io/mmrm/latest-tag/coverage-report/)
 <!-- badges: end -->  
 
 Mixed models for repeated measures (MMRM) are a popular choice for
