@@ -3,6 +3,8 @@
 ################################################################################
 
 # load required libraries
+library(reticulate)
+use_virtualenv("daniel")
 library(simChef)
 library(mmrm)
 library(glmmTMB)
@@ -19,7 +21,7 @@ library(microbenchmark)
 
 # source the R scripts
 sim_functions_files <- list.files(
-  c("R/dgp", "R/method", "R/eval", "R/viz"),
+  c("R/dgp", "R/method", "R/eval", "R/viz", "R/customizations"),
   pattern = "*.R$", full.names = TRUE, ignore.case = TRUE
 )
 sapply(sim_functions_files, source)
@@ -30,7 +32,7 @@ csh_cov_mat <- compute_csh_matrix()
 toep_cov_mat <- toeplitz(c(1, 0.5, 0.25, 0.125, rep(0, 6)))
 
 # set the sample size
-n_obs <- 600
+n_obs <- 200
 
 # dgps with no treatment effect
 no_effect_us_dgp <- create_dgp(
@@ -148,8 +150,8 @@ type_2_error_rate_eval <- create_evaluator(
 
 # create the experiment
 experiment <- create_experiment(
-  name = "mmrm-benchmark-no-missingness-n-600-SAS",
-  save_dir = "results/no-miss/n-600-SAS"
+  name = glue::glue("mmrm-benchmark-no-missingness-n-{n_obs}-SAS"),
+  save_dir = glue::glue("results/no-miss/n-{n_obs}-SAS")
 ) %>%
   add_dgp(no_effect_us_dgp, name = "no_effect_us") %>%
   add_dgp(no_effect_csh_dgp, name = "no_effect_csh") %>%
@@ -178,33 +180,31 @@ experiment <- create_experiment(
   add_evaluator(coverage_eval, name = "coverage_rate") %>%
   add_evaluator(type_1_error_rate_eval, name = "type_1_error_rate") %>%
   add_evaluator(type_2_error_rate_eval, name = "type_2_error_rate")
-#
-# # Input here the name of the SAS container.
-# hostname <- "sabanesd-ddi1zu-eu.ocean"
-#
-# # Do this to register host
-# session <- ssh::ssh_connect(hostname)
-# ssh_disconnect(session)
-#
-# # We can also be specific if there are multiple SAS containers we want to connect to.
-# cfg_name <- "sascfg_personal_4.py"
-# sasr.roche::setup_sasr_ocean(hostname, sascfg = cfg_name)
-# options(sascfg = cfg_name)
-#
-# # Test if it works.
-# df <- data.frame(a = 1, b = 2)
-# sasr::df2sd(df)
-#
-# # run the experiment
-# set.seed(62342)
-# results <- experiment$run(
-#   n_reps = 1000,
-#   save = TRUE,
-#   verbose = 2,
-#   checkpoint_n_reps = 10
-# )
 
-source("R/format-replicate-results/helpers.R")
+# Input here the name of the SAS container.
+hostname <- "sabanesd-m55pe7-eu.ocean"
+
+# Do this to register host
+session <- ssh::ssh_connect(hostname)
+ssh_disconnect(session)
+
+# We can also be specific if there are multiple SAS containers we want to connect to.
+cfg_name <- "sascfg_personal_4.py"
+sasr.roche::setup_sasr_ocean(hostname, sascfg = cfg_name)
+options(sascfg = cfg_name)
+
+# Test if it works.
+df <- data.frame(a = 1, b = 2)
+sasr::df2sd(df)
+
+# run the experiment
+set.seed(62342)
+results <- experiment$run(
+  n_reps = 1000,
+  save = TRUE,
+  verbose = 2,
+  checkpoint_n_reps = 100
+)
 
 format_fit_and_save(experiment)
 
