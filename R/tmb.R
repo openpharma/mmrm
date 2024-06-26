@@ -151,11 +151,11 @@ h_mmrm_tmb_data <- function(formula_parts,
   if (drop_levels) {
     full_frame <- droplevels(full_frame, except = formula_parts$visit_var)
   }
-  if (allow_na_response) {
-    # response is always the first column
-    keep_ind <- complete.cases(full_frame[, -1L, drop = FALSE])
+  keep_ind <- if (allow_na_response) {
+    # Note that response is always the first column.
+    stats::complete.cases(full_frame[, -1L, drop = FALSE])
   } else {
-    keep_ind <- complete.cases(full_frame)
+    stats::complete.cases(full_frame)
   }
   full_frame <- full_frame[keep_ind, ]
   if (drop_visit_levels && !formula_parts$is_spatial && is.factor(full_frame[[formula_parts$visit_var]])) {
