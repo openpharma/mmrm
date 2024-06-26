@@ -46,3 +46,4 @@ renv
 renv.lock
 *.pyc
 nohup.out
+inst/doc
