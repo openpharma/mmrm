@@ -96,7 +96,7 @@ test_that("emmeans works as expected", {
 test_that("emmeans works for spatial covariance", {
   fit <- mmrm(FEV1 ~ FEV1_BL + ARMCD * AVISIT + sp_exp(VISITN, VISITN2 | USUBJID), data = fev_data)
   lsmeans <- expect_silent(emmeans(fit, ~ ARMCD * AVISIT))
-  diffs <- expect_silent(summary(pairs(lsmeans, adjust="none")))
+  diffs <- expect_silent(summary(pairs(lsmeans, adjust = "none")))
   expect_snapshot_tolerance(diffs)
 })
 

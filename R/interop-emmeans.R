@@ -31,7 +31,7 @@ recover_data.mmrm <- function(object, ...) { # nolint
   # subject_var is excluded because it should not contain fixed effect.
   # visit_var is not excluded because emmeans can provide marginal mean
   # by each visit if visit_var is not spatial.
-  model_frame <- stats::model.frame(object, include = c(if (!object$formula_parts$is_spatial) "visit_var","response_var", "group_var"))
+  model_frame <- stats::model.frame(object, include = c(if (!object$formula_parts$is_spatial) "visit_var", "response_var", "group_var"))
   model_terms <- stats::delete.response(stats::terms(model_frame))
   emmeans::recover_data(
     fun_call,
