@@ -7,7 +7,7 @@
 ### Bug Fixes
 
 - Previously if the left hand side of a model formula is an expression, `predict` and `simulate` will fail. This is fixed now.
-- Previously `emmeans` will return NA for spatial covariance structure. This is fixed now.
+- Previously `emmeans` will return `NA` for spatial covariance structure. This is fixed now.
 
 # mmrm 0.3.11
 
