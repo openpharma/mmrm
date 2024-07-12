@@ -33,7 +33,10 @@ recover_data.mmrm <- function(object, ...) { # nolint
   # by each visit if visit_var is not spatial.
   model_frame <- stats::model.frame(
     object,
-    include = c(if (!object$formula_parts$is_spatial) "visit_var", "response_var", "group_var")
+    include = c(
+      if (!object$formula_parts$is_spatial) "visit_var" else NULL,
+      "response_var", "group_var"
+    )
   )
   model_terms <- stats::delete.response(stats::terms(model_frame))
   emmeans::recover_data(
@@ -65,7 +68,13 @@ emm_basis.mmrm <- function(object, # nolint
     beta_hat[kept] <- component(object, "beta_est")
     orig_model_mat <- stats::model.matrix(
       trms,
-      stats::model.frame(object, include = c("visit_var", "response_var", "group_var")),
+      stats::model.frame(
+        object,
+        include = c(
+          if (!object$formula_parts$is_spatial) "visit_var" else NULL,
+          "response_var", "group_var"
+        )
+      ),
       contrasts.arg = contrasts
     )
     estimability::nonest.basis(orig_model_mat)
