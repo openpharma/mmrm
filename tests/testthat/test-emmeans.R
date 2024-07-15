@@ -93,6 +93,13 @@ test_that("emmeans works as expected", {
   expect_equal(result_emmeans, expected_emmeans, tolerance = 1e-3)
 })
 
+test_that("emmeans works for spatial covariance", {
+  fit <- mmrm(FEV1 ~ FEV1_BL + ARMCD * AVISIT + sp_exp(VISITN, VISITN2 | USUBJID), data = fev_data)
+  lsmeans <- expect_silent(emmeans(fit, ~ ARMCD * AVISIT))
+  diffs <- expect_silent(summary(pairs(lsmeans, adjust = "none")))
+  expect_snapshot_tolerance(diffs)
+})
+
 test_that("emmeans works as expected for transformed variables", {
   skip_if_not_installed("emmeans", minimum_version = "1.6")
 

@@ -1,5 +1,11 @@
 # mmrm 0.3.12.9000
 
+### Bug Fixes
+
+- Previously `emmeans` will return `NA` for spatial covariance structure. This is fixed now.
+
+# mmrm 0.3.12
+
 ### New Features
 
 - Add parameter `conditional` for `predict` method to control whether the prediction is conditional on the observation or not.
