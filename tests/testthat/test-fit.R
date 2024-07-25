@@ -577,7 +577,7 @@ test_that("mmrm works and gives message for data with unobserved visit levels", 
     ),
     "In AVISIT there are dropped visits: VIS3"
   )
-  data_dropped <- droplevels(data_unobs)
+  data_dropped <- h_drop_level(data_unobs)
   expected <- mmrm(
     FEV1 ~ RACE + ad(AVISIT | USUBJID),
     data = data_dropped

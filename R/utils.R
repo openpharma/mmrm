@@ -447,7 +447,7 @@ emp_start <- function(data, model_formula, visit_var, subject_var, subject_group
   assert_factor(data[[visit_var]])
   n_visits <- length(levels(data[[visit_var]]))
   assert_factor(data[[subject_var]])
-  subjects <- droplevels(data[[subject_var]])
+  subjects <- h_drop_level(data[[subject_var]])
   n_subjects <- length(levels(subjects))
   fit <- stats::lm(formula = model_formula, data = data)
   res <- rep(NA, n_subjects * n_visits)
@@ -513,4 +513,35 @@ h_register_s3 <- function(pkg, generic, class, envir = parent.frame()) {
   setHook(packageEvent(pkg, "onLoad"), function(...) {
     registerS3method(generic, class, fun, envir = asNamespace(pkg))
   })
+}
+
+#' Drop Levels of a Factor
+#' @param x (`factor`) input vector to drop levels.
+#' @export
+h_drop_level <- function(x, exclude, ...) {
+  UseMethod("h_drop_level")
+}
+
+#' @export
+h_drop_level.factor <- function(x, exclude = if (anyNA(levels(x))) NULL else NA_character_, ...) {
+  assert_factor(x)
+  assert(
+    test_character(exclude),
+    test_null(exclude),
+  )
+  current_lvls <- attr(x, "levels")
+  new_lvls <- current_lvls[current_lvls %in% unique(x)]
+  attr(x, "levels") <- setdiff(new_lvls, exclude)
+  x
+}
+
+#' @export
+h_drop_level.data.frame <- function(x, except = NULL, exclude, ...) {
+  ix <- vapply(x, is.factor, NA)
+  if (!is.null(except)) ix[except] <- FALSE
+  x[ix] <- if (missing(exclude))
+    lapply(x[ix], h_drop_level)
+  else
+    lapply(x[ix], h_drop_level, exclude = exclude)
+  x
 }

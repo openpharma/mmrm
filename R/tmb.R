@@ -149,7 +149,7 @@ h_mmrm_tmb_data <- function(formula_parts,
     ))
   )
   if (drop_levels) {
-    full_frame <- droplevels(full_frame, except = formula_parts$visit_var)
+    full_frame <- h_drop_level(full_frame, except = formula_parts$visit_var)
   }
   keep_ind <- if (allow_na_response) {
     # Note that response is always the first column.
@@ -160,7 +160,7 @@ h_mmrm_tmb_data <- function(formula_parts,
   full_frame <- full_frame[keep_ind, ]
   if (drop_visit_levels && !formula_parts$is_spatial && is.factor(full_frame[[formula_parts$visit_var]])) {
     old_levels <- levels(full_frame[[formula_parts$visit_var]])
-    full_frame[[formula_parts$visit_var]] <- droplevels(full_frame[[formula_parts$visit_var]])
+    full_frame[[formula_parts$visit_var]] <- h_drop_level(full_frame[[formula_parts$visit_var]])
     new_levels <- levels(full_frame[[formula_parts$visit_var]])
     dropped <- setdiff(old_levels, new_levels)
     if (length(dropped) > 0) {
