@@ -1,0 +1,66 @@
+configfile: "config.yaml"
+
+rule all_simulated_data:
+  input: expand("simulated_data/{miss}_miss_{trt}_effect_seed_{seed}_n_{n}_rep_{rep}.xpt", **config)
+rule all_r_analysis:
+  input: expand("results/{miss}_miss_{trt}_effect_{cov}_method_{method}_n_{n}_seed_{seed}_rep_{rep}_{reml}.rds", **config, method = ["mmrm", "glmmtmb", "nlme"])
+rule all_sas_analysis:
+  input: expand("results/{miss}_miss_{trt}_effect_{cov}_method_sas_n_{n}_seed_{seed}_rep_{rep}_{reml}.xpt", **config)
+
+rule all_sas_analysis_low:
+  input: expand("results/low_miss_{trt}_effect_{cov}_method_sas_n_{n}_seed_{seed}_rep_{rep}_{reml}.xpt", **config)
+rule all_sas_analysis_high:
+  input: expand("results/high_miss_{trt}_effect_{cov}_method_sas_n_{n}_seed_{seed}_rep_{rep}_{reml}.xpt", **config)
+rule all_sas_analysis_extreme:
+  input: expand("results/extreme_miss_{trt}_effect_{cov}_method_sas_n_{n}_seed_{seed}_rep_{rep}_{reml}.xpt", **config)
+rule all_sas_analysis_no:
+  input: expand("results/no_miss_{trt}_effect_{cov}_method_sas_n_{n}_seed_{seed}_rep_{rep}_{reml}.xpt", **config)
+
+rule all_sas_process:
+  input: expand("results/{miss}_miss_{trt}_effect_{cov}_method_sas_n_{n}_seed_{seed}_rep_{rep}_{reml}.rds", **config)
+
+rule simulate_data:
+  output: 
+    "simulated_data/{miss}_miss_{trt}_effect_seed_{seed}_n_{n}_rep_{rep}.xpt",
+    "simulated_data/{miss}_miss_{trt}_effect_seed_{seed}_n_{n}_rep_{rep}.parquet"
+  threads: 1
+  resources:
+    lsf_queue="short",
+    mem_mb=40000,
+    walltime=180
+  log: "logs/simulate_data_{miss}_miss_{trt}_effect_seed_{seed}_n_{n}_rep_{rep}.log"
+  shell: "Rscript simulate_data.R -n {wildcards.n} -rep {wildcards.rep} -seed {wildcards.seed} -missingness {wildcards.miss} -treatment_effect {wildcards.trt} -xpt {output[0]} -parquet {output[1]} > {log} 2>&1"
+
+rule analyze_with_r:
+  input: "simulated_data/{miss}_miss_{trt}_effect_seed_{seed}_n_{n}_rep_{rep}.parquet"
+  output: "results/{miss}_miss_{trt}_effect_{cov}_method_{method}_n_{n}_seed_{seed}_rep_{rep}_{reml}.rds"
+  threads: 1
+  wildcard_constraints:
+    method = "mmrm|glmmtmb|nlme"
+  log: "logs/analyze_{miss}_miss_{trt}_effect_{cov}_method_{method}_n_{n}_seed_{seed}_rep_{rep}_{reml}.log"
+  resources:
+    lsf_queue="short",
+    mem_mb=40000,
+    walltime=180
+  shell: "Rscript run_analysis.R -method {wildcards.method} -reml {wildcards.reml} -covar_type {wildcards.cov} -seed {wildcards.seed} -missingness {wildcards.miss} -treatment_effect {wildcards.trt} -n {wildcards.n} -rep {wildcards.rep} -input_data {input} -output_file {output} > {log} 2>&1"
+
+rule analyze_with_sas:
+  output: "results/{miss}_miss_{trt}_effect_{cov}_method_sas_n_{n}_seed_{seed}_rep_{rep}_{reml}.xpt"
+  threads: 1
+  input: "simulated_data/{miss}_miss_{trt}_effect_seed_{seed}_n_{n}_rep_{rep}.xpt"
+  log: "logs/analyze_{miss}_miss_{trt}_effect_{cov}_method_sas_n_{n}_seed_{seed}_rep_{rep}_{reml}.log"
+  shell: "sas -norsasuser -set reml {wildcards.reml} -set inputdata {input} -set outputdata {output} -set n {wildcards.n} -set rep {wildcards.rep} -set miss {wildcards.miss} -set trt {wildcards.trt} -set cov {wildcards.cov} -set seed {wildcards.seed} -log {log} -print {log} run_analysis.sas"
+
+rule process_sas_result:
+  input: "results/{miss}_miss_{trt}_effect_{cov}_method_sas_n_{n}_seed_{seed}_rep_{rep}_{reml}.xpt"
+  threads: 1
+  output: "results/{miss}_miss_{trt}_effect_{cov}_method_sas_n_{n}_seed_{seed}_rep_{rep}_{reml}.rds"
+  log: "logs/process_{miss}_miss_{trt}_effect_{cov}_method_sas_n_{n}_seed_{seed}_rep_{rep}_{reml}.log"
+  shell: "Rscript process_sas.R -input_file {input} -output_file {output} > {log} 2>&1"
+
+rule transfer_simulated_data_to_hpc:
+  input: expand("simulated_data/{miss}_miss_{trt}_effect_seed_{seed}_n_{n}_rep_{rep}.xpt", **config)
+  shell: "scp -r simulated_data ec-hub.kau.science.roche.com:~/Projects/mmrm_simulation"
+rule transfer_back_results:
+  input: expand("simulated_data/{miss}_miss_{trt}_effect_seed_{seed}_n_{n}_rep_{rep}.xpt", **config)
+  shell: "scp -r ec-hub.kau.science.roche.com:~/Projects/mmrm_simulation/results ."

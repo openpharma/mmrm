@@ -1,0 +1,7 @@
+miss: ['no', 'low', 'high', 'extreme']
+trt: ['no', 'small', 'mod']
+cov: ['us', 'toeph', 'csh']
+n: ['200', '400', '600']
+seed: ['13412112']
+reml: ['reml', 'ml']
+rep: 1000

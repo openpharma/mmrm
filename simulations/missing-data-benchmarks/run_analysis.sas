@@ -1,0 +1,78 @@
+%let inputdata=%sysget(inputdata);
+%let outputdata=%sysget(outputdata);
+%let n=%sysget(n);
+%let rep=%sysget(rep);
+%let covar=%sysget(cov);
+%let seed=%sysget(seed);
+%let miss=%sysget(miss);
+%let trt=%sysget(trt);
+%let reml=%sysget(reml);
+
+libname xptin xport "&inputdata";
+libname xptout xport "&outputdata";
+
+proc copy inlib = xptin outlib = work;
+run;
+
+%macro set_var();
+  src = scan(source,2,'.');
+  seed = &seed;
+  n = &n;
+  miss = "&miss";
+  trt_eff = "&trt";
+%mend;
+
+%macro mix_fit(i, covar, lbl);
+%let _timer_start = %sysfunc(time());
+  ODS OUTPUT DIFFS = df_&lbl._&i. CovParms = cv_&lbl._&i. ConvergenceStatus = cs_&lbl._&i.;
+  PROC MIXED DATA = filter_data_&i METHOD = &reml.;
+    CLASS trt(ref = '0') visit strata id;
+    %if "&covar" eq "csh" %then %do;
+    	MODEL chgcsh = bcva_bl strata trt*visit / DDFM = SAT;
+    %end;
+    %else %if "&covar" eq "unr" %then %do;
+    	MODEL chgus = bcva_bl strata trt*visit / DDFM = SAT;
+    %end;
+    %else %do;
+    	MODEL chgtoep = bcva_bl strata trt*visit / DDFM = SAT;
+    %end;
+    REPEATED visit / subject=id type=&covar;
+    LSMEANS trt*visit / pdiff cl alpha = 0.05 OBSMARGINS;
+  RUN;
+  data ft_&lbl._&i;
+    dur = time() - &_timer_start;
+%mend;
+
+%macro run_proc_mixed(rep);
+  %do i = 0 %to (&rep - 1);
+    data filter_data_&i;
+      set simdata;
+      if id gt &i * &n and id le (&i + 1) * &n;
+    run;
+    %mix_fit(&i, toeph, t);
+    %mix_fit(&i, csh, c);
+    %mix_fit(&i, unr, u);
+  %end;
+  data fittime;
+    set ft: indsname = source;
+    %set_var();
+  data diffs;
+    length margins $40.;
+    set df: indsname = source;
+    %set_var();
+  data conv;
+    set cs: indsname = source;
+    %set_var();
+  data cvparm;
+    length covparm $40.;
+    set cv_: indsname = source;
+    %set_var();
+  proc datasets lib=work;
+    delete df_: cs_: cv_: ft_:;
+  quit;
+  proc copy in=work out=xptout;
+    select diffs conv fittime cvparm;
+  run;
+%mend;
+
+%run_proc_mixed(&rep);
