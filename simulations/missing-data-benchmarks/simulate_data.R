@@ -19,7 +19,11 @@ data <- generate_data(
   n_rep = nrep,
   n_visits = 10,
   missing_level = missingness,
-  trt_visit_coef = switch(treatment_effect, no = 0, small = 0.25, mod = 0.5),
+  trt_visit_coef = switch(treatment_effect,
+    no = 0,
+    small = 0.25,
+    mod = 0.5
+  ),
 )
 
 arrow::write_parquet(data, parquet_out)

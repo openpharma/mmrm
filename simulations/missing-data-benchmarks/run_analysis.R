@@ -27,6 +27,3 @@ ret$seed <- seed
 ret$reml <- reml
 
 saveRDS(ret, output_file)
-
-
-
