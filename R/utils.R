@@ -327,7 +327,9 @@ h_factor_ref <- function(x, ref, var_name = vname(x)) {
   uni_ref <- as.character(unique(ref))
   assert_character(uni_values, .var.name = var_name)
   assert_subset(uni_values, uni_ref, .var.name = var_name)
-  factor(x, levels = h_default_value(levels(ref), sort(uni_ref)))
+  ret <- factor(x, levels = h_default_value(levels(ref), sort(uni_ref)))
+  attributes(ret) <- attributes(ref)
+  ret
 }
 
 #' Convert Character to Factor Following Reference `MMRM` Fit.
