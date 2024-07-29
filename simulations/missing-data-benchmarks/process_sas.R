@@ -5,7 +5,7 @@ output_data <- args$output_file
 
 library(dplyr)
 
-covar_full <- c(C = "csh", T = "toeph", U = "us")
+method_covar <- args$cov
 
 fit_time <- input_data$fittime %>%
   mutate(fit_time = dur, src = substr(src, 4, 8)) %>%
@@ -55,7 +55,8 @@ df <- fit_time %>%
   full_join(emmeans, by = "src") %>%
   full_join(cov_csh, by = "src") %>%
   mutate(missingness = miss, treatment_effect = trt.eff) %>%
-  mutate(method_covar = covar_full[substr(src, 1, 1)], method = "sas", rep = as.numeric(substr(src, 3, 8))) %>%
+  mutate(method_covar = method_covar, method = "sas", rep = as.numeric(substr(src, 3, 8))) %>%
+  mutate(reml = ifelse(grepl("reml", args$input_file), "reml", "ml")) %>%
   select(fit_time, converged, rep, method_covar, method, missingness, n, treatment_effect, seed, emmeans_output, covmat_estimates)
 
 saveRDS(df, output_data)

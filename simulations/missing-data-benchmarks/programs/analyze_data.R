@@ -3,26 +3,20 @@
 #' @description This function conduct analysis on simulated data using mmrm.
 #'
 #' @param df Input dataset.
-#' @param covar_type covariance structure type.
+#' @param covar_rsp response covariance structure.
+#' @param covar_type covariance structure used in model.
 #'
 #' @return A formated results.
-mmrm_wrapper_fun <- function(df, covar_type, reml = TRUE) {
+mmrm_wrapper_fun <- function(df, covar_rsp, covar_type, reml = TRUE) {
   # NOTE: nlme produces an error when the model fails to converge. This function
   # safely returns an error message, and allows us to check if the model
   # converged.
   safe_mmrm <- purrr::safely(mmrm::mmrm)
-  if (covar_type == "us") {
-    formula <- chgus ~ bcva_bl + strata + trt * visit + us(visit | id)
-  } else if (covar_type == "csh") {
-    formula <- chgcsh ~ bcva_bl + strata + trt * visit + csh(visit | id)
-  } else if (covar_type == "toeph") {
-    formula <- chgtoep ~ bcva_bl + strata + trt * visit + toeph(visit | id)
-  } else {
-    stop("This covariance matrix is not supported by this wrapper function.")
-  }
+  rspvar <- paste0("chg", covar_rsp)
+  formula <- as.formula(sprintf("%s ~ bcva_bl + strata + trt * visit + %s(visit | id)", rspvar, covar_type))
   fit_time <- microbenchmark::microbenchmark(
     # NOTE: Errors when using L-BFGS-B first
-    fit <- safe_mmrm(formula = formula, data = df, optimizer = c("BFGS", "L-BFGS-B"), reml = reml),
+    fit <- safe_mmrm(formula = formula, data = df, optimizer = c("BFGS", "L-BFGS-B"), reml = reml), 
     times = 1L
   )
   format_fit_results(fit$result, df, fit_time$time / 1e9, df$group[1])
@@ -33,29 +27,28 @@ mmrm_wrapper_fun <- function(df, covar_type, reml = TRUE) {
 #' @description This function conduct analysis on simulated data using glmmTMB.
 #'
 #' @param df Input dataset.
-#' @param covar_type covariance structure type.
+#' @param covar_rsp response covariance structure.
+#' @param covar_type covariance structure used in model.
 #'
 #' @return A formated results.
-glmmtmb_wrapper_fun <- function(df, covar_type, reml = TRUE) {
+glmmtmb_wrapper_fun <- function(df, covar_rsp, covar_type, reml = TRUE) {
   control <- glmmTMB::glmmTMBControl(parallel = 1)
   safe_glmm <- purrr::safely(glmmTMB::glmmTMB)
-  if (covar_type == "us") {
-    formula <- chgus ~ bcva_bl + strata + trt * visit + us(visit + 0 | id)
-  } else if (covar_type == "csh") {
-    formula <- chgcsh ~ bcva_bl + strata + trt * visit + cs(visit + 0 | id)
-  } else if (covar_type == "toeph") {
-    formula <- chgtoep ~ bcva_bl + strata + trt * visit + toep(visit + 0 | id)
-  } else {
-    stop("This covariance matrix is not supported by this wrapper function.")
-  }
+  rspvar <- paste0("chg", covar_rsp)
+  covvar <- switch(
+    covar_type,
+    us = "us",
+    csh = "cs",
+    toeph = "toep"
+  )
+  formula <- as.formula(sprintf("%s ~ bcva_bl + strata + trt * visit + %s(visit | id)", rspvar, covvar))
   fit_time <- microbenchmark::microbenchmark(
     fit <- safe_glmm(
       formula = formula,
       dispformula = ~0,
       data = df,
       REML = reml,
-      control = control
-    ),
+      control = control),
     times = 1L
   )
   format_fit_results(fit$result, df, fit_time$time / 1e9, df$group[1])
@@ -66,30 +59,26 @@ glmmtmb_wrapper_fun <- function(df, covar_type, reml = TRUE) {
 #' @description This function conduct analysis on simulated data using nlme
 #'
 #' @param df Input dataset.
-#' @param covar_type covariance structure type.
+#' @param covar_rsp response covariance structure.
+#' @param covar_type covariance structure used in model.
 #'
 #' @return A formated results.
-nlme_wrapper_fun <- function(df, covar_type, reml = TRUE) {
+nlme_wrapper_fun <- function(df, covar_rsp, covar_type, reml = TRUE) {
   # NOTE: nlme produces an error when the model fails to converge. This function
   # safely returns an error message, and allows us to check if the model
   # converged.
   safe_gls <- purrr::safely(nlme::gls)
+  formula <- as.formula(sprintf("chg%s ~ bcva_bl + strata + trt * visit", covar_rsp))
   if (covar_type == "us") {
-    formula <- chgus ~ bcva_bl + strata + trt * visit
-    correlation <- nlme::corSymm(form = ~ 1 | id)
+    correlation <- nlme::corSymm(form = ~ visit | id)
   } else if (covar_type == "csh") {
-    formula <- chgcsh ~ bcva_bl + strata + trt * visit
-    correlation <- nlme::corCompSymm(form = ~ 1 | id)
+    correlation <- nlme::corCompSymm(form = ~ visit | id)
   } else if (covar_type == "toeph") {
-    formula <- chgtoep ~ bcva_bl + strata + trt * visit
-    correlation <- nlme::corARMA(form = ~ 1 | id, p = nlevels(df$visit) - 1, q = 0)
-    mx_visit <- max(tapply(df$id, df$id, length))
-    if (mx_visit != nlevels(df$visit)) {
-      return(format_fit_results(NULL, df, NA_real_, df$group[1]))
-    }
+    correlation <- nlme::corARMA(form = ~ visit | id, p = nlevels(df$visit) - 1, q = 0)
   } else {
     stop("This covariance matrix is not supported by this wrapper function.")
   }
+  df$visit <- as.numeric(df$visit)
   fit_time <- microbenchmark::microbenchmark(
     fit <- safe_gls(
       formula,
@@ -104,7 +93,7 @@ nlme_wrapper_fun <- function(df, covar_type, reml = TRUE) {
   format_fit_results(fit$result, df, fit_time$time / 1e9, df$group[1])
 }
 
-analyze_data <- function(df, method, covar_type, reml) {
+analyze_data <- function(df, method, covar_rsp, covar_type, reml) {
   if (method == "mmrm") {
     ana_fun <- mmrm_wrapper_fun
   } else if (method == "glmmtmb") {
@@ -117,7 +106,7 @@ analyze_data <- function(df, method, covar_type, reml) {
     function(x) {
       x$id <- as.factor(x$id)
       cat(sprintf("Analyzing group %s\n", x$group[1]))
-      ret <- ana_fun(x, covar_type, reml)
+      ret <- ana_fun(x, covar_rsp, covar_type, reml)
       ret$method_covar <- covar_type
       ret$method <- method
       ret
@@ -148,25 +137,22 @@ get_emmeans_output <- function(obj, ...) {
 }
 get_emmeans_output.default <- function(obj, data, ...) {
   # extract emmeans output
-  tryCatch(
-    {
-      marginal_means <- emmeans::emmeans(
-        obj,
-        spec = trt.vs.ctrl ~ trt | visit,
-        weights = "proportional",
-        data = data,
-        mode = "df.error"
-      )
-      emmeans_df <- as.data.frame(marginal_means$contrasts)
-      # compute lower and upper 95% CI
-      emmeans_df <- get_95_ci(emmeans_df)
-      # format to resemble SAS output
-      format_emmeans_df(emmeans_df)
-    },
-    error = function(e) {
-      NA
-    }
-  )
+  tryCatch({
+    marginal_means <- emmeans::emmeans(
+      obj,
+      spec = trt.vs.ctrl ~ trt | visit,
+      weights = "proportional",
+      data = data,
+      mode = "df.error"
+    )
+    emmeans_df <- as.data.frame(marginal_means$contrasts)
+    # compute lower and upper 95% CI
+    emmeans_df <- get_95_ci(emmeans_df)
+    # format to resemble SAS output
+    format_emmeans_df(emmeans_df)
+  }, error = function(e) {
+    NA
+  })
 }
 
 get_emmeans_output.NULL <- function(obj, ...) {
@@ -218,7 +204,7 @@ get_cov_mat_estimate.gls <- function(obj) {
   result <- t(S * sqrt(vars)) * sqrt(vars)
   colnames(result) <- gns
   row.names(result) <- gns
-  order <- match(sort(gns), gns)
+  order <- match(sort(as.numeric(gns)), gns)
   result[order, order]
 }
 

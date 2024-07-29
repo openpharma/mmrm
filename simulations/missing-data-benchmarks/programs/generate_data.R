@@ -20,10 +20,10 @@ generate_data <- function(n_sample_size, n_rep, n_visits, fixed = fixed_effect, 
   )
   chgfix <- fixed_effect(ret, trt_visit_coef = trt_visit_coef, ...)
   error_us <- as.vector(t(MASS::mvrnorm(n_obs, rep(0, n_visits), compute_unstructured_matrix(n_visits))))
-  error_toep <- as.vector(t(MASS::mvrnorm(n_obs, rep(0, n_visits), compute_csh_matrix(n_visits))))
-  error_csh <- as.vector(t(MASS::mvrnorm(n_obs, rep(0, n_visits), compute_topelitz_matrix(n_visits))))
+  error_csh <- as.vector(t(MASS::mvrnorm(n_obs, rep(0, n_visits), compute_csh_matrix(n_visits))))
+  error_toeph <- as.vector(t(MASS::mvrnorm(n_obs, rep(0, n_visits), compute_topelitz_matrix(n_visits))))
   ret$chgus <- chgfix + error_us
-  ret$chgtoep <- chgfix + error_toep
+  ret$chgtoeph <- chgfix + error_toeph
   ret$chgcsh <- chgfix + error_csh
   ret <- missing_at_random(ret, missing_level)
   ret$visit <- factor(ret$visit, levels = 1:10)
@@ -31,8 +31,7 @@ generate_data <- function(n_sample_size, n_rep, n_visits, fixed = fixed_effect, 
   ret
 }
 
-fixed_effect <- function(
-    df, intercept = 5,
+fixed_effect <- function(df, intercept = 5,
     base_bcva_coef = 0,
     strata_2_coef = -1,
     strata_3_coef = 1,
@@ -70,7 +69,9 @@ compute_unstructured_matrix <- function(n_visits) {
 }
 
 compute_topelitz_matrix <- function(n_visits) {
-  toeplitz(c(1, 0.5, 0.25, 0.125, rep(0, n_visits - 4)))
+  vars <- seq(from = 1, by = 0.5, length.out = n_visits)
+  sd_mat <- diag(sqrt(vars))
+  sd_mat %*% toeplitz(c(1, 0.5, 0.25, 0.125, rep(0, n_visits - 4))) %*% sd_mat
 }
 
 # Simulates intermittent dropout events as a function of measured baseline
