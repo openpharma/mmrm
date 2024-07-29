@@ -70,15 +70,15 @@ nlme_wrapper_fun <- function(df, covar_rsp, covar_type, reml = TRUE) {
   safe_gls <- purrr::safely(nlme::gls)
   formula <- as.formula(sprintf("chg%s ~ bcva_bl + strata + trt * visit", covar_rsp))
   if (covar_type == "us") {
-    correlation <- nlme::corSymm(form = ~ visit | id)
+    correlation <- nlme::corSymm(form = ~ visit2 | id)
   } else if (covar_type == "csh") {
-    correlation <- nlme::corCompSymm(form = ~ visit | id)
+    correlation <- nlme::corCompSymm(form = ~ visit2 | id)
   } else if (covar_type == "toeph") {
-    correlation <- nlme::corARMA(form = ~ visit | id, p = nlevels(df$visit) - 1, q = 0)
+    correlation <- nlme::corARMA(form = ~ visit2 | id, p = nlevels(df$visit) - 1, q = 0)
   } else {
     stop("This covariance matrix is not supported by this wrapper function.")
   }
-  df$visit <- as.numeric(df$visit)
+  df$visit2 <- as.numeric(df$visit)
   fit_time <- microbenchmark::microbenchmark(
     fit <- safe_gls(
       formula,
