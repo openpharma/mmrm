@@ -3,7 +3,7 @@
 %let n=%sysget(n);
 %let rep=%sysget(rep);
 %let covar=%sysget(cov);
-%let covarcov=%sysget(covarcov);
+%let covarrsp=%sysget(covarrsp);
 %let seed=%sysget(seed);
 %let miss=%sysget(miss);
 %let trt=%sysget(trt);
