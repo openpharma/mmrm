@@ -57,10 +57,3 @@ rule process_sas_result:
   output: "results/{miss}_miss_{trt}_effect_{cov}_method_sas_n_{n}_seed_{seed}_rep_{rep}_{reml}.rds"
   log: "logs/process_{miss}_miss_{trt}_effect_{cov}_method_sas_n_{n}_seed_{seed}_rep_{rep}_{reml}.log"
   shell: "Rscript process_sas.R -input_file {input} -output_file {output} > {log} 2>&1"
-
-rule transfer_simulated_data_to_hpc:
-  input: expand("simulated_data/{miss}_miss_{trt}_effect_seed_{seed}_n_{n}_rep_{rep}.xpt", **config)
-  shell: "scp -r simulated_data ec-hub.kau.science.roche.com:~/Projects/mmrm_simulation"
-rule transfer_back_results:
-  input: expand("simulated_data/{miss}_miss_{trt}_effect_seed_{seed}_n_{n}_rep_{rep}.xpt", **config)
-  shell: "scp -r ec-hub.kau.science.roche.com:~/Projects/mmrm_simulation/results ."
