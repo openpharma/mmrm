@@ -17,7 +17,7 @@ rule all_sas_analysis_no:
   input: expand("results/no_miss_{trt}_effect_{covar_rsp}_{cov}_method_sas_n_{n}_seed_{seed}_rep_{rep}_{reml}.xpt", **config)
 
 rule all_sas_process:
-  input: expand("results/{miss}_miss_{trt}_effect_{cov}_method_sas_n_{n}_seed_{seed}_rep_{rep}_{reml}.rds", **config)
+  input: expand("results/{miss}_miss_{trt}_effect_{covar_rsp}_{cov}_method_sas_n_{n}_seed_{seed}_rep_{rep}_{reml}.rds", **config)
 
 rule simulate_data:
   output: 
@@ -49,14 +49,14 @@ rule analyze_with_sas:
   threads: 1
   input: "simulated_data/{miss}_miss_{trt}_effect_seed_{seed}_n_{n}_rep_{rep}.xpt"
   log: "logs/analyze_{miss}_miss_{trt}_effect_{covar_rsp}_{cov}_method_sas_n_{n}_seed_{seed}_rep_{rep}_{reml}.log"
-  shell: "sas -norsasuser -set reml {wildcards.reml} -set inputdata {input} -set outputdata {output} -set n {wildcards.n} -set rep {wildcards.rep} -set miss {wildcards.miss} -set trt {wildcards.trt} -set cov {wildcards.cov} -set covarrsp {wildcards.covar_rsp} -set seed {wildcards.seed} -log {log} -print {log} run_analysis.sas"
+  shell: "sas -norsasuser -set reml {wildcards.reml} -set inputdata {input} -set outputdata {output} -set n {wildcards.n} -set rep {wildcards.rep} -set miss {wildcards.miss} -set trt {wildcards.trt} -set cov {wildcards.cov} -set covarrsp {wildcards.covar_rsp} -set seed {wildcards.seed} -log {log} -print /dev/null run_analysis.sas"
 
 rule process_sas_result:
   input: "results/{miss}_miss_{trt}_effect_{covar_rsp}_{cov}_method_sas_n_{n}_seed_{seed}_rep_{rep}_{reml}.xpt"
   threads: 1
   output: "results/{miss}_miss_{trt}_effect_{covar_rsp}_{cov}_method_sas_n_{n}_seed_{seed}_rep_{rep}_{reml}.rds"
   log: "logs/process_{miss}_miss_{trt}_effect_{covar_rsp}_{cov}_method_sas_n_{n}_seed_{seed}_rep_{rep}_{reml}.log"
-  shell: "Rscript process_sas.R -input_file {input} -output_file {output} > {log} 2>&1"
+  shell: "Rscript process_sas.R -input_file {input} -output_file {output} -cov {wildcards.cov} -covar_rsp {wildcards.covar_rsp} -reml {wildcards.reml} > {log} 2>&1"
 rule aggregate_all:
   input: expand("results/{miss}_miss_{trt}_effect_{cov}_method_{method}_n_{n}_seed_{seed}_rep_{rep}_{reml}.rds", **config, method = ["mmrm", "glmmtmb", "nlme", "sas"])
   output: "all_results.rds"

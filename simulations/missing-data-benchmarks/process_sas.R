@@ -6,6 +6,8 @@ output_data <- args$output_file
 library(dplyr)
 
 method_covar <- args$cov
+covar_rsp <- args$covar_rsp
+reml <- args$reml
 
 fit_time <- input_data$fittime %>%
   mutate(fit_time = dur, src = substr(src, 4, 8)) %>%
@@ -23,18 +25,18 @@ emmeans <- input_data$diffs %>%
 
 cov_from_parm <- function(x, type) {
   type <- type[1]
-  if (type == "C") {
+  if (type == "csh") {
     nl <- length(x) - 1
     d <- matrix(tail(x, 1), nl, nl)
     diag(d) <- 1
     v <- sqrt(head(x, nl))
     outer(v, v) * d
-  } else if (type == "T") {
+  } else if (type == "toeph") {
     nl <- (length(x) + 1) / 2
     d <- toeplitz(c(1, tail(x, nl - 1)))
     v <- sqrt(head(x, nl))
     outer(v, v) * d
-  } else if (type == "U") {
+  } else if (type == "us") {
     nl <- floor(sqrt(2 * length(x)))
     v <- sqrt(head(x, nl))
     d <- matrix(0, nl, nl)
@@ -48,15 +50,15 @@ cov_from_parm <- function(x, type) {
 cov_csh <- input_data$cvparm %>%
   mutate(src = substr(src, 4, 8)) %>%
   group_by(src) %>%
-  summarize(covmat_estimates = list(cov_from_parm(estimate, substr(src, 4, 4))))
+  summarize(covmat_estimates = list(cov_from_parm(estimate, method_covar)))
 
 df <- fit_time %>%
   full_join(convergence, by = "src") %>%
   full_join(emmeans, by = "src") %>%
   full_join(cov_csh, by = "src") %>%
   mutate(missingness = miss, treatment_effect = trt.eff) %>%
-  mutate(method_covar = method_covar, method = "sas", rep = as.numeric(substr(src, 3, 8))) %>%
-  mutate(reml = ifelse(grepl("reml", args$input_file), "reml", "ml")) %>%
-  select(fit_time, converged, rep, method_covar, method, missingness, n, treatment_effect, seed, emmeans_output, covmat_estimates)
+  mutate(method_covar = method_covar, method = "sas", rep = as.numeric(src)) %>%
+  mutate(reml = reml, covar_rsp = covar_rsp) %>%
+  select(fit_time, converged, rep, method_covar, method, missingness, n, treatment_effect, seed, emmeans_output, covmat_estimates, covar_rsp, reml)
 
 saveRDS(df, output_data)
