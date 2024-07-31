@@ -31,7 +31,8 @@ generate_data <- function(n_sample_size, n_rep, n_visits, fixed = fixed_effect, 
   ret
 }
 
-fixed_effect <- function(df, intercept = 5,
+fixed_effect <- function(
+    df, intercept = 5,
     base_bcva_coef = 0,
     strata_2_coef = -1,
     strata_3_coef = 1,

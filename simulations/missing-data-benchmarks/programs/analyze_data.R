@@ -16,7 +16,7 @@ mmrm_wrapper_fun <- function(df, covar_rsp, covar_type, reml = TRUE) {
   formula <- as.formula(sprintf("%s ~ bcva_bl + strata + trt * visit + %s(visit | id)", rspvar, covar_type))
   fit_time <- microbenchmark::microbenchmark(
     # NOTE: Errors when using L-BFGS-B first
-    fit <- safe_mmrm(formula = formula, data = df, optimizer = c("BFGS", "L-BFGS-B"), reml = reml), 
+    fit <- safe_mmrm(formula = formula, data = df, optimizer = c("BFGS", "L-BFGS-B"), reml = reml),
     times = 1L
   )
   format_fit_results(fit$result, df, fit_time$time / 1e9, df$group[1])
@@ -35,8 +35,7 @@ glmmtmb_wrapper_fun <- function(df, covar_rsp, covar_type, reml = TRUE) {
   control <- glmmTMB::glmmTMBControl(parallel = 1)
   safe_glmm <- purrr::safely(glmmTMB::glmmTMB)
   rspvar <- paste0("chg", covar_rsp)
-  covvar <- switch(
-    covar_type,
+  covvar <- switch(covar_type,
     us = "us",
     csh = "cs",
     toeph = "toep"
@@ -48,7 +47,8 @@ glmmtmb_wrapper_fun <- function(df, covar_rsp, covar_type, reml = TRUE) {
       dispformula = ~0,
       data = df,
       REML = reml,
-      control = control),
+      control = control
+    ),
     times = 1L
   )
   format_fit_results(fit$result, df, fit_time$time / 1e9, df$group[1])
@@ -137,22 +137,25 @@ get_emmeans_output <- function(obj, ...) {
 }
 get_emmeans_output.default <- function(obj, data, ...) {
   # extract emmeans output
-  tryCatch({
-    marginal_means <- emmeans::emmeans(
-      obj,
-      spec = trt.vs.ctrl ~ trt | visit,
-      weights = "proportional",
-      data = data,
-      mode = "df.error"
-    )
-    emmeans_df <- as.data.frame(marginal_means$contrasts)
-    # compute lower and upper 95% CI
-    emmeans_df <- get_95_ci(emmeans_df)
-    # format to resemble SAS output
-    format_emmeans_df(emmeans_df)
-  }, error = function(e) {
-    NA
-  })
+  tryCatch(
+    {
+      marginal_means <- emmeans::emmeans(
+        obj,
+        spec = trt.vs.ctrl ~ trt | visit,
+        weights = "proportional",
+        data = data,
+        mode = "df.error"
+      )
+      emmeans_df <- as.data.frame(marginal_means$contrasts)
+      # compute lower and upper 95% CI
+      emmeans_df <- get_95_ci(emmeans_df)
+      # format to resemble SAS output
+      format_emmeans_df(emmeans_df)
+    },
+    error = function(e) {
+      NA
+    }
+  )
 }
 
 get_emmeans_output.NULL <- function(obj, ...) {
