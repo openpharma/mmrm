@@ -3,6 +3,7 @@
 ### Bug Fixes
 
 - Previously `emmeans` will return `NA` for spatial covariance structure. This is fixed now.
+- Previously, `mmrm` will ignore the contrasts. This is fixed now.
 
 # mmrm 0.3.12
 
