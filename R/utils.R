@@ -496,7 +496,7 @@ h_drop_levels <- function(data, subject_var, visit_var, except) {
   to_drop <- all_cols[to_drop]
   # only drop levels for those not defined in excep and not in visit_var.
   to_drop <- setdiff(to_drop, c(visit_var, except))
-  data <- droplevels(data, except = setdiff(all_cols, to_drop))
+  data[to_drop] <- lapply(data[to_drop], droplevels)
   # subject var are always dropped and no message given.
   dropped <- setdiff(to_drop, subject_var)
   if (length(dropped) > 0) {
