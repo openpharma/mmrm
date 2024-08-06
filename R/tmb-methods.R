@@ -87,7 +87,8 @@ predict.mmrm_tmb <- function(object,
     drop_visit_levels = FALSE,
     allow_na_response = TRUE,
     drop_levels = FALSE,
-    xlev = stats::.getXlevels(terms(object), object$tmb_data$full_frame)
+    xlev = stats::.getXlevels(terms(object), object$tmb_data$full_frame),
+    contrasts = attr(object$tmb_data$x_matrix, "contrasts")
   )
   if (!conditional) {
     tmb_data$y_vector[] <- NA_real_
@@ -326,6 +327,7 @@ model.matrix.mmrm_tmb <- function(object, data, include = NULL, ...) { # nolint
     stats::model.matrix(
       object = lst_formula_and_data$formula,
       data = lst_formula_and_data$data,
+      contrasts.arg = attr(object$tmb_data$x_matrix, "contrasts"),
       ...
     )
 

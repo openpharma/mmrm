@@ -96,7 +96,8 @@ h_mmrm_tmb_data <- function(formula_parts,
                             drop_visit_levels,
                             allow_na_response = FALSE,
                             drop_levels = TRUE,
-                            xlev = NULL) {
+                            xlev = NULL,
+                            contrasts = NULL) {
   assert_class(formula_parts, "mmrm_tmb_formula_parts")
   assert_data_frame(data)
   varname <- formula_parts[grepl("_var", names(formula_parts))]
@@ -189,8 +190,12 @@ h_mmrm_tmb_data <- function(formula_parts,
       "To avoid this behavior, make sure use `drop_visit_levels = FALSE`."
     )
   }
-
-  x_matrix <- stats::model.matrix(formula_parts$model_formula, data = full_frame)
+  is_factor_col <- vapply(full_frame, is.factor, FUN.VALUE = TRUE)
+  is_factor_col <- intersect(names(is_factor_col)[is_factor_col], all.vars(formula_parts$model_formula))
+  x_matrix <- stats::model.matrix(
+    formula_parts$model_formula, data = full_frame,
+    contrasts.arg = h_default_value(contrasts, lapply(full_frame[is_factor_col], contrasts))
+  )
   x_cols_aliased <- stats::setNames(rep(FALSE, ncol(x_matrix)), nm = colnames(x_matrix))
   qr_x_mat <- qr(x_matrix)
   if (qr_x_mat$rank < ncol(x_matrix)) {
