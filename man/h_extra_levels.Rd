@@ -12,3 +12,4 @@ h_extra_levels(x)
 \description{
 Check if a Factor Should Drop Levels
 }
+\keyword{internal}
