@@ -466,3 +466,9 @@ h_register_s3 <- function(pkg, generic, class, envir = parent.frame()) {
     registerS3method(generic, class, fun, envir = asNamespace(pkg))
   })
 }
+
+#' Check if a Factor Should Drop Levels
+#' @param x (`vector`) vector to check.
+h_extra_levels <- function(x) {
+  is.factor(x) && length(levels(x)) > length(unique(x))
+}

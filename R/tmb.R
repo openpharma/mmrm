@@ -151,21 +151,22 @@ h_mmrm_tmb_data <- function(formula_parts,
     ))
   )
   if (drop_levels) {
-    ix <- vapply(
+    all_cols <- colnames(full_frame)
+    to_drop <- vapply(
       full_frame,
-      function(vec) {
-        is.factor(vec) && length(levels(vec)) > length(unique(vec))
-      },
+      h_extra_levels,
       logical(1L)
     )
-    # only drop levels for those not defined in xlev
-    ix <- ix & (!colnames(full_frame) %in% c(formula_parts$visit_var, formula_parts$subject_var)) &
-      is.na(match(colnames(full_frame), names(xlev)))
-    if (any(ix)) {
-      full_frame[ix] <- lapply(full_frame[ix], droplevels)
+    to_drop <- all_cols[to_drop]
+    # only drop levels for those not defined in xlev and not in visit_var.
+    to_drop <- setdiff(to_drop, c(formula_parts$visit_var, names(xlev)))
+    full_frame <- droplevels(full_frame, except = setdiff(all_cols, to_drop))
+    # subject var are always dropped and no message given.
+    dropped <- setdiff(to_drop, formula_parts$subject_var)
+    if (length(dropped) > 0) {
       message(
         "Some factor levels are dropped due to singular design matrix: ",
-        toString(colnames(full_frame)[ix])
+        toString(dropped)
       )
     }
   }
@@ -176,19 +177,17 @@ h_mmrm_tmb_data <- function(formula_parts,
     stats::complete.cases(full_frame)
   }
   full_frame <- full_frame[keep_ind, ]
-  if (drop_visit_levels && !formula_parts$is_spatial && is.factor(full_frame[[formula_parts$visit_var]])) {
+  if (drop_visit_levels && !formula_parts$is_spatial && h_extra_levels(full_frame[[formula_parts$visit_var]])) {
     visit_vec <- full_frame[[formula_parts$visit_var]]
     old_levels <- levels(visit_vec)
-    if (length(unique(visit_vec)) < length(levels(visit_vec))) {
-      full_frame[[formula_parts$visit_var]] <- droplevels(visit_vec)
-      new_levels <- levels(full_frame[[formula_parts$visit_var]])
-      dropped <- setdiff(old_levels, new_levels)
-      message(
-        "In ", formula_parts$visit_var, " there are dropped visits: ", toString(dropped),
-        ".\n Additional attributes including contrasts are lost.\n",
-        "To avoid this behavior, make sure use `drop_visit_levels = FALSE`."
-      )
-    }
+    full_frame[[formula_parts$visit_var]] <- droplevels(visit_vec)
+    new_levels <- levels(full_frame[[formula_parts$visit_var]])
+    dropped <- setdiff(old_levels, new_levels)
+    message(
+      "In ", formula_parts$visit_var, " there are dropped visits: ", toString(dropped),
+      ".\n Additional attributes including contrasts are lost.\n",
+      "To avoid this behavior, make sure use `drop_visit_levels = FALSE`."
+    )
   }
 
   x_matrix <- stats::model.matrix(formula_parts$model_formula, data = full_frame)

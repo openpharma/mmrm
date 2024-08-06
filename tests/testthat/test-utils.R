@@ -282,3 +282,12 @@ test_that("emp_start works", {
     h_get_theta_from_cov(emp_mat)
   )
 })
+
+# h_extra_levels ----
+
+test_that("h_extra_levels works as expected", {
+  a <- factor(c("a", "b", "c"), levels = c("a", "b", "c", "d"))
+  expect_true(h_extra_levels(a))
+  expect_false(h_extra_levels(rnorm(100)))
+  expect_false(h_extra_levels(factor(c("a", "b", "c", "d"))))
+})
