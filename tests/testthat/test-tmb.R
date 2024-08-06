@@ -362,8 +362,7 @@ test_that("h_mmrm_tmb_data gives error for rank deficient design matrix when not
         drop_visit_levels = TRUE
       ),
       "Some factor levels are dropped due to singular design matrix: RACE"
-    )
-    ,
+    ),
     paste(
       "design matrix only has rank 8 and 2 columns (ARMCDTRT:AVISITVIS2, ARMCDTRT:AVISITVIS3)",
       "could be dropped to achieve full rank 10 by using `accept_singular = TRUE`"

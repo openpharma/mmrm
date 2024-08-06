@@ -607,7 +607,7 @@ simulate.mmrm_tmb <- function(object,
   assert_data_frame(newdata)
   method <- match.arg(method)
 
-  
+
   tmb_data <- h_mmrm_tmb_data(
     object$formula_parts, newdata,
     weights = rep(1, nrow(newdata)),

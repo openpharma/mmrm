@@ -146,7 +146,8 @@ test_that("fit_single_optimizer deals correctly with unobserved visits message",
     attr(result, "messages"),
     paste0(
       "In AVISIT there are dropped visits: VIS3.\n Additional attributes including contrasts are lost.",
-      "\nTo avoid this behavior, make sure use `drop_visit_levels = FALSE`.")
+      "\nTo avoid this behavior, make sure use `drop_visit_levels = FALSE`."
+    )
   )
   expect_true(attr(result, "converged"))
 })

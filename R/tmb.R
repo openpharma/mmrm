@@ -193,7 +193,8 @@ h_mmrm_tmb_data <- function(formula_parts,
   is_factor_col <- vapply(full_frame, is.factor, FUN.VALUE = TRUE)
   is_factor_col <- intersect(names(is_factor_col)[is_factor_col], all.vars(formula_parts$model_formula))
   x_matrix <- stats::model.matrix(
-    formula_parts$model_formula, data = full_frame,
+    formula_parts$model_formula,
+    data = full_frame,
     contrasts.arg = h_default_value(contrasts, lapply(full_frame[is_factor_col], contrasts))
   )
   x_cols_aliased <- stats::setNames(rep(FALSE, ncol(x_matrix)), nm = colnames(x_matrix))
