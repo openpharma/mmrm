@@ -213,9 +213,9 @@ test_that("predict works if contrast provided", {
   contrasts(fev_data2$AVISIT) <- contr.poly(4)
   fit <- mmrm(FEV1 ~ ARMCD * AVISIT + ar1(AVISIT | USUBJID), data = fev_data2)
 
-  expect_silent(predict(fit, fev_data[c(1, 4), ]))
-  expect_silent(predict(fit, fev_data[c(2, 3), ]))
-  expect_silent(predict(fit, fev_data[c(1:4), ]))
+  expect_snapshot_tolerance(predict(fit, fev_data[c(1, 4), ]))
+  expect_snapshot_tolerance(predict(fit, fev_data[c(2, 3), ]))
+  expect_snapshot_tolerance(predict(fit, fev_data[c(1:4), ]))
 })
 
 ## integration test with SAS ----

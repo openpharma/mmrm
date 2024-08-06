@@ -39,6 +39,8 @@
 #'      or not.
 #' - `theta_vcov`:  estimated variance-covariance matrix of variance parameters.
 #' - `x_matrix`: design matrix used (excluding aliased columns).
+#' - `xlev`: 	a named list of character vectors giving the full set of levels to be assumed for each factor.
+#' - `contrasts`: a list of contrasts used for each factor.
 #' - `y_vector`: response vector used.
 #' - `jac_list`: Jacobian, see  [h_jac_list()] for details.
 #' - `full_frame`: `data.frame` with `n` rows containing all variables needed in the model.
@@ -67,7 +69,7 @@ component <- function(object,
                         "conv_message", "call", "theta_est",
                         "beta_est", "beta_est_complete", "beta_aliased",
                         "x_matrix", "y_vector", "neg_log_lik", "jac_list", "theta_vcov",
-                        "full_frame"
+                        "full_frame", "xlev", "contrasts"
                       )) {
   assert_class(object, "mmrm_tmb")
   name <- match.arg(name, several.ok = TRUE)
@@ -131,6 +133,8 @@ component <- function(object,
       },
     "varcor" = object$cov,
     "x_matrix" = object$tmb_data$x_matrix,
+    "xlev" = stats::.getXlevels(terms(object), object$tmb_data$full_frame),
+    "contrasts" = attr(object$tmb_data$x_matrix, "contrasts"),
     "theta_vcov" = object$theta_vcov,
     "full_frame" = object$tmb_data$full_frame,
     # If not found.

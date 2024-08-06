@@ -482,14 +482,8 @@ test_that("divergent optimizer will not be marked as success", {
 test_that("mmrm will use the provided contrast", {
   fev2 <- fev_data
   contrasts(fev2$ARMCD) <- contr.poly(n = 2)
-  fit <- mmrm(FEV1 ~ ARMCD * AVISIT + ar1(AVISIT | USUBJID), data = fev2)
-  expect_identical(
-    names(coef(fit)),
-    c(
-      "(Intercept)", "ARMCD.L", "AVISITVIS2", "AVISITVIS3", "AVISITVIS4",
-      "ARMCD.L:AVISITVIS2", "ARMCD.L:AVISITVIS3", "ARMCD.L:AVISITVIS4"
-    )
-  )
+  fit <- expect_silent(mmrm(FEV1 ~ ARMCD * AVISIT + ar1(AVISIT | USUBJID), data = fev2))
+  expect_snapshot_tolerance(coef(fit))
 })
 
 ## start values ----

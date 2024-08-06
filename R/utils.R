@@ -475,3 +475,35 @@ h_register_s3 <- function(pkg, generic, class, envir = parent.frame()) {
 h_extra_levels <- function(x) {
   is.factor(x) && length(levels(x)) > length(unique(x))
 }
+
+#' Drop Levels from Dataset
+#' @param data (`data.frame`) data to drop levels.
+#' @param subject_var (`character`) subject variable.
+#' @param visit_var (`character`) visit variable.
+#' @param except (`character`) variables to exclude from dropping.
+#' @keywords internal
+h_drop_levels <- function(data, subject_var, visit_var, except) {
+  assert_data_frame(data)
+  assert_character(subject_var)
+  assert_character(visit_var)
+  assert_character(except)
+  all_cols <- colnames(data)
+  to_drop <- vapply(
+    data,
+    h_extra_levels,
+    logical(1L)
+  )
+  to_drop <- all_cols[to_drop]
+  # only drop levels for those not defined in excep and not in visit_var.
+  to_drop <- setdiff(to_drop, c(visit_var, except))
+  data <- droplevels(data, except = setdiff(all_cols, to_drop))
+  # subject var are always dropped and no message given.
+  dropped <- setdiff(to_drop, subject_var)
+  if (length(dropped) > 0) {
+    message(
+      "Some factor levels are dropped due to singular design matrix: ",
+      toString(dropped)
+    )
+  }
+  data
+}

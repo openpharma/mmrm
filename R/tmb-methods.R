@@ -87,8 +87,8 @@ predict.mmrm_tmb <- function(object,
     drop_visit_levels = FALSE,
     allow_na_response = TRUE,
     drop_levels = FALSE,
-    xlev = stats::.getXlevels(terms(object), object$tmb_data$full_frame),
-    contrasts = attr(object$tmb_data$x_matrix, "contrasts")
+    xlev = component(object, "xlev"),
+    contrasts = component(object, "contrasts")
   )
   if (!conditional) {
     tmb_data$y_vector[] <- NA_real_
@@ -616,7 +616,8 @@ simulate.mmrm_tmb <- function(object,
     drop_visit_levels = FALSE,
     allow_na_response = TRUE,
     drop_levels = FALSE,
-    xlev = stats::.getXlevels(terms(object), object$tmb_data$full_frame)
+    xlev = component(object, "xlev"),
+    contrasts = component(object, "contrasts")
   )
   ret <- if (method == "conditional") {
     predict_res <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)

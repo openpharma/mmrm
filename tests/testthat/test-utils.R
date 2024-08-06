@@ -291,3 +291,34 @@ test_that("h_extra_levels works as expected", {
   expect_false(h_extra_levels(rnorm(100)))
   expect_false(h_extra_levels(factor(c("a", "b", "c", "d"))))
 })
+
+# h_drop_levels ----
+
+test_that("h_drop_levels works as expected", {
+  data <- data.frame(
+    a = factor(letters[1:3], levels = letters[1:4]),
+    b = factor(letters[1:3], levels = letters[1:4]),
+    c = factor(letters[1:3], levels = letters[1:4]),
+    d = factor(letters[1:3], levels = letters[1:4])
+  )
+  expect_message(
+    df <- h_drop_levels(data, "a", "b", "c"),
+    "Some factor levels are dropped due to singular design matrix: d"
+  )
+  expect_identical(
+    levels(df$a),
+    letters[1:3]
+  )
+  expect_identical(
+    levels(df$b),
+    letters[1:4]
+  )
+  expect_identical(
+    levels(df$c),
+    letters[1:4]
+  )
+  expect_identical(
+    levels(df$d),
+    letters[1:3]
+  )
+})

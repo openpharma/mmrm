@@ -152,24 +152,7 @@ h_mmrm_tmb_data <- function(formula_parts,
     ))
   )
   if (drop_levels) {
-    all_cols <- colnames(full_frame)
-    to_drop <- vapply(
-      full_frame,
-      h_extra_levels,
-      logical(1L)
-    )
-    to_drop <- all_cols[to_drop]
-    # only drop levels for those not defined in xlev and not in visit_var.
-    to_drop <- setdiff(to_drop, c(formula_parts$visit_var, names(xlev)))
-    full_frame <- droplevels(full_frame, except = setdiff(all_cols, to_drop))
-    # subject var are always dropped and no message given.
-    dropped <- setdiff(to_drop, formula_parts$subject_var)
-    if (length(dropped) > 0) {
-      message(
-        "Some factor levels are dropped due to singular design matrix: ",
-        toString(dropped)
-      )
-    }
+    full_frame <- h_drop_levels(full_frame, formula_parts$subject_var, formula_parts$visit_var, names(xlev))
   }
   keep_ind <- if (allow_na_response) {
     # Note that response is always the first column.

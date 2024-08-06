@@ -14,7 +14,8 @@ test_that("component works as expected for mmrm_tmb objects", {
       "conv_message", "call", "theta_est",
       "beta_est", "beta_est_complete", "beta_aliased",
       "x_matrix", "y_vector", "neg_log_lik",
-      "jac_list", "theta_vcov", "full_frame"
+      "jac_list", "theta_vcov", "full_frame",
+      "xlev", "contrasts"
     )
   )
 
@@ -30,6 +31,8 @@ test_that("component works as expected for mmrm_tmb objects", {
   expect_identical(component(object_mmrm_tmb, "beta_vcov"), object_mmrm_tmb$beta_vcov)
   expect_null(component(object_mmrm_tmb, "method"))
   expect_string(component(object_mmrm_tmb, "optimizer"))
+  expect_list(component(object_mmrm_tmb, "xlev"))
+  expect_list(component(object_mmrm_tmb, "contrasts"))
 })
 
 ## beta_vcov ----
