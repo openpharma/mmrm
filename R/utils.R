@@ -486,7 +486,7 @@ h_drop_levels <- function(data, subject_var, visit_var, except) {
   assert_data_frame(data)
   assert_character(subject_var)
   assert_character(visit_var)
-  assert_character(except)
+  assert_character(except, null.ok = TRUE)
   all_cols <- colnames(data)
   to_drop <- vapply(
     data,
