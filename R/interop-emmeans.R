@@ -59,7 +59,7 @@ emm_basis.mmrm <- function(object, # nolint
                            grid,
                            ...) {
   model_frame <- stats::model.frame(trms, grid, na.action = stats::na.pass, xlev = xlev)
-  contrasts <- attr(component(object, "x_matrix"), "contrasts")
+  contrasts <- component(object, "contrasts")
   model_mat <- stats::model.matrix(trms, model_frame, contrasts.arg = contrasts)
   beta_hat <- component(object, "beta_est")
   nbasis <- if (length(beta_hat) < ncol(model_mat)) {

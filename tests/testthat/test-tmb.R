@@ -334,14 +334,14 @@ test_that("h_mmrm_tmb_data correctly processes design matrix below full rank cor
   formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   dat <- fev_data[11:25, ]
-  result <- expect_silent(h_mmrm_tmb_data(
+  expect_message(result <- h_mmrm_tmb_data(
     formula_parts,
     dat,
     weights = rep(1, nrow(dat)),
     reml = FALSE,
     singular = "drop",
     drop_visit_levels = TRUE
-  ))
+  ), "Some factor levels are dropped due to singular design matrix: RACE")
   assert_true(qr(result$x_matrix)$rank == ncol(result$x_matrix))
   assert_true(sum(result$x_cols_aliased) == 2)
   assert_set_equal(names(which(!result$x_cols_aliased)), colnames(result$x_matrix))
@@ -352,13 +352,16 @@ test_that("h_mmrm_tmb_data gives error for rank deficient design matrix when not
   formula_parts <- h_mmrm_tmb_formula_parts(formula)
   dat <- fev_data[11:25, ]
   expect_error(
-    h_mmrm_tmb_data(
-      formula_parts,
-      dat,
-      weights = rep(1, nrow(dat)),
-      reml = FALSE,
-      singular = "error",
-      drop_visit_levels = TRUE
+    expect_message(
+      h_mmrm_tmb_data(
+        formula_parts,
+        dat,
+        weights = rep(1, nrow(dat)),
+        reml = FALSE,
+        singular = "error",
+        drop_visit_levels = TRUE
+      ),
+      "Some factor levels are dropped due to singular design matrix: RACE"
     ),
     paste(
       "design matrix only has rank 8 and 2 columns (ARMCDTRT:AVISITVIS2, ARMCDTRT:AVISITVIS3)",

@@ -95,7 +95,9 @@ h_mmrm_tmb_data <- function(formula_parts,
                             singular = c("drop", "error", "keep"),
                             drop_visit_levels,
                             allow_na_response = FALSE,
-                            drop_levels = TRUE) {
+                            drop_levels = TRUE,
+                            xlev = NULL,
+                            contrasts = NULL) {
   assert_class(formula_parts, "mmrm_tmb_formula_parts")
   assert_data_frame(data)
   varname <- formula_parts[grepl("_var", names(formula_parts))]
@@ -145,11 +147,12 @@ h_mmrm_tmb_data <- function(formula_parts,
       formula_parts$full_formula,
       data = data,
       weights = .(as.symbol(weights_name)),
-      na.action = "na.pass"
+      na.action = "na.pass",
+      xlev = xlev
     ))
   )
   if (drop_levels) {
-    full_frame <- droplevels(full_frame, except = formula_parts$visit_var)
+    full_frame <- h_drop_levels(full_frame, formula_parts$subject_var, formula_parts$visit_var, names(xlev))
   }
   keep_ind <- if (allow_na_response) {
     # Note that response is always the first column.
@@ -158,17 +161,25 @@ h_mmrm_tmb_data <- function(formula_parts,
     stats::complete.cases(full_frame)
   }
   full_frame <- full_frame[keep_ind, ]
-  if (drop_visit_levels && !formula_parts$is_spatial && is.factor(full_frame[[formula_parts$visit_var]])) {
-    old_levels <- levels(full_frame[[formula_parts$visit_var]])
-    full_frame[[formula_parts$visit_var]] <- droplevels(full_frame[[formula_parts$visit_var]])
+  if (drop_visit_levels && !formula_parts$is_spatial && h_extra_levels(full_frame[[formula_parts$visit_var]])) {
+    visit_vec <- full_frame[[formula_parts$visit_var]]
+    old_levels <- levels(visit_vec)
+    full_frame[[formula_parts$visit_var]] <- droplevels(visit_vec)
     new_levels <- levels(full_frame[[formula_parts$visit_var]])
     dropped <- setdiff(old_levels, new_levels)
-    if (length(dropped) > 0) {
-      message("In ", formula_parts$visit_var, " there are dropped visits: ", toString(dropped))
-    }
+    message(
+      "In ", formula_parts$visit_var, " there are dropped visits: ", toString(dropped),
+      ".\n Additional attributes including contrasts are lost.\n",
+      "To avoid this behavior, make sure use `drop_visit_levels = FALSE`."
+    )
   }
-
-  x_matrix <- stats::model.matrix(formula_parts$model_formula, data = full_frame)
+  is_factor_col <- vapply(full_frame, is.factor, FUN.VALUE = TRUE)
+  is_factor_col <- intersect(names(is_factor_col)[is_factor_col], all.vars(formula_parts$model_formula))
+  x_matrix <- stats::model.matrix(
+    formula_parts$model_formula,
+    data = full_frame,
+    contrasts.arg = h_default_value(contrasts, lapply(full_frame[is_factor_col], contrasts))
+  )
   x_cols_aliased <- stats::setNames(rep(FALSE, ncol(x_matrix)), nm = colnames(x_matrix))
   qr_x_mat <- qr(x_matrix)
   if (qr_x_mat$rank < ncol(x_matrix)) {
