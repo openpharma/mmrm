@@ -142,7 +142,13 @@ test_that("fit_single_optimizer deals correctly with unobserved visits message",
     data = data_unobs,
     weights = rep(1, nrow(data_unobs))
   ))
-  expect_identical(attr(result, "messages"), "In AVISIT there are dropped visits: VIS3")
+  expect_identical(
+    attr(result, "messages"),
+    paste0(
+      "In AVISIT there are dropped visits: VIS3.\n Additional attributes including contrasts are lost.",
+      "\nTo avoid this behavior, make sure use `drop_visit_levels = FALSE`."
+    )
+  )
   expect_true(attr(result, "converged"))
 })
 
@@ -357,7 +363,10 @@ test_that("mmrm fails if no optimizer works", {
   data_small <- fev_data[1:30, ]
   # Note: Here we are using parallel computations.
   expect_error(
-    mmrm(formula, data_small, reml = FALSE),
+    expect_message(
+      mmrm(formula, data_small, reml = FALSE),
+      "Some factor levels are dropped due to singular design matrix: RACE"
+    ),
     "No optimizer led to a successful model fit"
   )
 })
@@ -468,6 +477,13 @@ test_that("divergent optimizer will not be marked as success", {
     ),
     "No optimizer led to a successful model fit."
   )
+})
+
+test_that("mmrm will use the provided contrast", {
+  fev2 <- fev_data
+  contrasts(fev2$ARMCD) <- contr.poly(n = 2)
+  fit <- expect_silent(mmrm(FEV1 ~ ARMCD * AVISIT + ar1(AVISIT | USUBJID), data = fev2))
+  expect_snapshot_tolerance(coef(fit))
 })
 
 ## start values ----

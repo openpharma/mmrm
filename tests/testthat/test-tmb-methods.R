@@ -208,6 +208,16 @@ test_that("predict can work if response is an expression", {
   expect_silent(p <- predict(fit, newdata = fev_data, conditional = FALSE))
 })
 
+test_that("predict works if contrast provided", {
+  fev_data2 <- fev_data
+  contrasts(fev_data2$AVISIT) <- contr.poly(4)
+  fit <- mmrm(FEV1 ~ ARMCD * AVISIT + ar1(AVISIT | USUBJID), data = fev_data2)
+
+  expect_snapshot_tolerance(predict(fit, fev_data[c(1, 4), ]))
+  expect_snapshot_tolerance(predict(fit, fev_data[c(2, 3), ]))
+  expect_snapshot_tolerance(predict(fit, fev_data[c(1:4), ]))
+})
+
 ## integration test with SAS ----
 
 test_that("predict gives same result with sas in unstructured satterthwaite/Kenward-Roger", {

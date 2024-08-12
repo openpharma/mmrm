@@ -306,54 +306,6 @@ h_default_value <- function(x, y) {
   }
 }
 
-#' Convert Character to Factor Following Reference
-#'
-#' @param x (`character` or `factor`)\cr  input.
-#' @param ref (`factor`)\cr reference.
-#' @param var_name (`string`)\cr variable name of input `x`.
-#'
-#' @details Use `ref` to convert `x` into factor with the same levels.
-#' This is needed even if `x` and `ref` are both `character` because
-#' in `model.matrix` if `x` only has one level there could be errors.
-#'
-#' @return Factor vector with updated levels.
-#' @keywords internal
-h_factor_ref <- function(x, ref, var_name = vname(x)) {
-  assert_multi_class(ref, c("character", "factor"))
-  assert_multi_class(x, c("character", "factor"))
-  # NA can be possible values
-  uni_values <- as.character(stats::na.omit(unique(x)))
-  # no NA in reference
-  uni_ref <- as.character(unique(ref))
-  assert_character(uni_values, .var.name = var_name)
-  assert_subset(uni_values, uni_ref, .var.name = var_name)
-  factor(x, levels = h_default_value(levels(ref), sort(uni_ref)))
-}
-
-#' Convert Character to Factor Following Reference `MMRM` Fit.
-#'
-#' @param object (`mmrm_tmb`)\cr the fitted MMRM object.
-#' @param data (`data.frame`)\cr input data.
-#'
-#' @details Use fitted mmrm object to convert input data frame whose factors
-#' are of the same levels as the reference fitted object.
-#'
-#' @return Data frame with updated levels in specified columns.
-#' @keywords internal
-h_factor_ref_data <- function(object, data) {
-  assert_data_frame(data)
-  assert_class(object, "mmrm_tmb")
-  ref <- object$tmb_data$full_frame
-  vars <- object$formula_parts$model_var
-
-  for (v in vars) {
-    if (is.factor(ref[[v]]) || is.character(ref[[v]])) {
-      data[[v]] <- h_factor_ref(data[[v]], ref[[v]])
-    }
-  }
-  data
-}
-
 #' Warn on na.action
 #' @keywords internal
 h_warn_na_action <- function() {
@@ -513,4 +465,45 @@ h_register_s3 <- function(pkg, generic, class, envir = parent.frame()) {
   setHook(packageEvent(pkg, "onLoad"), function(...) {
     registerS3method(generic, class, fun, envir = asNamespace(pkg))
   })
+}
+
+#' Check if a Factor Should Drop Levels
+#'
+#' @param x (`vector`) vector to check.
+#'
+#' @keywords internal
+h_extra_levels <- function(x) {
+  is.factor(x) && length(levels(x)) > length(unique(x))
+}
+
+#' Drop Levels from Dataset
+#' @param data (`data.frame`) data to drop levels.
+#' @param subject_var (`character`) subject variable.
+#' @param visit_var (`character`) visit variable.
+#' @param except (`character`) variables to exclude from dropping.
+#' @keywords internal
+h_drop_levels <- function(data, subject_var, visit_var, except) {
+  assert_data_frame(data)
+  assert_character(subject_var)
+  assert_character(visit_var)
+  assert_character(except, null.ok = TRUE)
+  all_cols <- colnames(data)
+  to_drop <- vapply(
+    data,
+    h_extra_levels,
+    logical(1L)
+  )
+  to_drop <- all_cols[to_drop]
+  # only drop levels for those not defined in excep and not in visit_var.
+  to_drop <- setdiff(to_drop, c(visit_var, except))
+  data[to_drop] <- lapply(data[to_drop], droplevels)
+  # subject var are always dropped and no message given.
+  dropped <- setdiff(to_drop, subject_var)
+  if (length(dropped) > 0) {
+    message(
+      "Some factor levels are dropped due to singular design matrix: ",
+      toString(dropped)
+    )
+  }
+  data
 }
