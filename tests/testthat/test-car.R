@@ -27,6 +27,50 @@ test_that("h_get_contrast works as expected", {
     h_get_contrast(get_mmrm_trans(), "ARMCD:AVISIT", "3"),
     matrix(rep(rep(c(0, 1), 3), c(6, 1, 9, 1, 9, 1)), nrow = 3, byrow = TRUE)
   )
+  expect_identical(
+    fit <- 
+    h_get_contrast(get_mmrm_trans(), "ARMCD:AVISIT", "3"),
+    matrix(rep(rep(c(0, 1), 3), c(6, 1, 9, 1, 9, 1)), nrow = 3, byrow = TRUE)
+  )
+})
+
+test_that("h_get_contrast works even if the interaction term order changes", {
+  mod1 <- mmrm(
+    formula = FEV1 ~  RACE + AVISIT + RACE * AVISIT + FEV1_BL + us(AVISIT|USUBJID),
+    data = fev_data
+  )
+  ctr <- expect_silent(h_get_contrast(mod1, "AVISIT", "3"))
+  colnames(ctr) <- names(coef(mod1))
+  expect_identical(
+    names(ctr[1, ctr[1, ] != 0]),
+    sprintf(c("AVISITVIS%s","RACEBlack or African American:AVISITVIS%s","RACEWhite:AVISITVIS%s"), "2")
+  )
+  expect_identical(
+    names(ctr[2, ctr[3, ] != 0]),
+    sprintf(c("AVISITVIS%s","RACEBlack or African American:AVISITVIS%s","RACEWhite:AVISITVIS%s"), "3")
+  )
+  expect_identical(
+    names(ctr[3, ctr[3, ] != 0]),
+    sprintf(c("AVISITVIS%s","RACEBlack or African American:AVISITVIS%s","RACEWhite:AVISITVIS%s"), "4")
+  )
+  mod2 <- mmrm(
+    formula = FEV1 ~  AVISIT + RACE + AVISIT * RACE + FEV1_BL + us(AVISIT|USUBJID),
+    data = fev_data
+  )
+  ctr <- expect_silent(h_get_contrast(mod2, "AVISIT", "3"))
+  colnames(ctr) <- names(coef(mod2))
+  expect_identical(
+    names(ctr[1, ctr[1, ] != 0]),
+    sprintf(c("AVISITVIS%s","AVISITVIS%s:RACEBlack or African American","AVISITVIS%s:RACEWhite"), "2")
+  )
+  expect_identical(
+    names(ctr[2, ctr[2, ] != 0]),
+    sprintf(c("AVISITVIS%s","AVISITVIS%s:RACEBlack or African American","AVISITVIS%s:RACEWhite"), "3")
+  )
+  expect_identical(
+    names(ctr[3, ctr[3, ] != 0]),
+    sprintf(c("AVISITVIS%s","AVISITVIS%s:RACEBlack or African American","AVISITVIS%s:RACEWhite"), "4")
+  )
 })
 
 # Anova ----

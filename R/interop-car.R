@@ -67,8 +67,17 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
           additional_levels <- vapply(data[additional_vars], function(x) {
             if (is.factor(x)) nlevels(x) else length(unique(x))
           }, FUN.VALUE = 1L)
+          prior_vars <- additional_vars[which(match(additional_vars, row.names(fcts)) < match(effect, row.names(fcts)))]
+          prior_lvls <- vapply(data[prior_vars], function(x) {
+            if (is.factor(x)) nlevels(x) else length(unique(x))
+          }, FUN.VALUE = 1L)
+          prior_lvls <- prod(prior_lvls - 1L)
           t_levels <- prod(additional_levels)
-          l_mx[, cols] / t_levels
+          current_lvls <- length(cols)
+          current_row_idx <- rep(rep(seq_len(current_lvls), each = prior_lvls), times = length(current_col) / prior_lvls / current_lvls)
+          mt <- matrix(0, nrow = current_lvls, ncol = length(current_col))
+          mt[cbind(current_row_idx, seq_len(length(current_row_idx)))] <- 1 / t_levels
+          mt
         }
       )
       l_mx[, current_col] <- sub_mat
