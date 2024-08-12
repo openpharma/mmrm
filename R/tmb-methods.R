@@ -79,8 +79,6 @@ predict.mmrm_tmb <- function(object,
   assert_count(nsim, positive = TRUE)
   assert_flag(conditional)
   interval <- match.arg(interval)
-  # make sure new data has the same levels as original data
-  newdata <- h_factor_ref_data(object, newdata)
   tmb_data <- h_mmrm_tmb_data(
     object$formula_parts, newdata,
     weights = rep(1, nrow(newdata)),
@@ -88,7 +86,9 @@ predict.mmrm_tmb <- function(object,
     singular = "keep",
     drop_visit_levels = FALSE,
     allow_na_response = TRUE,
-    drop_levels = FALSE
+    drop_levels = FALSE,
+    xlev = component(object, "xlev"),
+    contrasts = component(object, "contrasts")
   )
   if (!conditional) {
     tmb_data$y_vector[] <- NA_real_
@@ -227,7 +227,8 @@ model.frame.mmrm_tmb <- function(formula, data, include = c("subject_var", "visi
     stats::model.frame(
       formula = lst_formula_and_data$formula,
       data = lst_formula_and_data$data,
-      na.action = na.action
+      na.action = na.action,
+      xlev = stats::.getXlevels(terms(formula), formula$tmb_data$full_frame)
     )
   # We need the full formula obs, so recalculating if not already full.
   ret_full <- if (lst_formula_and_data$is_full) {
@@ -236,7 +237,8 @@ model.frame.mmrm_tmb <- function(formula, data, include = c("subject_var", "visi
     stats::model.frame(
       formula = lst_formula_and_data$formula_full,
       data = lst_formula_and_data$data,
-      na.action = na.action
+      na.action = na.action,
+      xlev = stats::.getXlevels(terms(formula), formula$tmb_data$full_frame)
     )
   }
 
@@ -264,8 +266,7 @@ model.frame.mmrm_tmb <- function(formula, data, include = c("subject_var", "visi
 #' @return named list with four elements:
 #' - `"formula"`: the formula including the columns requested in the `include=` argument.
 #' - `"formula_full"`: the formula including all columns
-#' - `"data"`: a data frame including all columns where factor and
-#'   character columns have been processed with [h_factor_ref()].
+#' - `"data"`: a data frame including all columns needed in the formula.
 #' - `"is_full"`: a logical scalar indicating if the formula and
 #'   full formula are identical
 #' @keywords internal
@@ -299,11 +300,6 @@ h_construct_model_frame_inputs <- function(formula,
   all_vars <- all.vars(new_formula_full)
   assert_names(colnames(data), must.include = all_vars)
   full_frame <- formula$tmb_data$full_frame
-  for (v in setdiff(all_vars, formula$formula_parts$subject_var)) {
-    if (is.factor(full_frame[[v]]) || is.character(full_frame[[v]])) {
-      data[[v]] <- h_factor_ref(data[[v]], full_frame[[v]])
-    }
-  }
 
   # Return list with updated formula, full formula, data, and full formula flag.
   list(
@@ -331,6 +327,7 @@ model.matrix.mmrm_tmb <- function(object, data, include = NULL, ...) { # nolint
     stats::model.matrix(
       object = lst_formula_and_data$formula,
       data = lst_formula_and_data$data,
+      contrasts.arg = attr(object$tmb_data$x_matrix, "contrasts"),
       ...
     )
 
@@ -610,8 +607,7 @@ simulate.mmrm_tmb <- function(object,
   assert_data_frame(newdata)
   method <- match.arg(method)
 
-  # Ensure new data has the same levels as original data.
-  newdata <- h_factor_ref_data(object, newdata)
+
   tmb_data <- h_mmrm_tmb_data(
     object$formula_parts, newdata,
     weights = rep(1, nrow(newdata)),
@@ -619,7 +615,9 @@ simulate.mmrm_tmb <- function(object,
     singular = "keep",
     drop_visit_levels = FALSE,
     allow_na_response = TRUE,
-    drop_levels = FALSE
+    drop_levels = FALSE,
+    xlev = component(object, "xlev"),
+    contrasts = component(object, "contrasts")
   )
   ret <- if (method == "conditional") {
     predict_res <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)

@@ -12,7 +12,9 @@ h_mmrm_tmb_data(
   singular = c("drop", "error", "keep"),
   drop_visit_levels,
   allow_na_response = FALSE,
-  drop_levels = TRUE
+  drop_levels = TRUE,
+  xlev = NULL,
+  contrasts = NULL
 )
 }
 \arguments{
