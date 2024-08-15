@@ -33,6 +33,7 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
   type <- match.arg(type)
   mx <- component(object, "x_matrix")
   asg <- attr(mx, "assign")
+  has_intercept <- !0 %in% asg
   formula <- object$formula_parts$model_formula
   tms <- terms(formula)
   fcts <- attr(tms, "factors")[-1L, , drop = FALSE] # Discard the response.
@@ -40,41 +41,43 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
   assert_subset(effect, colnames(fcts))
   idx <- which(effect == colnames(fcts))
   cols <- which(asg == idx)
-  data <- model.frame(object)
-  var_numeric <- vapply(data, is.numeric, FUN.VALUE = TRUE)
-  coef_rows <- length(cols)
+  xlev <- component(object, "xlev")
+  is_intercet <- has_intercept && identical(names(xlev)[1], effect)
+  coef_rows <- length(cols) - is_intercet
   l_mx <- matrix(0, nrow = coef_rows, ncol = length(asg))
   if (coef_rows == 0L) {
     return(l_mx)
   }
-  l_mx[, cols] <- diag(rep(1, coef_rows))
+  if (is_intercet) {
+    l_mx[, cols] <- cbind(-1, diag(rep(1, coef_rows)))
+  } else {
+    l_mx[, cols] <- diag(rep(1, coef_rows))
+  }
   for (i in setdiff(seq_len(ncol(fcts)), idx)) {
-    x1 <- mx[, cols, drop = FALSE]
     additional_vars <- names(which(fcts[, i] > fcts[, idx]))
-    additional_numeric <- any(var_numeric[additional_vars])
+    additional_numeric <- any(!additional_vars %in% names(xlev))
     current_col <- which(asg == i)
     if (ods[i] >= ods[idx] && all(fcts[, i] >= fcts[, idx]) && !additional_numeric) {
       sub_mat <- switch(type,
         "2" = ,
         "II" = {
+          x1 <- mx[, cols, drop = FALSE]
           x0 <- mx[, -c(cols, current_col), drop = FALSE]
           x2 <- mx[, current_col, drop = FALSE]
           m <- diag(rep(1, nrow(x0))) - x0 %*% solve(t(x0) %*% x0) %*% t(x0)
-          solve(t(x1) %*% m %*% x1) %*% t(x1) %*% m %*% x2
+          ret <- solve(t(x1) %*% m %*% x1) %*% t(x1) %*% m %*% x2
+          if (is_intercet) {
+            ret[-1, ] - ret[1, ]
+          } else {
+            ret
+          }
         },
         "3" = ,
         "III" = {
-          additional_levels <- vapply(data[additional_vars], function(x) {
-            if (is.factor(x)) nlevels(x) else length(unique(x))
-          }, FUN.VALUE = 1L)
-          prior_vars <- additional_vars[which(match(additional_vars, row.names(fcts)) < match(effect, row.names(fcts)))]
-          prior_lvls <- vapply(data[prior_vars], function(x) {
-            if (is.factor(x)) nlevels(x) else length(unique(x))
-          }, FUN.VALUE = 1L)
-          prior_lvls <- prod(prior_lvls - 1L)
-          t_levels <- prod(additional_levels)
-          current_lvls <- length(cols)
-          current_row_idx <- rep(rep(seq_len(current_lvls), each = prior_lvls), times = length(current_col) / prior_lvls / current_lvls)
+          lvls <- h_obtain_lvls(effect, additional_vars, xlev)
+          t_levels <- lvls$total
+          current_lvls <- length(current_col) / prod(c(lvls$prior, lvls$post) - 1L)
+          current_row_idx <- rep(rep(seq_len(current_lvls), each = prod(lvls$prior - 1L)), times = prod(lvls$post - 1L))
           mt <- matrix(0, nrow = current_lvls, ncol = length(current_col))
           mt[cbind(current_row_idx, seq_len(length(current_row_idx)))] <- 1 / t_levels
           mt
@@ -122,4 +125,34 @@ Anova.mmrm <- function(mod, type = c("II", "III", "2", "3"), tol = sqrt(.Machine
     )
   )
   ret_df
+}
+
+
+#' Obtain Levels Prior and Posterior
+#' @param var (`string`) name of the effect.
+#' @param additional_vars (`character`) names of additional variables.
+#' @param xlev (`list`) named list of character levels.
+#' @keywords internal
+h_obtain_lvls <- function(var, additional_vars, xlev) {
+  assert_string(var)
+  assert_character(additional_vars)
+  assert_list(xlev, types = "character")
+  nms <- names(xlev)
+  assert_subset(additional_vars, nms)
+  if (var %in% nms) {
+    prior_vars <- intersect(nms[seq_len(match(var, nms) - 1)], additional_vars)
+    prior_lvls <- vapply(xlev[prior_vars], length, FUN.VALUE = 1L)
+    post_vars <- intersect(nms[seq(match(var, nms), length(nms))], additional_vars)
+    post_lvls <- vapply(xlev[post_vars], length, FUN.VALUE = 1L)
+    total_lvls <- prod(prior_lvls) * prod(post_lvls)
+  } else {
+    prior_lvls <- vapply(xlev[additional_vars], length, FUN.VALUE = 1L)
+    post_lvls <- 2L
+    total_lvls <- prod(prior_lvls)
+  }
+  list(
+    prior = prior_lvls,
+    post = post_lvls,
+    total = total_lvls
+  )
 }

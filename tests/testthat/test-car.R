@@ -12,6 +12,25 @@ test_that("car emits a message about mmrm registration on load", {
   expect_message(library(car), "mmrm")
 })
 
+# h_obtain_lvls ----
+test_that("h_obtain_lvls works as expected", {
+  expect_identical(
+    h_obtain_lvls("a", c("b", "c"), list(a = letters[1:2], b = letters[1:3], c = letters[1:5])),
+    list(
+      prior = setNames(integer(0), character(0)),
+      post = c(b = 3L, c = 5L),
+      total = 15
+    )
+  )
+  expect_identical(
+    h_obtain_lvls("a", c("b", "c"), list(b = letters[1:3], c = letters[1:5])),
+    list(
+      prior = c(b = 3L, c = 5L),
+      post = 2L,
+      total = 15
+    )
+  )
+})
 
 # h_get_contrast ----
 test_that("h_get_contrast works as expected", {
@@ -43,15 +62,15 @@ test_that("h_get_contrast works even if the interaction term order changes", {
   colnames(ctr) <- names(coef(mod1))
   expect_identical(
     names(ctr[1, ctr[1, ] != 0]),
-    sprintf(c("AVISITVIS%s","RACEBlack or African American:AVISITVIS%s","RACEWhite:AVISITVIS%s"), "2")
+    sprintf(c("AVISITVIS%s", "RACEBlack or African American:AVISITVIS%s", "RACEWhite:AVISITVIS%s"), "2")
   )
   expect_identical(
-    names(ctr[2, ctr[3, ] != 0]),
-    sprintf(c("AVISITVIS%s","RACEBlack or African American:AVISITVIS%s","RACEWhite:AVISITVIS%s"), "3")
+    names(ctr[2, ctr[2, ] != 0]),
+    sprintf(c("AVISITVIS%s", "RACEBlack or African American:AVISITVIS%s", "RACEWhite:AVISITVIS%s"), "3")
   )
   expect_identical(
     names(ctr[3, ctr[3, ] != 0]),
-    sprintf(c("AVISITVIS%s","RACEBlack or African American:AVISITVIS%s","RACEWhite:AVISITVIS%s"), "4")
+    sprintf(c("AVISITVIS%s", "RACEBlack or African American:AVISITVIS%s", "RACEWhite:AVISITVIS%s"), "4")
   )
   mod2 <- mmrm(
     formula = FEV1 ~  AVISIT + RACE + AVISIT * RACE + FEV1_BL + us(AVISIT|USUBJID),
@@ -61,16 +80,23 @@ test_that("h_get_contrast works even if the interaction term order changes", {
   colnames(ctr) <- names(coef(mod2))
   expect_identical(
     names(ctr[1, ctr[1, ] != 0]),
-    sprintf(c("AVISITVIS%s","AVISITVIS%s:RACEBlack or African American","AVISITVIS%s:RACEWhite"), "2")
+    sprintf(c("AVISITVIS%s", "AVISITVIS%s:RACEBlack or African American", "AVISITVIS%s:RACEWhite"), "2")
   )
   expect_identical(
     names(ctr[2, ctr[2, ] != 0]),
-    sprintf(c("AVISITVIS%s","AVISITVIS%s:RACEBlack or African American","AVISITVIS%s:RACEWhite"), "3")
+    sprintf(c("AVISITVIS%s", "AVISITVIS%s:RACEBlack or African American", "AVISITVIS%s:RACEWhite"), "3")
   )
   expect_identical(
     names(ctr[3, ctr[3, ] != 0]),
-    sprintf(c("AVISITVIS%s","AVISITVIS%s:RACEBlack or African American","AVISITVIS%s:RACEWhite"), "4")
+    sprintf(c("AVISITVIS%s", "AVISITVIS%s:RACEBlack or African American", "AVISITVIS%s:RACEWhite"), "4")
   )
+})
+
+test_that("h_get_contrast works if intercept is not given", {
+  fit <- mmrm(FEV1 ~ AVISIT * ARMCD -1 + ar1(AVISIT|USUBJID), data = fev_data)
+  h_get_contrast(fit, "ARMCD", "2")
+  h_get_contrast(fit, "AVISIT", "2")
+  h_get_contrast(fit, "ARMCD:AVISIT", "2")
 })
 
 # Anova ----
