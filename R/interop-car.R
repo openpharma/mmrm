@@ -33,7 +33,6 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
   type <- match.arg(type)
   mx <- component(object, "x_matrix")
   asg <- attr(mx, "assign")
-  has_intercept <- !0 %in% asg
   formula <- object$formula_parts$model_formula
   tms <- terms(formula)
   fcts <- attr(tms, "factors")[-1L, , drop = FALSE] # Discard the response.
@@ -42,13 +41,13 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
   idx <- which(effect == colnames(fcts))
   cols <- which(asg == idx)
   xlev <- component(object, "xlev")
-  is_intercet <- has_intercept && identical(names(xlev)[1], effect)
-  coef_rows <- length(cols) - is_intercet
+  contain_intercept <- (!0 %in% asg) && h_first_contain_categorical(effect, fcts, names(xlev))
+  coef_rows <- length(cols) - contain_intercept
   l_mx <- matrix(0, nrow = coef_rows, ncol = length(asg))
   if (coef_rows == 0L) {
     return(l_mx)
   }
-  if (is_intercet) {
+  if (contain_intercept) {
     l_mx[, cols] <- cbind(-1, diag(rep(1, coef_rows)))
   } else {
     l_mx[, cols] <- diag(rep(1, coef_rows))
@@ -66,7 +65,7 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
           x2 <- mx[, current_col, drop = FALSE]
           m <- diag(rep(1, nrow(x0))) - x0 %*% solve(t(x0) %*% x0) %*% t(x0)
           ret <- solve(t(x1) %*% m %*% x1) %*% t(x1) %*% m %*% x2
-          if (is_intercet) {
+          if (contain_intercept) {
             ret[-1, ] - ret[1, ]
           } else {
             ret
@@ -76,11 +75,16 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
         "III" = {
           lvls <- h_obtain_lvls(effect, additional_vars, xlev)
           t_levels <- lvls$total
-          current_lvls <- length(current_col) / prod(c(lvls$prior, lvls$post) - 1L)
-          current_row_idx <- rep(rep(seq_len(current_lvls), each = prod(lvls$prior - 1L)), times = prod(lvls$post - 1L))
-          mt <- matrix(0, nrow = current_lvls, ncol = length(current_col))
-          mt[cbind(current_row_idx, seq_len(length(current_row_idx)))] <- 1 / t_levels
-          mt
+          nms_base <- colnames(mx)[cols]
+          nms <- colnames(mx)[current_col]
+          base_idx <- length(lvls$prior) + 1L
+          nms_base_values <- vapply(strsplit(nms, ":"), \(x) x[base_idx], FUN.VALUE = "")
+          current_row_idx <- match(nms_base_values, nms_base)
+          mt <- l_mx[, cols, drop = FALSE] / t_levels
+          ret <- mt[, current_row_idx, drop = FALSE]
+          # if there is extra levels, replace it with -1/t_levels
+          ret[is.na(ret)] <- -1 / t_levels
+          ret
         }
       )
       l_mx[, current_col] <- sub_mat
@@ -132,8 +136,9 @@ Anova.mmrm <- function(mod, type = c("II", "III", "2", "3"), tol = sqrt(.Machine
 #' @param var (`string`) name of the effect.
 #' @param additional_vars (`character`) names of additional variables.
 #' @param xlev (`list`) named list of character levels.
+#' @param factors (`matrix`) the factor matrix.
 #' @keywords internal
-h_obtain_lvls <- function(var, additional_vars, xlev) {
+h_obtain_lvls <- function(var, additional_vars, xlev, factors) {
   assert_string(var)
   assert_character(additional_vars)
   assert_list(xlev, types = "character")
@@ -142,7 +147,7 @@ h_obtain_lvls <- function(var, additional_vars, xlev) {
   if (var %in% nms) {
     prior_vars <- intersect(nms[seq_len(match(var, nms) - 1)], additional_vars)
     prior_lvls <- vapply(xlev[prior_vars], length, FUN.VALUE = 1L)
-    post_vars <- intersect(nms[seq(match(var, nms), length(nms))], additional_vars)
+    post_vars <- intersect(nms[seq(match(var, nms) + 1, length(nms))], additional_vars)
     post_lvls <- vapply(xlev[post_vars], length, FUN.VALUE = 1L)
     total_lvls <- prod(prior_lvls) * prod(post_lvls)
   } else {
@@ -155,4 +160,30 @@ h_obtain_lvls <- function(var, additional_vars, xlev) {
     post = post_lvls,
     total = total_lvls
   )
+}
+
+#' Check if the Effect is the First Categorical Effect
+#' @param effect (`string`) name of the effect.
+#' @param categorical (`character`) names of the categorical values.
+#' @param factors (`matrix`) the factor matrix.
+#' @keywords internal
+h_first_contain_categorical <- function(effect, factors, categorical) {
+  assert_string(effect)
+  assert_matrix(factors)
+  assert_character(categorical)
+  mt <- match(effect, colnames(factors))
+  varnms <- row.names(factors)
+  # if the effect is not categorical in any value, return FALSE
+  if (!any(varnms[factors[, mt] > 0] %in% categorical)) {
+    return(FALSE)
+  }
+  # keep only categorical rows that is in front of the current factor
+  factors <- factors[row.names(factors) %in% categorical, seq_len(mt - 1L), drop = FALSE]
+  # if previous cols are all numerical, return TRUE
+  if (ncol(factors) < 1L) {
+    return(TRUE)
+  }
+  col_ind <- apply(factors, 2, prod)
+  # if any of the previous cols are categorical, return FALSE
+  return(!any(col_ind > 0))
 }
