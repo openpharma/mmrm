@@ -20,7 +20,8 @@ test_that("h_first_contain_categorical work as expected", {
   categorical <- c("AVISIT")
   expect_true(h_first_contain_categorical(effect, factors, categorical))
   factors2 <- matrix(
-    c(1, 0, 0, 0, 2, 2), nrow = 3L,
+    c(1, 0, 0, 0, 2, 2),
+    nrow = 3L,
     dimnames = list(c("AGE", "FEV1_BL", "AVISIT"), c("AGE", "FEV1_BL:AVISIT"))
   )
   expect_true(h_first_contain_categorical(effect, factors2, categorical))
@@ -66,9 +67,9 @@ test_that("h_get_contrast works as expected", {
   )
   expect_identical(
     fit <- h_get_contrast(
-      get_mmrm_trans(), "ARMCD:AVISIT", "3"),
-      matrix(rep(rep(c(0, 1), 3), c(6, 1, 9, 1, 9, 1)), nrow = 3, byrow = TRUE
-    )
+      get_mmrm_trans(), "ARMCD:AVISIT", "3"
+    ),
+    matrix(rep(rep(c(0, 1), 3), c(6, 1, 9, 1, 9, 1)), nrow = 3, byrow = TRUE)
   )
 })
 
