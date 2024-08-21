@@ -42,7 +42,7 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
   cols <- which(asg == idx)
   xlev <- component(object, "xlev")
   contains_intercept <- (!0 %in% asg) && h_first_contain_categorical(effect, fcts, names(xlev))
-  coef_rows <- length(cols) - contain_intercept
+  coef_rows <- length(cols) - as.integer(contains_intercept)
   l_mx <- matrix(0, nrow = coef_rows, ncol = length(asg))
   if (coef_rows == 0L) {
     return(l_mx)
