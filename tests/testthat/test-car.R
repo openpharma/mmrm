@@ -14,7 +14,7 @@ test_that("car emits a message about mmrm registration on load", {
 
 # h_first_contain_categorical ----
 
-test_that("h_first_contain_categorical work as expected", {
+test_that("h_first_contain_categorical works as expected", {
   effect <- "FEV1_BL:AVISIT"
   factors <- matrix(c(2, 2), nrow = 2L, dimnames = list(c("FEV1_BL", "AVISIT"), c("FEV1_BL:AVISIT")))
   categorical <- c("AVISIT")
