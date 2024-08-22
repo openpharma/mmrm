@@ -47,7 +47,7 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
   if (coef_rows == 0L) {
     return(l_mx)
   }
-  if (contain_intercept) {
+  if (contains_intercept) {
     l_mx[, cols] <- cbind(-1, diag(rep(1, coef_rows)))
   } else {
     l_mx[, cols] <- diag(rep(1, coef_rows))
@@ -65,7 +65,7 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
           x2 <- mx[, current_col, drop = FALSE]
           m <- diag(rep(1, nrow(x0))) - x0 %*% solve(t(x0) %*% x0) %*% t(x0)
           ret <- solve(t(x1) %*% m %*% x1) %*% t(x1) %*% m %*% x2
-          if (contain_intercept) {
+          if (contains_intercept) {
             ret[-1, ] - ret[1, ]
           } else {
             ret
