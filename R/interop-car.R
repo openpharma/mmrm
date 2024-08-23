@@ -77,11 +77,11 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
           t_levels <- lvls$total
           nms_base <- colnames(mx)[cols]
           nms <- colnames(mx)[current_col]
-          base_idx <- length(lvls$prior) + 1L
-          nms_base_values <- vapply(strsplit(nms, ":"), \(x) x[base_idx], FUN.VALUE = "")
-          current_row_idx <- match(nms_base_values, nms_base)
+          nms_base_split <- strsplit(nms_base, ":")
+          nms_split <- strsplit(nms, ":")
+          base_idx <- h_get_index(nms_split, nms_base_split)
           mt <- l_mx[, cols, drop = FALSE] / t_levels
-          ret <- mt[, current_row_idx, drop = FALSE]
+          ret <- mt[, base_idx, drop = FALSE]
           # if there is extra levels, replace it with -1/t_levels
           ret[is.na(ret)] <- -1 / t_levels
           ret
@@ -186,4 +186,24 @@ h_first_contain_categorical <- function(effect, factors, categorical) {
   col_ind <- apply(factors, 2, prod)
   # if any of the previous cols are categorical, return FALSE
   return(!any(col_ind > 0))
+}
+
+#' Test if the First Vector is Subset of the Second Vector
+#' @param x (`vector`) the first list.
+#' @param y (`vector`) the second list.
+h_get_index <- function(x, y) {
+  assert_list(x)
+  assert_list(y)
+  vapply(
+    x,
+    \(i) {
+      r <- vapply(y, \(j) test_subset(j, i), FUN.VALUE = TRUE)
+      if (sum(r) == 1L) {
+        which(r)
+      } else {
+        NA_integer_
+      }
+    },
+    FUN.VALUE = 1L
+  )
 }
