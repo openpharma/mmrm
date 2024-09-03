@@ -67,7 +67,7 @@ predict.mmrm_tmb <- function(object,
                              interval = c("none", "confidence", "prediction"),
                              level = 0.95,
                              nsim = 1000L,
-                             conditional = TRUE,
+                             conditional = FALSE,
                              ...) {
   if (missing(newdata)) {
     newdata <- object$data
@@ -79,8 +79,13 @@ predict.mmrm_tmb <- function(object,
   assert_count(nsim, positive = TRUE)
   assert_flag(conditional)
   interval <- match.arg(interval)
+  formula_parts <- object$formula_parts
+  if (!conditional) {
+    formula_parts$full_formula[[2]] <- NULL
+    formula_parts$model_formula[[2]] <- NULL
+  }
   tmb_data <- h_mmrm_tmb_data(
-    object$formula_parts, newdata,
+    formula_parts, newdata,
     weights = rep(1, nrow(newdata)),
     reml = TRUE,
     singular = "keep",
@@ -90,9 +95,6 @@ predict.mmrm_tmb <- function(object,
     xlev = component(object, "xlev"),
     contrasts = component(object, "contrasts")
   )
-  if (!conditional) {
-    tmb_data$y_vector[] <- NA_real_
-  }
   if (any(object$tmb_data$x_cols_aliased)) {
     warning(
       "In fitted object there are co-linear variables and therefore dropped terms, ",

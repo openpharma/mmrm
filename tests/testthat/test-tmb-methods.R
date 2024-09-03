@@ -110,9 +110,17 @@ test_that("predict works for only fit values without response", {
 
 test_that("predict works for only fit values with response", {
   object <- get_mmrm()
-  y_pred <- expect_silent(predict(object, fev_data))
+  y_pred <- expect_silent(predict(object, fev_data, conditional = TRUE))
   expect_equal(y_pred[!is.na(fev_data$FEV1)], object$tmb_data$y_vector, ignore_attr = TRUE)
   expect_numeric(y_pred[is.na(fev_data$FEV1)])
+})
+
+test_that("predict works for unconditional prediction if response does not exist", {
+  object <- get_mmrm()
+  fev_data2 <- fev_data
+  fev_data2$FEV1 <- NULL
+  y_pred <- expect_silent(predict(object, fev_data2, conditional = FALSE))
+  expect_snapshot_tolerance(y_pred)
 })
 
 test_that("predict warns on aliased variables", {
@@ -213,9 +221,9 @@ test_that("predict works if contrast provided", {
   contrasts(fev_data2$AVISIT) <- contr.poly(4)
   fit <- mmrm(FEV1 ~ ARMCD * AVISIT + ar1(AVISIT | USUBJID), data = fev_data2)
 
-  expect_snapshot_tolerance(predict(fit, fev_data[c(1, 4), ]))
-  expect_snapshot_tolerance(predict(fit, fev_data[c(2, 3), ]))
-  expect_snapshot_tolerance(predict(fit, fev_data[c(1:4), ]))
+  expect_snapshot_tolerance(predict(fit, fev_data[c(1, 4), ], conditional = TRUE))
+  expect_snapshot_tolerance(predict(fit, fev_data[c(2, 3), ], conditional = TRUE))
+  expect_snapshot_tolerance(predict(fit, fev_data[c(1:4), ], conditional = TRUE))
 })
 
 ## integration test with SAS ----
@@ -943,14 +951,14 @@ test_that("simulate with conditional method results are correctly centered", {
   object <- get_mmrm()
   set.seed(323)
   sims <- simulate(object, nsim = 1000, method = "conditional")
-  expect_equal(rowMeans(sims), predict(object), tolerance = 1e-2)
+  expect_equal(rowMeans(sims), predict(object, conditional = TRUE), tolerance = 1e-2)
 })
 
 test_that("simulate with marginal method results are correctly centered", {
   object <- get_mmrm()
   set.seed(323)
   sims <- simulate(object, nsim = 100, method = "marginal")
-  expect_equal(rowMeans(sims), predict(object), tolerance = 1e-1)
+  expect_equal(rowMeans(sims), predict(object, conditional = TRUE), tolerance = 1e-1)
 })
 
 test_that("simulate with conditional method works as expected for weighted models", {
@@ -958,28 +966,28 @@ test_that("simulate with conditional method works as expected for weighted model
   object <- get_mmrm_weighted()
   set.seed(535)
   sims <- simulate(object, nsim = 1000, method = "conditional")
-  expect_equal(rowMeans(sims), predict(object), tolerance = 1e-2)
+  expect_equal(rowMeans(sims), predict(object, conditional = TRUE), tolerance = 1e-2)
 })
 
 test_that("simulate with marginal method works as expected for weighted models", {
   object <- get_mmrm_weighted()
   set.seed(535)
   sims <- simulate(object, nsim = 100, method = "marginal")
-  expect_equal(rowMeans(sims), predict(object), tolerance = 1e-1)
+  expect_equal(rowMeans(sims), predict(object, conditional = TRUE), tolerance = 1e-1)
 })
 
 test_that("simulate with conditional method works as expected for grouped fits", {
   object <- get_mmrm_group()
   set.seed(737)
   sims <- simulate(object, nsim = 1000, method = "conditional")
-  expect_equal(rowMeans(sims), predict(object), tolerance = 1e-2)
+  expect_equal(rowMeans(sims), predict(object, conditional = TRUE), tolerance = 1e-2)
 })
 
 test_that("simulate with marginal method works as expected for grouped fits", {
   object <- get_mmrm_group()
   set.seed(737)
   sims <- simulate(object, nsim = 100, method = "marginal")
-  expect_equal(rowMeans(sims), predict(object), tolerance = 1e-1)
+  expect_equal(rowMeans(sims), predict(object, conditional = TRUE), tolerance = 1e-1)
 })
 
 test_that("simulate with conditional method works for differently ordered/numbered data", {
@@ -990,7 +998,7 @@ test_that("simulate with conditional method works for differently ordered/number
   df_mixed <- df_subset[neworder, ]
   set.seed(939)
   sims <- simulate(object, nsim = 1000, newdata = df_mixed, method = "conditional")
-  expect_equal(rowMeans(sims), predict(object, df_mixed), tolerance = 1e-2)
+  expect_equal(rowMeans(sims), predict(object, df_mixed, conditional = TRUE), tolerance = 1e-2)
 })
 
 test_that("simulate with marginal method works for differently ordered/numbered data", {
@@ -1002,7 +1010,7 @@ test_that("simulate with marginal method works for differently ordered/numbered 
   df_mixed <- df_subset[neworder, ]
   set.seed(939)
   sims <- simulate(object, nsim = 100, newdata = df_mixed, method = "marginal")
-  expect_equal(rowMeans(sims), predict(object, df_mixed), tolerance = 1e-2)
+  expect_equal(rowMeans(sims), predict(object, df_mixed, conditional = TRUE), tolerance = 1e-2)
 })
 
 test_that("simulate with conditional method is compatible with confidence intervals", {
@@ -1015,7 +1023,8 @@ test_that("simulate with conditional method is compatible with confidence interv
     newdata = fev_data,
     se.fit = TRUE,
     interval = "confidence",
-    level = 0.95
+    level = 0.95,
+    conditional = TRUE
   )
   expect_true(all(intervals[is_unobserved, "se"] > 0))
   sims <- simulate(
@@ -1038,7 +1047,8 @@ test_that("simulate with marginal method is compatible with prediction intervals
     se.fit = TRUE,
     interval = "prediction",
     level = 0.95,
-    nsim = 100
+    nsim = 100,
+    conditional = TRUE
   )
   sims <- simulate(
     object,

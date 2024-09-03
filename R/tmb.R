@@ -154,8 +154,9 @@ h_mmrm_tmb_data <- function(formula_parts,
   if (drop_levels) {
     full_frame <- h_drop_levels(full_frame, formula_parts$subject_var, formula_parts$visit_var, names(xlev))
   }
-  keep_ind <- if (allow_na_response) {
-    # Note that response is always the first column.
+  has_response <- !identical(attr(attr(full_frame, "terms"), "response"), 0L)
+  keep_ind <- if (allow_na_response && has_response) {
+    # Note that response is always the first column if there is response.
     stats::complete.cases(full_frame[, -1L, drop = FALSE])
   } else {
     stats::complete.cases(full_frame)
@@ -199,7 +200,11 @@ h_mmrm_tmb_data <- function(formula_parts,
       attr(x_matrix, "contrasts") <- contrasts_attr
     }
   }
-  y_vector <- as.numeric(stats::model.response(full_frame))
+  y_vector <- if (has_response) {
+    as.numeric(stats::model.response(full_frame))
+  } else {
+    rep(NA_real_, nrow(full_frame))
+  }
   weights_vector <- as.numeric(stats::model.weights(full_frame))
   n_subjects <- length(unique(full_frame[[formula_parts$subject_var]]))
   subject_zero_inds <- which(!duplicated(full_frame[[formula_parts$subject_var]])) - 1L
