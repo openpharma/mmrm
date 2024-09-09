@@ -51,6 +51,7 @@ Imports:
     parallel,
     Rcpp,
     Rdpack,
+    rlang,
     stats,
     stringr,
     tibble,

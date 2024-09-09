@@ -5,6 +5,10 @@
 - Previously `emmeans` will return `NA` for spatial covariance structure. This is fixed now.
 - Previously, `mmrm` will ignore contrasts defined for covariates in the input data set. This is fixed now.
 
+### Miscellaneous
+
+- Upon fitting an MMRM, it is checked whether a not reproducible optimization feature of `TMB` is turned on. If so, a warning is issued to the user once per session.
+
 # mmrm 0.3.12
 
 ### New Features

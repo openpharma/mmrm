@@ -322,3 +322,15 @@ test_that("h_drop_levels works as expected", {
     letters[1:3]
   )
 })
+
+# h_tmb_warn_optimization ----
+
+test_that("h_tmb_warn_optimization works as expected", {
+  TMB::config(optimize.instantly = 1, DLL = "mmrm")
+  expect_warning(
+    h_tmb_warn_optimization(),
+    "TMB is configured to optimize instantly"
+  )
+  TMB::config(optimize.instantly = 0, DLL = "mmrm")
+  expect_silent(h_tmb_warn_optimization())
+})
