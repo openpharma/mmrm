@@ -521,7 +521,7 @@ h_tmb_warn_optimization <- function() {
   if (tmb_config$optimize.instantly) {
     msg <- paste(
       "TMB is configured to optimize instantly, this may lead to unreproducible results.",
-      "To disable this behavior, use `TMB::config(optimize.instantly = 0)`.", 
+      "To disable this behavior, use `TMB::config(optimize.instantly = 0)`.",
       sep = "\n"
     )
     rlang::warn(msg, .frequency = "once", .frequency_id = "tmb_warn_optimization")
