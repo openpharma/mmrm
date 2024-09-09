@@ -4,6 +4,7 @@
 
 - Previously `emmeans` will return `NA` for spatial covariance structure. This is fixed now.
 - Previously, `mmrm` will ignore contrasts defined for covariates in the input data set. This is fixed now.
+- When running with `TMB` package versions below 1.9.15, MMRM fit results are not completely reproducible. While this may not be relevant for most applications, because the numerical differences are very small, we now issue a warning to the user if this is the case. We advise users to upgrade their `TMB` package versions to 1.9.15 or higher to ensure reproducibility.
 
 ### Miscellaneous
 
