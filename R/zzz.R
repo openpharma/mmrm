@@ -24,8 +24,6 @@
     callback = car_add_mmrm,
     message = "mmrm() registered as car::Anova extension"
   )
-
-  
 }
 
 #' Helper Function for Registering Functionality With Suggests Packages
