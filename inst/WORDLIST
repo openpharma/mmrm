@@ -50,7 +50,6 @@ customizations
 ddots
 de
 det
-df
 doi
 dotsb
 dotsc
@@ -72,7 +71,6 @@ intra
 jh
 ji
 jj
-kr
 ldots
 leq
 lintr
@@ -94,6 +92,7 @@ pkgdown
 plc
 pmatrix
 pre
+reproducibility
 rightarrow
 simeq
 sp
@@ -104,6 +103,7 @@ tidymodels
 toep
 toeph
 unadjusted
+unreproducible
 unscaled
 untracked
 vairance
