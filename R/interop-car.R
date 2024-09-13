@@ -40,35 +40,51 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
   assert_subset(effect, colnames(fcts))
   idx <- which(effect == colnames(fcts))
   cols <- which(asg == idx)
-  data <- model.frame(object)
-  var_numeric <- vapply(data, is.numeric, FUN.VALUE = TRUE)
-  coef_rows <- length(cols)
+  xlev <- component(object, "xlev")
+  contains_intercept <- (!0 %in% asg) && h_first_contain_categorical(effect, fcts, names(xlev))
+  coef_rows <- length(cols) - as.integer(contains_intercept)
   l_mx <- matrix(0, nrow = coef_rows, ncol = length(asg))
   if (coef_rows == 0L) {
     return(l_mx)
   }
-  l_mx[, cols] <- diag(rep(1, coef_rows))
+  if (contains_intercept) {
+    l_mx[, cols] <- cbind(-1, diag(rep(1, coef_rows)))
+  } else {
+    l_mx[, cols] <- diag(rep(1, coef_rows))
+  }
   for (i in setdiff(seq_len(ncol(fcts)), idx)) {
-    x1 <- mx[, cols, drop = FALSE]
     additional_vars <- names(which(fcts[, i] > fcts[, idx]))
-    additional_numeric <- any(var_numeric[additional_vars])
+    additional_numeric <- any(!additional_vars %in% names(xlev))
     current_col <- which(asg == i)
     if (ods[i] >= ods[idx] && all(fcts[, i] >= fcts[, idx]) && !additional_numeric) {
       sub_mat <- switch(type,
         "2" = ,
         "II" = {
+          x1 <- mx[, cols, drop = FALSE]
           x0 <- mx[, -c(cols, current_col), drop = FALSE]
           x2 <- mx[, current_col, drop = FALSE]
           m <- diag(rep(1, nrow(x0))) - x0 %*% solve(t(x0) %*% x0) %*% t(x0)
-          solve(t(x1) %*% m %*% x1) %*% t(x1) %*% m %*% x2
+          ret <- solve(t(x1) %*% m %*% x1) %*% t(x1) %*% m %*% x2
+          if (contains_intercept) {
+            ret[-1, ] - ret[1, ]
+          } else {
+            ret
+          }
         },
         "3" = ,
         "III" = {
-          additional_levels <- vapply(data[additional_vars], function(x) {
-            if (is.factor(x)) nlevels(x) else length(unique(x))
-          }, FUN.VALUE = 1L)
-          t_levels <- prod(additional_levels)
-          l_mx[, cols] / t_levels
+          lvls <- h_obtain_lvls(effect, additional_vars, xlev)
+          t_levels <- lvls$total
+          nms_base <- colnames(mx)[cols]
+          nms <- colnames(mx)[current_col]
+          nms_base_split <- strsplit(nms_base, ":")
+          nms_split <- strsplit(nms, ":")
+          base_idx <- h_get_index(nms_split, nms_base_split)
+          mt <- l_mx[, cols, drop = FALSE] / t_levels
+          ret <- mt[, base_idx, drop = FALSE]
+          # if there is extra levels, replace it with -1/t_levels
+          ret[is.na(ret)] <- -1 / t_levels
+          ret
         }
       )
       l_mx[, current_col] <- sub_mat
@@ -113,4 +129,82 @@ Anova.mmrm <- function(mod, type = c("II", "III", "2", "3"), tol = sqrt(.Machine
     )
   )
   ret_df
+}
+
+
+#' Obtain Levels Prior and Posterior
+#' @param var (`string`) name of the effect.
+#' @param additional_vars (`character`) names of additional variables.
+#' @param xlev (`list`) named list of character levels.
+#' @param factors (`matrix`) the factor matrix.
+#' @keywords internal
+h_obtain_lvls <- function(var, additional_vars, xlev, factors) {
+  assert_string(var)
+  assert_character(additional_vars)
+  assert_list(xlev, types = "character")
+  nms <- names(xlev)
+  assert_subset(additional_vars, nms)
+  if (var %in% nms) {
+    prior_vars <- intersect(nms[seq_len(match(var, nms) - 1)], additional_vars)
+    prior_lvls <- vapply(xlev[prior_vars], length, FUN.VALUE = 1L)
+    post_vars <- intersect(nms[seq(match(var, nms) + 1, length(nms))], additional_vars)
+    post_lvls <- vapply(xlev[post_vars], length, FUN.VALUE = 1L)
+    total_lvls <- prod(prior_lvls) * prod(post_lvls)
+  } else {
+    prior_lvls <- vapply(xlev[additional_vars], length, FUN.VALUE = 1L)
+    post_lvls <- 2L
+    total_lvls <- prod(prior_lvls)
+  }
+  list(
+    prior = prior_lvls,
+    post = post_lvls,
+    total = total_lvls
+  )
+}
+
+#' Check if the Effect is the First Categorical Effect
+#' @param effect (`string`) name of the effect.
+#' @param categorical (`character`) names of the categorical values.
+#' @param factors (`matrix`) the factor matrix.
+#' @keywords internal
+h_first_contain_categorical <- function(effect, factors, categorical) {
+  assert_string(effect)
+  assert_matrix(factors)
+  assert_character(categorical)
+  mt <- match(effect, colnames(factors))
+  varnms <- row.names(factors)
+  # if the effect is not categorical in any value, return FALSE
+  if (!any(varnms[factors[, mt] > 0] %in% categorical)) {
+    return(FALSE)
+  }
+  # keep only categorical rows that is in front of the current factor
+  factors <- factors[row.names(factors) %in% categorical, seq_len(mt - 1L), drop = FALSE]
+  # if previous cols are all numerical, return TRUE
+  if (ncol(factors) < 1L) {
+    return(TRUE)
+  }
+  col_ind <- apply(factors, 2, prod)
+  # if any of the previous cols are categorical, return FALSE
+  return(!any(col_ind > 0))
+}
+
+#' Test if the First Vector is Subset of the Second Vector
+#' @param x (`vector`) the first list.
+#' @param y (`vector`) the second list.
+#' @keywords internal
+h_get_index <- function(x, y) {
+  assert_list(x)
+  assert_list(y)
+  vapply(
+    x,
+    \(i) {
+      r <- vapply(y, \(j) test_subset(j, i), FUN.VALUE = TRUE)
+      if (sum(r) == 1L) {
+        which(r)
+      } else {
+        NA_integer_
+      }
+    },
+    FUN.VALUE = 1L
+  )
 }
