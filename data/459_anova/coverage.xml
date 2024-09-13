@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "https://raw.githubusercontent.com/cobertura/cobertura/master/cobertura/src/site/htdocs/xml/coverage-04.dtd">
-<coverage line-rate="0.971334726784115" branch-rate="0" lines-covered="3253" lines-valid="3349" branches-covered="0" branches-valid="0" complexity="0" version="3.6.4" timestamp="2024-08-24 01:09:52.378623">
+<coverage line-rate="0.971334726784115" branch-rate="0" lines-covered="3253" lines-valid="3349" branches-covered="0" branches-valid="0" complexity="0" version="3.6.4" timestamp="2024-09-13 02:14:19.212587">
   <sources>
     <source>/__w/mmrm/mmrm/mmrm</source>
   </sources>
@@ -1195,7 +1195,6 @@
             </method>
             <method name="h_get_index" signature="" line-rate="1" branch-rate="0" complexity="0">
               <lines>
-                <line number="195" hits="18" branch="false"/>
                 <line number="196" hits="18" branch="false"/>
                 <line number="197" hits="18" branch="false"/>
                 <line number="198" hits="18" branch="false"/>
@@ -1209,6 +1208,7 @@
                 <line number="206" hits="18" branch="false"/>
                 <line number="207" hits="18" branch="false"/>
                 <line number="208" hits="18" branch="false"/>
+                <line number="209" hits="18" branch="false"/>
               </lines>
             </method>
           </methods>
@@ -1329,7 +1329,6 @@
             <line number="184" hits="4" branch="false"/>
             <line number="186" hits="3" branch="false"/>
             <line number="188" hits="3" branch="false"/>
-            <line number="195" hits="18" branch="false"/>
             <line number="196" hits="18" branch="false"/>
             <line number="197" hits="18" branch="false"/>
             <line number="198" hits="18" branch="false"/>
@@ -1343,6 +1342,7 @@
             <line number="206" hits="18" branch="false"/>
             <line number="207" hits="18" branch="false"/>
             <line number="208" hits="18" branch="false"/>
+            <line number="209" hits="18" branch="false"/>
           </lines>
         </class>
         <class name="interop-emmeans.R" filename="R/interop-emmeans.R" line-rate="1" branch-rate="0" complexity="0">
