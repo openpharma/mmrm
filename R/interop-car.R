@@ -191,6 +191,7 @@ h_first_contain_categorical <- function(effect, factors, categorical) {
 #' Test if the First Vector is Subset of the Second Vector
 #' @param x (`vector`) the first list.
 #' @param y (`vector`) the second list.
+#' @keywords internal
 h_get_index <- function(x, y) {
   assert_list(x)
   assert_list(y)
