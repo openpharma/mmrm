@@ -67,9 +67,11 @@
 <url><loc>https://openpharma.github.io/mmrm/reference/h_drop_levels.html</loc></url>
 <url><loc>https://openpharma.github.io/mmrm/reference/h_extra_levels.html</loc></url>
 <url><loc>https://openpharma.github.io/mmrm/reference/h_extract_covariance_terms.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_first_contain_categorical.html</loc></url>
 <url><loc>https://openpharma.github.io/mmrm/reference/h_get_contrast.html</loc></url>
 <url><loc>https://openpharma.github.io/mmrm/reference/h_get_cov_default.html</loc></url>
 <url><loc>https://openpharma.github.io/mmrm/reference/h_get_empirical.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_get_index.html</loc></url>
 <url><loc>https://openpharma.github.io/mmrm/reference/h_get_kr_comp.html</loc></url>
 <url><loc>https://openpharma.github.io/mmrm/reference/h_get_optimizers.html</loc></url>
 <url><loc>https://openpharma.github.io/mmrm/reference/h_get_prediction.html</loc></url>
@@ -88,6 +90,7 @@
 <url><loc>https://openpharma.github.io/mmrm/reference/h_mmrm_tmb_formula_parts.html</loc></url>
 <url><loc>https://openpharma.github.io/mmrm/reference/h_mmrm_tmb_parameters.html</loc></url>
 <url><loc>https://openpharma.github.io/mmrm/reference/h_newdata_add_pred.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_obtain_lvls.html</loc></url>
 <url><loc>https://openpharma.github.io/mmrm/reference/h_optimizer_fun.html</loc></url>
 <url><loc>https://openpharma.github.io/mmrm/reference/h_partial_fun_args.html</loc></url>
 <url><loc>https://openpharma.github.io/mmrm/reference/h_print_aic_list.html</loc></url>
