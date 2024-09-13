@@ -3,6 +3,8 @@
 ### Bug Fixes
 
 - Previously `emmeans` will return `NA` for spatial covariance structure. This is fixed now.
+- Previously `car::Anova` will give incorrect results if an interaction term is included and the order of the covariate of interest is not the first categorical variable. This is fixed now.
+- Previously `car::Anova` will fail if the model does not contain intercept. This is fixed now.
 - Previously, `mmrm` will ignore contrasts defined for covariates in the input data set. This is fixed now.
 
 # mmrm 0.3.12
