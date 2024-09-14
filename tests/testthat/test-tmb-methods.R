@@ -119,7 +119,7 @@ test_that("predict works for unconditional prediction if response does not exist
   object <- get_mmrm()
   fev_data2 <- fev_data
   fev_data2$FEV1 <- NULL
-  y_pred <- expect_silent(predict(object, fev_data2, conditional = FALSE))
+  y_pred <- expect_silent(predict(object, fev_data2))
   expect_snapshot_tolerance(y_pred)
 })
 
