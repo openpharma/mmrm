@@ -4,7 +4,7 @@
 
 - Previously `emmeans` will return `NA` for spatial covariance structure. This is fixed now.
 - Previously, `mmrm` will ignore contrasts defined for covariates in the input data set. This is fixed now.
-- Previously, `predict` will always require the response to be valid, even for unconditional predictions. This is fixed now and unconditional prediction do not requre the response to be valid anymore.
+- Previously, `predict` will always require the response to be valid, even for unconditional predictions. This is fixed now and unconditional prediction do not require the response to be valid anymore.
 
 # mmrm 0.3.12
 
