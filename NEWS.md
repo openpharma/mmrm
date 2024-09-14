@@ -6,6 +6,11 @@
 - Previously `car::Anova` will give incorrect results if an interaction term is included and the order of the covariate of interest is not the first categorical variable. This is fixed now.
 - Previously `car::Anova` will fail if the model does not contain intercept. This is fixed now.
 - Previously, `mmrm` will ignore contrasts defined for covariates in the input data set. This is fixed now.
+- When running with `TMB` package versions below 1.9.15, MMRM fit results are not completely reproducible. While this may not be relevant for most applications, because the numerical differences are very small, we now issue a warning to the user if this is the case. We advise users to upgrade their `TMB` package versions to 1.9.15 or higher to ensure reproducibility.
+
+### Miscellaneous
+
+- Upon fitting an MMRM, it is checked whether a not reproducible optimization feature of `TMB` is turned on. If so, a warning is issued to the user once per session.
 
 # mmrm 0.3.12
 

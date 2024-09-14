@@ -1,3 +1,6 @@
+# We need to disable instant optimization to run tests.
+TMB::config(optimize.instantly = 0, DLL = "mmrm")
+
 .tmb_formula <- FEV1 ~ RACE + us(AVISIT | USUBJID)
 .mmrm_tmb_example <- fit_mmrm(.tmb_formula, fev_data, weights = rep(1, nrow(fev_data)))
 get_mmrm_tmb <- function() {
