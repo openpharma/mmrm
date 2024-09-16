@@ -4,6 +4,10 @@
 #' @keywords internal
 #' @noRd
 .onLoad <- function(libname, pkgname) { # nolint
+  if (utils::packageVersion("TMB") < "1.9.15") {
+    warning("TMB version 1.9.15 or higher is required for reproducible model fits")
+  }
+
   register_on_load(
     "emmeans", c("1.6", NA),
     callback = function() emmeans::.emm_register("mmrm", pkgname),
