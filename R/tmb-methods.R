@@ -282,9 +282,7 @@ model.frame.mmrm_tmb <- function(formula, data, include = c("subject_var", "visi
 #'
 #' @return named list with four elements:
 #' - `"formula"`: the formula including the columns requested in the `include=` argument.
-#' - `"formula_full"`: the formula including all columns
 #' - `"data"`: a data frame including all columns needed in the formula.
-#' - `"is_full"`: a logical scalar indicating if the formula and
 #'   full formula are identical
 #' @keywords internal
 h_construct_model_frame_inputs <- function(formula,
