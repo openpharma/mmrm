@@ -281,6 +281,69 @@
     c("1" = 36.3635976796827, "2" = 39.9710497720302, "3" = 35.5027462365071, 
     "4" = 20.4837899973602)
 
+# model.matrix works with broom.helpers
+
+    structure(list(term = c("ARMCDPBO", "ARMCDTRT", "ARMCDTRT:AVISITVIS2", 
+    "ARMCDTRT:AVISITVIS3", "ARMCDTRT:AVISITVIS4", "AVISITVIS1", "AVISITVIS2", 
+    "AVISITVIS3", "AVISITVIS4", "RACEAsian", "RACEBlack or African American", 
+    "RACEWhite", "SEXMale", "SEXFemale"), variable = c("ARMCD", "ARMCD", 
+    "ARMCD:AVISIT", "ARMCD:AVISIT", "ARMCD:AVISIT", "AVISIT", "AVISIT", 
+    "AVISIT", "AVISIT", "RACE", "RACE", "RACE", "SEX", "SEX"), var_label = c(ARMCD = "ARMCD", 
+    ARMCD = "ARMCD", "ARMCD:AVISIT" = "ARMCD * AVISIT", "ARMCD:AVISIT" = "ARMCD * AVISIT", 
+    "ARMCD:AVISIT" = "ARMCD * AVISIT", AVISIT = "AVISIT", AVISIT = "AVISIT", 
+    AVISIT = "AVISIT", AVISIT = "AVISIT", RACE = "RACE", RACE = "RACE", 
+    RACE = "RACE", SEX = "SEX", SEX = "SEX"), var_class = c("factor", 
+    ARMCD = "factor", NA, NA, NA, "factor", AVISIT = "factor", AVISIT = "factor", 
+    AVISIT = "factor", "factor", RACE = "factor", RACE = "factor", 
+    "factor", SEX = "factor"), var_type = c("dichotomous", "dichotomous", 
+    "interaction", "interaction", "interaction", "categorical", "categorical", 
+    "categorical", "categorical", "categorical", "categorical", "categorical", 
+    "dichotomous", "dichotomous"), var_nlevels = c(2L, ARMCD = 2L, 
+    NA, NA, NA, 4L, AVISIT = 4L, AVISIT = 4L, AVISIT = 4L, 3L, RACE = 3L, 
+    RACE = 3L, 2L, SEX = 2L), contrasts = c("contr.treatment", "contr.treatment", 
+    NA, NA, NA, "contr.treatment", "contr.treatment", "contr.treatment", 
+    "contr.treatment", "contr.treatment", "contr.treatment", "contr.treatment", 
+    "contr.treatment", "contr.treatment"), contrasts_type = c("treatment", 
+    "treatment", NA, NA, NA, "treatment", "treatment", "treatment", 
+    "treatment", "treatment", "treatment", "treatment", "treatment", 
+    "treatment"), reference_row = c(TRUE, FALSE, NA, NA, NA, TRUE, 
+    FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, TRUE, FALSE), label = c(ARMCDPBO = "PBO", 
+    ARMCDTRT = "TRT", "ARMCDTRT:AVISITVIS2" = "TRT * VIS2", "ARMCDTRT:AVISITVIS3" = "TRT * VIS3", 
+    "ARMCDTRT:AVISITVIS4" = "TRT * VIS4", AVISITVIS1 = "VIS1", AVISITVIS2 = "VIS2", 
+    AVISITVIS3 = "VIS3", AVISITVIS4 = "VIS4", RACEAsian = "Asian", 
+    "RACEBlack or African American" = "Black or African American", 
+    RACEWhite = "White", SEXMale = "Male", SEXFemale = "Female"), 
+        n_obs = c(ARMCDPBO = 275, ARMCDTRT = 262, "ARMCDTRT:AVISITVIS2" = 71, 
+        "ARMCDTRT:AVISITVIS3" = 58, "ARMCDTRT:AVISITVIS4" = 67, AVISITVIS1 = 134, 
+        AVISITVIS2 = 140, AVISITVIS3 = 129, AVISITVIS4 = 134, RACEAsian = 200, 
+        "RACEBlack or African American" = 196, RACEWhite = 141, SEXMale = 249, 
+        SEXFemale = 288), estimate = c(0, 3.77423004340742, -0.0419262502437297, 
+        -0.693685370012233, 0.624227032468209, 0, 4.83958845465698, 
+        10.3421128832467, 15.0538982626895, 0, 1.5304997707921, 5.64356534807883, 
+        0, 0.326061922040439), std.error = c(NA, 1.07414697568452, 
+        1.12931807081669, 1.18764553104087, 1.85085235375357, NA, 
+        0.80171672401867, 0.822693114357083, 1.31281331020802, NA, 
+        0.624475361804821, 0.665609345806726, NA, 0.531950363284883
+        ), df = c(NA, 145.551961966958, 138.564258914368, 158.165143267807, 
+        129.720430941981, NA, 143.875836395446, 155.557518226365, 
+        138.470779333042, NA, 168.665718047674, 157.138215602096, 
+        NA, 166.132390274815), statistic = c(NA, 3.51369982771885, 
+        -0.0371252805805274, -0.584084520070799, 0.33726462902471, 
+        NA, 6.0365317445271, 12.5710458769657, 11.4668994788788, 
+        NA, 2.45085693432122, 8.47879523271832, NA, 0.612955539736738
+        ), p.value = c(NA, 0.000589148053065131, 0.970438546955262, 
+        0.559995557684396, 0.73646251038525, NA, 1.27404785749447e-08, 
+        1.86285590944021e-25, 8.1137710308944e-22, NA, 0.0152721756140462, 
+        1.56486934310207e-14, NA, 0.540743930456226), conf.low = c(NA, 
+        1.65128972597226, -2.27485044302086, -3.03937574240459, -3.03753713573025, 
+        NA, 3.25492357986696, 8.71702131719472, 12.4581459150949, 
+        NA, 0.297705059652136, 4.32886996283646, NA, -0.724192262074581
+        ), conf.high = c(NA, 5.89717036084258, 2.1909979425334, 1.65200500238012, 
+        4.28599120066667, NA, 6.424253329447, 11.9672044492986, 17.649650610284, 
+        NA, 2.76329448193206, 6.95826073332119, NA, 1.37631610615546
+        )), row.names = c(NA, -14L), class = c("broom.helpers", "tbl_df", 
+    "tbl", "data.frame"), exponentiate = FALSE, conf.level = 0.95, N_obs = 537, coefficients_type = "generic", coefficients_label = "Beta")
+
 # print.mmrm_tmb works as expected
 
     mmrm fit

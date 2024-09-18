@@ -314,6 +314,18 @@ h_warn_na_action <- function() {
   }
 }
 
+#' Obtain na.action as Function
+#' @keywords internal
+h_get_na_action <- function(na_action) {
+  if (is.function(na_action) & identical(formalArgs(na_action), c("object", "..."))) {
+    return(na_action)
+  }
+  if (is.character(na_action) && length(na_action) == 1L) {
+    assert_subset(na_action, c("na.omit", "na.exclude", "na.fail", "na.pass", "na.exclude"))
+    return(get(na_action, mode = "function", pos = "package:stats"))
+  }
+}
+
 #' Validate mmrm Formula
 #' @param formula (`formula`)\cr to check.
 #'

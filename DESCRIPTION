@@ -58,6 +58,7 @@ Imports:
     TMB (>= 1.9.1),
     utils
 Suggests:
+    broom.helpers,
     car (>= 3.1.2),
     cli,
     clubSandwich,

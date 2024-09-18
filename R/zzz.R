@@ -5,7 +5,7 @@
 #' @noRd
 .onLoad <- function(libname, pkgname) { # nolint
   if (utils::packageVersion("TMB") < "1.9.15") {
-    warning("TMB version 1.9.15 or higher is required for reproducible model fits")
+    warning("TMB version 1.9.15 or higher is required for reproducible model fits", .call = FALSE)
   }
 
   register_on_load(

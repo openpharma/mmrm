@@ -80,9 +80,36 @@ predict.mmrm_tmb <- function(object,
   assert_flag(conditional)
   interval <- match.arg(interval)
   formula_parts <- object$formula_parts
-  if (!conditional) {
-    formula_parts$full_formula[[2]] <- NULL
-    formula_parts$model_formula[[2]] <- NULL
+  if (any(object$tmb_data$x_cols_aliased)) {
+    warning(
+      "In fitted object there are co-linear variables and therefore dropped terms, ",
+      "and this could lead to incorrect prediction on new data."
+    )
+  }
+  colnames <- names(Filter(isFALSE, object$tmb_data$x_cols_aliased))
+  if (!conditional && interval %in% c("none", "confidence")) {
+    # model.matrix always return a complete matrix (no NA allowed)
+    x_mat <- model.matrix(object, data = newdata, drop_response = TRUE)[, colnames, drop = FALSE]
+    x_mat_full <- matrix(NA, nrow = nrow(newdata), ncol = ncol(x_mat), dimnames = list(row.names(newdata), colnames(x_mat)))
+    x_mat_full[row.names(x_mat), ] <- x_mat
+    predictions <- (x_mat_full %*% component(object, "beta_est"))[, 1]
+    predictions_raw <- setNames(rep(NA_real_, nrow(newdata)), row.names(newdata))
+    predictions_raw[names(predictions)] <- predictions
+    if (identical(interval, "none")) {
+      return(predictions_raw)
+    }
+    se <- switch(
+      interval,
+      "confidence" = diag(x_mat_full %*% component(object, "beta_vcov") %*% t(x_mat_full)), # can be NA if there are aliased cols
+      "none" = NA_real_
+    )
+    res <- cbind(fit = predictions, se = se, lwr = predictions - stats::qnorm(1 - level / 2) * se, upr = predictions + stats::qnorm(1 - level / 2) * se)
+    if (!se.fit) {
+      res <- res[, setdiff(colnames(res), "se")]
+    }
+    res_raw <- matrix(NA_real_, ncol = ncol(res), nrow = nrow(newdata), dimnames = list(row.names(newdata), colnames(res)))
+    res_raw[row.names(res), ] <- res
+    return(res_raw)
   }
   tmb_data <- h_mmrm_tmb_data(
     formula_parts, newdata,
@@ -95,13 +122,6 @@ predict.mmrm_tmb <- function(object,
     xlev = component(object, "xlev"),
     contrasts = component(object, "contrasts")
   )
-  if (any(object$tmb_data$x_cols_aliased)) {
-    warning(
-      "In fitted object there are co-linear variables and therefore dropped terms, ",
-      "and this could lead to incorrect prediction on new data."
-    )
-  }
-  colnames <- names(Filter(isFALSE, object$tmb_data$x_cols_aliased))
   tmb_data$x_matrix <- tmb_data$x_matrix[, colnames, drop = FALSE]
   predictions <- h_get_prediction(
     tmb_data, object$theta_est, object$beta_est, component(object, "beta_vcov")
@@ -223,29 +243,24 @@ model.frame.mmrm_tmb <- function(formula, data, include = c("subject_var", "visi
       include = include,
       full = full
     )
-
-  # Construct data frame to return to users.
-  ret <-
-    stats::model.frame(
-      formula = lst_formula_and_data$formula,
-      data = lst_formula_and_data$data,
-      na.action = na.action,
-      xlev = stats::.getXlevels(terms(formula), formula$tmb_data$full_frame)
-    )
-  # We need the full formula obs, so recalculating if not already full.
-  ret_full <- if (lst_formula_and_data$is_full) {
+  # Only if include is default (full) and also data is missing, and also na.action is na.omit we will
+  # use the model frame from the tmb_data.
+  if (missing(data) && setequal(include, c("subject_var", "visit_var", "group_var", "response_var")) && (identical(na.action, "na.omit") || identical(na.action, na.omit))) {
+    ret <- formula$tmb_data$full_frame
+    # Remove weights column.
+    ret[, "(weights)"] <- NULL
     ret
   } else {
-    stats::model.frame(
-      formula = lst_formula_and_data$formula_full,
-      data = lst_formula_and_data$data,
-      na.action = na.action,
-      xlev = stats::.getXlevels(terms(formula), formula$tmb_data$full_frame)
-    )
+    # Construct data frame to return to users.
+    ret <-
+      stats::model.frame(
+        formula = lst_formula_and_data$formula,
+        data = h_get_na_action(na.action)(lst_formula_and_data$data),
+        na.action = na.action,
+        xlev = stats::.getXlevels(terms(formula), formula$tmb_data$full_frame)
+      )
   }
-
-  # Lastly, subsetting returned data frame to only include obs utilized in model.
-  ret[rownames(ret) %in% rownames(ret_full), , drop = FALSE]
+  ret
 }
 
 
@@ -301,14 +316,12 @@ h_construct_model_frame_inputs <- function(formula,
   # Update data based on the columns in the full formula return.
   all_vars <- all.vars(new_formula_full)
   assert_names(colnames(data), must.include = all_vars)
-  full_frame <- formula$tmb_data$full_frame
+  data <- data[, all_vars, drop = FALSE]
 
-  # Return list with updated formula, full formula, data, and full formula flag.
+  # Return list with updated formula, data.
   list(
     formula = new_formula,
-    formula_full = new_formula_full,
-    data = data,
-    is_full = setequal(include, include_choice)
+    data = data
   )
 }
 
@@ -318,34 +331,17 @@ h_construct_model_frame_inputs <- function(formula,
 #' @examples
 #' # Model matrix:
 #' model.matrix(object)
-model.matrix.mmrm_tmb <- function(object, data, include = NULL, ...) { # nolint
-  # Construct updated formula and data arguments.
-  assert_subset(include, c("subject_var", "visit_var", "group_var"))
-  lst_formula_and_data <-
-    h_construct_model_frame_inputs(formula = object, data = data, include = include)
-
-  # Construct matrix to return to users.
-  ret <-
-    stats::model.matrix(
-      object = lst_formula_and_data$formula,
-      data = lst_formula_and_data$data,
-      contrasts.arg = attr(object$tmb_data$x_matrix, "contrasts"),
-      ...
-    )
-
-  # We need the full formula obs, so recalculating if not already full.
-  ret_full <- if (lst_formula_and_data$is_full) {
-    ret
-  } else {
-    stats::model.matrix(
-      object = lst_formula_and_data$formula_full,
-      data = lst_formula_and_data$data,
-      ...
-    )
+model.matrix.mmrm_tmb <- function(object, data, drop_response = FALSE, ...) { # nolint
+  # Always return the utilized model matrix if data not provided.
+  if (missing(data)) {
+    return(object$tmb_data$x_matrix)
   }
-
-  # Subset data frame to only include obs utilized in model.
-  ret[rownames(ret) %in% rownames(ret_full), , drop = FALSE]
+  model.matrix(
+    h_add_terms(object$formula_parts$model_formula, NULL, drop_response = drop_response),
+    data = data,
+    contrasts.arg = attr(object$tmb_data$x_matrix, "contrasts"),
+    ...
+  )
 }
 
 #' @describeIn mmrm_tmb_methods obtains the terms object.

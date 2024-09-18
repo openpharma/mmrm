@@ -32,7 +32,7 @@
   interval = c("none", "confidence", "prediction"),
   level = 0.95,
   nsim = 1000L,
-  conditional = TRUE,
+  conditional = FALSE,
   ...
 )
 
@@ -45,7 +45,7 @@
   ...
 )
 
-\method{model.matrix}{mmrm_tmb}(object, data, include = NULL, ...)
+\method{model.matrix}{mmrm_tmb}(object, data, drop_response = FALSE, ...)
 
 \method{terms}{mmrm_tmb}(x, include = "response_var", ...)
 

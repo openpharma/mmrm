@@ -103,7 +103,7 @@ test_that("predict works for only fit values without response", {
   )
   fev_data_no_y <- fev_data
   fev_data_no_y$FEV1 <- NA_real_
-  y_pred <- expect_silent(predict(object, fev_data_no_y))
+  y_pred <- expect_silent(predict(object, fev_data_no_y, conditional = TRUE))
   y_hat <- as.vector(m %*% object$beta_est)
   expect_equal(y_pred, y_hat, ignore_attr = TRUE)
 })
@@ -157,7 +157,7 @@ test_that("predict will return on correct order", {
 })
 
 test_that("predict will return NA if data contains NA in covariates", {
-  new_order <- sample(seq_len(nrow(fev_data)))
+  new_order <- withr::with_seed(12345, sample(seq_len(nrow(fev_data))))
   fit <- get_mmrm()
   fev_data2 <- fev_data
   fev_data2$FEV1 <- NA_real_
@@ -165,8 +165,8 @@ test_that("predict will return NA if data contains NA in covariates", {
   predicted <- predict(fit, newdata = fev_data2[new_order, ], se.fit = TRUE, interval = "confidence")
 
   m <- stats::model.matrix(
-    fit$formula_parts$model_formula,
-    model.frame(fit, data = fev_data2[new_order, ], include = "response_var", na.action = "na.pass")
+    ~ RACE + SEX + ARMCD * AVISIT,
+    model.frame(fit, data = fev_data2[new_order, ], include = NULL, drop_response = TRUE, na.action = "na.pass")
   )
 
   expect_identical(
@@ -183,7 +183,7 @@ test_that("predict will return NA if data contains NA in covariates", {
 
 test_that("predict can give unconditional predictions", {
   fit <- get_mmrm()
-  expect_silent(p <- predict(fit, newdata = fev_data, conditional = FALSE))
+  expect_silent(p <- predict(fit, newdata = fev_data))
   m <- stats::model.matrix(
     fit$formula_parts$model_formula,
     model.frame(fit, data = fev_data, include = "response_var", na.action = "na.pass")
@@ -203,7 +203,7 @@ test_that("predict can change based on coefficients", {
     fit$formula_parts$model_formula,
     model.frame(fit, data = fev_data, include = "response_var", na.action = "na.pass")
   )
-  expect_silent(p <- predict(fit, newdata = fev_data, conditional = FALSE))
+  expect_silent(p <- predict(fit, newdata = fev_data))
   expect_equal(
     p,
     (m %*% new_beta)[, 1],
@@ -213,7 +213,7 @@ test_that("predict can change based on coefficients", {
 
 test_that("predict can work if response is an expression", {
   fit <- mmrm(log(FEV1) + FEV1 ~ ARMCD * AVISIT + ar1(AVISIT | USUBJID), data = fev_data)
-  expect_silent(p <- predict(fit, newdata = fev_data, conditional = FALSE))
+  expect_silent(p <- predict(fit, newdata = fev_data))
 })
 
 test_that("predict works if contrast provided", {
@@ -386,11 +386,6 @@ test_that("h_construct_model_frame_inputs works with all columns", {
     FEV1 ~ RACE + USUBJID + AVISIT,
     ignore_attr = TRUE
   )
-  expect_equal(
-    result$formula_full,
-    FEV1 ~ RACE + USUBJID + AVISIT,
-    ignore_attr = TRUE
-  )
 })
 
 test_that("h_construct_model_frame_inputs works with response var selected", {
@@ -408,11 +403,6 @@ test_that("h_construct_model_frame_inputs works with response var selected", {
     FEV1 ~ RACE,
     ignore_attr = TRUE
   )
-  expect_equal(
-    result$formula_full,
-    FEV1 ~ RACE + USUBJID + AVISIT,
-    ignore_attr = TRUE
-  )
 })
 
 test_that("h_construct_model_frame_inputs works with include=NULL", {
@@ -428,11 +418,6 @@ test_that("h_construct_model_frame_inputs works with include=NULL", {
   expect_equal(
     result$formula,
     ~RACE,
-    ignore_attr = TRUE
-  )
-  expect_equal(
-    result$formula_full,
-    FEV1 ~ RACE + USUBJID + AVISIT,
     ignore_attr = TRUE
   )
 })
@@ -460,7 +445,7 @@ test_that("model.frame returns full model frame if requested", {
   object <- get_mmrm_tmb()
   result <- expect_silent(model.frame(object, include = c("response_var", "visit_var", "subject_var", "group_var")))
   expect_data_frame(result, nrows = length(object$tmb_data$y_vector))
-  expect_named(result, c("FEV1", "RACE", "AVISIT", "USUBJID"))
+  expect_named(result, c("FEV1", "RACE", "USUBJID", "AVISIT"))
   expect_class(attr(result, "terms"), "terms")
 })
 
@@ -588,34 +573,13 @@ test_that("model.matrix works as expected with defaults", {
   )
 })
 
-test_that("model.matrix works as expected with includes", {
-  object <- get_mmrm_tmb()
-  result <- expect_silent(model.matrix(object, include = c("visit_var")))
-  expect_matrix(result, nrows = length(object$tmb_data$y_vector))
-  expect_equal(
-    colnames(result),
-    c("(Intercept)", "RACEBlack or African American", "RACEWhite", "AVISITVIS2", "AVISITVIS3", "AVISITVIS4")
-  )
-})
-
-test_that("model.matrix returns full model frame if requested", {
-  object <- get_mmrm_tmb()
-  result <- expect_silent(model.matrix(object, include = c("visit_var", "subject_var", "group_var")))
-  expect_matrix(result, nrows = length(object$tmb_data$y_vector))
-  # Expecting many columns for covariates and dummy cols for USUBJID.
-  expect_equal(
-    length(colnames(result)),
-    205L
-  )
-})
-
 test_that("model.matrix works if variable transformed", {
   fit1 <- get_mmrm_transformed()
-  result <- expect_silent(model.matrix(fit1, include = c("visit_var")))
+  result <- expect_silent(model.matrix(fit1))
   expect_matrix(result, nrows = length(fit1$tmb_data$y_vector))
   expect_equal(
     colnames(result),
-    c("(Intercept)", "log(FEV1_BL)", "AVISITVIS2", "AVISITVIS3", "AVISITVIS4")
+    c("(Intercept)", "log(FEV1_BL)")
   )
 })
 
@@ -623,27 +587,32 @@ test_that("model.matrix works for new data", {
   fit1 <- get_mmrm_transformed()
   result <- expect_silent(model.matrix(
     fit1,
-    data = fev_data[complete.cases(fev_data), ][1:20, ],
-    include = c("visit_var")
+    data = fev_data[complete.cases(fev_data), ][1:20, ]
   ))
   expect_matrix(result, nrows = 20L)
   expect_equal(
     colnames(result),
-    c("(Intercept)", "log(FEV1_BL)", "AVISITVIS2", "AVISITVIS3", "AVISITVIS4")
+    c("(Intercept)", "log(FEV1_BL)")
   )
 })
 
 test_that("model.matrix include all specified variables", {
   fit1 <- get_mmrm_group()
   out_frame <- expect_silent(
-    model.matrix(fit1, data = fev_data, include = "group_var")
+    model.matrix(fit1, data = fev_data)
   )
   expect_identical(colnames(out_frame), c("(Intercept)", "ARMCDTRT")) # formula already contains "ARMCD"
 
   out_frame <- expect_silent(
-    model.matrix(fit1, data = fev_data, include = "visit_var")
+    model.matrix(fit1, data = fev_data)
   )
-  expect_identical(colnames(out_frame), c("(Intercept)", "ARMCDTRT", "AVISITVIS2", "AVISITVIS3", "AVISITVIS4"))
+  expect_identical(colnames(out_frame), c("(Intercept)", "ARMCDTRT"))
+})
+
+test_that("model.matrix works with broom.helpers", {
+  fit <- get_mmrm()
+  res <- expect_silent(broom.helpers::tidy_plus_plus(fit))
+  expect_snapshot_tolerance(res)
 })
 
 # terms ----
