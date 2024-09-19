@@ -95,6 +95,20 @@ test_that("predict works for old patient, new visit", {
   expect_silent(predict(fit, fev_data[c(1:4), ]))
 })
 
+test_that("predict works for data with duplicated id", {
+  fit <- get_mmrm()
+  res <- expect_silent(predict(fit, fev_data[c(1:4, 1:4), ]))
+  expect_equal(res[1:4], res[5:8], ignore_attr = TRUE)
+})
+
+test_that("predict works for data different factor levels", {
+  fit <- get_mmrm()
+  data2 <- fev_data[1:3, ]
+  data2$AVISIT <- droplevels(data2$AVISIT)
+  res <- expect_silent(predict(fit, newdata = data2))
+  expect_snapshot_tolerance(res)
+})
+
 test_that("predict works for only fit values without response", {
   object <- get_mmrm()
   m <- stats::model.matrix(

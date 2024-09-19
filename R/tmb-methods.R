@@ -339,6 +339,7 @@ model.matrix.mmrm_tmb <- function(object, data, use_response = TRUE, ...) { # no
     h_add_terms(object$formula_parts$model_formula, NULL, drop_response = !use_response),
     data = data,
     contrasts.arg = attr(object$tmb_data$x_matrix, "contrasts"),
+    xlev = component(object, "xlev"),
     ...
   )
 }
