@@ -89,7 +89,7 @@ predict.mmrm_tmb <- function(object,
   colnames <- names(Filter(isFALSE, object$tmb_data$x_cols_aliased))
   if (!conditional && interval %in% c("none", "confidence")) {
     # model.matrix always return a complete matrix (no NA allowed)
-    x_mat <- model.matrix(object, data = newdata, use_response = FALSE)[, colnames, drop = FALSE]
+    x_mat <- stats::model.matrix(object, data = newdata, use_response = FALSE)[, colnames, drop = FALSE]
     x_mat_full <- matrix(
       NA,
       nrow = nrow(newdata), ncol = ncol(x_mat),
@@ -256,9 +256,8 @@ model.frame.mmrm_tmb <- function(formula, data, include = c("subject_var", "visi
     )
   # Only if include is default (full) and also data is missing, and also na.action is na.omit we will
   # use the model frame from the tmb_data.
-  if (missing(data) &&
-    setequal(include, c("subject_var", "visit_var", "group_var", "response_var")) &&
-    (identical(na.action, "na.omit") || identical(na.action, stats::na.omit))) {
+  include_choice <- c("subject_var", "visit_var", "group_var", "response_var")
+  if (missing(data) && setequal(include, include_choice) && identical(h_get_na_action(na.action), stats::na.omit)) {
     ret <- formula$tmb_data$full_frame
     # Remove weights column.
     ret[, "(weights)"] <- NULL

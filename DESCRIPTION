@@ -82,6 +82,7 @@ Suggests:
     scales,
     testthat (>= 3.0.0),
     tidymodels,
+    withr,
     xml2
 LinkingTo:
     Rcpp,
