@@ -90,23 +90,35 @@ predict.mmrm_tmb <- function(object,
   if (!conditional && interval %in% c("none", "confidence")) {
     # model.matrix always return a complete matrix (no NA allowed)
     x_mat <- model.matrix(object, data = newdata, use_response = FALSE)[, colnames, drop = FALSE]
-    x_mat_full <- matrix(NA, nrow = nrow(newdata), ncol = ncol(x_mat), dimnames = list(row.names(newdata), colnames(x_mat)))
+    x_mat_full <- matrix(
+      NA,
+      nrow = nrow(newdata), ncol = ncol(x_mat),
+      dimnames = list(row.names(newdata), colnames(x_mat))
+    )
     x_mat_full[row.names(x_mat), ] <- x_mat
     predictions <- (x_mat_full %*% component(object, "beta_est"))[, 1]
-    predictions_raw <- setNames(rep(NA_real_, nrow(newdata)), row.names(newdata))
+    predictions_raw <- stats::setNames(rep(NA_real_, nrow(newdata)), row.names(newdata))
     predictions_raw[names(predictions)] <- predictions
     if (identical(interval, "none")) {
       return(predictions_raw)
     }
     se <- switch(interval,
-      "confidence" = diag(x_mat_full %*% component(object, "beta_vcov") %*% t(x_mat_full)), # can be NA if there are aliased cols
+      # can be NA if there are aliased cols
+      "confidence" = diag(x_mat_full %*% component(object, "beta_vcov") %*% t(x_mat_full)),
       "none" = NA_real_
     )
-    res <- cbind(fit = predictions, se = se, lwr = predictions - stats::qnorm(1 - level / 2) * se, upr = predictions + stats::qnorm(1 - level / 2) * se)
+    res <- cbind(
+      fit = predictions, se = se,
+      lwr = predictions - stats::qnorm(1 - level / 2) * se, upr = predictions + stats::qnorm(1 - level / 2) * se
+    )
     if (!se.fit) {
       res <- res[, setdiff(colnames(res), "se")]
     }
-    res_raw <- matrix(NA_real_, ncol = ncol(res), nrow = nrow(newdata), dimnames = list(row.names(newdata), colnames(res)))
+    res_raw <- matrix(
+      NA_real_,
+      ncol = ncol(res), nrow = nrow(newdata),
+      dimnames = list(row.names(newdata), colnames(res))
+    )
     res_raw[row.names(res), ] <- res
     return(res_raw)
   }
@@ -244,7 +256,9 @@ model.frame.mmrm_tmb <- function(formula, data, include = c("subject_var", "visi
     )
   # Only if include is default (full) and also data is missing, and also na.action is na.omit we will
   # use the model frame from the tmb_data.
-  if (missing(data) && setequal(include, c("subject_var", "visit_var", "group_var", "response_var")) && (identical(na.action, "na.omit") || identical(na.action, na.omit))) {
+  if (missing(data) &&
+    setequal(include, c("subject_var", "visit_var", "group_var", "response_var")) &&
+    (identical(na.action, "na.omit") || identical(na.action, stats::na.omit))) {
     ret <- formula$tmb_data$full_frame
     # Remove weights column.
     ret[, "(weights)"] <- NULL
@@ -334,7 +348,7 @@ model.matrix.mmrm_tmb <- function(object, data, use_response = TRUE, ...) { # no
   if (missing(data)) {
     return(object$tmb_data$x_matrix)
   }
-  model.matrix(
+  stats::model.matrix(
     h_add_terms(object$formula_parts$model_formula, NULL, drop_response = !use_response),
     data = data,
     contrasts.arg = attr(object$tmb_data$x_matrix, "contrasts"),
