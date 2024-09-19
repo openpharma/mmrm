@@ -45,7 +45,7 @@
   ...
 )
 
-\method{model.matrix}{mmrm_tmb}(object, data, drop_response = FALSE, ...)
+\method{model.matrix}{mmrm_tmb}(object, data, use_response = TRUE, ...)
 
 \method{terms}{mmrm_tmb}(x, include = "response_var", ...)
 
@@ -107,6 +107,8 @@ Must be \code{NULL} or one or more of \code{c("subject_var", "visit_var", "group
 \item{full}{(\code{flag})\cr indicator whether to return full model frame (deprecated).}
 
 \item{na.action}{(\code{string})\cr na action.}
+
+\item{use_response}{(\code{flag})\cr whether to use the response for complete rows.}
 
 \item{x}{(\code{mmrm_tmb})\cr same as \code{object}.}
 

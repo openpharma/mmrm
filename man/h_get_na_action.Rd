@@ -2,11 +2,11 @@
 % Please edit documentation in R/utils.R
 \name{h_get_na_action}
 \alias{h_get_na_action}
-\title{Obtain na.action as Function}
+\title{Obtain \code{na.action} as Function}
 \usage{
 h_get_na_action(na_action)
 }
 \description{
-Obtain na.action as Function
+Obtain \code{na.action} as Function
 }
 \keyword{internal}
