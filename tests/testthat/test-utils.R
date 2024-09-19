@@ -334,3 +334,21 @@ test_that("h_tmb_warn_optimization works as expected", {
   TMB::config(optimize.instantly = 0, DLL = "mmrm")
   expect_silent(h_tmb_warn_optimization())
 })
+
+# h_get_na_action ----
+
+test_that("h_get_na_action works for strings", {
+  expect_identical(h_get_na_action("na.fail"), stats::na.fail)
+  expect_identical(h_get_na_action("na.omit"), stats::na.omit)
+  expect_identical(h_get_na_action("na.exclude"), stats::na.exclude)
+  expect_identical(h_get_na_action("na.pass"), stats::na.pass)
+  expect_identical(h_get_na_action("na.contiguous"), stats::na.contiguous)
+})
+
+test_that("h_get_na_action works for functions", {
+  expect_identical(h_get_na_action(stats::na.fail), stats::na.fail)
+  expect_identical(h_get_na_action(stats::na.omit), stats::na.omit)
+  expect_identical(h_get_na_action(stats::na.exclude), stats::na.exclude)
+  expect_identical(h_get_na_action(stats::na.pass), stats::na.pass)
+  expect_identical(h_get_na_action(stats::na.contiguous), stats::na.contiguous)
+})

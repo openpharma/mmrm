@@ -609,7 +609,24 @@ test_that("model.matrix include all specified variables", {
   expect_identical(colnames(out_frame), c("(Intercept)", "ARMCDTRT"))
 })
 
+test_that("model.matrix works with use_response", {
+  fit <- get_mmrm()
+  data <- fev_data[1:4, c("FEV1", "RACE", "SEX", "ARMCD", "AVISIT")]
+  res <- expect_silent(model.matrix(fit, data = data, use_response = TRUE))
+  expect_identical(2L, nrow(res))
+  res <- expect_silent(model.matrix(fit, data = data, use_response = FALSE))
+  data2 <- data
+  data2$FEV1 <- NULL
+  expect_error(
+    model.matrix(fit, data = data2, use_response = TRUE),
+    "object 'FEV1' not found"
+  )
+  res <- expect_silent(model.matrix(fit, data = data2, use_response = FALSE))
+  expect_identical(4L, nrow(res))
+})
+
 test_that("model.matrix works with broom.helpers", {
+  skip_if_not_installed("broom.helpers")
   fit <- get_mmrm()
   res <- expect_silent(broom.helpers::tidy_plus_plus(fit))
   expect_snapshot_tolerance(res)

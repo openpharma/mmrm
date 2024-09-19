@@ -12,7 +12,7 @@
 ### Miscellaneous
 
 - Upon fitting an MMRM, it is checked whether a not reproducible optimization feature of `TMB` is turned on. If so, a warning is issued to the user once per session.
-- `model.matrix` is updated to ensure that the `NA` values are dropped.
+- `model.matrix` is updated to ensure that the `NA` values are dropped. Additionally, an argument `use_response` is added to decide whether records with `NA` values in the response should be dicarded.
 - `model.frame` is updated to ensure that the `na.action` works.
 
 # mmrm 0.3.12

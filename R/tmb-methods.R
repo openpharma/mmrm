@@ -89,7 +89,7 @@ predict.mmrm_tmb <- function(object,
   colnames <- names(Filter(isFALSE, object$tmb_data$x_cols_aliased))
   if (!conditional && interval %in% c("none", "confidence")) {
     # model.matrix always return a complete matrix (no NA allowed)
-    x_mat <- model.matrix(object, data = newdata, drop_response = TRUE)[, colnames, drop = FALSE]
+    x_mat <- model.matrix(object, data = newdata, use_response = FALSE)[, colnames, drop = FALSE]
     x_mat_full <- matrix(NA, nrow = nrow(newdata), ncol = ncol(x_mat), dimnames = list(row.names(newdata), colnames(x_mat)))
     x_mat_full[row.names(x_mat), ] <- x_mat
     predictions <- (x_mat_full %*% component(object, "beta_est"))[, 1]
@@ -325,17 +325,18 @@ h_construct_model_frame_inputs <- function(formula,
 
 #' @describeIn mmrm_tmb_methods obtains the model matrix.
 #' @exportS3Method
+#' @param use_response (`flag`)\cr whether to use the response for complete rows.
 #'
 #' @examples
 #' # Model matrix:
 #' model.matrix(object)
-model.matrix.mmrm_tmb <- function(object, data, drop_response = FALSE, ...) { # nolint
+model.matrix.mmrm_tmb <- function(object, data, use_response = TRUE, ...) { # nolint
   # Always return the utilized model matrix if data not provided.
   if (missing(data)) {
     return(object$tmb_data$x_matrix)
   }
   model.matrix(
-    h_add_terms(object$formula_parts$model_formula, NULL, drop_response = drop_response),
+    h_add_terms(object$formula_parts$model_formula, NULL, drop_response = !use_response),
     data = data,
     contrasts.arg = attr(object$tmb_data$x_matrix, "contrasts"),
     ...
