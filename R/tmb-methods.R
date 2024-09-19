@@ -98,8 +98,7 @@ predict.mmrm_tmb <- function(object,
     if (identical(interval, "none")) {
       return(predictions_raw)
     }
-    se <- switch(
-      interval,
+    se <- switch(interval,
       "confidence" = diag(x_mat_full %*% component(object, "beta_vcov") %*% t(x_mat_full)), # can be NA if there are aliased cols
       "none" = NA_real_
     )
