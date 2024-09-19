@@ -314,7 +314,7 @@ h_warn_na_action <- function() {
   }
 }
 
-#' Obtain na.action as Function
+#' Obtain `na.action` as Function
 #' @keywords internal
 h_get_na_action <- function(na_action) {
   if (is.function(na_action) & identical(formalArgs(na_action), c("object", "..."))) {
