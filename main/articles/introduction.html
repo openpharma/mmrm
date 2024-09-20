@@ -69,25 +69,6 @@
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
 <li class="nav-item dropdown">
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.12">v0.3.12</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.11">v0.3.11</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.10">v0.3.10</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.7">v0.3.7</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.6">v0.3.6</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.5">v0.3.5</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.4">v0.3.4</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.3">v0.3.3</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.2">v0.3.2</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.1">v0.3.1</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.0">v0.3.0</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.2.2">v0.2.2</a> </div></li>
-<!-- end dropdown for versions -->
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-reports" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Reports</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-reports">
 <li><a class="dropdown-item" href="../coverage-report/">Coverage report</a></li>
@@ -923,16 +904,16 @@ merged <code>tibble</code> of the data, fitted values and residuals:</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 537 × 8</span></span></span>
 <span><span class="co">#&gt;    .rownames  FEV1 RACE                     ARMCD AVISIT USUBJID .fitted  .resid</span></span>
 <span><span class="co">#&gt;        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>         2  40.0 Black or African Americ… TRT   VIS2   PT1        40.0  -<span style="color: #BB0000;">1.09</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>         4  20.5 Black or African Americ… TRT   VIS4   PT1        20.5 -<span style="color: #BB0000;">31.4</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>         6  31.5 Asian                    PBO   VIS2   PT2        31.5  -<span style="color: #BB0000;">4.34</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>         7  36.9 Asian                    PBO   VIS3   PT2        36.9  -<span style="color: #BB0000;">4.42</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>         8  48.8 Asian                    PBO   VIS4   PT2        48.8   2.79 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>        10  36.0 Black or African Americ… PBO   VIS2   PT3        36.0  -<span style="color: #BB0000;">1.31</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>        12  37.2 Black or African Americ… PBO   VIS4   PT3        37.2 -<span style="color: #BB0000;">10.4</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>        13  33.9 Asian                    TRT   VIS1   PT4        33.9  -<span style="color: #BB0000;">0.851</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>        14  33.7 Asian                    TRT   VIS2   PT4        33.7  -<span style="color: #BB0000;">5.81</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>        16  54.5 Asian                    TRT   VIS4   PT4        54.5   4.02 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>         2  40.0 Black or African Americ… TRT   VIS2   PT1        41.1  -<span style="color: #BB0000;">1.09</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>         4  20.5 Black or African Americ… TRT   VIS4   PT1        51.9 -<span style="color: #BB0000;">31.4</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>         6  31.5 Asian                    PBO   VIS2   PT2        35.8  -<span style="color: #BB0000;">4.34</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>         7  36.9 Asian                    PBO   VIS3   PT2        41.3  -<span style="color: #BB0000;">4.42</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>         8  48.8 Asian                    PBO   VIS4   PT2        46.0   2.79 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>        10  36.0 Black or African Americ… PBO   VIS2   PT3        37.3  -<span style="color: #BB0000;">1.31</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>        12  37.2 Black or African Americ… PBO   VIS4   PT3        47.5 -<span style="color: #BB0000;">10.4</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>        13  33.9 Asian                    TRT   VIS1   PT4        34.7  -<span style="color: #BB0000;">0.851</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>        14  33.7 Asian                    TRT   VIS2   PT4        39.6  -<span style="color: #BB0000;">5.81</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>        16  54.5 Asian                    TRT   VIS4   PT4        50.4   4.02 </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 527 more rows</span></span></span></code></pre></div>
 <p>Also here we can specify details for the prediction intervals and
 type of residuals via the arguments:</p>
@@ -942,16 +923,16 @@ type of residuals via the arguments:</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 537 × 11</span></span></span>
 <span><span class="co">#&gt;    .rownames  FEV1 RACE       ARMCD AVISIT USUBJID .fitted .lower .upper .se.fit</span></span>
 <span><span class="co">#&gt;        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>         2  40.0 Black or … TRT   VIS2   PT1        40.0   40.0   40.0       0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>         4  20.5 Black or … TRT   VIS4   PT1        20.5   20.5   20.5       0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>         6  31.5 Asian      PBO   VIS2   PT2        31.5   31.5   31.5       0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>         7  36.9 Asian      PBO   VIS3   PT2        36.9   36.9   36.9       0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>         8  48.8 Asian      PBO   VIS4   PT2        48.8   48.8   48.8       0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>        10  36.0 Black or … PBO   VIS2   PT3        36.0   36.0   36.0       0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>        12  37.2 Black or … PBO   VIS4   PT3        37.2   37.2   37.2       0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>        13  33.9 Asian      TRT   VIS1   PT4        33.9   33.9   33.9       0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>        14  33.7 Asian      TRT   VIS2   PT4        33.7   33.7   33.7       0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>        16  54.5 Asian      TRT   VIS4   PT4        54.5   54.5   54.5       0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>         2  40.0 Black or … TRT   VIS2   PT1        41.1   41.0   41.1   0.515</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>         4  20.5 Black or … TRT   VIS4   PT1        51.9   51.8   52.0   1.55 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>         6  31.5 Asian      PBO   VIS2   PT2        35.8   35.8   35.8   0.486</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>         7  36.9 Asian      PBO   VIS3   PT2        41.3   41.3   41.3   0.325</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>         8  48.8 Asian      PBO   VIS4   PT2        46.0   45.9   46.1   1.53 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>        10  36.0 Black or … PBO   VIS2   PT3        37.3   37.3   37.3   0.462</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>        12  37.2 Black or … PBO   VIS4   PT3        47.5   47.4   47.6   1.51 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>        13  33.9 Asian      TRT   VIS1   PT4        34.7   34.7   34.8   0.709</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>        14  33.7 Asian      TRT   VIS2   PT4        39.6   39.5   39.6   0.468</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>        16  54.5 Asian      TRT   VIS4   PT4        50.4   50.3   50.5   1.55 </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 527 more rows</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1 more variable: .resid &lt;dbl&gt;</span></span></span></code></pre></div>
 </div>
@@ -1349,16 +1330,16 @@ the <code>set_engine()</code> call:</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 800 × 1</span></span></span>
 <span><span class="co">#&gt;    .pred</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>  32.5</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>  40.0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>  45.7</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>  20.5</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>  28.0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>  31.5</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>  36.9</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>  48.8</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>  30.7</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>  36.0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>  36.2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>  41.1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>  45.9</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>  51.9</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>  31.0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>  35.8</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>  41.3</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>  46.0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>  32.5</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>  37.3</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 790 more rows</span></span></span></code></pre></div>
 <p>Note that we need to explicitly pass <code>new_data</code> because
 the method definition does not allow to default it to the data set we
@@ -2189,16 +2170,16 @@ predicted values to a new data set:</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 800 × 4</span></span></span>
 <span><span class="co">#&gt;    USUBJID AVISIT .resid .pred</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> PT1     VIS1       <span style="color: #BB0000;">NA</span>  32.5</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> PT1     VIS2        0  40.0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> PT1     VIS3       <span style="color: #BB0000;">NA</span>  45.7</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> PT1     VIS4        0  20.5</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> PT2     VIS1       <span style="color: #BB0000;">NA</span>  28.0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> PT2     VIS2        0  31.5</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> PT2     VIS3        0  36.9</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> PT2     VIS4        0  48.8</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> PT3     VIS1       <span style="color: #BB0000;">NA</span>  30.7</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> PT3     VIS2        0  36.0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> PT1     VIS1    <span style="color: #BB0000;">NA</span>     36.2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> PT1     VIS2    -<span style="color: #BB0000;">1.09</span>  41.1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> PT1     VIS3    <span style="color: #BB0000;">NA</span>     45.9</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> PT1     VIS4   -<span style="color: #BB0000;">31.4</span>   51.9</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> PT2     VIS1    <span style="color: #BB0000;">NA</span>     31.0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> PT2     VIS2    -<span style="color: #BB0000;">4.34</span>  35.8</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> PT2     VIS3    -<span style="color: #BB0000;">4.42</span>  41.3</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> PT2     VIS4     2.79  46.0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> PT3     VIS1    <span style="color: #BB0000;">NA</span>     32.5</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> PT3     VIS2    -<span style="color: #BB0000;">1.31</span>  37.3</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 790 more rows</span></span></span></code></pre></div>
 <p>Note that here we cannot customize the <code>predict</code> options
 as this is currently not supported by the <code><a href="https://generics.r-lib.org/reference/augment.html" class="external-link">augment()</a></code> method

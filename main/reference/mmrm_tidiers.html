@@ -56,25 +56,6 @@ summary."><meta property="og:image" content="https://openpharma.github.io/mmrm/l
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
 <li class="nav-item dropdown">
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.12">v0.3.12</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.11">v0.3.11</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.10">v0.3.10</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.7">v0.3.7</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.6">v0.3.6</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.5">v0.3.5</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.4">v0.3.4</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.3">v0.3.3</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.2">v0.3.2</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.1">v0.3.1</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.0">v0.3.0</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.2.2">v0.2.2</a> </div></li>
-<!-- end dropdown for versions -->
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-reports" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Reports</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-reports"><li><a class="dropdown-item" href="../coverage-report/">Coverage report</a></li>
     <li><a class="dropdown-item" href="../unit-test-report/">Unit test report</a></li>
@@ -216,47 +197,47 @@ summary.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 537 × 9</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    .rownames  FEV1 RACE               SEX   ARMCD AVISIT USUBJID .fitted  .resid</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>         2  40.0 Black or African … Fema… TRT   VIS2   PT1        40.0  -<span style="color: #BB0000;">1.23</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>         4  20.5 Black or African … Fema… TRT   VIS4   PT1        20.5 -<span style="color: #BB0000;">31.6</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>         6  31.5 Asian              Male  PBO   VIS2   PT2        31.5  -<span style="color: #BB0000;">4.16</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>         7  36.9 Asian              Male  PBO   VIS3   PT2        36.9  -<span style="color: #BB0000;">4.24</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>         8  48.8 Asian              Male  PBO   VIS4   PT2        48.8   2.98 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>        10  36.0 Black or African … Fema… PBO   VIS2   PT3        36.0  -<span style="color: #BB0000;">1.49</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>        12  37.2 Black or African … Fema… PBO   VIS4   PT3        37.2 -<span style="color: #BB0000;">10.5</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>        13  33.9 Asian              Fema… TRT   VIS1   PT4        33.9  -<span style="color: #BB0000;">0.985</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>        14  33.7 Asian              Fema… TRT   VIS2   PT4        33.7  -<span style="color: #BB0000;">5.93</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>        16  54.5 Asian              Fema… TRT   VIS4   PT4        54.5   3.89 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>         2  40.0 Black or African … Fema… TRT   VIS2   PT1        41.2  -<span style="color: #BB0000;">1.23</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>         4  20.5 Black or African … Fema… TRT   VIS4   PT1        52.1 -<span style="color: #BB0000;">31.6</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>         6  31.5 Asian              Male  PBO   VIS2   PT2        35.6  -<span style="color: #BB0000;">4.16</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>         7  36.9 Asian              Male  PBO   VIS3   PT2        41.1  -<span style="color: #BB0000;">4.24</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>         8  48.8 Asian              Male  PBO   VIS4   PT2        45.8   2.98 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>        10  36.0 Black or African … Fema… PBO   VIS2   PT3        37.5  -<span style="color: #BB0000;">1.49</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>        12  37.2 Black or African … Fema… PBO   VIS4   PT3        47.7 -<span style="color: #BB0000;">10.5</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>        13  33.9 Asian              Fema… TRT   VIS1   PT4        34.9  -<span style="color: #BB0000;">0.985</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>        14  33.7 Asian              Fema… TRT   VIS2   PT4        39.7  -<span style="color: #BB0000;">5.93</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>        16  54.5 Asian              Fema… TRT   VIS4   PT4        50.6   3.89 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 527 more rows</span></span>
 <span class="r-in"><span><span class="va">fit</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://generics.r-lib.org/reference/augment.html" class="external-link">augment</a></span><span class="op">(</span>interval <span class="op">=</span> <span class="st">"confidence"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 537 × 12</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    .rownames  FEV1 RACE         SEX   ARMCD AVISIT USUBJID .fitted .lower .upper</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>         2  40.0 Black or Af… Fema… TRT   VIS2   PT1        40.0   40.0   40.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>         4  20.5 Black or Af… Fema… TRT   VIS4   PT1        20.5   20.5   20.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>         6  31.5 Asian        Male  PBO   VIS2   PT2        31.5   31.5   31.5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>         7  36.9 Asian        Male  PBO   VIS3   PT2        36.9   36.9   36.9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>         8  48.8 Asian        Male  PBO   VIS4   PT2        48.8   48.8   48.8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>        10  36.0 Black or Af… Fema… PBO   VIS2   PT3        36.0   36.0   36.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>        12  37.2 Black or Af… Fema… PBO   VIS4   PT3        37.2   37.2   37.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>        13  33.9 Asian        Fema… TRT   VIS1   PT4        33.9   33.9   33.9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>        14  33.7 Asian        Fema… TRT   VIS2   PT4        33.7   33.7   33.7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>        16  54.5 Asian        Fema… TRT   VIS4   PT4        54.5   54.5   54.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>         2  40.0 Black or Af… Fema… TRT   VIS2   PT1        41.2   41.2   41.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>         4  20.5 Black or Af… Fema… TRT   VIS4   PT1        52.1   52.0   52.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>         6  31.5 Asian        Male  PBO   VIS2   PT2        35.6   35.6   35.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>         7  36.9 Asian        Male  PBO   VIS3   PT2        41.1   41.1   41.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>         8  48.8 Asian        Male  PBO   VIS4   PT2        45.8   45.7   45.9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>        10  36.0 Black or Af… Fema… PBO   VIS2   PT3        37.5   37.4   37.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>        12  37.2 Black or Af… Fema… PBO   VIS4   PT3        47.7   47.6   47.8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>        13  33.9 Asian        Fema… TRT   VIS1   PT4        34.9   34.8   34.9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>        14  33.7 Asian        Fema… TRT   VIS2   PT4        39.7   39.6   39.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>        16  54.5 Asian        Fema… TRT   VIS4   PT4        50.6   50.5   50.7</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 527 more rows</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 2 more variables: .se.fit &lt;dbl&gt;, .resid &lt;dbl&gt;</span></span>
 <span class="r-in"><span><span class="va">fit</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://generics.r-lib.org/reference/augment.html" class="external-link">augment</a></span><span class="op">(</span>type.residuals <span class="op">=</span> <span class="st">"pearson"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 537 × 9</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    .rownames  FEV1 RACE                SEX   ARMCD AVISIT USUBJID .fitted .resid</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>         2  40.0 Black or African A… Fema… TRT   VIS2   PT1        40.0 -<span style="color: #BB0000;">0.240</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>         4  20.5 Black or African A… Fema… TRT   VIS4   PT1        20.5 -<span style="color: #BB0000;">3.23</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>         6  31.5 Asian               Male  PBO   VIS2   PT2        31.5 -<span style="color: #BB0000;">0.807</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>         7  36.9 Asian               Male  PBO   VIS3   PT2        36.9 -<span style="color: #BB0000;">1.10</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>         8  48.8 Asian               Male  PBO   VIS4   PT2        48.8  0.305</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>        10  36.0 Black or African A… Fema… PBO   VIS2   PT3        36.0 -<span style="color: #BB0000;">0.288</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>        12  37.2 Black or African A… Fema… PBO   VIS4   PT3        37.2 -<span style="color: #BB0000;">1.08</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>        13  33.9 Asian               Fema… TRT   VIS1   PT4        33.9 -<span style="color: #BB0000;">0.155</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>        14  33.7 Asian               Fema… TRT   VIS2   PT4        33.7 -<span style="color: #BB0000;">1.15</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>        16  54.5 Asian               Fema… TRT   VIS4   PT4        54.5  0.398</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>         2  40.0 Black or African A… Fema… TRT   VIS2   PT1        41.2 -<span style="color: #BB0000;">0.240</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>         4  20.5 Black or African A… Fema… TRT   VIS4   PT1        52.1 -<span style="color: #BB0000;">3.23</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>         6  31.5 Asian               Male  PBO   VIS2   PT2        35.6 -<span style="color: #BB0000;">0.807</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>         7  36.9 Asian               Male  PBO   VIS3   PT2        41.1 -<span style="color: #BB0000;">1.10</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>         8  48.8 Asian               Male  PBO   VIS4   PT2        45.8  0.305</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>        10  36.0 Black or African A… Fema… PBO   VIS2   PT3        37.5 -<span style="color: #BB0000;">0.288</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>        12  37.2 Black or African A… Fema… PBO   VIS4   PT3        47.7 -<span style="color: #BB0000;">1.08</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>        13  33.9 Asian               Fema… TRT   VIS1   PT4        34.9 -<span style="color: #BB0000;">0.155</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>        14  33.7 Asian               Fema… TRT   VIS2   PT4        39.7 -<span style="color: #BB0000;">1.15</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>        16  54.5 Asian               Fema… TRT   VIS4   PT4        50.6  0.398</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 527 more rows</span></span>
 </code></pre></div>
     </div>
