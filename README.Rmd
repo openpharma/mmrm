@@ -19,14 +19,14 @@ knitr::opts_chunk$set(
 [![CRAN status](https://www.r-pkg.org/badges/version-last-release/mmrm)](https://www.r-pkg.org/badges/version-last-release/mmrm)
 [![CRAN monthly downloads](https://cranlogs.r-pkg.org/badges/mmrm)](https://cranlogs.r-pkg.org/badges/mmrm)
 [![CRAN total downloads](https://cranlogs.r-pkg.org/badges/grand-total/mmrm)](https://cranlogs.r-pkg.org/badges/grand-total/mmrm)
-[![Code Coverage](https://raw.githubusercontent.com/openpharma/mmrm/_xml_coverage_reports/data/main/badge.svg)](https://raw.githubusercontent.com/openpharma/mmrm/_xml_coverage_reports/data/main/coverage.xml)
+[![Code Coverage](https://raw.githubusercontent.com/openpharma/mmrm/_xml_coverage_reports/data/main/badge.svg)](https://openpharma.github.io/mmrm/latest-tag/coverage-report/)
 <!-- badges: end -->
 \
 
 Mixed models for repeated measures (MMRM) are a popular
 choice for analyzing longitudinal continuous outcomes in randomized
 clinical trials and beyond; see
-[Cnaan, Laird and Slasor (1997)](https://doi.org/10.1002/(SICI)1097-0258(19971030)16:20<2349::AID-SIM667>3.0.CO;2-E)
+[Cnaan, Laird and Slasor (1997)](`r URLencode("https://doi.org/10.1002/(SICI)1097-0258(19971030)16:20<2349::AID-SIM667>3.0.CO;2-E")`)
 for a tutorial and
 [Mallinckrodt, Lane and Schnell (2008)](https://doi.org/10.1177/009286150804200402)
 for a review. This package implements
@@ -115,7 +115,7 @@ because compilation of the `C++` sources is required.
 See also the [introductory vignette](https://openpharma.github.io/mmrm/main/articles/introduction.html)
 or get started by trying out the example:
 
-```{r, child='vignettes/subsections/intro-getting_started.Rmd'}
+```{r, child='vignettes/subsections/_intro-getting_started.Rmd'}
 ```
 
 ## Citing `mmrm`
