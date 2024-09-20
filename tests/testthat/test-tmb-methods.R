@@ -95,6 +95,20 @@ test_that("predict works for old patient, new visit", {
   expect_silent(predict(fit, fev_data[c(1:4), ]))
 })
 
+test_that("predict works for data with duplicated id", {
+  fit <- get_mmrm()
+  res <- expect_silent(predict(fit, fev_data[c(1:4, 1:4), ]))
+  expect_equal(res[1:4], res[5:8], ignore_attr = TRUE)
+})
+
+test_that("predict works for data different factor levels", {
+  fit <- get_mmrm()
+  data2 <- fev_data[1:3, ]
+  data2$AVISIT <- droplevels(data2$AVISIT)
+  res <- expect_silent(predict(fit, newdata = data2))
+  expect_snapshot_tolerance(res)
+})
+
 test_that("predict works for only fit values without response", {
   object <- get_mmrm()
   m <- stats::model.matrix(
@@ -103,16 +117,24 @@ test_that("predict works for only fit values without response", {
   )
   fev_data_no_y <- fev_data
   fev_data_no_y$FEV1 <- NA_real_
-  y_pred <- expect_silent(predict(object, fev_data_no_y))
+  y_pred <- expect_silent(predict(object, fev_data_no_y, conditional = TRUE))
   y_hat <- as.vector(m %*% object$beta_est)
   expect_equal(y_pred, y_hat, ignore_attr = TRUE)
 })
 
 test_that("predict works for only fit values with response", {
   object <- get_mmrm()
-  y_pred <- expect_silent(predict(object, fev_data))
+  y_pred <- expect_silent(predict(object, fev_data, conditional = TRUE))
   expect_equal(y_pred[!is.na(fev_data$FEV1)], object$tmb_data$y_vector, ignore_attr = TRUE)
   expect_numeric(y_pred[is.na(fev_data$FEV1)])
+})
+
+test_that("predict works for unconditional prediction if response does not exist", {
+  object <- get_mmrm()
+  fev_data2 <- fev_data
+  fev_data2$FEV1 <- NULL
+  y_pred <- expect_silent(predict(object, fev_data2))
+  expect_snapshot_tolerance(y_pred)
 })
 
 test_that("predict warns on aliased variables", {
@@ -149,7 +171,7 @@ test_that("predict will return on correct order", {
 })
 
 test_that("predict will return NA if data contains NA in covariates", {
-  new_order <- sample(seq_len(nrow(fev_data)))
+  new_order <- withr::with_seed(12345, sample(seq_len(nrow(fev_data))))
   fit <- get_mmrm()
   fev_data2 <- fev_data
   fev_data2$FEV1 <- NA_real_
@@ -157,8 +179,8 @@ test_that("predict will return NA if data contains NA in covariates", {
   predicted <- predict(fit, newdata = fev_data2[new_order, ], se.fit = TRUE, interval = "confidence")
 
   m <- stats::model.matrix(
-    fit$formula_parts$model_formula,
-    model.frame(fit, data = fev_data2[new_order, ], include = "response_var", na.action = "na.pass")
+    ~ RACE + SEX + ARMCD * AVISIT,
+    model.frame(fit, data = fev_data2[new_order, ], include = NULL, drop_response = TRUE, na.action = "na.pass")
   )
 
   expect_identical(
@@ -175,7 +197,7 @@ test_that("predict will return NA if data contains NA in covariates", {
 
 test_that("predict can give unconditional predictions", {
   fit <- get_mmrm()
-  expect_silent(p <- predict(fit, newdata = fev_data, conditional = FALSE))
+  expect_silent(p <- predict(fit, newdata = fev_data))
   m <- stats::model.matrix(
     fit$formula_parts$model_formula,
     model.frame(fit, data = fev_data, include = "response_var", na.action = "na.pass")
@@ -195,7 +217,7 @@ test_that("predict can change based on coefficients", {
     fit$formula_parts$model_formula,
     model.frame(fit, data = fev_data, include = "response_var", na.action = "na.pass")
   )
-  expect_silent(p <- predict(fit, newdata = fev_data, conditional = FALSE))
+  expect_silent(p <- predict(fit, newdata = fev_data))
   expect_equal(
     p,
     (m %*% new_beta)[, 1],
@@ -205,7 +227,7 @@ test_that("predict can change based on coefficients", {
 
 test_that("predict can work if response is an expression", {
   fit <- mmrm(log(FEV1) + FEV1 ~ ARMCD * AVISIT + ar1(AVISIT | USUBJID), data = fev_data)
-  expect_silent(p <- predict(fit, newdata = fev_data, conditional = FALSE))
+  expect_silent(p <- predict(fit, newdata = fev_data))
 })
 
 test_that("predict works if contrast provided", {
@@ -213,9 +235,9 @@ test_that("predict works if contrast provided", {
   contrasts(fev_data2$AVISIT) <- contr.poly(4)
   fit <- mmrm(FEV1 ~ ARMCD * AVISIT + ar1(AVISIT | USUBJID), data = fev_data2)
 
-  expect_snapshot_tolerance(predict(fit, fev_data[c(1, 4), ]))
-  expect_snapshot_tolerance(predict(fit, fev_data[c(2, 3), ]))
-  expect_snapshot_tolerance(predict(fit, fev_data[c(1:4), ]))
+  expect_snapshot_tolerance(predict(fit, fev_data[c(1, 4), ], conditional = TRUE))
+  expect_snapshot_tolerance(predict(fit, fev_data[c(2, 3), ], conditional = TRUE))
+  expect_snapshot_tolerance(predict(fit, fev_data[c(1:4), ], conditional = TRUE))
 })
 
 ## integration test with SAS ----
@@ -378,11 +400,6 @@ test_that("h_construct_model_frame_inputs works with all columns", {
     FEV1 ~ RACE + USUBJID + AVISIT,
     ignore_attr = TRUE
   )
-  expect_equal(
-    result$formula_full,
-    FEV1 ~ RACE + USUBJID + AVISIT,
-    ignore_attr = TRUE
-  )
 })
 
 test_that("h_construct_model_frame_inputs works with response var selected", {
@@ -400,11 +417,6 @@ test_that("h_construct_model_frame_inputs works with response var selected", {
     FEV1 ~ RACE,
     ignore_attr = TRUE
   )
-  expect_equal(
-    result$formula_full,
-    FEV1 ~ RACE + USUBJID + AVISIT,
-    ignore_attr = TRUE
-  )
 })
 
 test_that("h_construct_model_frame_inputs works with include=NULL", {
@@ -420,11 +432,6 @@ test_that("h_construct_model_frame_inputs works with include=NULL", {
   expect_equal(
     result$formula,
     ~RACE,
-    ignore_attr = TRUE
-  )
-  expect_equal(
-    result$formula_full,
-    FEV1 ~ RACE + USUBJID + AVISIT,
     ignore_attr = TRUE
   )
 })
@@ -452,7 +459,7 @@ test_that("model.frame returns full model frame if requested", {
   object <- get_mmrm_tmb()
   result <- expect_silent(model.frame(object, include = c("response_var", "visit_var", "subject_var", "group_var")))
   expect_data_frame(result, nrows = length(object$tmb_data$y_vector))
-  expect_named(result, c("FEV1", "RACE", "AVISIT", "USUBJID"))
+  expect_named(result, c("FEV1", "RACE", "USUBJID", "AVISIT"))
   expect_class(attr(result, "terms"), "terms")
 })
 
@@ -580,34 +587,13 @@ test_that("model.matrix works as expected with defaults", {
   )
 })
 
-test_that("model.matrix works as expected with includes", {
-  object <- get_mmrm_tmb()
-  result <- expect_silent(model.matrix(object, include = c("visit_var")))
-  expect_matrix(result, nrows = length(object$tmb_data$y_vector))
-  expect_equal(
-    colnames(result),
-    c("(Intercept)", "RACEBlack or African American", "RACEWhite", "AVISITVIS2", "AVISITVIS3", "AVISITVIS4")
-  )
-})
-
-test_that("model.matrix returns full model frame if requested", {
-  object <- get_mmrm_tmb()
-  result <- expect_silent(model.matrix(object, include = c("visit_var", "subject_var", "group_var")))
-  expect_matrix(result, nrows = length(object$tmb_data$y_vector))
-  # Expecting many columns for covariates and dummy cols for USUBJID.
-  expect_equal(
-    length(colnames(result)),
-    205L
-  )
-})
-
 test_that("model.matrix works if variable transformed", {
   fit1 <- get_mmrm_transformed()
-  result <- expect_silent(model.matrix(fit1, include = c("visit_var")))
+  result <- expect_silent(model.matrix(fit1))
   expect_matrix(result, nrows = length(fit1$tmb_data$y_vector))
   expect_equal(
     colnames(result),
-    c("(Intercept)", "log(FEV1_BL)", "AVISITVIS2", "AVISITVIS3", "AVISITVIS4")
+    c("(Intercept)", "log(FEV1_BL)")
   )
 })
 
@@ -615,27 +601,49 @@ test_that("model.matrix works for new data", {
   fit1 <- get_mmrm_transformed()
   result <- expect_silent(model.matrix(
     fit1,
-    data = fev_data[complete.cases(fev_data), ][1:20, ],
-    include = c("visit_var")
+    data = fev_data[complete.cases(fev_data), ][1:20, ]
   ))
   expect_matrix(result, nrows = 20L)
   expect_equal(
     colnames(result),
-    c("(Intercept)", "log(FEV1_BL)", "AVISITVIS2", "AVISITVIS3", "AVISITVIS4")
+    c("(Intercept)", "log(FEV1_BL)")
   )
 })
 
 test_that("model.matrix include all specified variables", {
   fit1 <- get_mmrm_group()
   out_frame <- expect_silent(
-    model.matrix(fit1, data = fev_data, include = "group_var")
+    model.matrix(fit1, data = fev_data)
   )
   expect_identical(colnames(out_frame), c("(Intercept)", "ARMCDTRT")) # formula already contains "ARMCD"
 
   out_frame <- expect_silent(
-    model.matrix(fit1, data = fev_data, include = "visit_var")
+    model.matrix(fit1, data = fev_data)
   )
-  expect_identical(colnames(out_frame), c("(Intercept)", "ARMCDTRT", "AVISITVIS2", "AVISITVIS3", "AVISITVIS4"))
+  expect_identical(colnames(out_frame), c("(Intercept)", "ARMCDTRT"))
+})
+
+test_that("model.matrix works with use_response", {
+  fit <- get_mmrm()
+  data <- fev_data[1:4, c("FEV1", "RACE", "SEX", "ARMCD", "AVISIT")]
+  res <- expect_silent(model.matrix(fit, data = data, use_response = TRUE))
+  expect_identical(2L, nrow(res))
+  res <- expect_silent(model.matrix(fit, data = data, use_response = FALSE))
+  data2 <- data
+  data2$FEV1 <- NULL
+  expect_error(
+    model.matrix(fit, data = data2, use_response = TRUE),
+    "object 'FEV1' not found"
+  )
+  res <- expect_silent(model.matrix(fit, data = data2, use_response = FALSE))
+  expect_identical(4L, nrow(res))
+})
+
+test_that("model.matrix works with broom.helpers", {
+  skip_if_not_installed("broom.helpers")
+  fit <- get_mmrm()
+  res <- expect_silent(broom.helpers::tidy_plus_plus(fit))
+  expect_snapshot_tolerance(res)
 })
 
 # terms ----
@@ -943,14 +951,14 @@ test_that("simulate with conditional method results are correctly centered", {
   object <- get_mmrm()
   set.seed(323)
   sims <- simulate(object, nsim = 1000, method = "conditional")
-  expect_equal(rowMeans(sims), predict(object), tolerance = 1e-2)
+  expect_equal(rowMeans(sims), predict(object, conditional = TRUE), tolerance = 1e-2)
 })
 
 test_that("simulate with marginal method results are correctly centered", {
   object <- get_mmrm()
   set.seed(323)
   sims <- simulate(object, nsim = 100, method = "marginal")
-  expect_equal(rowMeans(sims), predict(object), tolerance = 1e-1)
+  expect_equal(rowMeans(sims), predict(object, conditional = TRUE), tolerance = 1e-1)
 })
 
 test_that("simulate with conditional method works as expected for weighted models", {
@@ -958,28 +966,28 @@ test_that("simulate with conditional method works as expected for weighted model
   object <- get_mmrm_weighted()
   set.seed(535)
   sims <- simulate(object, nsim = 1000, method = "conditional")
-  expect_equal(rowMeans(sims), predict(object), tolerance = 1e-2)
+  expect_equal(rowMeans(sims), predict(object, conditional = TRUE), tolerance = 1e-2)
 })
 
 test_that("simulate with marginal method works as expected for weighted models", {
   object <- get_mmrm_weighted()
   set.seed(535)
   sims <- simulate(object, nsim = 100, method = "marginal")
-  expect_equal(rowMeans(sims), predict(object), tolerance = 1e-1)
+  expect_equal(rowMeans(sims), predict(object, conditional = TRUE), tolerance = 1e-1)
 })
 
 test_that("simulate with conditional method works as expected for grouped fits", {
   object <- get_mmrm_group()
   set.seed(737)
   sims <- simulate(object, nsim = 1000, method = "conditional")
-  expect_equal(rowMeans(sims), predict(object), tolerance = 1e-2)
+  expect_equal(rowMeans(sims), predict(object, conditional = TRUE), tolerance = 1e-2)
 })
 
 test_that("simulate with marginal method works as expected for grouped fits", {
   object <- get_mmrm_group()
   set.seed(737)
   sims <- simulate(object, nsim = 100, method = "marginal")
-  expect_equal(rowMeans(sims), predict(object), tolerance = 1e-1)
+  expect_equal(rowMeans(sims), predict(object, conditional = TRUE), tolerance = 1e-1)
 })
 
 test_that("simulate with conditional method works for differently ordered/numbered data", {
@@ -990,7 +998,7 @@ test_that("simulate with conditional method works for differently ordered/number
   df_mixed <- df_subset[neworder, ]
   set.seed(939)
   sims <- simulate(object, nsim = 1000, newdata = df_mixed, method = "conditional")
-  expect_equal(rowMeans(sims), predict(object, df_mixed), tolerance = 1e-2)
+  expect_equal(rowMeans(sims), predict(object, df_mixed, conditional = TRUE), tolerance = 1e-2)
 })
 
 test_that("simulate with marginal method works for differently ordered/numbered data", {
@@ -1002,7 +1010,7 @@ test_that("simulate with marginal method works for differently ordered/numbered 
   df_mixed <- df_subset[neworder, ]
   set.seed(939)
   sims <- simulate(object, nsim = 100, newdata = df_mixed, method = "marginal")
-  expect_equal(rowMeans(sims), predict(object, df_mixed), tolerance = 1e-2)
+  expect_equal(rowMeans(sims), predict(object, df_mixed, conditional = TRUE), tolerance = 1e-2)
 })
 
 test_that("simulate with conditional method is compatible with confidence intervals", {
@@ -1015,7 +1023,8 @@ test_that("simulate with conditional method is compatible with confidence interv
     newdata = fev_data,
     se.fit = TRUE,
     interval = "confidence",
-    level = 0.95
+    level = 0.95,
+    conditional = TRUE
   )
   expect_true(all(intervals[is_unobserved, "se"] > 0))
   sims <- simulate(
@@ -1038,7 +1047,8 @@ test_that("simulate with marginal method is compatible with prediction intervals
     se.fit = TRUE,
     interval = "prediction",
     level = 0.95,
-    nsim = 100
+    nsim = 100,
+    conditional = TRUE
   )
   sims <- simulate(
     object,

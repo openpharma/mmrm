@@ -26,9 +26,7 @@ passed to \code{model.frame()} or \code{model.matrix()}}
 named list with four elements:
 \itemize{
 \item \code{"formula"}: the formula including the columns requested in the \verb{include=} argument.
-\item \code{"formula_full"}: the formula including all columns
 \item \code{"data"}: a data frame including all columns needed in the formula.
-\item \code{"is_full"}: a logical scalar indicating if the formula and
 full formula are identical
 }
 }

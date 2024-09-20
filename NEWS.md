@@ -6,11 +6,15 @@
 - Previously `car::Anova` will give incorrect results if an interaction term is included and the order of the covariate of interest is not the first categorical variable. This is fixed now.
 - Previously `car::Anova` will fail if the model does not contain intercept. This is fixed now.
 - Previously, `mmrm` will ignore contrasts defined for covariates in the input data set. This is fixed now.
+- Previously, `predict` will always require the response to be valid, even for unconditional predictions. This is fixed now and unconditional prediction do not require the response to be valid anymore.
 - When running with `TMB` package versions below 1.9.15, MMRM fit results are not completely reproducible. While this may not be relevant for most applications, because the numerical differences are very small, we now issue a warning to the user if this is the case. We advise users to upgrade their `TMB` package versions to 1.9.15 or higher to ensure reproducibility.
 
 ### Miscellaneous
 
 - Upon fitting an MMRM, it is checked whether a not reproducible optimization feature of `TMB` is turned on. If so, a warning is issued to the user once per session.
+- `model.matrix` is updated to ensure that the `NA` values are dropped. Additionally, an argument `use_response` is added to decide whether records with `NA` values in the response should be discarded.
+- `model.frame` is updated to ensure that the `na.action` works.
+- `predict` is updated to allow duplicated subject IDs for unconditional prediction.
 
 # mmrm 0.3.12
 
