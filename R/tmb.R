@@ -334,9 +334,9 @@ h_mmrm_tmb_check_conv <- function(tmb_opt, mmrm_tmb) {
     warning("Model convergence problem: theta_vcov contains non-finite values.")
     return()
   }
-  qr_rank <- qr(theta_vcov)$rank
-  if (qr_rank < ncol(theta_vcov)) {
-    warning("Model convergence problem: theta_vcov is numerically singular.")
+  eigen_vals <- eigen(theta_vcov, only.values = TRUE)$values
+  if (any(eigen_vals <= 0)) {
+    warning("Model convergence problem: theta_vcov is not positive definite.")
   }
 }
 

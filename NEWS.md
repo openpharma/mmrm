@@ -15,6 +15,7 @@
 - `model.matrix` is updated to ensure that the `NA` values are dropped. Additionally, an argument `use_response` is added to decide whether records with `NA` values in the response should be discarded.
 - `model.frame` is updated to ensure that the `na.action` works.
 - `predict` is updated to allow duplicated subject IDs for unconditional prediction.
+- `mmrm` now checks on the positive definiteness of the covariance matrix `theta_vcov`. If it is not positive definite, non-convergence is messaged appropriately.
 
 # mmrm 0.3.12
 

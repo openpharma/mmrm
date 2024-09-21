@@ -814,7 +814,66 @@ test_that("h_mmrm_tmb_check_conv warns if theta_vcov is singular", {
   )
   expect_warning(
     h_mmrm_tmb_check_conv(tmb_opt, mmrm_tmb),
-    "Model convergence problem: theta_vcov is numerically singular."
+    "Model convergence problem: theta_vcov is not positive definite."
+  )
+})
+
+test_that("h_mmrm_tmb_check_conv warns if theta_vcov is not positive definite", {
+  tmb_opt <- list(
+    par = 1:5,
+    objective = 10,
+    convergence = 0,
+    message = NULL
+  )  
+  not_positive_definite_matrix <- matrix(
+    c(
+      1,  2,  3,  4,  5,
+      2,  1,  4,  5,  6,
+      3,  4,  1,  6,  7,
+      4,  5,  6,  1,  8,
+      5,  6,  7,  8, -10
+    ), 
+    nrow = 5, 
+    byrow = TRUE
+  )
+  eigenvalues <- eigen(not_positive_definite_matrix)$values
+  assert_true(any(eigenvalues < 0))
+  mmrm_tmb <- structure(
+    list(theta_vcov = not_positive_definite_matrix),
+    class = "mmrm_tmb"
+  )
+  expect_warning(
+    h_mmrm_tmb_check_conv(tmb_opt, mmrm_tmb),
+    "Model convergence problem: theta_vcov is not positive definite."
+  )
+})
+
+test_that("h_mmrm_tmb_check_conv warns if theta_vcov is not symmetric", {
+  tmb_opt <- list(
+    par = 1:5,
+    objective = 10,
+    convergence = 0,
+    message = NULL
+  )
+  not_symmetric_matrix <- matrix(
+    c(
+      1,  1,  3,  4,  5,
+      2,  1,  4,  5,  6,
+      3,  4,  1,  6,  7,
+      4,  5,  6,  1,  8,
+      5,  6,  7,  8,  9
+    ), 
+    nrow = 5, 
+    byrow = TRUE
+  )
+  assert_false(all(not_symmetric_matrix == t(not_symmetric_matrix)))
+  mmrm_tmb <- structure(
+    list(theta_vcov = not_symmetric_matrix),
+    class = "mmrm_tmb"
+  )
+  expect_warning(
+    h_mmrm_tmb_check_conv(tmb_opt, mmrm_tmb),
+    "Model convergence problem: theta_vcov is not positive definite."
   )
 })
 
