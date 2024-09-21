@@ -877,6 +877,39 @@ test_that("h_mmrm_tmb_check_conv warns if theta_vcov is not symmetric", {
   )
 })
 
+test_that("h_mmrm_tmb_check_conv warns if theta_vcov is numerically singular", {
+  tmb_opt <- list(
+    par = 1:5,
+    objective = 10,
+    convergence = 0,
+    message = NULL
+  )
+  singular_matrix <- matrix(
+    c(
+      1, 0.99, 0.98, 0.97, 0.96,
+      0.99, 1, 0.99, 0.98, 0.97,
+      0.98, 0.99, 1, 0.99, 0.98,
+      0.97, 0.98, 0.99, 1, 0.99,
+      0.96, 0.97, 0.98, 0.99, 1
+    ),
+    nrow = 5,
+    byrow = TRUE
+  )
+  # Slightly perturb the matrix to make it numerically singular
+  singular_matrix[5, ] <- singular_matrix[4, ] + 1e-10
+
+  assert_true(all(eigen(singular_matrix)$values > 0))
+  assert_true(qr(singular_matrix)$rank == 4)
+  mmrm_tmb <- structure(
+    list(theta_vcov = singular_matrix),
+    class = "mmrm_tmb"
+  )
+  expect_warning(
+    h_mmrm_tmb_check_conv(tmb_opt, mmrm_tmb),
+    "Model convergence problem: theta_vcov is numerically singular."
+  )
+})
+
 # h_mmrm_tmb_extract_cov ----
 
 test_that("h_mmrm_tmb_extract_cov works as expected", {

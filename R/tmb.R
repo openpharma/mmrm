@@ -335,8 +335,14 @@ h_mmrm_tmb_check_conv <- function(tmb_opt, mmrm_tmb) {
     return()
   }
   eigen_vals <- eigen(theta_vcov, only.values = TRUE)$values
-  if (any(eigen_vals <= 0)) {
+  if (mode(eigen_vals) == "complex" || any(eigen_vals <= 0)) {
+    # Note: complex eigen values signal that the matrix is not symmetric, therefore not positive definite.
     warning("Model convergence problem: theta_vcov is not positive definite.")
+    return()
+  }
+  qr_rank <- qr(theta_vcov)$rank
+  if (qr_rank < ncol(theta_vcov)) {
+    warning("Model convergence problem: theta_vcov is numerically singular.")
   }
 }
 
