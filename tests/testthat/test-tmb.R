@@ -824,16 +824,16 @@ test_that("h_mmrm_tmb_check_conv warns if theta_vcov is not positive definite", 
     objective = 10,
     convergence = 0,
     message = NULL
-  )  
+  )
   not_positive_definite_matrix <- matrix(
     c(
-      1,  2,  3,  4,  5,
-      2,  1,  4,  5,  6,
-      3,  4,  1,  6,  7,
-      4,  5,  6,  1,  8,
-      5,  6,  7,  8, -10
-    ), 
-    nrow = 5, 
+      1, 2, 3, 4, 5,
+      2, 1, 4, 5, 6,
+      3, 4, 1, 6, 7,
+      4, 5, 6, 1, 8,
+      5, 6, 7, 8, -10
+    ),
+    nrow = 5,
     byrow = TRUE
   )
   eigenvalues <- eigen(not_positive_definite_matrix)$values
@@ -862,8 +862,8 @@ test_that("h_mmrm_tmb_check_conv warns if theta_vcov is not symmetric", {
       3,  4,  1,  6,  7,
       4,  5,  6,  1,  8,
       5,  6,  7,  8,  9
-    ), 
-    nrow = 5, 
+    ),
+    nrow = 5,
     byrow = TRUE
   )
   assert_false(all(not_symmetric_matrix == t(not_symmetric_matrix)))
