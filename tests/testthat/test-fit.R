@@ -419,16 +419,20 @@ test_that("mmrm works for specific small data example", {
 })
 
 test_that("mmrm works for custom optimizer", {
+  custom_optimizer <- optim
   fit <- mmrm(
     FEV1 ~ ARMCD + ar1(AVISIT | SEX / USUBJID),
     data = fev_data,
     reml = TRUE,
-    optimizer_fun = silly_optimizer,
-    optimizer_args = list(value_add = 2, message = "this is wrong"),
+    optimizer_fun = custom_optimizer,
+    optimizer_args = list(method = "Nelder-Mead", hessian = TRUE),
     start = c(1, 2, 3, 4),
     method = "Kenward-Roger"
   )
-  expect_identical(fit$theta_est, c(3, 4, 5, 6))
+  expect_equal(
+    fit$theta_est, c(2.2225, 0.4054, 2.2136, 0.4389),
+    tolerance = 1e-4
+  )
 })
 
 test_that("mmrm works for constructed control", {
