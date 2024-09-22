@@ -91,7 +91,7 @@ h_split_control <- function(control, ...) {
   assert_class(control, "mmrm_control")
   l <- length(control$optimizers)
   lapply(seq_len(l), function(i) {
-    ret <- modifyList(control, list(...))
+    ret <- utils::modifyList(control, list(...))
     ret$optimizers <- control$optimizers[i]
     ret
   })
@@ -196,10 +196,14 @@ h_partial_fun_args <- function(fun, ..., additional_attr = list()) {
   }
   do.call(
     structure,
-    args = modifyList(list(
-      .Data = fun, args = modifyList(args, a_args),
-      class = c("partial", "function")
-    ), additional_attr)
+    args = utils::modifyList(
+      list(
+        .Data = fun, 
+        args = utils::modifyList(args, a_args),
+        class = c("partial", "function")
+      ), 
+      additional_attr
+    )
   )
 }
 

@@ -467,7 +467,7 @@ h_mmrm_tmb_fit <- function(tmb_object,
 
 #' Low-Level Fitting Function for MMRM
 #'
-#' @description `r lifecycle::badge("experimental")`
+#' @description `r lifecycle::badge("stable")`
 #'
 #' This is the low-level function to fit an MMRM. Note that this does not
 #' try different optimizers or adds Jacobian information etc. in contrast to

@@ -39,7 +39,7 @@
 \item{type.residuals}{(\code{string})\cr passed on to \code{\link[=residuals.mmrm_tmb]{residuals.mmrm_tmb()}}.}
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
 
 These methods tidy the estimates from an \code{mmrm} object into a
 summary.

@@ -1,6 +1,6 @@
 #' Support for `emmeans`
 #'
-#' @description `r lifecycle::badge("experimental")`
+#' @description `r lifecycle::badge("stable")`
 #'
 #' This package includes methods that allow `mmrm` objects to be used
 #' with the `emmeans` package. `emmeans` computes estimated marginal means

@@ -1,9 +1,10 @@
 Type: Package
 Package: mmrm
 Title: Mixed Models for Repeated Measures
-Version: 0.3.12.9002
+Version: 0.3.13
 Authors@R: c(
-    person("Daniel", "Sabanes Bove", , "daniel.sabanes_bove@rconis.com", role = c("aut", "cre")),
+    person("Daniel", "Sabanes Bove", , "daniel.sabanes_bove@rconis.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-0176-9239")),
     person("Liming", "Li", , "liming.li@roche.com", role = "aut"),
     person("Julia", "Dedic", , "julia.dedic@roche.com", role = "aut"),
     person("Doug", "Kelkhoff", , "doug.kelkhoff@roche.com", role = "aut"),
@@ -21,7 +22,8 @@ Authors@R: c(
     person("Gilead Sciences, Inc.", role = c("cph", "fnd")),
     person("F. Hoffmann-La Roche AG", role = c("cph", "fnd")),
     person("Merck Sharp & Dohme, Inc.", role = c("cph", "fnd")),
-    person("AstraZeneca plc", role = c("cph", "fnd"))
+    person("AstraZeneca plc", role = c("cph", "fnd")),
+    person("inferential.biostatistics GmbH", role = c("cph", "fnd"))
   )
 Description: Mixed models for repeated measures (MMRM) are a popular
     choice for analyzing longitudinal continuous outcomes in randomized

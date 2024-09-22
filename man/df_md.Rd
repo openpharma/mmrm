@@ -18,7 +18,7 @@ actually estimated coefficients.}
 List with \code{num_df}, \code{denom_df}, \code{f_stat} and \code{p_val} (2-sided p-value).
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
 Calculates the estimate, standard error, degrees of freedom,
 t statistic and p-value for one-dimensional contrast, depending on the method
 used in \code{\link[=mmrm]{mmrm()}}.

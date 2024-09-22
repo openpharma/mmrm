@@ -1,6 +1,6 @@
 #' Component Access for `mmrm_tmb` Objects
 #'
-#' @description `r lifecycle::badge("experimental")`
+#' @description `r lifecycle::badge("stable")`
 #'
 #' @param object (`mmrm_tmb`)\cr the fitted MMRM.
 #' @param name (`character`)\cr the component(s) to be retrieved.

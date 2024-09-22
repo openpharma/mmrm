@@ -1,6 +1,6 @@
 #' Methods for `mmrm` Objects
 #'
-#' @description `r lifecycle::badge("experimental")`
+#' @description `r lifecycle::badge("stable")`
 #'
 #' @param object (`mmrm`)\cr the fitted MMRM including Jacobian and call etc.
 #' @param ... not used.

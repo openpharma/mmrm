@@ -2,7 +2,7 @@
 
 #' Example Data on FEV1
 #'
-#' @description `r lifecycle::badge("experimental")`
+#' @description `r lifecycle::badge("stable")`
 #'
 #' @note Measurements of FEV1 (forced expired volume in one second) is a measure
 #' of how quickly the lungs can be emptied. Low levels of FEV1 may indicate
@@ -27,7 +27,7 @@
 
 #' Example Data on BCVA
 #'
-#' @description `r lifecycle::badge("experimental")`
+#' @description `r lifecycle::badge("stable")`
 #'
 #' @note Measurements of BCVA (best corrected visual acuity) is a measure of how
 #'   how many letters a person can read off of an eye chart using corrective
@@ -47,7 +47,7 @@
 
 #' Cache Data for `mmrm` Model Comparison
 #'
-#' @description `r lifecycle::badge("experimental")`
+#' @description `r lifecycle::badge("stable")`
 #'
 #' @note The cached data for comparison is used for the vignettes generation.
 #' Please make sure that this data is refreshed before each package release
