@@ -198,10 +198,10 @@ h_partial_fun_args <- function(fun, ..., additional_attr = list()) {
     structure,
     args = utils::modifyList(
       list(
-        .Data = fun, 
+        .Data = fun,
         args = utils::modifyList(args, a_args),
         class = c("partial", "function")
-      ), 
+      ),
       additional_attr
     )
   )
