@@ -1,387 +1,136 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://openpharma.github.io/mmrm/404.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/CONTRIBUTING.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/PULL_REQUEST_TEMPLATE.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/articles/algorithm.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/articles/between_within.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/articles/coef_vcov.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/articles/covariance.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/articles/empirical_wls.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/articles/hypothesis_testing.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/articles/introduction.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/articles/kenward.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/articles/methodological_introduction.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/articles/mmrm_review_methods.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/articles/package_structure.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/articles/predict.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/articles/satterthwaite.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/index.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/Anova.mmrm.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/COV_TYPES.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/as.cov_struct.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/bcva_data.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/cached_mmrm_results.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/car_add_mmrm.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/check_package_version.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/component.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/cov_struct.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/cov_type_abbr.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/cov_type_name.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/covariance_types.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/df_1d.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/df_md.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/drop_elements.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/emit_tidymodels_register_msg.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/emmeans_support.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/emp_start.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/fev_data.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/fill_names.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/fit_mmrm.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/fit_single_optimizer.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/flat_expr.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/format.cov_struct.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/format_symbols.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/formula_rhs.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_add_covariance_terms.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_add_terms.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_coef_table.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_confirm_large_levels.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_construct_model_frame_inputs.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_default_value.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_df_1d_bw.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_df_1d_kr.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_df_1d_res.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_df_1d_sat.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_df_bw_calc.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_df_md_bw.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_df_md_from_1d.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_df_md_kr.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_df_md_res.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_df_md_sat.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_df_min_bw.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_df_to_tibble.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_drop_covariance_terms.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_extract_covariance_terms.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_factor_ref.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_factor_ref_data.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_get_contrast.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_get_cov_default.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_get_empirical.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_get_kr_comp.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_get_optimizers.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_get_prediction.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_get_prediction_variance.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_get_sim_per_subj.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_get_theta_from_cov.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_gradient.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_jac_list.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_kr_df.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_md_denom_df.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_mmrm_tmb_assert_start.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_mmrm_tmb_check_conv.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_mmrm_tmb_data.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_mmrm_tmb_extract_cov.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_mmrm_tmb_fit.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_mmrm_tmb_formula_parts.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_mmrm_tmb_parameters.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_newdata_add_pred.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_optimizer_fun.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_partial_fun_args.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_print_aic_list.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_print_call.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_print_cov.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_quad_form.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_reconcile_cov_struct.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_record_all_output.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_register_s3.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_residuals_normalized.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_residuals_pearson.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_residuals_response.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_split_control.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_summarize_all_fits.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_tbl_confint_terms.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_test_1d.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_test_md.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_tr.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_valid_formula.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_var_adj.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_warn_na_action.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/h_within_or_between.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/is_infix.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/mmrm-package.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/mmrm.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/mmrm_control.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/mmrm_methods.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/mmrm_tidiers.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/mmrm_tmb_methods.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/parsnip_add_mmrm.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/position_symbol.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/print.cov_struct.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/reexports.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/refit_multiple_optimizers.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/register_on_load.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/std_start.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/tmb_cov_type.html</loc>
-  </url>
-  <url>
-    <loc>https://openpharma.github.io/mmrm/reference/validate_cov_struct.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://openpharma.github.io/mmrm/404.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/CONTRIBUTING.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/PULL_REQUEST_TEMPLATE.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/articles/algorithm.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/articles/between_within.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/articles/coef_vcov.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/articles/covariance.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/articles/empirical_wls.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/articles/hypothesis_testing.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/articles/index.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/articles/introduction.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/articles/kenward.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/articles/methodological_introduction.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/articles/mmrm_review_methods.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/articles/package_structure.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/articles/predict.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/articles/satterthwaite.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/authors.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/index.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/news/index.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/Anova.mmrm.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/COV_TYPES.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/as.cov_struct.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/bcva_data.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/cached_mmrm_results.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/car_add_mmrm.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/check_package_version.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/component.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/cov_struct.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/cov_type_abbr.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/cov_type_name.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/covariance_types.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/df_1d.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/df_md.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/drop_elements.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/emit_tidymodels_register_msg.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/emmeans_support.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/emp_start.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/fev_data.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/fill_names.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/fit_mmrm.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/fit_single_optimizer.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/flat_expr.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/format.cov_struct.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/format_symbols.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/formula_rhs.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_add_covariance_terms.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_add_terms.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_coef_table.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_confirm_large_levels.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_construct_model_frame_inputs.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_default_value.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_df_1d_bw.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_df_1d_kr.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_df_1d_res.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_df_1d_sat.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_df_bw_calc.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_df_md_bw.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_df_md_from_1d.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_df_md_kr.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_df_md_res.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_df_md_sat.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_df_min_bw.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_df_to_tibble.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_drop_covariance_terms.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_drop_levels.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_extra_levels.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_extract_covariance_terms.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_first_contain_categorical.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_get_contrast.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_get_cov_default.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_get_empirical.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_get_index.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_get_kr_comp.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_get_na_action.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_get_optimizers.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_get_prediction.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_get_prediction_variance.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_get_sim_per_subj.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_get_theta_from_cov.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_gradient.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_jac_list.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_kr_df.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_md_denom_df.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_mmrm_tmb_assert_start.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_mmrm_tmb_check_conv.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_mmrm_tmb_data.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_mmrm_tmb_extract_cov.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_mmrm_tmb_fit.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_mmrm_tmb_formula_parts.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_mmrm_tmb_parameters.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_newdata_add_pred.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_obtain_lvls.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_optimizer_fun.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_partial_fun_args.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_print_aic_list.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_print_call.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_print_cov.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_quad_form.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_reconcile_cov_struct.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_record_all_output.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_register_s3.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_residuals_normalized.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_residuals_pearson.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_residuals_response.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_split_control.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_summarize_all_fits.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_tbl_confint_terms.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_test_1d.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_test_md.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_tmb_warn_optimization.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_tr.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_valid_formula.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_var_adj.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_warn_na_action.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_within_or_between.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/index.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/is_infix.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/mmrm-package.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/mmrm.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/mmrm_control.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/mmrm_methods.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/mmrm_tidiers.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/mmrm_tmb_methods.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/parsnip_add_mmrm.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/position_symbol.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/print.cov_struct.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/reexports.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/refit_multiple_optimizers.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/register_on_load.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/std_start.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/tmb_cov_type.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/validate_cov_struct.html</loc></url>
 </urlset>
+
