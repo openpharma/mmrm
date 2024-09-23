@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.12.9002</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.13</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,25 +52,6 @@
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
 <li class="nav-item dropdown">
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.12">v0.3.12</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.11">v0.3.11</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.10">v0.3.10</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.7">v0.3.7</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.6">v0.3.6</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.5">v0.3.5</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.4">v0.3.4</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.3">v0.3.3</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.2">v0.3.2</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.1">v0.3.1</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.0">v0.3.0</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.2.2">v0.2.2</a> </div></li>
-<!-- end dropdown for versions -->
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-reports" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Reports</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-reports"><li><a class="dropdown-item" href="../coverage-report/">Coverage report</a></li>
     <li><a class="dropdown-item" href="../unit-test-report/">Unit test report</a></li>
@@ -90,27 +71,27 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.3.12.9002" id="mmrm-03129002">mmrm 0.3.12.9002<a class="anchor" aria-label="anchor" href="#mmrm-03129002"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.3.13" id="mmrm-0313">mmrm 0.3.13<a class="anchor" aria-label="anchor" href="#mmrm-0313"></a></h2>
 <div class="section level4">
-<h4 id="bug-fixes-0-3-12-9002">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-3-12-9002"></a></h4>
-<ul><li>Previously <code>emmeans</code> will return <code>NA</code> for spatial covariance structure. This is fixed now.</li>
-<li>Previously <code><a href="https://rdrr.io/pkg/car/man/Anova.html" class="external-link">car::Anova</a></code> will give incorrect results if an interaction term is included and the order of the covariate of interest is not the first categorical variable. This is fixed now.</li>
-<li>Previously <code><a href="https://rdrr.io/pkg/car/man/Anova.html" class="external-link">car::Anova</a></code> will fail if the model does not contain intercept. This is fixed now.</li>
-<li>Previously, <code>mmrm</code> will ignore contrasts defined for covariates in the input data set. This is fixed now.</li>
-<li>Previously, <code>predict</code> will always require the response to be valid, even for unconditional predictions. This is fixed now and unconditional prediction do not require the response to be valid anymore.</li>
-<li>When running with <code>TMB</code> package versions below 1.9.15, MMRM fit results are not completely reproducible. While this may not be relevant for most applications, because the numerical differences are very small, we now issue a warning to the user if this is the case. We advise users to upgrade their <code>TMB</code> package versions to 1.9.15 or higher to ensure reproducibility.</li>
+<h4 id="bug-fixes-0-3-13">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-3-13"></a></h4>
+<ul><li>When running with <code>TMB</code> package versions below 1.9.15, MMRM fit results are not completely reproducible. While this may not be relevant for most applications, because the numerical differences are very small, we now issue a warning to the user if this is the case. We advise users to upgrade their <code>TMB</code> package versions to 1.9.15 or higher to ensure reproducibility.</li>
+<li>Previously, <code>mmrm</code> ignored contrasts defined for covariates in the input data set. This is fixed now.</li>
+<li>Previously, <code>predict</code> always required the response to be valid, even for unconditional predictions. This is fixed now and unconditional prediction does not require the response to be valid or present any longer.</li>
+<li>
+<code>model.frame</code> has been updated to ensure that the <code>na.action</code> works correctly.</li>
+<li>Previously <code><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html" class="external-link">emmeans::emmeans</a></code> returned <code>NA</code> for spatial covariance structures. This is fixed now.</li>
+<li>Previously <code><a href="https://rdrr.io/pkg/car/man/Anova.html" class="external-link">car::Anova</a></code> gave incorrect results if an interaction term is included and the covariate of interest was not the first categorical variable. This is fixed now.</li>
+<li>Previously <code><a href="https://rdrr.io/pkg/car/man/Anova.html" class="external-link">car::Anova</a></code> failed if the model did not contain an intercept. This is fixed now.</li>
 </ul></div>
 <div class="section level4">
-<h4 id="miscellaneous-0-3-12-9002">Miscellaneous<a class="anchor" aria-label="anchor" href="#miscellaneous-0-3-12-9002"></a></h4>
+<h4 id="miscellaneous-0-3-13">Miscellaneous<a class="anchor" aria-label="anchor" href="#miscellaneous-0-3-13"></a></h4>
 <ul><li>Upon fitting an MMRM, it is checked whether a not reproducible optimization feature of <code>TMB</code> is turned on. If so, a warning is issued to the user once per session.</li>
 <li>
-<code>model.matrix</code> is updated to ensure that the <code>NA</code> values are dropped. Additionally, an argument <code>use_response</code> is added to decide whether records with <code>NA</code> values in the response should be discarded.</li>
-<li>
-<code>model.frame</code> is updated to ensure that the <code>na.action</code> works.</li>
-<li>
-<code>predict</code> is updated to allow duplicated subject IDs for unconditional prediction.</li>
-<li>
 <code>mmrm</code> now checks on the positive definiteness of the covariance matrix <code>theta_vcov</code>. If it is not positive definite, non-convergence is messaged appropriately.</li>
+<li>
+<code>model.matrix</code> has been updated to ensure that the <code>NA</code> values are dropped. Additionally, an argument <code>use_response</code> is added to decide whether records with <code>NA</code> values in the response should be discarded.</li>
+<li>
+<code>predict</code> has been updated to allow duplicated subject IDs for unconditional prediction.</li>
 </ul></div>
 </div>
     <div class="section level2">
@@ -240,7 +221,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Daniel Sabanes Bove, Liming Li, Julia Dedic, Doug Kelkhoff, Kevin Kunzmann, Brian Matthew Lang, Christian Stock, Ya Wang, Dan James, Jonathan Sidi, Daniel Leibovitz, Daniel D. Sjoberg, Boehringer Ingelheim Ltd., Gilead Sciences, Inc., F. Hoffmann-La Roche AG, Merck Sharp &amp; Dohme, Inc., AstraZeneca plc.</p>
+  <p>Developed by Daniel Sabanes Bove, Liming Li, Julia Dedic, Doug Kelkhoff, Kevin Kunzmann, Brian Matthew Lang, Christian Stock, Ya Wang, Dan James, Jonathan Sidi, Daniel Leibovitz, Daniel D. Sjoberg, Boehringer Ingelheim Ltd., Gilead Sciences, Inc., F. Hoffmann-La Roche AG, Merck Sharp &amp; Dohme, Inc., AstraZeneca plc, inferential.biostatistics GmbH.</p>
 </div>
 
 <div class="pkgdown-footer-right">
