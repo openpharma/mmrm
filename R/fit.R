@@ -1,6 +1,6 @@
 #' Fitting an MMRM with Single Optimizer
 #'
-#' @description `r lifecycle::badge("experimental")`
+#' @description `r lifecycle::badge("stable")`
 #'
 #' This function helps to fit an MMRM using `TMB` with a single optimizer,
 #' while capturing messages and warnings.
@@ -127,7 +127,7 @@ h_summarize_all_fits <- function(all_fits) {
 
 #' Refitting MMRM with Multiple Optimizers
 #'
-#' @description `r lifecycle::badge("experimental")`
+#' @description `r lifecycle::badge("stable")`
 #'
 #' @param fit (`mmrm_fit`)\cr original model fit from [fit_single_optimizer()].
 #' @param ... Additional arguments passed to [mmrm_control()].
@@ -194,7 +194,7 @@ refit_multiple_optimizers <- function(fit,
 
 #' Control Parameters for Fitting an MMRM
 #'
-#' @description `r lifecycle::badge("experimental")`
+#' @description `r lifecycle::badge("stable")`
 #' Fine-grained specification of the MMRM fit details is possible using this
 #' control function.
 #'
@@ -313,7 +313,7 @@ mmrm_control <- function(n_cores = 1L,
 
 #' Fit an MMRM
 #'
-#' @description `r lifecycle::badge("experimental")`
+#' @description `r lifecycle::badge("stable")`
 #'
 #' This is the main function fitting the MMRM.
 #'

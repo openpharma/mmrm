@@ -1,6 +1,6 @@
 #' Tidying Methods for `mmrm` Objects
 #'
-#' @description `r lifecycle::badge("experimental")`
+#' @description `r lifecycle::badge("stable")`
 #'
 #' These methods tidy the estimates from an `mmrm` object into a
 #' summary.
