@@ -935,13 +935,13 @@ test_that("mmrm fails for vcov: Jackknife and method: Kenward-Roger", {
 })
 
 test_that("mmrm gives warning if not reproducible TMB option is used", {
-  TMB::config(optimize.instantly = 1, DLL = "mmrm")
+  TMB::config(tmbad_deterministic_hash = 0, DLL = "mmrm")
   expect_warning(
     mmrm(
       formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
       data = fev_data
     ),
-    "TMB is configured to optimize instantly"
+    "TMB is configured to use a non-deterministic hash"
   )
-  TMB::config(optimize.instantly = 0, DLL = "mmrm")
+  TMB::config(tmbad_deterministic_hash = 1, DLL = "mmrm")
 })

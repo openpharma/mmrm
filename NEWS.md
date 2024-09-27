@@ -2,6 +2,12 @@
 
 ### Bug Fixes
 
+- Previously, when the tape optimizer from `TMB` was switched on a warning would be given, instructing to turn off the tape optimizer. However, this is not necessary for reproducible results. Instead now it is checked whether the deterministic hash for the TMB tape optimizer is used, and a warning is issued otherwise.
+
+# mmrm 0.3.13
+
+### Bug Fixes
+
 - When running with `TMB` package versions below 1.9.15, MMRM fit results are not completely reproducible. While this may not be relevant for most applications, because the numerical differences are very small, we now issue a warning to the user if this is the case. We advise users to upgrade their `TMB` package versions to 1.9.15 or higher to ensure reproducibility.
 - Previously, `mmrm` ignored contrasts defined for covariates in the input data set. This is fixed now.
 - Previously, `predict` always required the response to be valid, even for unconditional predictions. This is fixed now and unconditional prediction does not require the response to be valid or present any longer.
