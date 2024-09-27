@@ -323,16 +323,17 @@ test_that("h_drop_levels works as expected", {
   )
 })
 
-# h_tmb_warn_optimization ----
+# h_tmb_warn_non_deterministic ----
 
-test_that("h_tmb_warn_optimization works as expected", {
-  TMB::config(optimize.instantly = 1, DLL = "mmrm")
+test_that("h_tmb_warn_non_deterministic works as expected", {
+  skip_if(packageVersion("TMB") < "1.9.15")
+  TMB::config(tmbad_deterministic_hash = 0, DLL = "mmrm")
   expect_warning(
-    h_tmb_warn_optimization(),
-    "TMB is configured to optimize instantly"
+    h_tmb_warn_non_deterministic(),
+    "TMB is configured to use a non-deterministic hash"
   )
-  TMB::config(optimize.instantly = 0, DLL = "mmrm")
-  expect_silent(h_tmb_warn_optimization())
+  TMB::config(tmbad_deterministic_hash = 1, DLL = "mmrm")
+  expect_silent(h_tmb_warn_non_deterministic())
 })
 
 # h_get_na_action ----

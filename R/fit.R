@@ -422,6 +422,7 @@ mmrm <- function(formula,
   h_valid_formula(formula)
   covariance <- h_reconcile_cov_struct(formula, covariance)
   formula_parts <- h_mmrm_tmb_formula_parts(formula, covariance)
+  h_tmb_warn_non_deterministic()
 
   if (!missing(data)) {
     attr(data, which = "dataname") <- toString(match.call()$data)

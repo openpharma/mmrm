@@ -524,22 +524,27 @@ h_drop_levels <- function(data, subject_var, visit_var, except) {
   data
 }
 
-#' Warn if TMB is Configured to Optimize Instantly
+#' Warn if TMB is Configured to Use Non-Deterministic Hash for Tape Optimizer
 #'
-#' This function checks the TMB configuration for the `optimize.instantly` setting.
-#' If it is set to `TRUE`, a warning is issued indicating that this may lead to
+#' This function checks the TMB configuration for the `tmbad_deterministic_hash` setting
+#' If it is set to `FALSE`, a warning is issued indicating that this may lead to
 #' unreproducible results.
 #'
 #' @return No return value, called for side effects.
 #' @keywords internal
-h_tmb_warn_optimization <- function() {
-  tmb_config <- TMB::config("optimize.instantly", DLL = "mmrm")
-  if (tmb_config$optimize.instantly) {
+h_tmb_warn_non_deterministic <- function() {
+  if (packageVersion("TMB") < "1.9.15") {
+    return()
+  }
+  tmb_config <- TMB::config(DLL = "mmrm")
+  tape_deterministic <- tmb_config$tmbad_deterministic_hash
+  if (!tape_deterministic) {
     msg <- paste(
-      "TMB is configured to optimize instantly, this may lead to unreproducible results.",
-      "To disable this behavior, use `TMB::config(optimize.instantly = 0)`.",
+      "TMB is configured to use a non-deterministic hash for its tape optimizer,",
+      "and this may lead to unreproducible results.",
+      "To disable this behavior, use `TMB::config(tmbad_deterministic_hash = 1)`.",
       sep = "\n"
     )
-    rlang::warn(msg, .frequency = "once", .frequency_id = "tmb_warn_optimization")
+    warning(msg)
   }
 }

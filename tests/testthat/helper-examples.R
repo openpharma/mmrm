@@ -1,5 +1,5 @@
-# We need to disable instant optimization to run tests.
-TMB::config(optimize.instantly = 0, DLL = "mmrm")
+# We need to make sure to have deterministic hash to run tests.
+TMB::config(tmbad_deterministic_hash = 1, DLL = "mmrm")
 
 .tmb_formula <- FEV1 ~ RACE + us(AVISIT | USUBJID)
 .mmrm_tmb_example <- fit_mmrm(.tmb_formula, fev_data, weights = rep(1, nrow(fev_data)))

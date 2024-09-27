@@ -537,8 +537,6 @@ fit_mmrm <- function(formula,
   }
   tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = control$start, n_groups = tmb_data$n_groups)
 
-  h_tmb_warn_optimization()
-
   tmb_object <- TMB::MakeADFun(
     data = tmb_data,
     parameters = tmb_parameters,

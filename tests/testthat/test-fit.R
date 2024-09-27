@@ -402,9 +402,9 @@ test_that("mmrm works if formula contains variables not in data", {
 
 test_that("mmrm works for specific small data example", {
   small_dat <- data.frame(
-    FEV1 = c(1, 2, 3, 4, 5, 6),
-    AVISIT = factor(c("V1", "V1", "V2", "V3", "V3", "V4")),
-    USUBJID = c("A", "B", "A", "C", "D", "A")
+    FEV1 = c(1, 2, 3, 4, 5, 6, 7, 8),
+    AVISIT = factor(c("V1", "V1", "V2", "V3", "V3", "V4", "V4", "V4")),
+    USUBJID = c("A", "B", "A", "C", "D", "A", "B", "C")
   )
   vars <- list(
     response = "FEV1",
@@ -932,4 +932,16 @@ test_that("mmrm fails for vcov: Jackknife and method: Kenward-Roger", {
     ),
     "Kenward-Roger degrees of freedom must work together with Kenward-Roger or Kenward-Roger-Linear covariance!"
   )
+})
+
+test_that("mmrm gives warning if not reproducible TMB option is used", {
+  TMB::config(tmbad_deterministic_hash = 0, DLL = "mmrm")
+  expect_warning(
+    mmrm(
+      formula = FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+      data = fev_data
+    ),
+    "TMB is configured to use a non-deterministic hash"
+  )
+  TMB::config(tmbad_deterministic_hash = 1, DLL = "mmrm")
 })
