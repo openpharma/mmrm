@@ -526,16 +526,19 @@ h_drop_levels <- function(data, subject_var, visit_var, except) {
 
 #' Warn if TMB is Configured to Use Non-Deterministic Hash for Tape Optimizer
 #'
-#' This function checks the TMB configuration for the `tmbad_deterministic_hash` setting.
+#' This function checks the TMB configuration for the `tmbad_deterministic_hash` setting
 #' If it is set to `FALSE`, a warning is issued indicating that this may lead to
 #' unreproducible results.
 #'
 #' @return No return value, called for side effects.
 #' @keywords internal
 h_tmb_warn_non_deterministic <- function() {
+  if (packageVersion("TMB") < "1.9.15") {
+    return()
+  }
   tmb_config <- TMB::config(DLL = "mmrm")
   tape_deterministic <- tmb_config$tmbad_deterministic_hash
-  if (is.null(tape_deterministic) || !tape_deterministic) {
+  if (!tape_deterministic) {
     msg <- paste(
       "TMB is configured to use a non-deterministic hash for its tape optimizer,",
       "and this may lead to unreproducible results.",

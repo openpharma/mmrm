@@ -326,6 +326,7 @@ test_that("h_drop_levels works as expected", {
 # h_tmb_warn_non_deterministic ----
 
 test_that("h_tmb_warn_non_deterministic works as expected", {
+  skip_if(packageVersion("TMB") < "1.9.15")
   TMB::config(tmbad_deterministic_hash = 0, DLL = "mmrm")
   expect_warning(
     h_tmb_warn_non_deterministic(),
