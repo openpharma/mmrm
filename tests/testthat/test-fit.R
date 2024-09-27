@@ -402,9 +402,9 @@ test_that("mmrm works if formula contains variables not in data", {
 
 test_that("mmrm works for specific small data example", {
   small_dat <- data.frame(
-    FEV1 = c(1, 2, 3, 4, 5, 6),
-    AVISIT = factor(c("V1", "V1", "V2", "V3", "V3", "V4")),
-    USUBJID = c("A", "B", "A", "C", "D", "A")
+    FEV1 = c(1, 2, 3, 4, 5, 6, 7, 8),
+    AVISIT = factor(c("V1", "V1", "V2", "V3", "V3", "V4", "V4", "V4")),
+    USUBJID = c("A", "B", "A", "C", "D", "A", "B", "C")
   )
   vars <- list(
     response = "FEV1",
