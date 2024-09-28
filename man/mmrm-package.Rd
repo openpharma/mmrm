@@ -36,6 +36,7 @@ Authors:
 Other contributors:
 \itemize{
   \item Craig Gower-Page \email{craig.gower-page@roche.com} [contributor]
+  \item Lukas A. Widmer (\href{https://orcid.org/0000-0003-1471-3493}{ORCID}) [contributor]
   \item Boehringer Ingelheim Ltd. [copyright holder, funder]
   \item Gilead Sciences, Inc. [copyright holder, funder]
   \item F. Hoffmann-La Roche AG [copyright holder, funder]

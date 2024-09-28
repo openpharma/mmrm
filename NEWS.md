@@ -1,9 +1,9 @@
-# mmrm 0.3.13.9001
+# mmrm 0.3.14
 
 ### Bug Fixes
 
-- In version 0.3.13, when the tape optimizer from `TMB` was switched on, a warning would be given by `fit_mmrm()`, instructing users to turn off the tape optimizer. However, this is not necessary for reproducible results. Instead, it is now checked whether the deterministic hash for the TMB tape optimizer is used, and a warning is issued otherwise. 
-- In version 0.3.13, the above described warning by `fit_mmrm()` was not visible to the user when calling `mmrm()` because it was caught internally, causing the first fit in each session to fail for the first tried optimizer and falling back to the other optimizers. The warning is now issued directly by `mmrm()`. This change ensures that the first fit is consistent with subsequent fits, avoiding discrepancies observed in version 0.3.13.
+- In version 0.3.13, when the tape optimizer from `TMB` was switched on, a warning would be given by `fit_mmrm()`, instructing users to turn off the tape optimizer. However, this is not necessary for reproducible results. Instead, it is now checked whether the deterministic hash for the `TMB` tape optimizer is used, and a warning is issued otherwise. 
+- In version 0.3.13, the above described warning by `fit_mmrm()` was not visible to the user when calling `mmrm()` because it was caught internally, causing the first fit in each session to fail for the first tried optimizer and falling back to the other optimizers. The warning is now issued directly by `mmrm()`. This change ensures that the first model fit is consistent regarding the chosen optimizer (and thus numeric results) with subsequent model fits, avoiding discrepancies observed in version 0.3.13.
 
 # mmrm 0.3.13
 

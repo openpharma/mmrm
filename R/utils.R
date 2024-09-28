@@ -533,7 +533,7 @@ h_drop_levels <- function(data, subject_var, visit_var, except) {
 #' @return No return value, called for side effects.
 #' @keywords internal
 h_tmb_warn_non_deterministic <- function() {
-  if (packageVersion("TMB") < "1.9.15") {
+  if (utils::packageVersion("TMB") < "1.9.15") {
     return()
   }
   tmb_config <- TMB::config(DLL = "mmrm")
