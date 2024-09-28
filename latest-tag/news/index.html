@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.13</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.14</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,6 +58,7 @@
           aria-expanded="false" aria-haspopup="true"
           id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
+<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.14">v0.3.14</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.13">v0.3.13</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.12">v0.3.12</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.11">v0.3.11</a>
@@ -87,11 +88,19 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.13/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.14/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.3.13" id="mmrm-0313">mmrm 0.3.13<a class="anchor" aria-label="anchor" href="#mmrm-0313"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.3.14" id="mmrm-0314">mmrm 0.3.14<a class="anchor" aria-label="anchor" href="#mmrm-0314"></a></h2><p class="text-muted">CRAN release: 2024-09-27</p>
+<div class="section level4">
+<h4 id="bug-fixes-0-3-14">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-3-14"></a></h4>
+<ul><li>In version 0.3.13, when the tape optimizer from <code>TMB</code> was switched on, a warning would be given by <code><a href="../reference/fit_mmrm.html">fit_mmrm()</a></code>, instructing users to turn off the tape optimizer. However, this is not necessary for reproducible results. Instead, it is now checked whether the deterministic hash for the <code>TMB</code> tape optimizer is used, and a warning is issued otherwise.</li>
+<li>In version 0.3.13, the above described warning by <code><a href="../reference/fit_mmrm.html">fit_mmrm()</a></code> was not visible to the user when calling <code><a href="../reference/mmrm.html">mmrm()</a></code> because it was caught internally, causing the first fit in each session to fail for the first tried optimizer and falling back to the other optimizers. The warning is now issued directly by <code><a href="../reference/mmrm.html">mmrm()</a></code>. This change ensures that the first model fit is consistent regarding the chosen optimizer (and thus numeric results) with subsequent model fits, avoiding discrepancies observed in version 0.3.13.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.3.13" id="mmrm-0313">mmrm 0.3.13<a class="anchor" aria-label="anchor" href="#mmrm-0313"></a></h2><p class="text-muted">CRAN release: 2024-09-23</p>
 <div class="section level4">
 <h4 id="bug-fixes-0-3-13">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-3-13"></a></h4>
 <ul><li>When running with <code>TMB</code> package versions below 1.9.15, MMRM fit results are not completely reproducible. While this may not be relevant for most applications, because the numerical differences are very small, we now issue a warning to the user if this is the case. We advise users to upgrade their <code>TMB</code> package versions to 1.9.15 or higher to ensure reproducibility.</li>

@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.13</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.14</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,6 +58,7 @@
           aria-expanded="false" aria-haspopup="true"
           id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
+<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.14">v0.3.14</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.13">v0.3.13</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.12">v0.3.12</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.11">v0.3.11</a>
@@ -87,7 +88,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Methods for <code>mmrm_tmb</code> Objects</h1>
-      <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.13/R/tmb-methods.R" class="external-link"><code>R/tmb-methods.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.14/R/tmb-methods.R" class="external-link"><code>R/tmb-methods.R</code></a></small>
       <div class="d-none name"><code>mmrm_tmb_methods.Rd</code></div>
     </div>
 
@@ -3428,7 +3429,7 @@ and m is the number <code>nsim</code> of simulated responses.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"response")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,".Environment")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5651cbed7968&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55ea15ffea88&gt;</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/terms.html" class="external-link">terms</a></span><span class="op">(</span><span class="va">object</span>, include <span class="op">=</span> <span class="st">"subject_var"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ~RACE + SEX + ARMCD + AVISIT + USUBJID + ARMCD:AVISIT</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"variables")</span>
@@ -3450,14 +3451,14 @@ and m is the number <code>nsim</code> of simulated responses.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"response")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,".Environment")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5651cbed7968&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55ea15ffea88&gt;</span>
 <span class="r-in"><span><span class="co"># Log likelihood given the estimated parameters:</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/logLik.html" class="external-link">logLik</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] -1693.225</span>
 <span class="r-in"><span><span class="co"># Formula which was used:</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/formula.html" class="external-link">formula</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5651cbed7968&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55ea15ffea88&gt;</span>
 <span class="r-in"><span><span class="co"># Variance-covariance matrix estimate for coefficients:</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/vcov.html" class="external-link">vcov</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                               (Intercept) RACEBlack or African American</span>

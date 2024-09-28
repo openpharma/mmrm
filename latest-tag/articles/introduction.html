@@ -27,7 +27,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.13</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.14</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -75,6 +75,7 @@
           aria-expanded="false" aria-haspopup="true"
           id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
+<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.14">v0.3.14</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.13">v0.3.13</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.12">v0.3.12</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.11">v0.3.11</a>
@@ -116,7 +117,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Package Introduction</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.13/vignettes/introduction.Rmd" class="external-link"><code>vignettes/introduction.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.14/vignettes/introduction.Rmd" class="external-link"><code>vignettes/introduction.Rmd</code></a></small>
       <div class="d-none name"><code>introduction.Rmd</code></div>
     </div>
 
@@ -165,20 +166,20 @@ information:</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients: </span></span>
 <span><span class="co">#&gt;                   (Intercept) RACEBlack or African American </span></span>
-<span><span class="co">#&gt;                    30.7774065                     1.5305950 </span></span>
+<span><span class="co">#&gt;                   30.77747548                    1.53049977 </span></span>
 <span><span class="co">#&gt;                     RACEWhite                     SEXFemale </span></span>
-<span><span class="co">#&gt;                     5.6435679                     0.3260274 </span></span>
+<span><span class="co">#&gt;                    5.64356535                    0.32606192 </span></span>
 <span><span class="co">#&gt;                      ARMCDTRT                    AVISITVIS2 </span></span>
-<span><span class="co">#&gt;                     3.7744139                     4.8396039 </span></span>
+<span><span class="co">#&gt;                    3.77423004                    4.83958845 </span></span>
 <span><span class="co">#&gt;                    AVISITVIS3                    AVISITVIS4 </span></span>
-<span><span class="co">#&gt;                    10.3421671                    15.0537863 </span></span>
+<span><span class="co">#&gt;                   10.34211288                   15.05389826 </span></span>
 <span><span class="co">#&gt;           ARMCDTRT:AVISITVIS2           ARMCDTRT:AVISITVIS3 </span></span>
-<span><span class="co">#&gt;                    -0.0420899                    -0.6938068 </span></span>
+<span><span class="co">#&gt;                   -0.04192625                   -0.69368537 </span></span>
 <span><span class="co">#&gt;           ARMCDTRT:AVISITVIS4 </span></span>
-<span><span class="co">#&gt;                     0.6241229 </span></span>
+<span><span class="co">#&gt;                    0.62422703 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Model Inference Optimization:</span></span>
-<span><span class="co">#&gt; Converged with code 0 and message: No message provided.</span></span></code></pre></div>
+<span><span class="co">#&gt; Converged with code 0 and message: convergence: rel_reduction_of_f &lt;= factr*epsmch</span></span></code></pre></div>
 <p>The <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> method then provides the coefficients
 table with Satterthwaite degrees of freedom as well as the covariance
 matrix estimate:</p>
@@ -200,17 +201,17 @@ matrix estimate:</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients: </span></span>
 <span><span class="co">#&gt;                                Estimate Std. Error        df t value Pr(&gt;|t|)</span></span>
-<span><span class="co">#&gt; (Intercept)                    30.77741    0.88657 218.79000  34.715  &lt; 2e-16</span></span>
-<span><span class="co">#&gt; RACEBlack or African American   1.53059    0.62446 168.67000   2.451 0.015263</span></span>
-<span><span class="co">#&gt; RACEWhite                       5.64357    0.66559 157.14000   8.479 1.56e-14</span></span>
-<span><span class="co">#&gt; SEXFemale                       0.32603    0.53194 166.14000   0.613 0.540776</span></span>
-<span><span class="co">#&gt; ARMCDTRT                        3.77441    1.07416 145.55000   3.514 0.000589</span></span>
-<span><span class="co">#&gt; AVISITVIS2                      4.83960    0.80173 143.87000   6.036 1.27e-08</span></span>
-<span><span class="co">#&gt; AVISITVIS3                     10.34217    0.82269 155.56000  12.571  &lt; 2e-16</span></span>
-<span><span class="co">#&gt; AVISITVIS4                     15.05379    1.31288 138.46000  11.466  &lt; 2e-16</span></span>
-<span><span class="co">#&gt; ARMCDTRT:AVISITVIS2            -0.04209    1.12933 138.56000  -0.037 0.970324</span></span>
-<span><span class="co">#&gt; ARMCDTRT:AVISITVIS3            -0.69381    1.18764 158.17000  -0.584 0.559924</span></span>
-<span><span class="co">#&gt; ARMCDTRT:AVISITVIS4             0.62412    1.85096 129.71000   0.337 0.736520</span></span>
+<span><span class="co">#&gt; (Intercept)                    30.77748    0.88656 218.80000  34.715  &lt; 2e-16</span></span>
+<span><span class="co">#&gt; RACEBlack or African American   1.53050    0.62448 168.67000   2.451 0.015272</span></span>
+<span><span class="co">#&gt; RACEWhite                       5.64357    0.66561 157.14000   8.479 1.56e-14</span></span>
+<span><span class="co">#&gt; SEXFemale                       0.32606    0.53195 166.13000   0.613 0.540744</span></span>
+<span><span class="co">#&gt; ARMCDTRT                        3.77423    1.07415 145.55000   3.514 0.000589</span></span>
+<span><span class="co">#&gt; AVISITVIS2                      4.83959    0.80172 143.88000   6.037 1.27e-08</span></span>
+<span><span class="co">#&gt; AVISITVIS3                     10.34211    0.82269 155.56000  12.571  &lt; 2e-16</span></span>
+<span><span class="co">#&gt; AVISITVIS4                     15.05390    1.31281 138.47000  11.467  &lt; 2e-16</span></span>
+<span><span class="co">#&gt; ARMCDTRT:AVISITVIS2            -0.04193    1.12932 138.56000  -0.037 0.970439</span></span>
+<span><span class="co">#&gt; ARMCDTRT:AVISITVIS3            -0.69369    1.18765 158.17000  -0.584 0.559996</span></span>
+<span><span class="co">#&gt; ARMCDTRT:AVISITVIS4             0.62423    1.85085 129.72000   0.337 0.736463</span></span>
 <span><span class="co">#&gt;                                  </span></span>
 <span><span class="co">#&gt; (Intercept)                   ***</span></span>
 <span><span class="co">#&gt; RACEBlack or African American *  </span></span>
@@ -228,10 +229,10 @@ matrix estimate:</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Covariance estimate:</span></span>
 <span><span class="co">#&gt;         VIS1    VIS2    VIS3    VIS4</span></span>
-<span><span class="co">#&gt; VIS1 40.5544 14.3960  4.9760 13.3779</span></span>
-<span><span class="co">#&gt; VIS2 14.3960 26.5714  2.7836  7.4773</span></span>
-<span><span class="co">#&gt; VIS3  4.9760  2.7836 14.8980  0.9036</span></span>
-<span><span class="co">#&gt; VIS4 13.3779  7.4773  0.9036 95.5565</span></span></code></pre></div>
+<span><span class="co">#&gt; VIS1 40.5537 14.3960  4.9747 13.3867</span></span>
+<span><span class="co">#&gt; VIS2 14.3960 26.5715  2.7855  7.4745</span></span>
+<span><span class="co">#&gt; VIS3  4.9747  2.7855 14.8979  0.9082</span></span>
+<span><span class="co">#&gt; VIS4 13.3867  7.4745  0.9082 95.5568</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="common-customizations">Common customizations<a class="anchor" aria-label="anchor" href="#common-customizations"></a>
