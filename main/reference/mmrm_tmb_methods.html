@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.13.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.14</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,26 +52,6 @@
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
 <li class="nav-item dropdown">
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.13">v0.3.13</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.12">v0.3.12</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.11">v0.3.11</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.10">v0.3.10</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.7">v0.3.7</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.6">v0.3.6</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.5">v0.3.5</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.4">v0.3.4</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.3">v0.3.3</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.2">v0.3.2</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.1">v0.3.1</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.0">v0.3.0</a>
-<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.2.2">v0.2.2</a> </div></li>
-<!-- end dropdown for versions -->
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-reports" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Reports</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-reports"><li><a class="dropdown-item" href="../coverage-report/">Coverage report</a></li>
     <li><a class="dropdown-item" href="../unit-test-report/">Unit test report</a></li>
@@ -306,8 +286,7 @@ over the coefficients for REML fits or the usual one for ML fits.</p></li>
 where the degrees of freedom are the number of variance parameters (<code>n_theta</code>).
 If <code>corrected</code>, then this is multiplied with <code>m / (m - n_theta - 1)</code> where
 <code>m</code> is the number of observations minus the number of coefficients, or
-<code>n_theta + 2</code> if it is smaller than that (Hurvich and Tsai 1989; Burnham and Anderson 1998)
-.</p></li>
+<code>n_theta + 2</code> if it is smaller than that hurvich1989regression,burnham1998practicalmmrm.</p></li>
 <li><p><code>BIC(mmrm_tmb)</code>: obtains the Bayesian Information Criterion,
 which is using the natural logarithm of the number of subjects for the
 penalty parameter <code>k</code>.</p></li>
@@ -321,21 +300,9 @@ and m is the number <code>nsim</code> of simulated responses.</p></li>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
 
-<ul><li><p>Hurvich CM, Tsai C (1989).
-“Regression and time series model selection in small samples.”
-<em>Biometrika</em>, <b>76</b>(2), 297–307.
-<a href="https://doi.org/10.2307/2336663" class="external-link">doi:10.2307/2336663</a>
-.</p></li>
-<li><p>Burnham KP, Anderson DR (1998).
-“Practical use of the information-theoretic approach.”
-In <em>Model selection and inference</em>, 75–117.
-Springer.
-<a href="https://doi.org/10.1007/978-1-4757-2917-7_3" class="external-link">doi:10.1007/978-1-4757-2917-7_3</a>
-.</p></li>
-</ul><ul><li><p>Gałecki A, Burzykowski T (2013).
-“Linear mixed-effects model.”
-In <em>Linear mixed-effects models using R</em>, 245–273.
-Springer.</p></li>
+<ul><li><p>hurvich1989regressionmmrm</p></li>
+<li><p>burnham1998practicalmmrm</p></li>
+</ul><ul><li><p>galecki2013linearmmrm</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -3441,7 +3408,7 @@ Springer.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"response")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,".Environment")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55e1d9a4a5d8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x56437ca7fa80&gt;</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/terms.html" class="external-link">terms</a></span><span class="op">(</span><span class="va">object</span>, include <span class="op">=</span> <span class="st">"subject_var"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ~RACE + SEX + ARMCD + AVISIT + USUBJID + ARMCD:AVISIT</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"variables")</span>
@@ -3463,14 +3430,14 @@ Springer.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"response")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,".Environment")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55e1d9a4a5d8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x56437ca7fa80&gt;</span>
 <span class="r-in"><span><span class="co"># Log likelihood given the estimated parameters:</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/logLik.html" class="external-link">logLik</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] -1693.225</span>
 <span class="r-in"><span><span class="co"># Formula which was used:</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/formula.html" class="external-link">formula</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55e1d9a4a5d8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x56437ca7fa80&gt;</span>
 <span class="r-in"><span><span class="co"># Variance-covariance matrix estimate for coefficients:</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/vcov.html" class="external-link">vcov</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                               (Intercept) RACEBlack or African American</span>
@@ -3890,7 +3857,7 @@ Springer.</p></li>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer></div>
