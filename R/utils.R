@@ -533,7 +533,7 @@ h_tmb_version_sufficient <- function() {
   # we can check like this:
   tmb_config <- TMB::config(DLL = "mmrm")
   tape_deterministic <- tmb_config$tmbad_deterministic_hash
-  !is_null(tape_deterministic)
+  !is.null(tape_deterministic)
 }
 
 #' Warn if TMB is Configured to Use Non-Deterministic Hash for Tape Optimizer
