@@ -1,3 +1,9 @@
+# mmrm 0.3.15
+
+### Bug Fixes
+
+- Previously, when compiling `mmrm` from source using a `TMB` version below 1.9.15, and installing a newer `TMB` of version 1.9.15 or above, would render the `mmrm` package unusable. This is fixed now, by checking in the dynamic library of `mmrm` whether the version of `TMB` has been sufficient.
+
 # mmrm 0.3.14
 
 ### Bug Fixes
