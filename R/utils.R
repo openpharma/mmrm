@@ -524,6 +524,18 @@ h_drop_levels <- function(data, subject_var, visit_var, except) {
   data
 }
 
+#' Predicate if the TMB Version Used to Compile the Package is Sufficient
+#'
+#' @return Flag whether the TMB version is sufficient.
+#' @keywords internal
+h_tmb_version_sufficient <- function() {
+  # Note: There is no version information saved in the dynamic library, but
+  # we can check like this:
+  tmb_config <- TMB::config(DLL = "mmrm")
+  tape_deterministic <- tmb_config$tmbad_deterministic_hash
+  !is.null(tape_deterministic)
+}
+
 #' Warn if TMB is Configured to Use Non-Deterministic Hash for Tape Optimizer
 #'
 #' This function checks the TMB configuration for the `tmbad_deterministic_hash` setting
@@ -533,7 +545,7 @@ h_drop_levels <- function(data, subject_var, visit_var, except) {
 #' @return No return value, called for side effects.
 #' @keywords internal
 h_tmb_warn_non_deterministic <- function() {
-  if (utils::packageVersion("TMB") < "1.9.15") {
+  if (!h_tmb_version_sufficient()) {
     return()
   }
   tmb_config <- TMB::config(DLL = "mmrm")

@@ -323,6 +323,13 @@ test_that("h_drop_levels works as expected", {
   )
 })
 
+# h_tmb_version_sufficient ----
+
+test_that("h_tmb_version_sufficient works as expected", {
+  skip_if(utils::packageVersion("TMB") < "1.9.15")
+  expect_true(h_tmb_version_sufficient())
+})
+
 # h_tmb_warn_non_deterministic ----
 
 test_that("h_tmb_warn_non_deterministic works as expected", {
