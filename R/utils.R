@@ -525,7 +525,7 @@ h_drop_levels <- function(data, subject_var, visit_var, except) {
 }
 
 #' Predicate if the TMB Version Used to Compile the Package is Sufficient
-#' 
+#'
 #' @return Flag whether the TMB version is sufficient.
 #' @keywords internal
 h_tmb_version_sufficient <- function() {
