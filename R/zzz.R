@@ -4,8 +4,13 @@
 #' @keywords internal
 #' @noRd
 .onLoad <- function(libname, pkgname) { # nolint
-  if (utils::packageVersion("TMB") < "1.9.15") {
-    warning("TMB version 1.9.15 or higher is required for reproducible model fits", call. = FALSE)
+  if (!h_tmb_version_sufficient()) {
+    msg <- paste(
+      "TMB below version 1.9.15 has been used to compile the mmrm package.",
+      "Reproducible model fits are not guaranteed.",
+      "Please consider recompiling the package with TMB version 1.9.15 or higher."
+    )
+    warning(msg, call. = FALSE)
   }
 
   register_on_load(
