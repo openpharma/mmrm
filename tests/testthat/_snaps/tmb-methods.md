@@ -1,3 +1,8 @@
+# predict works for data different factor levels
+
+    c("1" = 36.4082672191324, "2" = 41.2059294235457, "3" = 46.0566947323669
+    )
+
 # predict works for unconditional prediction if response does not exist
 
     c("1" = 36.4082672191322, "2" = 41.2059294235456, "3" = 46.0566947323668, 
