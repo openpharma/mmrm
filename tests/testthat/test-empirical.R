@@ -37,7 +37,7 @@ test_that("empirical covariance are the same with SAS result for ar1", {
 
   expect_equal(
     fit$beta_vcov %*%
-      (t(fit$meat_per_subject) %*% fit$meat_per_subject) %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
       t(fit$beta_vcov),
     fit$beta_vcov_adj,
     tolerance = 1e-4
@@ -55,7 +55,7 @@ test_that("empirical covariance are the same with SAS result for ar1h", {
 
   expect_equal(
     fit$beta_vcov %*%
-      (t(fit$meat_per_subject) %*% fit$meat_per_subject) %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
       t(fit$beta_vcov),
     fit$beta_vcov_adj,
     tolerance = 1e-4
@@ -73,7 +73,7 @@ test_that("empirical covariance are the same with SAS result for cs", {
 
   expect_equal(
     fit$beta_vcov %*%
-      (t(fit$meat_per_subject) %*% fit$meat_per_subject) %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
       t(fit$beta_vcov),
     fit$beta_vcov_adj,
     tolerance = 1e-4
@@ -91,7 +91,7 @@ test_that("empirical covariance are the same with SAS result for csh", {
 
   expect_equal(
     fit$beta_vcov %*%
-      (t(fit$meat_per_subject) %*% fit$meat_per_subject) %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
       t(fit$beta_vcov),
     fit$beta_vcov_adj,
     tolerance = 1e-4
@@ -109,7 +109,7 @@ test_that("empirical covariance are the same with SAS result for toep", {
 
   expect_equal(
     fit$beta_vcov %*%
-      (t(fit$meat_per_subject) %*% fit$meat_per_subject) %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
       t(fit$beta_vcov),
     fit$beta_vcov_adj,
     tolerance = 1e-4
@@ -127,7 +127,7 @@ test_that("empirical covariance are the same with SAS result for toeph", {
 
   expect_equal(
     fit$beta_vcov %*%
-      (t(fit$meat_per_subject) %*% fit$meat_per_subject) %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
       t(fit$beta_vcov),
     fit$beta_vcov_adj,
     tolerance = 1e-4
@@ -145,7 +145,7 @@ test_that("empirical covariance are the same with SAS result for adh", {
 
   expect_equal(
     fit$beta_vcov %*%
-      (t(fit$meat_per_subject) %*% fit$meat_per_subject) %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
       t(fit$beta_vcov),
     fit$beta_vcov_adj,
     tolerance = 1e-4
@@ -163,7 +163,7 @@ test_that("empirical covariance are the same with SAS result for us", {
 
   expect_equal(
     fit$beta_vcov %*%
-      (t(fit$meat_per_subject) %*% fit$meat_per_subject) %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
       t(fit$beta_vcov),
     fit$beta_vcov_adj,
     tolerance = 1e-4
@@ -184,7 +184,7 @@ test_that("empirical covariance are the same with SAS result for sp_exp", {
 
   expect_equal(
     fit$beta_vcov %*%
-      (t(fit$meat_per_subject) %*% fit$meat_per_subject) %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
       t(fit$beta_vcov),
     fit$beta_vcov_adj,
     tolerance = 1e-4
@@ -209,7 +209,7 @@ test_that("empirical covariance are the same with SAS result for ar1", {
 
   expect_equal(
     fit$beta_vcov %*%
-      (t(fit$meat_per_subject) %*% fit$meat_per_subject) %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
       t(fit$beta_vcov),
     fit$beta_vcov_adj,
     tolerance = 1e-4
@@ -230,7 +230,7 @@ test_that("empirical covariance are the same with SAS result for ar1h", {
 
   expect_equal(
     fit$beta_vcov %*%
-      (t(fit$meat_per_subject) %*% fit$meat_per_subject) %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
       t(fit$beta_vcov),
     fit$beta_vcov_adj,
     tolerance = 1e-4
@@ -251,7 +251,7 @@ test_that("empirical covariance are the same with SAS result for cs", {
 
   expect_equal(
     fit$beta_vcov %*%
-      (t(fit$meat_per_subject) %*% fit$meat_per_subject) %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
       t(fit$beta_vcov),
     fit$beta_vcov_adj,
     tolerance = 1e-4
@@ -272,7 +272,7 @@ test_that("empirical covariance are the same with SAS result for csh", {
 
   expect_equal(
     fit$beta_vcov %*%
-      (t(fit$meat_per_subject) %*% fit$meat_per_subject) %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
       t(fit$beta_vcov),
     fit$beta_vcov_adj,
     tolerance = 1e-4
@@ -293,7 +293,7 @@ test_that("empirical covariance are the same with SAS result for toep", {
 
   expect_equal(
     fit$beta_vcov %*%
-      (t(fit$meat_per_subject) %*% fit$meat_per_subject) %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
       t(fit$beta_vcov),
     fit$beta_vcov_adj,
     tolerance = 1e-4
@@ -314,7 +314,7 @@ test_that("empirical covariance are the same with SAS result for toeph", {
 
   expect_equal(
     fit$beta_vcov %*%
-      (t(fit$meat_per_subject) %*% fit$meat_per_subject) %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
       t(fit$beta_vcov),
     fit$beta_vcov_adj,
     tolerance = 1e-4
@@ -335,7 +335,7 @@ test_that("empirical covariance are the same with SAS result for adh", {
 
   expect_equal(
     fit$beta_vcov %*%
-      (t(fit$meat_per_subject) %*% fit$meat_per_subject) %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
       t(fit$beta_vcov),
     fit$beta_vcov_adj,
     tolerance = 1e-4
@@ -356,7 +356,7 @@ test_that("empirical covariance are the same with SAS result for us", {
 
   expect_equal(
     fit$beta_vcov %*%
-      (t(fit$meat_per_subject) %*% fit$meat_per_subject) %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
       t(fit$beta_vcov),
     fit$beta_vcov_adj,
     tolerance = 1e-4
@@ -377,7 +377,7 @@ test_that("empirical covariance are the same with SAS result for sp_exp", {
 
   expect_equal(
     fit$beta_vcov %*%
-      (t(fit$meat_per_subject) %*% fit$meat_per_subject) %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
       t(fit$beta_vcov),
     fit$beta_vcov_adj,
     tolerance = 1e-4

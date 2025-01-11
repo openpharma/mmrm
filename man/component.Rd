@@ -7,10 +7,11 @@
 component(
   object,
   name = c("cov_type", "subject_var", "n_theta", "n_subjects", "n_timepoints", "n_obs",
-    "beta_vcov", "beta_vcov_complete", "varcor", "formula", "dataset", "n_groups",
-    "reml", "convergence", "evaluations", "method", "optimizer", "conv_message", "call",
-    "theta_est", "beta_est", "beta_est_complete", "beta_aliased", "x_matrix", "y_vector",
-    "neg_log_lik", "jac_list", "theta_vcov", "full_frame", "xlev", "contrasts")
+    "beta_vcov", "beta_vcov_complete", "varcor", "score_per_subject", "formula",
+    "dataset", "n_groups", "reml", "convergence", "evaluations", "method", "optimizer",
+    "conv_message", "call", "theta_est", "beta_est", "beta_est_complete", "beta_aliased",
+    "x_matrix", "y_vector", "neg_log_lik", "jac_list", "theta_vcov", "full_frame",
+    "xlev", "contrasts")
 )
 }
 \arguments{
@@ -51,6 +52,8 @@ aliased coefficients with entries set to \code{NA}.
 \item \code{varcor}: estimated covariance matrix for residuals. If there are multiple
 groups, a named list of estimated covariance matrices for residuals will be
 returned. The names are the group levels.
+\item \code{score_per_subject}: score per subject in empirical covariance.
+See the vignette \code{vignette("coef_vcov", package = "mmrm")}.
 \item \code{theta_est}: estimated variance parameters.
 \item \code{beta_est}: estimated coefficients (excluding aliased coefficients).
 \item \code{beta_est_complete}: estimated coefficients including aliased coefficients

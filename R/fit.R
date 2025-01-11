@@ -501,7 +501,7 @@ mmrm <- function(formula,
     )
     fit$beta_vcov_adj <- empirical_comp$cov
     fit$empirical_df_mat <- empirical_comp$df_mat
-    fit$meat_per_subject <- empirical_comp$meat_per_subject
+    fit$score_per_subject <- empirical_comp$score_per_subject
     dimnames(fit$beta_vcov_adj) <- dimnames(fit$beta_vcov)
   } else if (identical(control$vcov, "Asymptotic")) {
     # Note that we only need the Jacobian list under Asymptotic covariance method,

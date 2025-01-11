@@ -58,7 +58,9 @@ covariance matrix.
 \]
 
 Where $W_i$ is the block diagonal part for subject $i$ of $W$ matrix, $\hat\epsilon_i$ is the observed residuals for subject i,
-$L_i$ is the Cholesky factor of $\Sigma_i^{-1}$ ($W_i = L_i L_i^\top$).
+$L_i$ is the Cholesky factor of $\Sigma_i^{-1}$ ($W_i = L_i L_i^\top$). 
+In the sandwich, the score $X_i^\top W_i \hat\epsilon_i$ computed for 
+subject $i$ can be accessed by `component(mmrm_obj, name = "score_per_subject")`. 
 
 See the detailed explanation of these formulas in the [Weighted Least Square Empirical Covariance](empirical_wls.html) vignette.
 

@@ -9,7 +9,8 @@ test_that("component works as expected for mmrm_tmb objects", {
     names(component(object_mmrm_tmb)),
     c(
       "cov_type", "subject_var", "n_theta", "n_subjects", "n_timepoints",
-      "n_obs", "beta_vcov", "beta_vcov_complete", "varcor", "formula", "dataset",
+      "n_obs", "beta_vcov", "beta_vcov_complete", "varcor", "score_per_subject",
+      "formula", "dataset",
       "n_groups", "reml", "convergence", "evaluations", "method", "optimizer",
       "conv_message", "call", "theta_est",
       "beta_est", "beta_est_complete", "beta_aliased",

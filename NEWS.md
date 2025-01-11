@@ -1,3 +1,9 @@
+# mmrm 0.3.15
+
+### New Features
+
+- `mmrm` now returns score per subject in empirical covariance. It can be accessed by `component(obj, name = "score_per_subject")`. 
+
 # mmrm 0.3.14.9001
 
 ### Bug Fixes

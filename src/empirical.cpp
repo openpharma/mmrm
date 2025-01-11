@@ -29,7 +29,7 @@ List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, Nume
   vector<double> G_sqrt = as_num_vector_tmb(sqrt(weights_vector));
   int p = x.cols();
 
-  NumericMatrix meat_per_subject(n_subjects, p);
+  matrix<double> score_per_subject = matrix<double>::Zero(n_subjects, p);
 
   // Use map to hold these base class pointers (can also work for child class objects).
   auto derivatives_by_group = cache_obj<double, derivatives_base<double>, derivatives_sp_exp<double>, derivatives_nonspatial<double>>(theta_v, n_groups, is_spatial, cov_type, n_visits);
@@ -70,9 +70,7 @@ List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, Nume
     xt_g_simga_inv_chol.block(0, start_i, p, n_visits_i) = xt_gi_simga_inv_chol;
     ax.block(start_i, 0, n_visits_i, p) = xta.transpose();
 
-    for(int j = 0; j < p; ++j){
-      meat_per_subject(i, j) = z(j, 0);
-    }
+    score_per_subject.row(i) = z.transpose();
   }
   matrix<double> h = xt_g_simga_inv_chol.transpose() * beta_vcov_matrix * xt_g_simga_inv_chol;
   matrix<double> imh = matrix<double>::Identity(n_observations, n_observations) - h;
@@ -92,7 +90,7 @@ List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, Nume
   //  ret = ret * (n_subjects - 1) / n_subjects;
   //}
   return List::create(
-    Named("meat_per_subject") = meat_per_subject,
+    Named("score_per_subject") = as_num_matrix_rcpp(score_per_subject),
     Named("cov") = as_num_matrix_rcpp(ret),
     Named("df_mat") = as_num_matrix_rcpp(gtvg)
   );
