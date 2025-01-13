@@ -34,6 +34,14 @@ test_that("empirical covariance are the same with SAS result for ar1", {
     dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
   )
   expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)
+
+  expect_equal(
+    fit$beta_vcov %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
+      t(fit$beta_vcov),
+    fit$beta_vcov_adj,
+    tolerance = 1e-4
+  )
 })
 
 test_that("empirical covariance are the same with SAS result for ar1h", {
@@ -44,6 +52,14 @@ test_that("empirical covariance are the same with SAS result for ar1h", {
     dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
   )
   expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)
+
+  expect_equal(
+    fit$beta_vcov %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
+      t(fit$beta_vcov),
+    fit$beta_vcov_adj,
+    tolerance = 1e-4
+  )
 })
 
 test_that("empirical covariance are the same with SAS result for cs", {
@@ -54,6 +70,14 @@ test_that("empirical covariance are the same with SAS result for cs", {
     dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
   )
   expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)
+
+  expect_equal(
+    fit$beta_vcov %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
+      t(fit$beta_vcov),
+    fit$beta_vcov_adj,
+    tolerance = 1e-4
+  )
 })
 
 test_that("empirical covariance are the same with SAS result for csh", {
@@ -64,6 +88,14 @@ test_that("empirical covariance are the same with SAS result for csh", {
     dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
   )
   expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)
+
+  expect_equal(
+    fit$beta_vcov %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
+      t(fit$beta_vcov),
+    fit$beta_vcov_adj,
+    tolerance = 1e-4
+  )
 })
 
 test_that("empirical covariance are the same with SAS result for toep", {
@@ -74,6 +106,14 @@ test_that("empirical covariance are the same with SAS result for toep", {
     dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
   )
   expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)
+
+  expect_equal(
+    fit$beta_vcov %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
+      t(fit$beta_vcov),
+    fit$beta_vcov_adj,
+    tolerance = 1e-4
+  )
 })
 
 test_that("empirical covariance are the same with SAS result for toeph", {
@@ -84,6 +124,14 @@ test_that("empirical covariance are the same with SAS result for toeph", {
     dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
   )
   expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)
+
+  expect_equal(
+    fit$beta_vcov %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
+      t(fit$beta_vcov),
+    fit$beta_vcov_adj,
+    tolerance = 1e-4
+  )
 })
 
 test_that("empirical covariance are the same with SAS result for adh", {
@@ -94,6 +142,14 @@ test_that("empirical covariance are the same with SAS result for adh", {
     dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
   )
   expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)
+
+  expect_equal(
+    fit$beta_vcov %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
+      t(fit$beta_vcov),
+    fit$beta_vcov_adj,
+    tolerance = 1e-4
+  )
 })
 
 test_that("empirical covariance are the same with SAS result for us", {
@@ -104,6 +160,14 @@ test_that("empirical covariance are the same with SAS result for us", {
     dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
   )
   expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)
+
+  expect_equal(
+    fit$beta_vcov %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
+      t(fit$beta_vcov),
+    fit$beta_vcov_adj,
+    tolerance = 1e-4
+  )
 })
 
 test_that("empirical covariance are the same with SAS result for sp_exp", {
@@ -117,6 +181,14 @@ test_that("empirical covariance are the same with SAS result for sp_exp", {
     dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
   )
   expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)
+
+  expect_equal(
+    fit$beta_vcov %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
+      t(fit$beta_vcov),
+    fit$beta_vcov_adj,
+    tolerance = 1e-4
+  )
 })
 
 # weighted mmrm ----
@@ -134,6 +206,14 @@ test_that("empirical covariance are the same with SAS result for ar1", {
     dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
   )
   expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)
+
+  expect_equal(
+    fit$beta_vcov %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
+      t(fit$beta_vcov),
+    fit$beta_vcov_adj,
+    tolerance = 1e-4
+  )
 })
 
 test_that("empirical covariance are the same with SAS result for ar1h", {
@@ -147,6 +227,14 @@ test_that("empirical covariance are the same with SAS result for ar1h", {
     dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
   )
   expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)
+
+  expect_equal(
+    fit$beta_vcov %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
+      t(fit$beta_vcov),
+    fit$beta_vcov_adj,
+    tolerance = 1e-4
+  )
 })
 
 test_that("empirical covariance are the same with SAS result for cs", {
@@ -160,6 +248,14 @@ test_that("empirical covariance are the same with SAS result for cs", {
     dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
   )
   expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)
+
+  expect_equal(
+    fit$beta_vcov %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
+      t(fit$beta_vcov),
+    fit$beta_vcov_adj,
+    tolerance = 1e-4
+  )
 })
 
 test_that("empirical covariance are the same with SAS result for csh", {
@@ -173,6 +269,14 @@ test_that("empirical covariance are the same with SAS result for csh", {
     dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
   )
   expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)
+
+  expect_equal(
+    fit$beta_vcov %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
+      t(fit$beta_vcov),
+    fit$beta_vcov_adj,
+    tolerance = 1e-4
+  )
 })
 
 test_that("empirical covariance are the same with SAS result for toep", {
@@ -186,6 +290,14 @@ test_that("empirical covariance are the same with SAS result for toep", {
     dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
   )
   expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)
+
+  expect_equal(
+    fit$beta_vcov %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
+      t(fit$beta_vcov),
+    fit$beta_vcov_adj,
+    tolerance = 1e-4
+  )
 })
 
 test_that("empirical covariance are the same with SAS result for toeph", {
@@ -199,6 +311,14 @@ test_that("empirical covariance are the same with SAS result for toeph", {
     dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
   )
   expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)
+
+  expect_equal(
+    fit$beta_vcov %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
+      t(fit$beta_vcov),
+    fit$beta_vcov_adj,
+    tolerance = 1e-4
+  )
 })
 
 test_that("empirical covariance are the same with SAS result for adh", {
@@ -212,6 +332,14 @@ test_that("empirical covariance are the same with SAS result for adh", {
     dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
   )
   expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)
+
+  expect_equal(
+    fit$beta_vcov %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
+      t(fit$beta_vcov),
+    fit$beta_vcov_adj,
+    tolerance = 1e-4
+  )
 })
 
 test_that("empirical covariance are the same with SAS result for us", {
@@ -225,6 +353,14 @@ test_that("empirical covariance are the same with SAS result for us", {
     dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
   )
   expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)
+
+  expect_equal(
+    fit$beta_vcov %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
+      t(fit$beta_vcov),
+    fit$beta_vcov_adj,
+    tolerance = 1e-4
+  )
 })
 
 test_that("empirical covariance are the same with SAS result for sp_exp", {
@@ -238,6 +374,14 @@ test_that("empirical covariance are the same with SAS result for sp_exp", {
     dimnames = rep(list(c("(Intercept)", "ARMCDTRT")), 2)
   )
   expect_equal(component(fit, "beta_vcov"), expected, tolerance = 1e-4)
+
+  expect_equal(
+    fit$beta_vcov %*%
+      (t(fit$score_per_subject) %*% fit$score_per_subject) %*%
+      t(fit$beta_vcov),
+    fit$beta_vcov_adj,
+    tolerance = 1e-4
+  )
 })
 
 ## Empirical Satterthwaite vs gls/clubSandwich ----

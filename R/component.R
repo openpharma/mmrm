@@ -31,6 +31,8 @@
 #' - `varcor`: estimated covariance matrix for residuals. If there are multiple
 #'      groups, a named list of estimated covariance matrices for residuals will be
 #'      returned. The names are the group levels.
+#' - `score_per_subject`: score per subject in empirical covariance.
+#'      See the vignette \code{vignette("coef_vcov", package = "mmrm")}.
 #' - `theta_est`: estimated variance parameters.
 #' - `beta_est`: estimated coefficients (excluding aliased coefficients).
 #' - `beta_est_complete`: estimated coefficients including aliased coefficients
@@ -64,7 +66,7 @@ component <- function(object,
                       name = c(
                         "cov_type", "subject_var", "n_theta", "n_subjects", "n_timepoints",
                         "n_obs", "beta_vcov", "beta_vcov_complete",
-                        "varcor", "formula", "dataset", "n_groups",
+                        "varcor", "score_per_subject", "formula", "dataset", "n_groups",
                         "reml", "convergence", "evaluations", "method", "optimizer",
                         "conv_message", "call", "theta_est",
                         "beta_est", "beta_est_complete", "beta_aliased",
@@ -132,6 +134,7 @@ component <- function(object,
         object$beta_vcov
       },
     "varcor" = object$cov,
+    "score_per_subject" = object$score_per_subject,
     "x_matrix" = object$tmb_data$x_matrix,
     "xlev" = stats::.getXlevels(terms(object), object$tmb_data$full_frame),
     "contrasts" = attr(object$tmb_data$x_matrix, "contrasts"),
