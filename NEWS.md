@@ -1,14 +1,12 @@
-# mmrm 0.3.15
-
-### New Features
-
-- `mmrm` now returns score per subject in empirical covariance. It can be accessed by `component(obj, name = "score_per_subject")`. 
-
 # mmrm 0.3.14.9001
 
 ### Bug Fixes
 
 - Previously, when compiling `mmrm` from source using a `TMB` version below 1.9.15, and installing a newer `TMB` of version 1.9.15 or above, would render the `mmrm` package unusable. This is fixed now, by checking in the dynamic library of `mmrm` whether the version of `TMB` has been sufficient.
+
+### New Features
+
+- `mmrm` now returns score per subject in empirical covariance. It can be accessed by `component(obj, name = "score_per_subject")`. 
 
 # mmrm 0.3.14
 

@@ -134,7 +134,7 @@ component <- function(object,
         object$beta_vcov
       },
     "varcor" = object$cov,
-    "meat_per_subject" = object$meat_per_subject,
+    "score_per_subject" = object$score_per_subject,
     "x_matrix" = object$tmb_data$x_matrix,
     "xlev" = stats::.getXlevels(terms(object), object$tmb_data$full_frame),
     "contrasts" = attr(object$tmb_data$x_matrix, "contrasts"),
