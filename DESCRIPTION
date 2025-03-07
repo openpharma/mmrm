@@ -5,7 +5,7 @@ Version: 0.3.14.9002
 Authors@R: c(
     person("Daniel", "Sabanes Bove", , "daniel.sabanes_bove@rconis.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-0176-9239")),
-    person("Liming", "Li", , "liming.li@roche.com", role = "aut"),
+    person("Liming", "Li", , "liming.li1@astrazeneca.com", role = "aut", comment = c(ORCID = "0009-0008-6870-0878"),
     person("Julia", "Dedic", , "julia.dedic@roche.com", role = "aut"),
     person("Doug", "Kelkhoff", , "doug.kelkhoff@roche.com", role = "aut"),
     person("Kevin", "Kunzmann", , "kevin.kunzmann@boehringer-ingelheim.com", role = "aut"),
