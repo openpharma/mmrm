@@ -500,6 +500,10 @@ mmrm <- function(formula,
       fit$tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov, control$vcov
     )
     fit$beta_vcov_adj <- empirical_comp$cov
+
+    # This value used to be equal to crossproduct(empirical_comp$df_mat)
+    # but this was a costly matrix manipulation to perform without the guarantee
+    # that it would even be needed.
     fit$empirical_df_mat <- empirical_comp$df_mat
     fit$score_per_subject <- empirical_comp$score_per_subject
     dimnames(fit$beta_vcov_adj) <- dimnames(fit$beta_vcov)

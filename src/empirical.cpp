@@ -81,7 +81,11 @@ List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, Nume
     int n_visits_i = subject_n_visits[i];
     g.block(0, i * p, n_observations, p) = imh.block(0, start_i, n_observations, n_visits_i) * ax_xtx.block(start_i, 0, n_visits_i, p);
   }
-  matrix<double> gtvg = g.transpose() * g;
+
+  // Not not running this line anymore because it's very slow and unlikely to be
+  // needed to complete mmrm(). We return g instead.
+  // matrix<double> gtvg = g.transpose() * g;
+
   // beta_vcov already take gi into consideration;
   matrix<double> ret = beta_vcov_matrix * meat * beta_vcov_matrix;
   // Removed because this scale factor can be applied by user manually
@@ -92,6 +96,7 @@ List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, Nume
   return List::create(
     Named("score_per_subject") = as_num_matrix_rcpp(score_per_subject),
     Named("cov") = as_num_matrix_rcpp(ret),
-    Named("df_mat") = as_num_matrix_rcpp(gtvg)
+    // Changing what is returned here from gtvg to g
+    Named("df_mat") = as_num_matrix_rcpp(g)
   );
 }

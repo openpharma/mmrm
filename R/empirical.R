@@ -13,7 +13,7 @@
 #'
 #' @return Named list with elements:
 #' - `cov`: `matrix` empirical covariance.
-#' - `df_mat`: `matrix` to calculate Satterthwaite degree of freedom.
+#' - `df_mat`: `matrix` to calculate Satterthwaite degrees of freedom. (This element used to be `crossproduct(df_mat)`, but this was a costly matrix manipulation that was being performed without the guarantee that the element would ever be needed.)
 #'
 #' @keywords internal
 h_get_empirical <- function(tmb_data, theta, beta, beta_vcov, type) {
