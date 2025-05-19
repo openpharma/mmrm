@@ -73,7 +73,7 @@ h_quad_form_mat <- function(mat, center, apply_crossproduct = FALSE) {
       any.missing = FALSE,
       ncols = ncol(center)
     )
-    out <- tcrossprod(mat, g) %*% tcrossprod(g, mat)
+    out <- tcrossprod(mat, center) %*% tcrossprod(center, mat)
   } else {
     assert_matrix(
       center,
