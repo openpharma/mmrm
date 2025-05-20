@@ -56,36 +56,21 @@ h_quad_form_vec <- function(vec, center) {
 #'   of rows in `mat`.
 #'
 #' @param mat (`matrix`)\cr numeric matrix to be multiplied left and right of
-#'   `center`, therefore needs to have as many columns as there are columns in
-#'   `center`.
-#'
-#' @param apply_crossproduct (`apply_crossproduct`)\cr logical indicating
-#'   whether or not to preprocess `center` with [crossproduct()].
+#'   `center`, therefore needs to have as many columns as there are rows and columns
+#'   in `center`.
 #'
 #' @keywords internal
-h_quad_form_mat <- function(mat, center, apply_crossproduct = FALSE) {
+h_quad_form_mat <- function(mat, center) {
   assert_matrix(mat, mode = "numeric", any.missing = FALSE, min.cols = 1L)
+  assert_matrix(
+    center,
+    mode = "numeric",
+    any.missing = FALSE,
+    nrows = ncol(center),
+    ncols = ncol(center)
+  )
 
-  if (apply_crossproduct) {
-    assert_matrix(
-      center,
-      mode = "numeric",
-      any.missing = FALSE,
-      ncols = ncol(center)
-    )
-    out <- tcrossprod(mat, center) %*% tcrossprod(center, mat)
-  } else {
-    assert_matrix(
-      center,
-      mode = "numeric",
-      any.missing = FALSE,
-      nrows = ncol(center),
-      ncols = ncol(center)
-    )
-    out <- mat %*% tcrossprod(center, mat)
-  }
-
-  out
+  mat %*% tcrossprod(center, mat)
 }
 
 #' Computation of a Gradient Given Jacobian and Contrast Vector
@@ -140,14 +125,18 @@ h_df_1d_sat <- function(object, contrast) {
     contrast_matrix <- Matrix::.bdiag(rep(list(matrix(contrast, nrow = 1)), component(object, "n_subjects")))
     contrast_matrix <- as.matrix(contrast_matrix)
 
-    # Added apply_crossproduct = TRUE because we made h_get_empirical() stop
-    # calculating the cross product preemptively because it was too costly
+    # This is equivalent to:
+    # h_quad_form_mat(contrast_matrix, crossproduct(object$empirical_g_mat))
+    # but is probably more efficient
+    assert_matrix(
+      object$empirical_g_mat,
+      mode = "numeric",
+      any.missing = FALSE,
+      ncols = ncol(contrast_matrix)
+    )
     g_matrix <-
-      h_quad_form_mat(
-        contrast_matrix,
-        object$empirical_df_mat,
-        apply_crossproduct = TRUE
-      )
+      tcrossprod(contrast_matrix, object$empirical_g_mat) %*%
+      tcrossprod(object$empirical_g_mat, contrast_matrix)
 
     h_tr(g_matrix)^2 / sum(g_matrix^2)
   }
@@ -268,14 +257,12 @@ h_df_md_sat <- function(object, contrast) {
         )
         contrast_matrix <- as.matrix(contrast_matrix)
 
-        # Added apply_crossproduct = TRUE because we made h_get_empirical() stop
-        # calculating the crossproduct pre-emptively because it was costly
+        # This is equivalent to:
+        # g_matrix <- h_quad_form_mat(contrast_matrix, crossproduct(object$empirical_g_mat))
+        # but is probably more efficient
         g_matrix <-
-          h_quad_form_mat(
-            contrast_matrix,
-            object$empirical_df_mat,
-            apply_crossproduct = TRUE
-          )
+          tcrossprod(contrast_matrix, object$empirical_g_mat) %*%
+          tcrossprod(object$empirical_g_mat, contrast_matrix)
 
         h_tr(g_matrix)^2 / sum(g_matrix^2)
       },

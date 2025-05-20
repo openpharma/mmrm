@@ -96,7 +96,7 @@ List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, Nume
   return List::create(
     Named("score_per_subject") = as_num_matrix_rcpp(score_per_subject),
     Named("cov") = as_num_matrix_rcpp(ret),
-    // Changing what is returned here from gtvg to g
-    Named("df_mat") = as_num_matrix_rcpp(g)
+    // This used to be: Named("df_mat") = as_num_matrix_rcpp(gtvg)
+    Named("g_mat") = as_num_matrix_rcpp(g)
   );
 }
