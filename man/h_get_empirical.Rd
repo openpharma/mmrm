@@ -22,7 +22,7 @@ and "Empirical-Bias-Reduced".}
 Named list with elements:
 \itemize{
 \item \code{cov}: \code{matrix} empirical covariance.
-\item \code{df_mat}: \code{matrix} to calculate Satterthwaite degree of freedom.
+\item \code{g_mat}: \code{matrix} to calculate Satterthwaite degrees of freedom. (This element used to be \code{df_mat}, which was equivalent to \code{crossproduct(g_mat)}, but executing the cross product was a costly matrix manipulation that was being performed without the guarantee that the element would ever be needed.)
 }
 }
 \description{
