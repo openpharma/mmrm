@@ -378,8 +378,8 @@ mmrm_control <- function(
 #' @note The `mmrm` object is also an `mmrm_fit` and an `mmrm_tmb` object,
 #' therefore corresponding methods also work (see [`mmrm_tmb_methods`]).
 #'
-#' Additional contents depend on the choice of the choice of `vcov` (see [mmrm_control()]):
-#' - If Kenward-Roger covariance matrix is used is used, `kr_comp` contains necessary
+#' Additional contents depend on `vcov` (see [mmrm_control()]):
+#' - If Kenward-Roger covariance matrix is used, `kr_comp` contains necessary
 #' components and `beta_vcov_adj` includes the adjusted coefficients covariance
 #' matrix.
 #' - If Empirical covariance matrix is used, `beta_vcov_adj` contains the
