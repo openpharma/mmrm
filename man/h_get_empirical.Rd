@@ -22,12 +22,17 @@ and "Empirical-Bias-Reduced".}
 Named list with elements:
 \itemize{
 \item \code{cov}: \code{matrix} empirical covariance.
-\item \code{g_mat}: \code{matrix} to calculate Satterthwaite degrees of freedom. (This element used to be \code{df_mat}, which was equivalent to \code{crossproduct(g_mat)}, but executing the cross product was a costly matrix manipulation that was being performed without the guarantee that the element would ever be needed.)
+\item \code{g_mat}: \code{matrix} to calculate Satterthwaite degrees of freedom.
 }
 }
 \description{
 Obtain the empirical or Jackknife covariance for \eqn{\beta}.
 Used in \code{mmrm} fitting if method is "Empirical", "Empirical-Jackknife" or
 "Empirical-Bias-Reduced".
+}
+\note{
+This function used to return \code{df_mat}, which was equivalent to \code{crossproduct(g_mat)}. However,
+executing the cross product in C++ was a costly matrix multiplication, in particular when the number of coefficients
+and/or the number of subjects was large. Therefore this is now avoided and \code{g_mat} is returned instead.
 }
 \keyword{internal}
