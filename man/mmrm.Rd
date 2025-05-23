@@ -75,9 +75,9 @@ this would delete the arguments passed via \code{mmrm}.
 The \code{mmrm} object is also an \code{mmrm_fit} and an \code{mmrm_tmb} object,
 therefore corresponding methods also work (see \code{\link{mmrm_tmb_methods}}).
 
-Additional contents depend on the choice of the choice of \code{vcov} (see \code{\link[=mmrm_control]{mmrm_control()}}):
+Additional contents depend on \code{vcov} (see \code{\link[=mmrm_control]{mmrm_control()}}):
 \itemize{
-\item If Kenward-Roger covariance matrix is used is used, \code{kr_comp} contains necessary
+\item If Kenward-Roger covariance matrix is used, \code{kr_comp} contains necessary
 components and \code{beta_vcov_adj} includes the adjusted coefficients covariance
 matrix.
 \item If Empirical covariance matrix is used, \code{beta_vcov_adj} contains the
