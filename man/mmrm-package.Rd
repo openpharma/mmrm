@@ -31,7 +31,7 @@ Authors:
   \item Jonathan Sidi \email{yoni@pinpointstrategies.io}
   \item Daniel Leibovitz \email{daniel.leibovitz@roche.com}
   \item Daniel D. Sjoberg \email{sjobergd@gene.com} (\href{https://orcid.org/0000-0003-0862-2018}{ORCID})
-  \item Nikolas Ivan Krieger \email{nikolas.krieger@experis.com}
+  \item Nikolas Ivan Krieger \email{nikolas.krieger@experis.com} (\href{https://orcid.org/0000-0002-4581-3545}{ORCID})
 }
 
 Other contributors:
