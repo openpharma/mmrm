@@ -213,11 +213,11 @@ test_that("h_get_contrast works for higher-order interaction", {
   mod <- mmrm(
     formula = FEV1 ~
       ARMCD +
-        RACE +
-        AVISIT +
-        RACE * AVISIT * ARMCD +
-        FEV1_BL +
-        ar1(AVISIT | USUBJID),
+      RACE +
+      AVISIT +
+      RACE * AVISIT * ARMCD +
+      FEV1_BL +
+      ar1(AVISIT | USUBJID),
     data = fev_data
   )
   ctr <- expect_silent(h_get_contrast(mod, "ARMCD:AVISIT", "3"))
