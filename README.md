@@ -1,5 +1,6 @@
 
 <!-- markdownlint-disable-file -->
+
 <!-- README.md needs to be generated from README.Rmd. Please edit that file -->
 
 # mmrm <img src="man/figures/logo.svg" align="right" width="175" />
@@ -22,7 +23,7 @@ Coverage](https://raw.githubusercontent.com/openpharma/mmrm/_xml_coverage_report
 Mixed models for repeated measures (MMRM) are a popular choice for
 analyzing longitudinal continuous outcomes in randomized clinical trials
 and beyond; see [Cnaan, Laird and Slasor
-(1997)](https://doi.org/10.1002%2f%28SICI%291097-0258%2819971030%2916%3a20%3c2349%3a%3aAID-SIM667%3e3.0.CO%3b2-E)
+(1997)](https://doi.org/10.1002/(SICI)1097-0258(19971030)16:20%3C2349::AID-SIM667%3E3.0.CO;2-E)
 for a tutorial and [Mallinckrodt, Lane and Schnell
 (2008)](https://doi.org/10.1177/009286150804200402) for a review. This
 package implements MMRM based on the marginal linear model without
