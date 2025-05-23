@@ -32,16 +32,15 @@
 #' )
 #' attr(mod_fit, "converged")
 fit_single_optimizer <- function(
-  formula,
-  data,
-  weights,
-  reml = TRUE,
-  covariance = NULL,
-  tmb_data,
-  formula_parts,
-  ...,
-  control = mmrm_control(...)
-) {
+    formula,
+    data,
+    weights,
+    reml = TRUE,
+    covariance = NULL,
+    tmb_data,
+    formula_parts,
+    ...,
+    control = mmrm_control(...)) {
   to_remove <- list(
     # Transient visit to invalid parameters.
     warnings = c("NA/NaN function evaluation")
@@ -264,15 +263,14 @@ refit_multiple_optimizers <- function(fit, ..., control = mmrm_control(...)) {
 #'   optimizer_args = list(method = "L-BFGS-B")
 #' )
 mmrm_control <- function(
-  n_cores = 1L,
-  method = c("Satterthwaite", "Kenward-Roger", "Residual", "Between-Within"),
-  vcov = NULL,
-  start = std_start,
-  accept_singular = TRUE,
-  drop_visit_levels = TRUE,
-  ...,
-  optimizers = h_get_optimizers(...)
-) {
+    n_cores = 1L,
+    method = c("Satterthwaite", "Kenward-Roger", "Residual", "Between-Within"),
+    vcov = NULL,
+    start = std_start,
+    accept_singular = TRUE,
+    drop_visit_levels = TRUE,
+    ...,
+    optimizers = h_get_optimizers(...)) {
   assert_count(n_cores, positive = TRUE)
   assert_character(method)
   if (is.null(start)) {
@@ -431,14 +429,13 @@ mmrm_control <- function(
 #'   control = mmrm_control(method = "Kenward-Roger")
 #' )
 mmrm <- function(
-  formula,
-  data,
-  weights = NULL,
-  covariance = NULL,
-  reml = TRUE,
-  control = mmrm_control(...),
-  ...
-) {
+    formula,
+    data,
+    weights = NULL,
+    covariance = NULL,
+    reml = TRUE,
+    control = mmrm_control(...),
+    ...) {
   assert_false(!missing(control) && !missing(...))
   assert_class(control, "mmrm_control")
   assert_list(control$optimizers, min.len = 1)
