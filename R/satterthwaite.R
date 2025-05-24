@@ -124,11 +124,11 @@ h_df_1d_sat_empirical <- function(object, contrast_matrix) {
     )
     h_quad_form_mat(contrast_matrix, object$empirical_df_mat)
   } else if (!is.null(object$empirical_g_mat)) {
-    contrast_times_g_transposed <- tcrossprod(
+    g_times_contrast_transposed <- tcrossprod(
       object$empirical_g_mat,
       contrast_matrix
     )
-    crossprod(contrast_times_g_transposed)
+    crossprod(g_times_contrast_transposed)
   } else {
     stop(
       "neither empirical_df_mat nor empirical_g_mat are available in mmrm fit object"
@@ -270,7 +270,8 @@ h_df_md_sat <- function(object, contrast) {
   assert_number(rank_cont_cov, lower = .Machine$double.xmin)
   rank_seq <- seq_len(rank_cont_cov)
   vctrs_cont_prod <- crossprod(eigen_cont_cov_vctrs, contrast)[
-    rank_seq, ,
+    rank_seq,
+    ,
     drop = FALSE
   ]
 
