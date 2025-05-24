@@ -2,6 +2,7 @@
 
 ### Bug Fixes
 
+- Previously, when fitting a model with empirical covariance matrix estimation to a data set with a large number of subjects and/or a large number of coefficients, the model fitting could take very long and exhaust the memory in the worst case. This was due to an inefficient implementation of a matrix needed only in case of Satterthwaite degrees of freedom adjustment. This is fixed now, by returning the matrix `empirical_g_mat` in the `mmrm` object, instead of the previous `empirical_df_mat` matrix. The model fit is now much faster and does not exhaust the memory anymore. If old model fit objects are used, the `empirical_df_mat` will still be used correctly, however a deprecation warning will be issued. Please consider re-fitting the model to get the new `empirical_g_mat` matrix.
 - Previously, when compiling `mmrm` from source using a `TMB` version below 1.9.15, and installing a newer `TMB` of version 1.9.15 or above, would render the `mmrm` package unusable. This is fixed now, by checking in the dynamic library of `mmrm` whether the version of `TMB` has been sufficient.
 
 ### New Features

@@ -3,6 +3,10 @@
 using namespace Rcpp;
 using std::string;
 // Obtain the empirical given beta, beta_vcov, theta.
+//
+// Note: This function previously (version < 0.3.15) returned `df_mat` which was the crossproduct of the `g` matrix.
+// This was removed because this matrix can be very large if the number of subjects is large and/or the number of
+// coefficients is large. Instead, now the `g_mat` element includes the `g` matrix.
 List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, NumericMatrix beta_vcov, string type) {
   NumericMatrix x = mmrm_data["x_matrix"];
   matrix<double> x_matrix = as_num_matrix_tmb(x);
@@ -81,17 +85,13 @@ List get_empirical(List mmrm_data, NumericVector theta, NumericVector beta, Nume
     int n_visits_i = subject_n_visits[i];
     g.block(0, i * p, n_observations, p) = imh.block(0, start_i, n_observations, n_visits_i) * ax_xtx.block(start_i, 0, n_visits_i, p);
   }
-  matrix<double> gtvg = g.transpose() * g;
+
   // beta_vcov already take gi into consideration;
   matrix<double> ret = beta_vcov_matrix * meat * beta_vcov_matrix;
-  // Removed because this scale factor can be applied by user manually
-  // not important.
-  //if (jackknife) {
-  //  ret = ret * (n_subjects - 1) / n_subjects;
-  //}
+
   return List::create(
     Named("score_per_subject") = as_num_matrix_rcpp(score_per_subject),
     Named("cov") = as_num_matrix_rcpp(ret),
-    Named("df_mat") = as_num_matrix_rcpp(gtvg)
+    Named("g_mat") = as_num_matrix_rcpp(g)
   );
 }

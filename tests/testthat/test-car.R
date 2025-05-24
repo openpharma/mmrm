@@ -16,7 +16,11 @@ test_that("car emits a message about mmrm registration on load", {
 
 test_that("h_first_contain_categorical works as expected", {
   effect <- "FEV1_BL:AVISIT"
-  factors <- matrix(c(2, 2), nrow = 2L, dimnames = list(c("FEV1_BL", "AVISIT"), c("FEV1_BL:AVISIT")))
+  factors <- matrix(
+    c(2, 2),
+    nrow = 2L,
+    dimnames = list(c("FEV1_BL", "AVISIT"), c("FEV1_BL:AVISIT"))
+  )
   categorical <- c("AVISIT")
   expect_true(h_first_contain_categorical(effect, factors, categorical))
   factors2 <- matrix(
@@ -34,7 +38,11 @@ test_that("h_first_contain_categorical works as expected", {
 # h_obtain_lvls ----
 test_that("h_obtain_lvls works as expected", {
   expect_identical(
-    h_obtain_lvls("a", c("b", "c"), list(a = letters[1:2], b = letters[1:3], c = letters[1:5])),
+    h_obtain_lvls(
+      "a",
+      c("b", "c"),
+      list(a = letters[1:2], b = letters[1:3], c = letters[1:5])
+    ),
     list(
       prior = setNames(integer(0), character(0)),
       post = c(b = 3L, c = 5L),
@@ -86,7 +94,8 @@ test_that("h_get_contrast works as expected", {
 
 test_that("h_get_contrast works even if the interaction term order changes", {
   mod1 <- mmrm(
-    formula = FEV1 ~ RACE + AVISIT + RACE * AVISIT + FEV1_BL + us(AVISIT | USUBJID),
+    formula = FEV1 ~
+      RACE + AVISIT + RACE * AVISIT + FEV1_BL + us(AVISIT | USUBJID),
     data = fev_data
   )
   ctr <- expect_silent(h_get_contrast(mod1, "AVISIT", "3"))
@@ -94,12 +103,20 @@ test_that("h_get_contrast works even if the interaction term order changes", {
   for (i in seq_len(nrow(ctr))) {
     expect_identical(
       names(ctr[i, ctr[i, ] != 0]),
-      sprintf(c("AVISITVIS%s", "RACEBlack or African American:AVISITVIS%s", "RACEWhite:AVISITVIS%s"), i + 1)
+      sprintf(
+        c(
+          "AVISITVIS%s",
+          "RACEBlack or African American:AVISITVIS%s",
+          "RACEWhite:AVISITVIS%s"
+        ),
+        i + 1
+      )
     )
   }
 
   mod2 <- mmrm(
-    formula = FEV1 ~ AVISIT + RACE + AVISIT * RACE + FEV1_BL + us(AVISIT | USUBJID),
+    formula = FEV1 ~
+      AVISIT + RACE + AVISIT * RACE + FEV1_BL + us(AVISIT | USUBJID),
     data = fev_data
   )
   ctr <- expect_silent(h_get_contrast(mod2, "AVISIT", "3"))
@@ -108,7 +125,14 @@ test_that("h_get_contrast works even if the interaction term order changes", {
   for (i in seq_len(nrow(ctr))) {
     expect_identical(
       names(ctr[i, ctr[i, ] != 0]),
-      sprintf(c("AVISITVIS%s", "AVISITVIS%s:RACEBlack or African American", "AVISITVIS%s:RACEWhite"), i + 1)
+      sprintf(
+        c(
+          "AVISITVIS%s",
+          "AVISITVIS%s:RACEBlack or African American",
+          "AVISITVIS%s:RACEWhite"
+        ),
+        i + 1
+      )
     )
   }
 })
@@ -139,8 +163,11 @@ test_that("h_get_contrast works even if only interaction term exists", {
       names(ctr2[i, ctr2[i, ] != 0]),
       sprintf(
         c(
-          "AVISITVIS%s", "AVISITVIS1:RACEBlack or African American", "AVISITVIS%s:RACEBlack or African American",
-          "AVISITVIS1:RACEWhite", "AVISITVIS%s:RACEWhite"
+          "AVISITVIS%s",
+          "AVISITVIS1:RACEBlack or African American",
+          "AVISITVIS%s:RACEBlack or African American",
+          "AVISITVIS1:RACEWhite",
+          "AVISITVIS%s:RACEWhite"
         ),
         i + 1
       )
@@ -159,9 +186,12 @@ test_that("h_get_contrast works even if only interaction term exists", {
       names(ctr3[i, ctr3[i, ] != 0]),
       sprintf(
         c(
-          "AVISITVIS1", "AVISITVIS%s", "AVISITVIS1:RACEBlack or African American",
+          "AVISITVIS1",
+          "AVISITVIS%s",
+          "AVISITVIS1:RACEBlack or African American",
           "AVISITVIS%s:RACEBlack or African American",
-          "AVISITVIS1:RACEWhite", "AVISITVIS%s:RACEWhite"
+          "AVISITVIS1:RACEWhite",
+          "AVISITVIS%s:RACEWhite"
         ),
         as.character(i + 1)
       )
@@ -170,15 +200,24 @@ test_that("h_get_contrast works even if only interaction term exists", {
 })
 
 test_that("h_get_contrast works if intercept is not given", {
-  fit <- mmrm(FEV1 ~ AVISIT * ARMCD - 1 + ar1(AVISIT | USUBJID), data = fev_data)
-  h_get_contrast(fit, "ARMCD", "2")
-  h_get_contrast(fit, "AVISIT", "2")
-  h_get_contrast(fit, "AVISIT:ARMCD", "2")
+  fit <- mmrm(
+    FEV1 ~ AVISIT * ARMCD - 1 + ar1(AVISIT | USUBJID),
+    data = fev_data
+  )
+  expect_silent(h_get_contrast(fit, "ARMCD", "2"))
+  expect_silent(h_get_contrast(fit, "AVISIT", "2"))
+  expect_silent(h_get_contrast(fit, "AVISIT:ARMCD", "2"))
 })
 
 test_that("h_get_contrast works for higher-order interaction", {
   mod <- mmrm(
-    formula = FEV1 ~ ARMCD + RACE + AVISIT + RACE * AVISIT * ARMCD + FEV1_BL + ar1(AVISIT | USUBJID),
+    formula = FEV1 ~
+      ARMCD +
+        RACE +
+        AVISIT +
+        RACE * AVISIT * ARMCD +
+        FEV1_BL +
+        ar1(AVISIT | USUBJID),
     data = fev_data
   )
   ctr <- expect_silent(h_get_contrast(mod, "ARMCD:AVISIT", "3"))
@@ -294,7 +333,10 @@ test_that("Anova give similar results to SAS", {
 
 test_that("Anova give similar results to SAS", {
   skip_if_not_installed("car")
-  fit <- mmrm(FEV1 ~ ARMCD * SEX + ARMCD * FEV1_BL - FEV1_BL + ar1(AVISIT | USUBJID), data = fev_data)
+  fit <- mmrm(
+    FEV1 ~ ARMCD * SEX + ARMCD * FEV1_BL - FEV1_BL + ar1(AVISIT | USUBJID),
+    data = fev_data
+  )
   df2 <- expect_silent(Anova(fit, "2"))
   df3 <- expect_silent(Anova(fit, "3"))
   # the SAS results from design/anova/test2_1.csv and design/anova/test3_1.csv

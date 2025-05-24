@@ -75,14 +75,23 @@ this would delete the arguments passed via \code{mmrm}.
 The \code{mmrm} object is also an \code{mmrm_fit} and an \code{mmrm_tmb} object,
 therefore corresponding methods also work (see \code{\link{mmrm_tmb_methods}}).
 
-Additional contents depend on the choice of the adjustment \code{method}:
+Additional contents depend on \code{vcov} (see \code{\link[=mmrm_control]{mmrm_control()}}):
 \itemize{
-\item If Satterthwaite adjustment is used, the Jacobian information \code{jac_list}
-is included.
-\item If Kenward-Roger adjustment is used, \code{kr_comp} contains necessary
+\item If Kenward-Roger covariance matrix is used, \code{kr_comp} contains necessary
 components and \code{beta_vcov_adj} includes the adjusted coefficients covariance
 matrix.
+\item If Empirical covariance matrix is used, \code{beta_vcov_adj} contains the
+corresponding coefficients covariance matrix estimate. In addition,
+\code{empirical_g_mat} contains the empirical g matrix, which is used to calculate
+the Satterthwaite degrees of freedom. The \code{score_per_subject} contains the
+empirical score per subject.
+\item If Asymptotic covariance matrix is used in combination with Satterthwaite
+d.f. adjustment, the Jacobian information \code{jac_list} is included.
 }
+
+Note that these additional elements might change over time and are to be considered
+internal implementation details rather than part of the public user interface of
+the package.
 
 Use of the package \code{emmeans} is supported, see \code{\link{emmeans_support}}.
 

@@ -7,8 +7,16 @@ test_that("h_jac_list works as expected", {
   beta_vcov <- matrix(c(1, 0, 0, 1), ncol = 2)
   result <- expect_silent(h_jac_list(fit$tmb_data, theta_est, beta_vcov))
   expect_list(result, len = 2L)
-  expect_equal(result[[1L]], matrix(c(6.037242, 2.893871, 2.893871, 2.893871), 2, 2), tolerance = 1e-4)
-  expect_equal(result[[2L]], matrix(c(1.495479, 0.744836, 0.744836, 0.744836), 2, 2), tolerance = 1e-4)
+  expect_equal(
+    result[[1L]],
+    matrix(c(6.037242, 2.893871, 2.893871, 2.893871), 2, 2),
+    tolerance = 1e-4
+  )
+  expect_equal(
+    result[[2L]],
+    matrix(c(1.495479, 0.744836, 0.744836, 0.744836), 2, 2),
+    tolerance = 1e-4
+  )
 })
 
 # h_quad_form_vec ----
@@ -55,6 +63,62 @@ test_that("h_gradient works as expected", {
   expect_equal(result, expected)
 })
 
+# h_df_1d_sat_empirical ----
+
+test_that("h_df_1d_sat_empirical works as expected with new model fit", {
+  object <- mmrm(
+    formula = FEV1 ~ us(AVISIT | USUBJID),
+    data = fev_data,
+    vcov = "Empirical"
+  )
+  expect_matrix(object$empirical_g_mat)
+  contrast_matrix <- matrix(
+    data = rep(1, component(object, "n_subjects")),
+    nrow = 1,
+    ncol = component(object, "n_subjects")
+  )
+  result <- expect_silent(h_df_1d_sat_empirical(object, contrast_matrix))
+  expect_equal(result, 1)
+})
+
+test_that("h_df_1d_sat_empirical works as expected with old model fit", {
+  object <- mmrm(
+    formula = FEV1 ~ us(AVISIT | USUBJID),
+    data = fev_data,
+    vcov = "Empirical"
+  )
+  object$empirical_df_mat <- crossprod(object$empirical_g_mat)
+  object$empirical_g_mat <- NULL
+  contrast_matrix <- matrix(
+    data = rep(1, component(object, "n_subjects")),
+    nrow = 1,
+    ncol = component(object, "n_subjects")
+  )
+  expect_warning(
+    result <- h_df_1d_sat_empirical(object, contrast_matrix),
+    "consider refitting the model"
+  )
+  expect_equal(result, 1)
+})
+
+test_that("h_df_1d_sat_empirical fails when neither empirical_g_mat nor empirical_df_mat are present", {
+  object <- mmrm(
+    formula = FEV1 ~ us(AVISIT | USUBJID),
+    data = fev_data,
+    vcov = "Empirical"
+  )
+  object$empirical_g_mat <- NULL
+  contrast_matrix <- matrix(
+    data = rep(1, component(object, "n_subjects")),
+    nrow = 1,
+    ncol = component(object, "n_subjects")
+  )
+  expect_error(
+    result <- h_df_1d_sat_empirical(object, contrast_matrix),
+    "neither empirical_df_mat nor empirical_g_mat are available in mmrm fit object"
+  )
+})
+
 # h_df_1d_sat ----
 
 test_that("h_df_1d_sat works as expected", {
@@ -86,6 +150,23 @@ test_that("h_df_1d_sat works as expected for singular fits", {
   result <- expect_silent(h_df_1d_sat(object, 1))
   expected <- expect_silent(h_df_1d_sat(object2, 1))
   expect_identical(result, expected)
+})
+
+test_that("h_df_1d_sat works as expected with Empirical covariance matrix", {
+  object <- mmrm(
+    formula = FEV1 ~ RACE + SEX + us(AVISIT | USUBJID),
+    data = fev_data,
+    vcov = "Empirical"
+  )
+  # Note: In SAS, Satterthwaite degrees of freedom are not calculated
+  # whent the empirical covariance matrix is used. So we cannot compare against that.
+  result <- expect_silent(h_df_1d_sat(object, contrast = c(1, 0, 0, 0)))
+  expect_list(result)
+  expect_equal(result$est, 40.94273, tolerance = 1e-4)
+  expect_equal(result$se, 0.68615, tolerance = 1e-4)
+  expect_identical(round(result$df), 58)
+  expect_equal(result$t_stat, 59.670, tolerance = 1e-4)
+  expect_true(result$p_val < 0.0001)
 })
 
 # h_md_denom_df ----
@@ -136,7 +217,11 @@ test_that("h_df_md_from_1d works as expected", {
 test_that("h_df_md_sat works as expected", {
   skip_if_r_devel_linux_clang()
   object <- get_mmrm()
-  contrast <- matrix(data = 0, nrow = 2, ncol = length(component(object, "beta_est")))
+  contrast <- matrix(
+    data = 0,
+    nrow = 2,
+    ncol = length(component(object, "beta_est"))
+  )
   contrast[1, 2] <- contrast[2, 3] <- 1
   # See design/SAS/sas_log_simple_reml.txt for the source of numbers.
   result <- expect_silent(h_df_md_sat(object, contrast))
@@ -149,7 +234,11 @@ test_that("h_df_md_sat works as expected", {
 
 test_that("h_df_md_sat works as expected with a non-full rank contrast matrix", {
   object <- get_mmrm()
-  contrast <- matrix(data = 0, nrow = 2, ncol = length(component(object, "beta_est")))
+  contrast <- matrix(
+    data = 0,
+    nrow = 2,
+    ncol = length(component(object, "beta_est"))
+  )
   contrast[2, 5] <- 1 # So the first row is all 0s still.
   result <- expect_silent(h_df_md_sat(object, contrast))
   expected <- h_df_md_sat(object, contrast[2L, , drop = FALSE])
@@ -159,10 +248,35 @@ test_that("h_df_md_sat works as expected with a non-full rank contrast matrix", 
 test_that("h_df_md_sat works as expected for rank deficient model", {
   skip_if_r_devel_linux_clang()
   object <- get_mmrm_rank_deficient()
-  contrast <- matrix(data = 0, nrow = 2, ncol = length(component(object, "beta_est")))
+  contrast <- matrix(
+    data = 0,
+    nrow = 2,
+    ncol = length(component(object, "beta_est"))
+  )
   contrast[1, 2] <- contrast[2, 3] <- 1
   result <- expect_silent(h_df_md_sat(object, contrast))
   object2 <- get_mmrm()
   expected <- expect_silent(h_df_md_sat(object2, contrast))
   expect_equal(result, expected, tolerance = 1e-4)
+})
+
+test_that("h_df_md_sat works as expected with Empirical covariance matrix", {
+  object <- mmrm(
+    formula = FEV1 ~ RACE + SEX + us(AVISIT | USUBJID),
+    data = fev_data,
+    vcov = "Empirical"
+  )
+  # Note: In SAS, Satterthwaite degrees of freedom are not calculated
+  # whent the empirical covariance matrix is used. So we cannot compare against that.
+  contrast <- matrix(
+    data = 0,
+    nrow = 2,
+    ncol = length(component(object, "beta_est"))
+  )
+  contrast[1, 2] <- contrast[2, 3] <- 1
+  result <- expect_silent(h_df_md_sat(object, contrast))
+  expect_identical(result$num_df, 2L)
+  expect_identical(round(result$denom_df), 112)
+  expect_equal(result$f_stat, 37.603, tolerance = 1e-3)
+  expect_true(result$p_val < 0.0001)
 })

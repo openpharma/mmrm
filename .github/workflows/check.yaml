@@ -50,10 +50,6 @@ jobs:
     if: github.event_name == 'pull_request'
     name: Spell Check 🆎
     uses: insightsengineering/r.pkg.template/.github/workflows/spelling.yaml@main
-  links:
-    if: github.event_name == 'pull_request'
-    name: Check URLs 🌐
-    uses: insightsengineering/r.pkg.template/.github/workflows/links.yaml@main
   vbump:
     name: Version Bump 🤜🤛
     if: github.event_name == 'push'
@@ -66,9 +62,3 @@ jobs:
   licenses:
     name: License Check 🃏
     uses: insightsengineering/r.pkg.template/.github/workflows/licenses.yaml@main
-  style:
-    if: github.event_name == 'pull_request'
-    name: Style Check 👗
-    uses: insightsengineering/r.pkg.template/.github/workflows/style.yaml@main
-    with:
-      auto-update: true

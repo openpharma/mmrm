@@ -11,9 +11,7 @@
 #'   with regards to this variance parameter.
 #'
 #' @keywords internal
-h_jac_list <- function(tmb_data,
-                       theta_est,
-                       beta_vcov) {
+h_jac_list <- function(tmb_data, theta_est, beta_vcov) {
   assert_class(tmb_data, "mmrm_tmb_data")
   assert_numeric(theta_est)
   assert_matrix(beta_vcov)
@@ -69,6 +67,7 @@ h_quad_form_mat <- function(mat, center) {
     nrows = ncol(center),
     ncols = ncol(center)
   )
+
   mat %*% tcrossprod(center, mat)
 }
 
@@ -98,6 +97,46 @@ h_gradient <- function(jac_list, contrast) {
   )
 }
 
+#' Helper for Calculation of Satterthwaite with Empirical Covariance Matrix
+#'
+#' @description Used in [h_df_1d_sat()] and [h_df_md_sat()] if empirical covariance
+#' matrix is used.
+#'
+#' @param object (`mmrm`)\cr the MMRM fit.
+#' @param contrast_matrix (`matrix`)\cr contrast matrix with number of subjects times
+#' number of coefficients as the number of columns.
+#'
+#' @return Adjusted degrees of freedom value.
+#' @keywords internal
+h_df_1d_sat_empirical <- function(object, contrast_matrix) {
+  assert_class(object, "mmrm")
+  assert_matrix(
+    contrast_matrix,
+    mode = "numeric",
+    any.missing = FALSE
+  )
+  g_matrix <- if (
+    is.null(object$empirical_g_mat) && !is.null(object$empirical_df_mat)
+  ) {
+    warning(
+      "mmrm fit was obtained with package version < 0.3.15, ",
+      "using deprecated calculation of d.f., consider refitting the model"
+    )
+    h_quad_form_mat(contrast_matrix, object$empirical_df_mat)
+  } else if (!is.null(object$empirical_g_mat)) {
+    g_times_contrast_transposed <- tcrossprod(
+      object$empirical_g_mat,
+      contrast_matrix
+    )
+    crossprod(g_times_contrast_transposed)
+  } else {
+    stop(
+      "neither empirical_df_mat nor empirical_g_mat are available in mmrm fit object"
+    )
+  }
+  h_tr(g_matrix)^2 / sum(g_matrix^2)
+}
+
 #' Calculation of Satterthwaite Degrees of Freedom for One-Dimensional Contrast
 #'
 #' @description Used in [df_1d()] if method is
@@ -120,11 +159,16 @@ h_df_1d_sat <- function(object, contrast) {
     v_num <- 2 * h_quad_form_vec(contrast, component(object, "beta_vcov"))^2
     v_denom <- h_quad_form_vec(grad, component(object, "theta_vcov"))
     v_num / v_denom
-  } else if (object$vcov %in% c("Empirical", "Empirical-Jackknife", "Empirical-Bias-Reduced")) {
-    contrast_matrix <- Matrix::.bdiag(rep(list(matrix(contrast, nrow = 1)), component(object, "n_subjects")))
+  } else if (
+    object$vcov %in%
+      c("Empirical", "Empirical-Jackknife", "Empirical-Bias-Reduced")
+  ) {
+    contrast_matrix <- Matrix::.bdiag(rep(
+      list(matrix(contrast, nrow = 1)),
+      component(object, "n_subjects")
+    ))
     contrast_matrix <- as.matrix(contrast_matrix)
-    g_matrix <- h_quad_form_mat(contrast_matrix, object$empirical_df_mat)
-    h_tr(g_matrix)^2 / sum(g_matrix^2)
+    h_df_1d_sat_empirical(object, contrast_matrix)
   }
 
   h_test_1d(object, contrast, df)
@@ -145,7 +189,12 @@ h_df_1d_sat <- function(object, contrast) {
 #'
 #' @keywords internal
 h_md_denom_df <- function(t_stat_df) {
-  assert_numeric(t_stat_df, min.len = 1L, lower = .Machine$double.xmin, any.missing = FALSE)
+  assert_numeric(
+    t_stat_df,
+    min.len = 1L,
+    lower = .Machine$double.xmin,
+    any.missing = FALSE
+  )
 
   if (test_scalar(t_stat_df)) {
     t_stat_df
@@ -176,7 +225,12 @@ h_df_md_from_1d <- function(object, contrast) {
     num_df = 1,
     denom_df = res_1d$df,
     f_stat = res_1d$t_stat^2,
-    p_val = stats::pf(q = res_1d$t_stat^2, df1 = 1, df2 = res_1d$df, lower.tail = FALSE)
+    p_val = stats::pf(
+      q = res_1d$t_stat^2,
+      df1 = 1,
+      df2 = res_1d$df,
+      lower.tail = FALSE
+    )
   )
 }
 
@@ -194,7 +248,12 @@ h_df_md_from_1d <- function(object, contrast) {
 #' @keywords internal
 h_df_md_sat <- function(object, contrast) {
   assert_class(object, "mmrm")
-  assert_matrix(contrast, mode = "numeric", any.missing = FALSE, ncols = length(component(object, "beta_est")))
+  assert_matrix(
+    contrast,
+    mode = "numeric",
+    any.missing = FALSE,
+    ncols = length(component(object, "beta_est"))
+  )
   # Early return if we are in the one-dimensional case.
   if (identical(nrow(contrast), 1L)) {
     return(h_df_md_from_1d(object, contrast))
@@ -210,7 +269,10 @@ h_df_md_sat <- function(object, contrast) {
   rank_cont_cov <- sum(eigen_cont_cov_vals > tol)
   assert_number(rank_cont_cov, lower = .Machine$double.xmin)
   rank_seq <- seq_len(rank_cont_cov)
-  vctrs_cont_prod <- crossprod(eigen_cont_cov_vctrs, contrast)[rank_seq, , drop = FALSE]
+  vctrs_cont_prod <- crossprod(eigen_cont_cov_vctrs, contrast)[
+    rank_seq, ,
+    drop = FALSE
+  ]
 
   # Early return if rank 1.
   if (identical(rank_cont_cov, 1L)) {
@@ -225,7 +287,12 @@ h_df_md_sat <- function(object, contrast) {
   t_stat_df <- if (identical(object$vcov, "Asymptotic")) {
     grads_vctrs_cont_prod <- lapply(
       rank_seq,
-      function(m) h_gradient(component(object, "jac_list"), contrast = vctrs_cont_prod[m, ])
+      function(m) {
+        h_gradient(
+          component(object, "jac_list"),
+          contrast = vctrs_cont_prod[m, ]
+        )
+      }
     )
     t_stat_df_denoms <- vapply(
       grads_vctrs_cont_prod,
@@ -239,11 +306,13 @@ h_df_md_sat <- function(object, contrast) {
       rank_seq,
       function(m) {
         contrast_matrix <- Matrix::.bdiag(
-          rep(list(vctrs_cont_prod[m, , drop = FALSE]), component(object, "n_subjects"))
+          rep(
+            list(vctrs_cont_prod[m, , drop = FALSE]),
+            component(object, "n_subjects")
+          )
         )
         contrast_matrix <- as.matrix(contrast_matrix)
-        g_matrix <- h_quad_form_mat(contrast_matrix, object$empirical_df_mat)
-        h_tr(g_matrix)^2 / sum(g_matrix^2)
+        h_df_1d_sat_empirical(object, contrast_matrix)
       },
       FUN.VALUE = 0
     )
@@ -254,6 +323,11 @@ h_df_md_sat <- function(object, contrast) {
     num_df = rank_cont_cov,
     denom_df = denom_df,
     f_stat = f_stat,
-    p_val = stats::pf(q = f_stat, df1 = rank_cont_cov, df2 = denom_df, lower.tail = FALSE)
+    p_val = stats::pf(
+      q = f_stat,
+      df1 = rank_cont_cov,
+      df2 = denom_df,
+      lower.tail = FALSE
+    )
   )
 }

@@ -253,4 +253,8 @@ but it is not used for the following reason:
 2. To find out the symmetric square root, singular value decomposition is still needed, so not using the method but instead
 calculating directly the square root of the pseudo inverse can be simpler.
 
+## Avoiding the Crossproduct of the G Matrix
+
+In the implementation of the empirical covariance matrix with the Satterthwaite degrees of freedom calculation, it is important to avoid directly computing the crossproduct of the $G$ matrix (i.e., $G^\top G$). This is because the $G$ matrix can have a large number of columns, in situations with many subjects and/or many coefficients, leading to significant computational and memory overhead. Instead, the current implementation leverages more efficient matrix operations when needed using the contrast matrix during the Satterthwaite degrees of freedom calculation. This approach ensures that the calculation remains feasible and efficient even for large datasets, without any numerical differences.
+
 # References
