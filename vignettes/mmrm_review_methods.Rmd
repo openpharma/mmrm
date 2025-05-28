@@ -196,7 +196,7 @@ MODEL FEV1 = AVISIT|ARMCD / ddfm=satterthwaite solution chisq;
 <pre><code>gls(
   FEV1 ~ ARMCD * AVISIT,
   data = fev_data,
-  correlation = <b>corCAR1(form = ~AVISIT | USUBJID)</b>,
+  correlation = <b>corAR1(form = ~AVISIT | USUBJID)</b>,
   weights = <b>varIdent(form = ~1|AVISIT)</b>,
   na.action = na.omit
 )
@@ -222,7 +222,7 @@ MODEL FEV1 =  ARMCD|AVISIT / ddfm=satterthwaite solution chisq;
 <pre><code>gls(
   FEV1 ~ ARMCD * AVISIT,
   data = fev_data,
-  correlation = <b>corCAR1(form = ~AVISIT | USUBJID)</b>,
+  correlation = <b>corAR1(form = ~AVISIT | USUBJID)</b>,
   na.action = na.omit
 )
 </code></pre>
