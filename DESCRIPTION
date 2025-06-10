@@ -1,7 +1,7 @@
 Type: Package
 Package: mmrm
 Title: Mixed Models for Repeated Measures
-Version: 0.3.14.9002
+Version: 0.3.15
 Authors@R: c(
     person("Daniel", "Sabanes Bove", , "daniel.sabanes_bove@rconis.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-0176-9239")),
@@ -46,7 +46,7 @@ License: Apache License 2.0
 URL: https://openpharma.github.io/mmrm/
 BugReports: https://github.com/openpharma/mmrm/issues
 Depends:
-    R (>= 4.0)
+    R (>= 4.1)
 Imports:
     checkmate (>= 2.0),
     generics,
