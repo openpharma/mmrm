@@ -35,7 +35,7 @@ h_mmrm_tmb_formula_parts <- function(
       model_formula = model_formula,
       full_formula = h_add_covariance_terms(model_formula, covariance),
       cov_type = tmb_cov_type(covariance),
-      is_spatial = covariance$type == "sp_exp",
+      is_spatial = grepl("sp_", covariance$type),
       visit_var = covariance$visits,
       subject_var = covariance$subject,
       group_var = if (length(covariance$group) < 1) NULL else covariance$group,

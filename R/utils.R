@@ -377,7 +377,8 @@ std_start <- function(cov_type, n_visits, n_groups, ...) {
     adh = rep(0, 2 * n_visits - 1),
     cs = rep(0, 2),
     csh = rep(0, n_visits + 1),
-    sp_exp = rep(0, 2)
+    sp_exp = rep(0, 2),
+    sp_gau = rep(0, 2)
   )
   rep(start_value, n_groups)
 }

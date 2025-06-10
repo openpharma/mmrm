@@ -221,4 +221,45 @@ struct derivatives_sp_exp: public lower_chol_spatial<Type>, virtual derivatives_
   }
 };
 
+
+// derivatives_sp_gau struct is created to obtain the exact derivatives of spatial Guassian
+// covariance structure, and its inverse.
+// Inherit from sp_exp because of similar parameterization
+template <class Type>
+struct derivatives_sp_gau: public derivatives_sp_exp<Type> {
+  Type const_sd;
+  Type rho;
+  Type logrho;
+  derivatives_sp_gau() {
+    // This default constructor is needed because the use of `[]` in maps.
+  }
+  // Initialize the theta values; the reason to have theta is that for a fit, the theta
+  // is the same for all subjects, while the distance between each visits for each subject
+  // can be different.
+  derivatives_sp_gau(vector<Type> theta, std::string cov_type): lower_chol_spatial<Type>(theta, cov_type) ,const_sd(exp(theta(0))), rho(invlogit(theta(1))) {
+    this->logrho = log(this->rho);
+  }
+  // Obtain first order derivatives
+  matrix<Type> get_sigma_derivative1(std::vector<int> visits, matrix<Type> dist) override {
+    matrix<Type> ret(2 * dist.rows(), dist.cols());
+    // partial sigma / partial theta_1 = sigma.
+    auto sigma = this->get_sigma(visits, dist);
+    ret.block(0, 0, dist.rows(), dist.cols()) = sigma;
+    ret.block(dist.rows(), 0, dist.rows(), dist.cols()) = sigma.array() * dist.array().suqare() * (1 - this->rho);
+    return ret;
+  }
+  // Obtain second order derivatives.
+  matrix<Type> get_sigma_derivative2(std::vector<int> visits, matrix<Type> dist) override {
+    matrix<Type> ret(4 * dist.rows(), dist.cols());
+    auto sigma = this->get_sigma(visits, dist);
+    ret.block(0, 0, dist.rows(), dist.cols()) = sigma;
+    Type rho_r = 1 - this->rho;
+    auto dtheta1dtheta2 = sigma.array() * dist.array().suqare() * rho_r;
+    ret.block(dist.rows(), 0, dist.rows(), dist.cols()) =  dtheta1dtheta2;
+    ret.block(dist.rows() * 2, 0, dist.rows(), dist.cols()) = dtheta1dtheta2;
+    matrix<Type> dtheta2s = dtheta1dtheta2 * (dist.array().suqare() * rho_r - this->rho);
+    ret.block(dist.rows() * 3, 0, dist.rows(), dist.cols()) = dtheta2s;
+    return ret;
+  }
+};
 #endif

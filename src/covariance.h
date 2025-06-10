@@ -130,12 +130,24 @@ matrix<T> get_compound_symmetry_heterogeneous(const vector<T>& theta, int n_visi
 template <class T>
 matrix<T> get_spatial_exponential(const vector<T>& theta, const matrix<T>& distance) {
   T const_sd = exp(theta(0));
-  T rho = invlogit(theta(1));
-  matrix<T> expdist = exp(distance.array() * log(rho));
+  T rho = invlogit(theta(1)); // theta (-Inf, Inf), rho (0, 1), log(rho) (-Inf, 0)
+  matrix<T> expdist = exp(distance.array() * log(rho)); 
   matrix<T> result = expdist * const_sd;
   Eigen::LLT<Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> > cov_i_chol(result);
   return cov_i_chol.matrixL();
 }
+
+// Spatial Gaussian Cholesky factor.
+template <class T>
+matrix<T> get_spatial_gaussian(const vector<T>& theta, const matrix<T>& distance) {
+  T const_sd = exp(theta(0));
+  T rho = invlogit(theta(1));
+  matrix<T> expdist = exp(distance.array().square() * log(rho)); // only take square of the dist
+  matrix<T> result = expdist * const_sd;
+  Eigen::LLT<Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> > cov_i_chol(result);
+  return cov_i_chol.matrixL();
+}
+
 
 // Creates a new correlation object dynamically.
 template <class T>
@@ -173,7 +185,9 @@ matrix<T> get_spatial_covariance_lower_chol(const vector<T>& theta, const matrix
   matrix<T> result;
   if (cov_type == "sp_exp") {
     result = get_spatial_exponential<T>(theta, distance);
-  } else {
+  } else if (cov_type == "sp_gau") {
+    result = get_spatial_gaussian<T>(theta, distance);
+  }else {
     Rf_error("%s", ("Unknown spatial covariance type '" + cov_type + "'.").c_str());
   }
   return result;
