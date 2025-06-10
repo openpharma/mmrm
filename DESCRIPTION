@@ -46,7 +46,7 @@ License: Apache License 2.0
 URL: https://openpharma.github.io/mmrm/
 BugReports: https://github.com/openpharma/mmrm/issues
 Depends:
-    R (>= 4.0)
+    R (>= 4.1)
 Imports:
     checkmate (>= 2.0),
     generics,
