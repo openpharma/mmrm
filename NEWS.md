@@ -8,6 +8,7 @@
 ### New Features
 
 - `mmrm` now returns score per subject in empirical covariance. It can be accessed by `component(obj, name = "score_per_subject")`. 
+- `mmrm` now support spatial Gaussian covariance matrix.
 
 # mmrm 0.3.14
 

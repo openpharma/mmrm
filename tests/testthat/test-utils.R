@@ -231,6 +231,10 @@ test_that("std_start works", {
     std_start("sp_exp", 5, 5),
     rep(0, 10)
   )
+  expect_identical(
+    std_start("sp_gau", 5, 5),
+    rep(0, 10)
+  )
 })
 
 # h_get_theta_from_cov ----
