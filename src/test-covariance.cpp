@@ -111,10 +111,19 @@ context("autoregressive") {
 context("compound symmetry") {
   test_that("corr_fun_compound_symmetry works as expected") {
     vector<double> theta {{1.2}};
-    corr_fun_compound_symmetry<double> test_fun(theta);
-    expect_equal(test_fun(1, 0), 0.7682213);
-    expect_equal(test_fun(4, 1), 0.7682213);
-    expect_equal(test_fun(3, 1), 0.7682213);
+    corr_fun_compound_symmetry<double> test_fun(theta, 3);
+    expect_equal(test_fun(1, 0), 0.6527872);
+    expect_equal(test_fun(4, 1), 0.6527872);
+    expect_equal(test_fun(3, 1), 0.6527872);
+  }
+
+  test_that("corr_fun_compound_symmetry respects the lower boundary") {
+    vector<double> theta {{-100.0}}; // So low that we get lower bound.
+    corr_fun_compound_symmetry<double> test_fun(theta, 100);
+    double lower_bound = - 1.0 / (100.0 - 1.0)
+    expect_equal(test_fun(1, 0), lower_bound);
+    expect_equal(test_fun(4, 1), lower_bound);
+    expect_equal(test_fun(3, 1), lower_bound);
   }
 
   test_that("get_compound_symmetry produces expected result") {
@@ -123,19 +132,19 @@ context("compound symmetry") {
     matrix<double> expected(3, 3);
     expected <<
       2, 0, 0,
-      1.89736659610103, 0.632455532033676, 0,
-      1.89736659610103, 0.307900211696917, 0.552446793489648;
+      1.8577223804673, 0.740855962458903, 0,
+      1.8577223804673, 0.356766134631966, 0.649296143751581;
     expect_equal_matrix(result, expected);
   }
 
   test_that("get_compound_symmetry_heterogeneous produces expected result") {
-    vector<double> theta {{log(1.0), log(2.0), log(3.0), 2.0}};
+    vector<double> theta {{log(1.0), log(2.0), log(3.0), - 2.0}};
     matrix<double> result = get_compound_symmetry_heterogeneous(theta, 3);
     matrix<double> expected(3, 3);
     expected <<
       1, 0, 0,
-      1.78885438199983, 0.894427190999916, 0,
-      2.68328157299975, 0.633436854000505, 1.18269089452568;
+      -0.642391233933647, 1.89402573967864, 0,
+      -0.963586850900471, -1.3443182923085, 2.50286010590613;
     expect_equal_matrix(result, expected);
   }
 }
