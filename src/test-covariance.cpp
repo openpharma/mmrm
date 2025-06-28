@@ -120,7 +120,7 @@ context("compound symmetry") {
   test_that("corr_fun_compound_symmetry respects the lower boundary") {
     vector<double> theta {{-100.0}}; // So low that we get lower bound.
     corr_fun_compound_symmetry<double> test_fun(theta, 100);
-    double lower_bound = - 1.0 / (100.0 - 1.0)
+    double lower_bound = - 1.0 / (100.0 - 1.0);
     expect_equal(test_fun(1, 0), lower_bound);
     expect_equal(test_fun(4, 1), lower_bound);
     expect_equal(test_fun(3, 1), lower_bound);
