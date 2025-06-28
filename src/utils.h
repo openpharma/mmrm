@@ -105,6 +105,13 @@ vector<T> map_to_cor(const vector<T>& theta) {
   return theta / sqrt(T(1.0) + theta * theta);
 }
 
+// Mapping from real values to correlation parameters in (-1/(m-1), 1) for compound symmetry.
+template <class T>
+vector<T> map_to_cs_cor(const vector<T>& theta, int n_visits) {
+  T a = T(1.0) / (T(n_visits) - T(1.0));
+  return invlogit(theta) * (T(1.0) + a) - a;
+}
+
 // Generic correlation function class containing and initializing correlation
 // values from variance parameters theta.
 template <class T>

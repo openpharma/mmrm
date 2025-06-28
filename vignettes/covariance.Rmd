@@ -198,11 +198,11 @@ where $\rho$ is the single correlation parameter here.
 
 The permitted range of $\rho$ is only from $-1/(m-1)$ to $1$, therefore we use here a different transformation: With the negative lower bound for the correlation defined as $a=1/(m-1)$, we use 
 \[
-\theta = f(\rho) = \logit^{-1)((\rho + a) / (1 + a))
+\theta = f(\rho) = \logit((\rho + a) / (1 + a))
 \]
 with the inverse
 \[
-\rho = f^{-1}(\theta) = \logit(\theta) (1 + a) - a.
+\rho = f^{-1}(\theta) = \logit^{-1}(\theta) (1 + a) - a.
 \]
 
 Assuming a constant variance in the state-space equation yields a
