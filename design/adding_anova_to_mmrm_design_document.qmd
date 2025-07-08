@@ -5,6 +5,35 @@ format: gfm
 editor: visual
 ---
 
+## Setup
+
+```{r setup}
+library(mmrm)
+set.seed(20250708)
+data <-
+  fev_data %>%
+  filter(VISITN == min(VISITN)) %>%
+  mutate(FEV1 = FEV1_BL, AVISIT = "BASELINE", VISITN = 0L) %>% 
+  bind_rows(fev_data, .) %>%
+  select(!c(FEV1_BL, VISITN2, WEIGHT)) %>%
+  arrange(USUBJID, VISITN) %>%
+  as_tibble() %>% 
+  mutate(
+    VISITX = VISITN * 12,
+    TIMEX = VISITX + runif(n = n(), min = -1, max = 1),
+    TIMEN = VISITN,
+    TIMEF =
+      ordered(as.character(TIMEN), levels = as.character(sort(unique(TIMEN))))
+  ) %>% 
+  select(FEV1, AVISIT, VISITX, VISITN, TIMEX, TIMEN, TIMEF, USUBJID, ARMCD,
+         RACE, SEX)
+basis <- splines::ns(data$TIMEX, df = 2, Boundary.knots = c(0, max(data$TIMEX)))
+spline <- function(TIMEX, column) {
+  as.numeric(predict(basis, TIMEX)[, column])
+}
+```
+
+
 # Background
 
 A current drawback of `mmrm` is that it does not support `stats::anova()` (i.e., `anova.mmrm()` does not exist). This is discussed here: <https://github.com/openpharma/mmrm/issues/164>
@@ -35,8 +64,8 @@ It's possible that the larger model was fit with an augmented data set (<https:/
 
 In order that `anova.mmrm()` may be comparable to `anova()` methods in the `nlme` and `lme4` packages, it shall contain the following arguments:
 
--   `test` argument to opt in/out of obtaining LRT results (see `?nlme::anova.lme`)
--   `refit` arguments to allow for refitting the models (see `?lme4::anova.merMod`)
+-   `test` argument to opt in/out of obtaining LRT results (see `?nlme::anova.lme`). The function will return degrees of freedom, AIC, BIC, and log-likelihood regardless.
+-   `refit` arguments to allow for refitting the models (see `?lme4::anova.merMod`).
 
 # Prerequisite: augment `logLik.mmrm_tmb()`
 
@@ -44,6 +73,38 @@ This function needs to return more data in the `attributes()` of the returned va
 
 -   `nall`, `nobs`, and `df`
 -   Add `"logLik"` to the `class()` of the returned value
+
+Prototype:
+
+```{r}
+#' @describeIn mmrm_tmb_methods obtains the attained log likelihood value.
+#' @importFrom stats logLik
+#' @exportS3Method
+#' @examples
+#' # Log likelihood given the estimated parameters:
+#' logLik(object)
+logLik.mmrm_tmb <- function(object, ...) {
+  out <- -component(object, "neg_log_lik")
+
+  # total number of observations
+  nall <- component(object, "n_obs")
+
+  # was REML used (ML was used if FALSE)
+  reml_used <- component(object, "reml")
+
+  # Number of estimated coefficients (excluding aliased coefficients)
+  n_fixed_effects <- length(component(object, "beta_est"))
+
+  # Adjusted number of observations when REML is used
+  nobs <- nall - reml_used * n_fixed_effects
+
+  # Number of parameters
+  df <- component(object, "n_theta")
+
+  structure(out, nall = nall, nobs = nobs, df = df, class = "logLik")
+}
+```
+
 
 # Designing `anova.mmrm()`
 
@@ -59,11 +120,11 @@ anova(object, ..., test = TRUE, refit = FALSE)
 ### Arguments
 
 |  |  |
-|----|----|
+|---------------------------|---------------------------------------------|
 | `object` | An object inheriting from class `mmrm`: a fitted mixed model with repeated measures. |
 | `...` | Other optional fitted model objects inheriting from class `mmrm`. |
-| `test` | Logical indicating whether likelihood ratio tests should be used to compare the fitted models represented by `object` and the object(s) in `...`. Defaults to `TRUE`. |
-| `refit` | Logical indicating if the models should be refitted before comparing. Defaults to `FALSE`. |
+| `test` | Logical indicating whether the output should include likelihood ratio test results comparing the model fits to one another. Defaults to `TRUE`. |
+| `refit` | Logical indicating whether the models should be refitted before comparing. This is ignored if `test = FALSE` (i.e., the models are not being directly compared) or if the models all have the same underlying data set. If `refit = FALSE` and the models have different underlying data sets, an error will be thrown. Defaults to `FALSE`. |
 
 ## Function outline
 
@@ -71,7 +132,7 @@ anova(object, ..., test = TRUE, refit = FALSE)
 
 #### Special case: supplying only one model fit
 
-If the user provides only one model fit to `anova.mmrm()`, the function will calculate and return the significance of the model terms.
+If the user provides only one model fit to `anova.mmrm()`, the function will calculate and return the significance of the model terms as each term is sequentially added.
 
 #### Comparing multiple model fits
 
@@ -79,10 +140,13 @@ If the user provides more than one model fit, a `tibble` of results is produced.
 
 If the user supplied `test = TRUE`, the model fits are subject to further tests to ensure they are nestable. If the data sets for the fits are not the same and the user supplied `refit = TRUE`, the data sets are harmonized and the models are refitted using the harmonized data set. The pairs of models then undergo likelihood ratio testing, and the results are augmented into the `tibble` of results.
 
-### Pseudocode
+### Prototype code
 
-```{r eval=FALSE}
+#### `anova.mmrm()`
+
+```{r }
 anova.mmrm <- function (object, ..., test = TRUE, refit = FALSE) {
+  checkmate::assert_class(object, "mmrm")
   
   # If there are objects supplied to "..."
   if (...length()) {
@@ -90,54 +154,47 @@ anova.mmrm <- function (object, ..., test = TRUE, refit = FALSE) {
     # Gather all objects into one list
     fits <- list(object, ...)
     
-    # Ensure all the objects are mmrm fits
-    validate_mmrm_objects(fits)
+    # Ensure all objects in ... are mmrm fits
+    lapply(fits[-1L], checkmate::assert_class, classes = "mmrm", .var.name = "...")
     
-    # Calculate the standard diagnostics no matter what
-    results <-
-      tibble(
-        call = lapply(fits, mmrm::component, "call"),
-        Model = row_number(),
-        df = vapply(fits, get_df, integer(1)), 
+    if (refit) {
+      fits <- h_combine_data_and_refit_all(fits)
+    }
+  
+    LL_vec <- lapply(fits, logLik.mmrm_tmb)
+    fit_calls <- lapply(fits, component, "call")
+    
+    # Calculate the standard diagnostics.
+    out <-
+      data.frame(
+        call = vapply(fit_calls, deparse1, character(1L)),
+        Model = seq_along(fits),
+        df = vapply(LL_vec, attr, FUN.VALUE = numeric(1L), "df"), 
         AIC = vapply(fits, AIC, numeric(1)),
         BIC = vapply(fits, BIC, numeric(1)),
-        logLik = vapply(fits, logLik, numeric(1))
+        logLik = as.numeric(LL_vec)
       )
     
     # If the user has requested the likelihood ratio test...
     if (test) {
-      
-      # Ensure all fits can be nested
-      ensure_same_formula_for_fixed_effects(fits)
-      ensure_same_time_group_subjectID_vars(fits)
-      ensure_nestable_covariance_structures(fits)
-      
-      # Handle differences in underlying data sets
-      data_sets_are_same <- compare_data_underlying_model_fits(fits)
-      if (!data_sets_are_same) {
-        if (refit) {
-          # Create one harmonized data set from all fits' underlying data
-          # Errors out if not possible
-          harmonized_data <- harmonize_underlying_data(fits)
-          
-          # Refit all models using harmonized data
-          fits <- lapply(fits, refit_mmrm, harmonized_data)
-        } else {
-          stop("Data underlying mmrm fits are not all the same and refit = FALSE")
-        }
+      # First iterate through and check the models to make sure their covariates
+      # and covariance structures are nested
+      for (i in seq_along(fits)[-1L]) {
+        h_assert_nested_models(fits[[i - 1L]], fits[[i]])
       }
       
+      # Label for the pair being compared (e.g., "3 vs 4")
+      out$test <- c(NA, paste(head(out$Model, -1), "vs", tail(out$Model, -1)))
       
-      results <- results |>
-        mutate(
-          # Label for the pair being compared (e.g., "3 vs 4")
-          test = c(NA, paste0(head(Model, -1), " vs ", tail(Model, -1))),
-          
-          # Calculate the likelihood ratio between the pairs using base::diff()
-          likelihood_ratio = c(NA, diff(logLik)),
-          
-          # Calculate the p-value using the ratios and differences in df
-          p_value = LR_pvalues(likelihood_ratio, c(NA, diff(df)))
+      # Calculate the likelihood ratio between the pairs using base::diff()
+      out$likelihood_ratio <- c(NA, diff(out$logLik))
+      
+      # Calculate the p-value using the ratios and differences in df
+      out$p_value <-
+        pchisq(
+          2 * abs(out$likelihood_ratio),
+          df = abs(diff(out$df)), 
+          lower.tail = FALSE
         )
     }
     
@@ -145,13 +202,253 @@ anova.mmrm <- function (object, ..., test = TRUE, refit = FALSE) {
     
     # If only one model fit was provided, calculate the significance of model
     # terms, which is what ?stats::anova promises
-    out <- calculate_significance_of_model_terms(object)
+    
+    coefficients <- names(component(object, "beta_est"))
+    
+    # Build a list of contrast vectors--one for each coefficient
+    contrast_mtx <- diag(length(coefficients))
+    df_1d_list <-
+      apply(
+        contrast_mtx,
+        MARGIN = 2,
+        FUN = df_1d, 
+        object = object, 
+        simplify = FALSE
+      )
+    
+    out <-
+      data.frame(
+        coefficient = coefficients,
+        do.call(rbind, lapply(df_1d_list, as.data.frame))
+      )
   }
   
   out
 }
 ```
 
+#### Supporting functions:
+
+```{r}
+# Compares two models to see if they are properly nested.
+# Errors out if they don't have the same visit, subject, and grouping vars
+# Errors out if the first model's covariates isn't a subset of the second
+# Errors out if the models have incompatible covariance structures
+# Warns if the models have the same covariates and covariance structure
+h_assert_nested_models <- function(model_basic,
+                                   model_augmented,
+                                   model_basic_name = vname(model_basic),
+                                   model_augmented_name =
+                                     vname(model_augmented)) {
+  model_basic <- model_basic[["formula_parts"]]
+  model_augmented <- model_augmented[["formula_parts"]]
+
+  if (!identical(model_basic[["visit_var"]], model_augmented[["visit_var"]])) {
+    stop(model_basic_name, " and ", model_augmented_name,
+         " must have the same visit variable.")
+  }
+
+  if (!identical(model_basic[["subject_var"]], model_augmented[["subject_var"]])) {
+    stop(model_basic_name, " and ", model_augmented_name,
+         " must have the same subject variable.")
+  }
+
+  if (!identical(model_basic[["group_var"]], model_augmented[["group_var"]])) {
+    stop(model_basic_name, " and ", model_augmented_name,
+         " must have the same grouping variable.")
+  }
+
+  switch(
+    h_check_covar_nesting(model_basic, model_augmented),
+    identical = 
+      if (
+        h_check_cov_struct_nesting(model_basic, model_augmented) == "identical"
+      ) {
+        warning("Models have identical covariates and covariance structures")
+      },
+    nested = 
+      if (
+        h_check_cov_struct_nesting(model_basic, model_augmented) == "nested"
+      ) {
+        stop("Models cannot have both nested covariates and nested covariance structures",
+             call. = FALSE)
+      }
+  )
+}
+
+
+# Checks the covariates of two models to see if they are nested (or identical).
+# The first model's covariates must be a subset of the second model's covariates
+#' @importFrom stats terms
+h_check_covar_nesting <- function(model_basic,
+                                  model_augmented,
+                                  basic_name = vname(model_basic),
+                                  aug_name = vname(model_augmented)) {
+  basic_covars <- attr(terms(model_basic[["model_formula"]]), "term.labels")
+  aug_covars <- attr(terms(model_augmented[["model_formula"]]), "term.labels")
+
+  if (!all(basic_covars %in% aug_covars)) {
+    stop("The covariates in ", basic_name,
+         " must be a subset of the covariates in ", aug_name, " .")
+  }
+
+  if (all(aug_covars %in% basic_covars)) {
+    "identical"
+  } else {
+    "nested"
+  }
+}
+
+
+
+
+# Checks the covariance structures of two models to see if they are nested (or
+# identical).
+h_check_cov_struct_nesting <- function(model_basic,
+                                       model_augmented,
+                                       basic_name = vname(model_basic),
+                                       aug_name = vname(model_augmented)) {
+  basic_cov_struct <- model_basic[["cov_type"]]
+  aug_cov_struct <- model_augmented[["cov_type"]]
+  
+  # Hierarchy, specifying the "parent" covariance structures of each available 
+  # type in mmrm
+  cov_struct_nesting <-
+    list(
+      ad = c("adh", "us"),
+      adh = "us",
+      ar1 = c("ad", "adh", "ar1h", "toep", "toeph", "us"),
+      ar1h = c("adh", "toeph", "us"),
+      cs = c("csh", "toep", "toeph", "us"),
+      csh = c("toeph", "us"),
+      toep = c("toeph", "us"),
+      toeph = "us",
+      us = character(0L),
+      sp_exp = character(0L)
+    )
+  
+  if (identical(basic_cov_struct, aug_cov_struct)) {
+    "identical"
+  } else if (any(cov_struct_nesting[[aug_cov_struct]] == basic_cov_struct)) {
+    "nested"
+  } else {
+    stop(
+      "The covariance structure of ", aug_name,
+      " must be identical to or a special case of the covariance structure of ",
+      basic_name, ". The covariance structure ", aug_cov_struct,
+      " is not a special case of ", basic_cov_struct, ".",
+      call. = FALSE
+    )
+  }
+}
+
+
+# Sorts a data frame's columns alphabetically, then sorts its rows by each
+# column in order
+h_df_sort_all <- function(df) {
+  cols <- sort(colnames(df))
+  Reduce(
+    function(df, col) df[order(df[[col]]), ],
+    cols,
+    init = df[cols],
+    right = TRUE
+  )
+}
+
+
+
+# Compares the data sets underlying a list of fits. If it finds differences, it
+# merges the data sets and then refits all the models so they are using the same
+# data set
+h_combine_data_and_refit_all <- function(fits) {
+  
+  # Grab the data frames behind the model fits into a separate list
+  dfs <- lapply(fits, component, "full_frame")
+  
+  # Sort the first element. Also save it as data.
+  data <- dfs[[1L]] <- h_df_sort_all(dfs[[1L]])
+  
+  # Begin by assuming all data is the same
+  all_data_same <- TRUE
+  
+  # Iterate through remaining fits
+  for (i in seq_along(fits)[-1L]) {
+    
+    dfs[[i]] <- h_df_sort_all(dfs[[i]])
+    
+    # If the current data set is not the same as data...
+    if (!identical(data, dfs[[i]])) {
+        
+      # ...mark that not all data sets are the same.
+      all_data_same <- FALSE
+      
+      # Merge current data set into data
+      data <- h_df_sort_all(merge(data, dfs[[i]], all = TRUE, sort = FALSE))
+      
+    }
+  }
+  
+  # If not all data were the same, refit the models with data
+  if (!all_data_same) {
+    fits <- Map(h_refit_mmrm_with_data, fits, dfs, MoreArgs = list(data))
+  }
+  
+  fits
+}
+
+
+
+# Refit a single model using a new data set
+h_refit_mmrm_with_data <- function(fit, current_df, new_df) {
+  # If the model fit's current data set is not the same as the new one...
+  if (!identical(current_df, new_df)) {
+    # Grab the model call and replace its "data" argument with the new data
+    expr <- component(fit, "call")
+    expr[["data"]] <- new_df
+    # Grab the environment of the model's formula
+    envir <- environment(fit[["formula_parts"]][["full_formula"]])
+    # Evaluate the model call in the environment of the original fit's formula
+    fit <- eval(call, envir)
+  }
+
+  fit
+}
+```
+
+
 # Examples
 
-Insert examples here.
+Using a modified version of the `fit_reduced` and `fit_full` models in the tutorial:
+
+```{r}
+fit_reduced <- 
+  mmrm(
+    FEV1 ~
+      I(spline(TIMEX, 1))*SEX + I(spline(TIMEX, 2))*SEX +
+      RACE + SEX +
+      us(TIMEF | USUBJID),
+    data = data
+  )
+
+fit_full <- 
+  mmrm(
+    FEV1 ~ 
+      I(spline(TIMEX, 1))*SEX + I(spline(TIMEX, 2))*SEX +
+      I(spline(TIMEX, 1)):ARMCD + I(spline(TIMEX, 2)):ARMCD +
+      RACE + SEX +
+      us(TIMEF | USUBJID),
+    data = data
+  )
+```
+
+First, running `anova()` just on one model:
+
+```{r}
+anova(fit_reduced)
+```
+
+Now, two models, including the likelihood ratio test (the default)
+
+```{r}
+anova(fit_reduced, fit_full)
+```
