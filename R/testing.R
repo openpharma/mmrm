@@ -37,7 +37,7 @@ df_1d <- function(object, contrast) {
 #'
 #' @description `r lifecycle::badge("stable")`
 #' Calculates the estimate, standard error, degrees of freedom,
-#' t statistic and p-value for one-dimensional contrast, depending on the method
+#' t statistic and p-value for *m*-dimensional contrast, depending on the method
 #' used in [mmrm()].
 #'
 #' @param object (`mmrm`)\cr the MMRM fit.

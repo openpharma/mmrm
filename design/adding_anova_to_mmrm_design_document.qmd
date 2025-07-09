@@ -9,6 +9,7 @@ editor: visual
 
 ```{r setup}
 library(mmrm)
+library(tidyverse)
 set.seed(20250708)
 data <-
   fev_data %>%
@@ -33,7 +34,6 @@ spline <- function(TIMEX, column) {
 }
 ```
 
-
 # Background
 
 A current drawback of `mmrm` is that it does not support `stats::anova()` (i.e., `anova.mmrm()` does not exist). This is discussed here: <https://github.com/openpharma/mmrm/issues/164>
@@ -47,7 +47,7 @@ There is consensus that this goal of obtaining LRT results would be available vi
 ### Models should be compared to check if they are nested:
 
 -   Nested sets of covariates. See: <https://github.com/openpharma/mmrm/issues/164#issuecomment-1446364890>
--   "Nested" covariance structures (e.g., unstructured + any structured; AR1 being a special case of Toeplitz). See: <https://github.com/openpharma/mmrm/issues/164#issuecomment-1446627674>.
+-   "Nested" covariance structures (e.g., unstructured + any structured; AR1 being a special case of Toeplitz). See: <https://github.com/openpharma/mmrm/issues/164#issuecomment-1446627674> and the **Nested covariance structures proofs** appendix below.
 -   **Not both** of the above, as this would be too complicated.
 
 ### Accommodate comparison of models that used different data sets
@@ -58,7 +58,7 @@ It's possible that the larger model was fit with an augmented data set (<https:/
 
 ### Providing only one fit to `anova.mmrm()`
 
-`?stats::anova` asserts that if only one model fit is provided, the function will calculate the significance of model terms. The `anova.mmrm()` should follow this lead and provide these results accordingly.
+`?stats::anova` declares that if only one model fit is provided, the function will calculate the significance of model terms. The `anova.mmrm()` should honor this.
 
 ### Following the lead of `anova()` methods in `nlme` and `lme4`
 
@@ -105,7 +105,6 @@ logLik.mmrm_tmb <- function(object, ...) {
 }
 ```
 
-
 # Designing `anova.mmrm()`
 
 ## Function specification
@@ -124,7 +123,7 @@ anova(object, ..., test = TRUE, refit = FALSE)
 | `object` | An object inheriting from class `mmrm`: a fitted mixed model with repeated measures. |
 | `...` | Other optional fitted model objects inheriting from class `mmrm`. |
 | `test` | Logical indicating whether the output should include likelihood ratio test results comparing the model fits to one another. Defaults to `TRUE`. |
-| `refit` | Logical indicating whether the models should be refitted before comparing. This is ignored if `test = FALSE` (i.e., the models are not being directly compared) or if the models all have the same underlying data set. If `refit = FALSE` and the models have different underlying data sets, an error will be thrown. Defaults to `FALSE`. |
+| `refit` | Logical indicating whether the models should be refitted before comparing. This is ignored if the models all have the same underlying data set. If `refit = FALSE` and the models have different underlying data sets, an error will be thrown. Defaults to `FALSE`. |
 
 ## Function outline
 
@@ -132,13 +131,13 @@ anova(object, ..., test = TRUE, refit = FALSE)
 
 #### Special case: supplying only one model fit
 
-If the user provides only one model fit to `anova.mmrm()`, the function will calculate and return the significance of the model terms as each term is sequentially added.
+If the user provides only one model fit to `anova.mmrm()`, the function will calculate and return the significance of the model terms in a data frame.
 
 #### Comparing multiple model fits
 
-If the user provides more than one model fit, a `tibble` of results is produced. This `tibble` will have a row for each model, and the columns will contain identifying information as well as standard diagnostics (e.g., AIC, log likelihood, etc.).
+If the user provides more than one model fit, a data frame is produced with a row for each model, and the columns will contain identifying information as well as standard diagnostics (e.g., AIC; log likelihood).
 
-If the user supplied `test = TRUE`, the model fits are subject to further tests to ensure they are nestable. If the data sets for the fits are not the same and the user supplied `refit = TRUE`, the data sets are harmonized and the models are refitted using the harmonized data set. The pairs of models then undergo likelihood ratio testing, and the results are augmented into the `tibble` of results.
+If the user supplied `test = TRUE`, the model fits are subject to further tests to ensure they are nestable. If the data sets for the fits are not the same and the user supplied `refit = TRUE`, the data sets are harmonized and the models are refitted using the harmonized data set. The pairs of models then undergo likelihood ratio testing, and the results are augmented into the data frame of results.
 
 ### Prototype code
 
@@ -200,27 +199,29 @@ anova.mmrm <- function (object, ..., test = TRUE, refit = FALSE) {
     
   } else { 
     
-    # If only one model fit was provided, calculate the significance of model
-    # terms, which is what ?stats::anova promises
+    # attributes of terms.object for the model formula without the cov struct
+    terms_attr <- attributes(terms(object$formula_parts$model_formula))
     
-    coefficients <- names(component(object, "beta_est"))
+    # Get a character vector of the terms.
+    # Prepend with "(Intercept)" if an intercept is present
+    terms <- c(if (terms_attr$intercept) "(Intercept)", terms_attr$term.labels)
     
-    # Build a list of contrast vectors--one for each coefficient
-    contrast_mtx <- diag(length(coefficients))
-    df_1d_list <-
-      apply(
-        contrast_mtx,
-        MARGIN = 2,
-        FUN = df_1d, 
-        object = object, 
-        simplify = FALSE
-      )
+    # Vector identifying each coefficient's corresponding term
+    assign_vec <- attr(component(object, "x_matrix"), "assign")
     
-    out <-
-      data.frame(
-        coefficient = coefficients,
-        do.call(rbind, lapply(df_1d_list, as.data.frame))
-      )
+    # Create an identity matrix with a row/col for each coefficient
+    identity_mtx <- diag(length(assign_vec))
+    
+    # Split the rows of identity_mtx according to assign_vec, creating a list of
+    # contrast matrices: one for each term in the model.
+    contrasts <-
+      split.data.frame(identity_mtx, factor(assign_vec, labels = terms))
+    
+    # Get df_md() results for each contrast matrix. Result is a list of lists
+    df_md_results <- lapply(contrasts, df_md, object = object)
+    
+    # Turn results into a data frame. The row.names identify the terms.
+    out <- do.call(rbind, lapply(df_md_results, as.data.frame))
   }
   
   out
@@ -230,6 +231,84 @@ anova.mmrm <- function (object, ..., test = TRUE, refit = FALSE) {
 #### Supporting functions:
 
 ```{r}
+# Compares the data sets underlying a list of fits. 
+
+# If refit = FALSE, this is a predicate function indicating whether all the data
+# sets are the same.
+
+# If refit = TRUE, all data sets are harmonized, the models are refit using the
+# harmonized data set, and the refits are returned.
+h_fits_data_identical <- function(fits, refit = FALSE) {
+  
+  # Grab the data frames behind the model fits into a separate list
+  dfs <- lapply(fits, component, "full_frame")
+  
+  # Sort the first element. Save it as "data"
+  data <- dfs[[1L]] <- h_df_sort_all(dfs[[1L]])
+  
+  # Begin by assuming all fits' data are the same
+  all_data_same <- TRUE
+  
+  # Iterate through remaining fits
+  for (i in seq_along(fits)[-1L]) {
+    
+    # Sort the current fit's data set
+    dfs[[i]] <- h_df_sort_all(dfs[[i]])
+    
+    # If the current data set is not the same as data...
+    if (!identical(data, dfs[[i]])) {
+      
+      # If we're refitting...
+      if (refit) {
+        # ...mark that not all data sets are the same...
+        all_data_same <- FALSE
+        # ...and merge current data set into data
+        data <- h_df_sort_all(merge(data, dfs[[i]], all = TRUE, sort = FALSE))
+      } else {
+        # If we're not refitting, just return FALSE
+        return(FALSE)
+      }
+      
+    }
+  }
+  
+  if (refit) {
+    
+    if (all_data_same) {
+      # If all data were the same, return the original model fits
+      out <- fits
+    } else {
+      # Otherwise, refit the models and return
+      out <- Map(h_refit_mmrm_with_data, fits, dfs, MoreArgs = list(data))
+    }
+    
+  } else {
+    # If we aren't refitting and we've gotten this far, return TRUE
+    out <- TRUE
+  }
+  
+  out
+}
+
+
+# Refit a single model using a new data set. Does not refit if original data is
+# the same as the new data.
+h_refit_mmrm_with_data <- function(fit, current_df, new_df) {
+  # If the model fit's current data set is not the same as the new one...
+  if (!identical(current_df, new_df)) {
+    # Grab the model call and replace its "data" argument with the new data
+    expr <- component(fit, "call")
+    expr[["data"]] <- new_df
+    # Grab the environment of the model's formula
+    envir <- environment(fit[["formula_parts"]][["full_formula"]])
+    # Evaluate the model call in the environment of the original fit's formula
+    fit <- eval(call, envir)
+  }
+
+  fit
+}
+
+
 # Compares two models to see if they are properly nested.
 # Errors out if they don't have the same visit, subject, and grouping vars
 # Errors out if the first model's covariates isn't a subset of the second
@@ -260,17 +339,17 @@ h_assert_nested_models <- function(model_basic,
 
   switch(
     h_check_covar_nesting(model_basic, model_augmented),
-    identical = 
+    "identical" = 
       if (
         h_check_cov_struct_nesting(model_basic, model_augmented) == "identical"
       ) {
-        warning("Models have identical covariates and covariance structures")
+        warning("Models have identical covariates and covariance structures.")
       },
-    nested = 
+    "nested" = 
       if (
         h_check_cov_struct_nesting(model_basic, model_augmented) == "nested"
       ) {
-        stop("Models cannot have both nested covariates and nested covariance structures",
+        stop("Models cannot have both nested covariates and nested covariance structures.",
              call. = FALSE)
       }
   )
@@ -279,11 +358,10 @@ h_assert_nested_models <- function(model_basic,
 
 # Checks the covariates of two models to see if they are nested (or identical).
 # The first model's covariates must be a subset of the second model's covariates
-#' @importFrom stats terms
 h_check_covar_nesting <- function(model_basic,
                                   model_augmented,
-                                  basic_name = vname(model_basic),
-                                  aug_name = vname(model_augmented)) {
+                                  basic_name = checkmate::vname(model_basic),
+                                  aug_name = checkmate::vname(model_augmented)) {
   basic_covars <- attr(terms(model_basic[["model_formula"]]), "term.labels")
   aug_covars <- attr(terms(model_augmented[["model_formula"]]), "term.labels")
 
@@ -298,8 +376,6 @@ h_check_covar_nesting <- function(model_basic,
     "nested"
   }
 }
-
-
 
 
 # Checks the covariance structures of two models to see if they are nested (or
@@ -354,67 +430,7 @@ h_df_sort_all <- function(df) {
     right = TRUE
   )
 }
-
-
-
-# Compares the data sets underlying a list of fits. If it finds differences, it
-# merges the data sets and then refits all the models so they are using the same
-# data set
-h_combine_data_and_refit_all <- function(fits) {
-  
-  # Grab the data frames behind the model fits into a separate list
-  dfs <- lapply(fits, component, "full_frame")
-  
-  # Sort the first element. Also save it as data.
-  data <- dfs[[1L]] <- h_df_sort_all(dfs[[1L]])
-  
-  # Begin by assuming all data is the same
-  all_data_same <- TRUE
-  
-  # Iterate through remaining fits
-  for (i in seq_along(fits)[-1L]) {
-    
-    dfs[[i]] <- h_df_sort_all(dfs[[i]])
-    
-    # If the current data set is not the same as data...
-    if (!identical(data, dfs[[i]])) {
-        
-      # ...mark that not all data sets are the same.
-      all_data_same <- FALSE
-      
-      # Merge current data set into data
-      data <- h_df_sort_all(merge(data, dfs[[i]], all = TRUE, sort = FALSE))
-      
-    }
-  }
-  
-  # If not all data were the same, refit the models with data
-  if (!all_data_same) {
-    fits <- Map(h_refit_mmrm_with_data, fits, dfs, MoreArgs = list(data))
-  }
-  
-  fits
-}
-
-
-
-# Refit a single model using a new data set
-h_refit_mmrm_with_data <- function(fit, current_df, new_df) {
-  # If the model fit's current data set is not the same as the new one...
-  if (!identical(current_df, new_df)) {
-    # Grab the model call and replace its "data" argument with the new data
-    expr <- component(fit, "call")
-    expr[["data"]] <- new_df
-    # Grab the environment of the model's formula
-    envir <- environment(fit[["formula_parts"]][["full_formula"]])
-    # Evaluate the model call in the environment of the original fit's formula
-    fit <- eval(call, envir)
-  }
-
-  fit
-}
 ```
-
 
 # Examples
 
@@ -441,14 +457,110 @@ fit_full <-
   )
 ```
 
-First, running `anova()` just on one model:
+First, run `anova()` on just one model fit:
 
 ```{r}
 anova(fit_reduced)
 ```
 
-Now, two models, including the likelihood ratio test (the default)
+We get the significance of each term in the model.
+
+Now, use two models. Note that the likelihood ratio test is included by default:
 
 ```{r}
 anova(fit_reduced, fit_full)
+```
+
+# Appendix: nested covariance structures
+
+## Unstructured covariance
+
+Tautologically, all covariance structures are special cases of an unstructured covariance, and a model with a covariance structure can be considered "nested" within an otherwise equivalent model without a covariance structure.
+
+## Homogeneous and heterogeneous
+
+All homogeneous covariance structures are special cases of their heterogeneous counterparts. Let $\sigma_i = \sigma$ and $\sigma_j = \sigma$
+
+Therefore:
+
+### `ad` is nested within `adh`:
+
+$$
+\sigma_{i}\sigma_{j}\prod_{k=i}^{j-1}\rho_{k} = \sigma\cdot\sigma\prod_{k=i}^{j-1}\rho_{k} = \sigma^{2}\prod_{k=i}^{j-1}\rho_{k}
+$$
+
+### `ar1` is nested within `ar1h`
+
+$$
+\sigma_{i}\sigma_{j}\rho^{\left \vert {i-j} \right \vert} = \sigma\cdot\sigma\rho^{\left \vert {i-j} \right \vert} = \sigma^{2}\rho^{\left \vert {i-j} \right \vert}
+$$
+
+### `cs` is nested within `csh`
+
+$$
+\sigma_{i}\sigma_{j}\left[ \rho I(i \neq j)+I(i=j) \right] = \sigma\cdot\sigma\left[ \rho I(i \neq j)+I(i=j) \right] = \sigma^{2}\left[ \rho I(i \neq j)+I(i=j) \right]
+$$
+
+### `toep` is nested within `toeph`
+
+$$
+\sigma_{i}\sigma_{j}\rho_{\left \vert {i-j} \right \vert} = \sigma\cdot\sigma\rho_{\left \vert {i-j} \right \vert} = \sigma^2\rho_{\left \vert {i-j} \right \vert}
+$$
+
+## Other hierarchies
+
+We will now restrict the correlations in one covariance structure can produce another covariance structure in this set, demonstrating that they are nested. We will only do this for the homogeneous structures, since the heterogeneous ones plainly follow the same pattern.
+
+### `ar1` is nested within `ad`
+
+Let $\rho_k$ = $\rho$
+
+Therefore:
+
+$$
+\sigma^2\prod_{k=i}^{j-1}\rho_{k} = \sigma^2\prod_{k=i}^{j-1}\rho = \sigma^2\rho^{\vert j-1-i+1\vert} = \sigma^2\rho^{\vert j-i\vert} = \sigma^2\rho^{\vert i-j\vert} 
+$$
+
+### `ar1` is nested within `toep`
+
+Let $\rho$ be a value not necessarily in the sequence $\{\rho_0, \rho_1, \rho_2, ...\}$
+
+Let $\rho_k = \rho^k$
+
+Therefore:
+
+$$
+\sigma^2\rho_{\left \vert {i-j} \right \vert} = \sigma^{2}\rho^{\left \vert {i-j} \right \vert}
+$$
+
+### `cs` is nested within `toep`
+
+Let $\rho$ be a value not necessarily in the sequence $\{\rho_0, \rho_1, \rho_2, ...\}$
+
+Let $\rho_0 = 1$
+
+Let $\rho_k=\rho$ $\forall$ $k \in \{1, 2, ...\}$
+
+Therefore:
+
+$$
+\sigma^2\rho_{\left \vert {i-j} \right \vert} = \sigma^2\left[\rho_{\left \vert {i-j} \right \vert} I(i \neq j) + \rho_{\left \vert {i-j} \right \vert} I(i=j) \right] 
+\\= \sigma^2\left[\rho_k I(i \neq j) + \rho_0 I(i=j) \right] 
+\\= \sigma^2\left[\rho I(i \neq j) + 1 \cdot I(i=j) \right] 
+\\= \sigma^{2}\left[ \rho I(i \neq j)+I(i=j) \right]
+$$
+
+```{r}
+list(
+      ad = c("adh", "us"),
+      adh = "us",
+      ar1 = c("ad", "adh", "ar1h", "toep", "toeph", "us"),
+      ar1h = c("adh", "toeph", "us"),
+      cs = c("csh", "toep", "toeph", "us"),
+      csh = c("toeph", "us"),
+      toep = c("toeph", "us"),
+      toeph = "us",
+      us = character(0L),
+      sp_exp = character(0L)
+    )
 ```
