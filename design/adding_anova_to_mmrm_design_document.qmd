@@ -157,7 +157,7 @@ anova.mmrm <- function (object, ..., test = TRUE, refit = FALSE) {
     lapply(fits[-1L], checkmate::assert_class, classes = "mmrm", .var.name = "...")
     
     if (refit) {
-      fits <- h_combine_data_and_refit_all(fits)
+      fits <- h_fits_data_identical(fits, refit = TRUE)
     }
   
     LL_vec <- lapply(fits, logLik.mmrm_tmb)
@@ -180,6 +180,11 @@ anova.mmrm <- function (object, ..., test = TRUE, refit = FALSE) {
       # and covariance structures are nested
       for (i in seq_along(fits)[-1L]) {
         h_assert_nested_models(fits[[i - 1L]], fits[[i]])
+      }
+      
+      if (!refit && !h_fits_data_identical(fits, refit = FALSE)) {
+        stop("Not all data sets underlying the model fits are identical and ",
+             "refit = FALSE.", call. = FALSE)
       }
       
       # Label for the pair being compared (e.g., "3 vs 4")
@@ -243,7 +248,7 @@ h_fits_data_identical <- function(fits, refit = FALSE) {
   # Grab the data frames behind the model fits into a separate list
   dfs <- lapply(fits, component, "full_frame")
   
-  # Sort the first element. Save it as "data"
+  # Sort the first data frame. Also store it in data
   data <- dfs[[1L]] <- h_df_sort_all(dfs[[1L]])
   
   # Begin by assuming all fits' data are the same
@@ -252,18 +257,31 @@ h_fits_data_identical <- function(fits, refit = FALSE) {
   # Iterate through remaining fits
   for (i in seq_along(fits)[-1L]) {
     
-    # Sort the current fit's data set
-    dfs[[i]] <- h_df_sort_all(dfs[[i]])
+    # Sort the current fit's data set, putting the previous fit's columns first
+    dfs[[i]] <-
+      h_df_sort_all(
+        dfs[[i]][
+          union(colnames(dfs[[i - 1]]), colnames(dfs[[i]]))
+        ]
+      )
     
-    # If the current data set is not the same as data...
-    if (!identical(data, dfs[[i]])) {
+    # If the shared columns in the current and previous data sets are not
+    # identical...
+    if (
+      !identical(
+        h_df_sort_all(dfs[[i - 1]]),
+        h_df_sort_all(dfs[[i]][colnames(dfs[[i - 1]])])
+      )
+    ) {
       
       # If we're refitting...
       if (refit) {
         # ...mark that not all data sets are the same...
         all_data_same <- FALSE
-        # ...and merge current data set into data
-        data <- h_df_sort_all(merge(data, dfs[[i]], all = TRUE, sort = FALSE))
+        # ...and merge the data sets, storing the merged data set in df[[i]] and
+        # in data
+        data <- dfs[[i]] <-
+          h_df_sort_all(merge(dfs[[i]], dfs[[i - 1]], all = TRUE, sort = FALSE))
       } else {
         # If we're not refitting, just return FALSE
         return(FALSE)
@@ -423,12 +441,7 @@ h_check_cov_struct_nesting <- function(model_basic,
 # column in order
 h_df_sort_all <- function(df) {
   cols <- sort(colnames(df))
-  Reduce(
-    function(df, col) df[order(df[[col]]), ],
-    cols,
-    init = df[cols],
-    right = TRUE
-  )
+  Reduce(function(df, col) df[order(df[[col]]), ], rev(cols), init = df[cols])
 }
 ```
 
