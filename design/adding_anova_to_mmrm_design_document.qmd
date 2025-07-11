@@ -9,29 +9,6 @@ editor: visual
 
 ```{r setup}
 library(mmrm)
-library(tidyverse)
-set.seed(20250708)
-data <-
-  fev_data %>%
-  filter(VISITN == min(VISITN)) %>%
-  mutate(FEV1 = FEV1_BL, AVISIT = "BASELINE", VISITN = 0L) %>% 
-  bind_rows(fev_data, .) %>%
-  select(!c(FEV1_BL, VISITN2, WEIGHT)) %>%
-  arrange(USUBJID, VISITN) %>%
-  as_tibble() %>% 
-  mutate(
-    VISITX = VISITN * 12,
-    TIMEX = VISITX + runif(n = n(), min = -1, max = 1),
-    TIMEN = VISITN,
-    TIMEF =
-      ordered(as.character(TIMEN), levels = as.character(sort(unique(TIMEN))))
-  ) %>% 
-  select(FEV1, AVISIT, VISITX, VISITN, TIMEX, TIMEN, TIMEF, USUBJID, ARMCD,
-         RACE, SEX)
-basis <- splines::ns(data$TIMEX, df = 2, Boundary.knots = c(0, max(data$TIMEX)))
-spline <- function(TIMEX, column) {
-  as.numeric(predict(basis, TIMEX)[, column])
-}
 ```
 
 # Background
@@ -145,35 +122,41 @@ If the user supplied `test = TRUE`, the model fits are subject to further tests 
 
 ```{r }
 anova.mmrm <- function (object, ..., test = TRUE, refit = FALSE) {
+  
   checkmate::assert_class(object, "mmrm")
   
+  fits <- list(object, ...)
   # If there are objects supplied to "..."
-  if (...length()) {
-    
-    # Gather all objects into one list
-    fits <- list(object, ...)
+  if (length(fits) > 1L) {
     
     # Ensure all objects in ... are mmrm fits
     lapply(fits[-1L], checkmate::assert_class, classes = "mmrm", .var.name = "...")
     
+    # If we're refitting...
     if (refit) {
-      fits <- h_fits_data_identical(fits, refit = TRUE)
+      # ...if the data are the same, only refit REML models
+      if (h_check_same_data(fits)) {
+        for (i in which(h_reml_fits_lgl(fits)))
+          fits[[i]] <- h_refit_mmrm(fits[[i]])
+      } else {
+        # ...if the data are not all the same, refit all with the common data
+        fits <- lapply(fits, h_refit_mmrm, data = h_fits_common_data(fits))
+      }
     }
-  
+    
+    # vector of log likelihood results for the fits
     LL_vec <- lapply(fits, logLik.mmrm_tmb)
-    fit_calls <- lapply(fits, component, "call")
     
     # Calculate the standard diagnostics.
     out <-
       data.frame(
-        call = vapply(fit_calls, deparse1, character(1L)),
         Model = seq_along(fits),
         df = vapply(LL_vec, attr, FUN.VALUE = numeric(1L), "df"), 
         AIC = vapply(fits, AIC, numeric(1)),
         BIC = vapply(fits, BIC, numeric(1)),
         logLik = as.numeric(LL_vec)
       )
-    
+
     # If the user has requested the likelihood ratio test...
     if (test) {
       # First iterate through and check the models to make sure their covariates
@@ -182,51 +165,46 @@ anova.mmrm <- function (object, ..., test = TRUE, refit = FALSE) {
         h_assert_nested_models(fits[[i - 1L]], fits[[i]])
       }
       
-      if (!refit && !h_fits_data_identical(fits, refit = FALSE)) {
-        stop("Not all data sets underlying the model fits are identical and ",
-             "refit = FALSE.", call. = FALSE)
+      # If we didn't refit, throw errors if not all data are the same or if any
+      # REML models are present
+      if (!refit) {
+        if (!h_check_same_data(fits)) {
+          stop(
+            "Likelihood ratio testing requires all fits to use the same data.",
+            " Not all fits have the same data and refit = FALSE.",
+            " Consider setting test = FALSE or refit = TRUE.",
+            call. = FALSE
+          )
+        }
+        if (any(h_reml_fits_lgl(fits))) {
+          stop(
+            "Likelihood ratio testing cannot be performed on fits using REML.",
+            " At least one fit uses REML and refit = FALSE.",
+            " Consider setting test = FALSE or refit = TRUE.",
+            call. = FALSE
+          )
+        }
       }
-      
+        
       # Label for the pair being compared (e.g., "3 vs 4")
-      out$test <- c(NA, paste(head(out$Model, -1), "vs", tail(out$Model, -1)))
+      out$test <- c(NA, paste(out$Model[-length(fits)], "vs", out$Model[-1L]))
       
       # Calculate the likelihood ratio between the pairs using base::diff()
-      out$likelihood_ratio <- c(NA, diff(out$logLik))
+      out$log_likelihood_ratio <- c(NA, diff(out$logLik))
       
       # Calculate the p-value using the ratios and differences in df
       out$p_value <-
         pchisq(
-          2 * abs(out$likelihood_ratio),
+          2 * abs(out$log_likelihood_ratio),
           df = abs(diff(out$df)), 
           lower.tail = FALSE
         )
     }
     
+    out$call <- vapply(lapply(fits, component, "call"), deparse1, character(1L))
+    
   } else { 
-    
-    # attributes of terms.object for the model formula without the cov struct
-    terms_attr <- attributes(terms(object$formula_parts$model_formula))
-    
-    # Get a character vector of the terms.
-    # Prepend with "(Intercept)" if an intercept is present
-    terms <- c(if (terms_attr$intercept) "(Intercept)", terms_attr$term.labels)
-    
-    # Vector identifying each coefficient's corresponding term
-    assign_vec <- attr(component(object, "x_matrix"), "assign")
-    
-    # Create an identity matrix with a row/col for each coefficient
-    identity_mtx <- diag(length(assign_vec))
-    
-    # Split the rows of identity_mtx according to assign_vec, creating a list of
-    # contrast matrices: one for each term in the model.
-    contrasts <-
-      split.data.frame(identity_mtx, factor(assign_vec, labels = terms))
-    
-    # Get df_md() results for each contrast matrix. Result is a list of lists
-    df_md_results <- lapply(contrasts, df_md, object = object)
-    
-    # Turn results into a data frame. The row.names identify the terms.
-    out <- do.call(rbind, lapply(df_md_results, as.data.frame))
+    out <- h_anova_single_mmrm_model(object)
   }
   
   out
@@ -236,95 +214,119 @@ anova.mmrm <- function (object, ..., test = TRUE, refit = FALSE) {
 #### Supporting functions:
 
 ```{r}
-# Compares the data sets underlying a list of fits. 
-
-# If refit = FALSE, this is a predicate function indicating whether all the data
-# sets are the same.
-
-# If refit = TRUE, all data sets are harmonized, the models are refit using the
-# harmonized data set, and the refits are returned.
-h_fits_data_identical <- function(fits, refit = FALSE) {
+h_check_same_data <- function(fits) {
+  # Grab the data frames behind the model fits into a separate list.
+  dfs <- lapply(fits, h_get_minimal_fit_data)
   
-  # Grab the data frames behind the model fits into a separate list
-  dfs <- lapply(fits, component, "full_frame")
-  
-  # Sort the first data frame. Also store it in data
-  data <- dfs[[1L]] <- h_df_sort_all(dfs[[1L]])
-  
-  # Begin by assuming all fits' data are the same
-  all_data_same <- TRUE
-  
-  # Iterate through remaining fits
   for (i in seq_along(fits)[-1L]) {
     
-    # Sort the current fit's data set, putting the previous fit's columns first
-    dfs[[i]] <-
-      h_df_sort_all(
-        dfs[[i]][
-          union(colnames(dfs[[i - 1]]), colnames(dfs[[i]]))
-        ]
-      )
+    # First check the number of rows.
+    if (nrow(dfs[[i - 1L]]) != nrow(dfs[[i]])) {
+      return(FALSE)
+    }
     
-    # If the shared columns in the current and previous data sets are not
-    # identical...
-    if (
-      !identical(
-        h_df_sort_all(dfs[[i - 1]]),
-        h_df_sort_all(dfs[[i]][colnames(dfs[[i - 1]])])
-      )
-    ) {
-      
-      # If we're refitting...
-      if (refit) {
-        # ...mark that not all data sets are the same...
-        all_data_same <- FALSE
-        # ...and merge the data sets, storing the merged data set in df[[i]] and
-        # in data
-        data <- dfs[[i]] <-
-          h_df_sort_all(merge(dfs[[i]], dfs[[i - 1]], all = TRUE, sort = FALSE))
-      } else {
-        # If we're not refitting, just return FALSE
-        return(FALSE)
-      }
-      
+    # Ensure previous df's columns is a subset of the current df's columns
+    cols_prev <- colnames(dfs[[i - 1L]])
+    cols_current <- colnames(dfs[[i]])
+    if (anyNA(match(cols_prev, cols_current))) {
+      return(FALSE)
+    }
+    
+    # If we're on the first iteration, sort the first data frame.
+    if (i == 2L) dfs[[1L]] <- h_df_sort_all(dfs[[1L]])
+    
+    # Pull prev df's columns to the front of current df. Then sort.
+    dfs[[i]] <- h_df_sort_all(dfs[[i]][union(cols_prev, cols_current)])
+    
+    # Ensure the common columns are the same
+    if (!identical(dfs[[i - 1L]], dfs[[i]][cols_prev])) {
+      return(FALSE)
     }
   }
   
-  if (refit) {
-    
-    if (all_data_same) {
-      # If all data were the same, return the original model fits
-      out <- fits
-    } else {
-      # Otherwise, refit the models and return
-      out <- Map(h_refit_mmrm_with_data, fits, dfs, MoreArgs = list(data))
-    }
-    
-  } else {
-    # If we aren't refitting and we've gotten this far, return TRUE
-    out <- TRUE
-  }
-  
+  TRUE
+}
+
+
+
+# Returns a logical vector identifying the reml fits
+h_reml_fits_lgl <- function(fits) {
+  vapply(fits, component, logical(1L), "reml")
+}
+
+
+
+# Iteratively merge the data sets underlying the fits to get the common rows
+h_fits_common_data <- function(fits) {
+  dfs <- lapply(fits, h_get_minimal_fit_data)
+  out <- Reduce(merge, dfs)
   out
 }
 
 
-# Refit a single model using a new data set. Does not refit if original data is
-# the same as the new data.
-h_refit_mmrm_with_data <- function(fit, current_df, new_df) {
-  # If the model fit's current data set is not the same as the new one...
-  if (!identical(current_df, new_df)) {
-    # Grab the model call and replace its "data" argument with the new data
-    expr <- component(fit, "call")
-    expr[["data"]] <- new_df
-    # Grab the environment of the model's formula
-    envir <- environment(fit[["formula_parts"]][["full_formula"]])
-    # Evaluate the model call in the environment of the original fit's formula
-    fit <- eval(call, envir)
-  }
 
+
+# Refit a single mmrm model. Always forces reml = FALSE. If data is included, it
+# forces the data argument of mmrm() to point to the new data set.
+h_refit_mmrm <- function(fit, data = NULL) {
+  
+  # Grab the model call
+  expr <- component(fit, "call")
+  
+  # Force the call not to use reml
+  expr[["reml"]] <- FALSE
+  
+  # Grab the environment of the model's formula
+  env <- environment(fit[["formula_parts"]][["full_formula"]])
+  
+  if (!is.null(data)) {
+    
+    # Generate a name guaranteed not to be in env nor its enclosing frames
+    data_name <- h_generate_new_name("data", env)
+    
+    # Create a child environment whose parent is the model's environment
+    env <- new.env(parent = env)
+    
+    # bind the new data to the new name in the model's environment
+    env[[data_name]] <- data
+    
+    # Force the data argument of the model call to be the new name
+    expr[["data"]] <- as.name(data_name)
+  }
+  
+  # Evaluate the updated model call in the appropriate environment
+  fit <- eval(expr, env)
+  
   fit
 }
+
+
+
+# Generates a name that is guaranteed not to be found in env nor its enclosing
+# frames
+h_generate_new_name <- function(x, env) {
+  # first, force x to be a syntactically valid name(s)
+  x <- make.names(x, unique = TRUE)
+  
+  # As long as we keep finding an object in env (or its enclosing frames) whose
+  # name is the same as the last element of x...
+  while (exists(x[length(x)], envir = env, inherits = TRUE)) {
+    # ...copy the first element of x and append it to the end. Run
+    # make.names(unique = TRUE) again in the hopes that the resulting last
+    # element will not be found on the search path next time
+    x <- make.names(c(x, x[1L]), unique = TRUE)
+  }
+  # If we've gotten here, the last element of doesn't exist in env or its
+  # enclosing frames
+  x[length(x)]
+}
+
+
+
+h_df_pull_columns_to_front <- function(df, cols) {
+  df[union(cols, colnames(df))]
+}
+
 
 
 # Compares two models to see if they are properly nested.
@@ -332,46 +334,43 @@ h_refit_mmrm_with_data <- function(fit, current_df, new_df) {
 # Errors out if the first model's covariates isn't a subset of the second
 # Errors out if the models have incompatible covariance structures
 # Warns if the models have the same covariates and covariance structure
-h_assert_nested_models <- function(model_basic,
-                                   model_augmented,
-                                   model_basic_name = vname(model_basic),
+h_assert_nested_models <- function(model_basic, model_augmented,
+                                   model_basic_name = checkmate::vname(model_basic),
                                    model_augmented_name =
-                                     vname(model_augmented)) {
+                                     checkmate::vname(model_augmented)) {
   model_basic <- model_basic[["formula_parts"]]
   model_augmented <- model_augmented[["formula_parts"]]
 
   if (!identical(model_basic[["visit_var"]], model_augmented[["visit_var"]])) {
     stop(model_basic_name, " and ", model_augmented_name,
-         " must have the same visit variable.")
+         " must have the same visit variable.",
+         call. = FALSE)
   }
 
   if (!identical(model_basic[["subject_var"]], model_augmented[["subject_var"]])) {
     stop(model_basic_name, " and ", model_augmented_name,
-         " must have the same subject variable.")
+         " must have the same subject variable.",
+         call. = FALSE)
   }
 
   if (!identical(model_basic[["group_var"]], model_augmented[["group_var"]])) {
     stop(model_basic_name, " and ", model_augmented_name,
-         " must have the same grouping variable.")
+         " must have the same grouping variable.",
+         call. = FALSE)
   }
 
-  switch(
-    h_check_covar_nesting(model_basic, model_augmented),
-    "identical" = 
-      if (
-        h_check_cov_struct_nesting(model_basic, model_augmented) == "identical"
-      ) {
-        warning("Models have identical covariates and covariance structures.")
-      },
-    "nested" = 
-      if (
-        h_check_cov_struct_nesting(model_basic, model_augmented) == "nested"
-      ) {
-        stop("Models cannot have both nested covariates and nested covariance structures.",
-             call. = FALSE)
-      }
-  )
+  covar_nesting <- h_check_covar_nesting(model_basic, model_augmented)
+  cov_struct_nesting <- h_check_cov_struct_nesting(model_basic, model_augmented)
+  
+  if (covar_nesting == "identical" && cov_struct_nesting == "identical") {
+    warning("Models have identical covariates and covariance structures.",
+            call. = FALSE)
+  }
+  
+  NULL
 }
+
+
 
 
 # Checks the covariates of two models to see if they are nested (or identical).
@@ -397,11 +396,11 @@ h_check_covar_nesting <- function(model_basic,
 
 
 # Checks the covariance structures of two models to see if they are nested (or
-# identical).
+# identical). This is a check against a mathematically determined hierarchy.
 h_check_cov_struct_nesting <- function(model_basic,
                                        model_augmented,
-                                       basic_name = vname(model_basic),
-                                       aug_name = vname(model_augmented)) {
+                                       basic_name = checkmate::vname(model_basic),
+                                       aug_name = checkmate::vname(model_augmented)) {
   basic_cov_struct <- model_basic[["cov_type"]]
   aug_cov_struct <- model_augmented[["cov_type"]]
   
@@ -437,52 +436,169 @@ h_check_cov_struct_nesting <- function(model_basic,
 }
 
 
-# Sorts a data frame's columns alphabetically, then sorts its rows by each
-# column in order
+# Returns a character vector of the names of the columns actually used in a fit
+h_get_minimal_fit_data <- function(fit) {
+  predictors <- 
+    unique(
+      unlist(
+        fit[["formula_parts"]][
+          c("visit_var", "subject_var", "group_var", "model_var")
+        ],
+        use.names = FALSE
+      )
+    )
+  terms_attr <- attributes(terms(fit))
+  response <- as.character(terms_attr$variables[[terms_attr$response + 1]])
+  fit[["data"]][c(response, predictors)]
+}
+
+
+# Sorts a data frame by its columns in the order they appear
 h_df_sort_all <- function(df) {
-  cols <- sort(colnames(df))
-  Reduce(function(df, col) df[order(df[[col]]), ], rev(cols), init = df[cols])
+  df[do.call(order, unname(df)), ]
+}
+
+
+
+h_anova_single_mmrm_model <- function(object) {
+  # attributes of terms.object for the model formula without the cov struct
+  terms_attr <- attributes(terms(object$formula_parts$model_formula))
+  
+  # Get a character vector of the terms.
+  # Prepend with "(Intercept)" if an intercept is present
+  terms <- c(if (terms_attr$intercept) "(Intercept)", terms_attr$term.labels)
+  
+  # Vector identifying each coefficient's corresponding term
+  assign_vec <- attr(component(object, "x_matrix"), "assign")
+  
+  # Create an identity matrix with a row/col for each coefficient
+  identity_mtx <- diag(length(assign_vec))
+  
+  # Split the rows of identity_mtx according to assign_vec, creating a list of
+  # contrast matrices: one for each term in the model.
+  contrasts <-
+    split.data.frame(identity_mtx, factor(assign_vec, labels = terms))
+  
+  # Get df_md() results for each contrast matrix. Result is a list of lists
+  df_md_results <- lapply(contrasts, df_md, object = object)
+  
+  # Turn results into a data frame. The row.names identify the terms.
+  out <- do.call(rbind, lapply(df_md_results, as.data.frame))
+  
+  out
 }
 ```
 
 # Examples
 
-Using a modified version of the `fit_reduced` and `fit_full` models in the tutorial:
+Using `mmrm::fev_data`, here is a model fit, a reduced version, and a "full" version, which has a more specialized covariance structure.
 
 ```{r}
-fit_reduced <- 
+fit <- 
   mmrm(
-    FEV1 ~
-      I(spline(TIMEX, 1))*SEX + I(spline(TIMEX, 2))*SEX +
-      RACE + SEX +
-      us(TIMEF | USUBJID),
-    data = data
+    FEV1 ~ FEV1_BL + SEX*RACE + ARMCD + toep(AVISIT | USUBJID),
+    data = fev_data
   )
 
-fit_full <- 
+fit_reduced <- 
   mmrm(
-    FEV1 ~ 
-      I(spline(TIMEX, 1))*SEX + I(spline(TIMEX, 2))*SEX +
-      I(spline(TIMEX, 1)):ARMCD + I(spline(TIMEX, 2)):ARMCD +
-      RACE + SEX +
-      us(TIMEF | USUBJID),
-    data = data
+    FEV1 ~ FEV1_BL + SEX + RACE + ARMCD + us(AVISIT | USUBJID),
+    data = fev_data
+  )
+
+fit_full <-
+  mmrm(
+    FEV1 ~ FEV1_BL + SEX*RACE + ARMCD + ar1(AVISIT | USUBJID),
+    data = fev_data
   )
 ```
 
 First, run `anova()` on just one model fit:
 
 ```{r}
-anova(fit_reduced)
+anova(fit)
 ```
 
 We get the significance of each term in the model.
 
-Now, use two models. Note that the likelihood ratio test is included by default:
+Now, use multiple models. Note that the likelihood ratio test is included by default. We specify `refit = TRUE` because `mmrm()` uses REML by default, which doesn't work with the likelihood ratio test.
 
 ```{r}
-anova(fit_reduced, fit_full)
+anova(fit_reduced, fit, fit_full, refit = TRUE)
 ```
+
+If we don't want to refit, we can run `anova()` but specify `test = FALSE`. This will result in fewer diagnostics.
+
+```{r}
+anova(fit_reduced, fit, fit_full, test = FALSE, refit = FALSE)
+```
+
+Now, let's create a model fit that's based on more data:
+
+```{r}
+fev_more_data <-
+  rbind(
+    fev_data,
+    transform(
+      fev_data[1:200, ],
+      FEV1 = FEV1 + rnorm(200, sd = sd(FEV1) / 10),
+      FEV1_BL = FEV1_BL + rnorm(200, sd = sd(FEV1_BL) / 10)
+    )
+  )
+fev_more_data$USUBJID <-
+  factor(rep(1:250, each = 4), labels = paste0("PT", 1:250))
+
+fit_more_data <-
+  mmrm(
+    FEV1 ~ FEV1_BL + SEX*RACE + ARMCD + toep(AVISIT | USUBJID),
+    data = fev_more_data,
+    reml = FALSE
+  )
+```
+
+Let's also refit the first three models, this time specifying `reml = FALSE`.
+
+```{r}
+fit_ml <- 
+  mmrm(
+    FEV1 ~ FEV1_BL + SEX*RACE + ARMCD + toep(AVISIT | USUBJID),
+    data = fev_data,
+    reml = FALSE
+  )
+
+fit_reduced_ml <- 
+  mmrm(
+    FEV1 ~ FEV1_BL + SEX + RACE + ARMCD + us(AVISIT | USUBJID),
+    data = fev_data,
+    reml = FALSE
+  )
+
+fit_full_ml <-
+  mmrm(
+    FEV1 ~ FEV1_BL + SEX*RACE + ARMCD + ar1(AVISIT | USUBJID),
+    data = fev_data,
+    reml = FALSE
+  )
+```
+
+Now we can obtain LRT results even with `refit = FALSE`.
+
+```{r}
+anova(fit_reduced_ml, fit_ml, fit_full_ml, test = TRUE, refit = FALSE)
+```
+
+But we can't do this if we slot in the new `fit_more_data` because although it didn't use REML, it still has a different underlying data set:
+
+```{r}
+anova(fit_reduced_ml, fit_more_data, fit_full_ml, test = TRUE, refit = FALSE)
+```
+
+Setting `refit = TRUE` makes it work:
+
+```{r}
+anova(fit_reduced_ml, fit_more_data, fit_full_ml, test = TRUE, refit = TRUE)
+```
+
 
 # Appendix: nested covariance structures
 
