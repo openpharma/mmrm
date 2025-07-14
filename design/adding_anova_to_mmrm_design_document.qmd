@@ -95,7 +95,7 @@ anova(object, ..., test = TRUE, refit = FALSE)
 ### Arguments
 
 |  |  |
-|------------------------------------|------------------------------------|
+|----|----|
 | `object` | An object inheriting from class `mmrm`: a fitted mixed model with repeated measures. |
 | `...` | Other optional fitted model objects inheriting from class `mmrm`. |
 | `test` | Logical indicating whether the output should include likelihood ratio test results comparing the model fits to one another. Defaults to `TRUE`. |
@@ -335,8 +335,8 @@ h_check_covar_nesting <- function(model_basic, model_augmented) {
   aug_covars <- attr(terms(model_augmented[["model_formula"]]), "term.labels")
 
   if (anyNA(match(basic_covars, aug_covars))) {
-    stop("The covariates in each model must be a subset of the covariates in ",
-         "all following models.", call. = FALSE)
+    stop("Each model's covariates must be a subset of the next model's ",
+         "covariates.", call. = FALSE)
   }
 
   if (anyNA(match(aug_covars, basic_covars))) {
@@ -376,7 +376,7 @@ h_check_cov_struct_nesting <- function(model_basic, model_augmented) {
   } else {
     stop(
       "The covariance structure of each model must be identical to or a ",
-      "special case of the covariance structure of all following models.",
+      "special case of the preceding model's covariance structure.",
       call. = FALSE
     )
   }
@@ -438,6 +438,8 @@ h_anova_single_mmrm_model <- function(object) {
 
 # Examples
 
+## Setup
+
 Using `mmrm::fev_data`, here is a model fit, a reduced version, and a "full" version, which has a more specialized covariance structure.
 
 ```{r}
@@ -460,6 +462,8 @@ fit_full <-
   )
 ```
 
+## Single model
+
 First, run `anova()` on just one model fit:
 
 ```{r}
@@ -468,13 +472,33 @@ anova(fit)
 
 We get the significance of each term in the model.
 
+## Multiple models
+
 Now, use multiple models. Note that the likelihood ratio test is included by default.
 
 ```{r}
 anova(fit_reduced, fit, fit_full)
 ```
 
-Now, let's create a model fit that's based on more data:
+## Nesting checks
+
+Note that models can only increase in terms from left to right. The following will not work because `fit_full` has more terms than `fit_reduced`.
+
+```{r error=TRUE}
+anova(fit_full, fit_reduced)
+```
+
+Furthermore, the specificity of covariance structures can only increase from left to right. Therefore, even though `fit` and `fit_full` have the same terms, the following will not work because the covariance structure of `fit_full`, `ar1`, is a special case of the covariance structure of `fit`, `toep`:
+
+```{r error=TRUE}
+anova(fit_full, fit)
+```
+
+## Data sameness checks
+
+### Setup
+
+First, let's create a model fit that's based on more data:
 
 ```{r}
 fev_more_data <-
@@ -496,17 +520,23 @@ fit_more_data <-
   )
 ```
 
+### Different data, `refit = FALSE`
+
 We cannot simply slot in the new `fit_more_data` because it has a different underlying data set:
 
 ```{r error=TRUE}
 anova(fit_reduced, fit_more_data, fit_full)
 ```
 
+### Different data, `refit = TRUE`
+
 Setting `refit = TRUE` makes it work:
 
 ```{r}
 anova(fit_reduced, fit_more_data, fit_full, refit = TRUE)
 ```
+
+## Bypassing `LRT`
 
 Note that we also have the option to forego the likelihood ratio testing if we want the other results and do not want to refit:
 
