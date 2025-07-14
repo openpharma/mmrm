@@ -55,30 +55,29 @@ Prototype:
 
 ```{r}
 #' @describeIn mmrm_tmb_methods obtains the attained log likelihood value.
+#' @param complete (`logical`)\cr Indicates whether or not to include aliased
+#'  coefficients set to `NA`.
 #' @importFrom stats logLik
 #' @exportS3Method
 #' @examples
 #' # Log likelihood given the estimated parameters:
 #' logLik(object)
-logLik.mmrm_tmb <- function(object, ...) {
+logLik.mmrm_tmb <- function(object, complete = TRUE, ...) {
   out <- -component(object, "neg_log_lik")
 
-  # total number of observations
-  nall <- component(object, "n_obs")
-
-  # was REML used (ML was used if FALSE)
-  reml_used <- component(object, "reml")
-
-  # Number of estimated coefficients (excluding aliased coefficients)
-  n_fixed_effects <- length(component(object, "beta_est"))
-
-  # Adjusted number of observations when REML is used
-  nobs <- nall - reml_used * n_fixed_effects
-
   # Number of parameters
-  df <- component(object, "n_theta")
+  n_params <- component(object, "n_theta")
 
-  structure(out, nall = nall, nobs = nobs, df = df, class = "logLik")
+  # Number of estimated coefficients
+  n_fixed_effects <- 
+    length(
+      component(
+        object, 
+        if (complete) "beta_est_complete" else "beta_est"
+      )
+    )
+
+  structure(out, df = n_params + n_fixed_effects, class = "logLik")
 }
 ```
 
@@ -96,11 +95,11 @@ anova(object, ..., test = TRUE, refit = FALSE)
 ### Arguments
 
 |  |  |
-|---------------------------|---------------------------------------------|
+|------------------------------------|------------------------------------|
 | `object` | An object inheriting from class `mmrm`: a fitted mixed model with repeated measures. |
 | `...` | Other optional fitted model objects inheriting from class `mmrm`. |
 | `test` | Logical indicating whether the output should include likelihood ratio test results comparing the model fits to one another. Defaults to `TRUE`. |
-| `refit` | Logical indicating whether the models should be refitted before comparing. This is ignored if the models all have the same underlying data set. If `refit = FALSE` and the models have different underlying data sets, an error will be thrown. Defaults to `FALSE`. |
+| `refit` | Logical indicating whether the models should be refitted with the least common data set before calculating results. This is ignored if the models all have the same underlying data set. If `refit = FALSE` and the models have different underlying data sets, an error will be thrown. Defaults to `FALSE`. |
 
 ## Function outline
 
@@ -114,7 +113,7 @@ If the user provides only one model fit to `anova.mmrm()`, the function will cal
 
 If the user provides more than one model fit, a data frame is produced with a row for each model, and the columns will contain identifying information as well as standard diagnostics (e.g., AIC; log likelihood).
 
-If the user supplied `test = TRUE`, the model fits are subject to further tests to ensure they are nestable. If the data sets for the fits are not the same and the user supplied `refit = TRUE`, the data sets are harmonized and the models are refitted using the harmonized data set. The pairs of models then undergo likelihood ratio testing, and the results are augmented into the data frame of results.
+If the user supplied `test = TRUE`, the model fits are subject to further tests to ensure they are nestable. If the data sets for the fits are not the same and the user supplied `refit = TRUE`, the smallest common data set is determined using `Reduce(f = merge)`, and all models are refitted using this data set. The pairs of models then undergo likelihood ratio testing, and the results are augmented into the data frame of results.
 
 ### Prototype code
 
@@ -132,16 +131,10 @@ anova.mmrm <- function (object, ..., test = TRUE, refit = FALSE) {
     # Ensure all objects in ... are mmrm fits
     lapply(fits[-1L], checkmate::assert_class, classes = "mmrm", .var.name = "...")
     
-    # If we're refitting...
-    if (refit) {
-      # ...if the data are the same, only refit REML models
-      if (h_check_same_data(fits)) {
-        for (i in which(h_reml_fits_lgl(fits)))
-          fits[[i]] <- h_refit_mmrm(fits[[i]])
-      } else {
-        # ...if the data are not all the same, refit all with the common data
-        fits <- lapply(fits, h_refit_mmrm, data = h_fits_common_data(fits))
-      }
+    # If the data are not all the same and refit = TRUE, refit all with the 
+    # smallest common data set
+    if (refit && !h_check_same_data(fits)) {
+      fits <- lapply(fits, h_refit_mmrm, data = h_fits_common_data(fits))
     }
     
     # vector of log likelihood results for the fits
@@ -165,34 +158,25 @@ anova.mmrm <- function (object, ..., test = TRUE, refit = FALSE) {
         h_assert_nested_models(fits[[i - 1L]], fits[[i]])
       }
       
-      # If we didn't refit, throw errors if not all data are the same or if any
-      # REML models are present
-      if (!refit) {
-        if (!h_check_same_data(fits)) {
-          stop(
-            "Likelihood ratio testing requires all fits to use the same data.",
-            " Not all fits have the same data and refit = FALSE.",
-            " Consider setting test = FALSE or refit = TRUE.",
-            call. = FALSE
-          )
-        }
-        if (any(h_reml_fits_lgl(fits))) {
-          stop(
-            "Likelihood ratio testing cannot be performed on fits using REML.",
-            " At least one fit uses REML and refit = FALSE.",
-            " Consider setting test = FALSE or refit = TRUE.",
-            call. = FALSE
-          )
-        }
+      # If we didn't refit, throw errors if not all data are the same
+      if (!refit && !h_check_same_data(fits)) {
+        stop(
+          "Likelihood ratio testing requires all fits to use the same data.",
+          " Not all fits have the same data and refit = FALSE.",
+          " Consider setting test = FALSE or refit = TRUE.",
+          call. = FALSE
+        )
       }
         
       # Label for the pair being compared (e.g., "3 vs 4")
       out$test <- c(NA, paste(out$Model[-length(fits)], "vs", out$Model[-1L]))
       
-      # Calculate the likelihood ratio between the pairs using base::diff()
+      # Calculate the log of likelihood ratios between the pairs using
+      # base::diff()
       out$log_likelihood_ratio <- c(NA, diff(out$logLik))
       
-      # Calculate the p-value using the ratios and differences in df
+      # Calculate the p-value using the log likelihood ratios and differences in
+      # df
       out$p_value <-
         pchisq(
           2 * abs(out$log_likelihood_ratio),
@@ -248,14 +232,6 @@ h_check_same_data <- function(fits) {
 }
 
 
-
-# Returns a logical vector identifying the reml fits
-h_reml_fits_lgl <- function(fits) {
-  vapply(fits, component, logical(1L), "reml")
-}
-
-
-
 # Iteratively merge the data sets underlying the fits to get the common rows
 h_fits_common_data <- function(fits) {
   dfs <- lapply(fits, h_get_minimal_fit_data)
@@ -266,33 +242,26 @@ h_fits_common_data <- function(fits) {
 
 
 
-# Refit a single mmrm model. Always forces reml = FALSE. If data is included, it
-# forces the data argument of mmrm() to point to the new data set.
-h_refit_mmrm <- function(fit, data = NULL) {
+# Refit a single mmrm model with a data set.
+h_refit_mmrm <- function(fit, data) {
   
   # Grab the model call
   expr <- component(fit, "call")
   
-  # Force the call not to use reml
-  expr[["reml"]] <- FALSE
-  
   # Grab the environment of the model's formula
   env <- environment(fit[["formula_parts"]][["full_formula"]])
   
-  if (!is.null(data)) {
-    
-    # Generate a name guaranteed not to be in env nor its enclosing frames
-    data_name <- h_generate_new_name("data", env)
-    
-    # Create a child environment whose parent is the model's environment
-    env <- new.env(parent = env)
-    
-    # bind the new data to the new name in the model's environment
-    env[[data_name]] <- data
-    
-    # Force the data argument of the model call to be the new name
-    expr[["data"]] <- as.name(data_name)
-  }
+  # Generate a name guaranteed not to be in env nor its enclosing frames
+  data_name <- h_generate_new_name("data", env)
+  
+  # Create a child environment whose parent is the model's environment
+  env <- new.env(parent = env)
+  
+  # bind the new data to the new name in the new, child environment
+  env[[data_name]] <- data
+  
+  # Force the data argument of the model call to be the new name
+  expr[["data"]] <- as.name(data_name)
   
   # Evaluate the updated model call in the appropriate environment
   fit <- eval(expr, env)
@@ -314,7 +283,7 @@ h_generate_new_name <- function(x, env) {
     # ...copy the first element of x and append it to the end. Run
     # make.names(unique = TRUE) again in the hopes that the resulting last
     # element will not be found on the search path next time
-    x <- make.names(c(x, x[1L]), unique = TRUE)
+    x <- make.names(x[c(seq_along(x), 1L)], unique = TRUE)
   }
   # If we've gotten here, the last element of doesn't exist in env or its
   # enclosing frames
@@ -323,48 +292,34 @@ h_generate_new_name <- function(x, env) {
 
 
 
-h_df_pull_columns_to_front <- function(df, cols) {
-  df[union(cols, colnames(df))]
-}
-
-
 
 # Compares two models to see if they are properly nested.
 # Errors out if they don't have the same visit, subject, and grouping vars
 # Errors out if the first model's covariates isn't a subset of the second
 # Errors out if the models have incompatible covariance structures
 # Warns if the models have the same covariates and covariance structure
-h_assert_nested_models <- function(model_basic, model_augmented,
-                                   model_basic_name = checkmate::vname(model_basic),
-                                   model_augmented_name =
-                                     checkmate::vname(model_augmented)) {
+h_assert_nested_models <- function(model_basic, model_augmented) {
   model_basic <- model_basic[["formula_parts"]]
   model_augmented <- model_augmented[["formula_parts"]]
 
   if (!identical(model_basic[["visit_var"]], model_augmented[["visit_var"]])) {
-    stop(model_basic_name, " and ", model_augmented_name,
-         " must have the same visit variable.",
-         call. = FALSE)
+    stop("Models must all have the same visit variable.", call. = FALSE)
   }
 
   if (!identical(model_basic[["subject_var"]], model_augmented[["subject_var"]])) {
-    stop(model_basic_name, " and ", model_augmented_name,
-         " must have the same subject variable.",
-         call. = FALSE)
+    stop("All models must have the same subject variable.", call. = FALSE)
   }
 
   if (!identical(model_basic[["group_var"]], model_augmented[["group_var"]])) {
-    stop(model_basic_name, " and ", model_augmented_name,
-         " must have the same grouping variable.",
-         call. = FALSE)
+    stop("All models must have the same grouping variable.", call. = FALSE)
   }
 
   covar_nesting <- h_check_covar_nesting(model_basic, model_augmented)
   cov_struct_nesting <- h_check_cov_struct_nesting(model_basic, model_augmented)
   
   if (covar_nesting == "identical" && cov_struct_nesting == "identical") {
-    warning("Models have identical covariates and covariance structures.",
-            call. = FALSE)
+    warning("Two models in the sequence have identical covariates and ",
+            "covariance structures.", call. = FALSE)
   }
   
   NULL
@@ -375,32 +330,26 @@ h_assert_nested_models <- function(model_basic, model_augmented,
 
 # Checks the covariates of two models to see if they are nested (or identical).
 # The first model's covariates must be a subset of the second model's covariates
-h_check_covar_nesting <- function(model_basic,
-                                  model_augmented,
-                                  basic_name = checkmate::vname(model_basic),
-                                  aug_name = checkmate::vname(model_augmented)) {
+h_check_covar_nesting <- function(model_basic, model_augmented) {
   basic_covars <- attr(terms(model_basic[["model_formula"]]), "term.labels")
   aug_covars <- attr(terms(model_augmented[["model_formula"]]), "term.labels")
 
-  if (!all(basic_covars %in% aug_covars)) {
-    stop("The covariates in ", basic_name,
-         " must be a subset of the covariates in ", aug_name, " .")
+  if (anyNA(match(basic_covars, aug_covars))) {
+    stop("The covariates in each model must be a subset of the covariates in ",
+         "all following models.", call. = FALSE)
   }
 
-  if (all(aug_covars %in% basic_covars)) {
-    "identical"
-  } else {
+  if (anyNA(match(aug_covars, basic_covars))) {
     "nested"
+  } else {
+    "identical"
   }
 }
 
 
 # Checks the covariance structures of two models to see if they are nested (or
 # identical). This is a check against a mathematically determined hierarchy.
-h_check_cov_struct_nesting <- function(model_basic,
-                                       model_augmented,
-                                       basic_name = checkmate::vname(model_basic),
-                                       aug_name = checkmate::vname(model_augmented)) {
+h_check_cov_struct_nesting <- function(model_basic, model_augmented) {
   basic_cov_struct <- model_basic[["cov_type"]]
   aug_cov_struct <- model_augmented[["cov_type"]]
   
@@ -426,10 +375,8 @@ h_check_cov_struct_nesting <- function(model_basic,
     "nested"
   } else {
     stop(
-      "The covariance structure of ", aug_name,
-      " must be identical to or a special case of the covariance structure of ",
-      basic_name, ". The covariance structure ", aug_cov_struct,
-      " is not a special case of ", basic_cov_struct, ".",
+      "The covariance structure of each model must be identical to or a ",
+      "special case of the covariance structure of all following models.",
       call. = FALSE
     )
   }
@@ -521,16 +468,10 @@ anova(fit)
 
 We get the significance of each term in the model.
 
-Now, use multiple models. Note that the likelihood ratio test is included by default. We specify `refit = TRUE` because `mmrm()` uses REML by default, which doesn't work with the likelihood ratio test.
+Now, use multiple models. Note that the likelihood ratio test is included by default.
 
 ```{r}
-anova(fit_reduced, fit, fit_full, refit = TRUE)
-```
-
-If we don't want to refit, we can run `anova()` but specify `test = FALSE`. This will result in fewer diagnostics.
-
-```{r}
-anova(fit_reduced, fit, fit_full, test = FALSE, refit = FALSE)
+anova(fit_reduced, fit, fit_full)
 ```
 
 Now, let's create a model fit that's based on more data:
@@ -551,60 +492,35 @@ fev_more_data$USUBJID <-
 fit_more_data <-
   mmrm(
     FEV1 ~ FEV1_BL + SEX*RACE + ARMCD + toep(AVISIT | USUBJID),
-    data = fev_more_data,
-    reml = FALSE
+    data = fev_more_data
   )
 ```
 
-Let's also refit the first three models, this time specifying `reml = FALSE`.
+We cannot simply slot in the new `fit_more_data` because it has a different underlying data set:
 
-```{r}
-fit_ml <- 
-  mmrm(
-    FEV1 ~ FEV1_BL + SEX*RACE + ARMCD + toep(AVISIT | USUBJID),
-    data = fev_data,
-    reml = FALSE
-  )
-
-fit_reduced_ml <- 
-  mmrm(
-    FEV1 ~ FEV1_BL + SEX + RACE + ARMCD + us(AVISIT | USUBJID),
-    data = fev_data,
-    reml = FALSE
-  )
-
-fit_full_ml <-
-  mmrm(
-    FEV1 ~ FEV1_BL + SEX*RACE + ARMCD + ar1(AVISIT | USUBJID),
-    data = fev_data,
-    reml = FALSE
-  )
-```
-
-Now we can obtain LRT results even with `refit = FALSE`.
-
-```{r}
-anova(fit_reduced_ml, fit_ml, fit_full_ml, test = TRUE, refit = FALSE)
-```
-
-But we can't do this if we slot in the new `fit_more_data` because although it didn't use REML, it still has a different underlying data set:
-
-```{r}
-anova(fit_reduced_ml, fit_more_data, fit_full_ml, test = TRUE, refit = FALSE)
+```{r error=TRUE}
+anova(fit_reduced, fit_more_data, fit_full)
 ```
 
 Setting `refit = TRUE` makes it work:
 
 ```{r}
-anova(fit_reduced_ml, fit_more_data, fit_full_ml, test = TRUE, refit = TRUE)
+anova(fit_reduced, fit_more_data, fit_full, refit = TRUE)
 ```
 
+Note that we also have the option to forego the likelihood ratio testing if we want the other results and do not want to refit:
+
+```{r}
+anova(fit_reduced, fit, fit_full, test = FALSE)
+```
 
 # Appendix: nested covariance structures
 
+For all covariance structures described below, let $i$ and $j$ be the indices of the time points of a model. Therefore, $i$ and $j$ can each take a value in the sequence $\{1, 2, ...\}$, and the $i,j$ element of the covariance matrix is the variance between the $i$th observation and the $j$th observation.
+
 ## Unstructured covariance
 
-Tautologically, all covariance structures are special cases of an unstructured covariance, and a model with a covariance structure can be considered "nested" within an otherwise equivalent model without a covariance structure.
+Tautologically, all covariance structures are special cases of an unstructured covariance, and a model with a covariance structure can be considered "nested" within an model without a covariance structure, assuming that the covariates are also nested.
 
 ## Homogeneous and heterogeneous
 
@@ -638,7 +554,7 @@ $$
 
 ## Other hierarchies
 
-We will now restrict the correlations in one covariance structure can produce another covariance structure in this set, demonstrating that they are nested. We will only do this for the homogeneous structures, since the heterogeneous ones plainly follow the same pattern.
+We will now restrict the correlations in one covariance structure to produce another covariance structure in this set, demonstrating that they are nested. We will only do this for the homogeneous structures, since the heterogeneous ones plainly follow the same pattern.
 
 ### `ar1` is nested within `ad`
 
@@ -647,7 +563,7 @@ Let $\rho_k$ = $\rho$
 Therefore:
 
 $$
-\sigma^2\prod_{k=i}^{j-1}\rho_{k} = \sigma^2\prod_{k=i}^{j-1}\rho = \sigma^2\rho^{\vert j-1-i+1\vert} = \sigma^2\rho^{\vert j-i\vert} = \sigma^2\rho^{\vert i-j\vert} 
+\sigma^2\prod_{k=i}^{j-1}\rho_{k} = \sigma^2\prod_{k=i}^{j-1}\rho = \sigma^2\rho^{\vert (j-1)-i+1\vert} = \sigma^2\rho^{\vert j-i\vert} = \sigma^2\rho^{\vert i-j\vert} 
 $$
 
 ### `ar1` is nested within `toep`
@@ -670,26 +586,38 @@ Let $\rho_0 = 1$
 
 Let $\rho_k=\rho$ $\forall$ $k \in \{1, 2, ...\}$
 
+Observe that:
+
+$$
+ab = a(b\cdot I(true) + b\cdot I(false))
+$$
+
+Observe also that when $i \neq j$, $\left \vert i - j \right \vert \in \{1, 2, ...\}$, and when $i=j$, $\left \vert i - j \right \vert = 0$.
+
 Therefore:
 
 $$
 \sigma^2\rho_{\left \vert {i-j} \right \vert} = \sigma^2\left[\rho_{\left \vert {i-j} \right \vert} I(i \neq j) + \rho_{\left \vert {i-j} \right \vert} I(i=j) \right] 
-\\= \sigma^2\left[\rho_k I(i \neq j) + \rho_0 I(i=j) \right] 
+\\= \sigma^2\left[\rho I(i \neq j) + \rho_0 I(i=j) \right] 
 \\= \sigma^2\left[\rho I(i \neq j) + 1 \cdot I(i=j) \right] 
 \\= \sigma^{2}\left[ \rho I(i \neq j)+I(i=j) \right]
 $$
 
+## Resulting `list` object describing the covariance structure nesting hierarchy
+
 ```{r}
 list(
-      ad = c("adh", "us"),
-      adh = "us",
-      ar1 = c("ad", "adh", "ar1h", "toep", "toeph", "us"),
-      ar1h = c("adh", "toeph", "us"),
-      cs = c("csh", "toep", "toeph", "us"),
-      csh = c("toeph", "us"),
-      toep = c("toeph", "us"),
-      toeph = "us",
-      us = character(0L),
-      sp_exp = character(0L)
-    )
+  ad = c("adh", "us"),
+  adh = "us",
+  ar1 = c("ad", "adh", "ar1h", "toep", "toeph", "us"),
+  ar1h = c("adh", "toeph", "us"),
+  cs = c("csh", "toep", "toeph", "us"),
+  csh = c("toeph", "us"),
+  toep = c("toeph", "us"),
+  toeph = "us",
+  us = character(0L),
+  sp_exp = character(0L)
+)
 ```
+
+Note that since `sp_exp` is a valid covariance structure in `mmrm`, `anova.mmrm()` could encounter it. Therefore, it is included in this `list` object.
