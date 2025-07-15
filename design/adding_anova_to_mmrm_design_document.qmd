@@ -48,7 +48,9 @@ In order that `anova.mmrm()` may be comparable to `anova()` methods in the `nlme
 
 This function needs to return more data in the `attributes()` of the returned value:
 
--   `nall`, `nobs`, and `df`
+-   `df`: the degrees of freedom shall be returned as an attribute.
+    -   If REML estimation was used, it shall equal the number of parameters.
+    -   If ML estimation was used, it shall equal the sum of the number of parameters and the number of estimated coefficients.
 -   Add `"logLik"` to the `class()` of the returned value
 
 Prototype:
@@ -68,16 +70,23 @@ logLik.mmrm_tmb <- function(object, complete = TRUE, ...) {
   # Number of parameters
   n_params <- component(object, "n_theta")
 
-  # Number of estimated coefficients
-  n_fixed_effects <- 
-    length(
-      component(
-        object, 
-        if (complete) "beta_est_complete" else "beta_est"
+  # REML
+  if (component(object, "reml")) {
+    df <- n_params
+  } else {
+    # ML
+    # Number of estimated coefficients
+    n_fixed_effects <-
+      length(
+        component(object, if (complete) "beta_est_complete" else "beta_est")
       )
-    )
-
-  structure(out, df = n_params + n_fixed_effects, class = "logLik")
+    df <- n_params + n_fixed_effects
+  }
+  
+  attr(out, "df") <- df
+  class(out) <- "logLik"
+  
+  out
 }
 ```
 
@@ -95,11 +104,11 @@ anova(object, ..., test = TRUE, refit = FALSE)
 ### Arguments
 
 |  |  |
-|----|----|
+|------------------------------------|------------------------------------|
 | `object` | An object inheriting from class `mmrm`: a fitted mixed model with repeated measures. |
 | `...` | Other optional fitted model objects inheriting from class `mmrm`. |
 | `test` | Logical indicating whether the output should include likelihood ratio test results comparing the model fits to one another. Defaults to `TRUE`. |
-| `refit` | Logical indicating whether the models should be refitted with the least common data set before calculating results. This is ignored if the models all have the same underlying data set. If `refit = FALSE` and the models have different underlying data sets, an error will be thrown. Defaults to `FALSE`. |
+| `refit` | Logical indicating whether the models should be refitted with a new data set consisting the maximum number of observations in common with all the fits' data sets, after which the calculation of results is resumed. This is ignored if the models all have the same underlying data set. If `refit = FALSE` and the models have different underlying data sets, an error will be thrown. Defaults to `FALSE`. |
 
 ## Function outline
 
@@ -113,7 +122,7 @@ If the user provides only one model fit to `anova.mmrm()`, the function will cal
 
 If the user provides more than one model fit, a data frame is produced with a row for each model, and the columns will contain identifying information as well as standard diagnostics (e.g., AIC; log likelihood).
 
-If the user supplied `test = TRUE`, the model fits are subject to further tests to ensure they are nestable. If the data sets for the fits are not the same and the user supplied `refit = TRUE`, the smallest common data set is determined using `Reduce(f = merge)`, and all models are refitted using this data set. The pairs of models then undergo likelihood ratio testing, and the results are augmented into the data frame of results.
+If the user supplied `test = TRUE`, the model fits are subject to further tests to ensure they are nestable. If the data sets for the fits are not the same and the user supplied `refit = TRUE`, the largest common dataset is determined using `Reduce(f = merge)`, and all models are refitted using this data set. The pairs of models then undergo likelihood ratio testing, and the results are augmented into the data frame of results.
 
 ### Prototype code
 
@@ -126,13 +135,15 @@ anova.mmrm <- function (object, ..., test = TRUE, refit = FALSE) {
   
   fits <- list(object, ...)
   # If there are objects supplied to "..."
-  if (length(fits) > 1L) {
+  if (length(fits) == 1L) {
+    out <- h_anova_single_mmrm_model(object)
+  } else {
     
     # Ensure all objects in ... are mmrm fits
     lapply(fits[-1L], checkmate::assert_class, classes = "mmrm", .var.name = "...")
     
     # If the data are not all the same and refit = TRUE, refit all with the 
-    # smallest common data set
+    # largest common data set
     if (refit && !h_check_same_data(fits)) {
       fits <- lapply(fits, h_refit_mmrm, data = h_fits_common_data(fits))
     }
@@ -144,29 +155,17 @@ anova.mmrm <- function (object, ..., test = TRUE, refit = FALSE) {
     out <-
       data.frame(
         Model = seq_along(fits),
-        df = vapply(LL_vec, attr, FUN.VALUE = numeric(1L), "df"), 
+        REML = vapply(fits, component, logical(1L), "reml"),
+        df = vapply(LL_vec, attr, numeric(1L), "df"), 
         AIC = vapply(fits, AIC, numeric(1)),
         BIC = vapply(fits, BIC, numeric(1)),
         logLik = as.numeric(LL_vec)
       )
-
+    
     # If the user has requested the likelihood ratio test...
     if (test) {
-      # First iterate through and check the models to make sure their covariates
-      # and covariance structures are nested
-      for (i in seq_along(fits)[-1L]) {
-        h_assert_nested_models(fits[[i - 1L]], fits[[i]])
-      }
       
-      # If we didn't refit, throw errors if not all data are the same
-      if (!refit && !h_check_same_data(fits)) {
-        stop(
-          "Likelihood ratio testing requires all fits to use the same data.",
-          " Not all fits have the same data and refit = FALSE.",
-          " Consider setting test = FALSE or refit = TRUE.",
-          call. = FALSE
-        )
-      }
+      h_assert_LRT_suitability(fits, refit, dfs = out$df, REMLs = out$REML)
         
       # Label for the pair being compared (e.g., "3 vs 4")
       out$test <- c(NA, paste(out$Model[-length(fits)], "vs", out$Model[-1L]))
@@ -187,8 +186,6 @@ anova.mmrm <- function (object, ..., test = TRUE, refit = FALSE) {
     
     out$call <- vapply(lapply(fits, component, "call"), deparse1, character(1L))
     
-  } else { 
-    out <- h_anova_single_mmrm_model(object)
   }
   
   out
@@ -198,32 +195,40 @@ anova.mmrm <- function (object, ..., test = TRUE, refit = FALSE) {
 #### Supporting functions:
 
 ```{r}
+# Checks that the underlying data sets for all the fits are the same. Before
+# comparing, it assembles the minimal set of columns actually used for each fit.
+# The following three criteria must be met for this function to return TRUE:
+# 1) All data sets must have the same number of rows.
+# 2) Each model's covariates must be a subset of the next model's covariates.
+# 3) The columns in common between neighboring data sets must be identical.
 h_check_same_data <- function(fits) {
   # Grab the data frames behind the model fits into a separate list.
-  dfs <- lapply(fits, h_get_minimal_fit_data)
+  datasets <- lapply(fits, h_get_minimal_fit_data)
+  
+  # Ensure the number of rows of all data sets are the same.
+  if (length(unique(vapply(datasets, nrow, numeric(1L)))) > 1L) {
+    return(FALSE)
+  }
+  
+  cols <- lapply(datasets, colnames)
   
   for (i in seq_along(fits)[-1L]) {
-    
-    # First check the number of rows.
-    if (nrow(dfs[[i - 1L]]) != nrow(dfs[[i]])) {
+    # Ensure previous dataset's cols are a subset of the current dataset's cols
+    if (anyNA(match(cols[[i - 1L]], cols[[i]]))) {
       return(FALSE)
     }
+  }
+  
+  # Sort the first data frame.
+  datasets[[1L]] <- h_dataset_sort_all(datasets[[1L]])
+  for (i in seq_along(fits)[-1L]) {
     
-    # Ensure previous df's columns is a subset of the current df's columns
-    cols_prev <- colnames(dfs[[i - 1L]])
-    cols_current <- colnames(dfs[[i]])
-    if (anyNA(match(cols_prev, cols_current))) {
-      return(FALSE)
-    }
-    
-    # If we're on the first iteration, sort the first data frame.
-    if (i == 2L) dfs[[1L]] <- h_df_sort_all(dfs[[1L]])
-    
-    # Pull prev df's columns to the front of current df. Then sort.
-    dfs[[i]] <- h_df_sort_all(dfs[[i]][union(cols_prev, cols_current)])
+    # Pull prev dataset's columns to the front of current dataset. Then sort.
+    cols[[i]] <- union(cols[[i - 1L]], cols[[i]])
+    datasets[[i]] <- h_dataset_sort_all(datasets[[i]][cols[[i]]])
     
     # Ensure the common columns are the same
-    if (!identical(dfs[[i - 1L]], dfs[[i]][cols_prev])) {
+    if (!identical(datasets[[i - 1L]], datasets[[i]][cols[[i - 1L]]])) {
       return(FALSE)
     }
   }
@@ -232,13 +237,15 @@ h_check_same_data <- function(fits) {
 }
 
 
-# Iteratively merge the data sets underlying the fits to get the common rows
+
+# Iteratively merge the data sets underlying the fits to get the common rows and
+# all columns.
 h_fits_common_data <- function(fits) {
-  dfs <- lapply(fits, h_get_minimal_fit_data)
-  out <- Reduce(merge, dfs)
+  datasets <- lapply(fits, h_get_minimal_fit_data)
+  out <- Reduce(merge, datasets)
+  out <- droplevels(out)
   out
 }
-
 
 
 
@@ -292,13 +299,52 @@ h_generate_new_name <- function(x, env) {
 
 
 
+# Function that checks the fits to make sure LRT is appropriate. Checks degrees
+# of freedom, nesting of covariates (in light of ML/REML usage), and nesting of
+# covariance structures.
+h_assert_LRT_suitability <- function(fits, refit, dfs, REMLs) {
+  
+  if (any(diff(dfs) <= 0)) {
+    stop(
+      "The degrees of freedom (df) of each model must be less than the df of ",
+      "the next model in order to perform likelihood ratio testing (LRT). ",
+      "Bypass LRT with test = FALSE.",
+      call. = FALSE
+    )
+  }
+  
+  # Do any models use REML?
+  any_reml <- any(REMLs)
+  
+  # First iterate through and check the models to make sure their covariates
+  # and covariance structures are nested
+  for (i in seq_along(fits)[-1L]) {
+    h_assert_nested_models(fits[[i - 1L]], fits[[i]], any_reml = any_reml)
+  }
+  
+  # If we didn't refit, throw errors if not all data are the same
+  if (!refit && !h_check_same_data(fits)) {
+    stop(
+      "Likelihood ratio testing requires all fits to use the same data.",
+      " Not all fits have the same data and refit = FALSE.",
+      " Consider setting test = FALSE or refit = TRUE.",
+      call. = FALSE
+    )
+  }
+  
+  TRUE
+}
+
+
 
 # Compares two models to see if they are properly nested.
 # Errors out if they don't have the same visit, subject, and grouping vars
 # Errors out if the first model's covariates isn't a subset of the second
-# Errors out if the models have incompatible covariance structures
+# Errors out if the first model's covariance structure isn't a special case of
+# the second model's covaraince structure.
 # Warns if the models have the same covariates and covariance structure
-h_assert_nested_models <- function(model_basic, model_augmented) {
+h_assert_nested_models <- function(model_basic, model_augmented, any_reml) {
+  
   model_basic <- model_basic[["formula_parts"]]
   model_augmented <- model_augmented[["formula_parts"]]
 
@@ -313,8 +359,13 @@ h_assert_nested_models <- function(model_basic, model_augmented) {
   if (!identical(model_basic[["group_var"]], model_augmented[["group_var"]])) {
     stop("All models must have the same grouping variable.", call. = FALSE)
   }
-
+  
   covar_nesting <- h_check_covar_nesting(model_basic, model_augmented)
+  if (any_reml && covar_nesting == "nested") {
+    stop("If any models use REML, all models' covariates must be the same.",
+         call. = FALSE)
+  }
+  
   cov_struct_nesting <- h_check_cov_struct_nesting(model_basic, model_augmented)
   
   if (covar_nesting == "identical" && cov_struct_nesting == "identical") {
@@ -324,7 +375,6 @@ h_assert_nested_models <- function(model_basic, model_augmented) {
   
   NULL
 }
-
 
 
 
@@ -345,6 +395,7 @@ h_check_covar_nesting <- function(model_basic, model_augmented) {
     "identical"
   }
 }
+
 
 
 # Checks the covariance structures of two models to see if they are nested (or
@@ -371,16 +422,15 @@ h_check_cov_struct_nesting <- function(model_basic, model_augmented) {
   
   if (identical(basic_cov_struct, aug_cov_struct)) {
     "identical"
-  } else if (any(cov_struct_nesting[[aug_cov_struct]] == basic_cov_struct)) {
+  } else if (any(cov_struct_nesting[[basic_cov_struct]] == aug_cov_struct)) {
     "nested"
   } else {
-    stop(
-      "The covariance structure of each model must be identical to or a ",
-      "special case of the preceding model's covariance structure.",
-      call. = FALSE
-    )
+    stop("Each model's covariance structure must be either identical to or a ",
+         "special case of the next model's covariance structure.",
+         call. = FALSE)
   }
 }
+
 
 
 # Returns a character vector of the names of the columns actually used in a fit
@@ -400,9 +450,10 @@ h_get_minimal_fit_data <- function(fit) {
 }
 
 
-# Sorts a data frame by its columns in the order they appear
-h_df_sort_all <- function(df) {
-  df[do.call(order, unname(df)), ]
+
+# Sorts a data frame by its columns' values in the order the columns appear
+h_dataset_sort_all <- function(data) {
+  data[do.call(order, unname(data)), ]
 }
 
 
@@ -440,25 +491,28 @@ h_anova_single_mmrm_model <- function(object) {
 
 ## Setup
 
-Using `mmrm::fev_data`, here is a model fit, a reduced version, and a "full" version, which has a more specialized covariance structure.
+Using `mmrm::fev_data`, here are three models: one including `SEX`, one including `SEX` and `RACE`, and one including `SEX` and `RACE` and the interaction between the two. All three use the `ar1` covariance structure, and all three use maximum likelihood (ML) estimation, as specified by `reml = FALSE`.
 
 ```{r}
-fit <- 
+fit_sex <- 
   mmrm(
-    FEV1 ~ FEV1_BL + SEX*RACE + ARMCD + toep(AVISIT | USUBJID),
-    data = fev_data
+    FEV1 ~ FEV1_BL + SEX + ARMCD + ar1(AVISIT | USUBJID),
+    data = fev_data,
+    reml = FALSE
   )
 
-fit_reduced <- 
+fit_sex_race <- 
   mmrm(
-    FEV1 ~ FEV1_BL + SEX + RACE + ARMCD + us(AVISIT | USUBJID),
-    data = fev_data
+    FEV1 ~ FEV1_BL + SEX + RACE + ARMCD + ar1(AVISIT | USUBJID),
+    data = fev_data,
+    reml = FALSE
   )
 
-fit_full <-
+fit_interaction <- 
   mmrm(
-    FEV1 ~ FEV1_BL + SEX*RACE + ARMCD + ar1(AVISIT | USUBJID),
-    data = fev_data
+    FEV1 ~ FEV1_BL + SEX * RACE + ARMCD + ar1(AVISIT | USUBJID),
+    data = fev_data,
+    reml = FALSE
   )
 ```
 
@@ -467,81 +521,229 @@ fit_full <-
 First, run `anova()` on just one model fit:
 
 ```{r}
-anova(fit)
+anova(fit_interaction)
 ```
 
-We get the significance of each term in the model.
+This yields the significance of each term in the model.
 
 ## Multiple models
 
 Now, use multiple models. Note that the likelihood ratio test is included by default.
 
 ```{r}
-anova(fit_reduced, fit, fit_full)
+anova(fit_sex, fit_sex_race, fit_interaction)
 ```
 
-## Nesting checks
+### Nesting checks
 
-Note that models can only increase in terms from left to right. The following will not work because `fit_full` has more terms than `fit_reduced`.
+#### `df` must increase
+
+Models can only increase in degrees of freedom from left to right. Thus, successive models can only gain terms from left to right, so changing the order of the models in the code above will result in an error.
 
 ```{r error=TRUE}
-anova(fit_full, fit_reduced)
+anova(fit_sex, fit_interaction, fit_sex_race)
 ```
 
-Furthermore, the specificity of covariance structures can only increase from left to right. Therefore, even though `fit` and `fit_full` have the same terms, the following will not work because the covariance structure of `fit_full`, `ar1`, is a special case of the covariance structure of `fit`, `toep`:
-
-```{r error=TRUE}
-anova(fit_full, fit)
-```
-
-## Data sameness checks
-
-### Setup
-
-First, let's create a model fit that's based on more data:
+As the error message states, we can obtain results without LRT—which still includes degrees of freedom—by specifying `test = FALSE`:
 
 ```{r}
-fev_more_data <-
-  rbind(
-    fev_data,
-    transform(
-      fev_data[1:200, ],
-      FEV1 = FEV1 + rnorm(200, sd = sd(FEV1) / 10),
-      FEV1_BL = FEV1_BL + rnorm(200, sd = sd(FEV1_BL) / 10)
-    )
-  )
-fev_more_data$USUBJID <-
-  factor(rep(1:250, each = 4), labels = paste0("PT", 1:250))
+anova(fit_sex, fit_interaction, fit_sex_race, test = FALSE)
+```
 
-fit_more_data <-
+Notice that the degrees of freedom from the second to the third models, `fit_interaction` and `fit_sex_race`, decreases from 10 to 8, so `anova.mmrm()` will not perform LRT.
+
+#### Nested covariates
+
+Models that pass the increasing df check have to subsequently pass the nested covariates check: the terms in each model must be a subset of the terms in the next model.
+
+Let's create a new model, `fit_race`, that is like `fit_sex` with `RACE` substituted for `SEX`. Because `RACE` has three levels as opposed to the two levels in `SEX`, it has more degrees of freedom. We can see this by adding it the call to `anova(test = FALSE)`:
+
+```{r}
+fit_race <- 
   mmrm(
-    FEV1 ~ FEV1_BL + SEX*RACE + ARMCD + toep(AVISIT | USUBJID),
-    data = fev_more_data
+    FEV1 ~ FEV1_BL + RACE + ARMCD + ar1(AVISIT | USUBJID),
+    data = fev_data,
+    reml = FALSE
+  )
+
+anova(fit_sex, fit_race, fit_sex_race, fit_interaction, test = FALSE)
+```
+
+The four models in the `anova()` call above have increasing degrees of freedom, but LRT still cannot be performed:
+
+```{r error=TRUE}
+anova(fit_sex, fit_race, fit_sex_race, fit_interaction)
+```
+
+`fit_sex` has fewer degrees of freedom than `fit_race` but its covariates are not nested: `fit_race` does not include `SEX`.
+
+#### Nested covariance structures
+
+The covariance structures must also be nested from model to model. Each model's covariance structure must be identical to or a special case of the next model's covariance structure.
+
+Let's create three new models, `fit_sex_csh`, `fit_sex_toeph`, and `fit_sex_us`, which are like `fit_sex` but with the `csh`, `toeph`, and `us` covariance structures instead of `ar1`. Note that `ar1` and `csh` are both special cases of `toeph` and `us`, so `fit_sex` (which uses `ar1`) and `fit_sex_csh` are each considered nested within `fit_sex_toeph` and `fit_sex_us`; however, `fit_sex` nor `fix_sex_csh` are special cases of the other, so they cannot be nested.
+
+```{r}
+fit_sex_csh <- 
+  mmrm(
+    FEV1 ~ FEV1_BL + SEX + ARMCD + csh(AVISIT | USUBJID),
+    data = fev_data,
+    reml = FALSE
+  )
+
+fit_sex_toeph <- 
+  mmrm(
+    FEV1 ~ FEV1_BL + SEX + ARMCD + toeph(AVISIT | USUBJID),
+    data = fev_data,
+    reml = FALSE
+  )
+
+fit_sex_us <- 
+  mmrm(
+    FEV1 ~ FEV1_BL + SEX + ARMCD + us(AVISIT | USUBJID),
+    data = fev_data,
+    reml = FALSE
   )
 ```
 
-### Different data, `refit = FALSE`
+Let's first view the degrees of freedom of these models, which all have identical covariates, using `anova(test = FALSE)`:
 
-We cannot simply slot in the new `fit_more_data` because it has a different underlying data set:
+```{r}
+anova(fit_sex, fit_sex_csh, fit_sex_toeph, fit_sex_us, test = FALSE)
+```
+
+However, despite their increasing degrees of freedom and identical covariates, we cannot turn LRT testing on with `test = TRUE` because `fit_sex` is not nested within `fit_sex_csh`:
 
 ```{r error=TRUE}
-anova(fit_reduced, fit_more_data, fit_full)
+anova(fit_sex, fit_sex_csh, fit_sex_toeph, fit_sex_us, test = TRUE)
 ```
 
-### Different data, `refit = TRUE`
-
-Setting `refit = TRUE` makes it work:
+If we follow the covariance structure nesting requirements, we can perform LRT with different subsets of these four models:
 
 ```{r}
-anova(fit_reduced, fit_more_data, fit_full, refit = TRUE)
+anova(fit_sex, fit_sex_toeph, fit_sex_us, test = TRUE)
+anova(fit_sex_csh, fit_sex_toeph, fit_sex_us, test = TRUE)
+anova(fit_sex, fit_sex_us, test = TRUE)
+anova(fit_sex_csh, fit_sex_us, test = TRUE)
 ```
 
-## Bypassing `LRT`
+### Data sameness checks and the `refit` argument
 
-Note that we also have the option to forego the likelihood ratio testing if we want the other results and do not want to refit:
+#### Setup
+
+First, let's refit `fev_sex_toeph` based on a subset of the `mmrm::fev_data` dataset such that each subject only has three time points instead of 4:
 
 ```{r}
-anova(fit_reduced, fit, fit_full, test = FALSE)
+fev_subset <- droplevels(fev_data[fev_data$VISITN < 4, ])
+
+fit_sex_toeph_subset <- 
+  mmrm(
+    FEV1 ~ FEV1_BL + SEX + ARMCD + toeph(AVISIT | USUBJID),
+    data = fev_subset,
+    reml = FALSE
+  )
+
+fev_subset
+```
+
+Without performing LRT, let's first inspect the original `fit_sex` and the new `fit_sex_toeph_subset` along with `fit_sex_toeph` and `fit_sex_us`:
+
+```{r}
+anova(fit_sex, fit_sex_toeph_subset, fit_sex_toeph, fit_sex_us, test = FALSE)
+```
+
+Even though the `toeph` models (Models 2 and 3) have the same covariates and covariance structures, we see that they have different degrees of freedom because:
+
+$$
+\text{df} = \text{number of coefficients} + \text{number of variance parameters}
+$$
+
+For all these models, there are four coefficients (one for each of the three predictors and one for the intercept). For the `toeph` covariance structure, the number of variance parameters is $2m - 1$, where $m$ is the number of time points (see `?mmrm::cov_types`).
+
+Therefore, we can verify that the original `fit_sex_toeph` model's df is $4 + 2\times 4 - 1 = 11$, and the new `fit_sex_toeph_subset` model's df is $4 + 2\times 3 - 1 = 9$.
+
+#### Data sameness assertion: Different data, `refit = FALSE`
+
+Because the degrees of freedom increases with each model, the covariates are nested, and the covariance structures are also nested, it may appear at first that we can perform the following likelihood ratio testing as is; however, this will not work, because LRT also requires that all models use the same data set:
+
+```{r error=TRUE}
+anova(fit_sex, fit_sex_toeph_subset, fit_sex_us)
+```
+
+#### Data sameness assertion: Different data, `refit = TRUE`
+
+As the error message above suggests, we can set `refit = TRUE`, which will find the largest possible data set in common between all the fits, refit all the models using this data set, and then attempt to perform LRT:
+
+```{r}
+anova(fit_sex, fit_sex_toeph_subset, fit_sex_us, refit = TRUE)
+```
+
+We have success, and we see that the diagnostics have changed for Models 1 and 3 since they have been refitted with smaller data sets. Notice also the partial change in degrees of freedom for Models 1 and 3. 
+
+Concerning Model 1, the degrees of freedom are still 6 because the number of variance parameters in the `ar1` covariance structure is always 2. Therefore, changing the number of time points will not change the degrees of freedom; this also applies to `cs`, whose number of covariance parameters is also fixed at 2. 
+
+Concerning Model 2, the unstructured covariance has $m(m+1)/2$ covariance parameters. In this case, when we account for the four coefficients, $df = 4 + 3(3+1)/2 = 10$.
+
+Since Model 2's data set was a subset of the other Models' data, its results are unchanged.
+
+#### Refitting without LRT
+
+We can choose to refit the models while bypassing LRT results by specifying both `test = FALSE` and `refit = TRUE`. When we do this, there is no data sameness assertion. 
+
+```{r}
+anova(fit_sex_toeph_subset, fit_sex_toeph, fit_race, fit_sex_csh,
+      refit = TRUE,
+      test = FALSE)
+```
+
+If we compare the last three models' results to the corresponding results above, we find different results because they were refitted with Model 1's smaller data set.
+
+### Greater restrictions when using REML estimation
+
+All model fits above utilize maximum likelihood (ML) estimation, and many of the above comparisons are only possible because no restricted maximum likelihood (REML) models were present. Specifically, if at least one model passed to `anova.mmrm()` used REML estimation, all models must have the same covariates. Covariance structures may still be nested.
+
+#### Setup
+
+Let's first create a few new models using we created above using REML by setting `reml = TRUE`:
+
+```{r}
+fit_sex_ar1_reml <- 
+  mmrm(
+    FEV1 ~ FEV1_BL + SEX + ARMCD + ar1(AVISIT | USUBJID),
+    data = fev_data,
+    reml = TRUE
+  )
+```
+
+#### Bypassing LRT
+
+REML models are not subject to the greater restrictions if LRT is bypassed.
+
+As above, we can get results without refitting...
+
+```{r}
+anova(fit_sex_ar1_reml, fit_sex_toeph_subset, fit_interaction, test = FALSE)
+```
+
+...and with refitting:
+
+```{r}
+anova(fit_sex_ar1_reml, fit_sex_toeph_subset, fit_interaction,
+      test = FALSE, refit = TRUE)
+```
+
+#### LRT with REML-estimated models
+
+If we want LRT results with even one REML model, we will not be able to do so if models differ at all in their sets of covariates:
+
+```{r error=TRUE}
+anova(fit_sex_ar1_reml, fit_interaction)
+```
+
+But we can get LRT results if we are careful only to use models with the same covariates:
+
+```{r}
+anova(fit_sex_ar1_reml, fit_sex_us)
 ```
 
 # Appendix: nested covariance structures
@@ -619,7 +821,7 @@ Let $\rho_k=\rho$ $\forall$ $k \in \{1, 2, ...\}$
 Observe that:
 
 $$
-ab = a(b\cdot I(true) + b\cdot I(false))
+x = x(I(true) + I(false)) = x\cdot I(true) + x\cdot I(false))
 $$
 
 Observe also that when $i \neq j$, $\left \vert i - j \right \vert \in \{1, 2, ...\}$, and when $i=j$, $\left \vert i - j \right \vert = 0$.
@@ -635,7 +837,7 @@ $$
 
 ## Resulting `list` object describing the covariance structure nesting hierarchy
 
-```{r}
+```{r eval=FALSE}
 list(
   ad = c("adh", "us"),
   adh = "us",
