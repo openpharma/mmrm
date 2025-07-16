@@ -41,48 +41,40 @@ It's possible that the larger model was fit with an augmented data set (<https:/
 
 In order that `anova.mmrm()` may be comparable to `anova()` methods in the `nlme` and `lme4` packages, it shall contain the following arguments:
 
--   `test` argument to opt in/out of obtaining LRT results (see `?nlme::anova.lme`). The function will return degrees of freedom, AIC, BIC, and log-likelihood regardless.
+-   `test` argument to opt in/out of obtaining LRT results (see `?nlme::anova.lme`). The function will return degrees of freedom (*df*), AIC, BIC, and log-likelihood regardless.
 -   `refit` arguments to allow for refitting the models (see `?lme4::anova.merMod`).
 
 # Prerequisite: augment `logLik.mmrm_tmb()`
 
 This function needs to return more data in the `attributes()` of the returned value:
 
--   `df`: the degrees of freedom shall be returned as an attribute.
-    -   If REML estimation was used, it shall equal the number of parameters.
-    -   If ML estimation was used, it shall equal the sum of the number of parameters and the number of estimated coefficients.
+-   `df`: the *df* shall be returned as an attribute.
+    -   If REML estimation was used, it shall equal the number of variance parameters.
+    -   If ML estimation was used, it shall equal the sum of the number of variance parameters and the number of estimated coefficients.
 -   Add `"logLik"` to the `class()` of the returned value
 
 Prototype:
 
 ```{r}
 #' @describeIn mmrm_tmb_methods obtains the attained log likelihood value.
-#' @param complete (`logical`)\cr Indicates whether or not to include aliased
-#'  coefficients set to `NA`.
 #' @importFrom stats logLik
 #' @exportS3Method
 #' @examples
 #' # Log likelihood given the estimated parameters:
 #' logLik(object)
-logLik.mmrm_tmb <- function(object, complete = TRUE, ...) {
+logLik.mmrm_tmb <- function(object, ...) {
   out <- -component(object, "neg_log_lik")
 
   # Number of parameters
   n_params <- component(object, "n_theta")
 
-  # REML
-  if (component(object, "reml")) {
-    df <- n_params
-  } else {
-    # ML
-    # Number of estimated coefficients
-    n_fixed_effects <-
-      length(
-        component(object, if (complete) "beta_est_complete" else "beta_est")
-      )
-    df <- n_params + n_fixed_effects
-  }
+  # Number of estimated coefficients
+  n_coef <- sum(!is.na(coef(object, ...)))
   
+  df <- n_params + n_coef * !component(object, "reml")
+  
+  attr(out, "n_params") <- n_params
+  attr(out, "n_coef") <- n_coef
   attr(out, "df") <- df
   class(out) <- "logLik"
   
@@ -144,22 +136,36 @@ anova.mmrm <- function (object, ..., test = TRUE, refit = FALSE) {
     
     # If the data are not all the same and refit = TRUE, refit all with the 
     # largest common data set
-    if (refit && !h_check_same_data(fits)) {
-      fits <- lapply(fits, h_refit_mmrm, data = h_fits_common_data(fits))
+    if (refit && !h_check_fits_all_data_same(fits)) {
+      common_data <- h_fits_common_data(fits)
+      refit_lgl <- 
+        !vapply(
+          lapply(fits, h_get_minimal_fit_data), 
+          h_check_columns_nested,
+          FUN.VALUE = logical(1L),
+          data_augmented = common_data
+        )
+      fits[refit_lgl] <-
+        lapply(fits[refit_lgl], h_refit_mmrm, data = common_data)
+    } else {
+      refit_lgl <- rep_len(FALSE, length(fits))
     }
     
     # vector of log likelihood results for the fits
-    LL_vec <- lapply(fits, logLik.mmrm_tmb)
+    logLik_vec <- lapply(fits, logLik.mmrm_tmb)
     
     # Calculate the standard diagnostics.
     out <-
       data.frame(
         Model = seq_along(fits),
+        refit = refit_lgl,
         REML = vapply(fits, component, logical(1L), "reml"),
-        df = vapply(LL_vec, attr, numeric(1L), "df"), 
+        n_params = vapply(logLik_vec, attr, numeric(1L), "n_params"),
+        n_coef = vapply(logLik_vec, attr, numeric(1L), "n_coef"),
+        df = vapply(logLik_vec, attr, numeric(1L), "df"), 
         AIC = vapply(fits, AIC, numeric(1)),
         BIC = vapply(fits, BIC, numeric(1)),
-        logLik = as.numeric(LL_vec)
+        logLik = as.numeric(logLik_vec)
       )
     
     # If the user has requested the likelihood ratio test...
@@ -201,7 +207,7 @@ anova.mmrm <- function (object, ..., test = TRUE, refit = FALSE) {
 # 1) All data sets must have the same number of rows.
 # 2) Each model's covariates must be a subset of the next model's covariates.
 # 3) The columns in common between neighboring data sets must be identical.
-h_check_same_data <- function(fits) {
+h_check_fits_all_data_same <- function(fits) {
   # Grab the data frames behind the model fits into a separate list.
   datasets <- lapply(fits, h_get_minimal_fit_data)
   
@@ -228,7 +234,13 @@ h_check_same_data <- function(fits) {
     datasets[[i]] <- h_dataset_sort_all(datasets[[i]][cols[[i]]])
     
     # Ensure the common columns are the same
-    if (!identical(datasets[[i - 1L]], datasets[[i]][cols[[i - 1L]]])) {
+    if (
+      !isTRUE(all.equal(
+        datasets[[i - 1L]], 
+        datasets[[i]][cols[[i - 1L]]],
+        check.attributes = FALSE
+      ))
+    ) {
       return(FALSE)
     }
   }
@@ -249,7 +261,31 @@ h_fits_common_data <- function(fits) {
 
 
 
-# Refit a single mmrm model with a data set.
+# Predicate function indicating whether one dataset is a subset of a second
+# dataset's columns. Returns TRUE if the subset of the second dataset's columns
+# results in the first dataset.
+h_check_columns_nested <- function(data_basic, data_augmented) {
+  if (nrow(data_basic) != nrow(data_augmented)) {
+    return(FALSE)
+  }
+  
+  colnames_basic <- colnames(data_basic)
+  
+  if (anyNA(match(colnames_basic, colnames(data_augmented)))) {
+    return(FALSE)
+  }
+  
+  isTRUE(all.equal(
+    h_dataset_sort_all(data_basic),
+    h_dataset_sort_all(data_augmented[colnames_basic]),
+    check.attributes = FALSE
+  ))
+}
+
+
+
+
+# Refit a single mmrm model with a new dataset
 h_refit_mmrm <- function(fit, data) {
   
   # Grab the model call
@@ -323,7 +359,7 @@ h_assert_LRT_suitability <- function(fits, refit, dfs, REMLs) {
   }
   
   # If we didn't refit, throw errors if not all data are the same
-  if (!refit && !h_check_same_data(fits)) {
+  if (!refit && !h_check_fits_all_data_same(fits)) {
     stop(
       "Likelihood ratio testing requires all fits to use the same data.",
       " Not all fits have the same data and refit = FALSE.",
@@ -457,7 +493,9 @@ h_dataset_sort_all <- function(data) {
 }
 
 
-
+# A function that creates the table of `anova.mmrm()` results when only one
+# model object is provided. This table contains the significance of each of the
+# model's terms.
 h_anova_single_mmrm_model <- function(object) {
   # attributes of terms.object for the model formula without the cov struct
   terms_attr <- attributes(terms(object$formula_parts$model_formula))
@@ -538,25 +576,25 @@ anova(fit_sex, fit_sex_race, fit_interaction)
 
 #### `df` must increase
 
-Models can only increase in degrees of freedom from left to right. Thus, successive models can only gain terms from left to right, so changing the order of the models in the code above will result in an error.
+Models can only increase in *df* from left to right. Thus, successive models can only gain terms from left to right, so changing the order of the models in the code above will result in an error.
 
 ```{r error=TRUE}
 anova(fit_sex, fit_interaction, fit_sex_race)
 ```
 
-As the error message states, we can obtain results without LRT—which still includes degrees of freedom—by specifying `test = FALSE`:
+As the error message states, we can obtain results without LRT—which still includes *df*—by specifying `test = FALSE`:
 
 ```{r}
 anova(fit_sex, fit_interaction, fit_sex_race, test = FALSE)
 ```
 
-Notice that the degrees of freedom from the second to the third models, `fit_interaction` and `fit_sex_race`, decreases from 10 to 8, so `anova.mmrm()` will not perform LRT.
+Notice that the *df* from the second to the third models, `fit_interaction` and `fit_sex_race`, decreases from 10 to 8, so `anova.mmrm()` will not perform LRT.
 
 #### Nested covariates
 
-Models that pass the increasing df check have to subsequently pass the nested covariates check: the terms in each model must be a subset of the terms in the next model.
+ML-estimated models that pass the increasing *df* check have to subsequently pass the nested covariates check: the terms in each model must be a subset of the terms in the next model. Note that if at least one model estimated with restricted maximum likelihood (REML) is present, all covariates in all models must be identical (see the **Greater Restrictions when using REML estimation** section below).
 
-Let's create a new model, `fit_race`, that is like `fit_sex` with `RACE` substituted for `SEX`. Because `RACE` has three levels as opposed to the two levels in `SEX`, it has more degrees of freedom. We can see this by adding it the call to `anova(test = FALSE)`:
+Let's create a new model, `fit_race`, that is like `fit_sex` with `RACE` substituted for `SEX`. Because `RACE` has three levels as opposed to the two levels in `SEX`, it has more *df*. We can see this by adding it the call to `anova(test = FALSE)`:
 
 ```{r}
 fit_race <- 
@@ -569,13 +607,13 @@ fit_race <-
 anova(fit_sex, fit_race, fit_sex_race, fit_interaction, test = FALSE)
 ```
 
-The four models in the `anova()` call above have increasing degrees of freedom, but LRT still cannot be performed:
+The four models in the `anova()` call above have increasing *df*, but LRT still cannot be performed:
 
 ```{r error=TRUE}
 anova(fit_sex, fit_race, fit_sex_race, fit_interaction)
 ```
 
-`fit_sex` has fewer degrees of freedom than `fit_race` but its covariates are not nested: `fit_race` does not include `SEX`.
+`fit_sex` has fewer *df* than `fit_race` but its covariates are not nested: `fit_race` does not include `SEX`.
 
 #### Nested covariance structures
 
@@ -606,13 +644,13 @@ fit_sex_us <-
   )
 ```
 
-Let's first view the degrees of freedom of these models, which all have identical covariates, using `anova(test = FALSE)`:
+Let's first view the *df* of these models, which all have identical covariates, using `anova(test = FALSE)`:
 
 ```{r}
 anova(fit_sex, fit_sex_csh, fit_sex_toeph, fit_sex_us, test = FALSE)
 ```
 
-However, despite their increasing degrees of freedom and identical covariates, we cannot turn LRT testing on with `test = TRUE` because `fit_sex` is not nested within `fit_sex_csh`:
+However, despite their increasing *df* and identical covariates, we cannot turn LRT testing on with `test = TRUE` because `fit_sex` is not nested within `fit_sex_csh`:
 
 ```{r error=TRUE}
 anova(fit_sex, fit_sex_csh, fit_sex_toeph, fit_sex_us, test = TRUE)
@@ -652,7 +690,7 @@ Without performing LRT, let's first inspect the original `fit_sex` and the new `
 anova(fit_sex, fit_sex_toeph_subset, fit_sex_toeph, fit_sex_us, test = FALSE)
 ```
 
-Even though the `toeph` models (Models 2 and 3) have the same covariates and covariance structures, we see that they have different degrees of freedom because:
+Even though the `toeph` models (Models 2 and 3) have the same covariates and covariance structures, we see that they have different *df* because the number of time points can affect the number of variance parameters depending on the covariance structure that was used; `toeph` is one such covariance structure. For ML-estimated models in particular:
 
 $$
 \text{df} = \text{number of coefficients} + \text{number of variance parameters}
@@ -660,11 +698,11 @@ $$
 
 For all these models, there are four coefficients (one for each of the three predictors and one for the intercept). For the `toeph` covariance structure, the number of variance parameters is $2m - 1$, where $m$ is the number of time points (see `?mmrm::cov_types`).
 
-Therefore, we can verify that the original `fit_sex_toeph` model's df is $4 + 2\times 4 - 1 = 11$, and the new `fit_sex_toeph_subset` model's df is $4 + 2\times 3 - 1 = 9$.
+Therefore, we can verify that the original `fit_sex_toeph` model's *df* is $4 + 2\times 4 - 1 = 11$, and the new `fit_sex_toeph_subset` model's *df* is $4 + 2\times 3 - 1 = 9$.
 
 #### Data sameness assertion: Different data, `refit = FALSE`
 
-Because the degrees of freedom increases with each model, the covariates are nested, and the covariance structures are also nested, it may appear at first that we can perform the following likelihood ratio testing as is; however, this will not work, because LRT also requires that all models use the same data set:
+Because the *df* increases with each model, the covariates are nested, and the covariance structures are also nested, it may appear at first that we can perform the following likelihood ratio testing as is; however, this will not work, because LRT also requires that all models use the same data set:
 
 ```{r error=TRUE}
 anova(fit_sex, fit_sex_toeph_subset, fit_sex_us)
@@ -678,17 +716,17 @@ As the error message above suggests, we can set `refit = TRUE`, which will find 
 anova(fit_sex, fit_sex_toeph_subset, fit_sex_us, refit = TRUE)
 ```
 
-We have success, and we see that the diagnostics have changed for Models 1 and 3 since they have been refitted with smaller data sets. Notice also the partial change in degrees of freedom for Models 1 and 3. 
+We have success, and we see that the diagnostics have changed for Models 1 and 3 since they have been refitted with smaller data sets. Notice also the change in *df* for Model 3.
 
-Concerning Model 1, the degrees of freedom are still 6 because the number of variance parameters in the `ar1` covariance structure is always 2. Therefore, changing the number of time points will not change the degrees of freedom; this also applies to `cs`, whose number of covariance parameters is also fixed at 2. 
+Concerning Model 1, the *df* are still 6 because the number of variance parameters in the `ar1` covariance structure is always 2. Therefore, changing the number of time points will not change the *df*; this also applies to `cs`, whose number of covariance parameters is also fixed at 2.
 
-Concerning Model 2, the unstructured covariance has $m(m+1)/2$ covariance parameters. In this case, when we account for the four coefficients, $df = 4 + 3(3+1)/2 = 10$.
+Concerning Model 2, the unstructured covariance has $m(m+1)/2$ parameters. In this case, when we account for the four coefficients, $df = 4 + 3(3+1)/2 = 10$.
 
 Since Model 2's data set was a subset of the other Models' data, its results are unchanged.
 
 #### Refitting without LRT
 
-We can choose to refit the models while bypassing LRT results by specifying both `test = FALSE` and `refit = TRUE`. When we do this, there is no data sameness assertion. 
+We can choose to refit the models while bypassing LRT results by specifying both `test = FALSE` and `refit = TRUE`. When we do this, there is no data sameness assertion.
 
 ```{r}
 anova(fit_sex_toeph_subset, fit_sex_toeph, fit_race, fit_sex_csh,
@@ -748,7 +786,7 @@ anova(fit_sex_ar1_reml, fit_sex_us)
 
 # Appendix: nested covariance structures
 
-For all covariance structures described below, let $i$ and $j$ be the indices of the time points of a model. Therefore, $i$ and $j$ can each take a value in the sequence $\{1, 2, ...\}$, and the $i,j$ element of the covariance matrix is the variance between the $i$th observation and the $j$th observation.
+For all covariance structures described below, let $i$ and $j$ be the indices of the time points of a model. Therefore, $i$ and $j$ can each take a value in the sequence $\{1, 2, ...\}$, and the $i,j$ element of the covariance matrix is the variance between the $i$-th observation and the $j$-th observation.
 
 ## Unstructured covariance
 
