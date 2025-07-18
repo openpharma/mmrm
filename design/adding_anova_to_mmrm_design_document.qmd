@@ -13,44 +13,61 @@ library(mmrm)
 
 # Background
 
-A current drawback of `mmrm` is that it does not support `stats::anova()` (i.e., `anova.mmrm()` does not exist). This is discussed here: <https://github.com/openpharma/mmrm/issues/164>
+A current drawback of `mmrm` is that it does not support `stats::anova()` (i.e., `anova.mmrm()` does not exist). This is discussed here: <https://github.com/openpharma/mmrm/issues/164>. Users are interested in an `mmrm` method for `anova()` supporting the likelihood ratio rest (LRT) for `mmrm` model fits.
 
-## Key points from the GitHub issue
+# Specifications
 
-The title of the issue is centered on incorporating the Likelihood Ratio Test for `mmrm` fits: "\[feature request\] add likelihood ratio test."
+## Primary Usage: LRT
 
-There is consensus that this goal of obtaining LRT results would be available via a new `anova()` method for `mmrm` model fits.
+The primary usage of `anova.mmrm()` would be to compare multiple nested model fits with a focus on performing LRT on adjacent models. To accomplish this, supplied models must meet the following requirements.
 
-### Models should be compared to check if they are nested:
+### Compatible Covariates
 
--   Nested sets of covariates. See: <https://github.com/openpharma/mmrm/issues/164#issuecomment-1446364890>
--   "Nested" covariance structures (e.g., unstructured + any structured; AR1 being a special case of Toeplitz). See: <https://github.com/openpharma/mmrm/issues/164#issuecomment-1446627674> and the **Nested covariance structures proofs** appendix below.
--   **Not both** of the above, as this would be too complicated.
+If all supplied models were estimated using maximum likelihood (ML), the models must have nested covariates in order to undergo LRT. In other words, the set of covariates for each model must be a subset of the covariates of the next model. See: <https://github.com/openpharma/mmrm/issues/164#issuecomment-1446364890>.
 
-### Accommodate comparison of models that used different data sets
+However, if any of the supplied models were estimated using restricted maximum likelihood (REML), all models must have the same covariates.
 
-It's possible that the larger model was fit with an augmented data set (<https://github.com/openpharma/mmrm/issues/164#issuecomment-1446839199>). In this case, it would be advantageous for the function to refit the model (<https://github.com/openpharma/mmrm/issues/164#issuecomment-1447419569>).
+### Nested covariance structures
 
-## Additional considerations
+LRT requires that the covariance structure of each model must be either (1) the same as that of the next model or (2) a special case of that of the next model. For instance, the homogeneous first-order autoregressive structure (`ar1`) is a special case of the Toeplitz structure (`toep`), so models using `ar1` must precede models using `toep`. Concerning models with unstructured covariances, they must follow all models having a covariance structure. See: <https://github.com/openpharma/mmrm/issues/164#issuecomment-1446627674> as well as the **Nested covariance structures proofs** appendix below.
 
-### Providing only one fit to `anova.mmrm()`
+### **Increasing degrees of freedom**
 
-`?stats::anova` declares that if only one model fit is provided, the function will calculate the significance of model terms. The `anova.mmrm()` should honor this.
+Each supplied model fit must have more degrees of freedom (*df*) than the preceding model fit.
 
-### Following the lead of `anova()` methods in `nlme` and `lme4`
+### Common data sets
 
-In order that `anova.mmrm()` may be comparable to `anova()` methods in the `nlme` and `lme4` packages, it shall contain the following arguments:
+LRT compares models that are fit to the same data. Model fits must either already use the same data or be refitted to a set of common observations in their respective data sets. See <https://github.com/openpharma/mmrm/issues/164#issuecomment-1446839199> and <https://github.com/openpharma/mmrm/issues/164#issuecomment-1447419569>.
 
--   `test` argument to opt in/out of obtaining LRT results (see `?nlme::anova.lme`). The function will return degrees of freedom (*df*), AIC, BIC, and log-likelihood regardless.
--   `refit` arguments to allow for refitting the models (see `?lme4::anova.merMod`).
+## Compliance with `?stats::anova` 
+
+As a method of the the generic function `stats::anova()`, `anova.mmrm()` will comply with the assertions in the generic's help page, `?stats::anova`.
+
+-   This method will yield a table of results.
+
+-   This method will accept a sequence of `mmrm` fits that are tested against one another in the order supplied.
+
+-   When a single `mmrm` fit is supplied, the resulting table will test the significance of the model's terms.
+
+## Following the lead of `anova()` methods in `nlme` and `lme4`
+
+In order that `anova.mmrm()` may be comparable to `anova()` methods in the `nlme` and `lme4` packages, it shall deliver a table of fit diagnostics (e.g., AIC, BIC, log likelihood) regardless of whether LRT is performed.
+
+Furthermore, `anova.mmrm()` shall accept the following `TRUE`/`FALSE` arguments:
+
+-   `test` – opt out of obtaining LRT results (see `?nlme::anova.lme`).
+
+-   `refit` – refit the models if they are incomparable (see `?lme4::anova.merMod`).
 
 # Prerequisite: augment `logLik.mmrm_tmb()`
 
-This function needs to return more data in the `attributes()` of the returned value:
+This function shall return more data in the `attributes()` of the returned value:
 
--   `df`: the *df* shall be returned as an attribute.
-    -   If REML estimation was used, it shall equal the number of variance parameters.
-    -   If ML estimation was used, it shall equal the sum of the number of variance parameters and the number of estimated coefficients.
+-   `n_param`: the number of variance parameters.
+-   `n_coef`: the number of estimated coefficients.
+-   `df`: the degrees of freedom
+    -   If REML estimation was used, it shall equal `n_param`.
+    -   If ML estimation was used, it shall equal `n_param + n_coef`.
 -   Add `"logLik"` to the `class()` of the returned value
 
 Prototype:
@@ -66,14 +83,14 @@ logLik.mmrm_tmb <- function(object, ...) {
   out <- -component(object, "neg_log_lik")
 
   # Number of parameters
-  n_params <- component(object, "n_theta")
+  n_param <- component(object, "n_theta")
 
   # Number of estimated coefficients
-  n_coef <- sum(!is.na(coef(object, ...)))
+  n_coef <- length(coef(object, complete = FALSE))
   
-  df <- n_params + n_coef * !component(object, "reml")
+  df <- n_param + n_coef * !component(object, "reml")
   
-  attr(out, "n_params") <- n_params
+  attr(out, "n_param") <- n_param
   attr(out, "n_coef") <- n_coef
   attr(out, "df") <- df
   class(out) <- "logLik"
@@ -99,8 +116,8 @@ anova(object, ..., test = TRUE, refit = FALSE)
 |------------------------------------|------------------------------------|
 | `object` | An object inheriting from class `mmrm`: a fitted mixed model with repeated measures. |
 | `...` | Other optional fitted model objects inheriting from class `mmrm`. |
-| `test` | Logical indicating whether the output should include likelihood ratio test results comparing the model fits to one another. Defaults to `TRUE`. |
-| `refit` | Logical indicating whether the models should be refitted with a new data set consisting the maximum number of observations in common with all the fits' data sets, after which the calculation of results is resumed. This is ignored if the models all have the same underlying data set. If `refit = FALSE` and the models have different underlying data sets, an error will be thrown. Defaults to `FALSE`. |
+| `test` | Logical indicating whether the output should include likelihood ratio test (LRT) results comparing the model fits to one another. Defaults to `TRUE`. |
+| `refit` | Logical indicating whether the models should be refitted with the dataset consisting of their shared set of observations before performing diagnostics and testing. This is ignored if the models already share the same dataset. If `refit = FALSE` and the models have different underlying data sets, an error will be thrown. Defaults to `FALSE`. |
 
 ## Function outline
 
@@ -114,7 +131,7 @@ If the user provides only one model fit to `anova.mmrm()`, the function will cal
 
 If the user provides more than one model fit, a data frame is produced with a row for each model, and the columns will contain identifying information as well as standard diagnostics (e.g., AIC; log likelihood).
 
-If the user supplied `test = TRUE`, the model fits are subject to further tests to ensure they are nestable. If the data sets for the fits are not the same and the user supplied `refit = TRUE`, the largest common dataset is determined using `Reduce(f = merge)`, and all models are refitted using this data set. The pairs of models then undergo likelihood ratio testing, and the results are augmented into the data frame of results.
+If the user supplied `test = TRUE`, the model fits are subject to further tests to ensure they are nestable. If the datasets for the fits are not the same and the user specified `refit = TRUE`, the observations common to all the fits' datasets are compiled, and all models are refitted using this data set. The pairs of models then undergo likelihood ratio testing, and the results are augmented into the data frame of results.
 
 ### Prototype code
 
@@ -160,7 +177,7 @@ anova.mmrm <- function (object, ..., test = TRUE, refit = FALSE) {
         Model = seq_along(fits),
         refit = refit_lgl,
         REML = vapply(fits, component, logical(1L), "reml"),
-        n_params = vapply(logLik_vec, attr, numeric(1L), "n_params"),
+        n_param = vapply(logLik_vec, attr, numeric(1L), "n_param"),
         n_coef = vapply(logLik_vec, attr, numeric(1L), "n_coef"),
         df = vapply(logLik_vec, attr, numeric(1L), "df"), 
         AIC = vapply(fits, AIC, numeric(1)),
@@ -193,6 +210,8 @@ anova.mmrm <- function (object, ..., test = TRUE, refit = FALSE) {
     out$call <- vapply(lapply(fits, component, "call"), deparse1, character(1L))
     
   }
+  
+  class(out) <- union("anova.mmrm", class(out))
   
   out
 }
