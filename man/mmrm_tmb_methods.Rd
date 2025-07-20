@@ -160,6 +160,9 @@ columns and one row per input data row.
 \item \code{terms(mmrm_tmb)}: obtains the terms object.
 
 \item \code{logLik(mmrm_tmb)}: obtains the attained log likelihood value.
+Includes as \link{attributes} the number of variance parameters, number of
+estimated coefficients, and degrees of freedom. Resulting value is of class
+\code{\link[stats:logLik]{logLik}}.
 
 \item \code{formula(mmrm_tmb)}: obtains the used formula.
 
