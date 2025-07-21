@@ -667,6 +667,18 @@ test_that("logLik works as expected", {
   expect_equal(result, expected)
 })
 
+test_that("logLik works as expected with ML estimation", {
+  object <- fit_mmrm(
+    .tmb_formula,
+    fev_data,
+    weights = rep(1, nrow(fev_data)),
+    reml = FALSE
+  )
+  result <- expect_silent(logLik(object))
+  expected <- structure(-1821.98024, n_param = 10, n_coef = 3, df = 13, class = "logLik")
+  expect_equal(result, expected)
+})
+
 # formula ----
 
 test_that("formula works as expected", {
