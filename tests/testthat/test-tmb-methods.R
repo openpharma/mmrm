@@ -663,7 +663,19 @@ test_that("terms works as expected with defaults", {
 test_that("logLik works as expected", {
   object <- get_mmrm_tmb()
   result <- expect_silent(logLik(object))
-  expected <- -1821.19736
+  expected <- structure(-1821.19736, n_param = 10, n_coef = 3, df = 10, class = "logLik")
+  expect_equal(result, expected)
+})
+
+test_that("logLik works as expected with ML estimation", {
+  object <- fit_mmrm(
+    .tmb_formula,
+    fev_data,
+    weights = rep(1, nrow(fev_data)),
+    reml = FALSE
+  )
+  result <- expect_silent(logLik(object))
+  expected <- structure(-1821.98024, n_param = 10, n_coef = 3, df = 13, class = "logLik")
   expect_equal(result, expected)
 })
 
@@ -727,14 +739,14 @@ test_that("deviance works as expected", {
 test_that("AIC works as expected with defaults", {
   object <- get_mmrm_tmb()
   result <- expect_silent(AIC(object))
-  expected <- -2 * logLik(object) + 2 * length(object$theta_est)
+  expected <- -2 * c(logLik(object)) + 2 * length(object$theta_est)
   expect_equal(result, expected)
 })
 
 test_that("AIC works as expected with different k", {
   object <- get_mmrm_tmb()
   result <- expect_silent(AIC(object, k = 5))
-  expected <- -2 * logLik(object) + 5 * length(object$theta_est)
+  expected <- -2 * c(logLik(object)) + 5 * length(object$theta_est)
   expect_equal(result, expected)
 })
 
@@ -744,7 +756,7 @@ test_that("corrected AIC works as expected", {
   m <- nrow(object$tmb_data$x_matrix) - ncol(object$tmb_data$x_matrix)
   n_theta <- length(object$theta_est)
   multiplier <- m / (m - n_theta - 1)
-  expected <- -2 * logLik(object) + 2 * length(object$theta_est) * multiplier
+  expected <- -2 * c(logLik(object)) + 2 * length(object$theta_est) * multiplier
   expect_equal(result, expected)
 })
 
@@ -753,7 +765,7 @@ test_that("corrected AIC works as expected", {
 test_that("BIC works as expected", {
   object <- get_mmrm_tmb()
   result <- expect_silent(BIC(object))
-  expected <- -2 * logLik(object) + log(object$tmb_data$n_subjects) * length(object$theta_est)
+  expected <- -2 * c(logLik(object)) + log(object$tmb_data$n_subjects) * length(object$theta_est)
   expect_equal(result, expected)
 })
 
