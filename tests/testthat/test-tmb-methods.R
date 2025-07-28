@@ -1216,3 +1216,63 @@ test_that("h_get_prediction_variance works as expected", {
     tolerance = 1e-1
   )
 })
+
+test_that("h_dataset_sort_all() sorts in column order", {
+  expect_equal(
+    h_dataset_sort_all(unique(mtcars[c("am", "vs", "cyl")])),
+    data.frame(
+      am = c(0, 0, 0, 1, 1, 1, 1),
+      vs = c(0, 1, 1, 0, 0, 0, 1),
+      cyl = c(8, 4, 6, 4, 6, 8, 4),
+      row.names =
+        c("Hornet Sportabout", "Merc 240D", "Hornet 4 Drive", "Porsche 914-2",
+          "Mazda RX4", "Ford Pantera L", "Datsun 710")
+    )
+  )
+})
+
+test_that("h_check_columns_nested() correctly compares dfs", {
+  expect_true(h_check_columns_nested(mtcars[, -2:-5], mtcars))
+  expect_false(h_check_columns_nested(mtcars[-2:-5, ], mtcars))
+  expect_false(h_check_columns_nested(transform(mtcars, a = 1), mtcars))
+})
+
+test_that("h_check_fits_all_data_same() correctly compares dfs", {
+  expect_true(h_check_fits_all_data_same(list(get_mmrm_group(),
+                                              get_mmrm(),
+                                              get_mmrm_rank_deficient())))
+  expect_false(h_check_fits_all_data_same(list(get_mmrm(),
+                                               get_mmrm_group(),
+                                               get_mmrm_rank_deficient())))
+  expect_false(h_check_fits_all_data_same(list(get_mmrm(),
+                                               get_mmrm_alt_data())))
+})
+
+test_that("h_fits_common_data() grabs common observations among datasets", {
+  expect_equal(
+    h_fits_common_data(
+      list(get_mmrm(), get_mmrm_alt_data(), get_mmrm_rank_deficient())
+    ),
+    data.frame(
+      FEV1 = c(39.9710497720302, NA),
+      AVISIT = factor(2:1, labels = c("VIS1", "VIS2")),
+      USUBJID = factor(c(1L, 1L), labels = "PT1"),
+      RACE = factor(c(2L, 2L), labels = "Black or African American"),
+      SEX = factor(c(2L, 2L), labels = "Female"),
+      ARMCD = factor(c(2L, 2L), labels = "TRT"),
+      SEX2 = factor(c(2L, 2L), labels = "Female")
+    )
+  )
+})
+
+test_that("h_get_minimal_fit_data() grabs only colums used in model fitting", {
+  expect_equal(
+    h_get_minimal_fit_data(get_mmrm_group()),
+    fev_data[c("FEV1", "AVISIT", "USUBJID", "ARMCD")]
+  )
+  expect_equal(
+    h_get_minimal_fit_data(get_mmrm()),
+    fev_data[c("FEV1", "AVISIT", "USUBJID", "RACE", "SEX", "ARMCD")]
+  )
+})
+
