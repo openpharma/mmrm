@@ -1232,20 +1232,34 @@ test_that("h_dataset_sort_all() sorts in column order", {
 })
 
 test_that("h_check_columns_nested() correctly compares dfs", {
-  expect_true(h_check_columns_nested(mtcars[, -2:-5], mtcars))
+  expect_true(h_check_columns_nested(mtcars[, -2:-5], structure(mtcars, a = 1)))
+  # FALSE because different numbers of rows:
   expect_false(h_check_columns_nested(mtcars[-2:-5, ], mtcars))
+  # FALSE because first dataset has more columns than second dataset:
   expect_false(h_check_columns_nested(transform(mtcars, a = 1), mtcars))
+  # FALSE because the first observation is different in each dataset:
+  expect_false(h_check_columns_nested(transform(mtcars, vs = c(7, vs[-1])),
+                                      mtcars))
 })
 
 test_that("h_check_fits_all_data_same() correctly compares dfs", {
   expect_true(h_check_fits_all_data_same(list(get_mmrm_group(),
                                               get_mmrm(),
                                               get_mmrm_rank_deficient())))
+  # FALSE because get_mmrm_smaller_data() has a dataset with fewer rows:
+  expect_false(h_check_fits_all_data_same(list(get_mmrm_group(),
+                                               get_mmrm(),
+                                               get_mmrm_smaller_data(),
+                                               get_mmrm_rank_deficient())))
+  # FALSE because get_mmrm() uses more columns than get_mmrm_group():
   expect_false(h_check_fits_all_data_same(list(get_mmrm(),
                                                get_mmrm_group(),
                                                get_mmrm_rank_deficient())))
-  expect_false(h_check_fits_all_data_same(list(get_mmrm(),
-                                               get_mmrm_alt_data())))
+  # FALSE because get_mmrm() and get_mmrm_alt_data() have different observations
+  expect_false(h_check_fits_all_data_same(list(get_mmrm_group(),
+                                               get_mmrm(),
+                                               get_mmrm_alt_data(),
+                                               get_mmrm_rank_deficient())))
 })
 
 test_that("h_fits_common_data() grabs common observations among datasets", {

@@ -137,6 +137,12 @@ get_mmrm_alt_data <- function() {
   .mmrm_alt_data
 }
 
+.smaller_fev_data <- fev_data[fev_data$AVISIT != "VIS4", ]
+.mmrm_smaller_data <- mmrm(.mmrm_formula, .smaller_fev_data)
+get_mmrm_smaller_data <- function() {
+  .mmrm_smaller_data
+}
+
 
 square_matrix <- function(values_by_row) {
   n <- length(values_by_row)
