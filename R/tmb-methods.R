@@ -731,7 +731,7 @@ h_get_sim_per_subj <- function(predict_res, nsub, nsim) {
 #'   second column, and so forth.
 #' @keywords internal
 h_dataset_sort_all <- function(data) {
-  data[do.call(order, unname(data)), ]
+  data[do.call(order, unname(data)), , drop = FALSE]
 }
 
 
