@@ -560,3 +560,204 @@ h_tmb_warn_non_deterministic <- function() {
     warning(msg)
   }
 }
+
+
+
+#' Sort a Data Frame by All Its Columns in Ascending Order
+#'
+#' @param data (`data.frame`)\cr a data frame to be sorted.
+#'
+#' @returns A data frame. The same as the input `data` with columns in the same
+#'   order but with rows sorted by the first column, with ties broken by the
+#'   second column, and so forth.
+#' @keywords internal
+h_dataset_sort_all <- function(data) {
+  assert_data_frame(data)
+  data[do.call(order, unname(data)), , drop = FALSE]
+}
+
+
+
+#' Predicate Indicating Whether Two Datasets Contain the Same Observations
+#'
+#' Checks whether two datasets contain the same observations and that the first
+#' dataset's columns are a subset of the second dataset's columns.
+#'
+#' For efficiency, the inspection takes place in this order:
+#'
+#' 1. `FALSE` is returned early if the datasets do not have the same number of
+#' rows.
+#'
+#' 1. `FALSE` is returned early if the first dataset has a column not in the
+#' second dataset.
+#'
+#' 1. The columns in common are sorted and compared using [all.equal()] with
+#' `check.attributes = FALSE`.
+#'
+#' @param data_basic,data_augmented (`data.frame`)\cr data frames to be
+#'   compared.
+#'
+#' @returns `TRUE` or `FALSE`, indicating whether the or not `data_basic` and
+#'   `data_augmented` contain the same observations and that `data_augmented`
+#'   contains all the columns in `data_basic`.
+#' @seealso [h_check_fits_all_data_same()], which performs this check on the
+#'   datasets of adjacent elements of a list of `mmrm` fits.
+#' @keywords internal
+h_check_columns_nested <- function(data_basic, data_augmented) {
+  assert_data_frame(data_basic)
+  assert_data_frame(data_augmented)
+  if (nrow(data_basic) != nrow(data_augmented)) {
+    return(FALSE)
+  }
+
+  colnames_basic <- colnames(data_basic)
+
+  if (anyNA(match(colnames_basic, colnames(data_augmented)))) {
+    return(FALSE)
+  }
+
+  isTRUE(all.equal(
+    h_dataset_sort_all(data_basic),
+    h_dataset_sort_all(data_augmented[colnames_basic]),
+    check.attributes = FALSE
+  ))
+}
+
+
+
+#' Predicate Indicating Whether `mmrm` Fits' Datasets Contain the Same
+#' Observations
+#'
+#' Checks a `list` of `mmrm` fits to see whether all their datasets contain the
+#' same observations and that they only increase in columns from one dataset to
+#' the next (i.e, columns are nested).
+#'
+#' For efficiency, the inspection takes place in this order:
+#'
+#' 1. `FALSE` is returned early if not all datasets have the same number of
+#' rows.
+#'
+#' 1. `FALSE` is returned early if a dataset has a column not in the next
+#' dataset.
+#'
+#' 1. The columns in common among adjacent datasets are sorted and compared
+#' using [all.equal()] with `check.attributes = FALSE`.
+#'
+#' This function is more efficient than running [h_check_columns_nested()] on
+#' all adjacent pairs and supplying the results to [all()].
+#'
+#' @param fits (`list`)\cr list of `mmrm` fits.
+#'
+#' @param data_basic,data_augmented (`data.frame`)\cr data frames to be
+#'   compared.
+#'
+#' @returns `TRUE` or `FALSE` indicating whether or not the datasets underlying
+#'   the elements of `fits` contain the same observations, and that each
+#'   dataset's columns are a subset of the next dataset's columns.
+#' @seealso [h_check_columns_nested()], which performs this check on two data
+#'   sets.
+#' @keywords internal
+h_check_fits_all_data_same <- function(fits) {
+  assert_list(fits, types = "mmrm", any.missing = FALSE, min.len = 1)
+  datasets <- lapply(fits, h_get_minimal_fit_data)
+
+  # Is nrow() the same for all datasets?
+  datasets_nrows <- vapply(datasets, nrow, numeric(1L))
+  if (length(unique(datasets_nrows)) > 1L) {
+    return(FALSE)
+  }
+
+  cols <- lapply(datasets, colnames)
+
+  for (i in seq_along(fits)[-1L]) {
+    # Ensure previous dataset's cols are a subset of the current dataset's cols
+    if (anyNA(match(cols[[i - 1L]], cols[[i]]))) {
+      return(FALSE)
+    }
+  }
+
+  datasets[[1L]] <- h_dataset_sort_all(datasets[[1L]])
+  for (i in seq_along(fits)[-1L]) {
+
+    # Pull prev dataset's columns to the front of current dataset. Then sort.
+    cols[[i]] <- union(cols[[i - 1L]], cols[[i]])
+    datasets[[i]] <- h_dataset_sort_all(datasets[[i]][cols[[i]]])
+
+    # Ensure the common columns are the same
+    if (
+      !isTRUE(all.equal(
+        datasets[[i - 1L]],
+        datasets[[i]][cols[[i - 1L]]],
+        check.attributes = FALSE
+      ))
+    ) {
+      return(FALSE)
+    }
+  }
+
+  TRUE
+}
+
+
+
+#' Combine the Datasets from `mmrm` Fits
+#'
+#' Take the data columns used in each `mmrm` fit and [merge()] them.
+#'
+#' All default arguments for [merge()] are used, resulting in a "natural join":
+#' the result will only contain the observations found in all datasets.
+#'
+#' [droplevels()] is applied to the final product to prevent extraneous
+#' warnings.
+#'
+#' @param fits (`list`)\cr list of `mmrm` fits.
+#'
+#' @returns A data frame combining all the common observations among the
+#'   datasets underlying the elements of `fits`.
+#' @keywords internal
+h_fits_common_data <- function(fits) {
+  assert_list(fits, types = "mmrm", any.missing = FALSE, min.len = 1)
+  datasets <- lapply(fits, h_get_minimal_fit_data)
+  out <- Reduce(merge, datasets)
+  out <- droplevels(out)
+  out
+}
+
+
+
+#' Obtain the Minimal Dataset Needed for an `mmrm` Fit
+#'
+#' Grab the dataset underlying an `mmrm` fit and select only the used columns.
+#'
+#' Grabs the response variable along with the predictors named in
+#' `fit$formula_parts`.
+#'
+#' @param fits (`mmrm`)\cr a fitted `mmrm` model.
+#'
+#' @returns A data frame: a subset of the columns the dataset underlying `fit`
+#'   (i.e., `fit$data`):
+#'
+#' - The response column.
+#'
+#' - The column denoting the visit index.
+#'
+#' - The column denoting the subject.
+#'
+#' - The column denoting the subject's grouping (e.g., study arm).
+#'
+#' - All other predictors not already specified.
+#'
+#'   Columns that were not used are excluded.
+#'
+#' @keywords internal
+h_get_minimal_fit_data <- function(fit) {
+  assert_class(fit, "mmrm")
+  predictors <-
+    fit[["formula_parts"]][
+      c("visit_var", "subject_var", "group_var", "model_var")
+    ]
+  predictors <- unique(unlist(predictors, use.names = FALSE))
+  terms_attr <- attributes(terms(fit))
+  response <- as.character(terms_attr$variables[[terms_attr$response + 1]])
+  fit[["data"]][c(response, predictors)]
+}

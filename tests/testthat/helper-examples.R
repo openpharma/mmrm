@@ -128,6 +128,22 @@ get_mmrm_brl <- function() {
   .mmrm_brl
 }
 
+.alt_fev_data <- fev_data
+.alt_fev_data$FEV1 <-
+  ifelse(is.na(fev_data$FEV1), fev_data$FEV1_BL, fev_data$FEV1) + 0.1
+.alt_fev_data$FEV1[1:2] <- fev_data$FEV1[1:2]
+.mmrm_alt_data <- mmrm(.mmrm_formula, .alt_fev_data)
+get_mmrm_alt_data <- function() {
+  .mmrm_alt_data
+}
+
+.smaller_fev_data <- fev_data[fev_data$AVISIT != "VIS4", ]
+.mmrm_smaller_data <- mmrm(.mmrm_formula, .smaller_fev_data)
+get_mmrm_smaller_data <- function() {
+  .mmrm_smaller_data
+}
+
+
 square_matrix <- function(values_by_row) {
   n <- length(values_by_row)
   size <- sqrt(n)
