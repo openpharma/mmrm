@@ -1289,4 +1289,3 @@ test_that("h_get_minimal_fit_data() grabs only colums used in model fitting", {
     fev_data[c("FEV1", "AVISIT", "USUBJID", "RACE", "SEX", "ARMCD")]
   )
 })
-

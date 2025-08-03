@@ -290,7 +290,7 @@ h_confirm_large_levels <- function(x) {
   if (!identical(proceed, TRUE)) {
     stop("Visit levels too large!", call. = FALSE)
   }
-  return(TRUE)
+  TRUE
 }
 
 #' Default Value on NULL
@@ -326,7 +326,7 @@ h_get_na_action <- function(na_action) {
   }
   if (is.character(na_action) && length(na_action) == 1L) {
     assert_subset(na_action, c("na.omit", "na.exclude", "na.fail", "na.pass", "na.contiguous"))
-    return(get(na_action, mode = "function", pos = "package:stats"))
+    get(na_action, mode = "function", pos = "package:stats")
   }
 }
 
