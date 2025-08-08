@@ -7,7 +7,7 @@
 h_check_cov_struct_nesting(model_basic, model_augmented)
 }
 \arguments{
-\item{model_basic, model_augmented}{(\code{formula_parts})\cr the
+\item{model_basic, model_augmented}{(\code{mmrm_tmb_formula_parts})\cr the
 \code{formula_parts} element of an \code{mmrm} model fit.}
 }
 \value{
@@ -27,6 +27,7 @@ covariance structure can result in another covariance structure, the latter
 structure is nested within the former structure.
 
 For upstream coding brevity, this function accepts the \code{formula_parts}
-element of two \code{mmrm} model fits rather than \code{mmrm} objects.
+element of two \code{mmrm} model fits rather than \code{mmrm} objects. Such objects are
+of class \code{mmrm_tmb_formula_parts}.
 }
 \keyword{internal}

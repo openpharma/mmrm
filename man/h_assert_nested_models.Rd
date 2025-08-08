@@ -9,11 +9,12 @@ h_assert_nested_models(model_basic, model_augmented, any_reml)
 \arguments{
 \item{model_basic, model_augmented}{(\code{mmrm})\cr model fits.}
 
-\item{any_reml}{(\code{bool})\cr \code{TRUE} or \code{FALSE} indicating whether or not
+\item{any_reml}{(\code{flag})\cr \code{TRUE} or \code{FALSE} indicating whether or not
 either model used REML estimation.}
 }
 \value{
 \code{TRUE} if \code{model_basic} is nested within \code{model_augmented}.
+Otherwise, an error is thrown.
 }
 \description{
 Throws an error if \code{model_basic} isn't nested within \code{model_augmented}.
