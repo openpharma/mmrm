@@ -132,15 +132,43 @@ get_mmrm_brl <- function() {
 .alt_fev_data$FEV1 <-
   ifelse(is.na(fev_data$FEV1), fev_data$FEV1_BL, fev_data$FEV1) + 0.1
 .alt_fev_data$FEV1[1:2] <- fev_data$FEV1[1:2]
+.alt_fev_data$AVISIT2 <- .alt_fev_data$AVISIT
+.alt_fev_data$USUBJID2 <- .alt_fev_data$USUBJID
+.alt_fev_data$ARMCD2 <- .alt_fev_data$ARMCD
+
 .mmrm_alt_data <- mmrm(.mmrm_formula, .alt_fev_data)
 get_mmrm_alt_data <- function() {
   .mmrm_alt_data
+}
+
+.mmrm_formula_alt_visit <- FEV1 ~ ARMCD + us(AVISIT2 | ARMCD / USUBJID)
+.mmrm_alt_visit <- mmrm(.mmrm_formula_alt_visit, .alt_fev_data)
+get_mmrm_alt_visit <- function() {
+  .mmrm_alt_visit
+}
+
+.mmrm_formula_alt_subj <- FEV1 ~ ARMCD + us(AVISIT | ARMCD / USUBJID2)
+.mmrm_alt_subj <- mmrm(.mmrm_formula_alt_subj, .alt_fev_data)
+get_mmrm_alt_subj <- function() {
+  .mmrm_alt_subj
+}
+
+.mmrm_formula_alt_group <- FEV1 ~ ARMCD + us(AVISIT | ARMCD2 / USUBJID)
+.mmrm_alt_group <- mmrm(.mmrm_formula_alt_group, .alt_fev_data)
+get_mmrm_alt_group <- function() {
+  .mmrm_alt_group
 }
 
 .smaller_fev_data <- fev_data[fev_data$AVISIT != "VIS4", ]
 .mmrm_smaller_data <- mmrm(.mmrm_formula, .smaller_fev_data)
 get_mmrm_smaller_data <- function() {
   .mmrm_smaller_data
+}
+
+.mmrm_formula_cs <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + cs(AVISIT | USUBJID)
+.mmrm_example_cs <- mmrm(.mmrm_formula_cs, fev_data)
+get_mmrm_cs <- function() {
+  .mmrm_example_cs
 }
 
 
