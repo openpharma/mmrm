@@ -82,9 +82,10 @@ predict.mmrm_tmb <- function(
   assert_flag(conditional)
   interval <- match.arg(interval)
   formula_parts <- object$formula_parts
-  # Make sure we have at least a completely NA filled response variable in newdata.
-  if (isFALSE(formula_parts$response_var %in% names(newdata))) {
-    newdata[[formula_parts$response_var]] <- NA_real_
+  # Make sure we have at least completely NA filled response variables in newdata.
+  missing_resp_vars <- setdiff(formula_parts$response_var, names(newdata))
+  for (resp_var in missing_resp_vars) {
+    newdata[[resp_var]] <- NA_real_
   }
   if (any(object$tmb_data$x_cols_aliased)) {
     warning(

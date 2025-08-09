@@ -197,6 +197,37 @@ test_that("predict returns unconditional prediction intervals also if response d
   expect_matrix(y_pred, nrows = nrow(fev_data), ncol = 3L)
 })
 
+test_that("predict also fixes multiple missing response variables", {
+  object <- mmrm(
+    I(FEV1 + VISITN2) ~ SEX + us(AVISIT | USUBJID),
+    fev_data
+  )
+  fev_data2$FEV1 <- NULL
+  y_pred <- expect_silent(predict(
+    object,
+    fev_data2,
+    interval = "prediction",
+    nsim = 2L
+  ))
+  expect_matrix(y_pred, nrows = nrow(fev_data), ncol = 3L)
+})
+
+test_that("predict works with combined covariates", {
+  object <- mmrm(
+    FEV1 ~ SEX + I(VISITN2 + WEIGHT) + us(AVISIT | USUBJID),
+    fev_data
+  )
+  y_pred <- predict(object, interval = "prediction", nsim = 2L)
+})
+
+test_that("predict works with combined response", {
+  object <- mmrm(
+    I(FEV1 / WEIGHT) ~ SEX + us(AVISIT | USUBJID),
+    fev_data
+  )
+  y_pred <- predict(object, interval = "prediction", nsim = 2L)
+})
+
 test_that("predict warns on aliased variables", {
   new_fev_data <- rbind(
     fev_data,

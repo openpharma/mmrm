@@ -31,7 +31,8 @@ spatial
 \item \code{group_var}: \code{string} with the group variable name. If no group specified,
 this element is \code{NULL}.
 \item \code{model_var}: \code{character} with the variables names of the formula, except \code{subject_var}.
-\item \code{response_var}: \code{string} with the response variable name.
+\item \code{response_var}: \code{character} with the response variable name (might include multiple
+variables if these are combined with the I() operator)
 }
 }
 \description{

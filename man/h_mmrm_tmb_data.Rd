@@ -36,11 +36,15 @@ stop the function return the error, "drop" to drop these columns, and "keep" to 
 \item{allow_na_response}{(\code{flag})\cr whether NA in response is allowed.}
 
 \item{drop_levels}{(\code{flag})\cr whether drop levels for covariates. If not dropped could lead to singular matrix.}
+
+\item{xlev}{(\code{NULL} or \code{list}) optional named list of character vectors giving the full set of levels to be
+assumed for each factor.}
 }
 \value{
 List of class \code{mmrm_tmb_data} with elements:
 \itemize{
 \item \code{full_frame}: \code{data.frame} with \code{n} rows containing all variables needed in the model.
+(Also includes potentially combined response variables as separate columns.)
 \item \code{data}: \code{data.frame} of input dataset.
 \item \code{x_matrix}: \code{matrix} with \code{n} rows and \code{p} columns specifying the overall design matrix.
 \item \code{x_cols_aliased}: \code{logical} with potentially more than \code{p} elements indicating which

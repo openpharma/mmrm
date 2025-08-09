@@ -113,6 +113,15 @@ test_that("h_mmrm_tmb_formula_parts works as expected", {
   )
 })
 
+test_that("h_mmrm_tmb_formula_parts can also return multiple response variables", {
+  parts <- expect_silent(h_mmrm_tmb_formula_parts(
+    I(A / B) ~ C + D + E + ar1(AVISIT | USUBJID)
+  ))
+  result <- parts$response_var
+  expected <- c("A", "B")
+  expect_identical(result, expected)
+})
+
 test_that("h_mmrm_tmb_formula_parts works without covariates", {
   result <- expect_silent(h_mmrm_tmb_formula_parts(
     FEV1 ~ ar1(AVISIT | USUBJID)
@@ -520,7 +529,6 @@ test_that("h_mmrm_tmb_data catches case with multiple time points per subject ea
   )
 })
 
-
 test_that("h_mmrm_tmb_data has no side effect of overwrite the weights in global env", {
   weights <- "this is global weights"
   formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
@@ -627,6 +635,23 @@ test_that("h_mmrm_tmb_data errors if too many visit levels", {
     ),
     "Visit levels too large!"
   )
+})
+
+test_that("h_mmrm_tmb_data returns combined response variables in full_frame", {
+  # Note that this is needed for `xlev` computation to work correctly in the
+  # corresponding component() call.
+  formula <- I(FEV1 / WEIGHT) ~ SEX + us(AVISIT | USUBJID)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula)
+  tmb_data <- h_mmrm_tmb_data(
+    formula_parts,
+    fev_data,
+    weights = rep(1, nrow(fev_data)),
+    reml = TRUE,
+    drop_visit_levels = TRUE
+  )
+  result <- tmb_data$full_frame
+  expect_data_frame(result)
+  expect_subset(c("FEV1", "WEIGHT"), names(result))
 })
 
 # h_mmrm_tmb_parameters ----

@@ -19,7 +19,8 @@
 #' - `group_var`: `string` with the group variable name. If no group specified,
 #'   this element is `NULL`.
 #' - `model_var`: `character` with the variables names of the formula, except `subject_var`.
-#' - `response_var`: `string` with the response variable name.
+#' - `response_var`: `character` with the response variable name (might include multiple
+#'    variables if these are combined with the I() operator)
 #'
 #' @keywords internal
 h_mmrm_tmb_formula_parts <- function(
@@ -61,9 +62,12 @@ h_mmrm_tmb_formula_parts <- function(
 #' @param drop_visit_levels (`flag`)\cr whether to drop levels for visit variable, if visit variable is a factor.
 #' @param allow_na_response (`flag`)\cr whether NA in response is allowed.
 #' @param drop_levels (`flag`)\cr whether drop levels for covariates. If not dropped could lead to singular matrix.
+#' @param xlev (`NULL` or `list`) optional named list of character vectors giving the full set of levels to be
+#'   assumed for each factor.
 #'
 #' @return List of class `mmrm_tmb_data` with elements:
 #' - `full_frame`: `data.frame` with `n` rows containing all variables needed in the model.
+#'      (Also includes potentially combined response variables as separate columns.)
 #' - `data`: `data.frame` of input dataset.
 #' - `x_matrix`: `matrix` with `n` rows and `p` columns specifying the overall design matrix.
 #' - `x_cols_aliased`: `logical` with potentially more than `p` elements indicating which
@@ -168,6 +172,12 @@ h_mmrm_tmb_data <- function(
       xlev = xlev
     ))
   )
+  # Make sure all response variables are included in the full model frame.
+  # We need this for `xlev` computation to work correctly in component().
+  missing_resp_vars <- setdiff(formula_parts$response_var, names(full_frame))
+  for (resp_var in missing_resp_vars) {
+    full_frame[[resp_var]] <- data[[resp_var]]
+  }
   if (drop_levels) {
     full_frame <- h_drop_levels(
       full_frame,
@@ -178,8 +188,10 @@ h_mmrm_tmb_data <- function(
   }
   has_response <- !identical(attr(attr(full_frame, "terms"), "response"), 0L)
   keep_ind <- if (allow_na_response && has_response) {
-    # Note that response is always the first column if there is response.
-    stats::complete.cases(full_frame[, -1L, drop = FALSE])
+    # Note that final response is always the first column if there is response.
+    # We also need to add other potentially added (source) response columns here.
+    resp_col_inds <- c(1L, match(missing_resp_vars, names(full_frame)))
+    stats::complete.cases(full_frame[, -resp_col_inds, drop = FALSE])
   } else {
     stats::complete.cases(full_frame)
   }
