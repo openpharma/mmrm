@@ -23,24 +23,25 @@ test_that("prepare numbers for homogeneous ante_dependence tests", {
   # fmt: skip
   expected <- square_matrix(c(
     2.0, 0.0, 0.0, 0.0,
-    1.1394, 1.6437, 0.0, 0.0,
-    0.8056, 1.1623, 1.4142, 0.0,
-    0.7206, 1.0396, 1.2649, 0.8944
+    1.139353, 1.643738, 0.0, 0.0,
+    0.805644, 1.162299, 1.414214, 0.0,
+    0.720590, 1.039591, 1.264911, 0.894427
   ))
-  expect_equal(result, expected, tolerance = 1e-4)
+  expect_equal(result, expected, tolerance = 1e-5)
 })
 
 test_that("prepare numbers for heterogeneous ante_dependence tests", {
-  theta <- c(log(1), log(2), log(3), 1, 2)
-  n_visits <- 3
+  theta <- c(log(1), log(2), log(3), 1, 2, 3)
+  n_visits <- 4
   sds <- exp(theta[1:n_visits])
   x <- tail(theta, n_visits - 1)
   cors <- x / sqrt(1 + x^2)
   # fmt: skip
   cor_mat <- square_matrix(c(
-    1, cors[1], prod(cors[1:2]),
-    cors[1], 1, cors[2],
-    prod(cors[1:2]), cors[2], 1
+    1, cors[1], prod(cors[1:2]), prod(cors[1:3]),
+    cors[1], 1, cors[2], prod(cors[2:3]),
+    prod(cors[1:2]), cors[2], 1, cors[3],
+    prod(cors[1:3]), prod(cors[2:3]), cors[3], 1
   ))
   low_tri <- lower.tri(cor_mat)
   cor_fun_vals <- cbind(
@@ -51,9 +52,10 @@ test_that("prepare numbers for heterogeneous ante_dependence tests", {
   result <- diag(sds) %*% t(chol(cor_mat))
   # fmt: skip
   expected <- square_matrix(c(
-    1, 0, 0,
-    sqrt(2), sqrt(2), 0,
-    1.897367, 1.897367, 1.341641
+    1, 0, 0, 0,
+    sqrt(2), sqrt(2), 0, 0,
+    1.897367, 1.897367, 1.341641, 0,
+    1.630969, 1.630969, 1.153269, 0.859596
   ))
   expect_equal(result, expected, tolerance = 1e-5)
 })

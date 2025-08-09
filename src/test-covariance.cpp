@@ -31,20 +31,21 @@ context("ante_dependence") {
     matrix<double> expected(4, 4);
     expected <<
       2.0, 0.0, 0.0, 0.0,
-      1.1394, 1.6437, 0.0, 0.0,
-      0.8056, 1.1623, 1.4142, 0.0,
-      0.7206, 1.0396, 1.2649, 0.8944;
+      1.139353, 1.643738, 0.0, 0.0,
+      0.805644, 1.162299, 1.414214, 0.0,
+      0.720590, 1.039591, 1.264911, 0.894427;
     expect_equal_matrix(result, expected);
   }
 
   test_that("get_ante_dependence_heterogeneous produces expected result") {
-    vector<double> theta {{log(1.0), log(2.0), log(3.0), 1.0, 2.0}};
-    matrix<double> result = get_ante_dependence_heterogeneous(theta, 3);
-    matrix<double> expected(3, 3);
+    vector<double> theta {{log(1.0), log(2.0), log(3.0), 1.0, 2.0, 3.0}};
+    matrix<double> result = get_ante_dependence_heterogeneous(theta, 4);
+    matrix<double> expected(4, 4);
     expected <<
-      1.0, 0.0, 0.0,
-      sqrt(2.0), sqrt(2.0), 0.0,
-      1.897367, 1.897367, 1.341641;
+      1, 0, 0, 0,
+      sqrt(2), sqrt(2), 0, 0,
+      1.897367, 1.897367, 1.341641, 0,
+      1.630969, 1.630969, 1.153269, 0.859596;
     expect_equal_matrix(result, expected);
   }
 }
