@@ -15,21 +15,25 @@ context("unstructured") {
 
 context("ante_dependence") {
   test_that("corr_fun_ante_dependence works as expected") {
-    vector<double> theta {{1.0, 2.0}};
+    vector<double> theta {{log(2.0), 1.0, 2.0}};
     corr_fun_ante_dependence<double> test_fun(theta);
-    expect_equal(test_fun(1, 0), 0.7071068);
-    expect_equal(test_fun(2, 0), 0.6324555);
-    expect_equal(test_fun(2, 1), 0.8944272);
+    expect_equal(test_fun(1, 0), 0.5696763);
+    expect_equal(test_fun(2, 0), 0.4028220);
+    expect_equal(test_fun(3, 0), 0.3602949);
+    expect_equal(test_fun(2, 1), 0.7071068);
+    expect_equal(test_fun(3, 1), 0.6324555);
+    expect_equal(test_fun(3, 2), 0.8944272);
   }
 
   test_that("get_ante_dependence produces expected result") {
-    vector<double> theta {{log(2.0), 1.0, 2.0}};
-    matrix<double> result = get_ante_dependence(theta, 3);
-    matrix<double> expected(3, 3);
+    vector<double> theta {{log(2.0), log(2.0), 1.0, 2.0}};
+    matrix<double> result = get_ante_dependence(theta, 4);
+    matrix<double> expected(4, 4);
     expected <<
-      2.0, 0.0, 0.0,
-      sqrt(2.0), sqrt(2.0), 0.0,
-      1.264911, 1.264911, 0.8944272;
+      2.0, 0.0, 0.0, 0.0,
+      1.1394, 1.6437, 0.0, 0.0,
+      0.8056, 1.1623, 1.4142, 0.0,
+      0.7206, 1.0396, 1.2649, 0.8944;
     expect_equal_matrix(result, expected);
   }
 
