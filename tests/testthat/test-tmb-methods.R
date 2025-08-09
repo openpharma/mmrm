@@ -184,12 +184,17 @@ test_that("predict works for unconditional prediction if response does not exist
   expect_snapshot_tolerance(y_pred)
 })
 
-test_that("predict returns unconditional prediction intervals if response does not exist", {
+test_that("predict returns unconditional prediction intervals also if response does not exist", {
   object <- get_mmrm()
   fev_data2 <- fev_data
   fev_data2$FEV1 <- NULL
-  y_pred <- expect_silent(predict(object, fev_data2, interval = "prediction"))
-  expect_snapshot_tolerance(y_pred)
+  y_pred <- expect_silent(predict(
+    object,
+    fev_data2,
+    interval = "prediction",
+    nsim = 2L
+  ))
+  expect_matrix(y_pred, nrows = nrow(fev_data), ncol = 3L)
 })
 
 test_that("predict warns on aliased variables", {

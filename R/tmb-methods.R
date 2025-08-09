@@ -61,14 +61,16 @@ fitted.mmrm_tmb <- function(object, ...) {
 #'
 #' @examples
 #' predict(object, newdata = fev_data)
-predict.mmrm_tmb <- function(object,
-                             newdata,
-                             se.fit = FALSE, # nolint
-                             interval = c("none", "confidence", "prediction"),
-                             level = 0.95,
-                             nsim = 1000L,
-                             conditional = FALSE,
-                             ...) {
+predict.mmrm_tmb <- function(
+  object,
+  newdata,
+  se.fit = FALSE, # nolint
+  interval = c("none", "confidence", "prediction"),
+  level = 0.95,
+  nsim = 1000L,
+  conditional = FALSE,
+  ...
+) {
   if (missing(newdata)) {
     newdata <- object$data
   }
@@ -80,6 +82,10 @@ predict.mmrm_tmb <- function(object,
   assert_flag(conditional)
   interval <- match.arg(interval)
   formula_parts <- object$formula_parts
+  # Make sure we have at least a completely NA filled response variable in newdata.
+  if (isFALSE(formula_parts$response_var %in% names(newdata))) {
+    newdata[[formula_parts$response_var]] <- NA_real_
+  }
   if (any(object$tmb_data$x_cols_aliased)) {
     warning(
       "In fitted object there are co-linear variables and therefore dropped terms, ",
@@ -89,41 +95,55 @@ predict.mmrm_tmb <- function(object,
   colnames <- names(Filter(isFALSE, object$tmb_data$x_cols_aliased))
   if (!conditional && interval %in% c("none", "confidence")) {
     # model.matrix always return a complete matrix (no NA allowed)
-    x_mat <- stats::model.matrix(object, data = newdata, use_response = FALSE)[, colnames, drop = FALSE]
+    x_mat <- stats::model.matrix(object, data = newdata, use_response = FALSE)[,
+      colnames,
+      drop = FALSE
+    ]
     x_mat_full <- matrix(
       NA,
-      nrow = nrow(newdata), ncol = ncol(x_mat),
+      nrow = nrow(newdata),
+      ncol = ncol(x_mat),
       dimnames = list(row.names(newdata), colnames(x_mat))
     )
     x_mat_full[row.names(x_mat), ] <- x_mat
     predictions <- (x_mat_full %*% component(object, "beta_est"))[, 1]
-    predictions_raw <- stats::setNames(rep(NA_real_, nrow(newdata)), row.names(newdata))
+    predictions_raw <- stats::setNames(
+      rep(NA_real_, nrow(newdata)),
+      row.names(newdata)
+    )
     predictions_raw[names(predictions)] <- predictions
     if (identical(interval, "none")) {
       return(predictions_raw)
     }
-    se <- switch(interval,
+    se <- switch(
+      interval,
       # can be NA if there are aliased cols
-      "confidence" = diag(x_mat_full %*% component(object, "beta_vcov") %*% t(x_mat_full)),
+      "confidence" = diag(
+        x_mat_full %*% component(object, "beta_vcov") %*% t(x_mat_full)
+      ),
       "none" = NA_real_
     )
     res <- cbind(
-      fit = predictions, se = se,
-      lwr = predictions - stats::qnorm(1 - level / 2) * se, upr = predictions + stats::qnorm(1 - level / 2) * se
+      fit = predictions,
+      se = se,
+      lwr = predictions - stats::qnorm(1 - level / 2) * se,
+      upr = predictions + stats::qnorm(1 - level / 2) * se
     )
     if (!se.fit) {
       res <- res[, setdiff(colnames(res), "se")]
     }
     res_raw <- matrix(
       NA_real_,
-      ncol = ncol(res), nrow = nrow(newdata),
+      ncol = ncol(res),
+      nrow = nrow(newdata),
       dimnames = list(row.names(newdata), colnames(res))
     )
     res_raw[row.names(res), ] <- res
     return(res_raw)
   }
   tmb_data <- h_mmrm_tmb_data(
-    formula_parts, newdata,
+    formula_parts,
+    newdata,
     weights = rep(1, nrow(newdata)),
     reml = TRUE,
     singular = "keep",
@@ -135,12 +155,16 @@ predict.mmrm_tmb <- function(object,
   )
   tmb_data$x_matrix <- tmb_data$x_matrix[, colnames, drop = FALSE]
   predictions <- h_get_prediction(
-    tmb_data, object$theta_est, object$beta_est, component(object, "beta_vcov")
+    tmb_data,
+    object$theta_est,
+    object$beta_est,
+    component(object, "beta_vcov")
   )$prediction
   res <- cbind(fit = rep(NA_real_, nrow(newdata)))
   new_order <- match(row.names(tmb_data$full_frame), orig_row_names)
   res[new_order, "fit"] <- predictions[, "fit"]
-  se <- switch(interval,
+  se <- switch(
+    interval,
     "confidence" = sqrt(predictions[, "conf_var"]),
     "prediction" = sqrt(h_get_prediction_variance(object, nsim, tmb_data)),
     "none" = NULL
@@ -192,7 +216,13 @@ h_get_prediction <- function(tmb_data, theta, beta, beta_vcov) {
   assert_numeric(theta)
   n_beta <- ncol(tmb_data$x_matrix)
   assert_numeric(beta, finite = TRUE, any.missing = FALSE, len = n_beta)
-  assert_matrix(beta_vcov, mode = "numeric", any.missing = FALSE, nrows = n_beta, ncols = n_beta)
+  assert_matrix(
+    beta_vcov,
+    mode = "numeric",
+    any.missing = FALSE,
+    nrows = n_beta,
+    ncols = n_beta
+  )
   .Call(`_mmrm_predict`, PACKAGE = "mmrm", tmb_data, theta, beta, beta_vcov)
 }
 
@@ -244,8 +274,15 @@ h_get_prediction_variance <- function(object, nsim, tmb_data) {
 #' # Model frame:
 #' model.frame(object)
 #' model.frame(object, include = "subject_var")
-model.frame.mmrm_tmb <- function(formula, data, include = c("subject_var", "visit_var", "group_var", "response_var"),
-                                 full, na.action = "na.omit", ...) { # nolint
+model.frame.mmrm_tmb <- function(
+  formula,
+  data,
+  include = c("subject_var", "visit_var", "group_var", "response_var"),
+  full,
+  na.action = "na.omit",
+  ...
+) {
+  # nolint
   # Construct updated formula and data arguments.
   lst_formula_and_data <-
     h_construct_model_frame_inputs(
@@ -257,7 +294,11 @@ model.frame.mmrm_tmb <- function(formula, data, include = c("subject_var", "visi
   # Only if include is default (full) and also data is missing, and also na.action is na.omit we will
   # use the model frame from the tmb_data.
   include_choice <- c("subject_var", "visit_var", "group_var", "response_var")
-  if (missing(data) && setequal(include, include_choice) && identical(h_get_na_action(na.action), stats::na.omit)) {
+  if (
+    missing(data) &&
+      setequal(include, include_choice) &&
+      identical(h_get_na_action(na.action), stats::na.omit)
+  ) {
     ret <- formula$tmb_data$full_frame
     # Remove weights column.
     ret[, "(weights)"] <- NULL
@@ -297,11 +338,13 @@ model.frame.mmrm_tmb <- function(formula, data, include = c("subject_var", "visi
 #' - `"data"`: a data frame including all columns needed in the formula.
 #'   full formula are identical
 #' @keywords internal
-h_construct_model_frame_inputs <- function(formula,
-                                           data,
-                                           include,
-                                           include_choice = c("subject_var", "visit_var", "group_var", "response_var"),
-                                           full) {
+h_construct_model_frame_inputs <- function(
+  formula,
+  data,
+  include,
+  include_choice = c("subject_var", "visit_var", "group_var", "response_var"),
+  full
+) {
   if (!missing(full) && identical(full, TRUE)) {
     lifecycle::deprecate_warn("0.3", "model.frame.mmrm_tmb(full)")
     include <- include_choice
@@ -316,12 +359,20 @@ h_construct_model_frame_inputs <- function(formula,
 
   drop_response <- !"response_var" %in% include
   add_vars <- unlist(formula$formula_parts[include])
-  new_formula <- h_add_terms(formula$formula_parts$model_formula, add_vars, drop_response)
+  new_formula <- h_add_terms(
+    formula$formula_parts$model_formula,
+    add_vars,
+    drop_response
+  )
 
   drop_response_full <- !"response_var" %in% include_choice
   add_vars_full <- unlist(formula$formula_parts[include_choice])
   new_formula_full <-
-    h_add_terms(formula$formula_parts$model_formula, add_vars_full, drop_response_full)
+    h_add_terms(
+      formula$formula_parts$model_formula,
+      add_vars_full,
+      drop_response_full
+    )
 
   # Update data based on the columns in the full formula return.
   all_vars <- all.vars(new_formula_full)
@@ -342,13 +393,18 @@ h_construct_model_frame_inputs <- function(formula,
 #' @examples
 #' # Model matrix:
 #' model.matrix(object)
-model.matrix.mmrm_tmb <- function(object, data, use_response = TRUE, ...) { # nolint
+model.matrix.mmrm_tmb <- function(object, data, use_response = TRUE, ...) {
+  # nolint
   # Always return the utilized model matrix if data not provided.
   if (missing(data)) {
     return(object$tmb_data$x_matrix)
   }
   stats::model.matrix(
-    h_add_terms(object$formula_parts$model_formula, NULL, drop_response = !use_response),
+    h_add_terms(
+      object$formula_parts$model_formula,
+      NULL,
+      drop_response = !use_response
+    ),
     data = data,
     contrasts.arg = attr(object$tmb_data$x_matrix, "contrasts"),
     xlev = component(object, "xlev"),
@@ -364,7 +420,8 @@ model.matrix.mmrm_tmb <- function(object, data, use_response = TRUE, ...) { # no
 #' # terms:
 #' terms(object)
 #' terms(object, include = "subject_var")
-terms.mmrm_tmb <- function(x, include = "response_var", ...) { # nolint
+terms.mmrm_tmb <- function(x, include = "response_var", ...) {
+  # nolint
   # Construct updated formula and data arguments.
   lst_formula_and_data <-
     h_construct_model_frame_inputs(
@@ -423,7 +480,8 @@ vcov.mmrm_tmb <- function(object, complete = TRUE, ...) {
 #' @examples
 #' # Variance-covariance matrix estimate for residuals:
 #' VarCorr(object)
-VarCorr.mmrm_tmb <- function(x, sigma = NA, ...) { # nolint
+VarCorr.mmrm_tmb <- function(x, sigma = NA, ...) {
+  # nolint
   assert_scalar_na(sigma)
 
   component(x, name = "varcor")
@@ -493,15 +551,20 @@ BIC.mmrm_tmb <- function(object, ...) {
 
 #' @describeIn mmrm_tmb_methods prints the object.
 #' @exportS3Method
-print.mmrm_tmb <- function(x,
-                           ...) {
+print.mmrm_tmb <- function(x, ...) {
   cat("mmrm fit\n\n")
 
   h_print_call(
-    component(x, "call"), component(x, "n_obs"),
-    component(x, "n_subjects"), component(x, "n_timepoints")
+    component(x, "call"),
+    component(x, "n_obs"),
+    component(x, "n_subjects"),
+    component(x, "n_timepoints")
   )
-  h_print_cov(component(x, "cov_type"), component(x, "n_theta"), component(x, "n_groups"))
+  h_print_cov(
+    component(x, "cov_type"),
+    component(x, "n_theta"),
+    component(x, "n_groups")
+  )
 
   cat("Inference:   ")
   cat(ifelse(component(x, "reml"), "REML", "ML"))
@@ -512,18 +575,32 @@ print.mmrm_tmb <- function(x,
   cat("\n\nCoefficients: ")
   n_singular_coefs <- sum(component(x, "beta_aliased"))
   if (n_singular_coefs > 0) {
-    cat("(", n_singular_coefs, " not defined because of singularities)", sep = "")
+    cat(
+      "(",
+      n_singular_coefs,
+      " not defined because of singularities)",
+      sep = ""
+    )
   }
   cat("\n")
   print(coef(x, complete = TRUE))
 
   cat("\nModel Inference Optimization:")
 
-  cat(ifelse(component(x, "convergence") == 0, "\nConverged", "\nFailed to converge"))
+  cat(ifelse(
+    component(x, "convergence") == 0,
+    "\nConverged",
+    "\nFailed to converge"
+  ))
   cat(
-    " with code", component(x, "convergence"),
+    " with code",
+    component(x, "convergence"),
     "and message:",
-    if (is.null(component(x, "conv_message"))) "No message provided." else tolower(component(x, "conv_message"))
+    if (is.null(component(x, "conv_message"))) {
+      "No message provided."
+    } else {
+      tolower(component(x, "conv_message"))
+    }
   )
   cat("\n")
   invisible(x)
@@ -542,9 +619,14 @@ print.mmrm_tmb <- function(x,
 #' residuals(object, type = "normalized")
 #' @references
 #' - \insertRef{galecki2013linear}{mmrm}
-residuals.mmrm_tmb <- function(object, type = c("response", "pearson", "normalized"), ...) {
+residuals.mmrm_tmb <- function(
+  object,
+  type = c("response", "pearson", "normalized"),
+  ...
+) {
   type <- match.arg(type)
-  switch(type,
+  switch(
+    type,
     "response" = h_residuals_response(object),
     "pearson" = h_residuals_pearson(object),
     "normalized" = h_residuals_normalized(object)
@@ -603,12 +685,14 @@ h_residuals_response <- function(object) {
 #'
 #' @importFrom stats simulate
 #' @exportS3Method
-simulate.mmrm_tmb <- function(object,
-                              nsim = 1,
-                              seed = NULL,
-                              newdata,
-                              ...,
-                              method = c("conditional", "marginal")) {
+simulate.mmrm_tmb <- function(
+  object,
+  nsim = 1,
+  seed = NULL,
+  newdata,
+  ...,
+  method = c("conditional", "marginal")
+) {
   assert_count(nsim, positive = TRUE)
   assert_null(seed)
   if (missing(newdata)) {
@@ -617,9 +701,9 @@ simulate.mmrm_tmb <- function(object,
   assert_data_frame(newdata)
   method <- match.arg(method)
 
-
   tmb_data <- h_mmrm_tmb_data(
-    object$formula_parts, newdata,
+    object$formula_parts,
+    newdata,
     weights = rep(1, nrow(newdata)),
     reml = TRUE,
     singular = "keep",
@@ -630,14 +714,20 @@ simulate.mmrm_tmb <- function(object,
     contrasts = component(object, "contrasts")
   )
   ret <- if (method == "conditional") {
-    predict_res <- h_get_prediction(tmb_data, object$theta_est, object$beta_est, object$beta_vcov)
+    predict_res <- h_get_prediction(
+      tmb_data,
+      object$theta_est,
+      object$beta_est,
+      object$beta_vcov
+    )
     as.data.frame(h_get_sim_per_subj(predict_res, tmb_data$n_subjects, nsim))
   } else if (method == "marginal") {
     theta_chol <- t(chol(object$theta_vcov))
     n_theta <- length(object$theta_est)
     as.data.frame(
       sapply(seq_len(nsim), function(x) {
-        newtheta <- object$theta_est + theta_chol %*% matrix(stats::rnorm(n_theta), ncol = 1)
+        newtheta <- object$theta_est +
+          theta_chol %*% matrix(stats::rnorm(n_theta), ncol = 1)
         # Recalculate betas with sampled thetas.
         hold <- object$tmb_object$report(newtheta)
         # Resample betas given new beta distribution.
@@ -650,7 +740,12 @@ simulate.mmrm_tmb <- function(object,
         )
         # Then we add the mean vector, the beta estimate.
         beta_sample <- hold$beta + w_sample
-        predict_res <- h_get_prediction(tmb_data, newtheta, beta_sample, hold$beta_vcov)
+        predict_res <- h_get_prediction(
+          tmb_data,
+          newtheta,
+          beta_sample,
+          hold$beta_vcov
+        )
         h_get_sim_per_subj(predict_res, tmb_data$n_subjects, 1L)
       })
     )
