@@ -1372,7 +1372,7 @@ test_that("h_assert_lrt_suitability() ensures suitability for LRT testing", {
                                         dfs = c(attr(logLik(get_mmrm_cs()), "df"),
                                                 attr(logLik(get_mmrm_smaller_data()), "df")),
                                         is_reml = c(component(get_mmrm_cs(), "reml"),
-                                                  component(get_mmrm_smaller_data(), "reml"))),
+                                                    component(get_mmrm_smaller_data(), "reml"))),
                regexp = "same data")
   expect_true(h_assert_lrt_suitability(list(get_mmrm_cs(), get_mmrm()),
                                        refit = FALSE,
