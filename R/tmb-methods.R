@@ -438,13 +438,34 @@ terms.mmrm_tmb <- function(x, include = "response_var", ...) {
 
 
 #' @describeIn mmrm_tmb_methods obtains the attained log likelihood value.
+#'   Includes as attributes the number of variance parameters, number of
+#'   estimated coefficients, and degrees of freedom. Resulting value is of class
+#'   [`logLik`][stats::logLik].
 #' @importFrom stats logLik
 #' @exportS3Method
 #' @examples
 #' # Log likelihood given the estimated parameters:
 #' logLik(object)
 logLik.mmrm_tmb <- function(object, ...) {
-  -component(object, "neg_log_lik")
+  out <- -component(object, "neg_log_lik")
+
+  # Number of variance parameters.
+  n_param <- component(object, "n_theta")
+
+  # Number of estimated coefficients.
+  n_coef <- length(coef(object, complete = FALSE))
+
+  # Number of degrees of freedom. Note that the number of coefficients is added only if the fit was estimated
+  # using ML rather than REML.
+  df <- n_param + n_coef * !component(object, "reml")
+
+  structure(
+    out,
+    n_param = n_param,
+    n_coef = n_coef,
+    df = df,
+    class = "logLik"
+  )
 }
 
 #' @describeIn mmrm_tmb_methods obtains the used formula.
