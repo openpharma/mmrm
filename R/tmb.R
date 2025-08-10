@@ -178,6 +178,7 @@ h_mmrm_tmb_data <- function(
   for (resp_var in missing_resp_vars) {
     full_frame[[resp_var]] <- data[[resp_var]]
   }
+  extra_response_cols <- match(missing_resp_vars, names(full_frame))
   if (drop_levels) {
     full_frame <- h_drop_levels(
       full_frame,
@@ -190,7 +191,7 @@ h_mmrm_tmb_data <- function(
   keep_ind <- if (allow_na_response && has_response) {
     # Note that final response is always the first column if there is response.
     # We also need to add other potentially added (source) response columns here.
-    resp_col_inds <- c(1L, match(missing_resp_vars, names(full_frame)))
+    resp_col_inds <- c(1L, extra_response_cols)
     stats::complete.cases(full_frame[, -resp_col_inds, drop = FALSE])
   } else {
     stats::complete.cases(full_frame)
@@ -297,7 +298,10 @@ h_mmrm_tmb_data <- function(
   }
   structure(
     list(
-      full_frame = full_frame,
+      full_frame = structure(
+        full_frame,
+        extra_response_cols = extra_response_cols
+      ),
       data = data,
       x_matrix = x_matrix,
       x_cols_aliased = x_cols_aliased,

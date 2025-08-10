@@ -39,7 +39,7 @@
 \method{model.frame}{mmrm_tmb}(
   formula,
   data,
-  include = c("subject_var", "visit_var", "group_var", "response_var"),
+  include = c("subject_var", "visit_var", "group_var", "response"),
   full,
   na.action = "na.omit",
   ...
@@ -47,7 +47,7 @@
 
 \method{model.matrix}{mmrm_tmb}(object, data, use_response = TRUE, ...)
 
-\method{terms}{mmrm_tmb}(x, include = "response_var", ...)
+\method{terms}{mmrm_tmb}(x, include = "response", ...)
 
 \method{logLik}{mmrm_tmb}(object, ...)
 
@@ -102,7 +102,7 @@ Exception is \code{model.matrix()} passing \code{...} to the default method.}
 \item{data}{(\code{data.frame})\cr object in which to construct the frame.}
 
 \item{include}{(\code{character})\cr names of variable types to include.
-Must be \code{NULL} or one or more of \code{c("subject_var", "visit_var", "group_var", "response_var")}.}
+Must be \code{NULL} or one or more of \code{c("subject_var", "visit_var", "group_var", "response")}.}
 
 \item{full}{(\code{flag})\cr indicator whether to return full model frame (deprecated).}
 
@@ -136,8 +136,9 @@ Depends on the method, see Functions.
 }
 \details{
 \code{include} argument controls the variables the returned model frame will include.
-Possible options are "response_var", "subject_var", "visit_var" and "group_var", representing the
-response variable, subject variable, visit variable or group variable.
+Possible options are "response", "subject_var", "visit_var" and "group_var", representing the
+response, subject variable, visit variable or group variable.
+(Note that the response column might also be a function of one or multiple variables.)
 \code{character} values in new data will always be factorized according to the data in the fit
 to avoid mismatched in levels or issues in \code{model.matrix}.
 }

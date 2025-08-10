@@ -8,7 +8,7 @@ h_construct_model_frame_inputs(
   formula,
   data,
   include,
-  include_choice = c("subject_var", "visit_var", "group_var", "response_var"),
+  include_choice = c("subject_var", "visit_var", "group_var", "response"),
   full
 )
 }

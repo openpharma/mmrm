@@ -11,7 +11,7 @@ component(
     "dataset", "n_groups", "reml", "convergence", "evaluations", "method", "optimizer",
     "conv_message", "call", "theta_est", "beta_est", "beta_est_complete", "beta_aliased",
     "x_matrix", "y_vector", "neg_log_lik", "jac_list", "theta_vcov", "full_frame",
-    "xlev", "contrasts")
+    "model_frame", "xlev", "contrasts")
 )
 }
 \arguments{
@@ -67,6 +67,8 @@ or not.
 \item \code{y_vector}: response vector used.
 \item \code{jac_list}: Jacobian, see  \code{\link[=h_jac_list]{h_jac_list()}} for details.
 \item \code{full_frame}: \code{data.frame} with \code{n} rows containing all variables needed in the model.
+\item \code{model_frame}: the same as \code{full_frame} just without additional extra separate response variables
+columns.
 }
 }
 \examples{

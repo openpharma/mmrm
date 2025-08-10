@@ -38,6 +38,7 @@ test_that("component works as expected for mmrm_tmb objects", {
       "jac_list",
       "theta_vcov",
       "full_frame",
+      "model_frame",
       "xlev",
       "contrasts"
     )
@@ -162,4 +163,18 @@ test_that("component can return xlev also when there is a combined response in t
   )
   result <- expect_silent(component(object, "xlev"))
   expect_list(result)
+})
+
+## model_frame ----
+
+test_that("component can extract model_frame as expected", {
+  object <- mmrm(
+    I(FEV1 / WEIGHT) ~ SEX + us(AVISIT | USUBJID),
+    fev_data
+  )
+  result <- expect_silent(component(object, "model_frame"))
+  expect_false(any(c("FEV1", "WEIGHT") %in% names(result)))
+  # Contrast to full_frame.
+  full_frame <- component(object, "full_frame")
+  expect_true(all(c("FEV1", "WEIGHT") %in% names(full_frame)))
 })

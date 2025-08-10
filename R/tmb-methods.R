@@ -258,7 +258,7 @@ h_get_prediction_variance <- function(object, nsim, tmb_data) {
 #' @describeIn mmrm_tmb_methods obtains the model frame.
 #' @param data (`data.frame`)\cr object in which to construct the frame.
 #' @param include (`character`)\cr names of variable types to include.
-#'   Must be `NULL` or one or more of `c("subject_var", "visit_var", "group_var", "response_var")`.
+#'   Must be `NULL` or one or more of `c("subject_var", "visit_var", "group_var", "response")`.
 #' @param full (`flag`)\cr indicator whether to return full model frame (deprecated).
 #' @param na.action (`string`)\cr na action.
 #' @importFrom stats model.frame
@@ -266,8 +266,9 @@ h_get_prediction_variance <- function(object, nsim, tmb_data) {
 #'
 #' @details
 #' `include` argument controls the variables the returned model frame will include.
-#' Possible options are "response_var", "subject_var", "visit_var" and "group_var", representing the
-#' response variable, subject variable, visit variable or group variable.
+#' Possible options are "response", "subject_var", "visit_var" and "group_var", representing the
+#' response, subject variable, visit variable or group variable.
+#' (Note that the response column might also be a function of one or multiple variables.)
 #' `character` values in new data will always be factorized according to the data in the fit
 #' to avoid mismatched in levels or issues in `model.matrix`.
 #'
@@ -278,7 +279,7 @@ h_get_prediction_variance <- function(object, nsim, tmb_data) {
 model.frame.mmrm_tmb <- function(
   formula,
   data,
-  include = c("subject_var", "visit_var", "group_var", "response_var"),
+  include = c("subject_var", "visit_var", "group_var", "response"),
   full,
   na.action = "na.omit",
   ...
@@ -294,13 +295,13 @@ model.frame.mmrm_tmb <- function(
     )
   # Only if include is default (full) and also data is missing, and also na.action is na.omit we will
   # use the model frame from the tmb_data.
-  include_choice <- c("subject_var", "visit_var", "group_var", "response_var")
+  include_choice <- c("subject_var", "visit_var", "group_var", "response")
   if (
     missing(data) &&
       setequal(include, include_choice) &&
       identical(h_get_na_action(na.action), stats::na.omit)
   ) {
-    ret <- formula$tmb_data$full_frame
+    ret <- component(formula, "model_frame")
     # Remove weights column.
     ret[, "(weights)"] <- NULL
     ret
@@ -311,7 +312,7 @@ model.frame.mmrm_tmb <- function(
         formula = lst_formula_and_data$formula,
         data = h_get_na_action(na.action)(lst_formula_and_data$data),
         na.action = na.action,
-        xlev = stats::.getXlevels(terms(formula), formula$tmb_data$full_frame)
+        xlev = component(formula, "xlev")
       )
   }
   ret
@@ -343,7 +344,7 @@ h_construct_model_frame_inputs <- function(
   formula,
   data,
   include,
-  include_choice = c("subject_var", "visit_var", "group_var", "response_var"),
+  include_choice = c("subject_var", "visit_var", "group_var", "response"),
   full
 ) {
   if (!missing(full) && identical(full, TRUE)) {
@@ -358,7 +359,7 @@ h_construct_model_frame_inputs <- function(
   }
   assert_data_frame(data)
 
-  drop_response <- !"response_var" %in% include
+  drop_response <- !"response" %in% include
   add_vars <- unlist(formula$formula_parts[include])
   new_formula <- h_add_terms(
     formula$formula_parts$model_formula,
@@ -366,7 +367,7 @@ h_construct_model_frame_inputs <- function(
     drop_response
   )
 
-  drop_response_full <- !"response_var" %in% include_choice
+  drop_response_full <- !"response" %in% include_choice
   add_vars_full <- unlist(formula$formula_parts[include_choice])
   new_formula_full <-
     h_add_terms(
@@ -421,7 +422,7 @@ model.matrix.mmrm_tmb <- function(object, data, use_response = TRUE, ...) {
 #' # terms:
 #' terms(object)
 #' terms(object, include = "subject_var")
-terms.mmrm_tmb <- function(x, include = "response_var", ...) {
+terms.mmrm_tmb <- function(x, include = "response", ...) {
   # nolint
   # Construct updated formula and data arguments.
   lst_formula_and_data <-

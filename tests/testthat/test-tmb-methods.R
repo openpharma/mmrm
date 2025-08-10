@@ -100,7 +100,7 @@ test_that("h_get_prediction works for partial data", {
   full_frame <- model.frame(
     fit,
     data = data,
-    include = c("subject_var", "visit_var", "group_var", "response_var"),
+    include = c("subject_var", "visit_var", "group_var", "response"),
     na.action = "na.pass"
   )
   tmb_data <- h_mmrm_tmb_data(
@@ -154,7 +154,7 @@ test_that("predict works for only fit values without response", {
     model.frame(
       object,
       data = fev_data,
-      include = "response_var",
+      include = "response",
       na.action = "na.pass"
     )
   )
@@ -198,6 +198,7 @@ test_that("predict returns unconditional prediction intervals also if response d
 })
 
 test_that("predict also fixes multiple missing response variables", {
+  fev_data2 <- fev_data
   object <- mmrm(
     I(FEV1 + VISITN2) ~ SEX + us(AVISIT | USUBJID),
     fev_data
@@ -217,7 +218,7 @@ test_that("predict works with combined covariates", {
     FEV1 ~ SEX + I(VISITN2 + WEIGHT) + us(AVISIT | USUBJID),
     fev_data
   )
-  y_pred <- predict(object, interval = "prediction", nsim = 2L)
+  y_pred <- expect_silent(predict(object, interval = "prediction", nsim = 2L))
 })
 
 test_that("predict works with combined response", {
@@ -225,7 +226,7 @@ test_that("predict works with combined response", {
     I(FEV1 / WEIGHT) ~ SEX + us(AVISIT | USUBJID),
     fev_data
   )
-  y_pred <- predict(object, interval = "prediction", nsim = 2L)
+  y_pred <- expect_silent(predict(object, interval = "prediction", nsim = 2L))
 })
 
 test_that("predict warns on aliased variables", {
@@ -260,7 +261,7 @@ test_that("predict will return on correct order", {
     model.frame(
       fit,
       data = fev_data2[new_order, ],
-      include = "response_var",
+      include = "response",
       na.action = "na.pass"
     )
   )
@@ -321,7 +322,7 @@ test_that("predict can give unconditional predictions", {
     model.frame(
       fit,
       data = fev_data,
-      include = "response_var",
+      include = "response",
       na.action = "na.pass"
     )
   )
@@ -341,7 +342,7 @@ test_that("predict can change based on coefficients", {
     model.frame(
       fit,
       data = fev_data,
-      include = "response_var",
+      include = "response",
       na.action = "na.pass"
     )
   )
@@ -394,7 +395,7 @@ test_that("predict gives same result with sas in unstructured satterthwaite/Kenw
   full_frame <- model.frame(
     fit,
     data = fev_data,
-    include = c("subject_var", "visit_var", "group_var", "response_var"),
+    include = c("subject_var", "visit_var", "group_var", "response"),
     na.action = "na.pass"
   )
   tmb_data <- h_mmrm_tmb_data(
@@ -430,7 +431,7 @@ test_that("predict gives same result with sas in toep satterthwaite", {
   full_frame <- model.frame(
     fit,
     data = fev_data,
-    include = c("subject_var", "visit_var", "group_var", "response_var"),
+    include = c("subject_var", "visit_var", "group_var", "response"),
     na.action = "na.pass"
   )
   tmb_data <- h_mmrm_tmb_data(
@@ -459,7 +460,7 @@ test_that("predict gives same result with sas in ar1 satterthwaite/kenward-roger
   full_frame <- model.frame(
     fit,
     data = fev_data,
-    include = c("subject_var", "visit_var", "group_var", "response_var"),
+    include = c("subject_var", "visit_var", "group_var", "response"),
     na.action = "na.pass"
   )
   tmb_data <- h_mmrm_tmb_data(
@@ -499,7 +500,7 @@ test_that("predict gives same result with sas in cs satterthwaite/kenward-roger"
   full_frame <- model.frame(
     fit,
     data = fev_data,
-    include = c("subject_var", "visit_var", "group_var", "response_var"),
+    include = c("subject_var", "visit_var", "group_var", "response"),
     na.action = "na.pass"
   )
   tmb_data <- h_mmrm_tmb_data(
@@ -540,7 +541,7 @@ test_that("predict gives same result with sas in sp_exp satterthwaite/kenward-ro
   full_frame <- model.frame(
     fit,
     data = fev_data,
-    include = c("subject_var", "visit_var", "group_var", "response_var"),
+    include = c("subject_var", "visit_var", "group_var", "response"),
     na.action = "na.pass"
   )
   tmb_data <- h_mmrm_tmb_data(
@@ -581,7 +582,7 @@ test_that("h_construct_model_frame_inputs works with all columns", {
       h_construct_model_frame_inputs(
         formula = object,
         data = object$data |> head(),
-        include = c("subject_var", "visit_var", "group_var", "response_var"),
+        include = c("subject_var", "visit_var", "group_var", "response"),
       )
     )
   expect_equal(
@@ -591,14 +592,14 @@ test_that("h_construct_model_frame_inputs works with all columns", {
   )
 })
 
-test_that("h_construct_model_frame_inputs works with response var selected", {
+test_that("h_construct_model_frame_inputs works with response selected", {
   object <- get_mmrm_tmb()
   result <-
     expect_silent(
       h_construct_model_frame_inputs(
         formula = object,
         data = object$data |> head(),
-        include = "response_var",
+        include = "response",
       )
     )
   expect_equal(
@@ -632,7 +633,7 @@ test_that("model.frame works as expected with defaults", {
   object <- get_mmrm_tmb()
   result <- expect_silent(model.frame(
     object,
-    include = c("response_var", "visit_var")
+    include = c("response", "visit_var")
   ))
   expect_data_frame(result, nrows = length(object$tmb_data$y_vector))
   expect_named(result, c("FEV1", "RACE", "AVISIT"))
@@ -641,7 +642,7 @@ test_that("model.frame works as expected with defaults", {
 
 test_that("model.frame works as expected with includes", {
   object <- get_mmrm_tmb()
-  result <- expect_silent(model.frame(object, include = c("response_var")))
+  result <- expect_silent(model.frame(object, include = c("response")))
   expect_data_frame(result, nrows = length(object$tmb_data$y_vector))
   expect_named(result, c("FEV1", "RACE"))
   expect_class(attr(result, "terms"), "terms")
@@ -651,7 +652,7 @@ test_that("model.frame returns full model frame if requested", {
   object <- get_mmrm_tmb()
   result <- expect_silent(model.frame(
     object,
-    include = c("response_var", "visit_var", "subject_var", "group_var")
+    include = c("response", "visit_var", "subject_var", "group_var")
   ))
   expect_data_frame(result, nrows = length(object$tmb_data$y_vector))
   expect_named(result, c("FEV1", "RACE", "USUBJID", "AVISIT"))
@@ -662,7 +663,7 @@ test_that("model.frame works if variable transformed", {
   fit1 <- get_mmrm_transformed()
   result <- expect_silent(model.frame(
     fit1,
-    include = c("response_var", "visit_var")
+    include = c("response", "visit_var")
   ))
   expect_data_frame(result, nrows = length(fit1$tmb_data$y_vector))
   expect_named(result, c("FEV1", "log(FEV1_BL)", "AVISIT"))
@@ -674,7 +675,7 @@ test_that("model.frame works for new data", {
   result <- expect_silent(model.frame(
     fit1,
     data = fev_data[complete.cases(fev_data), ][1:20, ],
-    include = c("response_var", "visit_var")
+    include = c("response", "visit_var")
   ))
   expect_data_frame(result, nrows = 20L)
   expect_named(result, c("FEV1", "log(FEV1_BL)", "AVISIT"))
@@ -691,7 +692,7 @@ test_that("model.frame works if input x does not contain NA, y contains but not 
 test_that("model.frame fails if y contains NA and is included", {
   fit1 <- get_mmrm_transformed()
   expect_error(
-    model.frame(fit1, na.action = "na.fail", include = "response_var")
+    model.frame(fit1, na.action = "na.fail", include = "response")
   )
 })
 
@@ -742,7 +743,7 @@ test_that("model.frame include all specified variables", {
       fit1,
       na.action = "na.pass",
       data = fev_data,
-      include = "response_var"
+      include = "response"
     )
   )
   expect_identical(colnames(out_frame), c("FEV1", "ARMCD"))
@@ -756,7 +757,7 @@ test_that("model.frame with character reference will return factors", {
   new_frame <- expect_silent(model.frame(
     fit,
     data = new_data,
-    include = c("subject_var", "visit_var", "response_var")
+    include = c("subject_var", "visit_var", "response")
   ))
   expect_identical(levels(new_frame$ARMCD), c("PBO", "TRT"))
   expect_silent(h_mmrm_tmb_data(
@@ -785,6 +786,15 @@ test_that("model.frame with character reference will return factors", {
     ),
     "contrasts can be applied only to factors"
   )
+})
+
+test_that("model.frame does not include extra response columns", {
+  object <- mmrm(
+    I(FEV1 / WEIGHT) ~ SEX + cs(AVISIT | USUBJID),
+    data = fev_data
+  )
+  result <- model.frame(object)
+  expect_false(any(c("FEV1", "WEIGHT") %in% names(result)))
 })
 
 # model.matrix ----
@@ -1501,7 +1511,7 @@ test_that("h_get_prediction_variance works as expected", {
   full_frame <- model.frame(
     fit,
     data = data,
-    include = c("subject_var", "visit_var", "group_var", "response_var"),
+    include = c("subject_var", "visit_var", "group_var", "response"),
     na.action = "na.pass"
   )
   tmb_data <- h_mmrm_tmb_data(

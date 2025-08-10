@@ -652,6 +652,7 @@ test_that("h_mmrm_tmb_data returns combined response variables in full_frame", {
   result <- tmb_data$full_frame
   expect_data_frame(result)
   expect_subset(c("FEV1", "WEIGHT"), names(result))
+  expect_identical(attr(result, "extra_response_cols"), c(6L, 7L))
 })
 
 # h_mmrm_tmb_parameters ----
