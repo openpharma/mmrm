@@ -650,7 +650,7 @@ test_that("model.frame works as expected with includes", {
 
 test_that("model.frame returns full model frame if requested", {
   object <- get_mmrm_tmb()
-  result <- expect_silent(model.frame(
+  result <- expect_silent(stats::model.frame(
     object,
     include = c("response", "visit_var", "subject_var", "group_var")
   ))

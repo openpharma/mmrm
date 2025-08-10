@@ -169,10 +169,21 @@ component <- function(
     "contrasts" = attr(object$tmb_data$x_matrix, "contrasts"),
     "theta_vcov" = object$theta_vcov,
     "full_frame" = object$tmb_data$full_frame,
-    "model_frame" = object$tmb_data$full_frame[,
-      -attr(object$tmb_data$full_frame, "extra_response_cols"),
-      drop = FALSE
-    ],
+    "model_frame" = if (
+      length(
+        extra_cols_inds <- attr(
+          object$tmb_data$full_frame,
+          "extra_response_cols"
+        )
+      )
+    ) {
+      object$tmb_data$full_frame[,
+        -extra_cols_inds,
+        drop = FALSE
+      ]
+    } else {
+      object$tmb_data$full_frame
+    },
     # If not found.
     "..foo.." = stop(sprintf(
       "component '%s' is not available",

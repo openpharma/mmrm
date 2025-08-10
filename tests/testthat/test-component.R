@@ -167,7 +167,14 @@ test_that("component can return xlev also when there is a combined response in t
 
 ## model_frame ----
 
-test_that("component can extract model_frame as expected", {
+test_that("component can extract model_frame as expected if there are no extra response columns", {
+  object <- get_mmrm()
+  result <- expect_silent(component(object, "model_frame"))
+  expected <- component(object, "full_frame")
+  expect_identical(result, expected)
+})
+
+test_that("component can extract model_frame as expected if there are extra response columns", {
   object <- mmrm(
     I(FEV1 / WEIGHT) ~ SEX + us(AVISIT | USUBJID),
     fev_data
