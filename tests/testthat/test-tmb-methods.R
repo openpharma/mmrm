@@ -1364,7 +1364,7 @@ test_that("h_assert_lrt_suitability() ensures suitability for LRT testing", {
   expect_error(h_assert_lrt_suitability(list(get_mmrm_cs(), get_mmrm_smaller_data()),
                                         refit = FALSE,
                                         dfs = c(3, 3),
-                                        is_reml = c(T, T)),
+                                        is_reml = c(TRUE, TRUE)),
                regexp = "degrees of freedom")
   # refit = FALSE and they don't use the same data
   expect_error(h_assert_lrt_suitability(list(get_mmrm_cs(), get_mmrm_smaller_data()),
