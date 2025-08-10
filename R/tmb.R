@@ -118,13 +118,20 @@ h_mmrm_tmb_data <- function(
   # Weights is always the last column.
   weights_name <- colnames(data)[ncol(data)]
 
+  # full_frame <- eval(
+  #   bquote(stats::model.frame(
+  #     formula_parts$full_formula,
+  #     data = data,
+  #     weights = .(as.symbol(weights_name)),
+  #     na.action = "na.pass",
+  #     xlev = xlev
+  #   ))
+  # )
   full_frame <- eval(
-    bquote(stats::model.frame(
+    bquote(stats::get_all_vars(
       formula_parts$full_formula,
       data = data,
-      weights = .(as.symbol(weights_name)),
-      na.action = "na.pass",
-      xlev = xlev
+      weights = .(as.symbol(weights_name))
     ))
   )
   # Make sure all response variables are included in the full model frame.
@@ -135,7 +142,7 @@ h_mmrm_tmb_data <- function(
       "~",
       paste(missing_resp_vars, collapse = " + ")
     ))
-    environment(resp_form) <- environment(formula)
+    environment(resp_form) <- environment(formula_parts$formula)
     resp_data <- stats::get_all_vars(
       resp_form,
       data = data,
