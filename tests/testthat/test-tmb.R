@@ -637,6 +637,23 @@ test_that("h_mmrm_tmb_data errors if too many visit levels", {
   )
 })
 
+test_that("h_mmrm_tmb_data works if formula contains variables not in data", {
+  set.seed(123L)
+  y <- rnorm(800)
+  wt <- exp(rnorm(800))
+  formula <- y ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula)
+  result <- expect_silent(
+    h_mmrm_tmb_data(
+      formula_parts,
+      fev_data,
+      wt,
+      reml = TRUE,
+      drop_visit_levels = TRUE
+    )
+  )
+})
+
 # h_mmrm_tmb_parameters ----
 
 test_that("h_mmrm_tmb_parameters works as expected without start values", {

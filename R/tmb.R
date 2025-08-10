@@ -109,33 +109,65 @@ h_mmrm_tmb_data <- function(
 ) {
   assert_class(formula_parts, "mmrm_tmb_formula_parts")
   assert_data_frame(data)
-  varname <- formula_parts[grepl("_var", names(formula_parts))]
-  assert_names(
-    names(data),
-    must.include = unlist(varname, use.names = FALSE)
-  )
-  assert_true(
-    is.factor(data[[formula_parts$subject_var]]) ||
-      is.character(data[[formula_parts$subject_var]])
-  )
   assert_numeric(weights, len = nrow(data))
   assert_flag(reml)
   singular <- match.arg(singular)
   assert_flag(drop_visit_levels)
 
-  if (is.character(data[[formula_parts$subject_var]])) {
-    data[[formula_parts$subject_var]] <- factor(
-      data[[formula_parts$subject_var]],
+  data <- data.frame(data, weights)
+  # Weights is always the last column.
+  weights_name <- colnames(data)[ncol(data)]
+
+  full_frame <- eval(
+    bquote(stats::model.frame(
+      formula_parts$full_formula,
+      data = data,
+      weights = .(as.symbol(weights_name)),
+      na.action = "na.pass",
+      xlev = xlev
+    ))
+  )
+  # Make sure all response variables are included in the full model frame.
+  # We need this for `xlev` computation to work correctly in component().
+  missing_resp_vars <- setdiff(formula_parts$response_var, names(full_frame))
+  if (length(missing_resp_vars)) {
+    resp_form <- as.formula(paste0(
+      "~",
+      paste(missing_resp_vars, collapse = " + ")
+    ))
+    environment(resp_form) <- environment(formula)
+    resp_data <- stats::get_all_vars(
+      resp_form,
+      data = data,
+      na.action = "na.pass",
+      xlev = xlev
+    )
+    full_frame <- data.frame(full_frame, resp_data)
+  }
+  extra_response_cols <- match(missing_resp_vars, names(full_frame))
+  # Now we are sure that all _var parts are included in full_frame.
+  varname <- formula_parts[grepl("_var", names(formula_parts))]
+  assert_names(
+    names(full_frame),
+    must.include = unlist(varname, use.names = FALSE)
+  )
+  assert_true(
+    is.factor(full_frame[[formula_parts$subject_var]]) ||
+      is.character(full_frame[[formula_parts$subject_var]])
+  )
+  if (is.character(full_frame[[formula_parts$subject_var]])) {
+    full_frame[[formula_parts$subject_var]] <- factor(
+      full_frame[[formula_parts$subject_var]],
       levels = stringr::str_sort(
-        unique(data[[formula_parts$subject_var]]),
+        unique(full_frame[[formula_parts$subject_var]]),
         numeric = TRUE
       )
     )
   }
   data_order <- if (formula_parts$is_spatial) {
-    order(data[[formula_parts$subject_var]])
+    order(full_frame[[formula_parts$subject_var]])
   } else {
-    subject_visit_data <- data[, c(
+    subject_visit_data <- full_frame[, c(
       formula_parts$subject_var,
       formula_parts$visit_var
     )]
@@ -149,36 +181,22 @@ h_mmrm_tmb_data <- function(
         )
       )
     }
-    order(data[[formula_parts$subject_var]], data[[formula_parts$visit_var]])
+    order(
+      full_frame[[formula_parts$subject_var]],
+      full_frame[[formula_parts$visit_var]]
+    )
   }
   if (identical(formula_parts$is_spatial, FALSE)) {
-    h_confirm_large_levels(length(levels(data[[formula_parts$visit_var]])))
+    h_confirm_large_levels(length(levels(full_frame[[
+      formula_parts$visit_var
+    ]])))
   }
-  data <- data[data_order, ]
-  weights <- weights[data_order]
-  data <- data.frame(data, weights)
-  # Weights is always the last column.
-  weights_name <- colnames(data)[ncol(data)]
+  full_frame <- full_frame[data_order, ]
+
   # If `y` is allowed to be NA, then first replace y with 1:n, then replace it with original y.
   if (!allow_na_response) {
     h_warn_na_action()
   }
-  full_frame <- eval(
-    bquote(stats::model.frame(
-      formula_parts$full_formula,
-      data = data,
-      weights = .(as.symbol(weights_name)),
-      na.action = "na.pass",
-      xlev = xlev
-    ))
-  )
-  # Make sure all response variables are included in the full model frame.
-  # We need this for `xlev` computation to work correctly in component().
-  missing_resp_vars <- setdiff(formula_parts$response_var, names(full_frame))
-  for (resp_var in missing_resp_vars) {
-    full_frame[[resp_var]] <- data[[resp_var]]
-  }
-  extra_response_cols <- match(missing_resp_vars, names(full_frame))
   if (drop_levels) {
     full_frame <- h_drop_levels(
       full_frame,
