@@ -47,7 +47,11 @@
 <url><loc>https://openpharma.github.io/mmrm/reference/formula_rhs.html</loc></url>
 <url><loc>https://openpharma.github.io/mmrm/reference/h_add_covariance_terms.html</loc></url>
 <url><loc>https://openpharma.github.io/mmrm/reference/h_add_terms.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_assert_lrt_suitability.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_assert_nested_models.html</loc></url>
 <url><loc>https://openpharma.github.io/mmrm/reference/h_check_columns_nested.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_check_cov_struct_nesting.html</loc></url>
+<url><loc>https://openpharma.github.io/mmrm/reference/h_check_covar_nesting.html</loc></url>
 <url><loc>https://openpharma.github.io/mmrm/reference/h_check_fits_all_data_same.html</loc></url>
 <url><loc>https://openpharma.github.io/mmrm/reference/h_coef_table.html</loc></url>
 <url><loc>https://openpharma.github.io/mmrm/reference/h_confirm_large_levels.html</loc></url>
