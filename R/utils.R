@@ -761,3 +761,228 @@ h_get_minimal_fit_data <- function(fit) {
   response <- as.character(terms_attr$variables[[terms_attr$response + 1]])
   fit[["data"]][c(response, predictors)]
 }
+
+
+
+
+#' Ensure LRT Is Appropriate for `list` of `mmrm` Fits
+#'
+#' Throws an error if the degrees of freedom aren't monotonically increasing, if
+#' the models aren't nested, or if `refit = FALSE` and the models have different
+#' underlying data.
+#'
+#' @param fits (`list`)\cr list of `mmrm` fits.
+#' @param refit (`flag`)\cr `TRUE` or `FALSE` indicating whether or not the user
+#'   gave permission to refit models to make all models suitable for LRT.
+#' @param dfs (`numeric`)\cr vector of the degrees of freedom for each element
+#'   of `fits`.
+#' @param is_reml (`logical`)\cr vector indicating whether or not REML was used
+#'   for each element of `fits`.
+#'
+#' @returns `TRUE` if the list of `fits` are suitable for LRT. Otherwise, an
+#'   error is thrown.
+#'
+#' @keywords internal
+h_assert_lrt_suitability <- function(fits, refit, dfs, is_reml) {
+
+  assert_list(fits, types = "mmrm", min.len = 2)
+  assert_flag(refit)
+  assert_numeric(
+    dfs,
+    lower = 1,
+    any.missing = FALSE,
+    finite = TRUE,
+    len = length(fits)
+  )
+  assert_logical(is_reml, any.missing = FALSE, len = length(fits))
+
+  if (any(diff(dfs) <= 0)) {
+    stop(
+      "The degrees of freedom (df) of each model must be less than the df of ",
+      "the next model in order to perform likelihood ratio testing (LRT). ",
+      "Bypass LRT with test = FALSE.",
+      call. = FALSE
+    )
+  }
+
+  # Do any models use REML?
+  any_reml <- any(is_reml)
+
+  # First iterate through and check the models to make sure their covariates
+  # and covariance structures are nested
+  for (i in seq_along(fits)[-1L]) {
+    h_assert_nested_models(fits[[i - 1L]], fits[[i]], any_reml = any_reml)
+  }
+
+  # If we didn't refit, throw errors if not all data are the same
+  if (!refit && !h_check_fits_all_data_same(fits)) {
+    stop(
+      "Likelihood ratio testing requires all fits to use the same data.",
+      " Not all fits have the same data and refit = FALSE.",
+      " Consider setting test = FALSE or refit = TRUE.",
+      call. = FALSE
+    )
+  }
+
+  TRUE
+}
+
+
+
+#' Ensure Two Models Are Nested
+#'
+#' Throws an error if `model_basic` isn't nested within `model_augmented`.
+#'
+#' The following checks are applied in this order, and an error is thrown if any
+#' of the conditions are not met:
+#'
+#' 1. The fits must have the same visit, subject, and grouping variables.
+#'
+#' 1. The covariates of `model_basic` must be the same as or a subset of the
+#' covariates of `model_augmented`.
+#'
+#' 1. The covariance structure of `model_basic` must be the same as or a special
+#' case of the covariance structure of `model_augmented`.
+#'
+#' Finally, if all these checks were passed, a warning is thrown if the two fits
+#' have identical covariates and covariance structures.
+#'
+#' @param model_basic,model_augmented (`mmrm`)\cr model fits.
+#' @param any_reml (`flag`)\cr `TRUE` or `FALSE` indicating whether or not
+#'   either model used REML estimation.
+#'
+#' @returns `TRUE` if `model_basic` is nested within `model_augmented`.
+#'   Otherwise, an error is thrown.
+#'
+#' @keywords internal
+h_assert_nested_models <- function(model_basic, model_augmented, any_reml) {
+
+  assert_class(model_basic, "mmrm")
+  assert_class(model_augmented, "mmrm")
+  assert_flag(any_reml)
+
+  model_basic <- model_basic[["formula_parts"]]
+  model_augmented <- model_augmented[["formula_parts"]]
+
+  if (!identical(model_basic[["visit_var"]], model_augmented[["visit_var"]])) {
+    stop("Models must all have the same visit variable.")
+  }
+
+  if (!identical(model_basic[["subject_var"]], model_augmented[["subject_var"]])) {
+    stop("All models must have the same subject variable.")
+  }
+
+  if (!identical(model_basic[["group_var"]], model_augmented[["group_var"]])) {
+    stop("All models must have the same grouping variable.")
+  }
+
+  covar_nesting <- h_check_covar_nesting(model_basic, model_augmented)
+  if (any_reml && covar_nesting == "nested") {
+    stop("If any models use REML, all models' covariates must be the same.")
+  }
+
+  cov_struct_nesting <- h_check_cov_struct_nesting(model_basic, model_augmented)
+
+  if (covar_nesting == "identical" && cov_struct_nesting == "identical") {
+    warning("Two models in the sequence have identical covariates and ",
+            "covariance structures.")
+  }
+
+  TRUE
+}
+
+
+#' Ensure Two Models' Covariates Are Nested
+#'
+#' Throws an error if the covariates of `model_basic` aren't the same as or a
+#' subset of the covariates of `model_augmented`.
+#'
+#' For upstream coding brevity, this function accepts the `formula_parts`
+#' element of two `mmrm` model fits rather than `mmrm` objects. Such objects are
+#' of class `mmrm_tmb_formula_parts`.
+#'
+#' @param model_basic,model_augmented (`mmrm_tmb_formula_parts`)\cr the
+#'   `formula_parts` element of an `mmrm` model fit.
+#'
+#' @returns `"identical"` if `model_basic` and `model_augmented` have the same
+#'   set of covariates. `"nesting"` if the covariates of `model_basic` are a
+#'   subset of the covariates of `model_augmented`.
+#'
+#' @keywords internal
+h_check_covar_nesting <- function(model_basic, model_augmented) {
+  assert_class(model_basic, "mmrm_tmb_formula_parts")
+  assert_class(model_augmented, "mmrm_tmb_formula_parts")
+
+  basic_covars <- attr(terms(model_basic[["model_formula"]]), "term.labels")
+  aug_covars <- attr(terms(model_augmented[["model_formula"]]), "term.labels")
+
+  if (anyNA(match(basic_covars, aug_covars))) {
+    stop("Each model's covariates must be a subset of the next model's ",
+         "covariates.", call. = FALSE)
+  }
+
+  if (anyNA(match(aug_covars, basic_covars))) {
+    "nested"
+  } else {
+    "identical"
+  }
+}
+
+
+
+#' Ensure Two Models' Covariance Structures Are Nested
+#'
+#' Throws an error if the covariance structure of `model_basic` isn't the same
+#' as or a special case of the covariance structure of `model_augmented`.
+#'
+#' The check for "nesting" is a check against a mathematically determined
+#' hierarchy of the available [cov_types]: if restricting an aspect of a
+#' covariance structure can result in another covariance structure, the latter
+#' structure is nested within the former structure.
+#'
+#' For upstream coding brevity, this function accepts the `formula_parts`
+#' element of two `mmrm` model fits rather than `mmrm` objects. Such objects are
+#' of class `mmrm_tmb_formula_parts`.
+#'
+#' @param model_basic,model_augmented (`mmrm_tmb_formula_parts`)\cr the
+#'   `formula_parts` element of an `mmrm` model fit.
+#'
+#' @returns `"identical"` if `model_basic` and `model_augmented` have the same
+#'   covariance structure. `"nesting"` if the covariance structure of
+#'   `model_basic` is a special case of the covariance structure of
+#'   `model_augmented`.
+#'
+#' @keywords internal
+h_check_cov_struct_nesting <- function(model_basic, model_augmented) {
+  assert_class(model_basic, "mmrm_tmb_formula_parts")
+  assert_class(model_augmented, "mmrm_tmb_formula_parts")
+
+  basic_cov_struct <- model_basic[["cov_type"]]
+  aug_cov_struct <- model_augmented[["cov_type"]]
+
+  # Hierarchy, specifying the "parent" covariance structures of each available
+  # type in mmrm
+  cov_struct_nesting <-
+    list(
+      ad = c("adh", "us"),
+      adh = "us",
+      ar1 = c("ad", "adh", "ar1h", "toep", "toeph", "us"),
+      ar1h = c("adh", "toeph", "us"),
+      cs = c("csh", "toep", "toeph", "us"),
+      csh = c("toeph", "us"),
+      toep = c("toeph", "us"),
+      toeph = "us",
+      us = character(0L),
+      sp_exp = character(0L)
+    )
+
+  if (identical(basic_cov_struct, aug_cov_struct)) {
+    "identical"
+  } else if (any(cov_struct_nesting[[basic_cov_struct]] == aug_cov_struct)) {
+    "nested"
+  } else {
+    stop("Each model's covariance structure must be either identical to or a ",
+         "special case of the next model's covariance structure.",
+         call. = FALSE)
+  }
+}
