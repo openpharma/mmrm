@@ -885,7 +885,31 @@ test_that("terms works as expected with defaults", {
 test_that("logLik works as expected", {
   object <- get_mmrm_tmb()
   result <- expect_silent(logLik(object))
-  expected <- -1821.19736
+  expected <- structure(
+    -1821.19736,
+    n_param = 10,
+    n_coef = 3,
+    df = 10,
+    class = "logLik"
+  )
+  expect_equal(result, expected)
+})
+
+test_that("logLik works as expected with ML estimation", {
+  object <- fit_mmrm(
+    .tmb_formula,
+    fev_data,
+    weights = rep(1, nrow(fev_data)),
+    reml = FALSE
+  )
+  result <- expect_silent(logLik(object))
+  expected <- structure(
+    -1821.98024,
+    n_param = 10,
+    n_coef = 3,
+    df = 13,
+    class = "logLik"
+  )
   expect_equal(result, expected)
 })
 
@@ -949,14 +973,14 @@ test_that("deviance works as expected", {
 test_that("AIC works as expected with defaults", {
   object <- get_mmrm_tmb()
   result <- expect_silent(AIC(object))
-  expected <- -2 * logLik(object) + 2 * length(object$theta_est)
+  expected <- -2 * c(logLik(object)) + 2 * length(object$theta_est)
   expect_equal(result, expected)
 })
 
 test_that("AIC works as expected with different k", {
   object <- get_mmrm_tmb()
   result <- expect_silent(AIC(object, k = 5))
-  expected <- -2 * logLik(object) + 5 * length(object$theta_est)
+  expected <- -2 * c(logLik(object)) + 5 * length(object$theta_est)
   expect_equal(result, expected)
 })
 
@@ -966,7 +990,7 @@ test_that("corrected AIC works as expected", {
   m <- nrow(object$tmb_data$x_matrix) - ncol(object$tmb_data$x_matrix)
   n_theta <- length(object$theta_est)
   multiplier <- m / (m - n_theta - 1)
-  expected <- -2 * logLik(object) + 2 * length(object$theta_est) * multiplier
+  expected <- -2 * c(logLik(object)) + 2 * length(object$theta_est) * multiplier
   expect_equal(result, expected)
 })
 
@@ -976,7 +1000,7 @@ test_that("BIC works as expected", {
   object <- get_mmrm_tmb()
   result <- expect_silent(BIC(object))
   expected <- -2 *
-    logLik(object) +
+    c(logLik(object)) +
     log(object$tmb_data$n_subjects) * length(object$theta_est)
   expect_equal(result, expected)
 })
@@ -1529,5 +1553,94 @@ test_that("h_get_prediction_variance works as expected", {
     res,
     c(37.10, 0, 17.04, 0, 0, 0, 0, 0),
     tolerance = 1e-1
+  )
+})
+
+test_that("h_dataset_sort_all() sorts in column order", {
+  expect_equal(
+    h_dataset_sort_all(unique(mtcars[c("am", "vs", "cyl")])),
+    data.frame(
+      am = c(0, 0, 0, 1, 1, 1, 1),
+      vs = c(0, 1, 1, 0, 0, 0, 1),
+      cyl = c(8, 4, 6, 4, 6, 8, 4),
+      row.names = c(
+        "Hornet Sportabout",
+        "Merc 240D",
+        "Hornet 4 Drive",
+        "Porsche 914-2",
+        "Mazda RX4",
+        "Ford Pantera L",
+        "Datsun 710"
+      )
+    )
+  )
+})
+
+test_that("h_check_columns_nested() correctly compares dfs", {
+  expect_true(h_check_columns_nested(mtcars[, -2:-5], structure(mtcars, a = 1)))
+  # FALSE because different numbers of rows:
+  expect_false(h_check_columns_nested(mtcars[-2:-5, ], mtcars))
+  # FALSE because first dataset has more columns than second dataset:
+  expect_false(h_check_columns_nested(transform(mtcars, a = 1), mtcars))
+  # FALSE because the first observation is different in each dataset:
+  expect_false(h_check_columns_nested(
+    transform(mtcars, vs = c(7, vs[-1])),
+    mtcars
+  ))
+})
+
+test_that("h_check_fits_all_data_same() correctly compares dfs", {
+  expect_true(h_check_fits_all_data_same(list(
+    get_mmrm_group(),
+    get_mmrm(),
+    get_mmrm_rank_deficient()
+  )))
+  # FALSE because get_mmrm_smaller_data() has a dataset with fewer rows:
+  expect_false(h_check_fits_all_data_same(list(
+    get_mmrm_group(),
+    get_mmrm(),
+    get_mmrm_smaller_data(),
+    get_mmrm_rank_deficient()
+  )))
+  # FALSE because get_mmrm() uses more columns than get_mmrm_group():
+  expect_false(h_check_fits_all_data_same(list(
+    get_mmrm(),
+    get_mmrm_group(),
+    get_mmrm_rank_deficient()
+  )))
+  # FALSE because get_mmrm() and get_mmrm_alt_data() have different observations
+  expect_false(h_check_fits_all_data_same(list(
+    get_mmrm_group(),
+    get_mmrm(),
+    get_mmrm_alt_data(),
+    get_mmrm_rank_deficient()
+  )))
+})
+
+test_that("h_fits_common_data() grabs common observations among datasets", {
+  expect_equal(
+    h_fits_common_data(
+      list(get_mmrm(), get_mmrm_alt_data(), get_mmrm_rank_deficient())
+    ),
+    data.frame(
+      FEV1 = c(39.9710497720302, NA),
+      AVISIT = factor(2:1, labels = c("VIS1", "VIS2")),
+      USUBJID = factor(c(1L, 1L), labels = "PT1"),
+      RACE = factor(c(2L, 2L), labels = "Black or African American"),
+      SEX = factor(c(2L, 2L), labels = "Female"),
+      ARMCD = factor(c(2L, 2L), labels = "TRT"),
+      SEX2 = factor(c(2L, 2L), labels = "Female")
+    )
+  )
+})
+
+test_that("h_get_minimal_fit_data() grabs only colums used in model fitting", {
+  expect_equal(
+    h_get_minimal_fit_data(get_mmrm_group()),
+    fev_data[c("FEV1", "AVISIT", "USUBJID", "ARMCD")]
+  )
+  expect_equal(
+    h_get_minimal_fit_data(get_mmrm()),
+    fev_data[c("FEV1", "AVISIT", "USUBJID", "RACE", "SEX", "ARMCD")]
   )
 })

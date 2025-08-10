@@ -637,24 +637,6 @@ test_that("h_mmrm_tmb_data errors if too many visit levels", {
   )
 })
 
-test_that("h_mmrm_tmb_data returns combined response variables in full_frame", {
-  # Note that this is needed for `xlev` computation to work correctly in the
-  # corresponding component() call.
-  formula <- I(FEV1 / WEIGHT) ~ SEX + us(AVISIT | USUBJID)
-  formula_parts <- h_mmrm_tmb_formula_parts(formula)
-  tmb_data <- h_mmrm_tmb_data(
-    formula_parts,
-    fev_data,
-    weights = rep(1, nrow(fev_data)),
-    reml = TRUE,
-    drop_visit_levels = TRUE
-  )
-  result <- tmb_data$full_frame
-  expect_data_frame(result)
-  expect_subset(c("FEV1", "WEIGHT"), names(result))
-  expect_identical(attr(result, "extra_response_cols"), c(6L, 7L))
-})
-
 # h_mmrm_tmb_parameters ----
 
 test_that("h_mmrm_tmb_parameters works as expected without start values", {
@@ -2029,13 +2011,12 @@ test_that("fit_mmrm works with grouped ar1h covariance structure and REML", {
 
 test_that("fit_mmrm works with cs covariance structure and ML", {
   formula <- FEV1 ~ cs(AVISIT | USUBJID)
-  # We can get transient warnings here.
-  result <- suppressWarnings(fit_mmrm(
+  result <- fit_mmrm(
     formula,
     fev_data,
     weights = rep(1, nrow(fev_data)),
     reml = FALSE
-  ))
+  )
   expect_class(result, "mmrm_tmb")
   # See design/SAS/sas_cs_ml.txt for the source of numbers.
   expect_equal(deviance(result), 3918.12214544)
@@ -2044,7 +2025,10 @@ test_that("fit_mmrm works with cs covariance structure and ML", {
   result_sd <- exp(result$theta_est[1])
   expected_sd <- sqrt(86.7143)
   expect_equal(result_sd, expected_sd, tolerance = 1e-4)
-  result_rho <- map_to_cor(result$theta_est[2])
+  result_rho <- map_to_cs_cor(
+    result$theta_est[2],
+    component(result, "n_timepoints")
+  )
   expected_rho <- 0.06596
   expect_equal(result_rho, expected_rho, tolerance = 1e-2)
 })
@@ -2052,12 +2036,12 @@ test_that("fit_mmrm works with cs covariance structure and ML", {
 test_that("fit_mmrm works with cs covariance structure and REML", {
   formula <- FEV1 ~ cs(AVISIT | USUBJID)
   # We can get transient warnings here.
-  result <- suppressWarnings(fit_mmrm(
+  result <- fit_mmrm(
     formula,
     fev_data,
     weights = rep(1, nrow(fev_data)),
     reml = TRUE
-  ))
+  )
   expect_class(result, "mmrm_tmb")
   # See design/SAS/sas_cs_reml.txt for the source of numbers.
   expect_equal(deviance(result), 3917.98183508)
@@ -2066,7 +2050,10 @@ test_that("fit_mmrm works with cs covariance structure and REML", {
   result_sd <- exp(result$theta_est[1])
   expected_sd <- sqrt(86.8968)
   expect_equal(result_sd, expected_sd, tolerance = 1e-4)
-  result_rho <- map_to_cor(result$theta_est[2])
+  result_rho <- map_to_cs_cor(
+    result$theta_est[2],
+    component(result, "n_timepoints")
+  )
   expected_rho <- 0.06783
   expect_equal(result_rho, expected_rho, tolerance = 1e-2)
 })
@@ -2089,7 +2076,10 @@ test_that("fit_mmrm works with csh covariance structure and ML", {
   result_sds <- exp(result$theta_est[1:4])
   expected_sds <- sqrt(c(104.54, 38.5253, 31.1656, 178.62))
   expect_equal(result_sds, expected_sds, tolerance = 1e-4)
-  result_rho <- map_to_cor(result$theta_est[5])
+  result_rho <- map_to_cs_cor(
+    result$theta_est[5],
+    component(result, "n_timepoints")
+  )
   expected_rho <- 0.1566
   expect_equal(result_rho, expected_rho, tolerance = 1e-3)
 })
@@ -2110,7 +2100,10 @@ test_that("fit_mmrm works with csh covariance structure and REML", {
   result_sds <- exp(result$theta_est[1:4])
   expected_sds <- sqrt(c(104.61, 38.6137, 31.3143, 178.91))
   expect_equal(result_sds, expected_sds, tolerance = 1e-4)
-  result_rho <- map_to_cor(result$theta_est[5])
+  result_rho <- map_to_cs_cor(
+    result$theta_est[5],
+    component(result, "n_timepoints")
+  )
   expected_rho <- 0.1582
   expect_equal(result_rho, expected_rho, tolerance = 1e-3)
 })
@@ -2157,13 +2150,12 @@ test_that("fit_mmrm works with weights and REML", {
 
 test_that("fit_mmrm works with group cs covariance structure and ML", {
   formula <- FEV1 ~ cs(AVISIT | ARMCD / USUBJID)
-  # We can get transient warnings here.
-  result <- suppressWarnings(fit_mmrm(
+  result <- fit_mmrm(
     formula,
     fev_data,
     weights = rep(1, nrow(fev_data)),
     reml = FALSE
-  ))
+  )
   expect_class(result, "mmrm_tmb")
   # See design/SAS/sas_group_cs_ml.txt for the source of numbers.
   expect_equal(deviance(result), 3915.54243738)
@@ -2172,20 +2164,22 @@ test_that("fit_mmrm works with group cs covariance structure and ML", {
   result_sd <- exp(result$theta_est[c(1, 3)])
   expected_sd <- sqrt(c(77.9218, 96.1798))
   expect_equal(result_sd, expected_sd, tolerance = 1e-4)
-  result_rho <- map_to_cor(result$theta_est[c(2, 4)])
+  result_rho <- map_to_cs_cor(
+    result$theta_est[c(2, 4)],
+    component(result, "n_timepoints")
+  )
   expected_rho <- c(3.0393, 8.8558) / c(77.9218, 96.1798)
   expect_equal(result_rho, expected_rho, tolerance = 1e-2)
 })
 
 test_that("fit_mmrm works with cs covariance structure and REML", {
   formula <- FEV1 ~ cs(AVISIT | ARMCD / USUBJID)
-  # We can get transient warnings here.
-  result <- suppressWarnings(fit_mmrm(
+  result <- fit_mmrm(
     formula,
     fev_data,
     weights = rep(1, nrow(fev_data)),
     reml = TRUE
-  ))
+  )
   expect_class(result, "mmrm_tmb")
   # See design/SAS/sas_group_cs_reml.txt for the source of numbers.
   expect_equal(deviance(result), 3915.41985780)
@@ -2194,7 +2188,10 @@ test_that("fit_mmrm works with cs covariance structure and REML", {
   result_sd <- exp(result$theta_est[c(1, 3)])
   expected_sd <- sqrt(c(78.1081, 96.3502))
   expect_equal(result_sd, expected_sd, tolerance = 1e-3)
-  result_rho <- map_to_cor(result$theta_est[c(2, 4)])
+  result_rho <- map_to_cs_cor(
+    result$theta_est[c(2, 4)],
+    component(result, "n_timepoints")
+  )
   expected_rho <- c(3.2130, 9.0248) / c(78.1081, 96.3502)
   expect_equal(result_rho, expected_rho, tolerance = 1e-2)
 })
@@ -2226,7 +2223,10 @@ test_that("fit_mmrm works with grouped csh covariance structure and ML", {
     234.25
   ))
   expect_equal(result_sds, expected_sds, tolerance = 1e-4)
-  result_rho <- map_to_cor(result$theta_est[c(5, 10)])
+  result_rho <- map_to_cs_cor(
+    result$theta_est[c(5, 10)],
+    component(result, "n_timepoints")
+  )
   expected_rho <- c(0.07915, 0.2082)
   expect_equal(result_rho, expected_rho, tolerance = 1e-3)
 })
@@ -2256,7 +2256,10 @@ test_that("fit_mmrm works with grouped csh covariance structure and REML", {
     234.52
   ))
   expect_equal(result_sds, expected_sds, tolerance = 1e-4)
-  result_rho <- map_to_cor(result$theta_est[c(5, 10)])
+  result_rho <- map_to_cs_cor(
+    result$theta_est[c(5, 10)],
+    component(result, "n_timepoints")
+  )
   expected_rho <- c(0.08074, 0.2097)
   expect_equal(result_rho, expected_rho, tolerance = 1e-3)
 })
@@ -2266,13 +2269,12 @@ test_that("fit_mmrm works with grouped csh covariance structure and REML", {
 
 test_that("fit_mmrm works with group cs covariance structure and ML", {
   formula <- FEV1 ~ cs(AVISIT | ARMCD / USUBJID)
-  # We can get transient warnings here.
-  result <- suppressWarnings(fit_mmrm(
+  result <- fit_mmrm(
     formula,
     fev_data,
     weights = rep(1, nrow(fev_data)),
     reml = FALSE
-  ))
+  )
   expect_class(result, "mmrm_tmb")
   # See design/SAS/sas_group_cs_ml.txt for the source of numbers.
   expect_equal(deviance(result), 3915.54243738)
@@ -2281,20 +2283,22 @@ test_that("fit_mmrm works with group cs covariance structure and ML", {
   result_sd <- exp(result$theta_est[c(1, 3)])
   expected_sd <- sqrt(c(77.9218, 96.1798))
   expect_equal(result_sd, expected_sd, tolerance = 1e-4)
-  result_rho <- map_to_cor(result$theta_est[c(2, 4)])
+  result_rho <- map_to_cs_cor(
+    result$theta_est[c(2, 4)],
+    component(result, "n_timepoints")
+  )
   expected_rho <- c(3.0393, 8.8558) / c(77.9218, 96.1798)
   expect_equal(result_rho, expected_rho, tolerance = 1e-2)
 })
 
 test_that("fit_mmrm works with cs covariance structure and REML", {
   formula <- FEV1 ~ cs(AVISIT | ARMCD / USUBJID)
-  # We can get transient warnings here.
-  result <- suppressWarnings(fit_mmrm(
+  result <- fit_mmrm(
     formula,
     fev_data,
     weights = rep(1, nrow(fev_data)),
     reml = TRUE
-  ))
+  )
   expect_class(result, "mmrm_tmb")
   # See design/SAS/sas_group_cs_reml.txt for the source of numbers.
   expect_equal(deviance(result), 3915.41985780)
@@ -2303,7 +2307,10 @@ test_that("fit_mmrm works with cs covariance structure and REML", {
   result_sd <- exp(result$theta_est[c(1, 3)])
   expected_sd <- sqrt(c(78.1081, 96.3502))
   expect_equal(result_sd, expected_sd, tolerance = 1e-3)
-  result_rho <- map_to_cor(result$theta_est[c(2, 4)])
+  result_rho <- map_to_cs_cor(
+    result$theta_est[c(2, 4)],
+    component(result, "n_timepoints")
+  )
   expected_rho <- c(3.2130, 9.0248) / c(78.1081, 96.3502)
   expect_equal(result_rho, expected_rho, tolerance = 1e-2)
 })
@@ -2335,7 +2342,10 @@ test_that("fit_mmrm works with grouped csh covariance structure and ML", {
     234.25
   ))
   expect_equal(result_sds, expected_sds, tolerance = 1e-4)
-  result_rho <- map_to_cor(result$theta_est[c(5, 10)])
+  result_rho <- map_to_cs_cor(
+    result$theta_est[c(5, 10)],
+    component(result, "n_timepoints")
+  )
   expected_rho <- c(0.07915, 0.2082)
   expect_equal(result_rho, expected_rho, tolerance = 1e-3)
 })
@@ -2365,7 +2375,10 @@ test_that("fit_mmrm works with grouped csh covariance structure and REML", {
     234.52
   ))
   expect_equal(result_sds, expected_sds, tolerance = 1e-4)
-  result_rho <- map_to_cor(result$theta_est[c(5, 10)])
+  result_rho <- map_to_cs_cor(
+    result$theta_est[c(5, 10)],
+    component(result, "n_timepoints")
+  )
   expected_rho <- c(0.08074, 0.2097)
   expect_equal(result_rho, expected_rho, tolerance = 1e-3)
 })

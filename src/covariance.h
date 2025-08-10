@@ -104,8 +104,11 @@ matrix<T> get_auto_regressive_heterogeneous(const vector<T>& theta, int n_visits
 
 // Correlation function.
 template <class T>
-struct corr_fun_compound_symmetry : generic_corr_fun<T> {
-  using generic_corr_fun<T>::generic_corr_fun;
+struct corr_fun_compound_symmetry {
+  const vector<T> corr_values;
+  // Custom constructor here because we need the special mapping from theta to rho.
+  corr_fun_compound_symmetry(const vector<T>& theta, int n_visits) :
+    corr_values(map_to_cs_cor(theta, n_visits)) {}
   const T operator() (int i, int j) const {
     return this->corr_values(0);  // rho (constant)
   }
@@ -114,7 +117,7 @@ struct corr_fun_compound_symmetry : generic_corr_fun<T> {
 template <class T>
 matrix<T> get_compound_symmetry(const vector<T>& theta, int n_visits) {
   T const_sd = exp(theta(0));
-  corr_fun_compound_symmetry<T> fun(theta.tail(1));
+  corr_fun_compound_symmetry<T> fun(theta.tail(1), n_visits);
   matrix<T> cs_cor_mat_chol = get_corr_mat_chol(n_visits, fun);
   return const_sd * cs_cor_mat_chol;
 }
@@ -122,7 +125,7 @@ matrix<T> get_compound_symmetry(const vector<T>& theta, int n_visits) {
 template <class T>
 matrix<T> get_compound_symmetry_heterogeneous(const vector<T>& theta, int n_visits) {
   vector<T> sd_values = exp(theta.head(n_visits));
-  corr_fun_compound_symmetry<T> fun(theta.tail(1));
+  corr_fun_compound_symmetry<T> fun(theta.tail(1), n_visits);
   return get_heterogeneous_cov(sd_values, fun);
 }
 
