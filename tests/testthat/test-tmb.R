@@ -520,7 +520,6 @@ test_that("h_mmrm_tmb_data catches case with multiple time points per subject ea
   )
 })
 
-
 test_that("h_mmrm_tmb_data has no side effect of overwrite the weights in global env", {
   weights <- "this is global weights"
   formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
