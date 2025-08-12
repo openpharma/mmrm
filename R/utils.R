@@ -986,3 +986,101 @@ h_check_cov_struct_nesting <- function(model_basic, model_augmented) {
          call. = FALSE)
   }
 }
+
+
+
+
+
+
+#' Generate a Name Not Already In an Environment nor Its Parents
+#'
+#' Alters the user-supplied string `x` using [make.names()] with `unique = TRUE`
+#' until it is a syntactically valid name not bound to in `env` nor its
+#' [parents][parent.env].
+#'
+#' @param x (`string`)\cr a candidate name.
+#' @param env (`environment`)\cr an [environment] whose bindings (and whose
+#'   parents' bindings) are checked to ensure that they do not include the
+#'   returned value.
+#'
+#' @returns A string that does not match any of the bindings of `env` nor its
+#'   parents.
+#'
+#' @keywords internal
+h_generate_new_name <- function(x, env) {
+  assert_string(x, na.ok = TRUE)
+  assert_environment(env)
+
+  # Force x to be a syntactically valid name.
+  x <- make.names(x, unique = TRUE)
+
+  # As long as we keep finding a binding in env (or its parents) whose name is
+  # the same as the last element of x...
+  while (exists(x[length(x)], envir = env, inherits = TRUE)) {
+    # ...Copy the first element of x and append it to the end.
+    # Run make.names(unique = TRUE) again.
+    x <- make.names(x[c(seq_along(x), 1L)], unique = TRUE)
+  }
+
+  # If we've gotten here, the last element of doesn't exist in env nor its
+  # parents
+  x[length(x)]
+}
+
+
+
+
+
+#' Refit an `mmrm` Model Using a New Dataset
+#'
+#' Extract the `call` [component] of `fit` and evaluate it in a new
+#' [environment][new.env] that contains the new `data`.
+#'
+#' This works as follows:
+#'
+#' 1. A new environment is created whose parent is
+#' `environment(fit$formula_parts$full_formula)`.
+#'
+#' 1. A name is generated using [h_generate_new_name()], and `data` is bound to
+#' the new environment using this new name.
+#'
+#' 1. The [`call`] component of `fit` is extracted and its `data` argument is
+#' changed to the new name.
+#'
+#' 1. The modified call is evaluated in the new environment.
+#'
+#' @param fit (`mmrm`)\cr an `mmrm` object to be refit.
+#' @param data (`data frame`)\cr a data frame upon which `fit` is to be refit.
+#'
+#' @returns An `mmrm` object with the same terms as `fit` but based on `data`.
+#'
+#' @keywords internal
+h_refit_mmrm <- function(fit, data) {
+  assert_class(fit, "mmrm")
+  assert_data_frame(data)
+
+  # Grab the environment of the model's formula.
+  env <- environment(fit[["formula_parts"]][["full_formula"]])
+  assert_environment(env)
+
+  # Grab the model call.
+  expr <- component(fit, "call")
+
+  # Generate a name guaranteed not to be in env nor its enclosing frames
+  data_name <- h_generate_new_name("data", env)
+
+  # Create a child environment whose parent is the model's environment.
+  env <- new.env(parent = env)
+
+  # Bind the new data to the new name in the new, child environment.
+  env[[data_name]] <- data
+
+  # Force the data argument of the model call to be the new name.
+  expr[["data"]] <- as.name(data_name)
+
+  # Evaluate the updated model call in the new environment.
+  fit <- eval(expr, env)
+
+  fit
+}
+
