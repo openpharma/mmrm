@@ -1383,6 +1383,15 @@ test_that("h_assert_lrt_suitability() ensures suitability for LRT testing", {
 
 test_that("h_generate_new_name() generates a string without a binding in env", {
   expect_equal(h_generate_new_name("c", asNamespace("stats")), "c.1")
+  foo_mmrm_test_name.2 <- NA
+  test_env_parent <- new.env()
+  test_env_child <- new.env(parent = test_env_parent)
+  test_env_parent$foo_mmrm_test_name <- NA
+  test_env_child$foo_mmrm_test_name.1 <- NA
+  expect_equal(
+    h_generate_new_name("foo_mmrm_test_name", test_env_child),
+    "foo_mmrm_test_name.3"
+  )
 })
 
 

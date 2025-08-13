@@ -1083,4 +1083,3 @@ h_refit_mmrm <- function(fit, data) {
 
   fit
 }
-
