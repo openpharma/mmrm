@@ -1379,3 +1379,33 @@ test_that("h_assert_lrt_suitability() ensures suitability for LRT testing", {
                                        dfs = c(attr(logLik(get_mmrm_cs()), "df"), attr(logLik(get_mmrm()), "df")),
                                        is_reml = c(component(get_mmrm_cs(), "reml"), component(get_mmrm(), "reml"))))
 })
+
+
+test_that("h_generate_new_name() generates a string without a binding in env", {
+  expect_equal(h_generate_new_name("c", asNamespace("stats")), "c.1")
+  this_environment <- environment()
+  test_env_parent <- new.env()
+  test_env_child <- new.env(parent = test_env_parent)
+  this_environment[["foo_mmrm_test_name.2"]] <- NA
+  test_env_parent[["foo_mmrm_test_name"]] <- NA
+  test_env_child[["foo_mmrm_test_name.1"]] <- NA
+  expect_equal(
+    h_generate_new_name("foo_mmrm_test_name", test_env_child),
+    "foo_mmrm_test_name.3"
+  )
+})
+
+
+
+test_that("h_refit_mmrm() successfully refits an mmrm fit", {
+  fit <- get_mmrm()
+  refit <- h_refit_mmrm(get_mmrm_smaller_data(), fev_data)
+
+  # Get rid of tmb_object and call's data argument, which will be different
+  fit$tmb_object <- NULL
+  fit$call$data <- NULL
+  refit$tmb_object <- NULL
+  refit$call$data <- NULL
+
+  expect_equal(refit, fit)
+})
