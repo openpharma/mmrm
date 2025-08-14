@@ -648,9 +648,6 @@ h_check_columns_nested <- function(data_basic, data_augmented) {
 #'
 #' @param fits (`list`)\cr list of `mmrm` fits.
 #'
-#' @param data_basic,data_augmented (`data.frame`)\cr data frames to be
-#'   compared.
-#'
 #' @returns `TRUE` or `FALSE` indicating whether or not the datasets underlying
 #'   the elements of `fits` contain the same observations, and that each
 #'   dataset's columns are a subset of the next dataset's columns.
@@ -732,7 +729,7 @@ h_fits_common_data <- function(fits) {
 #' Grabs the response variable along with the predictors named in
 #' `fit$formula_parts`.
 #'
-#' @param fits (`mmrm`)\cr a fitted `mmrm` model.
+#' @param fit (`mmrm`)\cr a fitted `mmrm` model.
 #'
 #' @returns A data frame: a subset of the columns the dataset underlying `fit`
 #'   (i.e., `fit$data`):
@@ -1119,7 +1116,7 @@ h_anova_single_mmrm_model <- function(object) {
   terms <- c(if (terms_attr[["intercept"]]) "(Intercept)",
              terms_attr[["term.labels"]])
 
-  # Obtain a vectot identifying each coefficient's corresponding term.
+  # Obtain a vector identifying each coefficient's corresponding term.
   assign_vec <- attr(component(object, "x_matrix"), "assign")
 
   # Create an identity matrix with a row/col for each coefficient.

@@ -328,10 +328,9 @@ confint.mmrm <- function(object, parm, level = 0.95, ...) {
 #'   covariance structure is nested within the heterogeneous Toeplitz covariance
 #'   structure.
 #'
-#'   ## Other nestings
+#'   ## Other nested structures
 #'
-#'   The following nestings also exist between different covariance structure
-#'   types.
+#'   Some different covariance structure types are also nested:
 #'
 #'   - First-order auto-regressive (`ar1` / `ar1h`) is nested within:
 #'     - ante-dependence (`ad` / `adh`)
@@ -343,42 +342,61 @@ confint.mmrm <- function(object, parm, level = 0.95, ...) {
 #'   `object` supplied as its argument. Otherwise, the resulting data frame will
 #'   have the following columns:
 #'
-#'   - `Model`: the sequence number of the model according to the order in which the models were supplied to this function.
+#'   - `Model`: the sequence number of the model according to the order in which
+#'   the models were supplied to this function.
 #'
-#'   - `refit`: logical, indicating whether or not the model was refitted. If the `refit` argument was `FALSE`, all values will be `FALSE`.
+#'   - `refit`: logical, indicating whether or not the model was refitted. If
+#'   the `refit` argument was `FALSE`, all values will be `FALSE`.
 #'
-#'   - `REML`: logical, indicating whether or not the model was fitted using restricted maximum likelihood (REML) estimation. If `FALSE`, the model was fitted using maxiumum likelihood (ML) estimation.
+#'   - `REML`: logical, indicating whether or not the model was fitted using
+#'   restricted maximum likelihood (REML) estimation. If `FALSE`, the model was
+#'   fitted using maximum likelihood (ML) estimation.
 #'
-#'   - `n_param`: the number of variance parameters in the model fit, obtained via [logLik.mmrm_tmb()].
+#'   - `n_param`: the number of variance parameters in the model fit, obtained
+#'   via [logLik.mmrm_tmb()].
 #'
-#'   - `n_coef`: the number of estimated coefficients in the model fit, obtained via [logLik.mmrm_tmb()].
+#'   - `n_coef`: the number of estimated coefficients in the model fit, obtained
+#'   via [logLik.mmrm_tmb()].
 #'
-#'   - `df`: degrees of freedom of the model fit, obtained via [logLik.mmrm_tmb()].
+#'   - `df`: degrees of freedom of the model fit, obtained via
+#'   [logLik.mmrm_tmb()].
 #'
-#'   - `AIC`: Akaike's "An Information Criterion" of the model fit, obtained via [stats::AIC()].
+#'   - `AIC`: Akaike's "An Information Criterion" of the model fit, obtained via
+#'   [stats::AIC()].
 #'
-#'   - `BIC`: the Bayesian Information Criterion of the model fit, obtained via [stats::BIC()].
+#'   - `BIC`: the Bayesian Information Criterion of the model fit, obtained via
+#'   [stats::BIC()].
 #'
-#'   - `logLik`: the log likelihood of the model fit, obtained via [logLik.mmrm_tmb()].
+#'   - `logLik`: the log likelihood of the model fit, obtained via
+#'   [logLik.mmrm_tmb()].
 #'
-#'   - `call`: the [call] that created the model fit, obtained via [component()] with `name = "call"`, which is passed to [deparse1()]. If the model was refitted (i.e., if its `refit` entry in this table is `TRUE`), this `call` will be different from the `call` component of the pre-refitted model fit.
+#'   - `call`: the [call] that created the model fit, obtained via [component()]
+#'   with `name = "call"`, which is passed to [deparse1()]. If the model was
+#'   refitted (i.e., if its `refit` entry in this table is `TRUE`), this `call`
+#'   will be different from the `call` component of the pre-refitted model fit.
 #'
 #'   The data frame will have these additional columns inserted before `call` if
 #'   `test = TRUE`. Note that since each of these columns describe the results
 #'   of a likelihood ratio test (LRT) between the previous row's and current
 #'   row's model fits, the first element of each of these columns will be `NA`.
 #'
-#' - `test`: character, indicating which two model fits were compared. Values are of the form `{Model - 1} vs {Model]`.
+#' - `test`: character, indicating which two model fits were compared. Values
+#'  are of the form `{Model - 1} vs {Model]`.
 #'
-#' - `log_likelihood_ratio`: the [log] of the likelihood ratio between the two models being compared, obtained by passing `logLik` to [diff()].
+#' - `log_likelihood_ratio`: the [log] of the likelihood ratio between the two
+#'  models being compared, obtained by passing `logLik` to [diff()].
 #'
-#' - `p_value`: the p-value of the `log_likelihood_ratio`, obtained by passing `2 * abs(log_likelihood_ratio)` to [stats::pchisq()] with `df = abs(diff(df))` and `lower.tail = FALSE`.
+#' - `p_value`: the p-value of the `log_likelihood_ratio`, obtained by passing
+#' `2 * abs(log_likelihood_ratio)` to [stats::pchisq()] with
+#' `df = abs(diff(df))` and `lower.tail = FALSE`.
 #'
 #' @seealso For details on the single model operation of this function, see
 #'   [h_anova_single_mmrm_model()]. For details on the generic, see
 #'   [stats::anova()].
 #'
 #' @export
+#'
+#' @name stats_anova
 #'
 #' @examples
 #' # Create a few model fits, only adding terms from one to the next.
@@ -426,7 +444,7 @@ confint.mmrm <- function(object, parm, level = 0.95, ...) {
 #'
 #' # If a model was created with a different data set, refit = TRUE is needed.
 #' anova(fit_sex_ar1, fit_sex_race_toeph_sub, fit_interaction_us, refit = TRUE)
-anova.mmrm <- function (object, ..., test = TRUE, refit = FALSE) {
+anova.mmrm <- function(object, ..., test = TRUE, refit = FALSE) {
 
   assert_class(object, "mmrm")
 
@@ -472,7 +490,7 @@ anova.mmrm <- function (object, ..., test = TRUE, refit = FALSE) {
     }
 
     # vector of log likelihood results for the fits
-    logLik_vec <- lapply(fits, logLik.mmrm_tmb)
+    log_likelihood_vec <- lapply(fits, logLik)
 
     # Calculate the standard diagnostics.
     out <-
@@ -480,12 +498,12 @@ anova.mmrm <- function (object, ..., test = TRUE, refit = FALSE) {
         Model = seq_along(fits),
         refit = needs_refit,
         REML = vapply(fits, component, logical(1L), "reml"),
-        n_param = vapply(logLik_vec, attr, numeric(1L), "n_param"),
-        n_coef = vapply(logLik_vec, attr, numeric(1L), "n_coef"),
-        df = vapply(logLik_vec, attr, numeric(1L), "df"),
-        AIC = vapply(fits, AIC, numeric(1)),
-        BIC = vapply(fits, BIC, numeric(1)),
-        logLik = as.numeric(logLik_vec)
+        n_param = vapply(log_likelihood_vec, attr, numeric(1L), "n_param"),
+        n_coef = vapply(log_likelihood_vec, attr, numeric(1L), "n_coef"),
+        df = vapply(log_likelihood_vec, attr, numeric(1L), "df"),
+        AIC = vapply(fits, AIC, numeric(1L)),
+        BIC = vapply(fits, BIC, numeric(1L)),
+        logLik = as.numeric(log_likelihood_vec)
       )
 
     # If the user has requested the likelihood ratio test...
@@ -498,14 +516,13 @@ anova.mmrm <- function (object, ..., test = TRUE, refit = FALSE) {
       # model plus the current row's model.
       out$test <- c(NA, paste(out$Model[-length(fits)], "vs", out$Model[-1L]))
 
-      # Calculate the log of likelihood ratios between the pairs using
-      # base::diff()
+      # log of likelihood ratios between the pairs using base::diff()
       out$log_likelihood_ratio <- c(NA, diff(out$logLik))
 
       # Calculate the p-value using the log likelihood ratios and differences in
       # df
       out$p_value <-
-        pchisq(
+        stats::pchisq(
           2 * abs(out$log_likelihood_ratio),
           df = abs(diff(out$df)),
           lower.tail = FALSE
