@@ -648,9 +648,6 @@ h_check_columns_nested <- function(data_basic, data_augmented) {
 #'
 #' @param fits (`list`)\cr list of `mmrm` fits.
 #'
-#' @param data_basic,data_augmented (`data.frame`)\cr data frames to be
-#'   compared.
-#'
 #' @returns `TRUE` or `FALSE` indicating whether or not the datasets underlying
 #'   the elements of `fits` contain the same observations, and that each
 #'   dataset's columns are a subset of the next dataset's columns.
@@ -732,7 +729,7 @@ h_fits_common_data <- function(fits) {
 #' Grabs the response variable along with the predictors named in
 #' `fit$formula_parts`.
 #'
-#' @param fits (`mmrm`)\cr a fitted `mmrm` model.
+#' @param fit (`mmrm`)\cr a fitted `mmrm` model.
 #'
 #' @returns A data frame: a subset of the columns the dataset underlying `fit`
 #'   (i.e., `fit$data`):
@@ -1082,4 +1079,59 @@ h_refit_mmrm <- function(fit, data) {
   fit <- eval(expr, env)
 
   fit
+}
+
+
+
+
+#' Calculate the Significance of Each Term in an `mmrm` Fit.
+#'
+#' Runs [df_md()] once for each term in an `mmrm` object and returns the results
+#' in a data frame.
+#'
+#' When only one model fit is passed to [anova.mmrm()], the `object` argument of
+#' `anova.mmrm()` is passed directly to this function.
+#'
+#' @param object (`mmrm`)\cr an `mmrm` object.
+#'
+#' @returns A data frame with a row for each term in `object`, including an
+#'   intercept if present. The [row.names] of the data frame identify the terms.
+#'   The data frame will contain the following four columns:
+#'
+#'  - `num_df`: the numerator degrees of freedom.
+#'  - `denom_df`: the denominator degrees of freedom.
+#'  - `f_stat`: the test statistic on the F-distribution.
+#'  - `p_va`: the associated p-value.
+#'
+#' @keywords internal
+h_anova_single_mmrm_model <- function(object) {
+  assert_class(object, "mmrm")
+
+  # Obtain the attributes of the terms.object of the model formula without the
+  # cov struct
+  terms_attr <- attributes(terms(object[["formula_parts"]][["model_formula"]]))
+
+  # Create a character vector of the model terms.
+  # Prepend with "(Intercept)" if an intercept is present
+  terms <- c(if (terms_attr[["intercept"]]) "(Intercept)",
+             terms_attr[["term.labels"]])
+
+  # Obtain a vector identifying each coefficient's corresponding term.
+  assign_vec <- attr(component(object, "x_matrix"), "assign")
+
+  # Create an identity matrix with a row/col for each coefficient.
+  identity_mtx <- diag(length(assign_vec))
+
+  # Split the rows of identity_mtx according to assign_vec, creating a list of
+  # contrast matrices: one for each term in the model.
+  contrasts <-
+    split.data.frame(identity_mtx, factor(assign_vec, labels = terms))
+
+  # Get df_md() results for each contrast matrix. Result is a list of lists.
+  df_md_results <- lapply(contrasts, df_md, object = object)
+
+  # Turn results into a data frame. The row.names identify the terms.
+  out <- do.call(rbind, lapply(df_md_results, as.data.frame))
+
+  out
 }

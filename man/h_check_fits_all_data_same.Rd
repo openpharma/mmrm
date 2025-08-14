@@ -9,9 +9,6 @@ h_check_fits_all_data_same(fits)
 }
 \arguments{
 \item{fits}{(\code{list})\cr list of \code{mmrm} fits.}
-
-\item{data_basic, data_augmented}{(\code{data.frame})\cr data frames to be
-compared.}
 }
 \value{
 \code{TRUE} or \code{FALSE} indicating whether or not the datasets underlying

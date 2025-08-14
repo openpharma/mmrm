@@ -7,7 +7,7 @@
 h_get_minimal_fit_data(fit)
 }
 \arguments{
-\item{fits}{(\code{mmrm})\cr a fitted \code{mmrm} model.}
+\item{fit}{(\code{mmrm})\cr a fitted \code{mmrm} model.}
 }
 \value{
 A data frame: a subset of the columns the dataset underlying \code{fit}
