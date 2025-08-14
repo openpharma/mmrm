@@ -261,3 +261,263 @@ confint.mmrm <- function(object, parm, level = 0.95, ...) {
   ci[] <- cf[parm] + c(sefac, -sefac)
   ci
 }
+
+
+
+#' Analysis of Variance for `mmrm` Fits
+#'
+#' If supplied only one model fit, the function will calculate and return the
+#' significance of the model terms. If supplied more than one model fit,
+#' standard diagnostics will be returned for each model, optionally including
+#' likelihood ratio test (LRT) results for adjacent models.
+#'
+#' @param object (`mmrm`)\cr an `mmrm` model fit.
+#' @param ... (`mmrm`)\cr optional `mmrm` model fits. If left empty, the
+#'   significance of each term in `object` will be calculated.
+#' @param test (`flag`)\cr indicating whether the output should include
+#'   likelihood ratio test (LRT) results comparing the model fits to one
+#'   another. Defaults to `TRUE`. Ignored if `...` is empty.
+#' @param refit (`flag`)\cr indicating whether the models should be refitted
+#'   with the dataset consisting of their shared set of observations before
+#'   performing diagnostics and testing. This is ignored if the models already
+#'   share the same dataset. If `refit = FALSE` and the models have different
+#'   underlying data sets, an error will be thrown. Defaults to `FALSE`. Ignored
+#'   if `...` is empty.
+#'
+#' @details When `test = FALSE` (or, when only one model is supplied), this
+#'   function will process any `mmrm` fits, related or unrelated.
+#'
+#'   When supplying multiple models and `test = TRUE`, adjacent pairs of models
+#'   are tested sequentially. In other words, the order of the supplied models
+#'   matters. Furthermore, there are are multiple requirements for successful
+#'   LRT. See **Requirements for LRT** below.
+#'
+#'   # Requirements for LRT
+#'
+#'   1. Each supplied model fit must have more degrees of freedom (*df*) than
+#'   the preceding model fit.
+#'
+#'   1. If all supplied models were estimated using maximum likelihood (ML), the
+#'   models must have nested covariates in order to undergo LRT. In other words,
+#'   the set of covariates for each model must be a subset of the covariates of
+#'   the next model. However, if any of the supplied models were estimated using
+#'   restricted maximum likelihood (REML), all models must have the same
+#'   covariates.
+#'
+#'   1. The covariance structure of each model must be either (a) the same as
+#'   that of the next model or (b) a special case of that of the next model. See
+#'   **Covariance structure nesting hierarchy** below.
+#'
+#'   1. All supplied model fits must either already use the same data or be
+#'   refitted using `refit = TRUE`, which refits all models to the dataset of
+#'   common observations between all models' respective data sets.
+#'
+#'   # Covariance structure nesting hierarchy
+#'
+#'   ## Structured nests within unstructured
+#'
+#'   Tautologically, all covariance structures are special cases of an
+#'   unstructured covariance, and a model *with* a covariance structure can be
+#'   considered "nested" within an model *without* a covariance structure
+#'   (assuming that the covariates are also nested).
+#'
+#'   ## Homogeneous nests within analogous heterogeneous
+#'
+#'   All homogeneous covariance structures are nested within their corresponding
+#'   heterogeneous counterparts. For instance, the homogeneous Toeplitz
+#'   covariance structure is nested within the heterogeneous Toeplitz covariance
+#'   structure.
+#'
+#'   ## Other nestings
+#'
+#'   The following nestings also exist between different covariance structure
+#'   types.
+#'
+#'   - First-order auto-regressive (`ar1` / `ar1h`) is nested within:
+#'     - ante-dependence (`ad` / `adh`)
+#'     - Toeplitz (`toep` / `toeph`)
+#'   - Compound symmetry (`cs` / `csh`) is nested within Toeplitz (`toep` / `toeph`)
+#'
+#' @returns A data frame with a row for each supplied model. If `...` is empty,
+#'   this will be the the returned value of [h_anova_single_mmrm_model()] with
+#'   `object` supplied as its argument. Otherwise, the resulting data frame will
+#'   have the following columns:
+#'
+#'   - `Model`: the sequence number of the model according to the order in which the models were supplied to this function.
+#'
+#'   - `refit`: logical, indicating whether or not the model was refitted. If the `refit` argument was `FALSE`, all values will be `FALSE`.
+#'
+#'   - `REML`: logical, indicating whether or not the model was fitted using restricted maximum likelihood (REML) estimation. If `FALSE`, the model was fitted using maxiumum likelihood (ML) estimation.
+#'
+#'   - `n_param`: the number of variance parameters in the model fit, obtained via [logLik.mmrm_tmb()].
+#'
+#'   - `n_coef`: the number of estimated coefficients in the model fit, obtained via [logLik.mmrm_tmb()].
+#'
+#'   - `df`: degrees of freedom of the model fit, obtained via [logLik.mmrm_tmb()].
+#'
+#'   - `AIC`: Akaike's "An Information Criterion" of the model fit, obtained via [stats::AIC()].
+#'
+#'   - `BIC`: the Bayesian Information Criterion of the model fit, obtained via [stats::BIC()].
+#'
+#'   - `logLik`: the log likelihood of the model fit, obtained via [logLik.mmrm_tmb()].
+#'
+#'   - `call`: the [call] that created the model fit, obtained via [component()] with `name = "call"`, which is passed to [deparse1()]. If the model was refitted (i.e., if its `refit` entry in this table is `TRUE`), this `call` will be different from the `call` component of the pre-refitted model fit.
+#'
+#'   The data frame will have these additional columns inserted before `call` if
+#'   `test = TRUE`. Note that since each of these columns describe the results
+#'   of a likelihood ratio test (LRT) between the previous row's and current
+#'   row's model fits, the first element of each of these columns will be `NA`.
+#'
+#' - `test`: character, indicating which two model fits were compared. Values are of the form `{Model - 1} vs {Model]`.
+#'
+#' - `log_likelihood_ratio`: the [log] of the likelihood ratio between the two models being compared, obtained by passing `logLik` to [diff()].
+#'
+#' - `p_value`: the p-value of the `log_likelihood_ratio`, obtained by passing `2 * abs(log_likelihood_ratio)` to [stats::pchisq()] with `df = abs(diff(df))` and `lower.tail = FALSE`.
+#'
+#' @seealso For details on the single model operation of this function, see
+#'   [h_anova_single_mmrm_model()]. For details on the generic, see
+#'   [stats::anova()].
+#'
+#' @export
+#'
+#' @examples
+#' # Create a few model fits, only adding terms from one to the next.
+#' # Notice also that each covariance structure is a special case of the one
+#' # that follows.
+#' fit_sex_ar1 <-
+#'   mmrm(FEV1 ~ FEV1_BL + SEX + ARMCD + ar1(AVISIT | USUBJID),
+#'     data = fev_data,
+#'     reml = FALSE
+#'   )
+#' fit_sex_race_toeph <-
+#'   mmrm(
+#'     FEV1 ~ FEV1_BL + SEX + RACE + ARMCD + toeph(AVISIT | USUBJID),
+#'     data = fev_data,
+#'     reml = FALSE
+#'   )
+#' fit_interaction_us <-
+#'   mmrm(
+#'     FEV1 ~ FEV1_BL + SEX * RACE + ARMCD + us(AVISIT | USUBJID),
+#'     data = fev_data,
+#'     reml = FALSE
+#'   )
+#'
+#' # Single model fit, showing significance of model terms:
+#' anova(fit_interaction_us)
+#'
+#' # Multiple model fits, with diagnostics for each fit and likelihood ratio
+#' # testing (LRT) for each adjacent pair. LRT is possible because when the fits
+#' # are in this order, their covariates and covariance structures are nested.
+#' anova(fit_sex_ar1, fit_sex_race_toeph, fit_interaction_us)
+#'
+#' # We can only change the order if we forego LRT using test = FALSE.
+#' anova(fit_sex_race_toeph, fit_interaction_us, fit_sex_ar1, test = FALSE)
+#'
+#' # Create a subset of fev_data set with the 4th visit removed.
+#' fev_subset <- droplevels(fev_data[fev_data$VISITN < 4, ])
+#'
+#' # Recreate fit_sex_race_toeph but this time based off fev_subset:
+#' fit_sex_race_toeph_sub <-
+#'   mmrm(
+#'     FEV1 ~ FEV1_BL + SEX + RACE + ARMCD + toeph(AVISIT | USUBJID),
+#'     data = fev_subset,
+#'     reml = FALSE
+#'   )
+#'
+#' # If a model was created with a different data set, refit = TRUE is needed.
+#' anova(fit_sex_ar1, fit_sex_race_toeph_sub, fit_interaction_us, refit = TRUE)
+anova.mmrm <- function (object, ..., test = TRUE, refit = FALSE) {
+
+  assert_class(object, "mmrm")
+
+  # Collect all model fits.
+  fits <- list(object, ...)
+
+  # If only one model fit was supplied.
+  if (length(fits) == 1L) {
+    out <- h_anova_single_mmrm_model(object)
+
+  } else {
+    # If more than one model fit was supplied.
+
+    # Ensure all objects in ... are mmrm fits.
+    lapply(fits[-1L], assert_class, classes = "mmrm", .var.name = "...")
+
+    assert_flag(test)
+    assert_flag(refit)
+
+    # If the data are not all the same and refit = TRUE, refit all with the
+    # largest common data set.
+    if (refit && !h_check_fits_all_data_same(fits)) {
+      # The set of observations in common to all the fits' data sets.
+      common_data <- h_fits_common_data(fits)
+
+      # A logical vector for each model fit, indicating whether the model needs
+      # to be refit. A model needs to be refit if its columns are not nested
+      # within the columns of common_data.
+      needs_refit <-
+        !vapply(
+          lapply(fits, h_get_minimal_fit_data),
+          h_check_columns_nested,
+          FUN.VALUE = logical(1L),
+          data_augmented = common_data
+        )
+
+      # Refit only the models that need to be refit using common_data.
+      fits[needs_refit] <-
+        lapply(fits[needs_refit], h_refit_mmrm, data = common_data)
+    } else {
+      # Make needs_refit a vector of FALSE with length equal to length(fits).
+      needs_refit <- rep_len(FALSE, length(fits))
+    }
+
+    # vector of log likelihood results for the fits
+    logLik_vec <- lapply(fits, logLik.mmrm_tmb)
+
+    # Calculate the standard diagnostics.
+    out <-
+      data.frame(
+        Model = seq_along(fits),
+        refit = needs_refit,
+        REML = vapply(fits, component, logical(1L), "reml"),
+        n_param = vapply(logLik_vec, attr, numeric(1L), "n_param"),
+        n_coef = vapply(logLik_vec, attr, numeric(1L), "n_coef"),
+        df = vapply(logLik_vec, attr, numeric(1L), "df"),
+        AIC = vapply(fits, AIC, numeric(1)),
+        BIC = vapply(fits, BIC, numeric(1)),
+        logLik = as.numeric(logLik_vec)
+      )
+
+    # If the user has requested the likelihood ratio test...
+    if (test) {
+
+      h_assert_lrt_suitability(fits, refit, dfs = out$df, is_reml = out$REML)
+
+      # Create labels for the pair being compared (e.g., "3 vs 4"). Force the
+      # first element to be NA because a pair of models is the previous row's
+      # model plus the current row's model.
+      out$test <- c(NA, paste(out$Model[-length(fits)], "vs", out$Model[-1L]))
+
+      # Calculate the log of likelihood ratios between the pairs using
+      # base::diff()
+      out$log_likelihood_ratio <- c(NA, diff(out$logLik))
+
+      # Calculate the p-value using the log likelihood ratios and differences in
+      # df
+      out$p_value <-
+        pchisq(
+          2 * abs(out$log_likelihood_ratio),
+          df = abs(diff(out$df)),
+          lower.tail = FALSE
+        )
+    }
+
+    # Extract the call of each fit and process it with base::deparse1()
+    out$call <- vapply(lapply(fits, component, "call"), deparse1, character(1L))
+
+  }
+
+  class(out) <- union("anova.mmrm", class(out))
+
+  out
+}
