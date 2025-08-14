@@ -403,6 +403,8 @@ test_that("anova.mmrm() works for a single model", {
 
 
 test_that("anova.mmrm() works for multiple models -- no refitting", {
+  call_cs <- quote(mmrm(formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + cs(AVISIT | USUBJID), data = fev_data))
+  call_us <- quote(mmrm(formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID), data = fev_data))
   expect_equal(
     anova(get_mmrm_cs(), get_mmrm()),
     structure(
@@ -419,8 +421,7 @@ test_that("anova.mmrm() works for multiple models -- no refitting", {
         test = c(NA, "1 vs 2"),
         log_likelihood_ratio = c(NA, 67.79654),
         p_value = c(NA, 1.95508e-25),
-        call = c(deparse1(quote(mmrm(formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + cs(AVISIT | USUBJID), data = fev_data))),
-                 deparse1(quote(mmrm(formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID), data = fev_data))))
+        call = c(deparse1(call_cs), deparse1(call_us))
       ),
       class = c("anova.mmrm", "data.frame")
     ),
@@ -432,6 +433,8 @@ test_that("anova.mmrm() works for multiple models -- no refitting", {
 
 
 test_that("anova.mmrm() works for multiple models -- with refitting", {
+  call_cs <- quote(mmrm(formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + cs(AVISIT | USUBJID), data = data.1))
+  call_us <- quote(mmrm(formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID), data = .smaller_fev_data))
   expect_equal(
     anova(get_mmrm_cs(), get_mmrm_smaller_data(), refit = TRUE),
     structure(
@@ -448,8 +451,7 @@ test_that("anova.mmrm() works for multiple models -- with refitting", {
         test = c(NA, "1 vs 2"),
         log_likelihood_ratio = c(NA, 19.05136),
         p_value = c(NA, 1.067197e-7),
-        call = c(deparse1(quote(mmrm(formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + cs(AVISIT | USUBJID), data = data.1))),
-                 deparse1(quote(mmrm(formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID), data = .smaller_fev_data))))
+        call = c(deparse1(call_cs), deparse1(call_us))
       ),
       class = c("anova.mmrm", "data.frame")
     ),
