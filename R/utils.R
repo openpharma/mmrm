@@ -290,7 +290,7 @@ h_confirm_large_levels <- function(x) {
   if (!identical(proceed, TRUE)) {
     stop("Visit levels too large!", call. = FALSE)
   }
-  return(TRUE)
+  TRUE
 }
 
 #' Default Value on NULL
@@ -326,7 +326,7 @@ h_get_na_action <- function(na_action) {
   }
   if (is.character(na_action) && length(na_action) == 1L) {
     assert_subset(na_action, c("na.omit", "na.exclude", "na.fail", "na.pass", "na.contiguous"))
-    return(get(na_action, mode = "function", pos = "package:stats"))
+    get(na_action, mode = "function", pos = "package:stats")
   }
 }
 
@@ -559,4 +559,527 @@ h_tmb_warn_non_deterministic <- function() {
     )
     warning(msg)
   }
+}
+
+
+
+#' Sort a Data Frame by All Its Columns in Ascending Order
+#'
+#' @param data (`data.frame`)\cr a data frame to be sorted.
+#'
+#' @returns A data frame. The same as the input `data` with columns in the same
+#'   order but with rows sorted by the first column, with ties broken by the
+#'   second column, and so forth.
+#' @keywords internal
+h_dataset_sort_all <- function(data) {
+  assert_data_frame(data)
+  data[do.call(order, unname(data)), , drop = FALSE]
+}
+
+
+
+#' Predicate Indicating Whether Two Datasets Contain the Same Observations
+#'
+#' Checks whether two datasets contain the same observations and that the first
+#' dataset's columns are a subset of the second dataset's columns.
+#'
+#' For efficiency, the inspection takes place in this order:
+#'
+#' 1. `FALSE` is returned early if the datasets do not have the same number of
+#' rows.
+#'
+#' 1. `FALSE` is returned early if the first dataset has a column not in the
+#' second dataset.
+#'
+#' 1. The columns in common are sorted and compared using [all.equal()] with
+#' `check.attributes = FALSE`.
+#'
+#' @param data_basic,data_augmented (`data.frame`)\cr data frames to be
+#'   compared.
+#'
+#' @returns `TRUE` or `FALSE`, indicating whether the or not `data_basic` and
+#'   `data_augmented` contain the same observations and that `data_augmented`
+#'   contains all the columns in `data_basic`.
+#' @seealso [h_check_fits_all_data_same()], which performs this check on the
+#'   datasets of adjacent elements of a list of `mmrm` fits.
+#' @keywords internal
+h_check_columns_nested <- function(data_basic, data_augmented) {
+  assert_data_frame(data_basic)
+  assert_data_frame(data_augmented)
+  if (nrow(data_basic) != nrow(data_augmented)) {
+    return(FALSE)
+  }
+
+  colnames_basic <- colnames(data_basic)
+
+  if (anyNA(match(colnames_basic, colnames(data_augmented)))) {
+    return(FALSE)
+  }
+
+  isTRUE(all.equal(
+    h_dataset_sort_all(data_basic),
+    h_dataset_sort_all(data_augmented[colnames_basic]),
+    check.attributes = FALSE
+  ))
+}
+
+
+
+#' Predicate Indicating Whether `mmrm` Fits' Datasets Contain the Same
+#' Observations
+#'
+#' Checks a `list` of `mmrm` fits to see whether all their datasets contain the
+#' same observations and that they only increase in columns from one dataset to
+#' the next (i.e, columns are nested).
+#'
+#' For efficiency, the inspection takes place in this order:
+#'
+#' 1. `FALSE` is returned early if not all datasets have the same number of
+#' rows.
+#'
+#' 1. `FALSE` is returned early if a dataset has a column not in the next
+#' dataset.
+#'
+#' 1. The columns in common among adjacent datasets are sorted and compared
+#' using [all.equal()] with `check.attributes = FALSE`.
+#'
+#' This function is more efficient than running [h_check_columns_nested()] on
+#' all adjacent pairs and supplying the results to [all()].
+#'
+#' @param fits (`list`)\cr list of `mmrm` fits.
+#'
+#' @param data_basic,data_augmented (`data.frame`)\cr data frames to be
+#'   compared.
+#'
+#' @returns `TRUE` or `FALSE` indicating whether or not the datasets underlying
+#'   the elements of `fits` contain the same observations, and that each
+#'   dataset's columns are a subset of the next dataset's columns.
+#' @seealso [h_check_columns_nested()], which performs this check on two data
+#'   sets.
+#' @keywords internal
+h_check_fits_all_data_same <- function(fits) {
+  assert_list(fits, types = "mmrm", any.missing = FALSE, min.len = 1)
+  datasets <- lapply(fits, h_get_minimal_fit_data)
+
+  # Is nrow() the same for all datasets?
+  datasets_nrows <- vapply(datasets, nrow, numeric(1L))
+  if (length(unique(datasets_nrows)) > 1L) {
+    return(FALSE)
+  }
+
+  cols <- lapply(datasets, colnames)
+
+  for (i in seq_along(fits)[-1L]) {
+    # Ensure previous dataset's cols are a subset of the current dataset's cols
+    if (anyNA(match(cols[[i - 1L]], cols[[i]]))) {
+      return(FALSE)
+    }
+  }
+
+  datasets[[1L]] <- h_dataset_sort_all(datasets[[1L]])
+  for (i in seq_along(fits)[-1L]) {
+
+    # Pull prev dataset's columns to the front of current dataset. Then sort.
+    cols[[i]] <- union(cols[[i - 1L]], cols[[i]])
+    datasets[[i]] <- h_dataset_sort_all(datasets[[i]][cols[[i]]])
+
+    # Ensure the common columns are the same
+    if (
+      !isTRUE(all.equal(
+        datasets[[i - 1L]],
+        datasets[[i]][cols[[i - 1L]]],
+        check.attributes = FALSE
+      ))
+    ) {
+      return(FALSE)
+    }
+  }
+
+  TRUE
+}
+
+
+
+#' Combine the Datasets from `mmrm` Fits
+#'
+#' Take the data columns used in each `mmrm` fit and [merge()] them.
+#'
+#' All default arguments for [merge()] are used, resulting in a "natural join":
+#' the result will only contain the observations found in all datasets.
+#'
+#' [droplevels()] is applied to the final product to prevent extraneous
+#' warnings.
+#'
+#' @param fits (`list`)\cr list of `mmrm` fits.
+#'
+#' @returns A data frame combining all the common observations among the
+#'   datasets underlying the elements of `fits`.
+#' @keywords internal
+h_fits_common_data <- function(fits) {
+  assert_list(fits, types = "mmrm", any.missing = FALSE, min.len = 1)
+  datasets <- lapply(fits, h_get_minimal_fit_data)
+  out <- Reduce(merge, datasets)
+  out <- droplevels(out)
+  out
+}
+
+
+
+#' Obtain the Minimal Dataset Needed for an `mmrm` Fit
+#'
+#' Grab the dataset underlying an `mmrm` fit and select only the used columns.
+#'
+#' Grabs the response variable along with the predictors named in
+#' `fit$formula_parts`.
+#'
+#' @param fits (`mmrm`)\cr a fitted `mmrm` model.
+#'
+#' @returns A data frame: a subset of the columns the dataset underlying `fit`
+#'   (i.e., `fit$data`):
+#'
+#' - The response column.
+#'
+#' - The column denoting the visit index.
+#'
+#' - The column denoting the subject.
+#'
+#' - The column denoting the subject's grouping (e.g., study arm).
+#'
+#' - All other predictors not already specified.
+#'
+#'   Columns that were not used are excluded.
+#'
+#' @keywords internal
+h_get_minimal_fit_data <- function(fit) {
+  assert_class(fit, "mmrm")
+  predictors <-
+    fit[["formula_parts"]][
+      c("visit_var", "subject_var", "group_var", "model_var")
+    ]
+  predictors <- unique(unlist(predictors, use.names = FALSE))
+  terms_attr <- attributes(terms(fit))
+  response <- as.character(terms_attr$variables[[terms_attr$response + 1]])
+  fit[["data"]][c(response, predictors)]
+}
+
+
+
+
+#' Ensure LRT Is Appropriate for `list` of `mmrm` Fits
+#'
+#' Throws an error if the degrees of freedom aren't monotonically increasing, if
+#' the models aren't nested, or if `refit = FALSE` and the models have different
+#' underlying data.
+#'
+#' @param fits (`list`)\cr list of `mmrm` fits.
+#' @param refit (`flag`)\cr `TRUE` or `FALSE` indicating whether or not the user
+#'   gave permission to refit models to make all models suitable for LRT.
+#' @param dfs (`numeric`)\cr vector of the degrees of freedom for each element
+#'   of `fits`.
+#' @param is_reml (`logical`)\cr vector indicating whether or not REML was used
+#'   for each element of `fits`.
+#'
+#' @returns `TRUE` if the list of `fits` are suitable for LRT. Otherwise, an
+#'   error is thrown.
+#'
+#' @keywords internal
+h_assert_lrt_suitability <- function(fits, refit, dfs, is_reml) {
+
+  assert_list(fits, types = "mmrm", min.len = 2)
+  assert_flag(refit)
+  assert_numeric(
+    dfs,
+    lower = 1,
+    any.missing = FALSE,
+    finite = TRUE,
+    len = length(fits)
+  )
+  assert_logical(is_reml, any.missing = FALSE, len = length(fits))
+
+  if (any(diff(dfs) <= 0)) {
+    stop(
+      "The degrees of freedom (df) of each model must be less than the df of ",
+      "the next model in order to perform likelihood ratio testing (LRT). ",
+      "Bypass LRT with test = FALSE.",
+      call. = FALSE
+    )
+  }
+
+  # Do any models use REML?
+  any_reml <- any(is_reml)
+
+  # First iterate through and check the models to make sure their covariates
+  # and covariance structures are nested
+  for (i in seq_along(fits)[-1L]) {
+    h_assert_nested_models(fits[[i - 1L]], fits[[i]], any_reml = any_reml)
+  }
+
+  # If we didn't refit, throw errors if not all data are the same
+  if (!refit && !h_check_fits_all_data_same(fits)) {
+    stop(
+      "Likelihood ratio testing requires all fits to use the same data.",
+      " Not all fits have the same data and refit = FALSE.",
+      " Consider setting test = FALSE or refit = TRUE.",
+      call. = FALSE
+    )
+  }
+
+  TRUE
+}
+
+
+
+#' Ensure Two Models Are Nested
+#'
+#' Throws an error if `model_basic` isn't nested within `model_augmented`.
+#'
+#' The following checks are applied in this order, and an error is thrown if any
+#' of the conditions are not met:
+#'
+#' 1. The fits must have the same visit, subject, and grouping variables.
+#'
+#' 1. The covariates of `model_basic` must be the same as or a subset of the
+#' covariates of `model_augmented`.
+#'
+#' 1. The covariance structure of `model_basic` must be the same as or a special
+#' case of the covariance structure of `model_augmented`.
+#'
+#' Finally, if all these checks were passed, a warning is thrown if the two fits
+#' have identical covariates and covariance structures.
+#'
+#' @param model_basic,model_augmented (`mmrm`)\cr model fits.
+#' @param any_reml (`flag`)\cr `TRUE` or `FALSE` indicating whether or not
+#'   either model used REML estimation.
+#'
+#' @returns `TRUE` if `model_basic` is nested within `model_augmented`.
+#'   Otherwise, an error is thrown.
+#'
+#' @keywords internal
+h_assert_nested_models <- function(model_basic, model_augmented, any_reml) {
+
+  assert_class(model_basic, "mmrm")
+  assert_class(model_augmented, "mmrm")
+  assert_flag(any_reml)
+
+  model_basic <- model_basic[["formula_parts"]]
+  model_augmented <- model_augmented[["formula_parts"]]
+
+  if (!identical(model_basic[["visit_var"]], model_augmented[["visit_var"]])) {
+    stop("Models must all have the same visit variable.")
+  }
+
+  if (!identical(model_basic[["subject_var"]], model_augmented[["subject_var"]])) {
+    stop("All models must have the same subject variable.")
+  }
+
+  if (!identical(model_basic[["group_var"]], model_augmented[["group_var"]])) {
+    stop("All models must have the same grouping variable.")
+  }
+
+  covar_nesting <- h_check_covar_nesting(model_basic, model_augmented)
+  if (any_reml && covar_nesting == "nested") {
+    stop("If any models use REML, all models' covariates must be the same.")
+  }
+
+  cov_struct_nesting <- h_check_cov_struct_nesting(model_basic, model_augmented)
+
+  if (covar_nesting == "identical" && cov_struct_nesting == "identical") {
+    warning("Two models in the sequence have identical covariates and ",
+            "covariance structures.")
+  }
+
+  TRUE
+}
+
+
+#' Ensure Two Models' Covariates Are Nested
+#'
+#' Throws an error if the covariates of `model_basic` aren't the same as or a
+#' subset of the covariates of `model_augmented`.
+#'
+#' For upstream coding brevity, this function accepts the `formula_parts`
+#' element of two `mmrm` model fits rather than `mmrm` objects. Such objects are
+#' of class `mmrm_tmb_formula_parts`.
+#'
+#' @param model_basic,model_augmented (`mmrm_tmb_formula_parts`)\cr the
+#'   `formula_parts` element of an `mmrm` model fit.
+#'
+#' @returns `"identical"` if `model_basic` and `model_augmented` have the same
+#'   set of covariates. `"nesting"` if the covariates of `model_basic` are a
+#'   subset of the covariates of `model_augmented`.
+#'
+#' @keywords internal
+h_check_covar_nesting <- function(model_basic, model_augmented) {
+  assert_class(model_basic, "mmrm_tmb_formula_parts")
+  assert_class(model_augmented, "mmrm_tmb_formula_parts")
+
+  basic_covars <- attr(terms(model_basic[["model_formula"]]), "term.labels")
+  aug_covars <- attr(terms(model_augmented[["model_formula"]]), "term.labels")
+
+  if (anyNA(match(basic_covars, aug_covars))) {
+    stop("Each model's covariates must be a subset of the next model's ",
+         "covariates.", call. = FALSE)
+  }
+
+  if (anyNA(match(aug_covars, basic_covars))) {
+    "nested"
+  } else {
+    "identical"
+  }
+}
+
+
+
+#' Ensure Two Models' Covariance Structures Are Nested
+#'
+#' Throws an error if the covariance structure of `model_basic` isn't the same
+#' as or a special case of the covariance structure of `model_augmented`.
+#'
+#' The check for "nesting" is a check against a mathematically determined
+#' hierarchy of the available [cov_types]: if restricting an aspect of a
+#' covariance structure can result in another covariance structure, the latter
+#' structure is nested within the former structure.
+#'
+#' For upstream coding brevity, this function accepts the `formula_parts`
+#' element of two `mmrm` model fits rather than `mmrm` objects. Such objects are
+#' of class `mmrm_tmb_formula_parts`.
+#'
+#' @param model_basic,model_augmented (`mmrm_tmb_formula_parts`)\cr the
+#'   `formula_parts` element of an `mmrm` model fit.
+#'
+#' @returns `"identical"` if `model_basic` and `model_augmented` have the same
+#'   covariance structure. `"nesting"` if the covariance structure of
+#'   `model_basic` is a special case of the covariance structure of
+#'   `model_augmented`.
+#'
+#' @keywords internal
+h_check_cov_struct_nesting <- function(model_basic, model_augmented) {
+  assert_class(model_basic, "mmrm_tmb_formula_parts")
+  assert_class(model_augmented, "mmrm_tmb_formula_parts")
+
+  basic_cov_struct <- model_basic[["cov_type"]]
+  aug_cov_struct <- model_augmented[["cov_type"]]
+
+  # Hierarchy, specifying the "parent" covariance structures of each available
+  # type in mmrm
+  cov_struct_nesting <-
+    list(
+      ad = c("adh", "us"),
+      adh = "us",
+      ar1 = c("ad", "adh", "ar1h", "toep", "toeph", "us"),
+      ar1h = c("adh", "toeph", "us"),
+      cs = c("csh", "toep", "toeph", "us"),
+      csh = c("toeph", "us"),
+      toep = c("toeph", "us"),
+      toeph = "us",
+      us = character(0L),
+      sp_exp = character(0L)
+    )
+
+  if (identical(basic_cov_struct, aug_cov_struct)) {
+    "identical"
+  } else if (any(cov_struct_nesting[[basic_cov_struct]] == aug_cov_struct)) {
+    "nested"
+  } else {
+    stop("Each model's covariance structure must be either identical to or a ",
+         "special case of the next model's covariance structure.",
+         call. = FALSE)
+  }
+}
+
+
+
+
+
+
+#' Generate a Name Not Already In an Environment nor Its Parents
+#'
+#' Alters the user-supplied string `x` using [make.names()] with `unique = TRUE`
+#' until it is a syntactically valid name not bound to in `env` nor its
+#' [parents][parent.env].
+#'
+#' @param x (`string`)\cr a candidate name.
+#' @param env (`environment`)\cr an [environment] whose bindings (and whose
+#'   parents' bindings) are checked to ensure that they do not include the
+#'   returned value.
+#'
+#' @returns A string that does not match any of the bindings of `env` nor its
+#'   parents.
+#'
+#' @keywords internal
+h_generate_new_name <- function(x, env) {
+  assert_string(x, na.ok = TRUE)
+  assert_environment(env)
+
+  # Force x to be a syntactically valid name.
+  x <- make.names(x, unique = TRUE)
+
+  # As long as we keep finding a binding in env (or its parents) whose name is
+  # the same as the last element of x...
+  while (exists(x[length(x)], envir = env, inherits = TRUE)) {
+    # ...Copy the first element of x and append it to the end.
+    # Run make.names(unique = TRUE) again.
+    x <- make.names(x[c(seq_along(x), 1L)], unique = TRUE)
+  }
+
+  # If we've gotten here, the last element of doesn't exist in env nor its
+  # parents
+  x[length(x)]
+}
+
+
+
+
+
+#' Refit an `mmrm` Model Using a New Dataset
+#'
+#' Extract the `call` [component] of `fit` and evaluate it in a new
+#' [environment][new.env] that contains the new `data`.
+#'
+#' This works as follows:
+#'
+#' 1. A new environment is created whose parent is
+#' `environment(fit$formula_parts$full_formula)`.
+#'
+#' 1. A name is generated using [h_generate_new_name()], and `data` is bound to
+#' the new environment using this new name.
+#'
+#' 1. The [`call`] component of `fit` is extracted and its `data` argument is
+#' changed to the new name.
+#'
+#' 1. The modified call is evaluated in the new environment.
+#'
+#' @param fit (`mmrm`)\cr an `mmrm` object to be refit.
+#' @param data (`data frame`)\cr a data frame upon which `fit` is to be refit.
+#'
+#' @returns An `mmrm` object with the same terms as `fit` but based on `data`.
+#'
+#' @keywords internal
+h_refit_mmrm <- function(fit, data) {
+  assert_class(fit, "mmrm")
+  assert_data_frame(data)
+
+  # Grab the environment of the model's formula.
+  env <- environment(fit[["formula_parts"]][["full_formula"]])
+  assert_environment(env)
+
+  # Grab the model call.
+  expr <- component(fit, "call")
+
+  # Generate a name guaranteed not to be in env nor its enclosing frames
+  data_name <- h_generate_new_name("data", env)
+
+  # Create a child environment whose parent is the model's environment.
+  env <- new.env(parent = env)
+
+  # Bind the new data to the new name in the new, child environment.
+  env[[data_name]] <- data
+
+  # Force the data argument of the model call to be the new name.
+  expr[["data"]] <- as.name(data_name)
+
+  # Evaluate the updated model call in the new environment.
+  fit <- eval(expr, env)
+
+  fit
 }
