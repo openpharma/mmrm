@@ -358,7 +358,7 @@ h_construct_model_frame_inputs <- function(
   assert_data_frame(data)
 
   drop_response <- !"response_var" %in% include
-  add_vars <- unlist(formula$formula_parts[include])
+  add_vars <- unlist(formula$formula_parts[setdiff(include, "response_var")])
   new_formula <- h_add_terms(
     formula$formula_parts$model_formula,
     add_vars,

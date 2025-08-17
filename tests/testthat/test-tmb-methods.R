@@ -594,7 +594,6 @@ test_that("h_construct_model_frame_inputs works with include=NULL", {
   )
 })
 
-
 # model.frame ----
 
 test_that("model.frame works as expected with defaults", {
@@ -840,6 +839,19 @@ test_that("terms works as expected with defaults", {
   expect_equal(
     result,
     FEV1 ~ RACE,
+    ignore_attr = TRUE
+  )
+})
+
+test_that("terms does not include response variable as covariate when transformed", {
+  object <- mmrm(
+    log(FEV1) ~ SEX + us(AVISIT | USUBJID),
+    fev_data
+  )
+  result <- expect_silent(terms(object))
+  expect_equal(
+    result,
+    log(FEV1) ~ SEX,
     ignore_attr = TRUE
   )
 })
@@ -1611,92 +1623,136 @@ test_that("h_get_minimal_fit_data() grabs only colums used in model fitting", {
 
 test_that("h_check_covar_nesting() ensures models have nested covariates", {
   expect_equal(
-    h_check_covar_nesting(get_mmrm()[["formula_parts"]],
-                          get_mmrm_rank_deficient()[["formula_parts"]]),
+    h_check_covar_nesting(
+      get_mmrm()[["formula_parts"]],
+      get_mmrm_rank_deficient()[["formula_parts"]]
+    ),
     "nested"
   )
   expect_equal(
-    h_check_covar_nesting(get_mmrm_group()[["formula_parts"]],
-                          get_mmrm_kr()[["formula_parts"]]),
+    h_check_covar_nesting(
+      get_mmrm_group()[["formula_parts"]],
+      get_mmrm_kr()[["formula_parts"]]
+    ),
     "identical"
   )
   # First model's covariates aren't nested within the second model's
   expect_error(
-    h_check_covar_nesting(get_mmrm_trans()[["formula_parts"]],
-                          get_mmrm_tmb_rank_deficient()[["formula_parts"]]),
+    h_check_covar_nesting(
+      get_mmrm_trans()[["formula_parts"]],
+      get_mmrm_tmb_rank_deficient()[["formula_parts"]]
+    ),
     regexp = "covariates.+subset"
   )
 })
 
 test_that("h_check_cov_struct_nesting() ensures models have nested covariance structures", {
   expect_equal(
-    h_check_cov_struct_nesting(get_mmrm_trans()[["formula_parts"]],
-                               get_mmrm_tmb()[["formula_parts"]]),
+    h_check_cov_struct_nesting(
+      get_mmrm_trans()[["formula_parts"]],
+      get_mmrm_tmb()[["formula_parts"]]
+    ),
     "nested"
   )
   expect_equal(
-    h_check_cov_struct_nesting(get_mmrm_transformed()[["formula_parts"]],
-                               get_mmrm_trans()[["formula_parts"]]),
+    h_check_cov_struct_nesting(
+      get_mmrm_transformed()[["formula_parts"]],
+      get_mmrm_trans()[["formula_parts"]]
+    ),
     "identical"
   )
   # Second model is nested within the first rather than the other way around
   expect_error(
-    h_check_cov_struct_nesting(get_mmrm_tmb()[["formula_parts"]],
-                               get_mmrm_trans()[["formula_parts"]]),
+    h_check_cov_struct_nesting(
+      get_mmrm_tmb()[["formula_parts"]],
+      get_mmrm_trans()[["formula_parts"]]
+    ),
     regexp = "special case of the next model"
   )
 })
 
 test_that("h_assert_nested_models() ensures nested models", {
   # Different visit variable
-  expect_error(h_assert_nested_models(get_mmrm_group(),
-                                      get_mmrm_alt_visit(),
-                                      any_reml = TRUE),
-               regexp = "visit variable")
+  expect_error(
+    h_assert_nested_models(
+      get_mmrm_group(),
+      get_mmrm_alt_visit(),
+      any_reml = TRUE
+    ),
+    regexp = "visit variable"
+  )
   # Different subject
-  expect_error(h_assert_nested_models(get_mmrm_group(),
-                                      get_mmrm_alt_subj(),
-                                      any_reml = TRUE),
-               regexp = "subject variable")
+  expect_error(
+    h_assert_nested_models(
+      get_mmrm_group(),
+      get_mmrm_alt_subj(),
+      any_reml = TRUE
+    ),
+    regexp = "subject variable"
+  )
   # Different grouping variable
-  expect_error(h_assert_nested_models(get_mmrm_group(),
-                                      get_mmrm_alt_group(),
-                                      any_reml = TRUE),
-               regexp = "grouping variable")
+  expect_error(
+    h_assert_nested_models(
+      get_mmrm_group(),
+      get_mmrm_alt_group(),
+      any_reml = TRUE
+    ),
+    regexp = "grouping variable"
+  )
   # Nested variables but REML
-  expect_error(h_assert_nested_models(get_mmrm(),
-                                      get_mmrm_rank_deficient(),
-                                      any_reml = TRUE),
-               regexp = "REML.+covariates.+same")
+  expect_error(
+    h_assert_nested_models(
+      get_mmrm(),
+      get_mmrm_rank_deficient(),
+      any_reml = TRUE
+    ),
+    regexp = "REML.+covariates.+same"
+  )
   # Identical model warning
-  expect_warning(h_assert_nested_models(get_mmrm(),
-                                        get_mmrm(),
-                                        any_reml = FALSE),
-                 regexp = "identical")
-  expect_true(h_assert_nested_models(get_mmrm_kr(),
-                                     get_mmrm(),
-                                     any_reml = FALSE))
+  expect_warning(
+    h_assert_nested_models(get_mmrm(), get_mmrm(), any_reml = FALSE),
+    regexp = "identical"
+  )
+  expect_true(h_assert_nested_models(
+    get_mmrm_kr(),
+    get_mmrm(),
+    any_reml = FALSE
+  ))
 })
 
 test_that("h_assert_lrt_suitability() ensures suitability for LRT testing", {
   # non-increasing degrees of freedom
-  expect_error(h_assert_lrt_suitability(list(get_mmrm_cs(), get_mmrm_smaller_data()),
-                                        refit = FALSE,
-                                        dfs = c(3, 3),
-                                        is_reml = c(TRUE, TRUE)),
-               regexp = "degrees of freedom")
+  expect_error(
+    h_assert_lrt_suitability(
+      list(get_mmrm_cs(), get_mmrm_smaller_data()),
+      refit = FALSE,
+      dfs = c(3, 3),
+      is_reml = c(TRUE, TRUE)
+    ),
+    regexp = "degrees of freedom"
+  )
   # refit = FALSE and they don't use the same data
-  expect_error(h_assert_lrt_suitability(list(get_mmrm_cs(), get_mmrm_smaller_data()),
-                                        refit = FALSE,
-                                        dfs = c(attr(logLik(get_mmrm_cs()), "df"),
-                                                attr(logLik(get_mmrm_smaller_data()), "df")),
-                                        is_reml = c(component(get_mmrm_cs(), "reml"),
-                                                    component(get_mmrm_smaller_data(), "reml"))),
-               regexp = "same data")
-  expect_true(h_assert_lrt_suitability(list(get_mmrm_cs(), get_mmrm()),
-                                       refit = FALSE,
-                                       dfs = c(attr(logLik(get_mmrm_cs()), "df"), attr(logLik(get_mmrm()), "df")),
-                                       is_reml = c(component(get_mmrm_cs(), "reml"), component(get_mmrm(), "reml"))))
+  expect_error(
+    h_assert_lrt_suitability(
+      list(get_mmrm_cs(), get_mmrm_smaller_data()),
+      refit = FALSE,
+      dfs = c(
+        attr(logLik(get_mmrm_cs()), "df"),
+        attr(logLik(get_mmrm_smaller_data()), "df")
+      ),
+      is_reml = c(
+        component(get_mmrm_cs(), "reml"),
+        component(get_mmrm_smaller_data(), "reml")
+      )
+    ),
+    regexp = "same data"
+  )
+  expect_true(h_assert_lrt_suitability(
+    list(get_mmrm_cs(), get_mmrm()),
+    refit = FALSE,
+    dfs = c(attr(logLik(get_mmrm_cs()), "df"), attr(logLik(get_mmrm()), "df")),
+    is_reml = c(component(get_mmrm_cs(), "reml"), component(get_mmrm(), "reml"))
+  ))
 })
 
 
@@ -1713,7 +1769,6 @@ test_that("h_generate_new_name() generates a string without a binding in env", {
     "foo_mmrm_test_name.3"
   )
 })
-
 
 
 test_that("h_refit_mmrm() successfully refits an mmrm fit", {
