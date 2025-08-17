@@ -1,21 +1,17 @@
 # ante-dependence ----
 
 test_that("prepare numbers for homogeneous ante_dependence tests", {
-  theta <- c(log(2), 1, 2)
-  n_visits <- 3
+  theta <- c(log(2), log(2), 1, 2)
+  n_visits <- 4
   sd <- exp(theta[1])
   x <- tail(theta, n_visits - 1)
   cors <- x / sqrt(1 + x^2)
+  # fmt: skip
   cor_mat <- square_matrix(c(
-    1,
-    cors[1],
-    prod(cors[1:2]),
-    cors[1],
-    1,
-    cors[2],
-    prod(cors[1:2]),
-    cors[2],
-    1
+    1, cors[1], prod(cors[1:2]), prod(cors[1:3]),
+    cors[1], 1, cors[2], prod(cors[2:3]),
+    prod(cors[1:2]), cors[2], 1, cors[3],
+    prod(cors[1:3]), prod(cors[2:3]), cors[3], 1
   ))
   low_tri <- lower.tri(cor_mat)
   cor_fun_vals <- cbind(
@@ -24,36 +20,28 @@ test_that("prepare numbers for homogeneous ante_dependence tests", {
     cor_mat[low_tri]
   )
   result <- sd * t(chol(cor_mat))
+  # fmt: skip
   expected <- square_matrix(c(
-    2.0,
-    0.0,
-    0.0,
-    sqrt(2.0),
-    sqrt(2.0),
-    0.0,
-    1.264911,
-    1.264911,
-    0.8944272
+    2.0, 0.0, 0.0, 0.0,
+    1.139353, 1.643738, 0.0, 0.0,
+    0.805644, 1.162299, 1.414214, 0.0,
+    0.720590, 1.039591, 1.264911, 0.894427
   ))
   expect_equal(result, expected, tolerance = 1e-5)
 })
 
 test_that("prepare numbers for heterogeneous ante_dependence tests", {
-  theta <- c(log(1), log(2), log(3), 1, 2)
-  n_visits <- 3
+  theta <- c(log(1), log(2), log(3), 1, 2, 3)
+  n_visits <- 4
   sds <- exp(theta[1:n_visits])
   x <- tail(theta, n_visits - 1)
   cors <- x / sqrt(1 + x^2)
+  # fmt: skip
   cor_mat <- square_matrix(c(
-    1,
-    cors[1],
-    prod(cors[1:2]),
-    cors[1],
-    1,
-    cors[2],
-    prod(cors[1:2]),
-    cors[2],
-    1
+    1, cors[1], prod(cors[1:2]), prod(cors[1:3]),
+    cors[1], 1, cors[2], prod(cors[2:3]),
+    prod(cors[1:2]), cors[2], 1, cors[3],
+    prod(cors[1:3]), prod(cors[2:3]), cors[3], 1
   ))
   low_tri <- lower.tri(cor_mat)
   cor_fun_vals <- cbind(
@@ -62,16 +50,12 @@ test_that("prepare numbers for heterogeneous ante_dependence tests", {
     cor_mat[low_tri]
   )
   result <- diag(sds) %*% t(chol(cor_mat))
+  # fmt: skip
   expected <- square_matrix(c(
-    1,
-    0,
-    0,
-    sqrt(2),
-    sqrt(2),
-    0,
-    1.897367,
-    1.897367,
-    1.341641
+    1, 0, 0, 0,
+    sqrt(2), sqrt(2), 0, 0,
+    1.897367, 1.897367, 1.341641, 0,
+    1.630969, 1.630969, 1.153269, 0.859596
   ))
   expect_equal(result, expected, tolerance = 1e-5)
 })
@@ -84,6 +68,7 @@ test_that("prepare numbers for homogeneous toeplitz tests", {
   sd <- exp(theta[1])
   x <- tail(theta, n_visits - 1)
   cors <- x / sqrt(1 + x^2)
+  # fmt: skip
   cor_mat <- square_matrix(c(
     1,
     cors[1],
@@ -102,6 +87,7 @@ test_that("prepare numbers for homogeneous toeplitz tests", {
     cor_mat[low_tri]
   )
   result <- sd * t(chol(cor_mat))
+  # fmt: skip
   expected <- square_matrix(c(
     2.0,
     0.0,
@@ -122,6 +108,7 @@ test_that("prepare numbers for heterogeneous toeplitz tests", {
   sds <- exp(theta[1:n_visits])
   x <- tail(theta, n_visits - 1)
   cors <- x / sqrt(1 + x^2)
+  # fmt: skip
   cor_mat <- square_matrix(c(
     1,
     cors[1],
@@ -140,6 +127,7 @@ test_that("prepare numbers for heterogeneous toeplitz tests", {
     cor_mat[low_tri]
   )
   result <- diag(sds) %*% t(chol(cor_mat))
+  # fmt: skip
   expected <- square_matrix(c(
     1,
     0,
@@ -168,6 +156,7 @@ test_that("prepare numbers for homogeneous autoregressive tests", {
   theta <- c(log(2), 3)
   n_visits <- 3
   cor <- map_to_cor(theta[2])
+  # fmt: skip
   cor_mat <- square_matrix(c(
     1,
     cor,
@@ -181,6 +170,7 @@ test_that("prepare numbers for homogeneous autoregressive tests", {
   ))
   sd <- exp(theta[1])
   result <- sd * t(chol(cor_mat))
+  # fmt: skip
   expected <- square_matrix(c(
     2,
     0,
@@ -200,6 +190,7 @@ test_that("prepare numbers for heterogeneous autoregressive tests", {
   n_visits <- 3
   sds <- exp(theta[1:n_visits])
   cor <- map_to_cor(theta[n_visits + 1])
+  # fmt: skip
   cor_mat <- square_matrix(c(
     1,
     cor,
@@ -212,6 +203,7 @@ test_that("prepare numbers for heterogeneous autoregressive tests", {
     1
   ))
   result <- diag(sds) %*% t(chol(cor_mat))
+  # fmt: skip
   expected <- square_matrix(c(
     1,
     0,
@@ -238,6 +230,7 @@ test_that("prepare numbers for homogeneous compound symmetry tests", {
   theta <- c(log(2), 3)
   n_visits <- 3
   cor <- map_to_cs_cor(theta[2], 3)
+  # fmt: skip
   cor_mat <- square_matrix(c(
     1,
     cor,
@@ -251,6 +244,7 @@ test_that("prepare numbers for homogeneous compound symmetry tests", {
   ))
   sd <- exp(theta[1])
   result <- sd * t(chol(cor_mat))
+  # fmt: skip
   expected <- square_matrix(c(
     2,
     0,
@@ -270,6 +264,7 @@ test_that("prepare numbers for heterogeneous compound symmetry tests", {
   n_visits <- 3
   sds <- exp(theta[1:n_visits])
   cor <- map_to_cs_cor(theta[n_visits + 1], 3)
+  # fmt: skip
   cor_mat <- square_matrix(c(
     1,
     cor,
@@ -282,6 +277,7 @@ test_that("prepare numbers for heterogeneous compound symmetry tests", {
     1
   ))
   result <- diag(sds) %*% t(chol(cor_mat))
+  # fmt: skip
   expected <- square_matrix(c(
     1,
     0,
