@@ -1747,7 +1747,6 @@ test_that("h_generate_new_name() generates a string without a binding in env", {
   )
 })
 
-
 test_that("h_refit_mmrm() successfully refits an mmrm fit", {
   fit <- get_mmrm()
   refit <- h_refit_mmrm(get_mmrm_smaller_data(), fev_data)
