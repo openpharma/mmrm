@@ -87,8 +87,10 @@ structure instead.
 ## Transformation to Variance Parameters
 
 For standard deviation parameters $\sigma$ we use the natural logarithm
-$\log(\sigma)$ to map them to $\mathbb{R}$. For correlation parameters
-$\rho$ we consistently use the transformation
+$\log(\sigma)$ to map them to $\mathbb{R}$. 
+
+For correlation parameters
+$\rho$ we mostly use the transformation
 \[
 \theta = f(\rho) = \mathop{\mathrm{sign}}(\rho) \sqrt{\frac{\rho^2}{1 - \rho^2}}
 \]
@@ -99,6 +101,7 @@ has the inverse
 \]
 This is important because the resulting variance parameters $\theta$
 can be optimized without constraints over the whole of $\mathbb{R}$.
+We use different transformations for the compound symmetry and spatial exponential covariance structures, as explained below.
 
 # Covariance Structures
 
@@ -193,6 +196,15 @@ correlation between different time points:
 \]
 where $\rho$ is the single correlation parameter here.
 
+The permitted range of $\rho$ is only from $-1/(m-1)$ to $1$, therefore we use here a different transformation: With the negative lower bound for the correlation defined as $a=1/(m-1)$, we use 
+\[
+\theta = f(\rho) = \logit((\rho + a) / (1 + a))
+\]
+with the inverse
+\[
+\rho = f^{-1}(\theta) = \logit^{-1}(\theta) (1 + a) - a.
+\]
+
 Assuming a constant variance in the state-space equation yields a
 homogeneous compound symmetry covariance structure with total only $k=2$
 variance parameters, otherwise we obtain the heterogeneous compound
@@ -233,10 +245,10 @@ A total number of parameters $k = 2$ is needed:
 
 The parameterization for $\theta$ is a little different from previous examples.
 In previous examples, $\rho$ can take values from -1 to 1, but here we need to restrict $\rho$ to (0, 1).
-Hence we have the following parametrization form.
+Hence we have the following parametrization form:
 
 \[
-  \theta = (\log(\sigma), \logit(\rho))
+\theta = (\log(\sigma), \logit(\rho))
 \]
 
 # References

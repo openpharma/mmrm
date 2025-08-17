@@ -1,98 +1,189 @@
 # h_get_kr_comp ----
 test_that("h_get_kr_comp works as expected on ar1 ungrouped mmrm", {
-  fit <- mmrm(FEV1 ~ ARMCD + ar1(AVISIT | USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+  fit <- mmrm(
+    FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+    data = fev_data,
+    reml = TRUE,
+    method = "Kenward-Roger"
+  )
   expect_snapshot_tolerance(fit$kr_comp)
 })
 
 test_that("h_get_kr_comp works as expected on ar1 grouped mmrm", {
-  fit <- mmrm(FEV1 ~ ARMCD + ar1(AVISIT | SEX / USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+  fit <- mmrm(
+    FEV1 ~ ARMCD + ar1(AVISIT | SEX / USUBJID),
+    data = fev_data,
+    reml = TRUE,
+    method = "Kenward-Roger"
+  )
   expect_snapshot_tolerance(fit$kr_comp)
 })
 
 test_that("h_get_kr_comp works as expected on ar1h ungrouped mmrm", {
-  fit <- mmrm(FEV1 ~ ARMCD + ar1h(AVISIT | USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+  fit <- mmrm(
+    FEV1 ~ ARMCD + ar1h(AVISIT | USUBJID),
+    data = fev_data,
+    reml = TRUE,
+    method = "Kenward-Roger"
+  )
   expect_snapshot_tolerance(fit$kr_comp)
 })
 
 test_that("h_get_kr_comp works as expected on ar1h grouped mmrm", {
-  fit <- mmrm(FEV1 ~ ARMCD + ar1h(AVISIT | SEX / USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+  fit <- mmrm(
+    FEV1 ~ ARMCD + ar1h(AVISIT | SEX / USUBJID),
+    data = fev_data,
+    reml = TRUE,
+    method = "Kenward-Roger"
+  )
   expect_snapshot_tolerance(fit$kr_comp)
 })
 
 test_that("h_get_kr_comp works as expected on cs ungrouped mmrm", {
-  fit <- mmrm(FEV1 ~ ARMCD + cs(AVISIT | USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+  fit <- mmrm(
+    FEV1 ~ ARMCD + cs(AVISIT | USUBJID),
+    data = fev_data,
+    reml = TRUE,
+    method = "Kenward-Roger"
+  )
   expect_snapshot_tolerance(fit$kr_comp)
 })
 
 test_that("h_get_kr_comp works as expected on cs grouped mmrm", {
-  fit <- mmrm(FEV1 ~ ARMCD + cs(AVISIT | SEX / USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+  fit <- mmrm(
+    FEV1 ~ ARMCD + cs(AVISIT | SEX / USUBJID),
+    data = fev_data,
+    reml = TRUE,
+    method = "Kenward-Roger"
+  )
   expect_snapshot_tolerance(fit$kr_comp)
 })
 
 test_that("h_get_kr_comp works as expected on csh ungrouped mmrm", {
-  fit <- mmrm(FEV1 ~ ARMCD + csh(AVISIT | USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+  fit <- mmrm(
+    FEV1 ~ ARMCD + csh(AVISIT | USUBJID),
+    data = fev_data,
+    reml = TRUE,
+    method = "Kenward-Roger"
+  )
   expect_snapshot_tolerance(fit$kr_comp)
 })
 
 test_that("h_get_kr_comp works as expected on csh grouped mmrm", {
-  fit <- mmrm(FEV1 ~ ARMCD + csh(AVISIT | SEX / USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+  fit <- mmrm(
+    FEV1 ~ ARMCD + csh(AVISIT | SEX / USUBJID),
+    data = fev_data,
+    reml = TRUE,
+    method = "Kenward-Roger"
+  )
   expect_snapshot_tolerance(fit$kr_comp)
 })
 
 test_that("h_get_kr_comp works as expected on toep ungrouped mmrm", {
-  fit <- mmrm(FEV1 ~ ARMCD + toep(AVISIT | USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+  fit <- mmrm(
+    FEV1 ~ ARMCD + toep(AVISIT | USUBJID),
+    data = fev_data,
+    reml = TRUE,
+    method = "Kenward-Roger"
+  )
   expect_snapshot_tolerance(fit$kr_comp)
 })
 
 test_that("h_get_kr_comp works as expected on toep grouped mmrm", {
-  fit <- mmrm(FEV1 ~ ARMCD + toep(AVISIT | SEX / USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+  fit <- mmrm(
+    FEV1 ~ ARMCD + toep(AVISIT | SEX / USUBJID),
+    data = fev_data,
+    reml = TRUE,
+    method = "Kenward-Roger"
+  )
   expect_snapshot_tolerance(fit$kr_comp)
 })
 
 test_that("h_get_kr_comp works as expected on toeph ungrouped mmrm", {
-  fit <- mmrm(FEV1 ~ ARMCD + toeph(AVISIT | USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+  fit <- mmrm(
+    FEV1 ~ ARMCD + toeph(AVISIT | USUBJID),
+    data = fev_data,
+    reml = TRUE,
+    method = "Kenward-Roger"
+  )
   expect_snapshot_tolerance(fit$kr_comp)
 })
 
 test_that("h_get_kr_comp works as expected on toeph grouped mmrm", {
-  fit <- mmrm(FEV1 ~ ARMCD + toeph(AVISIT | SEX / USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+  fit <- mmrm(
+    FEV1 ~ ARMCD + toeph(AVISIT | SEX / USUBJID),
+    data = fev_data,
+    reml = TRUE,
+    method = "Kenward-Roger"
+  )
   expect_snapshot_tolerance(fit$kr_comp)
 })
 
 test_that("h_get_kr_comp works as expected on us ungrouped mmrm", {
-  fit <- mmrm(FEV1 ~ ARMCD + us(AVISIT | USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+  fit <- mmrm(
+    FEV1 ~ ARMCD + us(AVISIT | USUBJID),
+    data = fev_data,
+    reml = TRUE,
+    method = "Kenward-Roger"
+  )
   expect_snapshot_tolerance(fit$kr_comp)
 })
 
 test_that("h_get_kr_comp works as expected on us grouped mmrm", {
-  fit <- mmrm(FEV1 ~ ARMCD + us(AVISIT | SEX / USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+  fit <- mmrm(
+    FEV1 ~ ARMCD + us(AVISIT | SEX / USUBJID),
+    data = fev_data,
+    reml = TRUE,
+    method = "Kenward-Roger"
+  )
   expect_snapshot_tolerance(fit$kr_comp)
 })
 
 test_that("h_get_kr_comp works as expected on adh ungrouped mmrm", {
-  fit <- mmrm(FEV1 ~ ARMCD + adh(AVISIT | USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+  fit <- mmrm(
+    FEV1 ~ ARMCD + adh(AVISIT | USUBJID),
+    data = fev_data,
+    reml = TRUE,
+    method = "Kenward-Roger"
+  )
   expect_snapshot_tolerance(fit$kr_comp)
 })
 
 test_that("h_get_kr_comp works as expected on adh grouped mmrm", {
-  fit <- mmrm(FEV1 ~ ARMCD + adh(AVISIT | SEX / USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+  fit <- mmrm(
+    FEV1 ~ ARMCD + adh(AVISIT | SEX / USUBJID),
+    data = fev_data,
+    reml = TRUE,
+    method = "Kenward-Roger"
+  )
   expect_snapshot_tolerance(fit$kr_comp)
 })
 
 test_that("h_get_kr_comp works as expected on ad ungrouped mmrm", {
-  fit <- mmrm(FEV1 ~ ARMCD + ad(AVISIT | USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+  fit <- mmrm(
+    FEV1 ~ ARMCD + ad(AVISIT | USUBJID),
+    data = fev_data,
+    reml = TRUE,
+    method = "Kenward-Roger"
+  )
   expect_snapshot_tolerance(fit$kr_comp)
 })
 
 test_that("h_get_kr_comp works as expected on ad grouped mmrm", {
-  fit <- mmrm(FEV1 ~ ARMCD + ad(AVISIT | SEX / USUBJID), data = fev_data, reml = TRUE, method = "Kenward-Roger")
+  fit <- mmrm(
+    FEV1 ~ ARMCD + ad(AVISIT | SEX / USUBJID),
+    data = fev_data,
+    reml = TRUE,
+    method = "Kenward-Roger"
+  )
   expect_snapshot_tolerance(fit$kr_comp)
 })
 
 test_that("h_get_kr_comp works as expected on spatial mmrm", {
   fit <- mmrm(
     FEV1 ~ ARMCD + sp_exp(VISITN, VISITN2 | USUBJID),
-    data = fev_data, reml = TRUE,
+    data = fev_data,
+    reml = TRUE,
     method = "Kenward-Roger"
   )
   expect_snapshot_tolerance(fit$kr_comp)
@@ -101,7 +192,8 @@ test_that("h_get_kr_comp works as expected on spatial mmrm", {
 test_that("h_get_kr_comp works as expected on grouped spatial mmrm", {
   fit <- mmrm(
     FEV1 ~ ARMCD + sp_exp(VISITN, VISITN2 | SEX / USUBJID),
-    data = fev_data, reml = TRUE,
+    data = fev_data,
+    reml = TRUE,
     method = "Kenward-Roger"
   )
   expect_snapshot_tolerance(fit$kr_comp)
@@ -114,7 +206,11 @@ test_that("h_get_kr_comp works as expected on grouped spatial mmrm", {
 ### kr ----
 
 test_that("kr give similar results as SAS for ar1", {
-  fit <- mmrm(FEV1 ~ ARMCD + ar1(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger")
+  fit <- mmrm(
+    FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+    data = fev_data,
+    method = "Kenward-Roger"
+  )
   res <- df_1d(fit, contrast = c(0, 1))
   expected <- c(0.95865439662225, 188.46934887972)
   expect_equal(res$df, expected[2], tolerance = 1e-4)
@@ -126,7 +222,9 @@ test_that("kr give similar results as SAS for ar1", {
 test_that("kr linear give similar results as SAS for ar1", {
   fit <- mmrm(
     FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
-    data = fev_data, method = "Kenward-Roger", vcov = "Kenward-Roger-Linear"
+    data = fev_data,
+    method = "Kenward-Roger",
+    vcov = "Kenward-Roger-Linear"
   )
   res <- df_1d(fit, contrast = c(0, 1))
   expected <- c(0.96058142305176, 188.46934887972)
@@ -139,7 +237,11 @@ test_that("kr linear give similar results as SAS for ar1", {
 ### kr ----
 
 test_that("kr give similar results as SAS for ar1h", {
-  fit <- mmrm(FEV1 ~ ARMCD + ar1h(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger")
+  fit <- mmrm(
+    FEV1 ~ ARMCD + ar1h(AVISIT | USUBJID),
+    data = fev_data,
+    method = "Kenward-Roger"
+  )
   res <- df_1d(fit, contrast = c(0, 1))
   expected <- c(0.7590316099633, 188.225339095373)
   expect_equal(res$df, expected[2], tolerance = 1e-4)
@@ -151,7 +253,9 @@ test_that("kr give similar results as SAS for ar1h", {
 test_that("kr linear give similar results as SAS for ar1h", {
   fit <- mmrm(
     FEV1 ~ ARMCD + ar1h(AVISIT | USUBJID),
-    data = fev_data, method = "Kenward-Roger", vcov = "Kenward-Roger-Linear"
+    data = fev_data,
+    method = "Kenward-Roger",
+    vcov = "Kenward-Roger-Linear"
   )
   res <- df_1d(fit, contrast = c(0, 1))
   expected <- c(0.75924807546934, 188.225339095373)
@@ -164,11 +268,15 @@ test_that("kr linear give similar results as SAS for ar1h", {
 ### kr ----
 
 test_that("kr give similar results as SAS for cs", {
-  fit <- mmrm(FEV1 ~ ARMCD + cs(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger")
+  fit <- mmrm(
+    FEV1 ~ ARMCD + cs(AVISIT | USUBJID),
+    data = fev_data,
+    method = "Kenward-Roger"
+  )
   res <- df_1d(fit, contrast = c(0, 1))
-  expected <- c(0.7964696053595, 177.038485931223)
+  expected <- c(0.7965, 177.038485931223)
   expect_equal(res$df, expected[2], tolerance = 1e-4)
-  expect_equal(res$se, expected[1], tolerance = 1e-3)
+  expect_equal(res$se, expected[1], tolerance = 1e-2)
 })
 
 ### kr linear ----
@@ -176,7 +284,9 @@ test_that("kr give similar results as SAS for cs", {
 test_that("kr linear give similar results as SAS for cs", {
   fit <- mmrm(
     FEV1 ~ ARMCD + cs(AVISIT | USUBJID),
-    data = fev_data, method = "Kenward-Roger", vcov = "Kenward-Roger-Linear"
+    data = fev_data,
+    method = "Kenward-Roger",
+    vcov = "Kenward-Roger-Linear"
   )
   res <- df_1d(fit, contrast = c(0, 1))
   expected <- c(0.7964696053595, 177.038485931223)
@@ -189,7 +299,11 @@ test_that("kr linear give similar results as SAS for cs", {
 ### kr ----
 
 test_that("kr give similar results as SAS for csh", {
-  fit <- mmrm(FEV1 ~ ARMCD + csh(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger")
+  fit <- mmrm(
+    FEV1 ~ ARMCD + csh(AVISIT | USUBJID),
+    data = fev_data,
+    method = "Kenward-Roger"
+  )
   res <- df_1d(fit, contrast = c(0, 1))
   expected <- c(0.67414806011886, 190.737701349941)
   expect_equal(res$df, expected[2], tolerance = 1e-3)
@@ -201,7 +315,9 @@ test_that("kr give similar results as SAS for csh", {
 test_that("kr linear give similar results as SAS for csh", {
   fit <- mmrm(
     FEV1 ~ ARMCD + csh(AVISIT | USUBJID),
-    data = fev_data, method = "Kenward-Roger", vcov = "Kenward-Roger-Linear"
+    data = fev_data,
+    method = "Kenward-Roger",
+    vcov = "Kenward-Roger-Linear"
   )
   res <- df_1d(fit, contrast = c(0, 1))
   expected <- c(0.67403858183242, 190.737701349941)
@@ -214,7 +330,11 @@ test_that("kr linear give similar results as SAS for csh", {
 ### kr ----
 
 test_that("kr give similar results as SAS for adh", {
-  fit <- mmrm(FEV1 ~ ARMCD + adh(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger")
+  fit <- mmrm(
+    FEV1 ~ ARMCD + adh(AVISIT | USUBJID),
+    data = fev_data,
+    method = "Kenward-Roger"
+  )
   res <- df_1d(fit, contrast = c(0, 1))
   expected <- c(0.66172017349971, 162.393385281755)
   expect_equal(res$df, expected[2], tolerance = 1e-3)
@@ -226,7 +346,9 @@ test_that("kr give similar results as SAS for adh", {
 test_that("kr linear give similar results as SAS for adh", {
   fit <- mmrm(
     FEV1 ~ ARMCD + adh(AVISIT | USUBJID),
-    data = fev_data, method = "Kenward-Roger", vcov = "Kenward-Roger-Linear"
+    data = fev_data,
+    method = "Kenward-Roger",
+    vcov = "Kenward-Roger-Linear"
   )
   res <- df_1d(fit, contrast = c(0, 1))
   expected <- c(0.66158550758897, 162.393385281755)
@@ -239,7 +361,11 @@ test_that("kr linear give similar results as SAS for adh", {
 ### kr ----
 
 test_that("kr give similar results as SAS for toep", {
-  fit <- mmrm(FEV1 ~ ARMCD + toep(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger")
+  fit <- mmrm(
+    FEV1 ~ ARMCD + toep(AVISIT | USUBJID),
+    data = fev_data,
+    method = "Kenward-Roger"
+  )
   res <- df_1d(fit, contrast = c(0, 1))
   expected <- c(0.87839805519623, 160.027408337368)
   expect_equal(res$df, expected[2], tolerance = 1e-3)
@@ -251,7 +377,9 @@ test_that("kr give similar results as SAS for toep", {
 test_that("kr linear give similar results as SAS for toep", {
   fit <- mmrm(
     FEV1 ~ ARMCD + toep(AVISIT | USUBJID),
-    data = fev_data, method = "Kenward-Roger", vcov = "Kenward-Roger-Linear"
+    data = fev_data,
+    method = "Kenward-Roger",
+    vcov = "Kenward-Roger-Linear"
   )
   res <- df_1d(fit, contrast = c(0, 1))
   expected <- c(0.87839805519623, 160.027408337368)
@@ -264,7 +392,11 @@ test_that("kr linear give similar results as SAS for toep", {
 ### kr ----
 
 test_that("kr give similar results as SAS for toeph", {
-  fit <- mmrm(FEV1 ~ ARMCD + toeph(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger")
+  fit <- mmrm(
+    FEV1 ~ ARMCD + toeph(AVISIT | USUBJID),
+    data = fev_data,
+    method = "Kenward-Roger"
+  )
   res <- df_1d(fit, contrast = c(0, 1))
   expected <- c(0.72543828853831, 180.062730071701)
   expect_equal(res$df, expected[2], tolerance = 1e-3)
@@ -276,7 +408,9 @@ test_that("kr give similar results as SAS for toeph", {
 test_that("kr linear give similar results as SAS for toeph", {
   fit <- mmrm(
     FEV1 ~ ARMCD + toeph(AVISIT | USUBJID),
-    data = fev_data, method = "Kenward-Roger", vcov = "Kenward-Roger-Linear"
+    data = fev_data,
+    method = "Kenward-Roger",
+    vcov = "Kenward-Roger-Linear"
   )
   res <- df_1d(fit, contrast = c(0, 1))
   expected <- c(0.72537324518435, 180.062730071701)
@@ -293,7 +427,11 @@ test_that("kr give similar results as SAS for unstructured", {
   # are identical because in their parameterization the second order derivatives are zero matrices.
   # In `mmrm`, we are using different parameterization so the second order derivatives are non-zero.
   # This will lead to differences in Kenward-Roger and Kenward-Roger-Linear.
-  fit <- mmrm(FEV1 ~ ARMCD + us(AVISIT | USUBJID), data = fev_data, method = "Kenward-Roger")
+  fit <- mmrm(
+    FEV1 ~ ARMCD + us(AVISIT | USUBJID),
+    data = fev_data,
+    method = "Kenward-Roger"
+  )
   res <- df_1d(fit, contrast = c(0, 1))
   expected <- c(0.66124382270307, 160.733266403768)
   expect_equal(res$df, expected[2], tolerance = 1e-3)
@@ -305,7 +443,9 @@ test_that("kr give similar results as SAS for unstructured", {
 test_that("kr linear give similar results as SAS for unstructured", {
   fit <- mmrm(
     FEV1 ~ ARMCD + us(AVISIT | USUBJID),
-    data = fev_data, method = "Kenward-Roger", vcov = "Kenward-Roger-Linear"
+    data = fev_data,
+    method = "Kenward-Roger",
+    vcov = "Kenward-Roger-Linear"
   )
   res <- df_1d(fit, contrast = c(0, 1))
   expected <- c(0.66124382270307, 160.73326640376)
@@ -320,7 +460,9 @@ test_that("kr linear give similar results as SAS for unstructured", {
 test_that("kr give similar results as SAS for spatial exponential", {
   fit <- mmrm(
     FEV1 ~ ARMCD + sp_exp(VISITN, VISITN2 | USUBJID),
-    data = fev_data, method = "Kenward-Roger", vcov = "Kenward-Roger-Linear"
+    data = fev_data,
+    method = "Kenward-Roger",
+    vcov = "Kenward-Roger-Linear"
   )
   res <- df_1d(fit, contrast = c(0, 1))
   expected <- c(0.90552903839818, 195.584197921463)
@@ -333,7 +475,9 @@ test_that("kr give similar results as SAS for spatial exponential", {
 test_that("kr linear give similar results as SAS for spatial exponential", {
   fit <- mmrm(
     FEV1 ~ ARMCD + sp_exp(VISITN, VISITN2 | USUBJID),
-    data = fev_data, method = "Kenward-Roger", vcov = "Kenward-Roger-Linear"
+    data = fev_data,
+    method = "Kenward-Roger",
+    vcov = "Kenward-Roger-Linear"
   )
   res <- df_1d(fit, contrast = c(0, 1))
   expected <- c(0.90527620094771, 195.584197921463)
@@ -353,8 +497,14 @@ test_that("h_df_1d_kr works as expected in the standard case", {
 
 test_that("h_df_md_kr works as expected in the standard case", {
   object_mmrm_kr <- get_mmrm_kr()
-  expect_snapshot_tolerance(h_df_md_kr(object_mmrm_kr, matrix(c(0, 1, 1, 0), nrow = 2)))
-  expect_snapshot_tolerance(h_df_md_kr(object_mmrm_kr, matrix(c(0, -1, 1, 0), nrow = 2)))
+  expect_snapshot_tolerance(h_df_md_kr(
+    object_mmrm_kr,
+    matrix(c(0, 1, 1, 0), nrow = 2)
+  ))
+  expect_snapshot_tolerance(h_df_md_kr(
+    object_mmrm_kr,
+    matrix(c(0, -1, 1, 0), nrow = 2)
+  ))
 })
 
 # h_kr_df ----
@@ -365,7 +515,12 @@ test_that("h_kr_df works as expected in the standard case", {
   w <- component(object_mmrm_kr, "theta_vcov")
   v_adj <- object_mmrm_kr$beta_vcov_adj
   expect_snapshot_tolerance(
-    h_kr_df(v0 = object_mmrm_kr$beta_vcov, l = matrix(c(0, 1), nrow = 1), w = w, p = kr_comp$P),
+    h_kr_df(
+      v0 = object_mmrm_kr$beta_vcov,
+      l = matrix(c(0, 1), nrow = 1),
+      w = w,
+      p = kr_comp$P
+    ),
     style = "deparse"
   )
 })
