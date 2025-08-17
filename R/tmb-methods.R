@@ -310,7 +310,7 @@ model.frame.mmrm_tmb <- function(
         formula = lst_formula_and_data$formula,
         data = h_get_na_action(na.action)(lst_formula_and_data$data),
         na.action = na.action,
-        xlev = stats::.getXlevels(terms(formula), formula$tmb_data$full_frame)
+        xlev = component(formula, "xlev")
       )
   }
   ret
