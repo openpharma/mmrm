@@ -162,7 +162,4 @@ test_that("component can return xlev also when there is a transformed response i
   )
   result <- expect_silent(component(object, "xlev"))
   expect_list(result)
-
-  terms(object)
-  df <- object$tmb_data$full_frame
 })
