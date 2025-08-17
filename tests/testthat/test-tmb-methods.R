@@ -675,7 +675,7 @@ test_that("model.frame makes the levels match", {
   expect_identical(levels(fev_data$AVISIT), levels(out_frame$AVISIT))
 })
 
-test_that("model.frame does not care about subject levels", {
+test_that("model.frame ignores subject levels", {
   fit1 <- get_mmrm()
   fev_data2 <- fev_data
   fev_data2$USUBJID <- sprintf("%s_TEST", fev_data2$USUBJID)
