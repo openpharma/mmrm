@@ -755,11 +755,6 @@ test_that("model.frame with character reference will return factors", {
   )
 })
 
-test_that("model.frame includes variables as expected", {
-  fit <- get_mmrm_rank_deficient()
-  result <- model.frame(fit)
-})
-
 # model.matrix ----
 
 test_that("model.matrix works as expected with defaults", {
