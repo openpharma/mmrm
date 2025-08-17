@@ -3,6 +3,7 @@
 ### Bug Fixes
 
 - Previously, the compound symmetry correlation models (`cs` and `csh`) could have divergence issues, especially when the correlation was negative. This was because the range of the correlation parameter was from -1 to 1, whereas the correct range is between -1/(m-1) and 1, where m is the number of observations per subject. This is fixed now by using another mapping from the real line to the correct range, and therefore compound symmetry correlation models will work more robustly. 
+- Previously, the `vcov()` method returned the asymptotic covariance matrix, even if an adjusted one has been used. This is now fixed and the requested adjusted covariance matrix will be returned. (Please note this was not an issue for downstream `summary()` or `emmeans()` calls, where the adjusted covariance matrix was correctly used.)
 
 # mmrm 0.3.15
 
