@@ -96,8 +96,17 @@ test_that("fit_single_optimizer is stable to extreme scaling with defaults", {
   visit <- factor(rep(c(1, 2), 50))
   x_large <- rep(rnorm(50, sd = sqrt(scaling_factor)), each = 2)
   x_small <- rep(rnorm(50, sd = 1 / sqrt(scaling_factor)), each = 2)
-  y <- x_large / sqrt(scaling_factor) + sqrt(scaling_factor) * x_small + rnorm(100, sd = .5) # add some noise
-  dat <- data.frame(id = id, x_large = x_large, x_small = x_small, visit = visit, y = y)
+  y <- x_large /
+    sqrt(scaling_factor) +
+    sqrt(scaling_factor) * x_small +
+    rnorm(100, sd = .5) # add some noise
+  dat <- data.frame(
+    id = id,
+    x_large = x_large,
+    x_small = x_small,
+    visit = visit,
+    y = y
+  )
 
   result <- fit_single_optimizer(
     formula = y ~ x_large + x_small + us(visit | id),
@@ -172,7 +181,10 @@ test_that("fit_single_optimizer signals non-convergence but does not fail for fi
     )
   ))
   expect_false(attr(result, "converged"))
-  expect_identical(attr(result, "divergence"), "L-BFGS-B needs finite values of 'fn'")
+  expect_identical(
+    attr(result, "divergence"),
+    "L-BFGS-B needs finite values of 'fn'"
+  )
 })
 
 test_that("fit_single_optimizer signals non-convergence but does not fail for NA/NaN Hessian error", {
@@ -228,7 +240,11 @@ test_that("h_summarize_all_fits works when some list elements are try-error obje
   all_fits <- list(mod_fit, mod_fit2, mod_fit3)
   result <- expect_silent(h_summarize_all_fits(all_fits))
   expected <- list(
-    warnings = list(NULL, "Error in try(stop(\"bla\"), silent = TRUE) : bla\n", NULL),
+    warnings = list(
+      NULL,
+      "Error in try(stop(\"bla\"), silent = TRUE) : bla\n",
+      NULL
+    ),
     messages = list(NULL, NULL, NULL),
     log_liks = c(-1693.225, NA, -1693.225),
     converged = c(TRUE, FALSE, TRUE)
@@ -251,7 +267,10 @@ test_that("refit_multiple_optimizers works as expected with default arguments", 
   attr(fit, "converged") <- FALSE
   fit$neg_log_lik <- fit$neg_log_lik + 10
 
-  result <- expect_silent(refit_multiple_optimizers(fit = fit, optimizer = "nlminb"))
+  result <- expect_silent(refit_multiple_optimizers(
+    fit = fit,
+    optimizer = "nlminb"
+  ))
   expect_class(result, "mmrm_fit")
 
   expect_true(attr(result, "converged"))
@@ -261,7 +280,10 @@ test_that("refit_multiple_optimizers works as expected with default arguments", 
 
 test_that("refit_multiple_optimizers works with parallel computations and selected optimizers", {
   skip_on_cran()
-  skip_if(!isTRUE(parallel::detectCores() > 1), "unable to detect more than one core")
+  skip_if(
+    !isTRUE(parallel::detectCores() > 1),
+    "unable to detect more than one core"
+  )
 
   has_parallelly <- length(find.package("parallelly", quiet = TRUE)) > 0
   n_cores <- if (has_parallelly) parallelly::availableCores(omit = 1) else 2
@@ -344,7 +366,8 @@ test_that("mmrm falls back to other optimizers if default does not work", {
   # Note: We disable parallel processing here to comply with CRAN checks.
   expect_warning(
     result <- mmrm(
-      formula, fev_data,
+      formula,
+      fev_data,
       n_cores = 1L,
       optimizer_fun = c(fake = fake_optimizer, h_get_optimizers("L-BFGS-B"))
     ),
@@ -393,9 +416,14 @@ test_that("mmrm works if data is not provided as argument", {
 test_that("mmrm works if formula contains variables not in data", {
   set.seed(123L)
   y <- rnorm(800)
+  x <- rnorm(800)
   wt <- exp(rnorm(800))
   result <- expect_silent(
-    mmrm(y ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID), weights = wt, data = fev_data)
+    mmrm(
+      y ~ x + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+      weights = wt,
+      data = fev_data
+    )
   )
   expect_true(attr(result, "converged"))
 })
@@ -430,7 +458,8 @@ test_that("mmrm works for custom optimizer", {
     method = "Kenward-Roger"
   )
   expect_equal(
-    fit$theta_est, c(2.2225, 0.4054, 2.2136, 0.4389),
+    fit$theta_est,
+    c(2.2225, 0.4054, 2.2136, 0.4389),
     tolerance = 1e-4
   )
 })
@@ -457,7 +486,11 @@ test_that("mmrm returns the correct best fit", {
   opts <- list(
     a = h_partial_fun_args(fail_optimizer, message = "this is wrong"),
     b = h_partial_fun_args(fail_optimizer, message = "this is wrong too"),
-    c = h_partial_fun_args(silly_optimizer, value_add = 0, message = "silly success")
+    c = h_partial_fun_args(
+      silly_optimizer,
+      value_add = 0,
+      message = "silly success"
+    )
   )
   fit <- expect_silent(mmrm(
     FEV1 ~ ARMCD + ar1(AVISIT | SEX / USUBJID),
@@ -486,7 +519,10 @@ test_that("divergent optimizer will not be marked as success", {
 test_that("mmrm will use the provided contrast", {
   fev2 <- fev_data
   contrasts(fev2$ARMCD) <- contr.poly(n = 2)
-  fit <- expect_silent(mmrm(FEV1 ~ ARMCD * AVISIT + ar1(AVISIT | USUBJID), data = fev2))
+  fit <- expect_silent(mmrm(
+    FEV1 ~ ARMCD * AVISIT + ar1(AVISIT | USUBJID),
+    data = fev2
+  ))
   expect_snapshot_tolerance(coef(fit))
 })
 
@@ -697,7 +733,9 @@ test_that("mmrm can proceed to second optimizer if first one has divergence erro
     result <- mmrm(
       formula = FEV1 ~ ARMCD + us(AVISIT | USUBJID),
       data = fev_data,
-      control = mmrm_control(optimizers = c(fake = fake_optimizer, h_get_optimizers()))
+      control = mmrm_control(
+        optimizers = c(fake = fake_optimizer, h_get_optimizers())
+      )
     ),
     "Divergence with optimizer fake due to problems"
   )
@@ -714,7 +752,11 @@ test_that("mmrm behaves correctly when some of alternative optimizers have diver
       formula = FEV1 ~ ARMCD + us(AVISIT | USUBJID),
       data = fev_data,
       control = mmrm_control(
-        optimizers = c(fake = fake_optimizer, normal_optimizers[1:2], fake2 = fake_optimizer)
+        optimizers = c(
+          fake = fake_optimizer,
+          normal_optimizers[1:2],
+          fake2 = fake_optimizer
+        )
       )
     ),
     "Divergence with optimizer fake due to problems"
