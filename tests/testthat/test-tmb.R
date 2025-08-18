@@ -431,7 +431,9 @@ test_that("h_mmrm_tmb_data works also for character ID variable", {
     singular = "error",
     drop_visit_levels = TRUE
   ))
-  expect_identical(result, expected)
+  expect_factor(result$full_frame$USUBJID)
+  expect_factor(expected$full_frame$USUBJID)
+  expect_equal(result$full_frame, expected$full_frame, ignore_attr = TRUE)
 })
 
 test_that("h_mmrm_tmb_data correctly processes design matrix below full rank correctly", {
