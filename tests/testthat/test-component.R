@@ -153,6 +153,13 @@ test_that("component returns complete variance-covariance matrix as expected in 
   expect_identical(component(object_mmrm_tmb, "beta_vcov"), result[1:3, 1:3])
 })
 
+test_that("component returns complete adjusted variance-covariance matrix as expected", {
+  object <- get_mmrm_emp()
+  result <- component(object, "beta_vcov_complete")
+  expected <- object$beta_vcov_adj
+  expect_equal(result, expected)
+})
+
 ## xlev ----
 
 test_that("component can return xlev also when there is a transformed response in the model", {

@@ -919,6 +919,13 @@ test_that("vcov works as expected for rank deficient model", {
   expect_names(colnames(result2), identical.to = nms2)
 })
 
+test_that("vcov returns adjusted covariance matrix as expected", {
+  object <- get_mmrm_emp()
+  result <- expect_silent(vcov(object))
+  expected <- object$beta_vcov_adj
+  expect_equal(result, expected)
+})
+
 # VarCorr ----
 
 test_that("VarCorr works as expected", {
@@ -1764,7 +1771,6 @@ test_that("h_generate_new_name() generates a string without a binding in env", {
     "foo_mmrm_test_name.3"
   )
 })
-
 
 test_that("h_refit_mmrm() successfully refits an mmrm fit", {
   fit <- get_mmrm()
