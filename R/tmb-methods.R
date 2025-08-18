@@ -279,7 +279,7 @@ model.frame.mmrm_tmb <- function(
   data,
   include = c("subject_var", "visit_var", "group_var", "response_var"),
   full,
-  na.action = "na.omit",
+  na.action = "na.omit", # nolint
   ...
 ) {
   # nolint

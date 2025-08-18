@@ -448,7 +448,7 @@ h_mmrm_tmb_extract_cov <- function(
         seq(1 + (i - 1) * d[2], i * d[2]),
       ])
       dimnames(ret) <- list(visit_names, visit_names)
-      return(ret)
+      ret
     }
   )
   if (identical(tmb_data$n_groups, 1L)) {
@@ -456,7 +456,7 @@ h_mmrm_tmb_extract_cov <- function(
   } else {
     names(cov) <- levels(tmb_data$subject_groups)
   }
-  return(cov)
+  cov
 }
 
 #' Build `TMB` Fit Result List
