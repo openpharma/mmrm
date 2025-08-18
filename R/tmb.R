@@ -271,7 +271,7 @@ h_mmrm_tmb_data <- function(
   # so no check is needed for `subject_visits`.
   assert_true(all(subject_n_visits > 0))
   if (!is.null(formula_parts$group_var)) {
-    assert_factor(data[[formula_parts$group_var]])
+    assert_factor(full_frame[[formula_parts$group_var]])
     subject_groups <- full_frame[[formula_parts$group_var]][
       subject_zero_inds + 1L
     ]
