@@ -130,7 +130,7 @@ h_mmrm_tmb_data <- function(
     ))
   )
 
-  varname <- formula_parts[grepl("_var", names(formula_parts))]
+  varname <- formula_parts[c("subject_var", "visit_var", "group_var")]
   assert_names(
     names(full_frame),
     must.include = unlist(varname, use.names = FALSE)
@@ -143,7 +143,7 @@ h_mmrm_tmb_data <- function(
     full_frame[[formula_parts$subject_var]] <- factor(
       full_frame[[formula_parts$subject_var]],
       levels = stringr::str_sort(
-        unique(data[[formula_parts$subject_var]]),
+        unique(full_frame[[formula_parts$subject_var]]),
         numeric = TRUE
       )
     )
