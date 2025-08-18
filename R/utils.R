@@ -403,8 +403,9 @@ std_start <- function(cov_type, n_visits, n_groups, ...) {
 #'
 #' @description Obtain empirical start value for unstructured covariance
 #'
-#' @param data (`data.frame`)\cr data used for model fitting.
-#' @param model_formula (`formula`)\cr the formula in mmrm model without covariance structure part.
+#' @param y_vector (`numeric`) response variable.
+#' @param x_matrix (`matrix`) design matrix.
+#' @param full_frame (`data.frame`) full data frame used for model fitting.
 #' @param visit_var (`string`)\cr visit variable.
 #' @param subject_var (`string`)\cr subject id variable.
 #' @param subject_groups (`factor`)\cr subject group assignment.
@@ -420,27 +421,31 @@ std_start <- function(cov_type, n_visits, n_groups, ...) {
 #'
 #' @export
 emp_start <- function(
-  data,
-  model_formula,
+  y_vector,
+  x_matrix,
+  full_frame,
   visit_var,
   subject_var,
   subject_groups,
   ...
 ) {
-  assert_formula(model_formula)
-  assert_data_frame(data)
-  assert_subset(all.vars(model_formula), colnames(data))
+  assert_numeric(y_vector)
+  assert_matrix(x_matrix)
+  assert_data_frame(full_frame)
   assert_string(visit_var)
   assert_string(subject_var)
-  assert_factor(data[[visit_var]])
-  n_visits <- length(levels(data[[visit_var]]))
-  assert_factor(data[[subject_var]])
-  subjects <- droplevels(data[[subject_var]])
+  assert_factor(full_frame[[visit_var]])
+  n_visits <- length(levels(full_frame[[visit_var]]))
+  assert_factor(full_frame[[subject_var]])
+  subjects <- droplevels(full_frame[[subject_var]])
   n_subjects <- length(levels(subjects))
-  fit <- stats::lm(formula = model_formula, data = data)
+  fit <- stats::lm.fit(x = x_matrix, y = y_vector)
   res <- rep(NA, n_subjects * n_visits)
   res[
-    n_visits * as.integer(subjects) - n_visits + as.integer(data[[visit_var]])
+    n_visits *
+      as.integer(subjects) -
+      n_visits +
+      as.integer(full_frame[[visit_var]])
   ] <- residuals(fit)
   res_mat <- matrix(res, ncol = n_visits, nrow = n_subjects, byrow = TRUE)
   emp_covs <- lapply(
@@ -451,6 +456,7 @@ emp_start <- function(
   )
   unlist(lapply(emp_covs, h_get_theta_from_cov))
 }
+
 #' Obtain Theta from Covariance Matrix
 #'
 #' @description Obtain unstructured theta from covariance matrix.
