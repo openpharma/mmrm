@@ -3,6 +3,7 @@
 S3method(AIC,mmrm_tmb)
 S3method(BIC,mmrm_tmb)
 S3method(VarCorr,mmrm_tmb)
+S3method(anova,mmrm)
 S3method(as.cov_struct,cov_struct)
 S3method(as.cov_struct,formula)
 S3method(augment,mmrm)
