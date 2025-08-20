@@ -290,11 +290,11 @@ confint.mmrm <- function(object, parm, level = 0.95, ...) {
 #'   When supplying multiple models and `test = TRUE`, adjacent pairs of models
 #'   are tested sequentially. In other words, the order of the supplied models
 #'   matters. Furthermore, there are are multiple requirements for successful
-#'   LRT. See **Requirements for LRT** below.
+#'   LRT. See the section "Requirements for LRT" below.
 #'
 #'   # Requirements for LRT
 #'
-#'   1. Each supplied model fit must have more degrees of freedom (*df*) than
+#'   1. Each supplied model fit must have more degrees of freedom than
 #'   the preceding model fit.
 #'
 #'   1. If all supplied models were estimated using maximum likelihood (ML), the
@@ -306,7 +306,7 @@ confint.mmrm <- function(object, parm, level = 0.95, ...) {
 #'
 #'   1. The covariance structure of each model must be either (a) the same as
 #'   that of the next model or (b) a special case of that of the next model. See
-#'   **Covariance structure nesting hierarchy** below.
+#'   the section "Covariance structure nesting hierarchy" below.
 #'
 #'   1. All supplied model fits must either already use the same data or be
 #'   refitted using `refit = TRUE`, which refits all models to the dataset of
@@ -381,14 +381,12 @@ confint.mmrm <- function(object, parm, level = 0.95, ...) {
 #'   row's model fits, the first element of each of these columns will be `NA`.
 #'
 #' - `test`: character, indicating which two model fits were compared. Values
-#'  are of the form `{Model - 1} vs {Model]`.
+#'  are of the form `{Model - 1} vs {Model}`.
 #'
-#' - `log_likelihood_ratio`: the [log] of the likelihood ratio between the two
-#'  models being compared, obtained by passing `logLik` to [diff()].
+#' - `log_likelihood_ratio`: the logarithm of the likelihood ratio between the two
+#'  models being compared.
 #'
-#' - `p_value`: the p-value of the `log_likelihood_ratio`, obtained by passing
-#' `2 * abs(log_likelihood_ratio)` to [stats::pchisq()] with
-#' `df = abs(diff(df))` and `lower.tail = FALSE`.
+#' - `p_value`: the p-value of the `log_likelihood_ratio`.
 #'
 #' @seealso For details on the single model operation of this function, see
 #'   [h_anova_single_mmrm_model()]. For details on the generic, see
@@ -448,15 +446,12 @@ anova.mmrm <- function(object, ..., test = TRUE, refit = FALSE) {
 
   assert_class(object, "mmrm")
 
-  # Collect all model fits.
   fits <- list(object, ...)
 
-  # If only one model fit was supplied.
   if (length(fits) == 1L) {
     out <- h_anova_single_mmrm_model(object)
 
   } else {
-    # If more than one model fit was supplied.
 
     # Ensure all objects in ... are mmrm fits.
     lapply(fits[-1L], assert_class, classes = "mmrm", .var.name = "...")
@@ -467,7 +462,6 @@ anova.mmrm <- function(object, ..., test = TRUE, refit = FALSE) {
     # If the data are not all the same and refit = TRUE, refit all with the
     # largest common data set.
     if (refit && !h_check_fits_all_data_same(fits)) {
-      # The set of observations in common to all the fits' data sets.
       common_data <- h_fits_common_data(fits)
 
       # A logical vector for each model fit, indicating whether the model needs
@@ -481,19 +475,15 @@ anova.mmrm <- function(object, ..., test = TRUE, refit = FALSE) {
           data_augmented = common_data
         )
 
-      # Refit only the models that need to be refit using common_data.
       fits[needs_refit] <-
         lapply(fits[needs_refit], h_refit_mmrm, data = common_data)
     } else {
-      # Make needs_refit a vector of FALSE with length equal to length(fits).
       needs_refit <- rep_len(FALSE, length(fits))
     }
 
-    # vector of log likelihood results for the fits
     log_likelihood_vec <- lapply(fits, logLik)
 
-    # Calculate the standard diagnostics.
-    out <-
+    standard_diagnostics <-
       data.frame(
         Model = seq_along(fits),
         refit = needs_refit,
@@ -506,7 +496,6 @@ anova.mmrm <- function(object, ..., test = TRUE, refit = FALSE) {
         logLik = as.numeric(log_likelihood_vec)
       )
 
-    # If the user has requested the likelihood ratio test...
     if (test) {
 
       h_assert_lrt_suitability(fits, refit, dfs = out$df, is_reml = out$REML)
@@ -516,11 +505,8 @@ anova.mmrm <- function(object, ..., test = TRUE, refit = FALSE) {
       # model plus the current row's model.
       out$test <- c(NA, paste(out$Model[-length(fits)], "vs", out$Model[-1L]))
 
-      # log of likelihood ratios between the pairs using base::diff()
       out$log_likelihood_ratio <- c(NA, diff(out$logLik))
 
-      # Calculate the p-value using the log likelihood ratios and differences in
-      # df
       out$p_value <-
         stats::pchisq(
           2 * abs(out$log_likelihood_ratio),
@@ -529,7 +515,6 @@ anova.mmrm <- function(object, ..., test = TRUE, refit = FALSE) {
         )
     }
 
-    # Extract the call of each fit and process it with base::deparse1()
     out$call <- vapply(lapply(fits, component, "call"), deparse1, character(1L))
 
   }

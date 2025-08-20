@@ -1107,20 +1107,14 @@ h_refit_mmrm <- function(fit, data) {
 h_anova_single_mmrm_model <- function(object) {
   assert_class(object, "mmrm")
 
-  # Obtain the attributes of the terms.object of the model formula without the
-  # cov struct
   terms_attr <- attributes(terms(object[["formula_parts"]][["model_formula"]]))
 
-  # Create a character vector of the model terms.
-  # Prepend with "(Intercept)" if an intercept is present
   terms <- c(if (terms_attr[["intercept"]]) "(Intercept)",
              terms_attr[["term.labels"]])
 
-  # Obtain a vector identifying each coefficient's corresponding term.
-  assign_vec <- attr(component(object, "x_matrix"), "assign")
+  assign_coef_term <- attr(component(object, "x_matrix"), "assign")
 
-  # Create an identity matrix with a row/col for each coefficient.
-  identity_mtx <- diag(length(assign_vec))
+  identity_matrix <- diag(length(assign_coef_term))
 
   # Split the rows of identity_mtx according to assign_vec, creating a list of
   # contrast matrices: one for each term in the model.
