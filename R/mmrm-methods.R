@@ -464,16 +464,17 @@ anova.mmrm <- function(object, ..., test = TRUE, refit = FALSE) {
     if (refit && !h_check_fits_all_data_same(fits)) {
       common_data <- h_fits_common_data(fits)
 
-      # A logical vector for each model fit, indicating whether the model needs
-      # to be refit. A model needs to be refit if its columns are not nested
-      # within the columns of common_data.
-      needs_refit <-
-        !vapply(
-          lapply(fits, h_get_minimal_fit_data),
+      fit_data <- lapply(fits, h_get_minimal_fit_data)
+
+      nested_in_common_data <-
+        vapply(
+          fit_data,
           h_check_columns_nested,
           FUN.VALUE = logical(1L),
           data_augmented = common_data
         )
+
+      needs_refit <- !nested_in_common_data
 
       fits[needs_refit] <-
         lapply(fits[needs_refit], h_refit_mmrm, data = common_data)
@@ -483,7 +484,7 @@ anova.mmrm <- function(object, ..., test = TRUE, refit = FALSE) {
 
     log_likelihood_vec <- lapply(fits, logLik)
 
-    standard_diagnostics <-
+    out <-
       data.frame(
         Model = seq_along(fits),
         refit = needs_refit,
@@ -500,10 +501,16 @@ anova.mmrm <- function(object, ..., test = TRUE, refit = FALSE) {
 
       h_assert_lrt_suitability(fits, refit, dfs = out$df, is_reml = out$REML)
 
+      model_indices_except_last <- out$Model[-length(fits)]
+      model_indices_except_first <- out$Model[-1L]
+
       # Create labels for the pair being compared (e.g., "3 vs 4"). Force the
       # first element to be NA because a pair of models is the previous row's
       # model plus the current row's model.
-      out$test <- c(NA, paste(out$Model[-length(fits)], "vs", out$Model[-1L]))
+      out$test <-
+        c(NA_character_,
+          paste(model_indices_except_last, "vs", model_indices_except_first)
+        )
 
       out$log_likelihood_ratio <- c(NA, diff(out$logLik))
 
@@ -515,7 +522,8 @@ anova.mmrm <- function(object, ..., test = TRUE, refit = FALSE) {
         )
     }
 
-    out$call <- vapply(lapply(fits, component, "call"), deparse1, character(1L))
+    fit_calls <- lapply(fits, component, "call")
+    out$call <- vapply(fit_calls, deparse1, FUN.VALUE = character(1L))
 
   }
 

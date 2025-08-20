@@ -61,12 +61,10 @@ of a likelihood ratio test (LRT) between the previous row's and current
 row's model fits, the first element of each of these columns will be \code{NA}.
 \itemize{
 \item \code{test}: character, indicating which two model fits were compared. Values
-are of the form \verb{\{Model - 1\} vs \{Model]}.
-\item \code{log_likelihood_ratio}: the \link{log} of the likelihood ratio between the two
-models being compared, obtained by passing \code{logLik} to \code{\link[=diff]{diff()}}.
-\item \code{p_value}: the p-value of the \code{log_likelihood_ratio}, obtained by passing
-\code{2 * abs(log_likelihood_ratio)} to \code{\link[stats:Chisquare]{stats::pchisq()}} with
-\code{df = abs(diff(df))} and \code{lower.tail = FALSE}.
+are of the form \verb{\{Model - 1\} vs \{Model\}}.
+\item \code{log_likelihood_ratio}: the logarithm of the likelihood ratio between the two
+models being compared.
+\item \code{p_value}: the p-value of the \code{log_likelihood_ratio}.
 }
 }
 \description{
@@ -82,11 +80,11 @@ function will process any \code{mmrm} fits, related or unrelated.
 When supplying multiple models and \code{test = TRUE}, adjacent pairs of models
 are tested sequentially. In other words, the order of the supplied models
 matters. Furthermore, there are are multiple requirements for successful
-LRT. See \strong{Requirements for LRT} below.
+LRT. See the section "Requirements for LRT" below.
 }
 \section{Requirements for LRT}{
 \enumerate{
-\item Each supplied model fit must have more degrees of freedom (\emph{df}) than
+\item Each supplied model fit must have more degrees of freedom than
 the preceding model fit.
 \item If all supplied models were estimated using maximum likelihood (ML), the
 models must have nested covariates in order to undergo LRT. In other words,
@@ -96,7 +94,7 @@ restricted maximum likelihood (REML), all models must have the same
 covariates.
 \item The covariance structure of each model must be either (a) the same as
 that of the next model or (b) a special case of that of the next model. See
-\strong{Covariance structure nesting hierarchy} below.
+the section "Covariance structure nesting hierarchy" below.
 \item All supplied model fits must either already use the same data or be
 refitted using \code{refit = TRUE}, which refits all models to the dataset of
 common observations between all models' respective data sets.

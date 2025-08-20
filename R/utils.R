@@ -1107,25 +1107,30 @@ h_refit_mmrm <- function(fit, data) {
 h_anova_single_mmrm_model <- function(object) {
   assert_class(object, "mmrm")
 
-  terms_attr <- attributes(terms(object[["formula_parts"]][["model_formula"]]))
+  model_terms_attributes <-
+    attributes(terms(object[["formula_parts"]][["model_formula"]]))
 
-  terms <- c(if (terms_attr[["intercept"]]) "(Intercept)",
-             terms_attr[["term.labels"]])
+  term_labels <- c(if (model_terms_attributes[["intercept"]]) "(Intercept)",
+                   model_terms_attributes[["term.labels"]])
 
-  assign_coef_term <- attr(component(object, "x_matrix"), "assign")
+  design_matrix <- component(object, "x_matrix")
 
-  identity_matrix <- diag(length(assign_coef_term))
+  # Integer vector with one entry per model coefficient, giving the index of the
+  # term that corresponds to the coefficient.
+  assign_coef_term <- attr(design_matrix, "assign")
 
-  # Split the rows of identity_mtx according to assign_vec, creating a list of
-  # contrast matrices: one for each term in the model.
-  contrasts <-
-    split.data.frame(identity_mtx, factor(assign_vec, labels = terms))
+  assign_coef_term <- factor(assign_coef_term, labels = term_labels)
 
-  # Get df_md() results for each contrast matrix. Result is a list of lists.
-  df_md_results <- lapply(contrasts, df_md, object = object)
+  coef_identity_matrix <- diag(length(assign_coef_term))
 
-  # Turn results into a data frame. The row.names identify the terms.
-  out <- do.call(rbind, lapply(df_md_results, as.data.frame))
+  contrast_matrix_per_term <-
+    split.data.frame(coef_identity_matrix, f = assign_coef_term)
 
-  out
+  df_md_results_per_term <-
+    lapply(contrast_matrix_per_term, df_md, object = object)
+  df_md_results_per_term <- lapply(df_md_results_per_term, as.data.frame)
+
+  df_md_results_data_frame <- do.call(rbind, df_md_results_per_term)
+
+  df_md_results_data_frame
 }

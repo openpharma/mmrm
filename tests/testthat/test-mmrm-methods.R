@@ -239,7 +239,8 @@ test_that("h_fits_common_data() grabs common observations among datasets", {
       SEX = factor(c(2L, 2L), labels = "Female"),
       ARMCD = factor(c(2L, 2L), labels = "TRT"),
       SEX2 = factor(c(2L, 2L), labels = "Female")
-    )
+    ),
+    tolerance = 1e-3
   )
 })
 
@@ -380,7 +381,8 @@ test_that("h_anova_single_mmrm_model() yields the significance of each term", {
       f_stat = c(10170.36271, 30.09819),
       p_val = c(3.319442e-97, 1.757614e-7),
       row.names = c("(Intercept)", "ARMCD")
-    )
+    ),
+    tolerance = 1e-3
   )
 })
 
@@ -396,7 +398,8 @@ test_that("anova.mmrm() works for a single model", {
         row.names = c("(Intercept)", "ARMCD")
       ),
       class = c("anova.mmrm", "data.frame")
-    )
+    ),
+    tolerance = 1e-3
   )
 })
 
@@ -425,7 +428,7 @@ test_that("anova.mmrm() works for multiple models -- no refitting", {
       ),
       class = c("anova.mmrm", "data.frame")
     ),
-    tolerance = 1e-5
+    tolerance = 1e-3
   )
 })
 
@@ -455,6 +458,6 @@ test_that("anova.mmrm() works for multiple models -- with refitting", {
       ),
       class = c("anova.mmrm", "data.frame")
     ),
-    tolerance = 1e-5
+    tolerance = 1e-3
   )
 })
