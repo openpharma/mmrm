@@ -62,17 +62,43 @@
 #' component(fit, c("formula"))
 #'
 #' @export
-component <- function(object,
-                      name = c(
-                        "cov_type", "subject_var", "n_theta", "n_subjects", "n_timepoints",
-                        "n_obs", "beta_vcov", "beta_vcov_complete",
-                        "varcor", "score_per_subject", "formula", "dataset", "n_groups",
-                        "reml", "convergence", "evaluations", "method", "optimizer",
-                        "conv_message", "call", "theta_est",
-                        "beta_est", "beta_est_complete", "beta_aliased",
-                        "x_matrix", "y_vector", "neg_log_lik", "jac_list", "theta_vcov",
-                        "full_frame", "xlev", "contrasts"
-                      )) {
+component <- function(
+  object,
+  name = c(
+    "cov_type",
+    "subject_var",
+    "n_theta",
+    "n_subjects",
+    "n_timepoints",
+    "n_obs",
+    "beta_vcov",
+    "beta_vcov_complete",
+    "varcor",
+    "score_per_subject",
+    "formula",
+    "dataset",
+    "n_groups",
+    "reml",
+    "convergence",
+    "evaluations",
+    "method",
+    "optimizer",
+    "conv_message",
+    "call",
+    "theta_est",
+    "beta_est",
+    "beta_est_complete",
+    "beta_aliased",
+    "x_matrix",
+    "y_vector",
+    "neg_log_lik",
+    "jac_list",
+    "theta_vcov",
+    "full_frame",
+    "xlev",
+    "contrasts"
+  )
+) {
   assert_class(object, "mmrm_tmb")
   name <- match.arg(name, several.ok = TRUE)
 
@@ -96,43 +122,43 @@ component <- function(object,
     "n_obs" = length(object$tmb_data$y_vector),
     "n_groups" = ifelse(is.list(object$cov), length(object$cov), 1L),
     # Numeric of length > 1.
-    "evaluations" = unlist(ifelse(is.null(object$opt_details$evaluations),
+    "evaluations" = unlist(ifelse(
+      is.null(object$opt_details$evaluations),
       list(object$opt_details$counts),
       list(object$opt_details$evaluations)
     )),
     "method" = object$method,
     "optimizer" = object$optimizer,
     "beta_est" = object$beta_est,
-    "beta_est_complete" =
-      if (any(object$tmb_data$x_cols_aliased)) {
-        stats::setNames(
-          object$beta_est[names(object$tmb_data$x_cols_aliased)],
-          names(object$tmb_data$x_cols_aliased)
-        )
-      } else {
-        object$beta_est
-      },
+    "beta_est_complete" = if (any(object$tmb_data$x_cols_aliased)) {
+      stats::setNames(
+        object$beta_est[names(object$tmb_data$x_cols_aliased)],
+        names(object$tmb_data$x_cols_aliased)
+      )
+    } else {
+      object$beta_est
+    },
     "beta_aliased" = object$tmb_data$x_cols_aliased,
     "theta_est" = object$theta_est,
     "y_vector" = object$tmb_data$y_vector,
     "jac_list" = object$jac_list,
     # Matrices.
-    "beta_vcov" =
-      if (is.null(object$vcov) || identical(object$vcov, "Asymptotic")) {
-        object$beta_vcov
-      } else {
-        object$beta_vcov_adj
-      },
-    "beta_vcov_complete" =
-      if (any(object$tmb_data$x_cols_aliased)) {
-        stats::.vcov.aliased(
-          aliased = object$tmb_data$x_cols_aliased,
-          vc = component(object, "beta_vcov"),
-          complete = TRUE
-        )
-      } else {
-        object$beta_vcov
-      },
+    "beta_vcov" = if (
+      is.null(object$vcov) || identical(object$vcov, "Asymptotic")
+    ) {
+      object$beta_vcov
+    } else {
+      object$beta_vcov_adj
+    },
+    "beta_vcov_complete" = if (any(object$tmb_data$x_cols_aliased)) {
+      stats::.vcov.aliased(
+        aliased = object$tmb_data$x_cols_aliased,
+        vc = component(object, "beta_vcov"),
+        complete = TRUE
+      )
+    } else {
+      component(object, "beta_vcov")
+    },
     "varcor" = object$cov,
     "score_per_subject" = object$score_per_subject,
     "x_matrix" = object$tmb_data$x_matrix,
@@ -141,11 +167,11 @@ component <- function(object,
     "theta_vcov" = object$theta_vcov,
     "full_frame" = object$tmb_data$full_frame,
     # If not found.
-    "..foo.." =
-      stop(sprintf(
-        "component '%s' is not available",
-        name, paste0(class(object), collapse = ", ")
-      )),
+    "..foo.." = stop(sprintf(
+      "component '%s' is not available",
+      name,
+      paste0(class(object), collapse = ", ")
+    )),
     simplify = FALSE
   )
 
