@@ -107,9 +107,14 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
 #'
 #' @keywords internal
 # Please do not load `car` and then create the documentation. The Rd file will be different.
-Anova.mmrm <- function(mod, type = c("II", "III", "2", "3"), tol = sqrt(.Machine$double.eps), ...) { # nolint
+Anova.mmrm <- function(mod,
+                       type = c("II", "III", "2", "3"),
+                       test.statistic = c("F", "Chisq"),
+                       tol = sqrt(.Machine$double.eps),
+                       ...) { # nolint
   assert_double(tol, finite = TRUE, len = 1L)
   type <- match.arg(type)
+  test.statistic <- match.arg(test.statistic)
   vars <- colnames(attr(terms(mod$formula_parts$model_formula), "factors"))
   ret <- lapply(
     vars,
@@ -117,16 +122,24 @@ Anova.mmrm <- function(mod, type = c("II", "III", "2", "3"), tol = sqrt(.Machine
   )
   ret_df <- do.call(rbind.data.frame, ret)
   row.names(ret_df) <- vars
-  colnames(ret_df) <- c("Num Df", "Denom Df", "F Statistic", "Pr(>=F)")
+  if (test.statistic == "Chisq") {
+    ret_df[["denom_df"]] <- NULL
+    ret_df[["p_val"]] <-
+      stats::pchisq(ret_df[["f_stat"]], ret_df[["num_df"]], lower.tail = FALSE)
+    colnames(ret_df) <- c("Df", "Chisq", "Pr(>Chisq)")
+  } else {
+    colnames(ret_df) <- c("Num Df", "Denom Df", "F Statistic", "Pr(>=F)")
+  }
   class(ret_df) <- c("anova", "data.frame")
   attr(ret_df, "heading") <- sprintf(
-    "Analysis of Fixed Effect Table (Type %s F tests)",
+    "Analysis of Fixed Effect Table (Type %s %s tests)",
     switch(type,
       "2" = ,
       "II" = "II",
       "3" = ,
       "III" = "III"
-    )
+    ),
+    test.statistic
   )
   ret_df
 }
