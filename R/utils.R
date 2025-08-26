@@ -910,21 +910,94 @@ h_check_covar_nesting <- function(model_basic, model_augmented) {
   assert_class(model_basic, "mmrm_tmb_formula_parts")
   assert_class(model_augmented, "mmrm_tmb_formula_parts")
 
-  basic_covars <- attr(terms(model_basic[["model_formula"]]), "term.labels")
-  aug_covars <- attr(terms(model_augmented[["model_formula"]]), "term.labels")
+  basic_terms <- terms(model_basic[["model_formula"]])
+  aug_terms <- terms(model_augmented[["model_formula"]])
 
-  if (anyNA(match(basic_covars, aug_covars))) {
+  basic_factors <- attr(basic_terms, "factors")
+  aug_factors <- attr(aug_terms, "factors")
+
+  is_interaction_basic <- attr(basic_terms, "order") > 1
+  is_interaction_aug <- attr(aug_terms, "order") > 1
+
+  basic_non_interactions <- colnames(basic_factors)[!is_interaction_basic]
+  aug_non_interactions <- colnames(aug_factors)[!is_interaction_aug]
+
+  if (anyNA(match(basic_non_interactions, aug_non_interactions))) {
     stop("Each model's covariates must be a subset of the next model's ",
          "covariates.", call. = FALSE)
   }
 
-  if (anyNA(match(aug_covars, basic_covars))) {
+  if (any(is_interaction_basic)) {
+    interactions_factors_basic <-
+      basic_factors[, is_interaction_basic, drop = FALSE]
+    interactions_factors_aug <-
+      aug_factors[rownames(basic_factors), is_interaction_aug, drop = FALSE]
+
+    interaction_nesting <-
+      h_many_to_many_interaction_nesting_test(
+        interactions_factors_basic = interactions_factors_basic,
+        interactions_factors_aug = interactions_factors_aug
+      )
+
+    if (any(interaction_nesting == "not_nested")) {
+      stop("Interaction terms must be nested.", call. = FALSE)
+    }
+  } else {
+    interaction_nesting <- character()
+  }
+
+  if (anyNA(match(aug_non_interactions, basic_non_interactions)) ||
+      any(interaction_nesting == "nested")) {
     "nested"
   } else {
     "identical"
   }
 }
 
+
+h_one_to_one_interaction_nesting_test <- function(interaction_factors_basic,
+                                                  interaction_factors_aug) {
+  if (all(interaction_factors_basic == interaction_factors_aug)) {
+    return(c(identical = 1L))
+  }
+
+  if (all(interaction_factors_basic <= interaction_factors_aug)) {
+    return(c(nested = 2L))
+  }
+
+  c(not_nested = 3L)
+}
+
+
+
+
+
+h_one_to_many_interaction_nesting_test <- function(interaction_factors_basic,
+                                                   interactions_factors_aug) {
+  nesting_results <-
+    apply(
+      interactions_factors_aug,
+      MARGIN = 2L,
+      h_one_to_one_interaction_nesting_test,
+      interaction_factors_basic = interaction_factors_basic,
+      simplify = TRUE
+    )
+  min(nesting_results)
+}
+
+
+h_many_to_many_interaction_nesting_test <- function(interactions_factors_basic,
+                                                    interactions_factors_aug) {
+  i <-
+    apply(
+      interactions_factors_basic,
+      MARGIN = 2L,
+      h_one_to_many_interaction_nesting_test,
+      interactions_factors_aug = interactions_factors_aug,
+      simplify = TRUE
+    )
+  c("identical", "nested", "not_nested")[i]
+}
 
 
 #' Ensure Two Models' Covariance Structures Are Nested
