@@ -100,48 +100,179 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
 #' @param ... not used.
 #' @inheritParams h_get_contrast
 #'
-#' @details
-#' `Anova` will return `anova` object with one row per variable and columns
-#' `Num Df`(numerator degrees of freedom), `Denom Df`(denominator degrees of freedom),
-#' `F Statistic` and `Pr(>=F)`.
+#' @details `Anova` will return `anova` object with one row per variable and
+#'   columns `Num Df`(numerator degrees of freedom), `Denom Df`(denominator
+#'   degrees of freedom), `F Statistic` and `Pr(>=F)`.
 #'
 #' @keywords internal
-# Please do not load `car` and then create the documentation. The Rd file will be different.
+#'
+#' @examples
+#'
+#' \dontshow{
+#'
+#' Please do not load `car` and then create the documentation. The Rd file will
+#' be different.}
 Anova.mmrm <- function(mod,
                        type = c("II", "III", "2", "3"),
-                       test.statistic = c("F", "Chisq"),
                        tol = sqrt(.Machine$double.eps),
+                       test.statistic = c("F", "Chisq"),
+                       vcov. = vcov(mod, complete = FALSE),
+                       singular.ok = FALSE,
                        ...) { # nolint
-  assert_double(tol, finite = TRUE, len = 1L)
+  assert_class(mod, "mmrm")
+  type <- as.character(type)
   type <- match.arg(type)
+  assert_double(tol, finite = TRUE, len = 1L)
   test.statistic <- match.arg(test.statistic)
-  vars <- colnames(attr(terms(mod$formula_parts$model_formula), "factors"))
-  ret <- lapply(
-    vars,
-    function(x) df_md(mod, h_get_contrast(mod, x, type, tol))
-  )
-  ret_df <- do.call(rbind.data.frame, ret)
-  row.names(ret_df) <- vars
-  if (test.statistic == "Chisq") {
-    ret_df[["denom_df"]] <- NULL
-    ret_df[["p_val"]] <-
-      stats::pchisq(ret_df[["f_stat"]], ret_df[["num_df"]], lower.tail = FALSE)
-    colnames(ret_df) <- c("Df", "Chisq", "Pr(>Chisq)")
-  } else {
+
+  if (test.statistic == "F") {
+    vars <- colnames(attr(terms(mod$formula_parts$model_formula), "factors"))
+    ret <- lapply(
+      vars,
+      function(x) df_md(mod, h_get_contrast(mod, x, type, tol))
+    )
+    ret_df <- do.call(rbind.data.frame, ret)
+    row.names(ret_df) <- vars
     colnames(ret_df) <- c("Num Df", "Denom Df", "F Statistic", "Pr(>=F)")
+    attr(ret_df, "heading") <-
+      sprintf(
+        "Analysis of Fixed Effect Table (Type %s %s tests)",
+        switch(type, "2" = , "II" = "II", "3" = , "III" = "III"),
+        test.statistic
+      )
+  } else {
+    if (type == "II" || type == "2") {
+      stop('Test type II is not yet supported for mmrm models when test.statistic = "Chisq".',
+           call. = FALSE)
+    }
+    terms <- terms(mod[["formula_parts"]][["model_formula"]])
+    intercept <- attr(terms, "intercept") > 0
+    p <- length(coef(mod, complete = TRUE))
+    I.p <- diag(p)
+    names <- c(if (intercept) "(Intercept)", labels(terms))
+    n_terms <- length(names)
+    assign <- attr(component(mod, "x_matrix"), "assign")
+    is_aliased <- component(mod, "beta_aliased")
+    if (!singular.ok && any(is_aliased)) {
+      stop("There cannot be any aliased coefficients when singular.ok = FALSE",
+           call. = FALSE)
+    }
+    df <- rep.int(0, n_terms)
+    if (intercept) df[1] <- 1
+    p <- teststat <- rep(0, n_terms)
+    for (term in seq_len(n_terms)) {
+      subs <- which(assign == term - intercept)
+      hyp.matrix <- I.p[subs, !is_aliased, drop = FALSE]
+      hyp.matrix <- hyp.matrix[
+        !apply(hyp.matrix, MARGIN = 1, function(x) all(x == 0)), , drop = FALSE
+      ]
+      if (nrow(hyp.matrix)) {
+        hyp <-
+          car::linearHypothesis(
+            model = mod,
+            hypothesis.matrix = hyp.matrix,
+            vcov. = vcov.,
+            singular.ok = singular.ok,
+            ...
+          )
+        teststat[term] <- hyp$Chisq[2]
+        df[term] <- abs(hyp$Df[2])
+        p[term] <- stats::pchisq(teststat[term], df[term], lower.tail = FALSE)
+      } else {
+        teststat[term] <- NA
+        df[term] <- 0
+        p[term] <- NA
+      }
+    }
+    ret_df <- data.frame(teststat, df, p)
+    row.names(ret_df) <- names
+    names(ret_df) <- c("Chisq", "Df", "Pr(>Chisq)")
+    response_name <- deparse1(attr(terms, "variables")[[2L]])
+    attr(ret_df, "heading") <-
+      c("Analysis of Deviance Table (Type III tests)\n",
+        paste("Response:", response_name))
+    # ret_df[["denom_df"]] <- NULL
+    # ret_df[["p_val"]] <-
+    #   stats::pchisq(ret_df[["f_stat"]], ret_df[["num_df"]], lower.tail = FALSE)
+    # colnames(ret_df) <- c("Df", "Chisq", "Pr(>Chisq)")
   }
   class(ret_df) <- c("anova", "data.frame")
-  attr(ret_df, "heading") <- sprintf(
-    "Analysis of Fixed Effect Table (Type %s %s tests)",
-    switch(type,
-      "2" = ,
-      "II" = "II",
-      "3" = ,
-      "III" = "III"
-    ),
-    test.statistic
-  )
   ret_df
+}
+
+
+#' @keywords internal
+linearHypothesis.mmrm <- function(model,
+                                  hypothesis.matrix,
+                                  rhs = NULL,
+                                  vcov. = NULL,
+                                  singular.ok = FALSE,
+                                  verbose = FALSE,
+                                  ...) {
+  if (is.null(vcov.)) {
+    V <- vcov(model, complete = FALSE)
+  } else if (is.function(vcov.)) {
+    V <- vcov.(model)
+  } else {
+    V <- vcov.
+  }
+  V <- as.matrix(V)
+  b <- coef(model, complete = TRUE)
+  is_aliased <- component(model, "beta_aliased")
+  if (!singular.ok && any(is_aliased)) {
+    stop("There cannot be aliased coefficients in the model.", call. = FALSE)
+  }
+  b <- b[!is_aliased]
+  if (is.character(hypothesis.matrix)) {
+    L <- makeHypothesis(names(b), hypothesis.matrix, rhs)
+    if (is.null(dim(L)))
+      L <- t(L)
+    rhs <- L[, NCOL(L)]
+    L <- L[, -NCOL(L), drop = FALSE]
+    rownames(L) <- hypothesis.matrix
+  } else {
+    if (is.null(dim(hypothesis.matrix))) {
+      L <- t(hypothesis.matrix)
+    } else {
+      L <- hypothesis.matrix
+    }
+    if (is.null(rhs)) rhs <- rep(0, nrow(L))
+  }
+  q <- NROW(L)
+  if (verbose) {
+    cat("\nHypothesis matrix:\n")
+    print(L)
+    cat("\nRight-hand-side vector:\n")
+    print(rhs)
+    cat("\nEstimated linear function (hypothesis.matrix %*% coef - rhs)\n")
+    print(drop(L %*% b - rhs))
+    cat("\n")
+  }
+  df <- Inf
+  SSH <-
+    as.vector(
+      t(L %*% b - rhs) %*% solve(L %*% V %*% t(L)) %*% (L %*% b - rhs)
+    )
+  name <- tryCatch(formula(model), error = function(e) substitute(model))
+  title <- "\nLinear hypothesis test:"
+  topnote <- paste("Model 1: restricted model", "\n", "Model 2: ",
+                   paste(deparse(name), collapse = "\n"), sep = "")
+  if (is.null(vcov.)) {
+    note <- ""
+  } else {
+    note <- "\nNote: Coefficient covariance matrix supplied.\n"
+  }
+  rval <- matrix(rep(NA, 8), ncol = 4)
+  colnames(rval) <- c("Res.Df", "Df", "Chisq", paste("Pr(>Chisq)", sep = ""))
+  rownames(rval) <- 1:2
+  rval[, 1] <- c(df + q, df)
+  p <- stats::pchisq(SSH, q, lower.tail = FALSE)
+  rval[2, 2:4] <- c(q, SSH, p)
+  rval <- as.data.frame(rval[, -1])
+  attr(rval, "heading") <-
+    c(title, car::printHypothesis(L, rhs, names(b)), "", topnote, note)
+  class(rval) <- c("anova", "data.frame")
+  rval
 }
 
 

@@ -402,11 +402,14 @@ logLik.mmrm_tmb <- function(object, ...) {
   # using ML rather than REML.
   df <- n_param + n_coef * !component(object, "reml")
 
+  nobs <- component(object, "n_obs")
+
   structure(
     out,
     n_param = n_param,
     n_coef = n_coef,
     df = df,
+    nobs = nobs,
     class = "logLik"
   )
 }
