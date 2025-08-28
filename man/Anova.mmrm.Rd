@@ -8,6 +8,9 @@ Anova.mmrm(
   mod,
   type = c("II", "III", "2", "3"),
   tol = sqrt(.Machine$double.eps),
+  test.statistic = c("F", "Chisq"),
+  vcov. = vcov(mod, complete = FALSE),
+  singular.ok = FALSE,
   ...
 )
 }
@@ -24,8 +27,15 @@ Anova.mmrm(
 Conduct type II/III hypothesis testing on the MMRM fit results.
 }
 \details{
-\code{Anova} will return \code{anova} object with one row per variable and columns
-\verb{Num Df}(numerator degrees of freedom), \verb{Denom Df}(denominator degrees of freedom),
-\verb{F Statistic} and \verb{Pr(>=F)}.
+\code{Anova} will return \code{anova} object with one row per variable and
+columns \verb{Num Df}(numerator degrees of freedom), \verb{Denom Df}(denominator
+degrees of freedom), \verb{F Statistic} and \verb{Pr(>=F)}.
+}
+\examples{
+
+\dontshow{
+
+Please do not load `car` and then create the documentation. The Rd file will
+be different.}
 }
 \keyword{internal}
