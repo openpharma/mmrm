@@ -99,13 +99,22 @@ test_that("h_get_optimizers works for default optimizers", {
 
 test_that("h_get_optimizers works added arguments", {
   opt1 <- h_get_optimizers("nlminb", optimizer_args = list(a = 1, b = 2))
-  expect_identical(attr(opt1[[1]], "args"), list(control = list(), a = 1, b = 2))
+  expect_identical(
+    attr(opt1[[1]], "args"),
+    list(control = list(), a = 1, b = 2)
+  )
 })
 
 test_that("h_get_optimizers works custom optimizer", {
-  opt1 <- h_get_optimizers(optimizer_fun = silly_optimizer, optimizer_args = list(a = 1, b = 2))
+  opt1 <- h_get_optimizers(
+    optimizer_fun = silly_optimizer,
+    optimizer_args = list(a = 1, b = 2)
+  )
   expect_identical(opt1[[1]], silly_optimizer, ignore_attr = TRUE)
-  expect_identical(attr(opt1[[1]], "args"), list(control = list(), a = 1, b = 2))
+  expect_identical(
+    attr(opt1[[1]], "args"),
+    list(control = list(), a = 1, b = 2)
+  )
 })
 
 # h_optimizer_fun ----
@@ -125,7 +134,12 @@ test_that("h_optimizer_fun return correct optimizer", {
 # h_partial_fun_args ----
 
 test_that("h_partial_fun_args works correctly to add attributes", {
-  opt1 <- h_partial_fun_args(stats::optim, a = 1, b = 2, additional_attr = list(a = 1, b = 2))
+  opt1 <- h_partial_fun_args(
+    stats::optim,
+    a = 1,
+    b = 2,
+    additional_attr = list(a = 1, b = 2)
+  )
   expect_identical(opt1, stats::optim, ignore_attr = TRUE)
   expect_identical(attr(opt1, "args"), list(a = 1, b = 2))
   expect_identical(attr(opt1, "a"), 1)
@@ -278,9 +292,43 @@ test_that("emp_start works", {
   )
   emp_mat <- cov(res_mat, use = "pairwise.complete.obs")
   expect_equal(
-    emp_start(full_frame, model_formula, visit_var, subject_var, n_visits, n_subjects, subject_groups),
+    emp_start(
+      y_vector = full_frame$FEV1,
+      x_matrix = model.matrix(model_formula, full_frame),
+      full_frame = full_frame,
+      visit_var,
+      subject_var,
+      subject_groups,
+      n_visits, # Additional arguments are ignored.
+      n_subjects
+    ),
     h_get_theta_from_cov(emp_mat)
   )
+})
+
+test_that("emp_start also works with transformed variables", {
+  fit <- get_mmrm_transformed()
+  result <- emp_start(
+    y_vector = fit$tmb_data$y_vector,
+    x_matrix = fit$tmb_data$x_matrix,
+    full_frame = fit$tmb_data$full_frame,
+    visit_var = fit$formula_parts$visit_var,
+    subject_var = fit$formula_parts$subject_var,
+    subject_groups = fit$tmb_data$subject_groups
+  )
+  expected <- c(
+    1.9293,
+    1.5648,
+    1.4619,
+    2.2415,
+    0.6193,
+    0.3743,
+    0.1593,
+    0.3227,
+    0.1882,
+    0.1708
+  )
+  expect_equal(result, expected, tolerance = 1e-4)
 })
 
 # h_extra_levels ----

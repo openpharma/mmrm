@@ -22,9 +22,7 @@
 #' - `divergence`: `NULL` or a character vector if divergence messages were caught.
 #'
 #' @keywords internal
-h_record_all_output <- function(expr,
-                                remove = list(),
-                                divergence = list()) {
+h_record_all_output <- function(expr, remove = list(), divergence = list()) {
   # Note: We don't need to and cannot assert `expr` here.
   assert_list(remove, types = "character")
   assert_list(divergence, types = "character")
@@ -128,10 +126,12 @@ h_split_control <- function(control, ...) {
 #' @return Named `list` of optimizers created by [h_partial_fun_args()].
 #'
 #' @keywords internal
-h_get_optimizers <- function(optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb"),
-                             optimizer_fun = h_optimizer_fun(optimizer),
-                             optimizer_args = list(),
-                             optimizer_control = list()) {
+h_get_optimizers <- function(
+  optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb"),
+  optimizer_fun = h_optimizer_fun(optimizer),
+  optimizer_args = list(),
+  optimizer_control = list()
+) {
   if ("automatic" %in% optimizer) {
     lifecycle::deprecate_warn(
       when = "0.2.0",
@@ -148,7 +148,10 @@ h_get_optimizers <- function(optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb"),
     optimizer_fun <- list(custom_optimizer = optimizer_fun)
   }
   lapply(optimizer_fun, function(x) {
-    do.call(h_partial_fun_args, c(list(fun = x, control = optimizer_control), optimizer_args))
+    do.call(
+      h_partial_fun_args,
+      c(list(fun = x, control = optimizer_control), optimizer_args)
+    )
   })
 }
 
@@ -161,11 +164,15 @@ h_get_optimizers <- function(optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb"),
 h_optimizer_fun <- function(optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb")) {
   optimizer <- match.arg(optimizer, several.ok = TRUE)
   lapply(stats::setNames(optimizer, optimizer), function(x) {
-    switch(x,
+    switch(
+      x,
       "L-BFGS-B" = h_partial_fun_args(fun = stats::optim, method = x),
       "BFGS" = h_partial_fun_args(fun = stats::optim, method = x),
       "CG" = h_partial_fun_args(fun = stats::optim, method = x),
-      "nlminb" = h_partial_fun_args(fun = stats::nlminb, additional_attr = list(use_hessian = TRUE))
+      "nlminb" = h_partial_fun_args(
+        fun = stats::nlminb,
+        additional_attr = list(use_hessian = TRUE)
+      )
     )
   })
 }
@@ -221,10 +228,13 @@ h_partial_fun_args <- function(fun, ..., additional_attr = list()) {
 #'
 #' @return String of the default covariance method.
 #' @keywords internal
-h_get_cov_default <- function(method = c("Satterthwaite", "Kenward-Roger", "Residual", "Between-Within")) {
+h_get_cov_default <- function(
+  method = c("Satterthwaite", "Kenward-Roger", "Residual", "Between-Within")
+) {
   assert_string(method)
   method <- match.arg(method)
-  switch(method,
+  switch(
+    method,
     "Residual" = "Empirical",
     "Satterthwaite" = "Asymptotic",
     "Kenward-Roger" = "Kenward-Roger",
@@ -321,11 +331,17 @@ h_warn_na_action <- function() {
 #' Obtain `na.action` as Function
 #' @keywords internal
 h_get_na_action <- function(na_action) {
-  if (is.function(na_action) && identical(methods::formalArgs(na_action), c("object", "..."))) {
+  if (
+    is.function(na_action) &&
+      identical(methods::formalArgs(na_action), c("object", "..."))
+  ) {
     return(na_action)
   }
   if (is.character(na_action) && length(na_action) == 1L) {
-    assert_subset(na_action, c("na.omit", "na.exclude", "na.fail", "na.pass", "na.contiguous"))
+    assert_subset(
+      na_action,
+      c("na.omit", "na.exclude", "na.fail", "na.pass", "na.contiguous")
+    )
     get(na_action, mode = "function", pos = "package:stats")
   }
 }
@@ -367,7 +383,8 @@ std_start <- function(cov_type, n_visits, n_groups, ...) {
   assert_subset(cov_type, cov_types(c("abbr", "habbr")))
   assert_int(n_visits, lower = 1L)
   assert_int(n_groups, lower = 1L)
-  start_value <- switch(cov_type,
+  start_value <- switch(
+    cov_type,
     us = rep(0, n_visits * (n_visits + 1) / 2),
     toep = rep(0, n_visits),
     toeph = rep(0, 2 * n_visits - 1),
@@ -386,8 +403,9 @@ std_start <- function(cov_type, n_visits, n_groups, ...) {
 #'
 #' @description Obtain empirical start value for unstructured covariance
 #'
-#' @param data (`data.frame`)\cr data used for model fitting.
-#' @param model_formula (`formula`)\cr the formula in mmrm model without covariance structure part.
+#' @param y_vector (`numeric`) response variable.
+#' @param x_matrix (`matrix`) design matrix.
+#' @param full_frame (`data.frame`) full data frame used for model fitting.
 #' @param visit_var (`string`)\cr visit variable.
 #' @param subject_var (`string`)\cr subject id variable.
 #' @param subject_groups (`factor`)\cr subject group assignment.
@@ -399,28 +417,35 @@ std_start <- function(cov_type, n_visits, n_groups, ...) {
 #' to obtain the empirical variance-covariance, and it is then used to obtain the
 #' starting values.
 #'
-#' @note `data` is used instead of `full_frame` because `full_frame` is already
-#' transformed if model contains transformations, e.g. `log(FEV1) ~ exp(FEV1_BL)` will
-#' drop `FEV1` and `FEV1_BL` but add `log(FEV1)` and `exp(FEV1_BL)` in `full_frame`.
-#'
 #' @return A numeric vector of starting values.
 #'
 #' @export
-emp_start <- function(data, model_formula, visit_var, subject_var, subject_groups, ...) {
-  assert_formula(model_formula)
-  assert_data_frame(data)
-  assert_subset(all.vars(model_formula), colnames(data))
+emp_start <- function(
+  y_vector,
+  x_matrix,
+  full_frame,
+  visit_var,
+  subject_var,
+  subject_groups,
+  ...
+) {
+  assert_numeric(y_vector)
+  assert_matrix(x_matrix)
+  assert_data_frame(full_frame)
   assert_string(visit_var)
   assert_string(subject_var)
-  assert_factor(data[[visit_var]])
-  n_visits <- length(levels(data[[visit_var]]))
-  assert_factor(data[[subject_var]])
-  subjects <- droplevels(data[[subject_var]])
+  assert_factor(full_frame[[visit_var]])
+  n_visits <- length(levels(full_frame[[visit_var]]))
+  assert_factor(full_frame[[subject_var]])
+  subjects <- droplevels(full_frame[[subject_var]])
   n_subjects <- length(levels(subjects))
-  fit <- stats::lm(formula = model_formula, data = data)
+  fit <- stats::lm.fit(x = x_matrix, y = y_vector)
   res <- rep(NA, n_subjects * n_visits)
   res[
-    n_visits * as.integer(subjects) - n_visits + as.integer(data[[visit_var]])
+    n_visits *
+      as.integer(subjects) -
+      n_visits +
+      as.integer(full_frame[[visit_var]])
   ] <- residuals(fit)
   res_mat <- matrix(res, ncol = n_visits, nrow = n_subjects, byrow = TRUE)
   emp_covs <- lapply(
@@ -431,6 +456,7 @@ emp_start <- function(data, model_formula, visit_var, subject_var, subject_group
   )
   unlist(lapply(emp_covs, h_get_theta_from_cov))
 }
+
 #' Obtain Theta from Covariance Matrix
 #'
 #' @description Obtain unstructured theta from covariance matrix.
@@ -562,7 +588,6 @@ h_tmb_warn_non_deterministic <- function() {
 }
 
 
-
 #' Sort a Data Frame by All Its Columns in Ascending Order
 #'
 #' @param data (`data.frame`)\cr a data frame to be sorted.
@@ -575,7 +600,6 @@ h_dataset_sort_all <- function(data) {
   assert_data_frame(data)
   data[do.call(order, unname(data)), , drop = FALSE]
 }
-
 
 
 #' Predicate Indicating Whether Two Datasets Contain the Same Observations
@@ -622,7 +646,6 @@ h_check_columns_nested <- function(data_basic, data_augmented) {
     check.attributes = FALSE
   ))
 }
-
 
 
 #' Predicate Indicating Whether `mmrm` Fits' Datasets Contain the Same
@@ -675,7 +698,6 @@ h_check_fits_all_data_same <- function(fits) {
 
   datasets[[1L]] <- h_dataset_sort_all(datasets[[1L]])
   for (i in seq_along(fits)[-1L]) {
-
     # Pull prev dataset's columns to the front of current dataset. Then sort.
     cols[[i]] <- union(cols[[i - 1L]], cols[[i]])
     datasets[[i]] <- h_dataset_sort_all(datasets[[i]][cols[[i]]])
@@ -694,7 +716,6 @@ h_check_fits_all_data_same <- function(fits) {
 
   TRUE
 }
-
 
 
 #' Combine the Datasets from `mmrm` Fits
@@ -719,7 +740,6 @@ h_fits_common_data <- function(fits) {
   out <- droplevels(out)
   out
 }
-
 
 
 #' Obtain the Minimal Dataset Needed for an `mmrm` Fit
@@ -760,8 +780,6 @@ h_get_minimal_fit_data <- function(fit) {
 }
 
 
-
-
 #' Ensure LRT Is Appropriate for `list` of `mmrm` Fits
 #'
 #' Throws an error if the degrees of freedom aren't monotonically increasing, if
@@ -781,7 +799,6 @@ h_get_minimal_fit_data <- function(fit) {
 #'
 #' @keywords internal
 h_assert_lrt_suitability <- function(fits, refit, dfs, is_reml) {
-
   assert_list(fits, types = "mmrm", min.len = 2)
   assert_flag(refit)
   assert_numeric(
@@ -825,7 +842,6 @@ h_assert_lrt_suitability <- function(fits, refit, dfs, is_reml) {
 }
 
 
-
 #' Ensure Two Models Are Nested
 #'
 #' Throws an error if `model_basic` isn't nested within `model_augmented`.
@@ -853,7 +869,6 @@ h_assert_lrt_suitability <- function(fits, refit, dfs, is_reml) {
 #'
 #' @keywords internal
 h_assert_nested_models <- function(model_basic, model_augmented, any_reml) {
-
   assert_class(model_basic, "mmrm")
   assert_class(model_augmented, "mmrm")
   assert_flag(any_reml)
@@ -865,7 +880,9 @@ h_assert_nested_models <- function(model_basic, model_augmented, any_reml) {
     stop("Models must all have the same visit variable.")
   }
 
-  if (!identical(model_basic[["subject_var"]], model_augmented[["subject_var"]])) {
+  if (
+    !identical(model_basic[["subject_var"]], model_augmented[["subject_var"]])
+  ) {
     stop("All models must have the same subject variable.")
   }
 
@@ -881,8 +898,10 @@ h_assert_nested_models <- function(model_basic, model_augmented, any_reml) {
   cov_struct_nesting <- h_check_cov_struct_nesting(model_basic, model_augmented)
 
   if (covar_nesting == "identical" && cov_struct_nesting == "identical") {
-    warning("Two models in the sequence have identical covariates and ",
-            "covariance structures.")
+    warning(
+      "Two models in the sequence have identical covariates and ",
+      "covariance structures."
+    )
   }
 
   TRUE
@@ -914,8 +933,11 @@ h_check_covar_nesting <- function(model_basic, model_augmented) {
   aug_covars <- attr(terms(model_augmented[["model_formula"]]), "term.labels")
 
   if (anyNA(match(basic_covars, aug_covars))) {
-    stop("Each model's covariates must be a subset of the next model's ",
-         "covariates.", call. = FALSE)
+    stop(
+      "Each model's covariates must be a subset of the next model's ",
+      "covariates.",
+      call. = FALSE
+    )
   }
 
   if (anyNA(match(aug_covars, basic_covars))) {
@@ -924,7 +946,6 @@ h_check_covar_nesting <- function(model_basic, model_augmented) {
     "identical"
   }
 }
-
 
 
 #' Ensure Two Models' Covariance Structures Are Nested
@@ -978,15 +999,13 @@ h_check_cov_struct_nesting <- function(model_basic, model_augmented) {
   } else if (any(cov_struct_nesting[[basic_cov_struct]] == aug_cov_struct)) {
     "nested"
   } else {
-    stop("Each model's covariance structure must be either identical to or a ",
-         "special case of the next model's covariance structure.",
-         call. = FALSE)
+    stop(
+      "Each model's covariance structure must be either identical to or a ",
+      "special case of the next model's covariance structure.",
+      call. = FALSE
+    )
   }
 }
-
-
-
-
 
 
 #' Generate a Name Not Already In an Environment nor Its Parents
@@ -1023,9 +1042,6 @@ h_generate_new_name <- function(x, env) {
   # parents
   x[length(x)]
 }
-
-
-
 
 
 #' Refit an `mmrm` Model Using a New Dataset
