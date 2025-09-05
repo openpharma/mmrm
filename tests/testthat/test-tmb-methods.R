@@ -836,6 +836,7 @@ test_that("logLik works as expected", {
     n_param = 10,
     n_coef = 3,
     df = 10,
+    nobs = 537,
     class = "logLik"
   )
   expect_equal(result, expected)
@@ -854,6 +855,7 @@ test_that("logLik works as expected with ML estimation", {
     n_param = 10,
     n_coef = 3,
     df = 13,
+    nobs = 537,
     class = "logLik"
   )
   expect_equal(result, expected)

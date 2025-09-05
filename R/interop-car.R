@@ -153,6 +153,7 @@ Anova.mmrm <- function(mod,
         switch(type, "2" = , "II" = "II", "3" = , "III" = "III"),
         test.statistic
       )
+    class(ret_df) <- c("anova", "data.frame")
   } else {
     ret_df <-
       switch(
