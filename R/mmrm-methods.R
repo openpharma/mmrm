@@ -492,8 +492,8 @@ anova.mmrm <- function(object, ..., test = TRUE, refit = FALSE) {
         n_param = vapply(log_likelihood_vec, attr, numeric(1L), "n_param"),
         n_coef = vapply(log_likelihood_vec, attr, numeric(1L), "n_coef"),
         df = vapply(log_likelihood_vec, attr, numeric(1L), "df"),
-        AIC = vapply(fits, AIC, numeric(1L)),
-        BIC = vapply(fits, BIC, numeric(1L)),
+        AIC = vapply(log_likelihood_vec, AIC, numeric(1L)),
+        BIC = vapply(log_likelihood_vec, BIC, numeric(1L)),
         logLik = as.numeric(log_likelihood_vec)
       )
 
