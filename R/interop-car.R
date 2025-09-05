@@ -97,12 +97,25 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
 #' Conduct type II/III hypothesis testing on the MMRM fit results.
 #'
 #' @param mod (`mmrm`)\cr the fitted MMRM.
-#' @param ... not used.
+#' @param test.statistic (`string`)\cr either `"F` or `"Chisq"`, indicating the
+#'   kind of test to perform.
+#' @param vcov. (`matrix` or `function`)\cr the coefficient-covariance matrix or
+#'   a function to compute a covariance matrix. This is only used when
+#'   `test.statistic = "Chisq"`.
+#' @param singular.ok (`flag`)\cr flag indicating whether or not to allow models
+#'   with aliased coefficients to undergo `Chisq` testing. Only used if
+#'   `test.statistic = "Chisq"`.
+#' @param ... Passed to [car::linearHypothesis()] when `test.statistic =
+#'   "Chisq"`.
 #' @inheritParams h_get_contrast
 #'
-#' @details `Anova` will return `anova` object with one row per variable and
-#'   columns `Num Df`(numerator degrees of freedom), `Denom Df`(denominator
-#'   degrees of freedom), `F Statistic` and `Pr(>=F)`.
+#' @details `Anova()` will return `anova` object with one row per variable. If
+#'   `test.statistic = "F"`, columns will be `Num Df`(numerator degrees of
+#'   freedom), `Denom Df` (denominator degrees of freedom), `F Statistic` and
+#'   `Pr(>=F)`.
+#'
+#'   If `test.statistic = "Chisq"`, columns will be `Chisq` (the Chi-squared
+#'   test statistic), `Df` (degrees of freedom), and `Pr(>Chisq)` (p-value).
 #'
 #' @keywords internal
 #'
@@ -141,66 +154,203 @@ Anova.mmrm <- function(mod,
         test.statistic
       )
   } else {
-    if (type == "II" || type == "2") {
-      stop('Test type II is not yet supported for mmrm models when test.statistic = "Chisq".',
-           call. = FALSE)
-    }
-    terms <- terms(mod[["formula_parts"]][["model_formula"]])
-    intercept <- attr(terms, "intercept") > 0
-    p <- length(coef(mod, complete = TRUE))
-    I.p <- diag(p)
-    names <- c(if (intercept) "(Intercept)", labels(terms))
-    n_terms <- length(names)
-    assign <- attr(component(mod, "x_matrix"), "assign")
-    is_aliased <- component(mod, "beta_aliased")
-    if (!singular.ok && any(is_aliased)) {
-      stop("There cannot be any aliased coefficients when singular.ok = FALSE",
-           call. = FALSE)
-    }
-    df <- rep.int(0, n_terms)
-    if (intercept) df[1] <- 1
-    p <- teststat <- rep(0, n_terms)
-    for (term in seq_len(n_terms)) {
-      subs <- which(assign == term - intercept)
-      hyp.matrix <- I.p[subs, !is_aliased, drop = FALSE]
-      hyp.matrix <- hyp.matrix[
-        !apply(hyp.matrix, MARGIN = 1, function(x) all(x == 0)), , drop = FALSE
-      ]
-      if (nrow(hyp.matrix)) {
-        hyp <-
-          car::linearHypothesis(
-            model = mod,
-            hypothesis.matrix = hyp.matrix,
+    ret_df <-
+      switch(
+        type,
+        "2" = ,
+        II =
+          h_Anova_II_Chisq_mmrm(
+            mod,
+            vcov. = vcov.,
+            singular.ok = singular.ok,
+            ...
+          ),
+        "3" = ,
+        III =
+          h_Anova_III_Chisq_mmrm(
+            mod,
             vcov. = vcov.,
             singular.ok = singular.ok,
             ...
           )
-        teststat[term] <- hyp$Chisq[2]
-        df[term] <- abs(hyp$Df[2])
-        p[term] <- stats::pchisq(teststat[term], df[term], lower.tail = FALSE)
-      } else {
-        teststat[term] <- NA
-        df[term] <- 0
-        p[term] <- NA
-      }
-    }
-    ret_df <- data.frame(teststat, df, p)
-    row.names(ret_df) <- names
-    names(ret_df) <- c("Chisq", "Df", "Pr(>Chisq)")
-    response_name <- deparse1(attr(terms, "variables")[[2L]])
-    attr(ret_df, "heading") <-
-      c("Analysis of Deviance Table (Type III tests)\n",
-        paste("Response:", response_name))
-    # ret_df[["denom_df"]] <- NULL
-    # ret_df[["p_val"]] <-
-    #   stats::pchisq(ret_df[["f_stat"]], ret_df[["num_df"]], lower.tail = FALSE)
-    # colnames(ret_df) <- c("Df", "Chisq", "Pr(>Chisq)")
+      )
   }
+  ret_df
+}
+
+
+
+
+
+#' Conduct Type-II or Type-III ANOVA with a Chi-squared Test Statistic.
+#'
+#' @inheritParams Anova.mmrm
+#'
+#' @returns `anova` object with one row per variable and columns `Chisq` (the
+#'   Chi-squared test statistic), `Df` (degrees of freedom), and `Pr(>Chisq)`
+#'   (p-value).
+#' @keywords internal
+h_Anova_II_Chisq_mmrm <- function(mod, vcov., singular.ok, ...) {
+  hypothesis_results <- function(term) {
+    which.term <- which(term == names)
+    subs.term <- which(assign == which.term)
+    relatives <- h_relatives(term, names, fac)
+    subs.relatives <- NULL
+    for (relative in relatives)
+      subs.relatives <- c(subs.relatives, which(assign == relative))
+    hyp.matrix.1 <- I.p[subs.relatives, !is_aliased, drop = FALSE]
+    hyp.matrix.2 <- I.p[c(subs.relatives, subs.term), !is_aliased, drop = FALSE]
+    if (nrow(hyp.matrix.1)) {
+      xq <- qr(hyp.matrix.2 %*% vcov. %*% t(hyp.matrix.1))
+      if (xq$rank == 0) {
+        hyp.matrix.term <- hyp.matrix.2
+      } else {
+        hyp.matrix.term <-
+          t(qr.Q(xq, complete = TRUE)[, -seq_len(xq$rank)]) %*% hyp.matrix.2
+      }
+    } else {
+      hyp.matrix.term <- hyp.matrix.2
+    }
+    hyp.matrix.term <-
+      hyp.matrix.term[
+        !apply(hyp.matrix.term, 1, function(x) all(x == 0)), , drop = FALSE
+      ]
+    if (!nrow(hyp.matrix.term))
+      return(c(statistic = NA, df = 0))
+    hyp <-
+      car::linearHypothesis(
+        model = mod,
+        hypothesis.matrix = hyp.matrix.term,
+        vcov. = vcov.,
+        singular.ok = singular.ok,
+        ...
+      )
+    c(statistic = hyp$Chisq[2], df = hyp$Df[2])
+  }
+  is_aliased <- component(mod, "beta_aliased")
+  if (!singular.ok && any(is_aliased))
+    stop("there are aliased coefficients in the model")
+  terms <- terms(mod)
+  fac <- attr(terms, "factors")
+  intercept <- attr(terms, "intercept") > 0
+  coefs <- coef(mod, complete = TRUE)
+  p <- length(coefs)
+  I.p <- diag(p)
+  assign <- attr(component(mod, "x_matrix"), "assign")
+  assign[is_aliased] <- NA
+  names <- labels(terms)
+  n.terms <- length(names)
+  p <- teststat <- df <- rep(0, n.terms)
+  for (i in seq_len(n.terms)) {
+    hyp <- hypothesis_results(names[i])
+    teststat[i] <- abs(hyp["statistic"])
+    df[i] <- abs(hyp["df"])
+    p[i] <- stats::pchisq(teststat[i], df[i], lower.tail = FALSE)
+  }
+  result <- data.frame(teststat, df, p)
+  row.names(result) <- names
+  names(result) <- c("Chisq", "Df", "Pr(>Chisq)")
+  class(result) <- c("anova", "data.frame")
+  response_name <- deparse1(attr(terms, "variables")[[2L]])
+  attr(result, "heading") <-
+    c("Analysis of Deviance Table (Type II Wald chisquare tests)\n",
+      paste("Response:", response_name))
+  result
+}
+
+
+#' Get Indices of a Model Term's "Relatives"
+#'
+#' For the model term `term`, return the indices of all *other* model terms
+#' whose variables contain all of `term`'s variables. These are probably most
+#' often the indices of interaction terms whose components contain all `term`'s
+#' variables.
+#'
+#' @param term (`string`)\cr the model term at hand.
+#' @param names (`character`)\cr a vector of all the terms in the model.
+#' @param factors (`matrix`)\cr the `factors` attribute of a [`terms.object`].
+#'
+#' @keywords internal
+h_relatives <- function(term, names, factors) {
+  if (length(names) == 1L) return(NULL)
+  term_is_not_name <- is.na(term) | is.na(names) | term != names
+  is_relative <-
+    vapply(
+      names[term_is_not_name],
+      function(term2) all(!factors[, term] | factors[, term2]),
+      logical(1L)
+    )
+  seq_along(names)[term_is_not_name][is_relative]
+}
+
+
+
+
+
+
+#' @rdname h_Anova_II_Chisq_mmrm
+h_Anova_III_Chisq_mmrm <- function(mod, vcov., singular.ok, ...) {
+  terms <- terms(mod[["formula_parts"]][["model_formula"]])
+  intercept <- attr(terms, "intercept") > 0
+  p <- length(coef(mod, complete = TRUE))
+  I_p <- diag(p)
+  names <- c(if (intercept) "(Intercept)", labels(terms))
+  n_terms <- length(names)
+  assign <- attr(component(mod, "x_matrix"), "assign")
+  p <- teststat <- df <- res_df <- rep(0, n_terms)
+  if (intercept) df[1] <- 1
+  is_aliased <- component(mod, "beta_aliased")
+  if (!singular.ok && any(is_aliased)) {
+    stop("There cannot be any aliased coefficients when singular.ok = FALSE",
+         call. = FALSE)
+  }
+  for (term in seq_len(n_terms)) {
+    subs <- which(assign == term - intercept)
+    hyp_matrix <- I_p[subs, !is_aliased, drop = FALSE]
+    hyp_matrix <- hyp_matrix[
+      !apply(hyp_matrix, MARGIN = 1, function(x) all(x == 0)), , drop = FALSE
+    ]
+    if (nrow(hyp_matrix)) {
+      hyp <-
+        car::linearHypothesis(
+          model = mod,
+          hypothesis.matrix = hyp_matrix,
+          vcov. = vcov.,
+          singular.ok = singular.ok,
+          ...
+        )
+      teststat[term] <- hyp$Chisq[2]
+      df[term] <- abs(hyp$Df[2])
+      p[term] <- stats::pchisq(teststat[term], df[term], lower.tail = FALSE)
+    } else {
+      teststat[term] <- NA
+      df[term] <- 0
+      p[term] <- NA
+    }
+  }
+  ret_df <- data.frame(teststat, df, p)
+  row.names(ret_df) <- names
+  names(ret_df) <- c("Chisq", "Df", "Pr(>Chisq)")
+  response_name <- deparse1(attr(terms, "variables")[[2L]])
+  attr(ret_df, "heading") <-
+    c("Analysis of Deviance Table (Type III Wald chisquare tests)\n",
+      paste("Response:", response_name))
   class(ret_df) <- c("anova", "data.frame")
   ret_df
 }
 
 
+
+
+#' Test a Linear Hypothesis on an `mmrm` Fit
+#'
+#' @param model (`mmrm`)\cr an `mmrm` model fit.
+#' @param hypothesis.matrix (`matrix`)\cr see [car::linearHypothesis()].
+#' @param rhs (`numeric`)\cr see [car::linearHypothesis()].
+#' @param verbose (`flag`)\cr see [car::linearHypothesis()].
+#' @param ... arguments passed down from other methods.
+#' @inheritParams Anova.mmrm
+#'
 #' @keywords internal
 linearHypothesis.mmrm <- function(model,
                                   hypothesis.matrix,
@@ -224,7 +374,7 @@ linearHypothesis.mmrm <- function(model,
   }
   b <- b[!is_aliased]
   if (is.character(hypothesis.matrix)) {
-    L <- makeHypothesis(names(b), hypothesis.matrix, rhs)
+    L <- car::makeHypothesis(names(b), hypothesis.matrix, rhs)
     if (is.null(dim(L)))
       L <- t(L)
     rhs <- L[, NCOL(L)]
@@ -248,7 +398,6 @@ linearHypothesis.mmrm <- function(model,
     print(drop(L %*% b - rhs))
     cat("\n")
   }
-  df <- Inf
   SSH <-
     as.vector(
       t(L %*% b - rhs) %*% solve(L %*% V %*% t(L)) %*% (L %*% b - rhs)
@@ -256,7 +405,7 @@ linearHypothesis.mmrm <- function(model,
   name <- tryCatch(formula(model), error = function(e) substitute(model))
   title <- "\nLinear hypothesis test:"
   topnote <- paste("Model 1: restricted model", "\n", "Model 2: ",
-                   paste(deparse(name), collapse = "\n"), sep = "")
+                   paste(deparse1(name), collapse = "\n"), sep = "")
   if (is.null(vcov.)) {
     note <- ""
   } else {
@@ -265,7 +414,7 @@ linearHypothesis.mmrm <- function(model,
   rval <- matrix(rep(NA, 8), ncol = 4)
   colnames(rval) <- c("Res.Df", "Df", "Chisq", paste("Pr(>Chisq)", sep = ""))
   rownames(rval) <- 1:2
-  rval[, 1] <- c(df + q, df)
+  rval[, 1] <- c(Inf + q, Inf)
   p <- stats::pchisq(SSH, q, lower.tail = FALSE)
   rval[2, 2:4] <- c(q, SSH, p)
   rval <- as.data.frame(rval[, -1])

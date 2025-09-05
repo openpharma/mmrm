@@ -499,8 +499,7 @@ anova.mmrm <- function(object, ..., test = TRUE, refit = FALSE) {
 
     if (test) {
 
-      # To be reactivated once we develop a nesting check strategy
-      # h_assert_lrt_suitability(fits, refit, dfs = out$df, is_reml = out$REML)
+      h_assert_lrt_suitability(fits, refit, dfs = out$df, is_reml = out$REML)
 
       model_indices_except_last <- out$Model[-length(fits)]
       model_indices_except_first <- out$Model[-1L]
