@@ -19,11 +19,13 @@
 #' - `group_var`: `string` with the group variable name. If no group specified,
 #'   this element is `NULL`.
 #' - `model_var`: `character` with the variables names of the formula, except `subject_var`.
+#' - `response_var`: `string` with the response variable name.
 #'
 #' @keywords internal
 h_mmrm_tmb_formula_parts <- function(
-    formula,
-    covariance = as.cov_struct(formula, warn_partial = FALSE)) {
+  formula,
+  covariance = as.cov_struct(formula, warn_partial = FALSE)
+) {
   assert_formula(formula)
   assert_true(identical(length(formula), 3L))
 
@@ -39,7 +41,8 @@ h_mmrm_tmb_formula_parts <- function(
       visit_var = covariance$visits,
       subject_var = covariance$subject,
       group_var = if (length(covariance$group) < 1) NULL else covariance$group,
-      model_var = setdiff(all.vars(formula[[3]]), covariance$subject)
+      model_var = setdiff(all.vars(formula[[3]]), covariance$subject),
+      response_var = all.vars(formula[[2]])
     ),
     class = "mmrm_tmb_formula_parts"
   )
@@ -88,53 +91,25 @@ h_mmrm_tmb_formula_parts <- function(
 #'   on the order please use a factor.
 #'
 #' @keywords internal
-h_mmrm_tmb_data <- function(formula_parts,
-                            data,
-                            weights,
-                            reml,
-                            singular = c("drop", "error", "keep"),
-                            drop_visit_levels,
-                            allow_na_response = FALSE,
-                            drop_levels = TRUE,
-                            xlev = NULL,
-                            contrasts = NULL) {
+h_mmrm_tmb_data <- function(
+  formula_parts,
+  data,
+  weights,
+  reml,
+  singular = c("drop", "error", "keep"),
+  drop_visit_levels,
+  allow_na_response = FALSE,
+  drop_levels = TRUE,
+  xlev = NULL,
+  contrasts = NULL
+) {
   assert_class(formula_parts, "mmrm_tmb_formula_parts")
   assert_data_frame(data)
-  varname <- formula_parts[grepl("_var", names(formula_parts))]
-  assert_names(
-    names(data),
-    must.include = unlist(varname, use.names = FALSE)
-  )
-  assert_true(is.factor(data[[formula_parts$subject_var]]) || is.character(data[[formula_parts$subject_var]]))
   assert_numeric(weights, len = nrow(data))
   assert_flag(reml)
   singular <- match.arg(singular)
   assert_flag(drop_visit_levels)
 
-  if (is.character(data[[formula_parts$subject_var]])) {
-    data[[formula_parts$subject_var]] <- factor(
-      data[[formula_parts$subject_var]],
-      levels = stringr::str_sort(unique(data[[formula_parts$subject_var]]), numeric = TRUE)
-    )
-  }
-  data_order <- if (formula_parts$is_spatial) {
-    order(data[[formula_parts$subject_var]])
-  } else {
-    subject_visit_data <- data[, c(formula_parts$subject_var, formula_parts$visit_var)]
-    is_duplicated <- duplicated(subject_visit_data)
-    if (any(is_duplicated)) {
-      stop(
-        "time points have to be unique for each subject, detected following duplicates in data:\n",
-        paste(utils::capture.output(print(subject_visit_data[is_duplicated, ])), collapse = "\n")
-      )
-    }
-    order(data[[formula_parts$subject_var]], data[[formula_parts$visit_var]])
-  }
-  if (identical(formula_parts$is_spatial, FALSE)) {
-    h_confirm_large_levels(length(levels(data[[formula_parts$visit_var]])))
-  }
-  data <- data[data_order, ]
-  weights <- weights[data_order]
   data <- data.frame(data, weights)
   # Weights is always the last column.
   weights_name <- colnames(data)[ncol(data)]
@@ -142,6 +117,9 @@ h_mmrm_tmb_data <- function(formula_parts,
   if (!allow_na_response) {
     h_warn_na_action()
   }
+
+  # Create model frame. This potentially uses variables from the environment if not present in
+  # `data`.
   full_frame <- eval(
     bquote(stats::model.frame(
       formula_parts$full_formula,
@@ -151,8 +129,61 @@ h_mmrm_tmb_data <- function(formula_parts,
       xlev = xlev
     ))
   )
+
+  varname <- formula_parts[c("subject_var", "visit_var", "group_var")]
+  assert_names(
+    names(full_frame),
+    must.include = unlist(varname, use.names = FALSE)
+  )
+  assert_true(
+    is.factor(full_frame[[formula_parts$subject_var]]) ||
+      is.character(full_frame[[formula_parts$subject_var]])
+  )
+  if (is.character(full_frame[[formula_parts$subject_var]])) {
+    full_frame[[formula_parts$subject_var]] <- factor(
+      full_frame[[formula_parts$subject_var]],
+      levels = stringr::str_sort(
+        unique(full_frame[[formula_parts$subject_var]]),
+        numeric = TRUE
+      )
+    )
+  }
+  data_order <- if (formula_parts$is_spatial) {
+    order(full_frame[[formula_parts$subject_var]])
+  } else {
+    subject_visit_data <- full_frame[, c(
+      formula_parts$subject_var,
+      formula_parts$visit_var
+    )]
+    is_duplicated <- duplicated(subject_visit_data)
+    if (any(is_duplicated)) {
+      stop(
+        "time points have to be unique for each subject, detected following duplicates in data:\n",
+        paste(
+          utils::capture.output(print(subject_visit_data[is_duplicated, ])),
+          collapse = "\n"
+        )
+      )
+    }
+    order(
+      full_frame[[formula_parts$subject_var]],
+      full_frame[[formula_parts$visit_var]]
+    )
+  }
+  if (identical(formula_parts$is_spatial, FALSE)) {
+    h_confirm_large_levels(length(levels(full_frame[[
+      formula_parts$visit_var
+    ]])))
+  }
+  full_frame <- full_frame[data_order, ]
+
   if (drop_levels) {
-    full_frame <- h_drop_levels(full_frame, formula_parts$subject_var, formula_parts$visit_var, names(xlev))
+    full_frame <- h_drop_levels(
+      full_frame,
+      formula_parts$subject_var,
+      formula_parts$visit_var,
+      names(xlev)
+    )
   }
   has_response <- !identical(attr(attr(full_frame, "terms"), "response"), 0L)
   keep_ind <- if (allow_na_response && has_response) {
@@ -162,34 +193,57 @@ h_mmrm_tmb_data <- function(formula_parts,
     stats::complete.cases(full_frame)
   }
   full_frame <- full_frame[keep_ind, ]
-  if (drop_visit_levels && !formula_parts$is_spatial && h_extra_levels(full_frame[[formula_parts$visit_var]])) {
+  if (
+    drop_visit_levels &&
+      !formula_parts$is_spatial &&
+      h_extra_levels(full_frame[[formula_parts$visit_var]])
+  ) {
     visit_vec <- full_frame[[formula_parts$visit_var]]
     old_levels <- levels(visit_vec)
     full_frame[[formula_parts$visit_var]] <- droplevels(visit_vec)
     new_levels <- levels(full_frame[[formula_parts$visit_var]])
     dropped <- setdiff(old_levels, new_levels)
     message(
-      "In ", formula_parts$visit_var, " there are dropped visits: ", toString(dropped),
+      "In ",
+      formula_parts$visit_var,
+      " there are dropped visits: ",
+      toString(dropped),
       ".\n Additional attributes including contrasts are lost.\n",
       "To avoid this behavior, make sure use `drop_visit_levels = FALSE`."
     )
   }
   is_factor_col <- vapply(full_frame, is.factor, FUN.VALUE = TRUE)
-  is_factor_col <- intersect(names(is_factor_col)[is_factor_col], all.vars(formula_parts$model_formula))
+  is_factor_col <- intersect(
+    names(is_factor_col)[is_factor_col],
+    all.vars(formula_parts$model_formula)
+  )
   x_matrix <- stats::model.matrix(
     formula_parts$model_formula,
     data = full_frame,
-    contrasts.arg = h_default_value(contrasts, lapply(full_frame[is_factor_col], contrasts))
+    contrasts.arg = h_default_value(
+      contrasts,
+      lapply(full_frame[is_factor_col], contrasts)
+    )
   )
-  x_cols_aliased <- stats::setNames(rep(FALSE, ncol(x_matrix)), nm = colnames(x_matrix))
+  x_cols_aliased <- stats::setNames(
+    rep(FALSE, ncol(x_matrix)),
+    nm = colnames(x_matrix)
+  )
   qr_x_mat <- qr(x_matrix)
   if (qr_x_mat$rank < ncol(x_matrix)) {
     cols_to_drop <- utils::tail(qr_x_mat$pivot, ncol(x_matrix) - qr_x_mat$rank)
     if (identical(singular, "error")) {
       stop(
-        "design matrix only has rank ", qr_x_mat$rank, " and ", length(cols_to_drop),
-        " columns (", toString(colnames(x_matrix)[cols_to_drop]), ") could be dropped",
-        " to achieve full rank ", ncol(x_matrix), " by using `accept_singular = TRUE`"
+        "design matrix only has rank ",
+        qr_x_mat$rank,
+        " and ",
+        length(cols_to_drop),
+        " columns (",
+        toString(colnames(x_matrix)[cols_to_drop]),
+        ") could be dropped",
+        " to achieve full rank ",
+        ncol(x_matrix),
+        " by using `accept_singular = TRUE`"
       )
     } else if (identical(singular, "drop")) {
       assign_attr <- attr(x_matrix, "assign")
@@ -207,14 +261,20 @@ h_mmrm_tmb_data <- function(formula_parts,
   }
   weights_vector <- as.numeric(stats::model.weights(full_frame))
   n_subjects <- length(unique(full_frame[[formula_parts$subject_var]]))
-  subject_zero_inds <- which(!duplicated(full_frame[[formula_parts$subject_var]])) - 1L
-  subject_n_visits <- c(utils::tail(subject_zero_inds, -1L), nrow(full_frame)) - subject_zero_inds
+  subject_zero_inds <- which(
+    !duplicated(full_frame[[formula_parts$subject_var]])
+  ) -
+    1L
+  subject_n_visits <- c(utils::tail(subject_zero_inds, -1L), nrow(full_frame)) -
+    subject_zero_inds
   # It is possible that `subject_var` is factor with more levels (and this does not affect fit)
   # so no check is needed for `subject_visits`.
   assert_true(all(subject_n_visits > 0))
   if (!is.null(formula_parts$group_var)) {
-    assert_factor(data[[formula_parts$group_var]])
-    subject_groups <- full_frame[[formula_parts$group_var]][subject_zero_inds + 1L]
+    assert_factor(full_frame[[formula_parts$group_var]])
+    subject_groups <- full_frame[[formula_parts$group_var]][
+      subject_zero_inds + 1L
+    ]
     n_groups <- nlevels(subject_groups)
   } else {
     subject_groups <- factor(rep(0L, n_subjects))
@@ -267,10 +327,12 @@ h_mmrm_tmb_data <- function(formula_parts,
 #'   parameters.
 #'
 #' @keywords internal
-h_mmrm_tmb_parameters <- function(formula_parts,
-                                  tmb_data,
-                                  start,
-                                  n_groups = 1L) {
+h_mmrm_tmb_parameters <- function(
+  formula_parts,
+  tmb_data,
+  start,
+  n_groups = 1L
+) {
   assert_class(formula_parts, "mmrm_tmb_formula_parts")
   assert_class(tmb_data, "mmrm_tmb_data")
 
@@ -284,7 +346,12 @@ h_mmrm_tmb_parameters <- function(formula_parts,
   } else {
     start
   }
-  assert_numeric(start_values, len = theta_dim, any.missing = FALSE, finite = TRUE)
+  assert_numeric(
+    start_values,
+    len = theta_dim,
+    any.missing = FALSE,
+    finite = TRUE
+  )
   list(theta = start_values)
 }
 
@@ -327,7 +394,9 @@ h_mmrm_tmb_check_conv <- function(tmb_opt, mmrm_tmb) {
   }
   theta_vcov <- mmrm_tmb$theta_vcov
   if (is(theta_vcov, "try-error")) {
-    warning("Model convergence problem: hessian is singular, theta_vcov not available.")
+    warning(
+      "Model convergence problem: hessian is singular, theta_vcov not available."
+    )
     return()
   }
   if (!all(is.finite(theta_vcov))) {
@@ -360,7 +429,12 @@ h_mmrm_tmb_check_conv <- function(tmb_opt, mmrm_tmb) {
 #' with its name equal to the group levels.
 #'
 #' @keywords internal
-h_mmrm_tmb_extract_cov <- function(tmb_report, tmb_data, visit_var, is_spatial) {
+h_mmrm_tmb_extract_cov <- function(
+  tmb_report,
+  tmb_data,
+  visit_var,
+  is_spatial
+) {
   d <- dim(tmb_report$covariance_lower_chol)
   visit_names <- if (!is_spatial) {
     levels(tmb_data$full_frame[[visit_var]])
@@ -370,9 +444,11 @@ h_mmrm_tmb_extract_cov <- function(tmb_report, tmb_data, visit_var, is_spatial) 
   cov <- lapply(
     seq_len(d[1] / d[2]),
     function(i) {
-      ret <- tcrossprod(tmb_report$covariance_lower_chol[seq(1 + (i - 1) * d[2], i * d[2]), ])
+      ret <- tcrossprod(tmb_report$covariance_lower_chol[
+        seq(1 + (i - 1) * d[2], i * d[2]),
+      ])
       dimnames(ret) <- list(visit_names, visit_names)
-      return(ret)
+      ret
     }
   )
   if (identical(tmb_data$n_groups, 1L)) {
@@ -380,7 +456,7 @@ h_mmrm_tmb_extract_cov <- function(tmb_report, tmb_data, visit_var, is_spatial) 
   } else {
     names(cov) <- levels(tmb_data$subject_groups)
   }
-  return(cov)
+  cov
 }
 
 #' Build `TMB` Fit Result List
@@ -416,10 +492,7 @@ h_mmrm_tmb_extract_cov <- function(tmb_report, tmb_data, visit_var, is_spatial) 
 #'   as well since they have been available on the `C++` side already.
 #'
 #' @keywords internal
-h_mmrm_tmb_fit <- function(tmb_object,
-                           tmb_opt,
-                           formula_parts,
-                           tmb_data) {
+h_mmrm_tmb_fit <- function(tmb_object, tmb_opt, formula_parts, tmb_data) {
   assert_list(tmb_object)
   assert_subset(c("fn", "gr", "par", "he"), names(tmb_object))
   assert_list(tmb_opt)
@@ -429,7 +502,12 @@ h_mmrm_tmb_fit <- function(tmb_object,
 
   tmb_report <- tmb_object$report(par = tmb_opt$par)
   x_matrix_cols <- colnames(tmb_data$x_matrix)
-  cov <- h_mmrm_tmb_extract_cov(tmb_report, tmb_data, formula_parts$visit_var, formula_parts$is_spatial)
+  cov <- h_mmrm_tmb_extract_cov(
+    tmb_report,
+    tmb_data,
+    formula_parts$visit_var,
+    formula_parts$is_spatial
+  )
   beta_est <- tmb_report$beta
   names(beta_est) <- x_matrix_cols
   beta_vcov <- tmb_report$beta_vcov
@@ -507,20 +585,26 @@ h_mmrm_tmb_fit <- function(tmb_object,
 #' formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
 #' data <- fev_data
 #' system.time(result <- fit_mmrm(formula, data, rep(1, nrow(fev_data))))
-fit_mmrm <- function(formula,
-                     data,
-                     weights,
-                     reml = TRUE,
-                     covariance = NULL,
-                     tmb_data,
-                     formula_parts,
-                     control = mmrm_control()) {
+fit_mmrm <- function(
+  formula,
+  data,
+  weights,
+  reml = TRUE,
+  covariance = NULL,
+  tmb_data,
+  formula_parts,
+  control = mmrm_control()
+) {
   if (missing(formula_parts) || missing(tmb_data)) {
     covariance <- h_reconcile_cov_struct(formula, covariance)
     formula_parts <- h_mmrm_tmb_formula_parts(formula, covariance)
 
-    if (!formula_parts$is_spatial && !is.factor(data[[formula_parts$visit_var]])) {
-      stop("Time variable must be a factor for non-spatial covariance structures")
+    if (
+      !formula_parts$is_spatial && !is.factor(data[[formula_parts$visit_var]])
+    ) {
+      stop(
+        "Time variable must be a factor for non-spatial covariance structures"
+      )
     }
 
     assert_class(control, "mmrm_control")
@@ -528,14 +612,23 @@ fit_mmrm <- function(formula,
     assert_numeric(weights, any.missing = FALSE)
     assert_true(all(weights > 0))
     tmb_data <- h_mmrm_tmb_data(
-      formula_parts, data, weights, reml,
-      singular = if (control$accept_singular) "drop" else "error", drop_visit_levels = control$drop_visit_levels
+      formula_parts,
+      data,
+      weights,
+      reml,
+      singular = if (control$accept_singular) "drop" else "error",
+      drop_visit_levels = control$drop_visit_levels
     )
   } else {
     assert_class(tmb_data, "mmrm_tmb_data")
     assert_class(formula_parts, "mmrm_tmb_formula_parts")
   }
-  tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = control$start, n_groups = tmb_data$n_groups)
+  tmb_parameters <- h_mmrm_tmb_parameters(
+    formula_parts,
+    tmb_data,
+    start = control$start,
+    n_groups = tmb_data$n_groups
+  )
 
   tmb_object <- TMB::MakeADFun(
     data = tmb_data,
