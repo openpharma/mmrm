@@ -49,6 +49,12 @@ fitted.mmrm_tmb <- function(object, ...) {
 #'  `interval == "none"`; otherwise it returns a data.frame with multiple
 #'  columns and one row per input data row.
 #'
+#' @note If the response in the formula is a complicated expression, e.g. with multiple
+#'   variables, and not all variables are provided in `newdata`, a warning is issued.
+#'   In this case it is recommended to provide all variables in the `newdata` data set,
+#'   and manually set the response variables to `NA` as needed for obtaining unconditional
+#'   predictions e.g.
+#'
 #' @param newdata (`data.frame`)\cr optional new data, otherwise data from `object` is used.
 #' @param se.fit (`flag`)\cr indicator if standard errors are required.
 #' @param interval (`string`)\cr type of interval calculation. Can be abbreviated.
@@ -82,8 +88,18 @@ predict.mmrm_tmb <- function(
   assert_flag(conditional)
   interval <- match.arg(interval)
   formula_parts <- object$formula_parts
-  # Make sure we have at least completely NA filled response variables in newdata.
+  # Check if the response is a simple variable name vs a complex expression
+  is_simple_response_var <- is(object$formula_parts$formula[[2]], "name")
   missing_resp_vars <- setdiff(formula_parts$response_var, names(newdata))
+  has_missing_resp_vars <- length(missing_resp_vars) > 0
+  if (!is_simple_response_var && has_missing_resp_vars) {
+    warning(
+      "complicated response expression in formula and not all variables in left-hand side are provided, ",
+      "using NA to replace the missing variables; ",
+      "this could potentially lead to unexpected behavior."
+    )
+  }
+  # Make sure we have at least completely NA filled response variables in newdata.
   for (var in missing_resp_vars) {
     newdata[[var]] <- NA_real_
   }

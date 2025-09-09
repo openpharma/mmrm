@@ -202,12 +202,16 @@ test_that("predict works for unconditional prediction of multi-variable response
   fev_data2 <- fev_data
   fev_data2$FEV1 <- NULL
   fev_data2$WEIGHT <- NULL
-  y_pred <- expect_silent(predict(
-    object,
-    fev_data2,
-    interval = "prediction",
-    nsim = 2L
-  ))
+  expect_warning(
+    y_pred <-
+      predict(
+        object,
+        fev_data2,
+        interval = "prediction",
+        nsim = 2L
+      ),
+    "complicated response expression"
+  )
   expect_matrix(y_pred, nrows = nrow(fev_data), ncol = 3L)
 })
 
