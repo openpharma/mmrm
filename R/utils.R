@@ -913,9 +913,6 @@ h_check_covar_nesting <- function(model_basic, model_augmented) {
   basic_terms <- terms(model_basic[["model_formula"]])
   aug_terms <- terms(model_augmented[["model_formula"]])
 
-  # basic_covars <- attr(terms(model_basic[["model_formula"]]), "term.labels")
-  # aug_covars <- attr(terms(model_augmented[["model_formula"]]), "term.labels")
-
   basic_factors <- attr(basic_terms, "factors")
   aug_factors <- attr(aug_terms, "factors")
 
@@ -951,6 +948,7 @@ h_check_covar_nesting <- function(model_basic, model_augmented) {
   } else {
     "identical"
   }
+}
 
 
 #' Ensure Two Models' Covariance Structures Are Nested
