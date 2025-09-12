@@ -99,23 +99,17 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
 #' @param mod (`mmrm`)\cr the fitted MMRM.
 #' @param test.statistic (`string`)\cr either `"F` or `"Chisq"`, indicating the
 #'   kind of test to perform.
-#' @param vcov. (`matrix` or `function`)\cr the coefficient-covariance matrix or
-#'   a function to compute a covariance matrix. This is only used when
-#'   `test.statistic = "Chisq"`.
-#' @param singular.ok (`flag`)\cr flag indicating whether or not to allow models
-#'   with aliased coefficients to undergo `Chisq` testing. Only used if
-#'   `test.statistic = "Chisq"`.
-#' @param ... Passed to [car::linearHypothesis()] when `test.statistic =
-#'   "Chisq"`.
+#' @param ... arguments passed from other methods.
 #' @inheritParams h_get_contrast
 #'
-#' @details `Anova()` will return `anova` object with one row per variable. If
-#'   `test.statistic = "F"`, columns will be `Num Df`(numerator degrees of
-#'   freedom), `Denom Df` (denominator degrees of freedom), `F Statistic` and
+#' @details `Anova()` will return an `anova` object with one row per variable.
+#'
+#'   If `test.statistic = "F"`, columns will be `Num Df`(numerator degrees of
+#'   freedom), `Denom Df` (denominator degrees of freedom), `F Statistic`, and
 #'   `Pr(>=F)`.
 #'
 #'   If `test.statistic = "Chisq"`, columns will be `Chisq` (the Chi-squared
-#'   test statistic), `Df` (degrees of freedom), and `Pr(>Chisq)` (p-value).
+#'   test statistic), `Df` (degrees of freedom), and `Pr(>=Chisq)` (p-value).
 #'
 #' @keywords internal
 #'
@@ -129,12 +123,9 @@ Anova.mmrm <- function(mod,
                        type = c("II", "III", "2", "3"),
                        tol = sqrt(.Machine$double.eps),
                        test.statistic = c("F", "Chisq"),
-                       vcov. = vcov(mod, complete = FALSE),
                        ...) { # nolint
-  assert_class(mod, "mmrm")
   type <- as.character(type)
   type <- match.arg(type)
-  assert_double(tol, finite = TRUE, len = 1L)
   test.statistic <- match.arg(test.statistic)
 
   vars <- colnames(attr(terms(mod$formula_parts$model_formula), "factors"))
@@ -146,7 +137,7 @@ Anova.mmrm <- function(mod,
     ret_df <- do.call(rbind.data.frame, ret)
     colnames(ret_df) <- c("Num Df", "Denom Df", "F Statistic", "Pr(>=F)")
   } else {
-    ret <- lapply(contrasts, h_chisq_results, object = mod, vcov. = vcov.)
+    ret <- lapply(contrasts, h_test_md, object = mod, test = "Chisq")
     ret_df <- do.call(rbind.data.frame, ret)
     colnames(ret_df) <- c("Df", "Chisq Statistic", "Pr(>=Chisq)")
   }
@@ -161,29 +152,6 @@ Anova.mmrm <- function(mod,
   class(ret_df) <- c("anova", "data.frame")
 
   ret_df
-}
-
-
-
-
-h_chisq_results <- function(object, contrast, vcov.) {
-  beta <- component(object, "beta_est")
-
-  contrast_times_beta <- contrast %*% beta
-
-  # More efficient version of solve(contrast %*% vcov. %*% t(contrast))
-  contrast_vcov_inv <- solve(h_quad_form_mat(contrast, vcov.))
-
-  chisq_stat <-
-    crossprod(contrast_times_beta, contrast_vcov_inv) %*% contrast_times_beta
-
-  chisq_stat <- as.numeric(chisq_stat)
-
-  df <- NROW(contrast)
-
-  p_val <- stats::pchisq(chisq_stat, df = df, lower.tail = FALSE)
-
-  list(df = df, chisq_stat = chisq_stat, p_val = p_val)
 }
 
 

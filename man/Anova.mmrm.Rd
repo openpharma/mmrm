@@ -10,7 +10,6 @@ Anova.mmrm(
   tol = sqrt(.Machine$double.eps),
   test.statistic = c("F", "Chisq"),
   vcov. = vcov(mod, complete = FALSE),
-  singular.ok = FALSE,
   ...
 )
 }
@@ -28,11 +27,11 @@ kind of test to perform.}
 a function to compute a covariance matrix. This is only used when
 \code{test.statistic = "Chisq"}.}
 
+\item{...}{Passed to \code{\link[car:linearHypothesis]{car::linearHypothesis()}} when \code{test.statistic = "Chisq"}.}
+
 \item{singular.ok}{(\code{flag})\cr flag indicating whether or not to allow models
 with aliased coefficients to undergo \code{Chisq} testing. Only used if
 \code{test.statistic = "Chisq"}.}
-
-\item{...}{Passed to \code{\link[car:linearHypothesis]{car::linearHypothesis()}} when \code{test.statistic = "Chisq"}.}
 }
 \description{
 Conduct type II/III hypothesis testing on the MMRM fit results.

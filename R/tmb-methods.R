@@ -398,18 +398,18 @@ logLik.mmrm_tmb <- function(object, ...) {
   # Number of estimated coefficients.
   n_coef <- length(coef(object, complete = FALSE))
 
-  # Number of degrees of freedom. Note that the number of coefficients is added only if the fit was estimated
-  # using ML rather than REML.
+  # Number of degrees of freedom. Note that the number of coefficients is added
+  # only if the fit was estimated using ML rather than REML.
   df <- n_param + n_coef * !component(object, "reml")
 
-  nobs <- component(object, "n_obs")
+  n_subjects <- component(object, "n_subjects")
 
   structure(
     out,
     n_param = n_param,
     n_coef = n_coef,
     df = df,
-    nobs = nobs,
+    nobs = n_subjects,
     class = "logLik"
   )
 }
