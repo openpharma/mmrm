@@ -381,8 +381,11 @@ terms.mmrm_tmb <- function(x, include = "response_var", ...) { # nolint
 
 
 #' @describeIn mmrm_tmb_methods obtains the attained log likelihood value.
-#'   Includes as attributes the number of variance parameters, number of
-#'   estimated coefficients, and degrees of freedom. Resulting value is of class
+#'   Includes as attributes the number of variance parameters `n_param`, number
+#'   of estimated coefficients `n_coef`, degrees of freedom `df`, and number of
+#'   subjects `nobs`. The `nobs` attribute is so named so that if this
+#'   function's results are passed to `stats::BIC()`, the BIC value will be
+#'   calculated correctly. Resulting value is of class
 #'   [`logLik`][stats::logLik].
 #' @importFrom stats logLik
 #' @exportS3Method

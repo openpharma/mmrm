@@ -94,6 +94,10 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
   l_mx
 }
 
+
+
+
+
 #' Conduct type II/III hypothesis testing on the MMRM fit results.
 #'
 #' @param mod (`mmrm`)\cr the fitted MMRM.
@@ -112,13 +116,8 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
 #'   test statistic), `Df` (degrees of freedom), and `Pr(>=Chisq)` (p-value).
 #'
 #' @keywords internal
-#'
-#' @examples
-#'
-#' \dontshow{
-#'
-#' Please do not load `car` and then create the documentation. The Rd file will
-#' be different.}
+# Please do not load `car` and then create the documentation. The Rd file will
+#  be different.
 Anova.mmrm <- function(mod,
                        type = c("II", "III", "2", "3"),
                        tol = sqrt(.Machine$double.eps),

@@ -154,31 +154,31 @@ h_test_md <- function(object,
 
   prec_contrast <- solve(h_quad_form_mat(contrast, component(object, "beta_vcov")))
   contrast_est <- tcrossprod(beta, contrast)
-  chisq_statistic <- h_quad_form_mat(contrast_est, prec_contrast)
+  chisq_statistic <- as.numeric(h_quad_form_mat(contrast_est, prec_contrast))
 
-  num_df <- NROW(contrast)
+  num_df <- nrow(contrast)
 
-  if (test == "F") {
-    f_statistic <- as.numeric(f_stat_factor / num_df * chisq_statistic)
+  out <-
+    if (test == "F") {
+      f_statistic <- f_stat_factor / num_df * chisq_statistic
 
-    p_val <- stats::pf(
-      q = f_statistic,
-      df1 = num_df,
-      df2 = df,
-      lower.tail = FALSE
-    )
+      p_val <- stats::pf(
+        q = f_statistic,
+        df1 = num_df,
+        df2 = df,
+        lower.tail = FALSE
+      )
 
-    out <- list(
-      num_df = num_df,
-      denom_df = df,
-      f_stat = f_statistic,
-      p_val = p_val
-    )
-  } else {
-    chisq_statistic <- as.numeric(chisq_statistic)
-    p_val <- stats::pchisq(chisq_statistic, df = num_df, lower.tail = FALSE)
-    out <- list(df = num_df, chisq_stat = chisq_statistic, p_val = p_val)
-  }
+      list(
+        num_df = num_df,
+        denom_df = df,
+        f_stat = f_statistic,
+        p_val = p_val
+      )
+    } else {
+      p_val <- stats::pchisq(chisq_statistic, df = num_df, lower.tail = FALSE)
+      list(df = num_df, chisq_stat = chisq_statistic, p_val = p_val)
+    }
 
   out
 }

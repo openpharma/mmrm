@@ -9,7 +9,6 @@ Anova.mmrm(
   type = c("II", "III", "2", "3"),
   tol = sqrt(.Machine$double.eps),
   test.statistic = c("F", "Chisq"),
-  vcov. = vcov(mod, complete = FALSE),
   ...
 )
 }
@@ -23,33 +22,19 @@ Anova.mmrm(
 \item{test.statistic}{(\code{string})\cr either \verb{"F} or \code{"Chisq"}, indicating the
 kind of test to perform.}
 
-\item{vcov.}{(\code{matrix} or \code{function})\cr the coefficient-covariance matrix or
-a function to compute a covariance matrix. This is only used when
-\code{test.statistic = "Chisq"}.}
-
-\item{...}{Passed to \code{\link[car:linearHypothesis]{car::linearHypothesis()}} when \code{test.statistic = "Chisq"}.}
-
-\item{singular.ok}{(\code{flag})\cr flag indicating whether or not to allow models
-with aliased coefficients to undergo \code{Chisq} testing. Only used if
-\code{test.statistic = "Chisq"}.}
+\item{...}{arguments passed from other methods.}
 }
 \description{
 Conduct type II/III hypothesis testing on the MMRM fit results.
 }
 \details{
-\code{Anova()} will return \code{anova} object with one row per variable. If
-\code{test.statistic = "F"}, columns will be \verb{Num Df}(numerator degrees of
-freedom), \verb{Denom Df} (denominator degrees of freedom), \verb{F Statistic} and
+\code{Anova()} will return an \code{anova} object with one row per variable.
+
+If \code{test.statistic = "F"}, columns will be \verb{Num Df}(numerator degrees of
+freedom), \verb{Denom Df} (denominator degrees of freedom), \verb{F Statistic}, and
 \verb{Pr(>=F)}.
 
 If \code{test.statistic = "Chisq"}, columns will be \code{Chisq} (the Chi-squared
-test statistic), \code{Df} (degrees of freedom), and \verb{Pr(>Chisq)} (p-value).
-}
-\examples{
-
-\dontshow{
-
-Please do not load `car` and then create the documentation. The Rd file will
-be different.}
+test statistic), \code{Df} (degrees of freedom), and \verb{Pr(>=Chisq)} (p-value).
 }
 \keyword{internal}
