@@ -910,40 +910,18 @@ h_check_covar_nesting <- function(model_basic, model_augmented) {
   assert_class(model_basic, "mmrm_tmb_formula_parts")
   assert_class(model_augmented, "mmrm_tmb_formula_parts")
 
-  basic_terms <- terms(model_basic[["model_formula"]])
-  aug_terms <- terms(model_augmented[["model_formula"]])
+  basic_covars <- attr(terms(model_basic[["model_formula"]]), "term.labels")
+  aug_covars <- attr(terms(model_augmented[["model_formula"]]), "term.labels")
 
-  basic_factors <- attr(basic_terms, "factors")
-  aug_factors <- attr(aug_terms, "factors")
-
-  is_interaction_basic <- attr(basic_terms, "order") > 1
-  is_interaction_aug <- attr(aug_terms, "order") > 1
-
-  basic_main_effects <- colnames(basic_factors)[!is_interaction_basic]
-  aug_main_effects <- colnames(aug_factors)[!is_interaction_aug]
-
-  if (anyNA(match(basic_main_effects, aug_main_effects))) {
-    stop("Each model's covariates must be a subset of the next model's ",
-         "covariates.", call. = FALSE)
+  if (anyNA(match(basic_covars, aug_covars))) {
+    stop(
+      "Each model's covariates must be a subset of the next model's ",
+      "covariates.",
+      call. = FALSE
+    )
   }
 
-  if (any(is_interaction_basic)) {
-    aug_factors <- aug_factors[rownames(basic_factors), , drop = FALSE]
-
-    for (j_basic in which(is_interaction_basic)) {
-      for (j_aug in which(is_interaction_aug)) {
-        match_found <- all(basic_factors[, j_basic] == aug_factors[, j_aug])
-        if (match_found) break
-      }
-      if (!match_found) {
-        stop("Each model's terms must be a subset of the next model's terms.",
-             call. = FALSE)
-      }
-    }
-  }
-
-  if (anyNA(match(aug_main_effects, basic_main_effects)) ||
-      sum(is_interaction_basic) < sum(is_interaction_aug)) {
+  if (anyNA(match(aug_covars, basic_covars))) {
     "nested"
   } else {
     "identical"
