@@ -919,35 +919,31 @@ h_check_covar_nesting <- function(model_basic, model_augmented) {
   is_interaction_basic <- attr(basic_terms, "order") > 1
   is_interaction_aug <- attr(aug_terms, "order") > 1
 
-  basic_non_interactions <- colnames(basic_factors)[!is_interaction_basic]
-  aug_non_interactions <- colnames(aug_factors)[!is_interaction_aug]
+  basic_main_effects <- colnames(basic_factors)[!is_interaction_basic]
+  aug_main_effects <- colnames(aug_factors)[!is_interaction_aug]
 
-  if (anyNA(match(basic_non_interactions, aug_non_interactions))) {
+  if (anyNA(match(basic_main_effects, aug_main_effects))) {
     stop("Each model's covariates must be a subset of the next model's ",
          "covariates.", call. = FALSE)
   }
 
   if (any(is_interaction_basic)) {
-    interactions_factors_basic <-
-      basic_factors[, is_interaction_basic, drop = FALSE]
-    interactions_factors_aug <-
-      aug_factors[rownames(basic_factors), is_interaction_aug, drop = FALSE]
+    aug_factors <- aug_factors[rownames(basic_factors), , drop = FALSE]
 
-    interaction_nesting <-
-      h_many_to_many_interaction_nesting_test(
-        interactions_factors_basic = interactions_factors_basic,
-        interactions_factors_aug = interactions_factors_aug
-      )
-
-    if (any(interaction_nesting == "not_nested")) {
-      stop("Interaction terms must be nested.", call. = FALSE)
+    for (j_basic in which(is_interaction_basic)) {
+      for (j_aug in which(is_interaction_aug)) {
+        match_found <- all(basic_factors[, j_basic] == aug_factors[, j_aug])
+        if (match_found) break
+      }
+      if (!match_found) {
+        stop("Each model's terms must be a subset of the next model's terms.",
+             call. = FALSE)
+      }
     }
-  } else {
-    interaction_nesting <- character()
   }
 
-  if (anyNA(match(aug_non_interactions, basic_non_interactions)) ||
-      any(interaction_nesting == "nested")) {
+  if (anyNA(match(aug_main_effects, basic_main_effects)) ||
+      sum(is_interaction_basic) < sum(is_interaction_aug)) {
     "nested"
   } else {
     "identical"
