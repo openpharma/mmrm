@@ -159,3 +159,14 @@ test_that("component returns complete adjusted variance-covariance matrix as exp
   expected <- object$beta_vcov_adj
   expect_equal(result, expected)
 })
+
+## xlev ----
+
+test_that("component can return xlev also when there is a transformed response in the model", {
+  object <- mmrm(
+    log(FEV1) ~ SEX + us(AVISIT | USUBJID),
+    fev_data
+  )
+  result <- expect_silent(component(object, "xlev"))
+  expect_list(result)
+})

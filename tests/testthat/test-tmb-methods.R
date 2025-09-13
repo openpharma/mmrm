@@ -184,6 +184,37 @@ test_that("predict works for unconditional prediction if response does not exist
   expect_snapshot_tolerance(y_pred)
 })
 
+test_that("predict returns unconditional prediction intervals also if response does not exist", {
+  object <- get_mmrm()
+  fev_data2 <- fev_data
+  fev_data2$FEV1 <- NULL
+  y_pred <- expect_silent(predict(
+    object,
+    fev_data2,
+    interval = "prediction",
+    nsim = 2L
+  ))
+  expect_matrix(y_pred, nrows = nrow(fev_data), ncol = 3L)
+})
+
+test_that("predict works for unconditional prediction of multi-variable response w/o response", {
+  object <- get_mmrm_multi_resp()
+  fev_data2 <- fev_data
+  fev_data2$FEV1 <- NULL
+  fev_data2$WEIGHT <- NULL
+  expect_warning(
+    y_pred <-
+      predict(
+        object,
+        fev_data2,
+        interval = "prediction",
+        nsim = 2L
+      ),
+    "complicated response expression"
+  )
+  expect_matrix(y_pred, nrows = nrow(fev_data), ncol = 3L)
+})
+
 test_that("predict warns on aliased variables", {
   new_fev_data <- rbind(
     fev_data,
@@ -581,7 +612,6 @@ test_that("h_construct_model_frame_inputs works with include=NULL", {
   )
 })
 
-
 # model.frame ----
 
 test_that("model.frame works as expected with defaults", {
@@ -662,7 +692,7 @@ test_that("model.frame makes the levels match", {
   expect_identical(levels(fev_data$AVISIT), levels(out_frame$AVISIT))
 })
 
-test_that("model.frame do not care about subject levels", {
+test_that("model.frame ignores subject levels", {
   fit1 <- get_mmrm()
   fev_data2 <- fev_data
   fev_data2$USUBJID <- sprintf("%s_TEST", fev_data2$USUBJID)
@@ -822,6 +852,19 @@ test_that("terms works as expected with defaults", {
   expect_equal(
     result,
     FEV1 ~ RACE,
+    ignore_attr = TRUE
+  )
+})
+
+test_that("terms does not include response variable as covariate when transformed", {
+  object <- mmrm(
+    log(FEV1) ~ SEX + us(AVISIT | USUBJID),
+    fev_data
+  )
+  result <- expect_silent(terms(object))
+  expect_equal(
+    result,
+    log(FEV1) ~ SEX,
     ignore_attr = TRUE
   )
 })

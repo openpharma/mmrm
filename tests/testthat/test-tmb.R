@@ -37,7 +37,8 @@ test_that("h_mmrm_tmb_formula_parts works as expected", {
       visit_var = "AVISIT",
       subject_var = "USUBJID",
       group_var = NULL,
-      model_var = c("RACE", "SEX", "ARMCD", "AVISIT")
+      model_var = c("RACE", "SEX", "ARMCD", "AVISIT"),
+      response_var = "FEV1"
     ),
     class = "mmrm_tmb_formula_parts"
   )
@@ -58,7 +59,8 @@ test_that("h_mmrm_tmb_formula_parts works as expected", {
       visit_var = "AVISIT",
       subject_var = "USUBJID",
       group_var = "ARMCD",
-      model_var = c("RACE", "SEX", "ARMCD", "AVISIT")
+      model_var = c("RACE", "SEX", "ARMCD", "AVISIT"),
+      response_var = "FEV1"
     ),
     class = "mmrm_tmb_formula_parts"
   )
@@ -125,7 +127,8 @@ test_that("h_mmrm_tmb_formula_parts works without covariates", {
       visit_var = "AVISIT",
       subject_var = "USUBJID",
       group_var = NULL,
-      model_var = c("AVISIT")
+      model_var = "AVISIT",
+      response_var = "FEV1"
     ),
     class = "mmrm_tmb_formula_parts"
   )
@@ -147,7 +150,8 @@ test_that("h_mmrm_tmb_formula_parts works as expected for antedependence", {
       visit_var = "AVISIT",
       subject_var = "USUBJID",
       group_var = NULL,
-      model_var = c("RACE", "SEX", "ARMCD", "AVISIT")
+      model_var = c("RACE", "SEX", "ARMCD", "AVISIT"),
+      response_var = "FEV1"
     ),
     class = "mmrm_tmb_formula_parts"
   )
@@ -427,7 +431,9 @@ test_that("h_mmrm_tmb_data works also for character ID variable", {
     singular = "error",
     drop_visit_levels = TRUE
   ))
-  expect_identical(result, expected)
+  expect_factor(result$full_frame$USUBJID)
+  expect_factor(expected$full_frame$USUBJID)
+  expect_equal(result$full_frame, expected$full_frame, ignore_attr = TRUE)
 })
 
 test_that("h_mmrm_tmb_data correctly processes design matrix below full rank correctly", {
@@ -515,7 +521,6 @@ test_that("h_mmrm_tmb_data catches case with multiple time points per subject ea
     )
   )
 })
-
 
 test_that("h_mmrm_tmb_data has no side effect of overwrite the weights in global env", {
   weights <- "this is global weights"

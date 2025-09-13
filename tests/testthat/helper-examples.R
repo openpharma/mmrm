@@ -30,6 +30,15 @@ get_mmrm_trans <- function() {
   .mmrm_trans
 }
 
+.mmrm_multi_resp <- mmrm(
+  FEV1 + log(WEIGHT) ~ ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = fev_data
+)
+
+get_mmrm_multi_resp <- function() {
+  .mmrm_multi_resp
+}
+
 .tmb_formula_rank_deficient <- FEV1 ~ SEX + SEX2 + us(AVISIT | USUBJID)
 .mmrm_tmb_dat_rank_deficient <- cbind(fev_data, SEX2 = fev_data$SEX) # nolint
 .mmrm_tmb_example_rk_deficient <- fit_mmrm(
