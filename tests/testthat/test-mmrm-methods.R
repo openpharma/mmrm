@@ -261,9 +261,11 @@ test_that("h_check_covar_nesting() ensures models have nested covariates", {
                           get_mmrm_rank_deficient()[["formula_parts"]]),
     "nested"
   )
+  # This also tests whether the function can recognize the same interaction term
+  # whose components are specified in a different order (e.g, a:b = b:a)
   expect_equal(
-    h_check_covar_nesting(get_mmrm_group()[["formula_parts"]],
-                          get_mmrm_kr()[["formula_parts"]]),
+    h_check_covar_nesting(get_mmrm()[["formula_parts"]],
+                          get_mmrm_cs()[["formula_parts"]]),
     "identical"
   )
   # First model's covariates aren't nested within the second model's
@@ -272,6 +274,14 @@ test_that("h_check_covar_nesting() ensures models have nested covariates", {
                           get_mmrm_tmb_rank_deficient()[["formula_parts"]]),
     regexp = "covariates.+subset"
   )
+  # First model's interaction terms aren't nested within the second model's
+  expect_error(
+    h_check_covar_nesting(get_mmrm()[["formula_parts"]],
+                          get_mmrm_interactions()[["formula_parts"]]),
+    regexp = "interaction.+subset"
+  )
+
+  get_mmrm_interaction
 })
 
 test_that("h_check_cov_struct_nesting() ensures models have nested covariance structures", {
@@ -406,7 +416,7 @@ test_that("anova.mmrm() works for a single model", {
 
 
 test_that("anova.mmrm() works for multiple models -- no refitting", {
-  call_cs <- quote(mmrm(formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + cs(AVISIT | USUBJID), data = fev_data))
+  call_cs <- quote(mmrm(formula = FEV1 ~ RACE + SEX + AVISIT * ARMCD + cs(AVISIT | USUBJID), data = fev_data))
   call_us <- quote(mmrm(formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID), data = fev_data))
   expect_equal(
     anova(get_mmrm_cs(), get_mmrm()),
@@ -436,7 +446,7 @@ test_that("anova.mmrm() works for multiple models -- no refitting", {
 
 
 test_that("anova.mmrm() works for multiple models -- with refitting", {
-  call_cs <- quote(mmrm(formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + cs(AVISIT | USUBJID), data = data.1))
+  call_cs <- quote(mmrm(formula = FEV1 ~ RACE + SEX + AVISIT * ARMCD + cs(AVISIT | USUBJID), data = data.1))
   call_us <- quote(mmrm(formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID), data = .smaller_fev_data))
   expect_equal(
     anova(get_mmrm_cs(), get_mmrm_smaller_data(), refit = TRUE),

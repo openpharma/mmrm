@@ -931,12 +931,14 @@ h_check_covar_nesting <- function(model_basic, model_augmented) {
     aug_factors <- aug_factors[rownames(basic_factors), , drop = FALSE]
 
     for (j_basic in which(is_interaction_basic)) {
+      match_found <- FALSE
       for (j_aug in which(is_interaction_aug)) {
         match_found <- all(basic_factors[, j_basic] == aug_factors[, j_aug])
         if (match_found) break
       }
       if (!match_found) {
-        stop("Each model's terms must be a subset of the next model's terms.",
+        stop("Each model's interaction terms must be a subset of the next ",
+             "model's terms.",
              call. = FALSE)
       }
     }
