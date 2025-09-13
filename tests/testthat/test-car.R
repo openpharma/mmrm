@@ -280,6 +280,9 @@ test_that("Anova works as expected", {
   expect_snapshot_tolerance(
     Anova(get_mmrm_trans(), "2")
   )
+  expect_snapshot_tolerance(
+    Anova(get_mmrm(), type = "III", test.statistic = "Chisq")
+  )
 })
 
 ## Anova with character covariates

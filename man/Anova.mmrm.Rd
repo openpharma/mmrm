@@ -8,6 +8,7 @@ Anova.mmrm(
   mod,
   type = c("II", "III", "2", "3"),
   tol = sqrt(.Machine$double.eps),
+  test.statistic = c("F", "Chisq"),
   ...
 )
 }
@@ -18,14 +19,22 @@ Anova.mmrm(
 
 \item{tol}{(\code{numeric}) threshold blow which values are treated as 0.}
 
-\item{...}{not used.}
+\item{test.statistic}{(\code{string})\cr either \verb{"F} or \code{"Chisq"}, indicating the
+kind of test to perform.}
+
+\item{...}{arguments passed from other methods.}
 }
 \description{
 Conduct type II/III hypothesis testing on the MMRM fit results.
 }
 \details{
-\code{Anova} will return \code{anova} object with one row per variable and columns
-\verb{Num Df}(numerator degrees of freedom), \verb{Denom Df}(denominator degrees of freedom),
-\verb{F Statistic} and \verb{Pr(>=F)}.
+\code{Anova()} will return an \code{anova} object with one row per variable.
+
+If \code{test.statistic = "F"}, columns will be \verb{Num Df}(numerator degrees of
+freedom), \verb{Denom Df} (denominator degrees of freedom), \verb{F Statistic}, and
+\verb{Pr(>=F)}.
+
+If \code{test.statistic = "Chisq"}, columns will be \code{Chisq} (the Chi-squared
+test statistic), \code{Df} (degrees of freedom), and \verb{Pr(>=Chisq)} (p-value).
 }
 \keyword{internal}

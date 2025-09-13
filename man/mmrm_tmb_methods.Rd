@@ -160,8 +160,11 @@ columns and one row per input data row.
 \item \code{terms(mmrm_tmb)}: obtains the terms object.
 
 \item \code{logLik(mmrm_tmb)}: obtains the attained log likelihood value.
-Includes as attributes the number of variance parameters, number of
-estimated coefficients, and degrees of freedom. Resulting value is of class
+Includes as attributes the number of variance parameters \code{n_param}, number
+of estimated coefficients \code{n_coef}, degrees of freedom \code{df}, and number of
+subjects \code{nobs}. The \code{nobs} attribute is so named so that if this
+function's results are passed to \code{stats::BIC()}, the BIC value will be
+calculated correctly. Resulting value is of class
 \code{\link[stats:logLik]{logLik}}.
 
 \item \code{formula(mmrm_tmb)}: obtains the used formula.
