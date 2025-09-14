@@ -209,7 +209,7 @@ h_first_contain_categorical <- function(effect, factors, categorical) {
   }
   col_ind <- apply(factors, 2, prod)
   # if any of the previous cols are categorical, return FALSE
-  return(!any(col_ind > 0))
+  !any(col_ind > 0)
 }
 
 #' Test if the First Vector is Subset of the Second Vector
