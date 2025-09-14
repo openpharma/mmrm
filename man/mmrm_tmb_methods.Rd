@@ -199,6 +199,13 @@ where n is the number of rows in \code{newdata},
 and m is the number \code{nsim} of simulated responses.
 
 }}
+\note{
+If the response in the formula is a complicated expression, e.g. with multiple
+variables, and not all variables are provided in \code{newdata}, a warning is issued.
+In this case it is recommended to provide all variables in the \code{newdata} data set,
+and manually set the response variables to \code{NA} as needed for obtaining unconditional
+predictions e.g.
+}
 \examples{
 formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
 object <- fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)))
