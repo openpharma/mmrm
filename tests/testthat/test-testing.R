@@ -91,4 +91,9 @@ test_that("h_test_md works as expected", {
   expect_list(result)
   expect_named(result, c("num_df", "denom_df", "f_stat", "p_val"))
   expect_snapshot_tolerance(result)
+
+  result_chisq <- expect_silent(h_test_md(object, contrast_md, test = "Chisq"))
+  expect_list(result_chisq)
+  expect_named(result_chisq, c("df", "chisq_stat", "p_val"))
+  expect_snapshot_tolerance(result_chisq)
 })
