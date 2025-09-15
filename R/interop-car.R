@@ -118,14 +118,14 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
 #' @keywords internal
 # Please do not load `car` and then create the documentation. The Rd file will
 #  be different.
-Anova.mmrm <- function(mod,
+Anova.mmrm <- function(mod, # nolint
                        type = c("II", "III", "2", "3"),
                        tol = sqrt(.Machine$double.eps),
-                       test.statistic = c("F", "Chisq"),
-                       ...) { # nolint
+                       test.statistic = c("F", "Chisq"), # nolint
+                       ...) {
   type <- as.character(type)
   type <- match.arg(type)
-  test.statistic <- match.arg(test.statistic)
+  test.statistic <- match.arg(test.statistic) # nolint
 
   vars <- colnames(attr(terms(mod$formula_parts$model_formula), "factors"))
   contrasts <-
