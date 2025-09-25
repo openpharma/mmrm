@@ -105,21 +105,38 @@ confint(pairs(lsmeans_by_visit, reverse = TRUE))
 
 ## Support for car
 
-This package includes methods that allow `mmrm` objects to be used with the
-`car::Anova` function. `Anova` conducts type II/III hypothesis testing for
-the effect in `mmrm` models. For example, in order to see if the used covariates
-are related to the response:
+This package includes methods that allow `mmrm` objects to be used with
+`car::Anova()`. This function conducts type II/III hypothesis testing for
+the effects in `mmrm` models, using either F-tests (default) or Chi-squared tests. 
+
+### Mathematical basis
+
+For each effect, the Chi-squared test statistic is calculated using:
+$$
+\chi^2=[\mathbf{L}\cdot b]^T\cdot [\mathbf{L}\cdot\mathbf{V}\cdot\mathbf{L}^T]^{-1}\cdot\mathbf{L}\cdot b
+$$
+where $\mathbf{L}$ is the desired contrast matrix, $b$ is a one-column matrix containing the coefficients of the non-aliased terms in the model, and $\mathbf{V}$ is the variance-covariance matrix of the coefficients.
+
+The F-test statistic is calculated by dividing the Chi-squared test statistic by the numerator degrees of freedom $\text{df}_\text{num}$, which is equal to the number of parameters associated with the effect and therefore the number of rows in the contrast matrix $\mathbf{L}$. It is also multiplied by a scaling factor $\lambda$ (e.g., when utilizing the adjusted Kenward-Roger degrees of freedom), which can be set to 1 if not needed:
+
+$$
+F = \lambda\frac{\chi^2}{\text{df}_\text{num}}
+$$
+
+### Examples
+
+In order to see if the used covariates are related to the response using a type II test:
 
 ```{r car_type2}
 library(car)
 Anova(fit, type = "II")
 ```
 
-Note that the degrees of freedom choice is inherited here from the initial `mmrm`
-fit.
+Note that for the F-test, the denominator degrees of freedom choice is inherited here from the initial `mmrm` fit.
 In addition, please note that if you see results that are slightly different from SAS, it could be because the reference level is set differently for categorical covariates.
-We can also use type III hypothesis testing:
+
+We can also use type III hypothesis testing, this time choosing a Chi-squared test statistic:
 
 ```{r car_type3}
-Anova(fit, type = "III")
+Anova(fit, type = "III", test.statistic = "Chisq")
 ```

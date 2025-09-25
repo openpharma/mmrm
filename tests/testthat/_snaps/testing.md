@@ -7,3 +7,7 @@
 
     list(num_df = 2L, denom_df = 5, f_stat = 798.827755352408, p_val = 5.43656466194095e-07)
 
+---
+
+    list(df = 2L, chisq_stat = 1597.65551070475, p_val = 0)
+

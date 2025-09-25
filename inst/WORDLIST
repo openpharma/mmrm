@@ -47,6 +47,7 @@ ast
 biostatistics
 blockdiag
 boldsymbol
+cdot
 cdots
 cli
 cov
@@ -83,6 +84,7 @@ ldots
 leq
 lintr
 mathbb
+mathbf
 mathcal
 mathop
 mathrm
@@ -92,6 +94,7 @@ ne
 newcommand
 nlminb
 nonidentifiability
+num
 onLoad
 optimizers
 parametrized
