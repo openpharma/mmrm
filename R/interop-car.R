@@ -94,42 +94,66 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
   l_mx
 }
 
+
+
+
+
 #' Conduct type II/III hypothesis testing on the MMRM fit results.
 #'
 #' @param mod (`mmrm`)\cr the fitted MMRM.
-#' @param ... not used.
+#' @param test.statistic (`string`)\cr either `"F` or `"Chisq"`, indicating the
+#'   kind of test to perform.
+#' @param ... arguments passed from other methods.
 #' @inheritParams h_get_contrast
 #'
-#' @details
-#' `Anova` will return `anova` object with one row per variable and columns
-#' `Num Df`(numerator degrees of freedom), `Denom Df`(denominator degrees of freedom),
-#' `F Statistic` and `Pr(>=F)`.
+#' @details `Anova()` will return an `anova` object with one row per variable.
+#'
+#'   If `test.statistic = "F"`, columns will be `Num Df`(numerator degrees of
+#'   freedom), `Denom Df` (denominator degrees of freedom), `F Statistic`, and
+#'   `Pr(>=F)`.
+#'
+#'   If `test.statistic = "Chisq"`, columns will be `Chisq` (the Chi-squared
+#'   test statistic), `Df` (degrees of freedom), and `Pr(>=Chisq)` (p-value).
 #'
 #' @keywords internal
-# Please do not load `car` and then create the documentation. The Rd file will be different.
-Anova.mmrm <- function(mod, type = c("II", "III", "2", "3"), tol = sqrt(.Machine$double.eps), ...) { # nolint
-  assert_double(tol, finite = TRUE, len = 1L)
+# Please do not load `car` and then create the documentation. The Rd file will
+#  be different.
+Anova.mmrm <- function(mod, # nolint
+                       type = c("II", "III", "2", "3"),
+                       tol = sqrt(.Machine$double.eps),
+                       test.statistic = c("F", "Chisq"), # nolint
+                       ...) {
+  type <- as.character(type)
   type <- match.arg(type)
+  test.statistic <- match.arg(test.statistic) # nolint
+
   vars <- colnames(attr(terms(mod$formula_parts$model_formula), "factors"))
-  ret <- lapply(
-    vars,
-    function(x) df_md(mod, h_get_contrast(mod, x, type, tol))
-  )
-  ret_df <- do.call(rbind.data.frame, ret)
+  contrasts <-
+    lapply(vars, h_get_contrast, object = mod, type = type, tol = tol)
+
+  if (test.statistic == "F") {
+    ret <- lapply(contrasts, df_md, object = mod)
+    ret_df <- do.call(rbind.data.frame, ret)
+    colnames(ret_df) <- c("Num Df", "Denom Df", "F Statistic", "Pr(>=F)")
+  } else {
+    ret <- lapply(contrasts, h_test_md, object = mod, test = "Chisq")
+    ret_df <- do.call(rbind.data.frame, ret)
+    colnames(ret_df) <- c("Df", "Chisq Statistic", "Pr(>=Chisq)")
+  }
+
   row.names(ret_df) <- vars
-  colnames(ret_df) <- c("Num Df", "Denom Df", "F Statistic", "Pr(>=F)")
-  class(ret_df) <- c("anova", "data.frame")
-  attr(ret_df, "heading") <- sprintf(
-    "Analysis of Fixed Effect Table (Type %s F tests)",
-    switch(type,
-      "2" = ,
-      "II" = "II",
-      "3" = ,
-      "III" = "III"
+  attr(ret_df, "heading") <-
+    sprintf(
+      "Analysis of Fixed Effect Table (Type %s %s tests)",
+      switch(type, "2" = "II", "3" = "III", type),
+      test.statistic
     )
-  )
+  class(ret_df) <- c("anova", "data.frame")
+
   ret_df
 }
+
+
 
 
 #' Obtain Levels Prior and Posterior
@@ -185,7 +209,7 @@ h_first_contain_categorical <- function(effect, factors, categorical) {
   }
   col_ind <- apply(factors, 2, prod)
   # if any of the previous cols are categorical, return FALSE
-  return(!any(col_ind > 0))
+  !any(col_ind > 0)
 }
 
 #' Test if the First Vector is Subset of the Second Vector

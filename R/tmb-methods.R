@@ -455,8 +455,11 @@ terms.mmrm_tmb <- function(x, include = "response_var", ...) {
 
 
 #' @describeIn mmrm_tmb_methods obtains the attained log likelihood value.
-#'   Includes as attributes the number of variance parameters, number of
-#'   estimated coefficients, and degrees of freedom. Resulting value is of class
+#'   Includes as attributes the number of variance parameters `n_param`, number
+#'   of estimated coefficients `n_coef`, degrees of freedom `df`, and number of
+#'   subjects `nobs`. The `nobs` attribute is so named so that if this
+#'   function's results are passed to `stats::BIC()`, the BIC value will be
+#'   calculated correctly. Resulting value is of class
 #'   [`logLik`][stats::logLik].
 #' @importFrom stats logLik
 #' @exportS3Method
@@ -472,15 +475,18 @@ logLik.mmrm_tmb <- function(object, ...) {
   # Number of estimated coefficients.
   n_coef <- length(coef(object, complete = FALSE))
 
-  # Number of degrees of freedom. Note that the number of coefficients is added only if the fit was estimated
-  # using ML rather than REML.
+  # Number of degrees of freedom. Note that the number of coefficients is added
+  # only if the fit was estimated using ML rather than REML.
   df <- n_param + n_coef * !component(object, "reml")
+
+  n_subjects <- component(object, "n_subjects")
 
   structure(
     out,
     n_param = n_param,
     n_coef = n_coef,
     df = df,
+    nobs = n_subjects,
     class = "logLik"
   )
 }
