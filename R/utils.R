@@ -964,7 +964,7 @@ h_check_covar_nesting <- function(model_basic, model_augmented) {
   }
 
   if (anyNA(match(aug_main_effects, basic_main_effects)) ||
-      sum(is_interaction_basic) < sum(is_interaction_aug)) {
+        sum(is_interaction_basic) < sum(is_interaction_aug)) {
     "nested"
   } else {
     "identical"

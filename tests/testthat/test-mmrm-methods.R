@@ -280,8 +280,6 @@ test_that("h_check_covar_nesting() ensures models have nested covariates", {
                           get_mmrm_interactions()[["formula_parts"]]),
     regexp = "interaction.+subset"
   )
-
-  get_mmrm_interaction
 })
 
 test_that("h_check_cov_struct_nesting() ensures models have nested covariance structures", {
