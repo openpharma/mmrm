@@ -253,6 +253,13 @@ test_that("h_get_minimal_fit_data() grabs only colums used in model fitting", {
     h_get_minimal_fit_data(get_mmrm()),
     fev_data[c("FEV1", "AVISIT", "USUBJID", "RACE", "SEX", "ARMCD")]
   )
+
+  # Account for model terms that are calls instead of just symbols (e.g., log(x)
+  # as opposed to just x)
+  expect_equal(
+    h_get_minimal_fit_data(get_mmrm_trans()),
+    fev_data[c("FEV1", "AVISIT", "USUBJID", "FEV1_BL", "ARMCD")]
+  )
 })
 
 test_that("h_check_covar_nesting() ensures models have nested covariates", {
