@@ -22,7 +22,8 @@ get_mmrm_transformed <- function() {
 }
 
 .mmrm_trans <- mmrm(
-  FEV1 ~ log(FEV1_BL) + ARMCD * AVISIT + ar1(AVISIT | USUBJID),
+  identity(FEV1) ~
+    log(FEV1_BL) + ARMCD * AVISIT + ar1(as.ordered(AVISIT) | USUBJID),
   data = fev_data
 )
 

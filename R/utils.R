@@ -769,14 +769,19 @@ h_fits_common_data <- function(fits) {
 #' @keywords internal
 h_get_minimal_fit_data <- function(fit) {
   assert_class(fit, "mmrm")
-  predictors <-
-    fit[["formula_parts"]][
-      c("visit_var", "subject_var", "group_var", "model_var")
-    ]
-  predictors <- unique(unlist(predictors, use.names = FALSE))
+  covariance_vars <-
+    fit[["formula_parts"]][c("visit_var", "subject_var", "group_var")]
+  covariance_vars <- Filter(length, covariance_vars)
+  covariance_vars <- lapply(covariance_vars, str2lang)
+  covariance_vars <- lapply(covariance_vars, all.vars)
+  covariance_vars <- unlist(covariance_vars, use.names = FALSE)
+  predictors <- c(covariance_vars, fit[["formula_parts"]][["model_var"]])
+  predictors <- unique(predictors)
   terms_attr <- attributes(terms(fit))
-  response <- as.character(terms_attr$variables[[terms_attr$response + 1]])
-  fit[["data"]][c(response, predictors)]
+  response <- all.vars(terms_attr$variables[[terms_attr$response + 1]])
+  cols <- c(response, predictors)
+  cols <- intersect(cols, colnames(fit[["data"]]))
+  fit[["data"]][cols]
 }
 
 
