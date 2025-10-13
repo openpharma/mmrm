@@ -33,6 +33,21 @@ test_that("h_first_contain_categorical works as expected", {
   expect_false(h_first_contain_categorical(effect, factors, categorical2))
   categorical3 <- c("AGE")
   expect_false(h_first_contain_categorical(effect, factors, categorical3))
+
+  # Second battery of tests using an actual mmrm model. The model formula is:
+  # identity(FEV1) ~ log(FEV1_BL) + ARMCD * AVISIT
+  factors <-
+    attr(terms(get_mmrm_trans()$formula_parts$model_formula), "factors")
+  categorical <- names(component(get_mmrm_trans(), "xlev"))
+  # FALSE because log(FEV1_BL) is not categorical
+  expect_false(h_first_contain_categorical("log(FEV1_BL)", factors, categorical))
+  # TRUE because ARMCD is the first categorical term in the model
+  expect_true(h_first_contain_categorical("ARMCD", factors, categorical))
+  # FALSE because although AVISIT is a categorical term, it is not the first
+  expect_false(h_first_contain_categorical("AVISIT", factors, categorical))
+  # FALSE because although ARMCD:AVISIT contains categorical vars, it is not the
+  # first term in the model containing categorical vars.
+  expect_false(h_first_contain_categorical("ARMCD:AVISIT", factors, categorical))
 })
 
 # h_obtain_lvls ----
