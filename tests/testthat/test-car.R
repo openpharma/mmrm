@@ -105,6 +105,16 @@ test_that("h_get_contrast works as expected", {
     h_get_contrast(get_mmrm_trans(), "ARMCD:AVISIT", "3"),
     matrix(rep(rep(c(0, 1), 3), c(6, 1, 9, 1, 9, 1)), nrow = 3, byrow = TRUE)
   )
+
+  # Testing an intercept-free model that includes a categorical variable
+  expect_identical(
+    h_get_contrast(get_mmrm_no_intercept(), "RACE", type = "III"),
+    matrix(
+      c(0, -1, 1, 0, 0, 0.5, 0.0,
+        0, -1, 0, 1, 0, 0.0, 0.5),
+      nrow = 2, byrow = TRUE
+    )
+  )
 })
 
 test_that("h_get_contrast works even if the interaction term order changes", {
