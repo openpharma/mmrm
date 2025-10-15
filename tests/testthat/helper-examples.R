@@ -66,6 +66,13 @@ get_mmrm <- function() {
   .mmrm_example
 }
 
+.mmrm_formula_interactions <-
+  FEV1 ~ RACE * ARMCD + SEX * AVISIT + ARMCD:AVISIT:SEX + us(AVISIT | USUBJID)
+.mmrm_interactions <- mmrm(.mmrm_formula_interactions, fev_data)
+get_mmrm_interactions <- function() {
+  .mmrm_interactions
+}
+
 set.seed(123, kind = "Mersenne-Twister")
 .mmrm_weights <- rpois(nrow(fev_data), lambda = 5) + 1
 .mmrm_weighted_example <- mmrm(.mmrm_formula, fev_data, weights = .mmrm_weights)
@@ -184,7 +191,7 @@ get_mmrm_smaller_data <- function() {
   .mmrm_smaller_data
 }
 
-.mmrm_formula_cs <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + cs(AVISIT | USUBJID)
+.mmrm_formula_cs <- FEV1 ~ RACE + SEX + AVISIT * ARMCD + cs(AVISIT | USUBJID)
 .mmrm_example_cs <- mmrm(.mmrm_formula_cs, fev_data)
 get_mmrm_cs <- function() {
   .mmrm_example_cs
