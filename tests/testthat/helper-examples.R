@@ -31,6 +31,15 @@ get_mmrm_trans <- function() {
   .mmrm_trans
 }
 
+.mmrm_no_intercept <- mmrm(
+  FEV1 ~ log(FEV1_BL) + RACE * SEX - 1 + ar1(as.ordered(AVISIT) | USUBJID),
+  data = fev_data
+)
+
+get_mmrm_no_intercept <- function() {
+  .mmrm_no_intercept
+}
+
 .mmrm_multi_resp <- mmrm(
   FEV1 + log(WEIGHT) ~ ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data

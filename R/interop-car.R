@@ -196,20 +196,11 @@ h_first_contain_categorical <- function(effect, factors, categorical) {
   assert_matrix(factors)
   assert_character(categorical)
   mt <- match(effect, colnames(factors))
-  varnms <- row.names(factors)
-  # if the effect is not categorical in any value, return FALSE
-  if (!any(varnms[factors[, mt] > 0] %in% categorical)) {
-    return(FALSE)
-  }
-  # keep only categorical rows that is in front of the current factor
-  factors <- factors[row.names(factors) %in% categorical, seq_len(mt - 1L), drop = FALSE]
-  # if previous cols are all numerical, return TRUE
-  if (ncol(factors) < 1L) {
-    return(TRUE)
-  }
-  col_ind <- apply(factors, 2, prod)
-  # if any of the previous cols are categorical, return FALSE
-  !any(col_ind > 0)
+  categorical <- intersect(row.names(factors), categorical)
+  # Keep only the categorical var rows. Remove cols after the effect's col.
+  factors <- factors[categorical, seq_len(mt), drop = FALSE]
+  # TRUE when effect contains categorical vars and all preceding effects do not.
+  any(factors[, effect] > 0) && all(factors[, -mt] <= 0)
 }
 
 #' Test if the First Vector is Subset of the Second Vector
