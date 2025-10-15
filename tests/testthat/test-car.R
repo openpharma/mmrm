@@ -34,8 +34,7 @@ test_that("h_first_contain_categorical works as expected", {
   categorical3 <- c("AGE")
   expect_false(h_first_contain_categorical(effect, factors, categorical3))
 
-  # Second battery of tests using an actual mmrm model. The model formula is:
-  # identity(FEV1) ~ log(FEV1_BL) + ARMCD * AVISIT
+  # Second battery of tests using an actual mmrm model.
   factors <-
     attr(terms(get_mmrm_trans()$formula_parts$model_formula), "factors")
   categorical <- names(component(get_mmrm_trans(), "xlev"))
