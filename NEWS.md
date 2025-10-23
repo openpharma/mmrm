@@ -11,6 +11,7 @@
 - Previously, the `predict()` method failed when requesting an unconditional prediction interval. This is fixed now.
 - Previously, the `emp_start()` starting values could only work with variables included directly in `data`. Now they can also work when variables are not included in `data` but are available in the parent environment: The variables will be correctly included in the design matrix. This is achieved by an internal update to `h_mmrm_tmb_data()`.
 - Previously, the `vcov()` method returned the asymptotic covariance matrix, even if an adjusted one has been used. This is now fixed and the requested adjusted covariance matrix will be returned. (Please note this was not an issue for downstream `summary()` or `emmeans()` calls, where the adjusted covariance matrix was correctly used.)
+- Previously, the naming conventions used in the `Anova.mmrm()` method were not recognized by `broom::tidy()`. This is fixed now by using more standard names for the resulting data frame columns (e.g. `F` instead of `F Statistic` etc.)
 
 # mmrm 0.3.15
 
