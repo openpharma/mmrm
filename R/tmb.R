@@ -393,6 +393,12 @@ h_mmrm_tmb_check_conv <- function(tmb_opt, mmrm_tmb) {
     return()
   }
   theta_vcov <- mmrm_tmb$theta_vcov
+  if (is.call(theta_vcov)) {
+    message(
+      "theta_vcov calculation was disabled and cannot be used for convergence checks"
+    )
+    return()
+  }
   if (is(theta_vcov, "try-error")) {
     warning(
       "Model convergence problem: hessian is singular, theta_vcov not available."
@@ -469,6 +475,7 @@ h_mmrm_tmb_extract_cov <- function(
 #' @param formula_parts (`mmrm_tmb_formula_parts`)\cr produced by
 #'  [h_mmrm_tmb_formula_parts()].
 #' @param tmb_data (`mmrm_tmb_data`)\cr produced by [h_mmrm_tmb_data()].
+#' @param disable_theta_vcov (`flag`)\cr whether calculation of `theta_vcov` was disabled.
 #'
 #' @return List of class `mmrm_tmb` with:
 #'   - `cov`: estimated covariance matrix, or named list of estimated group specific covariance matrices.
@@ -477,7 +484,7 @@ h_mmrm_tmb_extract_cov <- function(
 #'   - `beta_vcov_inv_L`: Lower triangular matrix `L` of the inverse variance-covariance matrix decomposition.
 #'   - `beta_vcov_inv_D`: vector of diagonal matrix `D` of the inverse variance-covariance matrix decomposition.
 #'   - `theta_est`: vector of variance parameter estimates.
-#'   - `theta_vcov`: variance-covariance matrix for variance parameter estimates.
+#'   - `theta_vcov`: variance-covariance matrix for variance parameter estimates (if not disabled).
 #'   - `neg_log_lik`: obtained negative log-likelihood.
 #'   - `formula_parts`: input.
 #'   - `data`: input.
@@ -492,7 +499,13 @@ h_mmrm_tmb_extract_cov <- function(
 #'   as well since they have been available on the `C++` side already.
 #'
 #' @keywords internal
-h_mmrm_tmb_fit <- function(tmb_object, tmb_opt, formula_parts, tmb_data) {
+h_mmrm_tmb_fit <- function(
+  tmb_object,
+  tmb_opt,
+  formula_parts,
+  tmb_data,
+  disable_theta_vcov
+) {
   assert_list(tmb_object)
   assert_subset(c("fn", "gr", "par", "he"), names(tmb_object))
   assert_list(tmb_opt)
@@ -516,7 +529,11 @@ h_mmrm_tmb_fit <- function(tmb_object, tmb_opt, formula_parts, tmb_data) {
   beta_vcov_inv_D <- tmb_report$XtWX_D # nolint
   theta_est <- tmb_opt$par
   names(theta_est) <- NULL
-  theta_vcov <- try(solve(tmb_object$he(tmb_opt$par)), silent = TRUE)
+  theta_vcov <- if (disable_theta_vcov) {
+    quote(stop("theta_vcov calculation was disabled"))
+  } else {
+    try(solve(tmb_object$he(tmb_opt$par)), silent = TRUE)
+  }
   opt_details_names <- setdiff(
     names(tmb_opt),
     c("par", "objective")
@@ -629,7 +646,6 @@ fit_mmrm <- function(
     start = control$start,
     n_groups = tmb_data$n_groups
   )
-
   tmb_object <- TMB::MakeADFun(
     data = tmb_data,
     parameters = tmb_parameters,
@@ -659,7 +675,13 @@ fit_mmrm <- function(
     tmb_opt$objective <- tmb_opt$value
     tmb_opt$value <- NULL
   }
-  fit <- h_mmrm_tmb_fit(tmb_object, tmb_opt, formula_parts, tmb_data)
+  fit <- h_mmrm_tmb_fit(
+    tmb_object,
+    tmb_opt,
+    formula_parts,
+    tmb_data,
+    disable_theta_vcov = control$disable_theta_vcov
+  )
   h_mmrm_tmb_check_conv(tmb_opt, fit)
   fit$call <- match.call()
   fit$call$formula <- formula_parts$formula
