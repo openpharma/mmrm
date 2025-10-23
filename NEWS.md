@@ -4,6 +4,7 @@
 
 - `Anova.mmrm()` now has a `test.statistic` argument allowing the user to choose a Chi-squared test as opposed to the default F-test.
 - `logLik.mmrm_tmb()` now includes a `nobs` attribute containing the number of subjects in the inputted model (i.e., `component(mmrm_object, "n_subjects")`). As a result, `BIC(logLik(mmrm_object))` will now be successfully calculated.
+- `mmrm_control()` now has a `disable_theta_vcov` argument allowing the user to disable computation of the variance-covariance matrix of the covariance parameters. In that case, the `nlminb` optimizer cannot be used and other optimizers should be selected. Avoiding this computation can be useful in cases where the number of covariance parameters is large and computation of this very large matrix is slow and memory-intensive.
 
 ### Bug Fixes
 
