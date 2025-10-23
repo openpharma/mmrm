@@ -63,6 +63,7 @@ Imports:
     TMB (>= 1.9.1),
     utils
 Suggests:
+    broom,
     broom.helpers,
     car (>= 3.1.2),
     cli,

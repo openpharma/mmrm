@@ -30,11 +30,11 @@ Conduct type II/III hypothesis testing on the MMRM fit results.
 \details{
 \code{Anova()} will return an \code{anova} object with one row per variable.
 
-If \code{test.statistic = "F"}, columns will be \verb{Num Df}(numerator degrees of
-freedom), \verb{Denom Df} (denominator degrees of freedom), \verb{F Statistic}, and
-\verb{Pr(>=F)}.
+If \code{test.statistic = "F"}, columns will be \code{Df}(numerator degrees of
+freedom), \code{Res.Df} (denominator degrees of freedom), \code{F}, and
+\verb{Pr(>F)}.
 
 If \code{test.statistic = "Chisq"}, columns will be \code{Chisq} (the Chi-squared
-test statistic), \code{Df} (degrees of freedom), and \verb{Pr(>=Chisq)} (p-value).
+test statistic), \code{Df} (degrees of freedom), and \verb{Pr(>Chisq)} (p-value).
 }
 \keyword{internal}

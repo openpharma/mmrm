@@ -213,11 +213,11 @@ test_that("h_get_contrast works for higher-order interaction", {
   mod <- mmrm(
     formula = FEV1 ~
       ARMCD +
-        RACE +
-        AVISIT +
-        RACE * AVISIT * ARMCD +
-        FEV1_BL +
-        ar1(AVISIT | USUBJID),
+      RACE +
+      AVISIT +
+      RACE * AVISIT * ARMCD +
+      FEV1_BL +
+      ar1(AVISIT | USUBJID),
     data = fev_data
   )
   ctr <- expect_silent(h_get_contrast(mod, "ARMCD:AVISIT", "3"))
@@ -313,22 +313,22 @@ test_that("Anova give similar results to SAS", {
   # the SAS results from design/anova/test2_1.csv and design/anova/test3_1.csv
   # they shared the same model
   expect_equal(
-    df2$`Denom Df`,
+    df2$`Res.Df`,
     c(199.582314485653, 196.41571750149, 198.163532037944),
     tolerance = 1e-4
   )
   expect_equal(
-    df2$`F Statistic`,
+    df2$`F`,
     c(0.03099660681111, 11.5301174147263, 0.7644368094469),
     tolerance = 1e-4
   )
   expect_equal(
-    df3$`Denom Df`,
+    df3$`Res.Df`,
     c(199.582314485653, 198.163532037936, 198.163532037944),
     tolerance = 1e-4
   )
   expect_equal(
-    df3$`F Statistic`,
+    df3$`F`,
     c(0.03099660681111, 11.0435094615508, 0.7644368094469),
     tolerance = 1e-4
   )
@@ -345,23 +345,61 @@ test_that("Anova give similar results to SAS", {
   # the SAS results from design/anova/test2_1.csv and design/anova/test3_1.csv
   # they shared the same model
   expect_equal(
-    df2$`Denom Df`,
+    df2$`Res.Df`,
     c(196.700026021882, 186.404412481085, 186.11901853766, 194.942672335072),
     tolerance = 1e-4
   )
   expect_equal(
-    df2$`F Statistic`,
+    df2$`F`,
     c(0.03093826913613, 0.10489707559679, 0.46643535342468, 6.11482167585228),
     tolerance = 1e-4
   )
   expect_equal(
-    df3$`Denom Df`,
+    df3$`Res.Df`,
     c(197.423866403271, 186.119018537661, 186.11901853766, 194.942672335072),
     tolerance = 1e-4
   )
   expect_equal(
-    df3$`F Statistic`,
+    df3$`F`,
     c(0.04875135180324, 0.09277653315012, 0.46643535342468, 6.11482167585228),
     tolerance = 1e-4
+  )
+})
+
+test_that("Anova results are compatible with broom::tidy", {
+  skip_if_not_installed("car")
+  skip_if_not_installed("broom")
+  fit <- mmrm(
+    FEV1 ~ ARMCD * SEX + ARMCD * FEV1_BL - FEV1_BL + ar1(AVISIT | USUBJID),
+    data = fev_data
+  )
+  df2 <- expect_silent(car::Anova(fit, "2"))
+  df2_chisq <- expect_silent(car::Anova(fit, "2", test.statistic = "Chisq"))
+
+  df3 <- expect_silent(car::Anova(fit, "3"))
+  df3_chisq <- expect_silent(car::Anova(fit, "3", test.statistic = "Chisq"))
+
+  tidy2 <- expect_silent(broom::tidy(df2))
+  tidy2_chisq <- expect_silent(broom::tidy(df2_chisq))
+
+  tidy3 <- expect_silent(broom::tidy(df3))
+  tidy3_chisq <- expect_silent(broom::tidy(df3_chisq))
+
+  expect_names(
+    names(tidy2),
+    identical.to = c("term", "df", "df.residual", "statistic", "p.value")
+  )
+  expect_names(
+    names(tidy2_chisq),
+    identical.to = c("term", "df", "statistic", "p.value")
+  )
+
+  expect_names(
+    names(tidy3),
+    identical.to = c("term", "df", "df.residual", "statistic", "p.value")
+  )
+  expect_names(
+    names(tidy3_chisq),
+    identical.to = c("term", "df", "statistic", "p.value")
   )
 })
