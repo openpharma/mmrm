@@ -504,7 +504,7 @@ h_mmrm_tmb_fit <- function(
   tmb_opt,
   formula_parts,
   tmb_data,
-  disable_theta_vcov
+  disable_theta_vcov = FALSE
 ) {
   assert_list(tmb_object)
   assert_subset(c("fn", "gr", "par", "he"), names(tmb_object))
