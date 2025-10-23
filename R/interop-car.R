@@ -119,7 +119,7 @@ h_get_contrast <- function(
 #'   `Pr(>F)`.
 #'
 #'   If `test.statistic = "Chisq"`, columns will be `Chisq` (the Chi-squared
-#'   test statistic), `Df` (degrees of freedom), and `Pr(>Chi)` (p-value).
+#'   test statistic), `Df` (degrees of freedom), and `Pr(>Chisq)` (p-value).
 #'
 #' @keywords internal
 # Please do not load `car` and then create the documentation. The Rd file will
@@ -146,7 +146,7 @@ Anova.mmrm <- function(
   } else {
     ret <- lapply(contrasts, h_test_md, object = mod, test = "Chisq")
     ret_df <- do.call(rbind.data.frame, ret)
-    colnames(ret_df) <- c("Df", "Chisq", "Pr(>Chi)")
+    colnames(ret_df) <- c("Df", "Chisq", "Pr(>Chisq)")
   }
 
   row.names(ret_df) <- vars
