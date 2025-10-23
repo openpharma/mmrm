@@ -26,7 +26,12 @@ car_add_mmrm <- function(quietly = FALSE) {
 #' @return A `matrix` of the contrast.
 #'
 #' @keywords internal
-h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol = sqrt(.Machine$double.eps)) {
+h_get_contrast <- function(
+  object,
+  effect,
+  type = c("II", "III", "2", "3"),
+  tol = sqrt(.Machine$double.eps)
+) {
   assert_class(object, "mmrm")
   assert_string(effect)
   assert_double(tol, finite = TRUE, len = 1L)
@@ -41,7 +46,8 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
   idx <- which(effect == colnames(fcts))
   cols <- which(asg == idx)
   xlev <- component(object, "xlev")
-  contains_intercept <- (!0 %in% asg) && h_first_contain_categorical(effect, fcts, names(xlev))
+  contains_intercept <- (!0 %in% asg) &&
+    h_first_contain_categorical(effect, fcts, names(xlev))
   coef_rows <- length(cols) - as.integer(contains_intercept)
   l_mx <- matrix(0, nrow = coef_rows, ncol = length(asg))
   if (coef_rows == 0L) {
@@ -56,8 +62,11 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
     additional_vars <- names(which(fcts[, i] > fcts[, idx]))
     additional_numeric <- any(!additional_vars %in% names(xlev))
     current_col <- which(asg == i)
-    if (ods[i] >= ods[idx] && all(fcts[, i] >= fcts[, idx]) && !additional_numeric) {
-      sub_mat <- switch(type,
+    if (
+      ods[i] >= ods[idx] && all(fcts[, i] >= fcts[, idx]) && !additional_numeric
+    ) {
+      sub_mat <- switch(
+        type,
         "2" = ,
         "II" = {
           x1 <- mx[, cols, drop = FALSE]
@@ -95,9 +104,6 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
 }
 
 
-
-
-
 #' Conduct type II/III hypothesis testing on the MMRM fit results.
 #'
 #' @param mod (`mmrm`)\cr the fitted MMRM.
@@ -108,21 +114,23 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
 #'
 #' @details `Anova()` will return an `anova` object with one row per variable.
 #'
-#'   If `test.statistic = "F"`, columns will be `Num Df`(numerator degrees of
-#'   freedom), `Denom Df` (denominator degrees of freedom), `F Statistic`, and
-#'   `Pr(>=F)`.
+#'   If `test.statistic = "F"`, columns will be `Df`(numerator degrees of
+#'   freedom), `Res.Df` (denominator degrees of freedom), `F`, and
+#'   `Pr(>F)`.
 #'
 #'   If `test.statistic = "Chisq"`, columns will be `Chisq` (the Chi-squared
-#'   test statistic), `Df` (degrees of freedom), and `Pr(>=Chisq)` (p-value).
+#'   test statistic), `Df` (degrees of freedom), and `Pr(>Chi)` (p-value).
 #'
 #' @keywords internal
 # Please do not load `car` and then create the documentation. The Rd file will
 #  be different.
-Anova.mmrm <- function(mod, # nolint
-                       type = c("II", "III", "2", "3"),
-                       tol = sqrt(.Machine$double.eps),
-                       test.statistic = c("F", "Chisq"), # nolint
-                       ...) {
+Anova.mmrm <- function(
+  mod, # nolint
+  type = c("II", "III", "2", "3"),
+  tol = sqrt(.Machine$double.eps),
+  test.statistic = c("F", "Chisq"), # nolint
+  ...
+) {
   type <- as.character(type)
   type <- match.arg(type)
   test.statistic <- match.arg(test.statistic) # nolint
@@ -134,11 +142,11 @@ Anova.mmrm <- function(mod, # nolint
   if (test.statistic == "F") {
     ret <- lapply(contrasts, df_md, object = mod)
     ret_df <- do.call(rbind.data.frame, ret)
-    colnames(ret_df) <- c("Num Df", "Denom Df", "F Statistic", "Pr(>=F)")
+    colnames(ret_df) <- c("Df", "Res.Df", "F", "Pr(>F)")
   } else {
     ret <- lapply(contrasts, h_test_md, object = mod, test = "Chisq")
     ret_df <- do.call(rbind.data.frame, ret)
-    colnames(ret_df) <- c("Df", "Chisq Statistic", "Pr(>=Chisq)")
+    colnames(ret_df) <- c("Df", "Chisq", "Pr(>Chi)")
   }
 
   row.names(ret_df) <- vars
@@ -152,8 +160,6 @@ Anova.mmrm <- function(mod, # nolint
 
   ret_df
 }
-
-
 
 
 #' Obtain Levels Prior and Posterior
@@ -171,7 +177,10 @@ h_obtain_lvls <- function(var, additional_vars, xlev, factors) {
   if (var %in% nms) {
     prior_vars <- intersect(nms[seq_len(match(var, nms) - 1)], additional_vars)
     prior_lvls <- vapply(xlev[prior_vars], length, FUN.VALUE = 1L)
-    post_vars <- intersect(nms[seq(match(var, nms) + 1, length(nms))], additional_vars)
+    post_vars <- intersect(
+      nms[seq(match(var, nms) + 1, length(nms))],
+      additional_vars
+    )
     post_lvls <- vapply(xlev[post_vars], length, FUN.VALUE = 1L)
     total_lvls <- prod(prior_lvls) * prod(post_lvls)
   } else {
@@ -202,7 +211,11 @@ h_first_contain_categorical <- function(effect, factors, categorical) {
     return(FALSE)
   }
   # keep only categorical rows that is in front of the current factor
-  factors <- factors[row.names(factors) %in% categorical, seq_len(mt - 1L), drop = FALSE]
+  factors <- factors[
+    row.names(factors) %in% categorical,
+    seq_len(mt - 1L),
+    drop = FALSE
+  ]
   # if previous cols are all numerical, return TRUE
   if (ncol(factors) < 1L) {
     return(TRUE)
