@@ -256,7 +256,7 @@ h_get_prediction_variance <- function(object, nsim, tmb_data) {
   assert_class(object, "mmrm_tmb")
   assert_class(tmb_data, "mmrm_tmb_data")
   assert_count(nsim, positive = TRUE)
-  theta_chol <- chol(object$theta_vcov)
+  theta_chol <- chol(eval(object$theta_vcov))
   n_theta <- length(object$theta_est)
   res <- replicate(nsim, {
     z <- stats::rnorm(n = n_theta)

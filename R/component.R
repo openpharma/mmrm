@@ -164,7 +164,7 @@ component <- function(
     "x_matrix" = object$tmb_data$x_matrix,
     "xlev" = stats::.getXlevels(terms(object), object$tmb_data$full_frame),
     "contrasts" = attr(object$tmb_data$x_matrix, "contrasts"),
-    "theta_vcov" = object$theta_vcov,
+    "theta_vcov" = eval(object$theta_vcov),
     "full_frame" = object$tmb_data$full_frame,
     # If not found.
     "..foo.." = stop(sprintf(
