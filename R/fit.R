@@ -32,15 +32,16 @@
 #' )
 #' attr(mod_fit, "converged")
 fit_single_optimizer <- function(
-    formula,
-    data,
-    weights,
-    reml = TRUE,
-    covariance = NULL,
-    tmb_data,
-    formula_parts,
-    ...,
-    control = mmrm_control(...)) {
+  formula,
+  data,
+  weights,
+  reml = TRUE,
+  covariance = NULL,
+  tmb_data,
+  formula_parts,
+  ...,
+  control = mmrm_control(...)
+) {
   to_remove <- list(
     # Transient visit to invalid parameters.
     warnings = c("NA/NaN function evaluation")
@@ -216,6 +217,9 @@ refit_multiple_optimizers <- function(fit, ..., control = mmrm_control(...)) {
 #' @param optimizers (`list`)\cr optimizer specification, created with [h_get_optimizers()].
 #' @param drop_visit_levels (`flag`)\cr whether to drop levels for visit variable,
 #'   if visit variable is a factor, see details.
+#' @param disable_theta_vcov (`flag`)\cr whether to disable calculation of
+#'   variance-covariance matrix for variance parameters. This can speed up fitting
+#'   when there are many variance parameters, see details.
 #' @param ... additional arguments passed to [h_get_optimizers()].
 #'
 #' @details
@@ -254,6 +258,12 @@ refit_multiple_optimizers <- function(fit, ..., control = mmrm_control(...)) {
 #'   By default or if `NULL` is provided, `std_start` will be used.
 #'   Other implemented methods include `emp_start`.
 #'
+#' - Disabling the `theta_vcov` calculation can speed up the fitting process when there are many variance
+#'   parameters. However, this has also drawbacks. We can no longer check that the variance parameter estimates
+#'   are indeed at a local maximum of the log-likelihood surface, and therefore convergence issues might go unnoticed.
+#'   In addition, some covariance matrix adjustment methods (e.g., Kenward-Roger) require `theta_vcov` to be calculated.
+#'   These will then raise errors.
+#'
 #' @return List of class `mmrm_control` with the control parameters.
 #' @export
 #'
@@ -263,14 +273,16 @@ refit_multiple_optimizers <- function(fit, ..., control = mmrm_control(...)) {
 #'   optimizer_args = list(method = "L-BFGS-B")
 #' )
 mmrm_control <- function(
-    n_cores = 1L,
-    method = c("Satterthwaite", "Kenward-Roger", "Residual", "Between-Within"),
-    vcov = NULL,
-    start = std_start,
-    accept_singular = TRUE,
-    drop_visit_levels = TRUE,
-    ...,
-    optimizers = h_get_optimizers(...)) {
+  n_cores = 1L,
+  method = c("Satterthwaite", "Kenward-Roger", "Residual", "Between-Within"),
+  vcov = NULL,
+  start = std_start,
+  accept_singular = TRUE,
+  drop_visit_levels = TRUE,
+  disable_theta_vcov = FALSE,
+  ...,
+  optimizers = h_get_optimizers(...)
+) {
   assert_count(n_cores, positive = TRUE)
   assert_character(method)
   if (is.null(start)) {
@@ -283,6 +295,7 @@ mmrm_control <- function(
   )
   assert_flag(accept_singular)
   assert_flag(drop_visit_levels)
+  assert_flag(disable_theta_vcov)
   assert_list(optimizers, names = "unique", types = c("function", "partial"))
   assert_string(vcov, null.ok = TRUE)
   method <- match.arg(method)
@@ -311,6 +324,11 @@ mmrm_control <- function(
       "or Kenward-Roger-Linear covariance!"
     ))
   }
+  if (
+    disable_theta_vcov && vcov %in% c("Kenward-Roger", "Kenward-Roger-Linear")
+  ) {
+    stop("Kenward-Roger requires theta_vcov calculation!")
+  }
   structure(
     list(
       optimizers = optimizers,
@@ -319,7 +337,8 @@ mmrm_control <- function(
       method = method,
       vcov = vcov,
       n_cores = as.integer(n_cores),
-      drop_visit_levels = drop_visit_levels
+      drop_visit_levels = drop_visit_levels,
+      disable_theta_vcov = disable_theta_vcov
     ),
     class = "mmrm_control"
   )
@@ -429,13 +448,14 @@ mmrm_control <- function(
 #'   control = mmrm_control(method = "Kenward-Roger")
 #' )
 mmrm <- function(
-    formula,
-    data,
-    weights = NULL,
-    covariance = NULL,
-    reml = TRUE,
-    control = mmrm_control(...),
-    ...) {
+  formula,
+  data,
+  weights = NULL,
+  covariance = NULL,
+  reml = TRUE,
+  control = mmrm_control(...),
+  ...
+) {
   assert_false(!missing(control) && !missing(...))
   assert_class(control, "mmrm_control")
   assert_list(control$optimizers, min.len = 1)

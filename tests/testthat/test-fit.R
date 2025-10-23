@@ -311,6 +311,25 @@ test_that("refit_multiple_optimizers works with parallel computations and select
   expect_true(logLik(result) > logLik(fit))
 })
 
+# mmrm_control ----
+
+test_that("disable_theta_vcov works as expected in mmrm_control", {
+  control <- expect_silent(
+    mmrm_control(
+      disable_theta_vcov = TRUE
+    )
+  )
+  expect_true(control$disable_theta_vcov)
+
+  expect_error(
+    mmrm_control(
+      disable_theta_vcov = TRUE,
+      method = "Kenward-Roger"
+    ),
+    "Kenward-Roger requires theta_vcov calculation!"
+  )
+})
+
 # mmrm ----
 
 ## convergence ----
