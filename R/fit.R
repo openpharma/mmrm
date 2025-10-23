@@ -215,6 +215,8 @@ refit_multiple_optimizers <- function(fit, ..., control = mmrm_control(...)) {
 #' @param accept_singular (`flag`)\cr whether singular design matrices are reduced
 #'   to full rank automatically and additional coefficient estimates will be missing.
 #' @param optimizers (`list`)\cr optimizer specification, created with [h_get_optimizers()].
+#'   Please note that optimizers using the Hessian will not be compatible with
+#'   `disable_theta_vcov = TRUE` and an error will be raised in that case.
 #' @param drop_visit_levels (`flag`)\cr whether to drop levels for visit variable,
 #'   if visit variable is a factor, see details.
 #' @param disable_theta_vcov (`flag`)\cr whether to disable calculation of
@@ -324,10 +326,22 @@ mmrm_control <- function(
       "or Kenward-Roger-Linear covariance!"
     ))
   }
-  if (
-    disable_theta_vcov && vcov %in% c("Kenward-Roger", "Kenward-Roger-Linear")
-  ) {
-    stop("Kenward-Roger requires theta_vcov calculation!")
+  if (disable_theta_vcov) {
+    if (vcov %in% c("Kenward-Roger", "Kenward-Roger-Linear")) {
+      stop("Kenward-Roger requires theta_vcov calculation!")
+    }
+    uses_hessian <- lapply(
+      optimizers,
+      attr,
+      "use_hessian"
+    )
+    uses_hessian <- vapply(uses_hessian, isTRUE, logical(1))
+    if (any(uses_hessian)) {
+      stop(
+        "Disabling theta_vcov calculation is incompatible with optimizers using Hessian: ",
+        toString(names(optimizers[uses_hessian]))
+      )
+    }
   }
   structure(
     list(

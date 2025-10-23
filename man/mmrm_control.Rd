@@ -38,7 +38,9 @@ when there are many variance parameters, see details.}
 
 \item{...}{additional arguments passed to \code{\link[=h_get_optimizers]{h_get_optimizers()}}.}
 
-\item{optimizers}{(\code{list})\cr optimizer specification, created with \code{\link[=h_get_optimizers]{h_get_optimizers()}}.}
+\item{optimizers}{(\code{list})\cr optimizer specification, created with \code{\link[=h_get_optimizers]{h_get_optimizers()}}.
+Please note that optimizers using the Hessian will not be compatible with
+\code{disable_theta_vcov = TRUE} and an error will be raised in that case.}
 }
 \value{
 List of class \code{mmrm_control} with the control parameters.

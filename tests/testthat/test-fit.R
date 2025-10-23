@@ -316,7 +316,8 @@ test_that("refit_multiple_optimizers works with parallel computations and select
 test_that("disable_theta_vcov works as expected in mmrm_control", {
   control <- expect_silent(
     mmrm_control(
-      disable_theta_vcov = TRUE
+      disable_theta_vcov = TRUE,
+      optimizer = "L-BFGS-B"
     )
   )
   expect_true(control$disable_theta_vcov)
@@ -327,6 +328,16 @@ test_that("disable_theta_vcov works as expected in mmrm_control", {
       method = "Kenward-Roger"
     ),
     "Kenward-Roger requires theta_vcov calculation!"
+  )
+})
+
+test_that("disable_theta_vcov = TRUE will give failure if an optimizer with hessian is used", {
+  expect_error(
+    mmrm_control(
+      disable_theta_vcov = TRUE,
+      optimizer = "nlminb"
+    ),
+    "Disabling theta_vcov calculation is incompatible with optimizers using Hessian: nlminb"
   )
 })
 
