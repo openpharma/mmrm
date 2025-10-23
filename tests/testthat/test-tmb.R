@@ -13,7 +13,8 @@ test_that("mmrm_control works as expected", {
       method = "Satterthwaite",
       vcov = "Asymptotic",
       n_cores = 1L,
-      drop_visit_levels = TRUE
+      drop_visit_levels = TRUE,
+      disable_theta_vcov = FALSE
     ),
     class = "mmrm_control"
   )
@@ -1128,6 +1129,24 @@ test_that("h_mmrm_tmb_check_conv warns if theta_vcov is numerically singular", {
   )
 })
 
+test_that("h_mmrm_tmb_check_conv gives message if theta_vcov was disabled", {
+  tmb_opt <- list(
+    par = 1:5,
+    objective = 10,
+    convergence = 0,
+    message = NULL
+  )
+  mmrm_tmb <- structure(
+    list(theta_vcov = quote(stop("disabled"))),
+    class = "mmrm_tmb"
+  )
+  expect_message(
+    result <- h_mmrm_tmb_check_conv(tmb_opt, mmrm_tmb),
+    "theta_vcov calculation was disabled and cannot be used for convergence checks"
+  )
+  expect_null(result)
+})
+
 # h_mmrm_tmb_extract_cov ----
 
 test_that("h_mmrm_tmb_extract_cov works as expected", {
@@ -1407,6 +1426,45 @@ test_that("h_mmrm_tmb_fit works as expected for grouped covariance", {
   expect_list(result$opt_details)
   expect_list(result$tmb_object)
   expect_class(result$tmb_data, "mmrm_tmb_data")
+})
+
+test_that("h_mmrm_tmb_fit works as expected when theta_vcov calculation is disabled", {
+  formula <- FEV1 ~ RACE + us(AVISIT | USUBJID)
+  formula_parts <- h_mmrm_tmb_formula_parts(formula)
+  weights <- rep(1, nrow(fev_data))
+  tmb_data <- h_mmrm_tmb_data(
+    formula_parts,
+    fev_data,
+    weights = weights,
+    reml = FALSE,
+    singular = "error",
+    drop_visit_levels = TRUE
+  )
+  tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL)
+  tmb_object <- TMB::MakeADFun(
+    data = tmb_data,
+    parameters = tmb_parameters,
+    hessian = TRUE,
+    DLL = "mmrm",
+    silent = TRUE
+  )
+  tmb_opt <- with(
+    tmb_object,
+    do.call(
+      what = stats::optim,
+      args = list(par, fn, gr, method = "L-BFGS-B")
+    )
+  )
+  tmb_opt$objective <- tmb_opt$value
+  result <- expect_silent(h_mmrm_tmb_fit(
+    tmb_object,
+    tmb_opt,
+    formula_parts,
+    tmb_data,
+    disable_theta_vcov = TRUE
+  ))
+  expect_class(result$theta_vcov, "call")
+  expect_error(eval(result$theta_vcov), "disabled")
 })
 
 # fit_mmrm ----
@@ -2608,4 +2666,19 @@ test_that("get_covariance_lower_chol errors when an invalid covariance type is u
     ),
     "Unknown covariance type 'gaaah'"
   )
+})
+
+test_that("fit_mmrm works when theta_vcov calculation is disabled", {
+  formula <- FEV1 ~ us(AVISIT | USUBJID)
+  expect_message(
+    result <- fit_mmrm(
+      formula,
+      fev_data,
+      weights = rep(1, nrow(fev_data)),
+      control = mmrm_control(disable_theta_vcov = TRUE, optimizer = "L-BFGS-B")
+    ),
+    "theta_vcov calculation was disabled"
+  )
+  expect_class(result, "mmrm_tmb")
+  expect_class(result$theta_vcov, "call")
 })

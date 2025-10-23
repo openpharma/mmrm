@@ -11,6 +11,7 @@ mmrm_control(
   start = std_start,
   accept_singular = TRUE,
   drop_visit_levels = TRUE,
+  disable_theta_vcov = FALSE,
   ...,
   optimizers = h_get_optimizers(...)
 )
@@ -31,9 +32,15 @@ to full rank automatically and additional coefficient estimates will be missing.
 \item{drop_visit_levels}{(\code{flag})\cr whether to drop levels for visit variable,
 if visit variable is a factor, see details.}
 
+\item{disable_theta_vcov}{(\code{flag})\cr whether to disable calculation of
+variance-covariance matrix for variance parameters. This can speed up fitting
+when there are many variance parameters, see details.}
+
 \item{...}{additional arguments passed to \code{\link[=h_get_optimizers]{h_get_optimizers()}}.}
 
-\item{optimizers}{(\code{list})\cr optimizer specification, created with \code{\link[=h_get_optimizers]{h_get_optimizers()}}.}
+\item{optimizers}{(\code{list})\cr optimizer specification, created with \code{\link[=h_get_optimizers]{h_get_optimizers()}}.
+Please note that optimizers using the Hessian will not be compatible with
+\code{disable_theta_vcov = TRUE} and an error will be raised in that case.}
 }
 \value{
 List of class \code{mmrm_control} with the control parameters.
@@ -78,6 +85,11 @@ If \code{function} is provided, make sure its parameter is a valid element of \c
 or \code{mmrm_tmb_formula_parts} and it returns a numeric vector.
 By default or if \code{NULL} is provided, \code{std_start} will be used.
 Other implemented methods include \code{emp_start}.
+\item Disabling the \code{theta_vcov} calculation can speed up the fitting process when there are many variance
+parameters. However, this has also drawbacks. We can no longer check that the variance parameter estimates
+are indeed at a local maximum of the log-likelihood surface, and therefore convergence issues might go unnoticed.
+In addition, some covariance matrix adjustment methods (e.g., Kenward-Roger) require \code{theta_vcov} to be calculated.
+These will then raise errors.
 }
 }
 \examples{
