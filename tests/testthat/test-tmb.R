@@ -13,7 +13,8 @@ test_that("mmrm_control works as expected", {
       method = "Satterthwaite",
       vcov = "Asymptotic",
       n_cores = 1L,
-      drop_visit_levels = TRUE
+      drop_visit_levels = TRUE,
+      disable_theta_vcov = FALSE
     ),
     class = "mmrm_control"
   )
