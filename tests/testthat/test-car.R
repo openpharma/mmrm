@@ -86,23 +86,58 @@ test_that("h_get_index works as expected", {
   )
 })
 
+
+# h_first_term_containing_categorical_var ----
+test_that("h_first_term_containing_categorical_var", {
+  expect_identical(
+    h_first_term_containing_categorical_var(
+      attr(terms(get_mmrm_no_intercept()), "factors"),
+      c("RACE", "SEX")
+    ),
+    "RACE"
+  )
+})
+
+
 # h_get_contrast ----
 test_that("h_get_contrast works as expected", {
+  mmrm_trans_dimnames <-
+    list(NULL, colnames(component(get_mmrm_trans(), "x_matrix")))
   expect_identical(
     h_get_contrast(get_mmrm_trans(), "log(FEV1_BL)", "3"),
-    matrix(c(0, 1, rep(0, 7)), nrow = 1, byrow = TRUE)
+    matrix(
+      c(0, 1, rep(0, 7)),
+      nrow = 1,
+      byrow = TRUE,
+      dimnames = mmrm_trans_dimnames
+    )
   )
   expect_identical(
     h_get_contrast(get_mmrm_trans(), "ARMCD", "3"),
-    matrix(c(0, 0, 1, rep(0, 3), rep(0.25, 3)), nrow = 1, byrow = TRUE)
+    matrix(
+      c(0, 0, 1, rep(0, 3), rep(0.25, 3)),
+      nrow = 1,
+      byrow = TRUE,
+      dimnames = mmrm_trans_dimnames
+    )
   )
   expect_identical(
     h_get_contrast(get_mmrm_trans(), "ARMCD:AVISIT", "3"),
-    matrix(rep(rep(c(0, 1), 3), c(6, 1, 9, 1, 9, 1)), nrow = 3, byrow = TRUE)
+    matrix(
+      rep(rep(c(0, 1), 3), c(6, 1, 9, 1, 9, 1)),
+      nrow = 3,
+      byrow = TRUE,
+      dimnames = mmrm_trans_dimnames
+    )
   )
   expect_identical(
     h_get_contrast(get_mmrm_trans(), "ARMCD:AVISIT", "3"),
-    matrix(rep(rep(c(0, 1), 3), c(6, 1, 9, 1, 9, 1)), nrow = 3, byrow = TRUE)
+    matrix(
+      rep(rep(c(0, 1), 3), c(6, 1, 9, 1, 9, 1)),
+      nrow = 3,
+      byrow = TRUE,
+      dimnames = mmrm_trans_dimnames
+    )
   )
 
   # Testing an intercept-free model that includes a categorical variable
@@ -111,7 +146,23 @@ test_that("h_get_contrast works as expected", {
     matrix(
       c(0, -1, 1, 0, 0, 0.5, 0.0,
         0, -1, 0, 1, 0, 0.0, 0.5),
-      nrow = 2, byrow = TRUE
+      nrow = 2,
+      byrow = TRUE,
+      dimnames =
+        list(NULL, colnames(component(get_mmrm_no_intercept(), "x_matrix")))
+    )
+  )
+
+  # Testing an intercept-free model whose first term that contains a categorical
+  # variable also has an aliased coefficient
+  expect_identical(
+    h_get_contrast(get_mmrm_alias_noint(), "FEV1_BL:ARMCD", type = "III"),
+    matrix(
+      c(0, 1, 0, 0),
+      nrow = 1,
+      byrow = TRUE,
+      dimnames =
+        list(NULL, colnames(component(get_mmrm_alias_noint(), "x_matrix")))
     )
   )
 })

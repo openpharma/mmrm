@@ -33,6 +33,8 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
   type <- match.arg(type)
   mx <- component(object, "x_matrix")
   asg <- attr(mx, "assign")
+  asg_complete <- component(object, "assign_complete")
+  aliased <- component(object, "beta_aliased")
   formula <- object$formula_parts$model_formula
   tms <- terms(formula)
   fcts <- attr(tms, "factors")[-1L, , drop = FALSE] # Discard the response.
@@ -41,13 +43,29 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
   idx <- which(effect == colnames(fcts))
   cols <- which(asg == idx)
   xlev <- component(object, "xlev")
-  contains_intercept <- (!0 %in% asg) && h_first_contain_categorical(effect, fcts, names(xlev))
-  coef_rows <- length(cols) - as.integer(contains_intercept)
-  l_mx <- matrix(0, nrow = coef_rows, ncol = length(asg))
+
+  categorical_covars <- intersect(rownames(fcts), names(xlev))
+
+  term_contains_aliased_coefs <- any(aliased[asg_complete == idx])
+
+  effect_contains_intercept <-
+    !attr(tms, "intercept") &&
+    !term_contains_aliased_coefs &&
+    length(categorical_covars) &&
+    effect == h_first_term_containing_categorical_var(fcts, categorical_covars)
+
+  coef_rows <- length(cols) - as.integer(effect_contains_intercept)
+  l_mx <-
+    matrix(
+      0,
+      nrow = coef_rows,
+      ncol = ncol(mx),
+      dimnames = list(NULL, colnames(mx))
+    )
   if (coef_rows == 0L) {
     return(l_mx)
   }
-  if (contains_intercept) {
+  if (effect_contains_intercept) {
     l_mx[, cols] <- cbind(-1, diag(rep(1, coef_rows)))
   } else {
     l_mx[, cols] <- diag(rep(1, coef_rows))
@@ -65,7 +83,7 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
           x2 <- mx[, current_col, drop = FALSE]
           m <- diag(rep(1, nrow(x0))) - x0 %*% solve(t(x0) %*% x0) %*% t(x0)
           ret <- solve(t(x1) %*% m %*% x1) %*% t(x1) %*% m %*% x2
-          if (contains_intercept) {
+          if (effect_contains_intercept) {
             ret[-1, ] - ret[1, ]
           } else {
             ret
@@ -92,6 +110,16 @@ h_get_contrast <- function(object, effect, type = c("II", "III", "2", "3"), tol 
   }
   l_mx[abs(l_mx) < tol] <- 0
   l_mx
+}
+
+
+
+
+h_first_term_containing_categorical_var <- function(factors, categorical) {
+  factors <- factors[categorical, , drop = FALSE]
+  for (term in colnames(factors))
+    if (any(factors[, term] > 0))
+      return(term)
 }
 
 
