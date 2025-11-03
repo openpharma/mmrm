@@ -33,14 +33,23 @@ NULL
 #' # Applying tidy method to return summary table of covariate estimates.
 #' fit |> tidy()
 #' fit |> tidy(conf.int = TRUE, conf.level = 0.9)
-tidy.mmrm <- function(x, # nolint
-                      conf.int = FALSE, # nolint
-                      conf.level = 0.95, # nolint
-                      ...) {
+tidy.mmrm <- function(
+  x, # nolint
+  conf.int = FALSE, # nolint
+  conf.level = 0.95, # nolint
+  ...
+) {
   assert_flag(conf.int)
   assert_number(conf.level, lower = 0, upper = 1)
   tbl <- tibble::as_tibble(summary(x)$coefficients, rownames = "term")
-  colnames(tbl) <- c("term", "estimate", "std.error", "df", "statistic", "p.value")
+  colnames(tbl) <- c(
+    "term",
+    "estimate",
+    "std.error",
+    "df",
+    "statistic",
+    "p.value"
+  )
   coefs <- coef(x)
   if (length(coefs) != nrow(tbl)) {
     coefs <- tibble::enframe(coefs, name = "term", value = "estimate")
@@ -58,7 +67,8 @@ tidy.mmrm <- function(x, # nolint
 #' @examples
 #' # Applying glance method to return summary table of goodness of fit statistics.
 #' fit |> glance()
-glance.mmrm <- function(x, ...) { # nolint
+glance.mmrm <- function(x, ...) {
+  # nolint
   tibble::as_tibble(summary(x)$aic_list)
 }
 
@@ -69,12 +79,14 @@ glance.mmrm <- function(x, ...) { # nolint
 #' fit |> augment()
 #' fit |> augment(interval = "confidence")
 #' fit |> augment(type.residuals = "pearson")
-augment.mmrm <- function(x, # nolint
-                         newdata = NULL,
-                         interval = c("none", "confidence", "prediction"),
-                         se_fit = (interval != "none"),
-                         type.residuals = c("response", "pearson", "normalized"), # nolint
-                         ...) {
+augment.mmrm <- function(
+  x, # nolint
+  newdata = NULL,
+  interval = c("none", "confidence", "prediction"),
+  se_fit = (interval != "none"),
+  type.residuals = c("response", "pearson", "normalized"), # nolint
+  ...
+) {
   type.residuals <- match.arg(type.residuals) # nolint
   resid_df <- NULL
   if (is.null(newdata)) {
@@ -134,11 +146,7 @@ h_tbl_confint_terms <- function(x, ...) {
 #'   requested).
 #'
 #' @keywords internal
-h_newdata_add_pred <- function(x,
-                               newdata,
-                               se_fit,
-                               interval,
-                               ...) {
+h_newdata_add_pred <- function(x, newdata, se_fit, interval, ...) {
   assert_class(x, "mmrm")
   assert_data_frame(newdata)
   assert_flag(se_fit)
@@ -187,7 +195,8 @@ h_newdata_add_pred <- function(x,
 #' @keywords internal
 h_df_to_tibble <- function(data) {
   tryCatch(tbl <- tibble::as_tibble(data), error = function(cnd) {
-    stop("Could not coerce data to `tibble`. Try explicitly passing a",
+    stop(
+      "Could not coerce data to `tibble`. Try explicitly passing a",
       "dataset to either the `data` or `newdata` argument.",
       call. = FALSE
     )

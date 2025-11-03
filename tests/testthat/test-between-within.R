@@ -9,7 +9,12 @@ test_that("h_within_or_between works as expected", {
   )
   subject_ids <- factor(c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 1, 2))
   result <- expect_silent(h_within_or_between(x_matrix, subject_ids))
-  expected <- c("(Intercept)" = "intercept", "AGE" = "between", "VISIT" = "within", "SLOW" = "within")
+  expected <- c(
+    "(Intercept)" = "intercept",
+    "AGE" = "between",
+    "VISIT" = "within",
+    "SLOW" = "within"
+  )
   expect_identical(result, expected)
 })
 
@@ -123,7 +128,11 @@ test_that("h_df_1d_bw works as expected for singular fits", {
 test_that("h_df_md_bw works as expected - between effect", {
   skip_if_r_devel_linux_clang()
   object <- get_mmrm()
-  contrast <- matrix(data = 0, nrow = 2, ncol = length(component(object, "beta_est")))
+  contrast <- matrix(
+    data = 0,
+    nrow = 2,
+    ncol = length(component(object, "beta_est"))
+  )
   contrast[1, 2] <- contrast[2, 3] <- 1
   result <- expect_silent(h_df_md_bw(object, contrast))
   expect_list(result)
@@ -136,7 +145,11 @@ test_that("h_df_md_bw works as expected - between effect", {
 test_that("h_df_md_bw works as expected - within effect", {
   skip_if_r_devel_linux_clang()
   object <- get_mmrm()
-  contrast <- matrix(data = 0, nrow = 2, ncol = length(component(object, "beta_est")))
+  contrast <- matrix(
+    data = 0,
+    nrow = 2,
+    ncol = length(component(object, "beta_est"))
+  )
   contrast[1, 6] <- contrast[2, 7] <- 1
   result <- expect_silent(h_df_md_bw(object, contrast))
   expect_list(result)
@@ -149,7 +162,11 @@ test_that("h_df_md_bw works as expected - within effect", {
 test_that("h_df_md_bw works as expected - both effects", {
   skip_if_r_devel_linux_clang()
   object <- get_mmrm()
-  contrast <- matrix(data = 0, nrow = 2, ncol = length(component(object, "beta_est")))
+  contrast <- matrix(
+    data = 0,
+    nrow = 2,
+    ncol = length(component(object, "beta_est"))
+  )
   contrast[1, 2] <- contrast[2, 3] <- contrast[1, 6] <- contrast[2, 7] <- 1
   result <- expect_silent(h_df_md_bw(object, contrast))
   expect_list(result)
@@ -162,7 +179,11 @@ test_that("h_df_md_bw works as expected - both effects", {
 test_that("h_df_md_bw works as expected for rank deficient model", {
   skip_if_r_devel_linux_clang()
   object <- get_mmrm_rank_deficient()
-  contrast <- matrix(data = 0, nrow = 2, ncol = length(component(object, "beta_est")))
+  contrast <- matrix(
+    data = 0,
+    nrow = 2,
+    ncol = length(component(object, "beta_est"))
+  )
   contrast[1, 2] <- contrast[2, 3] <- 1
   result <- expect_silent(h_df_md_bw(object, contrast))
   object2 <- get_mmrm()

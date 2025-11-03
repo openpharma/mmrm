@@ -91,7 +91,9 @@ test_that("tmb_cov_type derives abbreviated string from covariance structure", {
 # cov_types ----
 
 test_that("cov_types returns list of covariance structure keywords", {
-  expect_true(all(c("Toeplitz", "ante-dependence", "ar1", "sp_exp") %in% cov_types()))
+  expect_true(all(
+    c("Toeplitz", "ante-dependence", "ar1", "sp_exp") %in% cov_types()
+  ))
   expect_false("Toeplitz" %in% cov_types("abbr"))
   expect_true("csh" %in% cov_types("habbr"))
   expect_true("sp_exp" %in% cov_types(filter = "spatial"))

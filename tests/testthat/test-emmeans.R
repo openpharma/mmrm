@@ -94,7 +94,10 @@ test_that("emmeans works as expected", {
 })
 
 test_that("emmeans works for spatial covariance", {
-  fit <- mmrm(FEV1 ~ FEV1_BL + ARMCD * AVISIT + sp_exp(VISITN, VISITN2 | USUBJID), data = fev_data)
+  fit <- mmrm(
+    FEV1 ~ FEV1_BL + ARMCD * AVISIT + sp_exp(VISITN, VISITN2 | USUBJID),
+    data = fev_data
+  )
   lsmeans <- expect_silent(emmeans(fit, ~ ARMCD * AVISIT))
   diffs <- expect_silent(summary(pairs(lsmeans, adjust = "none")))
   expect_snapshot_tolerance(diffs)
@@ -103,7 +106,10 @@ test_that("emmeans works for spatial covariance", {
 test_that("emmeans works as expected for transformed variables", {
   skip_if_not_installed("emmeans", minimum_version = "1.6")
 
-  fit <- mmrm(FEV1 ~ log(FEV1_BL) + AVISIT + ar1(AVISIT | USUBJID), data = fev_data)
+  fit <- mmrm(
+    FEV1 ~ log(FEV1_BL) + AVISIT + ar1(AVISIT | USUBJID),
+    data = fev_data
+  )
   result <- expect_silent(emmeans::emmeans(fit, ~AVISIT))
   expect_class(result, "emmGrid")
   result_emmeans <- as.data.frame(result)$emmean
@@ -114,11 +120,23 @@ test_that("emmeans works as expected for transformed variables", {
 test_that("emmeans works as expected for transformed variables and fixed effect is not visit", {
   skip_if_not_installed("emmeans", minimum_version = "1.6")
 
-  fit <- mmrm(FEV1 ~ log(FEV1_BL) + ARMCD + ar1(AVISIT | USUBJID), data = fev_data)
+  fit <- mmrm(
+    FEV1 ~ log(FEV1_BL) + ARMCD + ar1(AVISIT | USUBJID),
+    data = fev_data
+  )
   result <- expect_silent(emmeans::emmeans(fit, ~ ARMCD | AVISIT))
   expect_class(result, "emmGrid")
   result_emmeans <- as.data.frame(result)$emmean
-  expected_emmeans <- c(40.41980, 44.78855, 40.41980, 44.78855, 40.41980, 44.78855, 40.41980, 44.78855)
+  expected_emmeans <- c(
+    40.41980,
+    44.78855,
+    40.41980,
+    44.78855,
+    40.41980,
+    44.78855,
+    40.41980,
+    44.78855
+  )
   expect_equal(result_emmeans, expected_emmeans, tolerance = 1e-3)
 })
 
@@ -134,7 +152,16 @@ test_that("emmeans gives values close to what is expected", {
   expected_df <- data.frame(
     ARMCD = factor(rep(c("PBO", "TRT"), 4)),
     AVISIT = factor(rep(paste0("VIS", 1:4), each = 2)),
-    emmean = c(33.3318, 37.1063, 38.1715, 41.9037, 43.6740, 46.7546, 48.3855, 52.7841),
+    emmean = c(
+      33.3318,
+      37.1063,
+      38.1715,
+      41.9037,
+      43.6740,
+      46.7546,
+      48.3855,
+      52.7841
+    ),
     SE = c(0.7554, 0.7626, 0.6117, 0.6023, 0.4617, 0.5086, 1.1886, 1.1877),
     df = c(148, 143, 147, 144, 130, 130, 134, 133)
   )
@@ -182,12 +209,26 @@ test_that("emmeans works as expected also for weighted model", {
   fit <- mmrm(formula, fev_data, weights = fev_data$WEIGHT)
   result <- expect_silent(emmeans::emmeans(fit, ~ ARMCD | AVISIT))
   expect_class(result, "emmGrid")
-  result_emmeans_df <- as.data.frame(result)[, c("ARMCD", "AVISIT", "emmean", "SE")]
+  result_emmeans_df <- as.data.frame(result)[, c(
+    "ARMCD",
+    "AVISIT",
+    "emmean",
+    "SE"
+  )]
 
   # See design/SAS/sas_weighted.txt for the source of numbers.
   expected_emmeans_df <- data.frame(
     ARMCD = factor(c("PBO", "TRT", "PBO", "TRT", "PBO", "TRT", "PBO", "TRT")),
-    AVISIT = factor(c("VIS1", "VIS1", "VIS2", "VIS2", "VIS3", "VIS3", "VIS4", "VIS4")),
+    AVISIT = factor(c(
+      "VIS1",
+      "VIS1",
+      "VIS2",
+      "VIS2",
+      "VIS3",
+      "VIS3",
+      "VIS4",
+      "VIS4"
+    )),
     emmean = c(33.37, 36.77, 38.24, 41.66, 43.42, 46.82, 48.17, 52.43),
     SE = c(0.772, 0.776, 0.617, 0.585, 0.468, 0.543, 1.163, 1.226)
   )
@@ -202,13 +243,18 @@ test_that("emmeans gives d.f. close to what is expected for weighted model", {
   fit <- mmrm(formula, fev_data, weights = fev_data$WEIGHT)
   result <- expect_silent(emmeans::emmeans(fit, pairwise ~ ARMCD * AVISIT))
   expect_class(result, "emm_list")
-  result_emmeans_df <- as.data.frame(result$emmeans)[, c("ARMCD", "AVISIT", "df")]
+  result_emmeans_df <- as.data.frame(result$emmeans)[, c(
+    "ARMCD",
+    "AVISIT",
+    "df"
+  )]
   result_contrasts_df <- as.data.frame(result$contrasts)[, c("contrast", "df")]
 
   # See design/SAS/R_weighted_nlme.txt for the source of numbers.
   expected_emmeans_df <- data.frame(
     ARMCD = factor(c("PBO", "TRT", "PBO", "TRT", "PBO", "TRT", "PBO", "TRT")),
-    AVISIT = factor(c("VIS4", "VIS4", "VIS1", "VIS1", "VIS2", "VIS2", "VIS3", "VIS3"),
+    AVISIT = factor(
+      c("VIS4", "VIS4", "VIS1", "VIS1", "VIS2", "VIS2", "VIS3", "VIS3"),
       levels = c("VIS4", "VIS1", "VIS2", "VIS3")
     ),
     df = c(134, 132, 147, 142, 144, 143, 128, 128)
@@ -217,20 +263,64 @@ test_that("emmeans gives d.f. close to what is expected for weighted model", {
 
   expected_contrasts_df <- data.frame(
     contrast = c(
-      "PBO VIS4 - TRT VIS4", "PBO VIS4 - PBO VIS1", "PBO VIS4 - TRT VIS1",
-      "PBO VIS4 - PBO VIS2", "PBO VIS4 - TRT VIS2", "PBO VIS4 - PBO VIS3",
-      "PBO VIS4 - TRT VIS3", "TRT VIS4 - PBO VIS1", "TRT VIS4 - TRT VIS1",
-      "TRT VIS4 - PBO VIS2", "TRT VIS4 - TRT VIS2", "TRT VIS4 - PBO VIS3",
-      "TRT VIS4 - TRT VIS3", "PBO VIS1 - TRT VIS1", "PBO VIS1 - PBO VIS2",
-      "PBO VIS1 - TRT VIS2", "PBO VIS1 - PBO VIS3", "PBO VIS1 - TRT VIS3",
-      "TRT VIS1 - PBO VIS2", "TRT VIS1 - TRT VIS2", "TRT VIS1 - PBO VIS3",
-      "TRT VIS1 - TRT VIS3", "PBO VIS2 - TRT VIS2", "PBO VIS2 - PBO VIS3",
-      "PBO VIS2 - TRT VIS3", "TRT VIS2 - PBO VIS3", "TRT VIS2 - TRT VIS3",
+      "PBO VIS4 - TRT VIS4",
+      "PBO VIS4 - PBO VIS1",
+      "PBO VIS4 - TRT VIS1",
+      "PBO VIS4 - PBO VIS2",
+      "PBO VIS4 - TRT VIS2",
+      "PBO VIS4 - PBO VIS3",
+      "PBO VIS4 - TRT VIS3",
+      "TRT VIS4 - PBO VIS1",
+      "TRT VIS4 - TRT VIS1",
+      "TRT VIS4 - PBO VIS2",
+      "TRT VIS4 - TRT VIS2",
+      "TRT VIS4 - PBO VIS3",
+      "TRT VIS4 - TRT VIS3",
+      "PBO VIS1 - TRT VIS1",
+      "PBO VIS1 - PBO VIS2",
+      "PBO VIS1 - TRT VIS2",
+      "PBO VIS1 - PBO VIS3",
+      "PBO VIS1 - TRT VIS3",
+      "TRT VIS1 - PBO VIS2",
+      "TRT VIS1 - TRT VIS2",
+      "TRT VIS1 - PBO VIS3",
+      "TRT VIS1 - TRT VIS3",
+      "PBO VIS2 - TRT VIS2",
+      "PBO VIS2 - PBO VIS3",
+      "PBO VIS2 - TRT VIS3",
+      "TRT VIS2 - PBO VIS3",
+      "TRT VIS2 - TRT VIS3",
       "PBO VIS3 - TRT VIS3"
     ),
     df = c(
-      133, 148, 231, 158, 198, 157, 190, 223, 122, 196, 147, 170, 161, 142,
-      151, 257, 157, 251, 258, 135, 225, 168, 144, 160, 270, 264, 159, 129
+      133,
+      148,
+      231,
+      158,
+      198,
+      157,
+      190,
+      223,
+      122,
+      196,
+      147,
+      170,
+      161,
+      142,
+      151,
+      257,
+      157,
+      251,
+      258,
+      135,
+      225,
+      168,
+      144,
+      160,
+      270,
+      264,
+      159,
+      129
     )
   )
   expect_equal(result_contrasts_df, expected_contrasts_df, tolerance = 1e-2)

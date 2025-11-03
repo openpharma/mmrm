@@ -58,7 +58,13 @@ h_coef_table <- function(object) {
     colnames(coef_table),
     identical.to = c("est", "se", "df", "t_stat", "p_val")
   )
-  colnames(coef_table) <- c("Estimate", "Std. Error", "df", "t value", "Pr(>|t|)")
+  colnames(coef_table) <- c(
+    "Estimate",
+    "Std. Error",
+    "df",
+    "t value",
+    "Pr(>|t|)"
+  )
 
   coef_aliased <- component(object, "beta_aliased")
   if (any(coef_aliased)) {
@@ -89,11 +95,20 @@ summary.mmrm <- function(object, ...) {
   )
   coefficients <- h_coef_table(object)
   call <- stats::getCall(object)
-  components <- component(object, c(
-    "cov_type", "reml", "n_groups", "n_theta",
-    "n_subjects", "n_timepoints", "n_obs",
-    "beta_vcov", "varcor"
-  ))
+  components <- component(
+    object,
+    c(
+      "cov_type",
+      "reml",
+      "n_groups",
+      "n_theta",
+      "n_subjects",
+      "n_timepoints",
+      "n_obs",
+      "beta_vcov",
+      "varcor"
+    )
+  )
   components$method <- object$method
   components$vcov <- object$vcov
   structure(
@@ -129,8 +144,15 @@ h_print_call <- function(call, n_obs, n_subjects, n_timepoints) {
   }
   if (!is.null(call$data)) {
     cat(
-      "Data:       ", deparse(call$data), "(used", n_obs, "observations from",
-      n_subjects, "subjects with maximum", n_timepoints, "timepoints)",
+      "Data:       ",
+      deparse(call$data),
+      "(used",
+      n_obs,
+      "observations from",
+      n_subjects,
+      "subjects with maximum",
+      n_timepoints,
+      "timepoints)",
       fill = TRUE
     )
   }
@@ -152,7 +174,8 @@ h_print_cov <- function(cov_type, n_theta, n_groups) {
   assert_string(cov_type)
   assert_count(n_theta, positive = TRUE)
   assert_count(n_groups, positive = TRUE)
-  cov_definition <- switch(cov_type,
+  cov_definition <- switch(
+    cov_type,
     us = "unstructured",
     toep = "Toeplitz",
     toeph = "heterogeneous Toeplitz",
@@ -182,8 +205,7 @@ h_print_cov <- function(cov_type, n_theta, n_groups) {
 #' @param digits (`number`)\cr number of decimal places used with [round()].
 #'
 #' @keywords internal
-h_print_aic_list <- function(aic_list,
-                             digits = 1) {
+h_print_aic_list <- function(aic_list, digits = 1) {
   diag_vals <- round(unlist(aic_list), digits)
   diag_vals <- format(diag_vals)
   print(diag_vals, quote = FALSE)
@@ -192,10 +214,12 @@ h_print_aic_list <- function(aic_list,
 #' @describeIn mmrm_methods prints the MMRM fit summary.
 #' @exportS3Method
 #' @keywords internal
-print.summary.mmrm <- function(x,
-                               digits = max(3, getOption("digits") - 3),
-                               signif.stars = getOption("show.signif.stars"), # nolint
-                               ...) {
+print.summary.mmrm <- function(
+  x,
+  digits = max(3, getOption("digits") - 3),
+  signif.stars = getOption("show.signif.stars"), # nolint
+  ...
+) {
   cat("mmrm fit\n\n")
   h_print_call(x$call, x$n_obs, x$n_subjects, x$n_timepoints)
   h_print_cov(x$cov_type, x$n_theta, x$n_groups)
@@ -209,7 +233,12 @@ print.summary.mmrm <- function(x,
   cat("\n")
   cat("Coefficients: ")
   if (x$n_singular_coefs > 0) {
-    cat("(", x$n_singular_coefs, " not defined because of singularities)", sep = "")
+    cat(
+      "(",
+      x$n_singular_coefs,
+      " not defined because of singularities)",
+      sep = ""
+    )
   }
   cat("\n")
   stats::printCoefmat(
@@ -248,10 +277,15 @@ confint.mmrm <- function(object, parm, level = 0.95, ...) {
     check_subset(parm, pnames),
     check_integerish(parm, lower = 1L, upper = length(cf))
   )
-  if (is.numeric(parm)) parm <- pnames[parm]
+  if (is.numeric(parm)) {
+    parm <- pnames[parm]
+  }
   assert_number(level, lower = 0, upper = 1)
   a <- (1 - level) / 2
-  pct <- paste(format(100 * c(a, 1 - a), trim = TRUE, scientific = FALSE, digits = 3), "%")
+  pct <- paste(
+    format(100 * c(a, 1 - a), trim = TRUE, scientific = FALSE, digits = 3),
+    "%"
+  )
   coef_table <- h_coef_table(object)
   df <- coef_table[parm, "df"]
   ses <- coef_table[parm, "Std. Error"]
@@ -261,7 +295,6 @@ confint.mmrm <- function(object, parm, level = 0.95, ...) {
   ci[] <- cf[parm] + c(sefac, -sefac)
   ci
 }
-
 
 
 #' Analysis of Variance for `mmrm` Fits
@@ -443,16 +476,13 @@ confint.mmrm <- function(object, parm, level = 0.95, ...) {
 #' # If a model was created with a different data set, refit = TRUE is needed.
 #' anova(fit_sex_ar1, fit_sex_race_toeph_sub, fit_interaction_us, refit = TRUE)
 anova.mmrm <- function(object, ..., test = TRUE, refit = FALSE) {
-
   assert_class(object, "mmrm")
 
   fits <- list(object, ...)
 
   if (length(fits) == 1L) {
     out <- h_anova_single_mmrm_model(object)
-
   } else {
-
     # Ensure all objects in ... are mmrm fits.
     lapply(fits[-1L], assert_class, classes = "mmrm", .var.name = "...")
 
@@ -498,7 +528,6 @@ anova.mmrm <- function(object, ..., test = TRUE, refit = FALSE) {
       )
 
     if (test) {
-
       h_assert_lrt_suitability(fits, refit, dfs = out$df, is_reml = out$REML)
 
       model_indices_except_last <- out$Model[-length(fits)]
@@ -508,7 +537,8 @@ anova.mmrm <- function(object, ..., test = TRUE, refit = FALSE) {
       # first element to be NA because a pair of models is the previous row's
       # model plus the current row's model.
       out$test <-
-        c(NA_character_,
+        c(
+          NA_character_,
           paste(model_indices_except_last, "vs", model_indices_except_first)
         )
 
@@ -524,7 +554,6 @@ anova.mmrm <- function(object, ..., test = TRUE, refit = FALSE) {
 
     fit_calls <- lapply(fits, component, "call")
     out$call <- vapply(fit_calls, deparse1, FUN.VALUE = character(1L))
-
   }
 
   class(out) <- union("anova.mmrm", class(out))

@@ -35,7 +35,10 @@ sascode_reml <- list(
     RUN;
       "
 )
-result_reml <- r2stream::bee_sas(data = list("dat" = data), sascode = sascode_reml)
+result_reml <- r2stream::bee_sas(
+  data = list("dat" = data),
+  sascode = sascode_reml
+)
 result_reml$test$sas_log
 writeLines(result_reml$test$sas_out, con = "sas_log_reml.txt")
 

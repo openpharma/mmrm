@@ -35,8 +35,14 @@ test_that("parsnip works with the covariance structure in the formula in `fit()`
 
   result <- expect_silent(
     parsnip::linear_reg() |>
-      parsnip::set_engine("mmrm", control = mmrm_control(method = "Satterthwaite")) |>
-      parsnip::fit(FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID), fev_data)
+      parsnip::set_engine(
+        "mmrm",
+        control = mmrm_control(method = "Satterthwaite")
+      ) |>
+      parsnip::fit(
+        FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
+        fev_data
+      )
   )
   expect_s3_class(result, "model_fit")
 })
@@ -47,7 +53,10 @@ test_that("parsnip works with predict", {
   skip_if_not_installed("parsnip", minimum_version = "1.1.0")
 
   model <- parsnip::linear_reg() |>
-    parsnip::set_engine("mmrm", control = mmrm_control(method = "Satterthwaite")) |>
+    parsnip::set_engine(
+      "mmrm",
+      control = mmrm_control(method = "Satterthwaite")
+    ) |>
     parsnip::fit(FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID), fev_data)
   result <- expect_silent(predict(model, new_data = fev_data))
   expect_tibble(result)
@@ -58,7 +67,10 @@ test_that("parsnip allows to pass additional arguments to predict with type `raw
   skip_if_not_installed("parsnip", minimum_version = "1.1.0")
 
   model <- parsnip::linear_reg() |>
-    parsnip::set_engine("mmrm", control = mmrm_control(method = "Satterthwaite")) |>
+    parsnip::set_engine(
+      "mmrm",
+      control = mmrm_control(method = "Satterthwaite")
+    ) |>
     parsnip::fit(FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID), fev_data)
   result <- expect_silent(predict(
     model,
@@ -81,7 +93,10 @@ test_that("parsnip works with augment and using `new_data`", {
   skip_if_not_installed("parsnip", minimum_version = "1.1.0")
 
   model <- parsnip::linear_reg() |>
-    parsnip::set_engine("mmrm", control = mmrm_control(method = "Satterthwaite")) |>
+    parsnip::set_engine(
+      "mmrm",
+      control = mmrm_control(method = "Satterthwaite")
+    ) |>
     parsnip::fit(FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID), fev_data)
   result <- expect_silent(augment(model, new_data = fev_data))
   expect_tibble(result)

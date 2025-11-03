@@ -34,8 +34,21 @@ test_that("summary works as expected", {
   expect_named(
     result,
     c(
-      "cov_type", "reml", "n_groups", "n_theta", "n_subjects", "n_timepoints", "n_obs",
-      "beta_vcov", "varcor", "method", "vcov", "coefficients", "n_singular_coefs", "aic_list", "call"
+      "cov_type",
+      "reml",
+      "n_groups",
+      "n_theta",
+      "n_subjects",
+      "n_timepoints",
+      "n_obs",
+      "beta_vcov",
+      "varcor",
+      "method",
+      "vcov",
+      "coefficients",
+      "n_singular_coefs",
+      "aic_list",
+      "call"
     )
   )
 })
@@ -65,7 +78,12 @@ test_that("h_print_cov works as expected", {
 test_that("h_print_aic_list works as expected", {
   expect_snapshot_output(
     h_print_aic_list(
-      list(AIC = 234.234235, BIC = 234.23, logLik = -252.234234, deviance = 345235.2323)
+      list(
+        AIC = 234.234235,
+        BIC = 234.23,
+        logLik = -252.234234,
+        deviance = 345235.2323
+      )
     ),
     cran = FALSE
   )
@@ -143,40 +161,60 @@ test_that("confint give same result as emmeans if no interaction term", {
 
 test_that("confint give same result as SAS on unstructured", {
   # SAS result file is "design/SAS/sas_coef_ci_ml_un.txt"
-  object <- mmrm(FEV1 ~ ARMCD + SEX + us(AVISIT | USUBJID), data = fev_data, reml = FALSE)
+  object <- mmrm(
+    FEV1 ~ ARMCD + SEX + us(AVISIT | USUBJID),
+    data = fev_data,
+    reml = FALSE
+  )
   conf_coef <- confint(object)
   cis <- matrix(
     c(40.0071, 42.1609, 2.5714, 5.0838, -1.3968, 1.1204),
-    ncol = 2, byrow = TRUE
+    ncol = 2,
+    byrow = TRUE
   )
   expect_equal(conf_coef, cis, ignore_attr = TRUE, tolerance = 1e-4)
 
   # SAS result file is "design/SAS/sas_coef_ci_reml_un.txt"
-  object <- mmrm(FEV1 ~ ARMCD + SEX + us(AVISIT | USUBJID), data = fev_data, reml = TRUE)
+  object <- mmrm(
+    FEV1 ~ ARMCD + SEX + us(AVISIT | USUBJID),
+    data = fev_data,
+    reml = TRUE
+  )
   conf_coef <- confint(object)
   cis <- matrix(
     c(39.9890, 42.1634, 2.5584, 5.0945, -1.4108, 1.1301),
-    ncol = 2, byrow = TRUE
+    ncol = 2,
+    byrow = TRUE
   )
   expect_equal(conf_coef, cis, ignore_attr = TRUE, tolerance = 1e-4)
 })
 
 test_that("confint give same result as SAS on ar1", {
   # SAS result file is "design/SAS/sas_coef_ci_ml_ar1.txt"
-  object <- mmrm(FEV1 ~ ARMCD + SEX + ar1(AVISIT | USUBJID), data = fev_data, reml = FALSE)
+  object <- mmrm(
+    FEV1 ~ ARMCD + SEX + ar1(AVISIT | USUBJID),
+    data = fev_data,
+    reml = FALSE
+  )
   conf_coef <- confint(object)
   cis <- matrix(
     c(38.5271, 41.8057, 2.3353, 6.1039, -1.6559, 2.1193),
-    ncol = 2, byrow = TRUE
+    ncol = 2,
+    byrow = TRUE
   )
   expect_equal(conf_coef, cis, ignore_attr = TRUE, tolerance = 1e-4)
 
   # SAS result file is "design/SAS/sas_coef_ci_reml_ar1.txt"
-  object <- mmrm(FEV1 ~ ARMCD + SEX + ar1(AVISIT | USUBJID), data = fev_data, reml = TRUE)
+  object <- mmrm(
+    FEV1 ~ ARMCD + SEX + ar1(AVISIT | USUBJID),
+    data = fev_data,
+    reml = TRUE
+  )
   conf_coef <- confint(object)
   cis <- matrix(
     c(38.5119, 41.8167, 2.3216, 6.1206, -1.6664, 2.1392),
-    ncol = 2, byrow = TRUE
+    ncol = 2,
+    byrow = TRUE
   )
   expect_equal(conf_coef, cis, ignore_attr = TRUE, tolerance = 1e-4)
 })
@@ -188,9 +226,15 @@ test_that("h_dataset_sort_all() sorts in column order", {
       am = c(0, 0, 0, 1, 1, 1, 1),
       vs = c(0, 1, 1, 0, 0, 0, 1),
       cyl = c(8, 4, 6, 4, 6, 8, 4),
-      row.names =
-        c("Hornet Sportabout", "Merc 240D", "Hornet 4 Drive", "Porsche 914-2",
-          "Mazda RX4", "Ford Pantera L", "Datsun 710")
+      row.names = c(
+        "Hornet Sportabout",
+        "Merc 240D",
+        "Hornet 4 Drive",
+        "Porsche 914-2",
+        "Mazda RX4",
+        "Ford Pantera L",
+        "Datsun 710"
+      )
     )
   )
 })
@@ -202,28 +246,38 @@ test_that("h_check_columns_nested() correctly compares dfs", {
   # FALSE because first dataset has more columns than second dataset:
   expect_false(h_check_columns_nested(transform(mtcars, a = 1), mtcars))
   # FALSE because the first observation is different in each dataset:
-  expect_false(h_check_columns_nested(transform(mtcars, vs = c(7, vs[-1])),
-                                      mtcars))
+  expect_false(h_check_columns_nested(
+    transform(mtcars, vs = c(7, vs[-1])),
+    mtcars
+  ))
 })
 
 test_that("h_check_fits_all_data_same() correctly compares dfs", {
-  expect_true(h_check_fits_all_data_same(list(get_mmrm_group(),
-                                              get_mmrm(),
-                                              get_mmrm_rank_deficient())))
+  expect_true(h_check_fits_all_data_same(list(
+    get_mmrm_group(),
+    get_mmrm(),
+    get_mmrm_rank_deficient()
+  )))
   # FALSE because get_mmrm_smaller_data() has a dataset with fewer rows:
-  expect_false(h_check_fits_all_data_same(list(get_mmrm_group(),
-                                               get_mmrm(),
-                                               get_mmrm_smaller_data(),
-                                               get_mmrm_rank_deficient())))
+  expect_false(h_check_fits_all_data_same(list(
+    get_mmrm_group(),
+    get_mmrm(),
+    get_mmrm_smaller_data(),
+    get_mmrm_rank_deficient()
+  )))
   # FALSE because get_mmrm() uses more columns than get_mmrm_group():
-  expect_false(h_check_fits_all_data_same(list(get_mmrm(),
-                                               get_mmrm_group(),
-                                               get_mmrm_rank_deficient())))
+  expect_false(h_check_fits_all_data_same(list(
+    get_mmrm(),
+    get_mmrm_group(),
+    get_mmrm_rank_deficient()
+  )))
   # FALSE because get_mmrm() and get_mmrm_alt_data() have different observations
-  expect_false(h_check_fits_all_data_same(list(get_mmrm_group(),
-                                               get_mmrm(),
-                                               get_mmrm_alt_data(),
-                                               get_mmrm_rank_deficient())))
+  expect_false(h_check_fits_all_data_same(list(
+    get_mmrm_group(),
+    get_mmrm(),
+    get_mmrm_alt_data(),
+    get_mmrm_rank_deficient()
+  )))
 })
 
 test_that("h_fits_common_data() grabs common observations among datasets", {
@@ -264,100 +318,146 @@ test_that("h_get_minimal_fit_data() grabs only colums used in model fitting", {
 
 test_that("h_check_covar_nesting() ensures models have nested covariates", {
   expect_equal(
-    h_check_covar_nesting(get_mmrm()[["formula_parts"]],
-                          get_mmrm_rank_deficient()[["formula_parts"]]),
+    h_check_covar_nesting(
+      get_mmrm()[["formula_parts"]],
+      get_mmrm_rank_deficient()[["formula_parts"]]
+    ),
     "nested"
   )
   # This also tests whether the function can recognize the same interaction term
   # whose components are specified in a different order (e.g, a:b = b:a)
   expect_equal(
-    h_check_covar_nesting(get_mmrm()[["formula_parts"]],
-                          get_mmrm_cs()[["formula_parts"]]),
+    h_check_covar_nesting(
+      get_mmrm()[["formula_parts"]],
+      get_mmrm_cs()[["formula_parts"]]
+    ),
     "identical"
   )
   # First model's covariates aren't nested within the second model's
   expect_error(
-    h_check_covar_nesting(get_mmrm_trans()[["formula_parts"]],
-                          get_mmrm_tmb_rank_deficient()[["formula_parts"]]),
+    h_check_covar_nesting(
+      get_mmrm_trans()[["formula_parts"]],
+      get_mmrm_tmb_rank_deficient()[["formula_parts"]]
+    ),
     regexp = "covariates.+subset"
   )
   # First model's interaction terms aren't nested within the second model's
   expect_error(
-    h_check_covar_nesting(get_mmrm()[["formula_parts"]],
-                          get_mmrm_interactions()[["formula_parts"]]),
+    h_check_covar_nesting(
+      get_mmrm()[["formula_parts"]],
+      get_mmrm_interactions()[["formula_parts"]]
+    ),
     regexp = "interaction.+subset"
   )
 })
 
 test_that("h_check_cov_struct_nesting() ensures models have nested covariance structures", {
   expect_equal(
-    h_check_cov_struct_nesting(get_mmrm_trans()[["formula_parts"]],
-                               get_mmrm_tmb()[["formula_parts"]]),
+    h_check_cov_struct_nesting(
+      get_mmrm_trans()[["formula_parts"]],
+      get_mmrm_tmb()[["formula_parts"]]
+    ),
     "nested"
   )
   expect_equal(
-    h_check_cov_struct_nesting(get_mmrm_transformed()[["formula_parts"]],
-                               get_mmrm_trans()[["formula_parts"]]),
+    h_check_cov_struct_nesting(
+      get_mmrm_transformed()[["formula_parts"]],
+      get_mmrm_trans()[["formula_parts"]]
+    ),
     "identical"
   )
   # Second model is nested within the first rather than the other way around
   expect_error(
-    h_check_cov_struct_nesting(get_mmrm_tmb()[["formula_parts"]],
-                               get_mmrm_trans()[["formula_parts"]]),
+    h_check_cov_struct_nesting(
+      get_mmrm_tmb()[["formula_parts"]],
+      get_mmrm_trans()[["formula_parts"]]
+    ),
     regexp = "special case of the next model"
   )
 })
 
 test_that("h_assert_nested_models() ensures nested models", {
   # Different visit variable
-  expect_error(h_assert_nested_models(get_mmrm_group(),
-                                      get_mmrm_alt_visit(),
-                                      any_reml = TRUE),
-               regexp = "visit variable")
+  expect_error(
+    h_assert_nested_models(
+      get_mmrm_group(),
+      get_mmrm_alt_visit(),
+      any_reml = TRUE
+    ),
+    regexp = "visit variable"
+  )
   # Different subject
-  expect_error(h_assert_nested_models(get_mmrm_group(),
-                                      get_mmrm_alt_subj(),
-                                      any_reml = TRUE),
-               regexp = "subject variable")
+  expect_error(
+    h_assert_nested_models(
+      get_mmrm_group(),
+      get_mmrm_alt_subj(),
+      any_reml = TRUE
+    ),
+    regexp = "subject variable"
+  )
   # Different grouping variable
-  expect_error(h_assert_nested_models(get_mmrm_group(),
-                                      get_mmrm_alt_group(),
-                                      any_reml = TRUE),
-               regexp = "grouping variable")
+  expect_error(
+    h_assert_nested_models(
+      get_mmrm_group(),
+      get_mmrm_alt_group(),
+      any_reml = TRUE
+    ),
+    regexp = "grouping variable"
+  )
   # Nested variables but REML
-  expect_error(h_assert_nested_models(get_mmrm(),
-                                      get_mmrm_rank_deficient(),
-                                      any_reml = TRUE),
-               regexp = "REML.+covariates.+same")
+  expect_error(
+    h_assert_nested_models(
+      get_mmrm(),
+      get_mmrm_rank_deficient(),
+      any_reml = TRUE
+    ),
+    regexp = "REML.+covariates.+same"
+  )
   # Identical model warning
-  expect_warning(h_assert_nested_models(get_mmrm(),
-                                        get_mmrm(),
-                                        any_reml = FALSE),
-                 regexp = "identical")
-  expect_true(h_assert_nested_models(get_mmrm_kr(),
-                                     get_mmrm(),
-                                     any_reml = FALSE))
+  expect_warning(
+    h_assert_nested_models(get_mmrm(), get_mmrm(), any_reml = FALSE),
+    regexp = "identical"
+  )
+  expect_true(h_assert_nested_models(
+    get_mmrm_kr(),
+    get_mmrm(),
+    any_reml = FALSE
+  ))
 })
 
 test_that("h_assert_lrt_suitability() ensures suitability for LRT testing", {
   # non-increasing degrees of freedom
-  expect_error(h_assert_lrt_suitability(list(get_mmrm_cs(), get_mmrm_smaller_data()),
-                                        refit = FALSE,
-                                        dfs = c(3, 3),
-                                        is_reml = c(TRUE, TRUE)),
-               regexp = "degrees of freedom")
+  expect_error(
+    h_assert_lrt_suitability(
+      list(get_mmrm_cs(), get_mmrm_smaller_data()),
+      refit = FALSE,
+      dfs = c(3, 3),
+      is_reml = c(TRUE, TRUE)
+    ),
+    regexp = "degrees of freedom"
+  )
   # refit = FALSE and they don't use the same data
-  expect_error(h_assert_lrt_suitability(list(get_mmrm_cs(), get_mmrm_smaller_data()),
-                                        refit = FALSE,
-                                        dfs = c(attr(logLik(get_mmrm_cs()), "df"),
-                                                attr(logLik(get_mmrm_smaller_data()), "df")),
-                                        is_reml = c(component(get_mmrm_cs(), "reml"),
-                                                    component(get_mmrm_smaller_data(), "reml"))),
-               regexp = "same data")
-  expect_true(h_assert_lrt_suitability(list(get_mmrm_cs(), get_mmrm()),
-                                       refit = FALSE,
-                                       dfs = c(attr(logLik(get_mmrm_cs()), "df"), attr(logLik(get_mmrm()), "df")),
-                                       is_reml = c(component(get_mmrm_cs(), "reml"), component(get_mmrm(), "reml"))))
+  expect_error(
+    h_assert_lrt_suitability(
+      list(get_mmrm_cs(), get_mmrm_smaller_data()),
+      refit = FALSE,
+      dfs = c(
+        attr(logLik(get_mmrm_cs()), "df"),
+        attr(logLik(get_mmrm_smaller_data()), "df")
+      ),
+      is_reml = c(
+        component(get_mmrm_cs(), "reml"),
+        component(get_mmrm_smaller_data(), "reml")
+      )
+    ),
+    regexp = "same data"
+  )
+  expect_true(h_assert_lrt_suitability(
+    list(get_mmrm_cs(), get_mmrm()),
+    refit = FALSE,
+    dfs = c(attr(logLik(get_mmrm_cs()), "df"), attr(logLik(get_mmrm()), "df")),
+    is_reml = c(component(get_mmrm_cs(), "reml"), component(get_mmrm(), "reml"))
+  ))
 })
 
 test_that("h_generate_new_name() generates a string without a binding in env", {
@@ -419,10 +519,15 @@ test_that("anova.mmrm() works for a single model", {
 })
 
 
-
 test_that("anova.mmrm() works for multiple models -- no refitting", {
-  call_cs <- quote(mmrm(formula = FEV1 ~ RACE + SEX + AVISIT * ARMCD + cs(AVISIT | USUBJID), data = fev_data))
-  call_us <- quote(mmrm(formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID), data = fev_data))
+  call_cs <- quote(mmrm(
+    formula = FEV1 ~ RACE + SEX + AVISIT * ARMCD + cs(AVISIT | USUBJID),
+    data = fev_data
+  ))
+  call_us <- quote(mmrm(
+    formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+    data = fev_data
+  ))
   expect_equal(
     anova(get_mmrm_cs(), get_mmrm()),
     structure(
@@ -448,11 +553,15 @@ test_that("anova.mmrm() works for multiple models -- no refitting", {
 })
 
 
-
-
 test_that("anova.mmrm() works for multiple models -- with refitting", {
-  call_cs <- quote(mmrm(formula = FEV1 ~ RACE + SEX + AVISIT * ARMCD + cs(AVISIT | USUBJID), data = data.1))
-  call_us <- quote(mmrm(formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID), data = .smaller_fev_data))
+  call_cs <- quote(mmrm(
+    formula = FEV1 ~ RACE + SEX + AVISIT * ARMCD + cs(AVISIT | USUBJID),
+    data = data.1
+  ))
+  call_us <- quote(mmrm(
+    formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+    data = .smaller_fev_data
+  ))
   expect_equal(
     anova(get_mmrm_cs(), get_mmrm_smaller_data(), refit = TRUE),
     structure(

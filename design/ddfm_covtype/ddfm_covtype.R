@@ -3,13 +3,17 @@ library(mmrm)
 df2sd(fev_data, "fev")
 
 sas_code <- function(ddfm, covtype) {
-  sprintf("ods output diffs = diff;
+  sprintf(
+    "ods output diffs = diff;
     PROC MIXED DATA = fev cl method=reml;
       CLASS RACE(ref = 'Asian') AVISIT(ref = 'VIS4') SEX(ref = 'Male') ARMCD(ref = 'PBO') USUBJID;
       MODEL FEV1 = ARMCD / ddfm=%s solution chisq;
       REPEATED AVISIT / subject=USUBJID type=%s r rcorr;
       LSMEANS ARMCD / pdiff=all cl alpha=0.05 slice=AVISIT;
-    RUN;", ddfm, covtype)
+    RUN;",
+    ddfm,
+    covtype
+  )
 }
 
 

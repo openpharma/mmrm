@@ -2,7 +2,11 @@ library(googledrive)
 library(dplyr)
 drive_auth()
 
-args <- R.utils::commandArgs(trailingOnly = TRUE, asValues = TRUE, excludeReserved = TRUE)
+args <- R.utils::commandArgs(
+  trailingOnly = TRUE,
+  asValues = TRUE,
+  excludeReserved = TRUE
+)
 
 outname <- args$output
 input_folder <- args$input
