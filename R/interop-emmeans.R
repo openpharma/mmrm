@@ -26,8 +26,9 @@ NULL
 #' @seealso See [emmeans::recover_data()] for background.
 #' @keywords internal
 #' @noRd
+# nolint start
 recover_data.mmrm <- function(object, ...) {
-  # nolint
+  # nolint end
   fun_call <- stats::getCall(object)
   # subject_var is excluded because it should not contain fixed effect.
   # visit_var is not excluded because emmeans can provide marginal mean
@@ -55,8 +56,10 @@ recover_data.mmrm <- function(object, ...) {
 #' @seealso See [emmeans::emm_basis()] for background.
 #' @keywords internal
 #' @noRd
+# nolint start
 emm_basis.mmrm <- function(
-  object, # nolint
+  # nolint end
+  object,
   trms,
   xlev,
   grid,

@@ -409,7 +409,7 @@ get_convergence_rates_sas <- function(missingness_level) {
         method = "PROC GLIMMIX",
         converged = sas_converged
       )
-      return(results)
+      results
     }
   ) %>%
     group_by(method) %>%
@@ -741,7 +741,7 @@ get_convergence_rates <- function(missingness_level) {
         )
       )
 
-      return(results)
+      results
     }
   ) %>%
     group_by(method) %>%

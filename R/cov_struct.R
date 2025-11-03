@@ -26,8 +26,9 @@
 #' }
 #'
 #' @keywords internal
+# nolint start
 COV_TYPES <- local({
-  # nolint
+  # nolint end
   type <- function(name, abbr, habbr, heterogeneous, spatial) {
     args <- as.list(match.call()[-1])
     do.call(data.frame, args)
