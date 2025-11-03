@@ -11,7 +11,7 @@ h_type2_contrast(object, effect, tol = sqrt(.Machine$double.eps))
 
 \item{effect}{(\code{string}) the name of the effect.}
 
-\item{tol}{(\code{numeric}) threshold blow which values are treated as 0.}
+\item{tol}{(\code{numeric}) threshold below which values are treated as 0.}
 }
 \value{
 A \code{matrix} of the contrast.

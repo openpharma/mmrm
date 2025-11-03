@@ -9,7 +9,7 @@ h_type3_contrasts(object, tol = sqrt(.Machine$double.eps))
 \arguments{
 \item{object}{(\code{mmrm})\cr the fitted MMRM.}
 
-\item{tol}{(\code{numeric}) threshold blow which values are treated as 0.}
+\item{tol}{(\code{numeric}) threshold below which values are treated as 0.}
 }
 \value{
 A \code{list} of contrast matrices, one per effect.

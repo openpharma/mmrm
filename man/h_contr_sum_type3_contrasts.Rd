@@ -7,7 +7,7 @@
 h_contr_sum_type3_contrasts(object)
 }
 \arguments{
-\item{mod}{(\code{mmrm})\cr the fitted MMRM.}
+\item{object}{(\code{mmrm})\cr the fitted MMRM.}
 }
 \value{
 A \code{list} of contrast matrices, which are just row-wise term subsets of

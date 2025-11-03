@@ -4,7 +4,7 @@
 \alias{Anova.mmrm}
 \title{Conduct type II/III hypothesis testing on the MMRM fit results.}
 \usage{
-Anova.mmrm(
+\method{Anova}{mmrm}(
   mod,
   type = c("II", "III", "2", "3"),
   tol = sqrt(.Machine$double.eps),
@@ -18,7 +18,7 @@ Anova.mmrm(
 \item{type}{(\code{string})\cr either \code{"II"}, \code{"III"}, \code{"2"}, or \code{"3"}, indicating the
 type of test to perform.}
 
-\item{tol}{(\code{numeric}) threshold blow which values are treated as 0.}
+\item{tol}{(\code{numeric}) threshold below which values are treated as 0.}
 
 \item{test.statistic}{(\code{string})\cr either \verb{"F} or \code{"Chisq"}, indicating the
 kind of test to perform.}

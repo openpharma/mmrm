@@ -19,7 +19,7 @@ car_add_mmrm <- function(quietly = FALSE) {
 #'
 #' @param object (`mmrm`)\cr the fitted MMRM.
 #' @param effect (`string`) the name of the effect.
-#' @param tol (`numeric`) threshold blow which values are treated as 0.
+#' @param tol (`numeric`) threshold below which values are treated as 0.
 #'
 #' @return A `matrix` of the contrast.
 #'
@@ -84,7 +84,7 @@ h_type2_contrast <- function(
 #' This is support function to obtain contrast matrices for type III testing.
 #'
 #' @param object (`mmrm`)\cr the fitted MMRM.
-#' @param tol (`numeric`) threshold blow which values are treated as 0.
+#' @param tol (`numeric`) threshold below which values are treated as 0.
 #'
 #' @return A `list` of contrast matrices, one per effect.
 #' @keywords internal
@@ -291,7 +291,7 @@ h_get_index <- function(x, y) {
 
 #' Construct Preliminary Contrast Matrices for Type III Tests Assuming Sum Contrasts
 #'
-#' @param mod (`mmrm`)\cr the fitted MMRM.
+#' @param object (`mmrm`)\cr the fitted MMRM.
 #'
 #' @return A `list` of contrast matrices, which are just row-wise term subsets of
 #'   an overall identity matrix.
