@@ -406,11 +406,18 @@ h_construct_model_frame_inputs <- function(
 #' @describeIn mmrm_tmb_methods obtains the model matrix.
 #' @exportS3Method
 #' @param use_response (`flag`)\cr whether to use the response for complete rows.
+#' @param contrasts.arg (`list`)\cr contrasts to be used.
 #'
 #' @examples
 #' # Model matrix:
 #' model.matrix(object)
-model.matrix.mmrm_tmb <- function(object, data, use_response = TRUE, ...) {
+model.matrix.mmrm_tmb <- function(
+  object,
+  data,
+  use_response = TRUE,
+  contrasts.arg = attr(object$tmb_data$x_matrix, "contrasts"),
+  ...
+) {
   # nolint
   # Always return the utilized model matrix if data not provided.
   if (missing(data)) {
@@ -423,7 +430,7 @@ model.matrix.mmrm_tmb <- function(object, data, use_response = TRUE, ...) {
       drop_response = !use_response
     ),
     data = data,
-    contrasts.arg = attr(object$tmb_data$x_matrix, "contrasts"),
+    contrasts.arg = contrasts.arg,
     xlev = component(object, "xlev"),
     ...
   )
