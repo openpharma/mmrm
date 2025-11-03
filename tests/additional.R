@@ -1,5 +1,6 @@
 # Additional tests for interop-car.R which don't work well with testthat::test_that
 
+library(mmrm)
 library(testthat)
 
 # Type 3 tests are compatible with nlme::gls even if only interaction term exists
