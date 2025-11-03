@@ -45,7 +45,13 @@
   ...
 )
 
-\method{model.matrix}{mmrm_tmb}(object, data, use_response = TRUE, ...)
+\method{model.matrix}{mmrm_tmb}(
+  object,
+  data,
+  use_response = TRUE,
+  contrasts.arg = attr(object$tmb_data$x_matrix, "contrasts"),
+  ...
+)
 
 \method{terms}{mmrm_tmb}(x, include = "response_var", ...)
 
@@ -109,6 +115,8 @@ Must be \code{NULL} or one or more of \code{c("subject_var", "visit_var", "group
 \item{na.action}{(\code{string})\cr na action.}
 
 \item{use_response}{(\code{flag})\cr whether to use the response for complete rows.}
+
+\item{contrasts.arg}{(\code{list})\cr contrasts to be used.}
 
 \item{x}{(\code{mmrm_tmb})\cr same as \code{object}.}
 
