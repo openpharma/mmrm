@@ -1,4 +1,5 @@
 # car loading ----
+
 test_that("car emits a message about mmrm registration on load", {
   # Don't use skip_if_not_installed yet since it runs requireNamespace, which
   # will itself load the package without testing startup.
@@ -36,6 +37,7 @@ test_that("h_first_contain_categorical works as expected", {
 })
 
 # h_obtain_lvls ----
+
 test_that("h_obtain_lvls works as expected", {
   expect_identical(
     h_obtain_lvls(
@@ -73,6 +75,7 @@ test_that("h_get_index works as expected", {
 })
 
 # h_get_contrast ----
+
 test_that("h_get_contrast works as expected", {
   expect_identical(
     h_get_contrast(get_mmrm_trans(), "log(FEV1_BL)", "3"),
@@ -254,6 +257,7 @@ test_that("h_get_contrast works for higher-order interaction", {
 })
 
 # Anova ----
+
 test_that("Anova works as expected", {
   skip_if_not_installed("car")
   expect_snapshot_tolerance(
@@ -402,4 +406,64 @@ test_that("Anova results are compatible with broom::tidy", {
     names(tidy3_chisq),
     identical.to = c("term", "df", "statistic", "p.value")
   )
+})
+
+test_that("Anova Type 3 results are compatible with emmeans::joint_tests", {
+  skip_if_not_installed("car")
+  skip_if_not_installed("emmeans")
+
+  # Uses the data from https://github.com/openpharma/mmrm/issues/502
+  # fmt: skip
+  dane_post_part <- data.frame(
+    PatientId = structure(c(44L, 12L, 58L, 55L, 51L, 
+  5L, 41L, 48L, 20L, 37L, 8L, 27L, 30L, 26L, 33L, 21L, 13L, 33L, 
+  18L, 52L, 39L, 38L, 6L, 58L, 25L, 35L, 1L, 4L, 42L, 46L, 38L, 
+  40L, 1L, 28L, 26L, 9L), levels = c("1", "2", "3", "4", "5", "6", 
+  "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", 
+  "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", 
+  "29", "30", "101", "102", "103", "104", "105", "106", "107", 
+  "108", "109", "110", "111", "112", "113", "114", "115", "116", 
+  "117", "118", "119", "120", "121", "122", "123", "124", "125", 
+  "126", "127", "128", "129", "130"), class = "factor"), Timepoint = structure(c(2L, 
+  1L, 1L, 1L, 1L, 1L, 1L, 2L, 1L, 1L, 2L, 2L, 1L, 2L, 1L, 2L, 1L, 
+  2L, 1L, 1L, 2L, 1L, 2L, 2L, 1L, 1L, 2L, 2L, 2L, 2L, 2L, 2L, 1L, 
+  1L, 1L, 1L), levels = c("Month 6", "Month 12"), class = "factor"), 
+      Response = c(5.5, 6.5, 5, 7, 6, 3, 6, 7.5, 5.5, 4, 3, 4.5, 
+      3.5, 3.5, 4.5, 6.5, 4, 4, 6.5, 5, 5, 5, 3, 5.5, 6.5, 6.5, 
+      6, 4, 7.5, 6.5, 5, 3, 3, 5.5, 3.5, 3.5), Method = structure(c(1L, 
+      2L, 1L, 1L, 1L, 2L, 1L, 1L, 2L, 1L, 2L, 2L, 2L, 2L, 1L, 2L, 
+      2L, 1L, 2L, 1L, 1L, 1L, 2L, 1L, 2L, 1L, 2L, 2L, 1L, 1L, 1L, 
+      1L, 2L, 2L, 2L, 2L), levels = c("A", "B"), class = "factor"), 
+      Response_Bas = c(5.5, 8.5, 5.5, 7.5, 6.5, 7, 8, 7.5, 7.5, 
+      8, 7.5, 6.5, 5.5, 5.5, 5, 8.5, 8.5, 5, 8.5, 5.5, 6.5, 5.5, 
+      5.5, 5.5, 8.5, 7, 5.5, 11.5, 8, 6.5, 5.5, 5, 5.5, 7.5, 5.5, 
+      12), CFB = c(0, -2, -0.5, -0.5, -0.5, -4, -2, 0, -2, -4, 
+      -4.5, -2, -2, -2, -0.5, -2, -4.5, -1, -2, -0.5, -1.5, -0.5, 
+      -2.5, 0, -2, -0.5, 0.5, -7.5, -0.5, 0, -0.5, -2, -2.5, -2, 
+      -2, -8.5), Response_Bas_cent = c(-1.14166666666667, 1.85833333333333, 
+      -1.14166666666667, 0.858333333333333, -0.141666666666667, 
+      0.358333333333333, 1.35833333333333, 0.858333333333333, 0.858333333333333, 
+      1.35833333333333, 0.858333333333333, -0.141666666666667, 
+      -1.14166666666667, -1.14166666666667, -1.64166666666667, 
+      1.85833333333333, 1.85833333333333, -1.64166666666667, 1.85833333333333, 
+      -1.14166666666667, -0.141666666666667, -1.14166666666667, 
+      -1.14166666666667, -1.14166666666667, 1.85833333333333, 0.358333333333333, 
+      -1.14166666666667, 4.85833333333333, 1.35833333333333, -0.141666666666667, 
+      -1.14166666666667, -1.64166666666667, -1.14166666666667, 
+      0.858333333333333, -1.14166666666667, 5.35833333333333)
+  )
+
+  fit <- mmrm(
+    Response ~ Method *
+      Timepoint *
+      Response_Bas_cent +
+      us(Timepoint | PatientId),
+    data = dane_post_part,
+    method = "Kenward-Roger"
+  )
+
+  car_result <- car::Anova(fit, type = "3")
+  emmeans_result <- emmeans::joint_tests(fit)
+
+  expect_equal(car_result$F, emmeans_result$F.ratio, tolerance = 1e-4)
 })
