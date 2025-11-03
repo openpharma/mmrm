@@ -157,8 +157,10 @@ h_type3_contrasts <- function(object, tol = sqrt(.Machine$double.eps)) {
 #' @keywords internal
 # Please do not load `car` and then create the documentation. The Rd file will
 #  be different.
+# nolint start
 Anova.mmrm <- function(
-  mod, # nolint
+  # nolint end
+  mod,
   type = c("II", "III", "2", "3"),
   tol = sqrt(.Machine$double.eps),
   test.statistic = c("F", "Chisq"), # nolint

@@ -415,10 +415,11 @@ model.matrix.mmrm_tmb <- function(
   object,
   data,
   use_response = TRUE,
+  # nolint start
   contrasts.arg = attr(object$tmb_data$x_matrix, "contrasts"),
+  # nolint end
   ...
 ) {
-  # nolint
   # Always return the utilized model matrix if data not provided.
   if (missing(data)) {
     return(object$tmb_data$x_matrix)

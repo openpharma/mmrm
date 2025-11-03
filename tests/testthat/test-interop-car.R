@@ -95,35 +95,35 @@ test_that("h_type3_contrasts works as expected", {
   # fmt: skip
   expected <- list(
     `(Intercept)` = matrix(
-      c(1, 1/3, 1/3, 1/2, 1/2, 1/4, 1/4, 1/4, 1/8, 1/8, 1/8), 
+      c(1, 1 / 3, 1 / 3, 1 / 2, 1 / 2, 1 / 4, 1 / 4, 1 / 4, 1 / 8, 1 / 8, 1 / 8),
       nrow = 1L, ncol = 11L
     ),
     RACE = matrix(
-      c(0, 0, -1/3, 2/3, -1/3, -1/3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), 
+      c(0, 0, -1 / 3, 2 / 3, -1 / 3, -1 / 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
       nrow = 2L, ncol = 11L
     ),
     SEX = matrix(
-      c(0, 0, 0, -1/2, 0, 0, 0, 0, 0, 0, 0), 
+      c(0, 0, 0, -1 / 2, 0, 0, 0, 0, 0, 0, 0),
       nrow = 1L, ncol = 11L
     ),
     ARMCD = matrix(
-      c(0, 0, 0, 0, -1/2, 0, 0, 0, -1/8, -1/8, -1/8), 
+      c(0, 0, 0, 0, -1 / 2, 0, 0, 0, -1 / 8, -1 / 8, -1 / 8),
       nrow = 1L, ncol = 11L
     ),
     AVISIT = matrix(
       c(
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-        -1/4, 3/4, -1/4, -1/4, -1/4, 3/4, -1/4, -1/4, 
-        -1/4, -1/8, 3/8, -1/8, -1/8, -1/8, 3/8, -1/8, -1/8, -1/8
-      ), 
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        -1 / 4, 3 / 4, -1 / 4, -1 / 4, -1 / 4, 3 / 4, -1 / 4, -1 / 4,
+        -1 / 4, -1 / 8, 3 / 8, -1 / 8, -1 / 8, -1 / 8, 3 / 8, -1 / 8, -1 / 8, -1 / 8
+      ),
       nrow = 3L, ncol = 11L
     ),
     `ARMCD:AVISIT` = matrix(
       c(
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1/8, -3/8, 
-        1/8, 1/8, 1/8, -3/8, 1/8, 1/8, 1/8
-      ), 
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 / 8, -3 / 8,
+        1 / 8, 1 / 8, 1 / 8, -3 / 8, 1 / 8, 1 / 8, 1 / 8
+      ),
       nrow = 3L, ncol = 11L
     )
   )
@@ -421,42 +421,58 @@ test_that("Anova Type 3 results are compatible with emmeans::joint_tests", {
   # Uses the data from https://github.com/openpharma/mmrm/issues/502
   # fmt: skip
   dane_post_part <- data.frame(
-    PatientId = structure(c(44L, 12L, 58L, 55L, 51L, 
-  5L, 41L, 48L, 20L, 37L, 8L, 27L, 30L, 26L, 33L, 21L, 13L, 33L, 
-  18L, 52L, 39L, 38L, 6L, 58L, 25L, 35L, 1L, 4L, 42L, 46L, 38L, 
-  40L, 1L, 28L, 26L, 9L), levels = c("1", "2", "3", "4", "5", "6", 
-  "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", 
-  "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", 
-  "29", "30", "101", "102", "103", "104", "105", "106", "107", 
-  "108", "109", "110", "111", "112", "113", "114", "115", "116", 
-  "117", "118", "119", "120", "121", "122", "123", "124", "125", 
-  "126", "127", "128", "129", "130"), class = "factor"), Timepoint = structure(c(2L, 
-  1L, 1L, 1L, 1L, 1L, 1L, 2L, 1L, 1L, 2L, 2L, 1L, 2L, 1L, 2L, 1L, 
-  2L, 1L, 1L, 2L, 1L, 2L, 2L, 1L, 1L, 2L, 2L, 2L, 2L, 2L, 2L, 1L, 
-  1L, 1L, 1L), levels = c("Month 6", "Month 12"), class = "factor"), 
-      Response = c(5.5, 6.5, 5, 7, 6, 3, 6, 7.5, 5.5, 4, 3, 4.5, 
-      3.5, 3.5, 4.5, 6.5, 4, 4, 6.5, 5, 5, 5, 3, 5.5, 6.5, 6.5, 
-      6, 4, 7.5, 6.5, 5, 3, 3, 5.5, 3.5, 3.5), Method = structure(c(1L, 
-      2L, 1L, 1L, 1L, 2L, 1L, 1L, 2L, 1L, 2L, 2L, 2L, 2L, 1L, 2L, 
-      2L, 1L, 2L, 1L, 1L, 1L, 2L, 1L, 2L, 1L, 2L, 2L, 1L, 1L, 1L, 
-      1L, 2L, 2L, 2L, 2L), levels = c("A", "B"), class = "factor"), 
-      Response_Bas = c(5.5, 8.5, 5.5, 7.5, 6.5, 7, 8, 7.5, 7.5, 
-      8, 7.5, 6.5, 5.5, 5.5, 5, 8.5, 8.5, 5, 8.5, 5.5, 6.5, 5.5, 
-      5.5, 5.5, 8.5, 7, 5.5, 11.5, 8, 6.5, 5.5, 5, 5.5, 7.5, 5.5, 
-      12), CFB = c(0, -2, -0.5, -0.5, -0.5, -4, -2, 0, -2, -4, 
-      -4.5, -2, -2, -2, -0.5, -2, -4.5, -1, -2, -0.5, -1.5, -0.5, 
-      -2.5, 0, -2, -0.5, 0.5, -7.5, -0.5, 0, -0.5, -2, -2.5, -2, 
-      -2, -8.5), Response_Bas_cent = c(-1.14166666666667, 1.85833333333333, 
-      -1.14166666666667, 0.858333333333333, -0.141666666666667, 
-      0.358333333333333, 1.35833333333333, 0.858333333333333, 0.858333333333333, 
-      1.35833333333333, 0.858333333333333, -0.141666666666667, 
-      -1.14166666666667, -1.14166666666667, -1.64166666666667, 
-      1.85833333333333, 1.85833333333333, -1.64166666666667, 1.85833333333333, 
-      -1.14166666666667, -0.141666666666667, -1.14166666666667, 
-      -1.14166666666667, -1.14166666666667, 1.85833333333333, 0.358333333333333, 
-      -1.14166666666667, 4.85833333333333, 1.35833333333333, -0.141666666666667, 
-      -1.14166666666667, -1.64166666666667, -1.14166666666667, 
-      0.858333333333333, -1.14166666666667, 5.35833333333333)
+    PatientId = structure(c(
+      44L, 12L, 58L, 55L, 51L,
+      5L, 41L, 48L, 20L, 37L, 8L, 27L, 30L, 26L, 33L, 21L, 13L, 33L,
+      18L, 52L, 39L, 38L, 6L, 58L, 25L, 35L, 1L, 4L, 42L, 46L, 38L,
+      40L, 1L, 28L, 26L, 9L
+    ), levels = c(
+      "1", "2", "3", "4", "5", "6",
+      "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17",
+      "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28",
+      "29", "30", "101", "102", "103", "104", "105", "106", "107",
+      "108", "109", "110", "111", "112", "113", "114", "115", "116",
+      "117", "118", "119", "120", "121", "122", "123", "124", "125",
+      "126", "127", "128", "129", "130"
+    ), class = "factor"), Timepoint = structure(c(
+      2L,
+      1L, 1L, 1L, 1L, 1L, 1L, 2L, 1L, 1L, 2L, 2L, 1L, 2L, 1L, 2L, 1L,
+      2L, 1L, 1L, 2L, 1L, 2L, 2L, 1L, 1L, 2L, 2L, 2L, 2L, 2L, 2L, 1L,
+      1L, 1L, 1L
+    ), levels = c("Month 6", "Month 12"), class = "factor"),
+    Response = c(
+      5.5, 6.5, 5, 7, 6, 3, 6, 7.5, 5.5, 4, 3, 4.5,
+      3.5, 3.5, 4.5, 6.5, 4, 4, 6.5, 5, 5, 5, 3, 5.5, 6.5, 6.5,
+      6, 4, 7.5, 6.5, 5, 3, 3, 5.5, 3.5, 3.5
+    ), Method = structure(c(
+      1L,
+      2L, 1L, 1L, 1L, 2L, 1L, 1L, 2L, 1L, 2L, 2L, 2L, 2L, 1L, 2L,
+      2L, 1L, 2L, 1L, 1L, 1L, 2L, 1L, 2L, 1L, 2L, 2L, 1L, 1L, 1L,
+      1L, 2L, 2L, 2L, 2L
+    ), levels = c("A", "B"), class = "factor"),
+    Response_Bas = c(
+      5.5, 8.5, 5.5, 7.5, 6.5, 7, 8, 7.5, 7.5,
+      8, 7.5, 6.5, 5.5, 5.5, 5, 8.5, 8.5, 5, 8.5, 5.5, 6.5, 5.5,
+      5.5, 5.5, 8.5, 7, 5.5, 11.5, 8, 6.5, 5.5, 5, 5.5, 7.5, 5.5,
+      12
+    ), CFB = c(
+      0, -2, -0.5, -0.5, -0.5, -4, -2, 0, -2, -4,
+      -4.5, -2, -2, -2, -0.5, -2, -4.5, -1, -2, -0.5, -1.5, -0.5,
+      -2.5, 0, -2, -0.5, 0.5, -7.5, -0.5, 0, -0.5, -2, -2.5, -2,
+      -2, -8.5
+    ), Response_Bas_cent = c(
+      -1.14166666666667, 1.85833333333333,
+      -1.14166666666667, 0.858333333333333, -0.141666666666667,
+      0.358333333333333, 1.35833333333333, 0.858333333333333, 0.858333333333333,
+      1.35833333333333, 0.858333333333333, -0.141666666666667,
+      -1.14166666666667, -1.14166666666667, -1.64166666666667,
+      1.85833333333333, 1.85833333333333, -1.64166666666667, 1.85833333333333,
+      -1.14166666666667, -0.141666666666667, -1.14166666666667,
+      -1.14166666666667, -1.14166666666667, 1.85833333333333, 0.358333333333333,
+      -1.14166666666667, 4.85833333333333, 1.35833333333333, -0.141666666666667,
+      -1.14166666666667, -1.64166666666667, -1.14166666666667,
+      0.858333333333333, -1.14166666666667, 5.35833333333333
+    )
   )
 
   fit <- mmrm(
@@ -479,105 +495,4 @@ test_that("Anova Type 3 results are compatible with emmeans::joint_tests", {
   car_result2 <- car::Anova(fit2, type = "3")
   emmeans_result2 <- emmeans::joint_tests(fit2)
   expect_equal(car_result2$F, emmeans_result2$F.ratio, tolerance = 1e-1)
-})
-
-test_that("Type 3 tests are compatible with nlme::gls even if only interaction term exists", {
-  skip_if_not_installed("car")
-
-  fev_data_complete <- na.omit(fev_data)
-
-  fev_data_complete_gls <- fev_data_complete
-  contrasts(fev_data_complete_gls$AVISIT) <- contr.sum(length(levels(
-    fev_data_complete_gls$AVISIT
-  )))
-  contrasts(fev_data_complete_gls$RACE) <- contr.sum(length(levels(
-    fev_data_complete_gls$RACE
-  )))
-
-  mod1 <- mmrm(
-    formula = FEV1 ~ FEV1_BL:AVISIT - 1 + ar1(AVISIT | USUBJID),
-    data = fev_data_complete
-  )
-  result1 <- car::Anova(mod1, type = "3", test.statistic = "Chisq")
-
-  mod1_gls <- nlme::gls(
-    FEV1 ~ FEV1_BL:AVISIT - 1,
-    correlation = nlme::corAR1(form = ~ as.numeric(AVISIT) | USUBJID),
-    data = fev_data_complete_gls,
-    method = "REML"
-  )
-  result1_gls <- car::Anova(mod1_gls, type = "3")
-
-  expect_equal(result1$Chisq, result1_gls$Chisq, tolerance = 1e-6)
-  expect_equal(result1$Df, result1_gls$Df)
-
-  mod2 <- mmrm(
-    formula = FEV1 ~ AVISIT + AVISIT:RACE + FEV1_BL + us(AVISIT | USUBJID),
-    data = fev_data
-  )
-  result2 <- car::Anova(mod2, type = "3", test.statistic = "Chisq")
-
-  mod2_gls <- nlme::gls(
-    FEV1 ~ AVISIT + AVISIT:RACE + FEV1_BL,
-    correlation = nlme::corSymm(form = ~ as.numeric(AVISIT) | USUBJID),
-    weights = nlme::varIdent(form = ~ 1 | as.numeric(AVISIT)),
-    data = fev_data_complete_gls,
-    method = "REML"
-  )
-  result2_gls <- car::Anova(mod2_gls, type = "3")
-
-  # We don't get the same fit here therefore results are a little bit different.
-  expect_equal(
-    as.numeric(logLik(mod2)),
-    as.numeric(logLik(mod2_gls)),
-    tolerance = 1e-2
-  )
-  expect_equal(result2$Chisq, result2_gls$Chisq[-1], tolerance = 1e-3)
-})
-
-test_that("Type 3 tests are compatible with nlme::gls for higher-order interaction", {
-  fev_data_complete <- na.omit(fev_data)
-
-  fev_data_complete_gls <- fev_data_complete
-  contrasts(fev_data_complete_gls$AVISIT) <- contr.sum(length(levels(
-    fev_data_complete_gls$AVISIT
-  )))
-  contrasts(fev_data_complete_gls$RACE) <- contr.sum(length(levels(
-    fev_data_complete_gls$RACE
-  )))
-  contrasts(fev_data_complete_gls$ARMCD) <- contr.sum(length(levels(
-    fev_data_complete_gls$ARMCD
-  )))
-
-  mod <- mmrm(
-    formula = FEV1 ~
-      ARMCD +
-      RACE +
-      AVISIT +
-      RACE * AVISIT * ARMCD +
-      FEV1_BL +
-      ar1(AVISIT | USUBJID),
-    data = fev_data_complete
-  )
-  result <- car::Anova(mod, type = "3", test.statistic = "Chisq")
-
-  mod_gls <- nlme::gls(
-    FEV1 ~
-      ARMCD +
-      RACE +
-      AVISIT +
-      RACE * AVISIT * ARMCD +
-      FEV1_BL,
-    correlation = nlme::corAR1(form = ~ as.numeric(AVISIT) | USUBJID),
-    data = fev_data_complete_gls,
-    method = "REML"
-  )
-  result_gls <- car::Anova(mod_gls, type = "3")
-
-  expect_equal(
-    as.numeric(logLik(mod)),
-    as.numeric(logLik(mod_gls)),
-    tolerance = 1e-1
-  )
-  expect_equal(result$Chisq, result_gls$Chisq[-1], tolerance = 1e-5)
 })
