@@ -245,3 +245,36 @@ h_get_index <- function(x, y) {
     FUN.VALUE = 1L
   )
 }
+
+#' Construct Preliminary Contrast Matrices for Type III Tests Assuming Sum Contrasts
+#'
+#' @param mod (`mmrm`)\cr the fitted MMRM.
+#'
+#' @return A `list` of contrast matrices, which are just row-wise term subsets of
+#'   an overall identity matrix.
+#'
+#' @keywords internal
+h_contr_sum_type3_contrasts <- function(object) {
+  assert_class(object, "mmrm")
+
+  terms <- stats::terms(object)
+  has_intercept <- attr(terms, "intercept")
+  term_labels <- c(if (has_intercept) "(Intercept)", labels(terms))
+
+  coefs_not_aliased <- !component(object, "beta_aliased")
+  n_coefs <- sum(coefs_not_aliased)
+  identity_matrix <- diag(n_coefs)
+
+  x_matrix <- component(object, "x_matrix")
+  assign <- attr(x_matrix, "assign")
+  assert_integer(assign, lower = 0L, len = ncol(x_matrix))
+  map_terms_to_cols <- assign + 1L
+
+  terms_per_col <- factor(term_labels[map_terms_to_cols], levels = term_labels)
+
+  split.data.frame(
+    identity_matrix,
+    terms_per_col,
+    drop = TRUE
+  )
+}

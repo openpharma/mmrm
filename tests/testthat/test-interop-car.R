@@ -256,6 +256,46 @@ test_that("h_get_contrast works for higher-order interaction", {
   }
 })
 
+# h_contr_sum_type3_contrasts ----
+
+test_that("h_contr_sum_type3_contrasts works as expected", {
+  object <- get_mmrm()
+  result <- h_contr_sum_type3_contrasts(object)
+
+  # fmt: skip
+  expected <- list(
+    `(Intercept)` = matrix(c(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), nrow = 1L, ncol = 11L),
+    RACE = matrix(c(0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0), nrow = 2L, ncol = 11L),
+    SEX = matrix(c(0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0), nrow = 1L, ncol = 11L),
+    ARMCD = matrix(c(0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0), nrow = 1L, ncol = 11L),
+    AVISIT = matrix(
+      c(
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+        0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0
+      ),
+      nrow = 3L, ncol = 11L
+    ),
+    `ARMCD:AVISIT` = matrix(
+      c(
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1
+      ),
+      nrow = 3L, ncol = 11L
+    )
+  )
+  expect_equal(result, expected)
+})
+
+test_that("h_contr_sum_type3_contrasts works with aliased coefficients", {
+  object <- get_mmrm_rank_deficient()
+  result <- expect_silent(h_contr_sum_type3_contrasts(object))
+  expect_identical(
+    names(result),
+    # No SEX2 term in here because that was aliased.
+    c("(Intercept)", "RACE", "SEX", "ARMCD", "AVISIT", "ARMCD:AVISIT")
+  )
+})
+
 # Anova ----
 
 test_that("Anova works as expected", {
