@@ -1,0 +1,31 @@
+---
+title: Spatial Gaussian
+---
+
+
+```{sas}
+libname xptfile xport "fev.xpt";
+proc copy inlib = xptfile outlib = work;
+run;
+
+ods output CovParms = covparm Rcorr = rcorr SolutionF = fixed FitStatistics= fit;
+PROC MIXED DATA = fev cl method=ml;
+  CLASS USUBJID;
+  MODEL FEV1 = / ddfm=satterthwaite solution chisq;
+  REPEATED / subject=USUBJID type=sp(gau)(visitn) rcorr;
+RUN;
+
+libname xptout xport "out.xpt";
+
+proc copy inlib = work outlib = xptout memtype = data;
+  select covparm rcorr fixed fit;
+run;
+```
+
+
+```{r}
+fit <- mmrm(FEV1 ~ sp_gau(VISITN | USUBJID), data = fev_data, reml = FALSE, method = "Satterthwaite")
+summary(fit)
+
+# degree of freedom seems not working right now.
+```

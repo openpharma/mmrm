@@ -47,3 +47,8 @@ renv.lock
 *.pyc
 nohup.out
 inst/doc
+*xpt
+.python-version
+pyproject.toml
+sascfg_personal.py
+uv.lock
