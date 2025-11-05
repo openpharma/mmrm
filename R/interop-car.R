@@ -171,19 +171,13 @@ Anova.mmrm <- function(
   test.statistic <- match.arg(test.statistic) # nolint
 
   vars <- colnames(attr(terms(mod$formula_parts$model_formula), "factors"))
-  contrasts <- if (type %in% c("II", "2")) {
-    sapply(
-      vars,
-      FUN = h_type2_contrast,
-      object = mod,
-      tol = tol,
-      simplify = FALSE,
-      USE.NAMES = TRUE
-    )
+  if (type %in% c("II", "2")) {
+    contrasts <- lapply(vars, h_type2_contrast, object = mod, tol = tol)
+    names(contrasts) <- vars
   } else {
-    h_type3_contrasts(mod, tol = tol)
+    contrasts <- h_type3_contrasts(mod, tol = tol)
+    contrasts <- contrasts[intersect(vars, names(contrasts))]
   }
-  contrasts <- contrasts[intersect(vars, names(contrasts))]
 
   if (test.statistic == "F") {
     ret <- lapply(contrasts, df_md, object = mod)
@@ -307,7 +301,7 @@ h_contr_sum_type3_contrasts <- function(object) {
   term_labels <- c(if (has_intercept) "(Intercept)", labels(terms))
 
   coefs_not_aliased <- !component(object, "beta_aliased")
-  n_coefs <- sum(coefs_not_aliased)
+  n_coefs <- length(component(object, "beta_est"))
   identity_matrix <- diag(n_coefs)
 
   x_matrix <- component(object, "x_matrix")
