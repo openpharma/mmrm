@@ -406,8 +406,9 @@ print.cov_struct <- function(x, ...) {
 #'
 #' @family covariance types
 #' @export
+# nolint start
 as.cov_struct <- function(x, ...) {
-  # nolint
+  # nolint end
   UseMethod("as.cov_struct")
 }
 
