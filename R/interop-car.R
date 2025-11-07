@@ -300,7 +300,6 @@ h_contr_sum_type3_contrasts <- function(object) {
   has_intercept <- attr(terms, "intercept")
   term_labels <- c(if (has_intercept) "(Intercept)", labels(terms))
 
-  coefs_not_aliased <- !component(object, "beta_aliased")
   n_coefs <- length(component(object, "beta_est"))
   identity_matrix <- diag(n_coefs)
 
