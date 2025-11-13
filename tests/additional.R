@@ -15,6 +15,9 @@ if (require("car", quietly = TRUE)) {
   contrasts(fev_data_complete_gls$RACE) <- contr.sum(length(levels(
     fev_data_complete_gls$RACE
   )))
+  contrasts(fev_data_complete_gls$ARMCD) <- contr.sum(length(levels(
+    fev_data_complete_gls$ARMCD
+  )))
 
   mod1 <- mmrm(
     formula = FEV1 ~ FEV1_BL:AVISIT - 1 + ar1(AVISIT | USUBJID),
@@ -55,6 +58,63 @@ if (require("car", quietly = TRUE)) {
     tolerance = 1e-2
   )
   expect_equal(result2$Chisq, result2_gls$Chisq[-1], tolerance = 1e-3)
+
+  # Check simplest example in more detail and compare with nlme and lme4 result.
+  mod3 <- get_mmrm()
+  result3 <- car::Anova(mod3, type = "3", test.statistic = "Chisq")
+
+  mod3_gls <- nlme::gls(
+    FEV1 ~ RACE + SEX + ARMCD * AVISIT,
+    correlation = nlme::corSymm(form = ~ as.numeric(AVISIT) | USUBJID),
+    weights = nlme::varIdent(form = ~ 1 | as.numeric(AVISIT)),
+    data = fev_data_complete_gls,
+    method = "REML"
+  )
+  result3_gls <- car::Anova(mod3_gls, type = "3")
+
+  expect_equal(
+    as.numeric(logLik(mod3)),
+    as.numeric(logLik(mod3_gls)),
+    tolerance = 1e-2
+  )
+  expect_equal(result3$Chisq, result3_gls$Chisq[-1], tolerance = 1e-4)
+
+  if (require("lmerTest", quietly = TRUE)) {
+    mod3_lmer_kr <- lmerTest::lmer(
+      FEV1 ~ RACE + SEX + ARMCD * AVISIT + (0 + AVISIT | USUBJID),
+      data = fev_data_complete_gls,
+      control = lme4::lmerControl(
+        check.nobs.vs.nRE = "ignore",
+        check.conv.grad = list(action = "warning", tol = 2e-2, relTol = NULL),
+      )
+    )
+    mod3_kr <- mmrm(
+      FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+      data = fev_data,
+      method = "Kenward-Roger"
+    )
+    expect_equal(
+      as.numeric(logLik(mod3_lmer_kr)),
+      as.numeric(logLik(mod3_kr)),
+      tolerance = 1e-2
+    )
+    result3_kr <- car::Anova(mod3_kr, type = "3", test.statistic = "F")
+    result3_lmer_kr <- car::Anova(
+      mod3_lmer_kr,
+      type = "3",
+      test.statistic = "F"
+    )
+    expect_equal(
+      result3_kr$F,
+      result3_lmer_kr$F[-1],
+      tolerance = 1e-1
+    )
+    expect_equal(
+      result3_kr$Res.Df,
+      result3_lmer_kr$Df.res[-1],
+      tolerance = 1e-1
+    )
+  }
 }
 
 # Type 3 tests are compatible with nlme::gls for higher-order interaction

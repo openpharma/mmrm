@@ -268,32 +268,33 @@ test_that("h_contr_sum_type3_contrasts also works when there is just an interact
 
 test_that("Anova works as expected", {
   skip_if_not_installed("car")
+
   expect_snapshot_tolerance(
-    Anova(get_mmrm(), "3")
+    car::Anova(get_mmrm(), "3")
   )
   expect_snapshot_tolerance(
-    Anova(get_mmrm_weighted(), "3")
+    car::Anova(get_mmrm_weighted(), "3")
   )
   expect_snapshot_tolerance(
-    Anova(get_mmrm_rank_deficient(), "3")
+    car::Anova(get_mmrm_rank_deficient(), "3")
   )
   expect_snapshot_tolerance(
-    Anova(get_mmrm_trans(), "3")
+    car::Anova(get_mmrm_trans(), "3")
   )
   expect_snapshot_tolerance(
-    Anova(get_mmrm(), "2")
+    car::Anova(get_mmrm(), "2")
   )
   expect_snapshot_tolerance(
-    Anova(get_mmrm_weighted(), "2")
+    car::Anova(get_mmrm_weighted(), "2")
   )
   expect_snapshot_tolerance(
-    Anova(get_mmrm_rank_deficient(), "2")
+    car::Anova(get_mmrm_rank_deficient(), "2")
   )
   expect_snapshot_tolerance(
-    Anova(get_mmrm_trans(), "2")
+    car::Anova(get_mmrm_trans(), "2")
   )
   expect_snapshot_tolerance(
-    Anova(get_mmrm(), type = "III", test.statistic = "Chisq")
+    car::Anova(get_mmrm(), type = "III", test.statistic = "Chisq")
   )
 })
 
@@ -304,12 +305,12 @@ test_that("Anova works if covariate are character", {
   fit <- mmrm(FEV1 ~ ARMCD * AVISIT + ar1(AVISIT | USUBJID), data = fev2)
   fit2 <- mmrm(FEV1 ~ ARMCD * AVISIT + ar1(AVISIT | USUBJID), data = fev_data)
   expect_identical(
-    Anova(fit, "III"),
-    Anova(fit2, "III")
+    car::Anova(fit, "III"),
+    car::Anova(fit2, "III")
   )
   expect_identical(
-    Anova(fit, "II"),
-    Anova(fit2, "II")
+    car::Anova(fit, "II"),
+    car::Anova(fit2, "II")
   )
 })
 
@@ -318,8 +319,8 @@ test_that("Anova works if covariate are character", {
 test_that("Anova give similar results to SAS", {
   skip_if_not_installed("car")
   fit <- mmrm(FEV1 ~ ARMCD * FEV1_BL + ar1(AVISIT | USUBJID), data = fev_data)
-  df2 <- expect_silent(Anova(fit, "2"))
-  df3 <- expect_silent(Anova(fit, "3"))
+  df2 <- expect_silent(car::Anova(fit, "2"))
+  df3 <- expect_silent(car::Anova(fit, "3"))
   # the SAS results from design/anova/test2_1.csv and design/anova/test3_1.csv
   # they shared the same model
   expect_equal(
@@ -350,8 +351,8 @@ test_that("Anova give similar results to SAS", {
     FEV1 ~ ARMCD * SEX + ARMCD * FEV1_BL - FEV1_BL + ar1(AVISIT | USUBJID),
     data = fev_data
   )
-  df2 <- expect_silent(Anova(fit, "2"))
-  df3 <- expect_silent(Anova(fit, "3"))
+  df2 <- expect_silent(car::Anova(fit, "2"))
+  df3 <- expect_silent(car::Anova(fit, "3"))
   # the SAS results from design/anova/test2_1.csv and design/anova/test3_1.csv
   # they shared the same model
   expect_equal(
