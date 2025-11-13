@@ -60,7 +60,10 @@ if (require("car", quietly = TRUE)) {
   expect_equal(result2$Chisq, result2_gls$Chisq[-1], tolerance = 1e-3)
 
   # Check simplest example in more detail and compare with nlme and lme4 result.
-  mod3 <- get_mmrm()
+  mod3 <- mmrm(
+    FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
+    data = fev_data
+  )
   result3 <- car::Anova(mod3, type = "3", test.statistic = "Chisq")
 
   mod3_gls <- nlme::gls(
