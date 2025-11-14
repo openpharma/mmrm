@@ -26,7 +26,9 @@
 #' }
 #'
 #' @keywords internal
-COV_TYPES <- local({ # nolint
+# nolint start
+COV_TYPES <- local({
+  # nolint end
   type <- function(name, abbr, habbr, heterogeneous, spatial) {
     args <- as.list(match.call()[-1])
     do.call(data.frame, args)
@@ -160,8 +162,9 @@ COV_TYPES <- local({ # nolint
 #' @name covariance_types
 #' @export
 cov_types <- function(
-    form = c("name", "abbr", "habbr"),
-    filter = c("heterogeneous", "spatial")) {
+  form = c("name", "abbr", "habbr"),
+  filter = c("heterogeneous", "spatial")
+) {
   form <- match.arg(form, several.ok = TRUE)
   filter <- if (missing(filter)) c() else match.arg(filter, several.ok = TRUE)
   df <- COV_TYPES[form][rowSums(!COV_TYPES[filter]) == 0, ]
@@ -231,11 +234,16 @@ tmb_cov_type <- function(cov) {
 #' @family covariance types
 #' @export
 cov_struct <- function(
-    type = cov_types(), visits, subject, group = character(),
-    heterogeneous = FALSE) {
+  type = cov_types(),
+  visits,
+  subject,
+  group = character(),
+  heterogeneous = FALSE
+) {
   # if heterogeneous isn't provided, derive from provided type
   if (missing(heterogeneous)) {
-    heterogeneous <- switch(type,
+    heterogeneous <- switch(
+      type,
       toeph = ,
       ar1h = ,
       adh = ,
@@ -398,7 +406,9 @@ print.cov_struct <- function(x, ...) {
 #'
 #' @family covariance types
 #' @export
-as.cov_struct <- function(x, ...) { # nolint
+# nolint start
+as.cov_struct <- function(x, ...) {
+  # nolint end
   UseMethod("as.cov_struct")
 }
 

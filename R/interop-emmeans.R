@@ -26,7 +26,9 @@ NULL
 #' @seealso See [emmeans::recover_data()] for background.
 #' @keywords internal
 #' @noRd
-recover_data.mmrm <- function(object, ...) { # nolint
+# nolint start
+recover_data.mmrm <- function(object, ...) {
+  # nolint end
   fun_call <- stats::getCall(object)
   # subject_var is excluded because it should not contain fixed effect.
   # visit_var is not excluded because emmeans can provide marginal mean
@@ -35,7 +37,8 @@ recover_data.mmrm <- function(object, ...) { # nolint
     object,
     include = c(
       if (!object$formula_parts$is_spatial) "visit_var" else NULL,
-      "response_var", "group_var"
+      "response_var",
+      "group_var"
     )
   )
   model_terms <- stats::delete.response(stats::terms(model_frame))
@@ -53,12 +56,21 @@ recover_data.mmrm <- function(object, ...) { # nolint
 #' @seealso See [emmeans::emm_basis()] for background.
 #' @keywords internal
 #' @noRd
-emm_basis.mmrm <- function(object, # nolint
-                           trms,
-                           xlev,
-                           grid,
-                           ...) {
-  model_frame <- stats::model.frame(trms, grid, na.action = stats::na.pass, xlev = xlev)
+# nolint start
+emm_basis.mmrm <- function(
+  # nolint end
+  object,
+  trms,
+  xlev,
+  grid,
+  ...
+) {
+  model_frame <- stats::model.frame(
+    trms,
+    grid,
+    na.action = stats::na.pass,
+    xlev = xlev
+  )
   contrasts <- component(object, "contrasts")
   model_mat <- stats::model.matrix(trms, model_frame, contrasts.arg = contrasts)
   beta_hat <- component(object, "beta_est")
@@ -72,7 +84,8 @@ emm_basis.mmrm <- function(object, # nolint
         object,
         include = c(
           if (!object$formula_parts$is_spatial) "visit_var" else NULL,
-          "response_var", "group_var"
+          "response_var",
+          "group_var"
         )
       ),
       contrasts.arg = contrasts

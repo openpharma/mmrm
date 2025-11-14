@@ -21,9 +21,14 @@
 #' df_1d(object, contrast)
 df_1d <- function(object, contrast) {
   assert_class(object, "mmrm")
-  assert_numeric(contrast, len = length(component(object, "beta_est")), any.missing = FALSE)
+  assert_numeric(
+    contrast,
+    len = length(component(object, "beta_est")),
+    any.missing = FALSE
+  )
   contrast <- as.vector(contrast)
-  switch(object$method,
+  switch(
+    object$method,
     "Satterthwaite" = h_df_1d_sat(object, contrast),
     "Kenward-Roger" = h_df_1d_kr(object, contrast),
     "Residual" = h_df_1d_res(object, contrast),
@@ -74,7 +79,8 @@ df_md <- function(object, contrast) {
       )
     )
   }
-  switch(object$method,
+  switch(
+    object$method,
     "Satterthwaite" = h_df_md_sat(object, contrast),
     "Kenward-Roger" = h_df_md_kr(object, contrast),
     "Residual" = h_df_md_res(object, contrast),
@@ -94,9 +100,7 @@ df_md <- function(object, contrast) {
 #' @return List with `est`, `se`, `df`, `t_stat` and `p_val` (2-sided p-value).
 #'
 #' @keywords internal
-h_test_1d <- function(object,
-                      contrast,
-                      df) {
+h_test_1d <- function(object, contrast, df) {
   assert_class(object, "mmrm")
   assert_numeric(contrast, len = length(component(object, "beta_est")))
   assert_number(df, lower = .Machine$double.xmin)
@@ -137,11 +141,13 @@ h_test_1d <- function(object,
 #'   In both cases, p-values are two sided.
 #'
 #' @keywords internal
-h_test_md <- function(object,
-                      contrast,
-                      df,
-                      f_stat_factor = 1,
-                      test = c("F", "Chisq")) {
+h_test_md <- function(
+  object,
+  contrast,
+  df,
+  f_stat_factor = 1,
+  test = c("F", "Chisq")
+) {
   test <- match.arg(test)
   assert_class(object, "mmrm")
   beta <- component(object, "beta_est")
@@ -152,7 +158,10 @@ h_test_md <- function(object,
     assert_number(f_stat_factor, lower = .Machine$double.xmin)
   }
 
-  prec_contrast <- solve(h_quad_form_mat(contrast, component(object, "beta_vcov")))
+  prec_contrast <- solve(h_quad_form_mat(
+    contrast,
+    component(object, "beta_vcov")
+  ))
   contrast_est <- tcrossprod(beta, contrast)
   chisq_statistic <- as.numeric(h_quad_form_mat(contrast_est, prec_contrast))
 

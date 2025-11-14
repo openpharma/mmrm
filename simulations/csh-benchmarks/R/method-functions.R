@@ -19,7 +19,6 @@ mmrm_wrapper_fun <- function(
   y,
   trt
 ) {
-
   ## assemble the vectors into a data.frame
   df <- data.frame(
     "participant" = participant,
@@ -29,7 +28,8 @@ mmrm_wrapper_fun <- function(
   )
 
   fit <- mmrm::mmrm(
-    formula = y ~ trt + csh(time | participant), data = df
+    formula = y ~ trt + csh(time | participant),
+    data = df
   )
 
   return(list(fit = fit))
@@ -52,7 +52,6 @@ glmmtmb_wrapper_fun <- function(
   y,
   trt
 ) {
-
   ## assemble the vectors into a data.frame
   df <- data.frame(
     "participant" = participant,
@@ -65,12 +64,12 @@ glmmtmb_wrapper_fun <- function(
   ## https://cran.r-project.org/web/packages/glmmTMB/vignettes/covstruct.html
   ## for details.
   fit <- glmmTMB::glmmTMB(
-    formula = y ~ trt + cs(time + 0 | participant), data = df,
-    dispformula = ~ 0
+    formula = y ~ trt + cs(time + 0 | participant),
+    data = df,
+    dispformula = ~0
   )
 
   return(list(fit = fit))
-
 }
 
 #' nlme wrapper function
@@ -90,7 +89,6 @@ nlme_wrapper_fun <- function(
   y,
   trt
 ) {
-
   ## assemble the vectors into a data.frame
   df <- data.frame(
     "participant" = participant,
@@ -102,11 +100,11 @@ nlme_wrapper_fun <- function(
   fit <- nlme::gls(
     y ~ trt,
     correlation = nlme::corCompSymm(form = ~ 1 | participant),
-    weights = nlme::varIdent(form = ~ 1 | time), data = df
+    weights = nlme::varIdent(form = ~ 1 | time),
+    data = df
   )
 
   return(list(fit = fit))
-
 }
 
 #' PROC MIXED Function (SAS)
@@ -127,7 +125,6 @@ proc_mixed_fun <- function(
   y,
   trt
 ) {
-
   ## assemble the vectors into a data.frame
   df <- data.frame(
     "participant" = participant,
@@ -155,5 +152,4 @@ proc_mixed_fun <- function(
 
   ## prepare the fit object
   return(list(fit = cov_mat_df))
-
 }

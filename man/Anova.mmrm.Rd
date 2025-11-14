@@ -15,9 +15,10 @@ Anova.mmrm(
 \arguments{
 \item{mod}{(\code{mmrm})\cr the fitted MMRM.}
 
-\item{type}{(\code{string}) type of test, "II", "III", '2', or '3'.}
+\item{type}{(\code{string})\cr either \code{"II"}, \code{"III"}, \code{"2"}, or \code{"3"}, indicating the
+type of test to perform.}
 
-\item{tol}{(\code{numeric}) threshold blow which values are treated as 0.}
+\item{tol}{(\code{numeric}) threshold below which values are treated as 0.}
 
 \item{test.statistic}{(\code{string})\cr either \verb{"F} or \code{"Chisq"}, indicating the
 kind of test to perform.}

@@ -7,7 +7,11 @@ library(glmmTMB)
 ## fit basic model
 # Daniel: Note REML = FALSE here!
 m1 <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy, REML = FALSE)
-glmmtmb1 <- glmmTMB(Reaction ~ Days + (Days | Subject), sleepstudy, REML = FALSE)
+glmmtmb1 <- glmmTMB(
+  Reaction ~ Days + (Days | Subject),
+  sleepstudy,
+  REML = FALSE
+)
 
 ## compile and load TMB DLL
 # Daniel: Note that here we could also select the other AD framework

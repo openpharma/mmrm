@@ -38,7 +38,8 @@ het_rct_dgp <- create_dgp(,
 true_covar_ls <- list(
   "hom_rct" = compute_true_covar_mat(rep(1, 10), 0.5),
   "het_rct" = compute_true_covar_mat(
-    seq(from = 0.5, by = 0.25, length.out = 10), 0.2
+    seq(from = 0.5, by = 0.25, length.out = 10),
+    0.2
   )
 )
 
@@ -77,9 +78,9 @@ bias_viz <- create_visualizer(.viz_fun = bias_fun)
 
 ## define the experiment object
 experiment <- create_experiment(
-    name = "covar-matrix-estimation-comparison",
-    save_dir = "results"
-  ) %>%
+  name = "covar-matrix-estimation-comparison",
+  save_dir = "results"
+) %>%
   add_dgp(hom_rct_dgp, name = "hom_rct") %>%
   add_dgp(het_rct_dgp, name = "het_rct") %>%
   add_vary_across(.dgp = "hom_rct", num_part = c(250, 500, 1000)) %>%
@@ -101,7 +102,11 @@ experiment <- create_experiment(
 set.seed(510)
 results <- experiment$run(
   n_reps = 100,
-  future.globals = c("compute_true_covar_mat", "compute_sasr_covar_mat",
-                     "compute_glmmtmb_covar_mat", "get_covar_mat"),
+  future.globals = c(
+    "compute_true_covar_mat",
+    "compute_sasr_covar_mat",
+    "compute_glmmtmb_covar_mat",
+    "get_covar_mat"
+  ),
   save = TRUE
 )

@@ -2,7 +2,6 @@
 ## Data-Generating Processes
 ################################################################################
 
-
 #' Assemble the true heterogeneous compound symmetry matrix
 #'
 #' @description Computes the true heterogeneous compound symmetry covariance
@@ -50,7 +49,6 @@ rct_dgp_fun <- function(
   outcome_vars = NULL,
   outcome_cor = 0.5
 ) {
-
   if (is.null(outcome_vars)) {
     outcome_vars <- rep(1, num_rep_meas)
   }
@@ -67,7 +65,7 @@ rct_dgp_fun <- function(
   df <- cov_df %>% dplyr::left_join(time_point_df, by = "participant")
 
   ## produce the model matrix for the fixed effects
-  fixed_model_mat <- model.matrix(~ trt, data = df)
+  fixed_model_mat <- model.matrix(~trt, data = df)
 
   ## define the repeated measures correlation structure, assuming
   ## heterogeneous compound symmetry
@@ -75,7 +73,8 @@ rct_dgp_fun <- function(
 
   ## generate the outcomes
   beta <- c(fixed_int, fixed_trt)
-  df$y <- fixed_model_mat %*% beta +
+  df$y <- fixed_model_mat %*%
+    beta +
     as.vector(t(MASS::mvrnorm(num_part, rep(0, num_rep_meas), csh_mat)))
 
   ## return the generated data

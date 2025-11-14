@@ -39,7 +39,6 @@ result$test$sas_log
 writeLines(result$test$sas_out, con = "sas_toeph_reml.txt")
 
 
-
 # Grouped Heterogeneous Toeplitz covariance structure ----
 formula <- FEV1 ~ toeph(AVISIT | ARMCD / USUBJID)
 data <- fev_data

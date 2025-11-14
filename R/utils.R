@@ -947,8 +947,11 @@ h_check_covar_nesting <- function(model_basic, model_augmented) {
   aug_main_effects <- colnames(aug_factors)[!is_interaction_aug]
 
   if (anyNA(match(basic_main_effects, aug_main_effects))) {
-    stop("Each model's covariates must be a subset of the next model's ",
-         "covariates.", call. = FALSE)
+    stop(
+      "Each model's covariates must be a subset of the next model's ",
+      "covariates.",
+      call. = FALSE
+    )
   }
 
   if (any(is_interaction_basic)) {
@@ -961,21 +964,24 @@ h_check_covar_nesting <- function(model_basic, model_augmented) {
         if (match_found) break
       }
       if (!match_found) {
-        stop("Each model's interaction terms must be a subset of the next ",
-             "model's terms.",
-             call. = FALSE)
+        stop(
+          "Each model's interaction terms must be a subset of the next ",
+          "model's terms.",
+          call. = FALSE
+        )
       }
     }
   }
 
-  if (anyNA(match(aug_main_effects, basic_main_effects)) ||
-        sum(is_interaction_basic) < sum(is_interaction_aug)) {
+  if (
+    anyNA(match(aug_main_effects, basic_main_effects)) ||
+      sum(is_interaction_basic) < sum(is_interaction_aug)
+  ) {
     "nested"
   } else {
     "identical"
   }
 }
-
 
 
 #' Ensure Two Models' Covariance Structures Are Nested
@@ -1128,8 +1134,6 @@ h_refit_mmrm <- function(fit, data) {
 }
 
 
-
-
 #' Calculate the Significance of Each Term in an `mmrm` Fit.
 #'
 #' Runs [df_md()] once for each term in an `mmrm` object and returns the results
@@ -1156,8 +1160,10 @@ h_anova_single_mmrm_model <- function(object) {
   model_terms_attributes <-
     attributes(terms(object[["formula_parts"]][["model_formula"]]))
 
-  term_labels <- c(if (model_terms_attributes[["intercept"]]) "(Intercept)",
-                   model_terms_attributes[["term.labels"]])
+  term_labels <- c(
+    if (model_terms_attributes[["intercept"]]) "(Intercept)",
+    model_terms_attributes[["term.labels"]]
+  )
 
   design_matrix <- component(object, "x_matrix")
 

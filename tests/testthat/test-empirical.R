@@ -2,19 +2,37 @@
 
 test_that("h_get_empirical obtain empirical covariance", {
   fit <- get_mmrm_emp()
-  result <- h_get_empirical(fit$tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov, "Empirical")
+  result <- h_get_empirical(
+    fit$tmb_data,
+    fit$theta_est,
+    fit$beta_est,
+    fit$beta_vcov,
+    "Empirical"
+  )
   expect_snapshot_tolerance(result$cov)
 })
 
 test_that("h_get_empirical obtain jackknife covariance", {
   fit <- get_mmrm_jack()
-  result <- h_get_empirical(fit$tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov, "Empirical-Jackknife")
+  result <- h_get_empirical(
+    fit$tmb_data,
+    fit$theta_est,
+    fit$beta_est,
+    fit$beta_vcov,
+    "Empirical-Jackknife"
+  )
   expect_snapshot_tolerance(result$cov)
 })
 
 test_that("h_get_empirical obtain jackknife covariance", {
   fit <- get_mmrm_brl()
-  result <- h_get_empirical(fit$tmb_data, fit$theta_est, fit$beta_est, fit$beta_vcov, "Empirical-Bias-Reduced")
+  result <- h_get_empirical(
+    fit$tmb_data,
+    fit$theta_est,
+    fit$beta_est,
+    fit$beta_vcov,
+    "Empirical-Bias-Reduced"
+  )
   expect_snapshot_tolerance(result$cov)
 })
 
@@ -26,7 +44,8 @@ test_that("empirical covariance are the same with SAS result for ar1", {
   fit <- mmrm(
     FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
     data = fev_data,
-    vcov = "Empirical", method = "Residual"
+    vcov = "Empirical",
+    method = "Residual"
   )
   expected <- matrix(
     c(0.27666930670945, -0.27666930670945, -0.27666930670945, 0.68196697308307),
@@ -45,7 +64,12 @@ test_that("empirical covariance are the same with SAS result for ar1", {
 })
 
 test_that("empirical covariance are the same with SAS result for ar1h", {
-  fit <- mmrm(FEV1 ~ ARMCD + ar1h(AVISIT | USUBJID), data = fev_data, vcov = "Empirical", method = "Residual")
+  fit <- mmrm(
+    FEV1 ~ ARMCD + ar1h(AVISIT | USUBJID),
+    data = fev_data,
+    vcov = "Empirical",
+    method = "Residual"
+  )
   expected <- matrix(
     c(0.19106397930347, -0.19106397930347, -0.19106397930347, 0.46203608554929),
     ncol = 2,
@@ -63,7 +87,12 @@ test_that("empirical covariance are the same with SAS result for ar1h", {
 })
 
 test_that("empirical covariance are the same with SAS result for cs", {
-  fit <- mmrm(FEV1 ~ ARMCD + cs(AVISIT | USUBJID), data = fev_data, vcov = "Empirical", method = "Residual")
+  fit <- mmrm(
+    FEV1 ~ ARMCD + cs(AVISIT | USUBJID),
+    data = fev_data,
+    vcov = "Empirical",
+    method = "Residual"
+  )
   expected <- matrix(
     c(0.26910953746582, -0.26910953746582, -0.26910953746582, 0.6297163326325),
     ncol = 2,
@@ -81,7 +110,12 @@ test_that("empirical covariance are the same with SAS result for cs", {
 })
 
 test_that("empirical covariance are the same with SAS result for csh", {
-  fit <- mmrm(FEV1 ~ ARMCD + csh(AVISIT | USUBJID), data = fev_data, vcov = "Empirical", method = "Residual")
+  fit <- mmrm(
+    FEV1 ~ ARMCD + csh(AVISIT | USUBJID),
+    data = fev_data,
+    vcov = "Empirical",
+    method = "Residual"
+  )
   expected <- matrix(
     c(0.19635239056617, -0.19635239056617, -0.19635239056617, 0.46038132267959),
     ncol = 2,
@@ -99,7 +133,12 @@ test_that("empirical covariance are the same with SAS result for csh", {
 })
 
 test_that("empirical covariance are the same with SAS result for toep", {
-  fit <- mmrm(FEV1 ~ ARMCD + toep(AVISIT | USUBJID), data = fev_data, vcov = "Empirical", method = "Residual")
+  fit <- mmrm(
+    FEV1 ~ ARMCD + toep(AVISIT | USUBJID),
+    data = fev_data,
+    vcov = "Empirical",
+    method = "Residual"
+  )
   expected <- matrix(
     c(0.30022945455349, -0.30022945455349, -0.30022945455349, 0.76371849328831),
     ncol = 2,
@@ -117,7 +156,12 @@ test_that("empirical covariance are the same with SAS result for toep", {
 })
 
 test_that("empirical covariance are the same with SAS result for toeph", {
-  fit <- mmrm(FEV1 ~ ARMCD + toeph(AVISIT | USUBJID), data = fev_data, vcov = "Empirical", method = "Residual")
+  fit <- mmrm(
+    FEV1 ~ ARMCD + toeph(AVISIT | USUBJID),
+    data = fev_data,
+    vcov = "Empirical",
+    method = "Residual"
+  )
   expected <- matrix(
     c(0.18350201218893, -0.18350201218893, -0.18350201218893, 0.46360435395588),
     ncol = 2,
@@ -135,7 +179,12 @@ test_that("empirical covariance are the same with SAS result for toeph", {
 })
 
 test_that("empirical covariance are the same with SAS result for adh", {
-  fit <- mmrm(FEV1 ~ ARMCD + adh(AVISIT | USUBJID), data = fev_data, vcov = "Empirical", method = "Residual")
+  fit <- mmrm(
+    FEV1 ~ ARMCD + adh(AVISIT | USUBJID),
+    data = fev_data,
+    vcov = "Empirical",
+    method = "Residual"
+  )
   expected <- matrix(
     c(0.17350223093416, -0.17350223093416, -0.17350223093416, 0.41552647969341),
     ncol = 2,
@@ -153,7 +202,12 @@ test_that("empirical covariance are the same with SAS result for adh", {
 })
 
 test_that("empirical covariance are the same with SAS result for us", {
-  fit <- mmrm(FEV1 ~ ARMCD + us(AVISIT | USUBJID), data = fev_data, vcov = "Empirical", method = "Residual")
+  fit <- mmrm(
+    FEV1 ~ ARMCD + us(AVISIT | USUBJID),
+    data = fev_data,
+    vcov = "Empirical",
+    method = "Residual"
+  )
   expected <- matrix(
     c(0.16725909903518, -0.16725909903518, -0.16725909903518, 0.40908637028234),
     ncol = 2,
@@ -173,7 +227,9 @@ test_that("empirical covariance are the same with SAS result for us", {
 test_that("empirical covariance are the same with SAS result for sp_exp", {
   fit <- mmrm(
     FEV1 ~ ARMCD + sp_exp(VISITN, VISITN2 | USUBJID),
-    data = fev_data, vcov = "Empirical", method = "Residual"
+    data = fev_data,
+    vcov = "Empirical",
+    method = "Residual"
   )
   expected <- matrix(
     c(0.26947559034166, -0.26947559034166, -0.26947559034166, 0.65569217854087),
@@ -197,7 +253,8 @@ test_that("empirical covariance are the same with SAS result for ar1", {
   fit <- mmrm(
     FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
     data = fev_data,
-    vcov = "Empirical", method = "Residual",
+    vcov = "Empirical",
+    method = "Residual",
     weights = fev_data$WEIGHT
   )
   expected <- matrix(
@@ -217,8 +274,11 @@ test_that("empirical covariance are the same with SAS result for ar1", {
 })
 
 test_that("empirical covariance are the same with SAS result for ar1h", {
-  fit <- mmrm(FEV1 ~ ARMCD + ar1h(AVISIT | USUBJID),
-    data = fev_data, vcov = "Empirical", method = "Residual",
+  fit <- mmrm(
+    FEV1 ~ ARMCD + ar1h(AVISIT | USUBJID),
+    data = fev_data,
+    vcov = "Empirical",
+    method = "Residual",
     weights = fev_data$WEIGHT
   )
   expected <- matrix(
@@ -238,8 +298,11 @@ test_that("empirical covariance are the same with SAS result for ar1h", {
 })
 
 test_that("empirical covariance are the same with SAS result for cs", {
-  fit <- mmrm(FEV1 ~ ARMCD + cs(AVISIT | USUBJID),
-    data = fev_data, vcov = "Empirical", method = "Residual",
+  fit <- mmrm(
+    FEV1 ~ ARMCD + cs(AVISIT | USUBJID),
+    data = fev_data,
+    vcov = "Empirical",
+    method = "Residual",
     weights = fev_data$WEIGHT
   )
   expected <- matrix(
@@ -259,8 +322,11 @@ test_that("empirical covariance are the same with SAS result for cs", {
 })
 
 test_that("empirical covariance are the same with SAS result for csh", {
-  fit <- mmrm(FEV1 ~ ARMCD + csh(AVISIT | USUBJID),
-    data = fev_data, vcov = "Empirical", method = "Residual",
+  fit <- mmrm(
+    FEV1 ~ ARMCD + csh(AVISIT | USUBJID),
+    data = fev_data,
+    vcov = "Empirical",
+    method = "Residual",
     weights = fev_data$WEIGHT
   )
   expected <- matrix(
@@ -280,8 +346,11 @@ test_that("empirical covariance are the same with SAS result for csh", {
 })
 
 test_that("empirical covariance are the same with SAS result for toep", {
-  fit <- mmrm(FEV1 ~ ARMCD + toep(AVISIT | USUBJID),
-    data = fev_data, vcov = "Empirical", method = "Residual",
+  fit <- mmrm(
+    FEV1 ~ ARMCD + toep(AVISIT | USUBJID),
+    data = fev_data,
+    vcov = "Empirical",
+    method = "Residual",
     weights = fev_data$WEIGHT
   )
   expected <- matrix(
@@ -301,8 +370,11 @@ test_that("empirical covariance are the same with SAS result for toep", {
 })
 
 test_that("empirical covariance are the same with SAS result for toeph", {
-  fit <- mmrm(FEV1 ~ ARMCD + toeph(AVISIT | USUBJID),
-    data = fev_data, vcov = "Empirical", method = "Residual",
+  fit <- mmrm(
+    FEV1 ~ ARMCD + toeph(AVISIT | USUBJID),
+    data = fev_data,
+    vcov = "Empirical",
+    method = "Residual",
     weights = fev_data$WEIGHT
   )
   expected <- matrix(
@@ -322,8 +394,11 @@ test_that("empirical covariance are the same with SAS result for toeph", {
 })
 
 test_that("empirical covariance are the same with SAS result for adh", {
-  fit <- mmrm(FEV1 ~ ARMCD + adh(AVISIT | USUBJID),
-    data = fev_data, vcov = "Empirical", method = "Residual",
+  fit <- mmrm(
+    FEV1 ~ ARMCD + adh(AVISIT | USUBJID),
+    data = fev_data,
+    vcov = "Empirical",
+    method = "Residual",
     weights = fev_data$WEIGHT
   )
   expected <- matrix(
@@ -343,8 +418,11 @@ test_that("empirical covariance are the same with SAS result for adh", {
 })
 
 test_that("empirical covariance are the same with SAS result for us", {
-  fit <- mmrm(FEV1 ~ ARMCD + us(AVISIT | USUBJID),
-    data = fev_data, vcov = "Empirical", method = "Residual",
+  fit <- mmrm(
+    FEV1 ~ ARMCD + us(AVISIT | USUBJID),
+    data = fev_data,
+    vcov = "Empirical",
+    method = "Residual",
     weights = fev_data$WEIGHT
   )
   expected <- matrix(
@@ -364,8 +442,11 @@ test_that("empirical covariance are the same with SAS result for us", {
 })
 
 test_that("empirical covariance are the same with SAS result for sp_exp", {
-  fit <- mmrm(FEV1 ~ ARMCD + sp_exp(VISITN, VISITN2 | USUBJID),
-    data = fev_data, vcov = "Empirical", method = "Residual",
+  fit <- mmrm(
+    FEV1 ~ ARMCD + sp_exp(VISITN, VISITN2 | USUBJID),
+    data = fev_data,
+    vcov = "Empirical",
+    method = "Residual",
     weights = fev_data$WEIGHT
   )
   expected <- matrix(
@@ -391,10 +472,24 @@ test_that("Empirical works as expected for ar1", {
   skip_if_not_installed("clubSandwich")
   formula <- FEV1 ~ ARMCD + ar1(AVISIT | USUBJID)
   data_full <- fev_data[complete.cases(fev_data), ]
-  fit <- mmrm(formula = formula, data = data_full, vcov = "Empirical", method = "Satterthwaite")
-  fit_gls <- nlme::gls(FEV1 ~ ARMCD, data_full, correlation = nlme::corAR1(form = ~ VISITN | USUBJID))
+  fit <- mmrm(
+    formula = formula,
+    data = data_full,
+    vcov = "Empirical",
+    method = "Satterthwaite"
+  )
+  fit_gls <- nlme::gls(
+    FEV1 ~ ARMCD,
+    data_full,
+    correlation = nlme::corAR1(form = ~ VISITN | USUBJID)
+  )
   expected <- clubSandwich::vcovCR(fit_gls, type = "CR0")
-  expect_equal(fit$beta_vcov_adj, expected, tolerance = 1e-4, ignore_attr = TRUE)
+  expect_equal(
+    fit$beta_vcov_adj,
+    expected,
+    tolerance = 1e-4,
+    ignore_attr = TRUE
+  )
   coef_obj <- clubSandwich::coef_test(fit_gls, expected)
   sfit <- summary(fit)
   result <- sfit$coefficients[, "df", drop = TRUE]
@@ -408,18 +503,27 @@ test_that("Empirical works as expected for weighted ar1", {
   formula <- FEV1 ~ ARMCD + ar1(AVISIT | USUBJID)
   data_full <- fev_data[complete.cases(fev_data), ]
   fit <- mmrm(
-    formula = formula, data = data_full, vcov = "Empirical",
-    method = "Satterthwaite", weights = data_full$WEIGHT
+    formula = formula,
+    data = data_full,
+    vcov = "Empirical",
+    method = "Satterthwaite",
+    weights = data_full$WEIGHT
   )
   # the weights are different in gls and mmrm/SAS;
   data_full$WEIGHT2 <- 1 / data_full$WEIGHT
   fit_gls <- nlme::gls(
-    FEV1 ~ ARMCD, data_full,
+    FEV1 ~ ARMCD,
+    data_full,
     correlation = nlme::corAR1(form = ~ VISITN | USUBJID),
     weights = nlme::varFixed(~WEIGHT2)
   )
   expected <- clubSandwich::vcovCR(fit_gls, type = "CR0")
-  expect_equal(fit$beta_vcov_adj, expected, tolerance = 1e-4, ignore_attr = TRUE)
+  expect_equal(
+    fit$beta_vcov_adj,
+    expected,
+    tolerance = 1e-4,
+    ignore_attr = TRUE
+  )
 
   coef_obj <- clubSandwich::coef_test(fit_gls, expected)
   sfit <- summary(fit)
@@ -436,10 +540,24 @@ test_that("Jackknife works as expected for ar1", {
   skip_if_not_installed("clubSandwich")
   formula <- FEV1 ~ ARMCD + ar1(AVISIT | USUBJID)
   data_full <- fev_data[complete.cases(fev_data), ]
-  fit <- mmrm(formula = formula, data = data_full, vcov = "Empirical-Jackknife", method = "Satterthwaite")
-  fit_gls <- nlme::gls(FEV1 ~ ARMCD, data_full, correlation = nlme::corAR1(form = ~ VISITN | USUBJID))
+  fit <- mmrm(
+    formula = formula,
+    data = data_full,
+    vcov = "Empirical-Jackknife",
+    method = "Satterthwaite"
+  )
+  fit_gls <- nlme::gls(
+    FEV1 ~ ARMCD,
+    data_full,
+    correlation = nlme::corAR1(form = ~ VISITN | USUBJID)
+  )
   expected <- clubSandwich::vcovCR(fit_gls, type = "CR3")
-  expect_equal(fit$beta_vcov_adj, expected, tolerance = 1e-4, ignore_attr = TRUE)
+  expect_equal(
+    fit$beta_vcov_adj,
+    expected,
+    tolerance = 1e-4,
+    ignore_attr = TRUE
+  )
   coef_obj <- clubSandwich::coef_test(fit_gls, expected)
   sfit <- summary(fit)
   result <- sfit$coefficients[, "df", drop = TRUE]
@@ -453,18 +571,27 @@ test_that("Jackknife works as expected for weighted ar1", {
   formula <- FEV1 ~ ARMCD + ar1(AVISIT | USUBJID)
   data_full <- fev_data[complete.cases(fev_data), ]
   fit <- mmrm(
-    formula = formula, data = data_full, vcov = "Empirical-Jackknife",
-    method = "Satterthwaite", weights = data_full$WEIGHT
+    formula = formula,
+    data = data_full,
+    vcov = "Empirical-Jackknife",
+    method = "Satterthwaite",
+    weights = data_full$WEIGHT
   )
   # the weights are different in gls and mmrm/SAS;
   data_full$WEIGHT2 <- 1 / data_full$WEIGHT
   fit_gls <- nlme::gls(
-    FEV1 ~ ARMCD, data_full,
+    FEV1 ~ ARMCD,
+    data_full,
     correlation = nlme::corAR1(form = ~ VISITN | USUBJID),
     weights = nlme::varFixed(~WEIGHT2)
   )
   expected <- clubSandwich::vcovCR(fit_gls, type = "CR3")
-  expect_equal(fit$beta_vcov_adj, expected, tolerance = 1e-4, ignore_attr = TRUE)
+  expect_equal(
+    fit$beta_vcov_adj,
+    expected,
+    tolerance = 1e-4,
+    ignore_attr = TRUE
+  )
 
   coef_obj <- clubSandwich::coef_test(fit_gls, expected)
   sfit <- summary(fit)
@@ -481,10 +608,24 @@ test_that("Bias-Reduced works as expected for ar1", {
   skip_if_not_installed("clubSandwich")
   formula <- FEV1 ~ ARMCD + ar1(AVISIT | USUBJID)
   data_full <- fev_data[complete.cases(fev_data), ]
-  fit <- mmrm(formula = formula, data = data_full, vcov = "Empirical-Bias-Reduced", method = "Satterthwaite")
-  fit_gls <- nlme::gls(FEV1 ~ ARMCD, data_full, correlation = nlme::corAR1(form = ~ VISITN | USUBJID))
+  fit <- mmrm(
+    formula = formula,
+    data = data_full,
+    vcov = "Empirical-Bias-Reduced",
+    method = "Satterthwaite"
+  )
+  fit_gls <- nlme::gls(
+    FEV1 ~ ARMCD,
+    data_full,
+    correlation = nlme::corAR1(form = ~ VISITN | USUBJID)
+  )
   expected <- clubSandwich::vcovCR(fit_gls, type = "CR2")
-  expect_equal(fit$beta_vcov_adj, expected, tolerance = 1e-3, ignore_attr = TRUE)
+  expect_equal(
+    fit$beta_vcov_adj,
+    expected,
+    tolerance = 1e-3,
+    ignore_attr = TRUE
+  )
   coef_obj <- clubSandwich::coef_test(fit_gls, expected)
   sfit <- summary(fit)
   result <- sfit$coefficients[, "df", drop = TRUE]
@@ -498,18 +639,27 @@ test_that("Bias-Reduced works as expected for weighted ar1", {
   formula <- FEV1 ~ ARMCD + ar1(AVISIT | USUBJID)
   data_full <- fev_data[complete.cases(fev_data), ]
   fit <- mmrm(
-    formula = formula, data = data_full, vcov = "Empirical-Bias-Reduced",
-    method = "Satterthwaite", weights = data_full$WEIGHT
+    formula = formula,
+    data = data_full,
+    vcov = "Empirical-Bias-Reduced",
+    method = "Satterthwaite",
+    weights = data_full$WEIGHT
   )
   # the weights are different in gls and mmrm/SAS;
   data_full$WEIGHT2 <- 1 / data_full$WEIGHT
   fit_gls <- nlme::gls(
-    FEV1 ~ ARMCD, data_full,
+    FEV1 ~ ARMCD,
+    data_full,
     correlation = nlme::corAR1(form = ~ VISITN | USUBJID),
     weights = nlme::varFixed(~WEIGHT2)
   )
   expected <- clubSandwich::vcovCR(fit_gls, type = "CR2")
-  expect_equal(fit$beta_vcov_adj, expected, tolerance = 1e-3, ignore_attr = TRUE)
+  expect_equal(
+    fit$beta_vcov_adj,
+    expected,
+    tolerance = 1e-3,
+    ignore_attr = TRUE
+  )
 
   coef_obj <- clubSandwich::coef_test(fit_gls, expected)
   sfit <- summary(fit)

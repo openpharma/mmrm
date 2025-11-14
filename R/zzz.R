@@ -3,7 +3,8 @@
 #' @seealso See `vignette("xtending", package = "emmeans")` for background.
 #' @keywords internal
 #' @noRd
-.onLoad <- function(libname, pkgname) { # nolint
+.onLoad <- function(libname, pkgname) {
+  # nolint
   if (!h_tmb_version_sufficient()) {
     msg <- paste(
       "TMB below version 1.9.15 has been used to compile the mmrm package.",
@@ -14,18 +15,21 @@
   }
 
   register_on_load(
-    "emmeans", c("1.6", NA),
+    "emmeans",
+    c("1.6", NA),
     callback = function() emmeans::.emm_register("mmrm", pkgname),
     message = "mmrm() registered as emmeans extension"
   )
 
   register_on_load(
-    "parsnip", c("1.1.0", NA),
+    "parsnip",
+    c("1.1.0", NA),
     callback = parsnip_add_mmrm,
     message = emit_tidymodels_register_msg
   )
   register_on_load(
-    "car", c("3.1.2", NA),
+    "car",
+    c("3.1.2", NA),
     callback = car_add_mmrm,
     message = "mmrm() registered as car::Anova extension"
   )
@@ -46,14 +50,20 @@
 #'  If not, a onLoad hook was set for the next time the package is loaded.
 #'
 #' @keywords internal
-register_on_load <- function(pkg,
-                             ver = c(NA_character_, NA_character_),
-                             callback,
-                             message = NULL) {
+register_on_load <- function(
+  pkg,
+  ver = c(NA_character_, NA_character_),
+  callback,
+  message = NULL
+) {
   if (isNamespaceLoaded(pkg) && check_package_version(pkg, ver)) {
     callback()
-    if (is.character(message)) packageStartupMessage(message)
-    if (is.function(message)) packageStartupMessage(message())
+    if (is.character(message)) {
+      packageStartupMessage(message)
+    }
+    if (is.function(message)) {
+      packageStartupMessage(message())
+    }
     return(invisible(TRUE))
   }
 
@@ -94,7 +104,8 @@ check_package_version <- function(pkg, ver = c(NA_character_, NA_character_)) {
     ver_na <- is.na(ver)
     warning(sprintf(
       "Cannot register mmrm for use with %s (v%s). Version %s required.",
-      pkg, pkg_ver,
+      pkg,
+      pkg_ver,
       if (!any(ver_na)) {
         sprintf("%s to %s", ver[1], ver[2])
       } else if (ver_na[2]) {
@@ -140,8 +151,11 @@ emit_tidymodels_register_msg <- function() {
         right = paste(pkg, ver)
       ),
       "\n",
-      cli::col_green(cli::symbol$tick), " ",
-      cli::col_blue("mmrm"), "::", cli::col_green("mmrm()")
+      cli::col_green(cli::symbol$tick),
+      " ",
+      cli::col_blue("mmrm"),
+      "::",
+      cli::col_green("mmrm()")
     )
   } else {
     paste0(pkg, "::mmrm() registered for use with tidymodels")

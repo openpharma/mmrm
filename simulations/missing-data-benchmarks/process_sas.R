@@ -20,7 +20,16 @@ emmeans <- input_data$diffs %>%
   mutate(src = substr(src, 4, 8)) %>%
   group_by(src) %>%
   summarize(
-    emmeans_output = list(data.frame(visit, estimate, stderr, df, tvalue, pvalue = probt, lower, upper))
+    emmeans_output = list(data.frame(
+      visit,
+      estimate,
+      stderr,
+      df,
+      tvalue,
+      pvalue = probt,
+      lower,
+      upper
+    ))
   )
 
 cov_from_parm <- function(x, type) {
@@ -59,6 +68,20 @@ df <- fit_time %>%
   mutate(missingness = miss, treatment_effect = trt.eff) %>%
   mutate(method_covar = method_covar, method = "sas", rep = as.numeric(src)) %>%
   mutate(reml = reml, covar_rsp = covar_rsp) %>%
-  select(fit_time, converged, rep, method_covar, method, missingness, n, treatment_effect, seed, emmeans_output, covmat_estimates, covar_rsp, reml)
+  select(
+    fit_time,
+    converged,
+    rep,
+    method_covar,
+    method,
+    missingness,
+    n,
+    treatment_effect,
+    seed,
+    emmeans_output,
+    covmat_estimates,
+    covar_rsp,
+    reml
+  )
 
 saveRDS(df, output_data)

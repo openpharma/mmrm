@@ -80,7 +80,10 @@ h_df_bw_calc <- function(object) {
 #' @keywords internal
 h_df_min_bw <- function(bw_calc, is_coef_involved) {
   assert_list(bw_calc)
-  assert_names(names(bw_calc), identical.to = c("coefs_between_within", "ddf_between", "ddf_within"))
+  assert_names(
+    names(bw_calc),
+    identical.to = c("coefs_between_within", "ddf_between", "ddf_within")
+  )
   assert_logical(is_coef_involved, len = length(bw_calc$coefs_between_within))
   assert_true(sum(is_coef_involved) > 0)
 
@@ -122,7 +125,12 @@ h_df_1d_bw <- function(object, contrast) {
 #' @keywords internal
 h_df_md_bw <- function(object, contrast) {
   assert_class(object, "mmrm")
-  assert_matrix(contrast, mode = "numeric", any.missing = FALSE, ncols = length(component(object, "beta_est")))
+  assert_matrix(
+    contrast,
+    mode = "numeric",
+    any.missing = FALSE,
+    ncols = length(component(object, "beta_est"))
+  )
 
   bw_calc <- h_df_bw_calc(object)
   is_coef_involved <- apply(X = contrast != 0, MARGIN = 2L, FUN = any)

@@ -17,4 +17,9 @@ bb <- numDeriv::jacobian(f2, c(1, 1))
 toString(rbind(matrix(aa[, 1], ncol = 3), matrix(aa[, 2], ncol = 3)))
 
 
-toString(t(rbind(matrix(bb[1:9, 1], ncol = 3), matrix(bb[10:18, 1], ncol = 3), matrix(bb[1:9, 2], ncol = 3), matrix(bb[10:18, 2], ncol = 3))))
+toString(t(rbind(
+  matrix(bb[1:9, 1], ncol = 3),
+  matrix(bb[10:18, 1], ncol = 3),
+  matrix(bb[1:9, 2], ncol = 3),
+  matrix(bb[10:18, 2], ncol = 3)
+)))

@@ -33,7 +33,8 @@ generate_covariates <- function(n_obs, n_visits = 10) {
 
 # Helper function for randomly generating unstructured covariance matrix.
 compute_unstructured_matrix <- function(
-    vars = seq(from = 1, by = 0.5, length.out = 10)) {
+  vars = seq(from = 1, by = 0.5, length.out = 10)
+) {
   n_visits <- length(vars)
   corr_mat <- abs(cov2cor(
     clusterGeneration::genPositiveDefMat(dim = n_visits)$Sigma
@@ -44,15 +45,17 @@ compute_unstructured_matrix <- function(
 }
 
 # Helper function for generating BCVA data.
-generate_outcomes <- function(covars_df,
-                              cov_mat,
-                              intercept = 5,
-                              base_bcva_coef = 1,
-                              strata_2_coef = -1,
-                              strata_3_coef = 1,
-                              trt_coef = 1,
-                              visit_coef = 0.25,
-                              trt_visit_coef = 0.25) {
+generate_outcomes <- function(
+  covars_df,
+  cov_mat,
+  intercept = 5,
+  base_bcva_coef = 1,
+  strata_2_coef = -1,
+  strata_3_coef = 1,
+  trt_coef = 1,
+  visit_coef = 0.25,
+  trt_visit_coef = 0.25
+) {
   # Construct the model matrix.
   model_mat <- model.matrix(
     ~ base_bcva + strata + trt * visit_num,
@@ -63,18 +66,30 @@ generate_outcomes <- function(covars_df,
   n_visits <- nrow(cov_mat)
   n_obs <- nrow(covars_df) / n_visits
   effect_coefs <- c(
-    intercept, base_bcva_coef, strata_2_coef, strata_3_coef,
-    trt_coef, visit_coef, trt_visit_coef
+    intercept,
+    base_bcva_coef,
+    strata_2_coef,
+    strata_3_coef,
+    trt_coef,
+    visit_coef,
+    trt_visit_coef
   )
-  as.vector(model_mat %*% effect_coefs + t(MASS::mvrnorm(n_obs, rep(0, n_visits), cov_mat)))
+  as.vector(
+    model_mat %*%
+      effect_coefs +
+      t(MASS::mvrnorm(n_obs, rep(0, n_visits), cov_mat))
+  )
 }
 
 # MAR helper function.
 missing_at_random <- function(covars_df, type) {
   # Compute missingness probabilities.
   lin_pred <- function(coef_visit, coef_trt) {
-    -(5 - 0.01 * covars_df$base_bcva + 0.5 * (covars_df$strata == 2) +
-      1 * (covars_df$strata == 3) + coef_visit * covars_df$visit_num +
+    -(5 -
+      0.01 * covars_df$base_bcva +
+      0.5 * (covars_df$strata == 2) +
+      1 * (covars_df$strata == 3) +
+      coef_visit * covars_df$visit_num +
       coef_trt * (covars_df$trt == 0))
   }
   prob_miss <- if (type == "none") {
@@ -95,15 +110,18 @@ missing_at_random <- function(covars_df, type) {
 }
 
 # BCVA data-generating process.
-rct_dgp_fun <- function(n_obs = 1000,
-                        outcome_covar_mat = compute_unstructured_matrix(),
-                        trt_coef = 0.25,
-                        visit_coef = 0.25,
-                        trt_visit_coef = 0.25,
-                        missing_type = "moderate") {
+rct_dgp_fun <- function(
+  n_obs = 1000,
+  outcome_covar_mat = compute_unstructured_matrix(),
+  trt_coef = 0.25,
+  visit_coef = 0.25,
+  trt_visit_coef = 0.25,
+  missing_type = "moderate"
+) {
   # Generate the covariates.
   covars_df <- generate_covariates(
-    n_obs = n_obs, n_visits = nrow(outcome_covar_mat)
+    n_obs = n_obs,
+    n_visits = nrow(outcome_covar_mat)
   )
 
   # Generate the outcomes.
@@ -142,7 +160,9 @@ rct_dgp_fun <- function(n_obs = 1000,
         levels = paste0("VIS", str_pad(seq_len(10), width = 2, pad = "0"))
       ),
       ARMCD = ifelse(trt == 1, "TRT", "CTL"),
-      RACE = ifelse(strata == 1, "Black",
+      RACE = ifelse(
+        strata == 1,
+        "Black",
         ifelse(strata == 2, "Asian", "White")
       ),
       BCVA_BL = base_bcva,

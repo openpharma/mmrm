@@ -13,10 +13,19 @@ mmrm_wrapper_fun <- function(df, covar_rsp, covar_type, reml = TRUE) {
   # converged.
   safe_mmrm <- purrr::safely(mmrm::mmrm)
   rspvar <- paste0("chg", covar_rsp)
-  formula <- as.formula(sprintf("%s ~ bcva_bl + strata + trt * visit + %s(visit | id)", rspvar, covar_type))
+  formula <- as.formula(sprintf(
+    "%s ~ bcva_bl + strata + trt * visit + %s(visit | id)",
+    rspvar,
+    covar_type
+  ))
   fit_time <- microbenchmark::microbenchmark(
     # NOTE: Errors when using L-BFGS-B first
-    fit <- safe_mmrm(formula = formula, data = df, optimizer = c("BFGS", "L-BFGS-B"), reml = reml),
+    fit <- safe_mmrm(
+      formula = formula,
+      data = df,
+      optimizer = c("BFGS", "L-BFGS-B"),
+      reml = reml
+    ),
     times = 1L
   )
   format_fit_results(fit$result, df, fit_time$time / 1e9, df$group[1])
@@ -35,12 +44,12 @@ glmmtmb_wrapper_fun <- function(df, covar_rsp, covar_type, reml = TRUE) {
   control <- glmmTMB::glmmTMBControl(parallel = 1)
   safe_glmm <- purrr::safely(glmmTMB::glmmTMB)
   rspvar <- paste0("chg", covar_rsp)
-  covvar <- switch(covar_type,
-    us = "us",
-    csh = "cs",
-    toeph = "toep"
-  )
-  formula <- as.formula(sprintf("%s ~ bcva_bl + strata + trt * visit + %s(visit | id)", rspvar, covvar))
+  covvar <- switch(covar_type, us = "us", csh = "cs", toeph = "toep")
+  formula <- as.formula(sprintf(
+    "%s ~ bcva_bl + strata + trt * visit + %s(visit | id)",
+    rspvar,
+    covvar
+  ))
   fit_time <- microbenchmark::microbenchmark(
     fit <- safe_glmm(
       formula = formula,
@@ -68,13 +77,20 @@ nlme_wrapper_fun <- function(df, covar_rsp, covar_type, reml = TRUE) {
   # safely returns an error message, and allows us to check if the model
   # converged.
   safe_gls <- purrr::safely(nlme::gls)
-  formula <- as.formula(sprintf("chg%s ~ bcva_bl + strata + trt * visit", covar_rsp))
+  formula <- as.formula(sprintf(
+    "chg%s ~ bcva_bl + strata + trt * visit",
+    covar_rsp
+  ))
   if (covar_type == "us") {
     correlation <- nlme::corSymm(form = ~ visit2 | id)
   } else if (covar_type == "csh") {
     correlation <- nlme::corCompSymm(form = ~ visit2 | id)
   } else if (covar_type == "toeph") {
-    correlation <- nlme::corARMA(form = ~ visit2 | id, p = nlevels(df$visit) - 1, q = 0)
+    correlation <- nlme::corARMA(
+      form = ~ visit2 | id,
+      p = nlevels(df$visit) - 1,
+      q = 0
+    )
   } else {
     stop("This covariance matrix is not supported by this wrapper function.")
   }
@@ -203,7 +219,10 @@ get_cov_mat_estimate.gls <- function(obj) {
   gns <- attr(obj$modelStruct$varStruct, "groupNames")
   vw <- nlme::varWeights(obj$modelStruct$varStruct)[gns]
   vars <- (obj$sigma / vw)^2
-  S <- nlme::corMatrix(obj$modelStruct$corStruct, covariate = seq(0, length(gns) - 1))
+  S <- nlme::corMatrix(
+    obj$modelStruct$corStruct,
+    covariate = seq(0, length(gns) - 1)
+  )
   result <- t(S * sqrt(vars)) * sqrt(vars)
   colnames(result) <- gns
   row.names(result) <- gns
