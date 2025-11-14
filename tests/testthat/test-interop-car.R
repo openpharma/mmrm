@@ -181,7 +181,7 @@ test_that("h_type3_contrasts works even if only interaction term exists", {
     formula = FEV1 ~ FEV1_BL:AVISIT - 1 + ar1(AVISIT | USUBJID),
     data = fev_data
   )
-  result <- h_type3_contrasts(mod1)
+  expect_warning(result <- h_type3_contrasts(mod1), "misleading")
   expect_snapshot_tolerance(result)
 
   mod2 <- mmrm(
@@ -195,7 +195,7 @@ test_that("h_type3_contrasts works even if only interaction term exists", {
     formula = FEV1 ~ AVISIT + AVISIT:RACE + FEV1_BL - 1 + us(AVISIT | USUBJID),
     data = fev_data
   )
-  result3 <- h_type3_contrasts(mod3)
+  expect_warning(result3 <- h_type3_contrasts(mod3), "misleading")
   expect_snapshot_tolerance(result3)
 })
 
@@ -259,7 +259,7 @@ test_that("h_contr_sum_type3_contrasts also works when there is just an interact
     formula = FEV1 ~ FEV1_BL:AVISIT - 1 + ar1(AVISIT | USUBJID),
     data = fev_data
   )
-  result <- h_contr_sum_type3_contrasts(mod1)
+  expect_warning(result <- h_contr_sum_type3_contrasts(mod1), "misleading")
   expected <- diag(4)
   expect_equal(result$`FEV1_BL:AVISIT`, expected, ignore_attr = TRUE)
 })
@@ -311,6 +311,21 @@ test_that("Anova works if covariate are character", {
   expect_identical(
     car::Anova(fit, "II"),
     car::Anova(fit2, "II")
+  )
+})
+
+test_that("Anova gives a warning if type III test is performed on a model without intercept", {
+  skip_if_not_installed("car")
+  fit <- mmrm(
+    FEV1 ~ ARMCD * AVISIT - 1 + ar1(AVISIT | USUBJID),
+    data = fev_data
+  )
+  expect_warning(
+    car::Anova(fit, "III"),
+    "Type III tests can give misleading results for models without an intercept"
+  )
+  expect_silent(
+    car::Anova(fit, "II")
   )
 })
 

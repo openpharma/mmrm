@@ -122,7 +122,7 @@ $$
 
 # Type III Hypothesis Testing
 
-For type III hypothesis testing, we assume that the hypothesis tested should be the same for all
+For Type III hypothesis testing, we assume that the hypothesis tested should be the same for all
 designs with the same general form of estimable functions.
 
 An important consideration for Type III testing is that it should be performed with orthogonal contrasts for the categorical covariates. In R this can be achieved via using e.g. the `contr.sum` contrasts for the categorical covariates. 
@@ -135,6 +135,8 @@ However, the default in R are treatment contrasts, via `contr.treatment`. Theref
   - The submatrix of $L_{c,j}$ associated with $E_j$ is set to the identity matrix.
 1. We calculate a correction matrix $C = (X_c^\top X_c)^{-1} X_c^\top X_t$ and obtain corrected Type III contrast matrices subsequently as $L_{t,j} = L_{c,j} C$.
 1. We perform the linear hypothesis tests with the contrast matrices $L_{t,j}$ for our coefficient estimate.
+
+Note that an intercept term should be included in a model when performing Type III tests: otherwise one of the categorical covariates will have an arbitrary high test statistic value. This behavior is different from SAS, but consistent with other `car::Anova()` results e.g. from linear or generalized linear models. In order to guide the user, a warning message is issued when Type III tests are requested for models without an intercept.
 
 # Hypothesis Testing in SAS
 

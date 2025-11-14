@@ -298,8 +298,12 @@ h_contr_sum_type3_contrasts <- function(object) {
 
   terms <- stats::terms(object)
   has_intercept <- attr(terms, "intercept")
+  if (!has_intercept) {
+    warning(
+      "Type III tests can give misleading results for models without an intercept"
+    )
+  }
   term_labels <- c(if (has_intercept) "(Intercept)", labels(terms))
-
   n_coefs <- length(component(object, "beta_est"))
   identity_matrix <- diag(n_coefs)
 
