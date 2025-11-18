@@ -337,23 +337,24 @@ model.frame.mmrm_tmb <- function(
 #' Construction of Model Frame Formula and Data Inputs
 #'
 #' @description
-#' Input formulas are converted from mmrm-style to a style compatible
+#' Input formulas are converted from `mmrm`-style to a style compatible
 #' with default [stats::model.frame()] and [stats::model.matrix()] methods.
 #'
 #' The full formula is returned so we can construct, for example, the
 #' `model.frame()` including all columns as well as the requested subset.
 #' The full set is used to identify rows to include in the reduced model frame.
 #'
-#' @param formula (`mmrm`)\cr mmrm fit object.
-#' @param data optional data frame that will be
-#'   passed to `model.frame()` or `model.matrix()`
-#' @param include (`character`)\cr names of variable to include
+#' @param formula (`mmrm`)\cr fit object.
+#' @param data (`data.frame`)\cr optional data frame will be
+#'   passed to `model.frame()` or `model.matrix()`.
+#' @param include (`character`)\cr specification of variables to include.
 #' @param full (`flag`)\cr indicator whether to return full model frame (deprecated).
 #'
-#' @return named list with four elements:
+#' @return A named list with two elements:
+#'
 #' - `"formula"`: the formula including the columns requested in the `include=` argument.
 #' - `"data"`: a data frame including all columns needed in the formula.
-#'   full formula are identical
+#'
 #' @keywords internal
 h_construct_model_frame_inputs <- function(
   formula,
@@ -393,7 +394,7 @@ h_construct_model_frame_inputs <- function(
 
   # Update data based on the columns in the full formula return.
   all_vars <- all.vars(new_formula_full)
-  assert_names(colnames(data), must.include = all_vars)
+  all_vars <- intersect(colnames(data), all_vars) # Because some variables could be from the environment.
   data <- data[, all_vars, drop = FALSE]
 
   # Return list with updated formula, data.
