@@ -773,6 +773,17 @@ test_that("model.frame with character reference will return factors", {
   )
 })
 
+test_that("model.frame also works with environment variables", {
+  new_levels <- c("Female", "Male")
+  fit <- mmrm(
+    FEV1 ~
+      FEV1_BL + factor(SEX, new_levels) + ar1(as.ordered(VISITN) | USUBJID),
+    fev_data
+  )
+  result <- expect_silent(model.frame(fit))
+  expect_data_frame(result)
+})
+
 # model.matrix ----
 
 test_that("model.matrix works as expected with defaults", {
