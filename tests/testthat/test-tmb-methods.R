@@ -700,8 +700,10 @@ test_that("model.frame ignores subject levels", {
     model.frame(fit1, data = fev_data2, include = "subject_var")
   )
   expect_identical(
-    # first remove missing obs from input data
+    # First remove missing obs from input data, and then get the subject ID
+    # column.
     na.omit(fev_data2[all.vars(fit1$formula$formula)])$USUBJID,
+    # This should be the same as the returned subject ID column.
     out_frame$USUBJID
   )
 })
