@@ -692,19 +692,35 @@ test_that("model.frame makes the levels match", {
   expect_identical(levels(fev_data$AVISIT), levels(out_frame$AVISIT))
 })
 
-test_that("model.frame ignores subject levels", {
+test_that("model.frame only considers included columns when applying na.action", {
   fit1 <- get_mmrm()
   fev_data2 <- fev_data
-  fev_data2$USUBJID <- sprintf("%s_TEST", fev_data2$USUBJID)
   out_frame <- expect_silent(
     model.frame(fit1, data = fev_data2, include = "subject_var")
   )
+  # First remove missing obs from input data, and then get the subject ID
+  # column.
+  usubjid_from_complete <- fev_data2 |>
+    dplyr::select(dplyr::all_of(all.vars(fit1$formula$formula))) |>
+    na.omit() |>
+    dplyr::pull(USUBJID)
+  # This is just the requested columns, with NAs removed, then get the subject ID column.
+  usubjid_from_selected <- fev_data2 |>
+    dplyr::select(dplyr::all_of(names(out_frame))) |>
+    na.omit() |>
+    dplyr::pull(USUBJID)
+  # This is the subject ID column from the output data frame.
+  usubjid_result <- out_frame$USUBJID
+  # The latter two should be identical.
   expect_identical(
-    # First remove missing obs from input data, and then get the subject ID
-    # column.
-    na.omit(fev_data2[all.vars(fit1$formula$formula)])$USUBJID,
-    # This should be the same as the returned subject ID column.
-    out_frame$USUBJID
+    usubjid_from_selected,
+    usubjid_result
+  )
+  # We would see less subject IDs when only considering the subject_var
+  # from the missing removed complete model frame.
+  expect_subset(
+    usubjid_from_complete,
+    usubjid_result
   )
 })
 
