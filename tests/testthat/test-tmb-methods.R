@@ -784,6 +784,16 @@ test_that("model.frame also works with environment variables", {
   expect_data_frame(result)
 })
 
+test_that("model.frame works with environment variables with missing values and `data` argument", {
+  env_fev1_bl <- fev_data$FEV1_BL
+  fit <-
+    mmrm(
+      FEV1 ~ env_fev1_bl + SEX + ar1(as.ordered(VISITN) | USUBJID),
+      fev_data
+    )
+  result <- expect_silent(model.frame(fit, data = fev_data))
+})
+
 # model.matrix ----
 
 test_that("model.matrix works as expected with defaults", {
