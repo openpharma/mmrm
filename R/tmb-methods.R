@@ -325,7 +325,7 @@ model.frame.mmrm_tmb <- function(
     ret <-
       stats::model.frame(
         formula = lst_formula_and_data$formula,
-        data = h_get_na_action(na.action)(lst_formula_and_data$data),
+        data = lst_formula_and_data$data,
         na.action = na.action,
         xlev = component(formula, "xlev")
       )
