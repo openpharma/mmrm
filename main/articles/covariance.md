@@ -1,0 +1,249 @@
+# Covariance Structures
+
+Here we describe the covariance structures which are currently available
+in `mmrm`.
+
+## Introduction
+
+We use some concepts throughout the different covariance structures and
+introduce these here.
+
+### Covariance and Correlation Matrices
+
+The symmetric and positive definite covariance matrix
+``` math
+\Sigma = \begin{pmatrix}
+\sigma_1^2 & \sigma_{12} & \dots & \dots & \sigma_{1m} \\
+\sigma_{21} & \sigma_2^2 & \sigma_{23} & \dots & \sigma_{2m}\\
+\vdots & & \ddots & & \vdots \\
+\vdots & & & \ddots & \vdots \\
+\sigma_{m1} & \dots & \dots & \sigma_{m,m-1} & \sigma_m^2
+\end{pmatrix}
+```
+is parametrized by a vector of variance parameters
+$`\theta = (\theta_1, \dotsc, \theta_k)^\top`$. The meaning and the
+number ($`k`$) of variance parameters is different for each covariance
+structure.
+
+In many covariance structures we use the decomposition
+``` math
+\Sigma = DPD
+```
+where the diagonal standard deviation matrix is
+``` math
+D = \begin{pmatrix}
+\sigma_1 & 0 & \cdots & & 0 \\
+0 & \sigma_2 & 0 & \cdots & 0 \\
+\vdots & & \ddots & \ddots & \vdots \\
+&  & & \sigma_{m-1} & 0 \\
+0 & \cdots & & 0 & \sigma_m
+\end{pmatrix}
+```
+with entries $`\sigma_i > 0`$, and the symmetric correlation matrix
+$`P`$ is
+``` math
+P = \begin{pmatrix}
+  1 & \rho_{12}   & \rho_{13} & \cdots & \cdots & \rho_{1,m-1} \\
+  \rho_{12} & 1      & \rho_{23} & \ddots &        & \vdots \\
+  \rho_{13} & \rho_{23}      & \ddots & \ddots & \ddots & \vdots \\
+ \vdots & \ddots & \ddots & \ddots & \rho_{m-2,m-1} & \rho_{m-2,m} \\
+ \vdots &        & \ddots & \rho_{m-2,m-1}    & 1    & \rho_{m-1,m} \\
+\rho_{1, m-1} & \cdots & \cdots & \rho_{m-2,m} & \rho_{m-1,m}    & 1
+\end{pmatrix}
+```
+with entries $`\rho_{ij} \in (-1, 1)`$. Since these covariance
+structures assume different variances for each time point they are
+called “heterogeneous” covariance structures. Assuming a constant
+$`\sigma = \sigma_1 = \dotsb = \sigma_m`$ gives a “homogeneous”
+covariance structure instead.
+
+### Transformation to Variance Parameters
+
+For standard deviation parameters $`\sigma`$ we use the natural
+logarithm $`\log(\sigma)`$ to map them to $`\mathbb{R}`$.
+
+For correlation parameters $`\rho`$ we mostly use the transformation
+``` math
+\theta = f(\rho) = \mathop{\mathrm{sign}}(\rho) \sqrt{\frac{\rho^2}{1 - \rho^2}}
+```
+which maps the correlation parameter to $`\theta \in \mathbb{R}`$. It
+has the inverse
+``` math
+\rho = f^{-1}(\theta) = \frac{\theta}{\sqrt{1 + \theta^2}}.
+```
+This is important because the resulting variance parameters $`\theta`$
+can be optimized without constraints over the whole of $`\mathbb{R}`$.
+We use different transformations for the compound symmetry and spatial
+exponential covariance structures, as explained below.
+
+## Covariance Structures
+
+### Unstructured (`us`)
+
+Any covariance matrix can be represented by this saturated correlation
+structure. Here $`k = m (m+1) / 2`$. See the [algorithm
+vignette](https://openpharma.github.io/mmrm/articles/algorithm.md) for
+details.
+
+### Homogeneous (`ad`) and Heterogeneous Ante-dependence (`adh`)
+
+The ante-dependence correlation structure (Gabriel 1962) is useful for
+balanced designs where the observations are not necessarily equally
+spaced in time. Here we use an order one ante-dependence model, where
+the correlation matrix $`P`$ has elements
+``` math
+\rho_{ij} = \prod_{k=i}^{j-1} \rho_k.
+```
+So we have correlation parameters $`\rho_k`$, $`k = 1, \dotsc, m-1`$.
+
+We use a heterogeneous covariance structure to allow for different
+within subject variances. So here we can identify
+``` math
+\theta = (\log(\sigma_1), \dotsc, \log(\sigma_m), f(\rho_1), \dotsc, f(\rho_{m-1}))
+```
+and we have in total $`2m - 1`$ variance parameters. Assuming a constant
+variance yields a homogeneous ante-dependence covariance structure with
+total $`m`$ variance parameters.
+
+Note our naming convention for the homogeneous and heterogeneous
+covariance structures that a suffix `h` is used to denote the
+heterogeneous version, e.g, `ad` for homogeneous and `adh` for
+heterogeneous ante-dependence. This is different from the name used in
+SAS for ante-dependence covariance structure, where `ANTE(1)` refers to
+heterogeneous ante-dependence covariance structure and a homogeneous
+version is not provided in SAS.
+
+### Homogeneous (`toep`) and Heterogeneous Toeplitz (`toeph`)
+
+Toeplitz matrices (Toeplitz 1911) are diagonal-constant matrices. Here
+we can model the correlation matrix as a Toeplitz matrix:
+``` math
+P = \begin{pmatrix}
+  1 & \rho_1   & \rho_2 & \cdots & \cdots & \rho_{m-1} \\
+  \rho_1 & 1      & \rho_1 & \ddots &        & \vdots \\
+  \rho_2 & \rho_1      & \ddots & \ddots & \ddots & \vdots \\
+ \vdots & \ddots & \ddots & \ddots & \rho_1 & \rho_2 \\
+ \vdots &        & \ddots & \rho_1    & 1    & \rho_1 \\
+\rho_{m-1} & \cdots & \cdots & \rho_2    & \rho_1    & 1
+\end{pmatrix}
+```
+This means that the correlation between two time points only depends on
+the distance between them, i.e.
+``` math
+\rho_{ij} = \rho_{\left\vert i - j\right\vert}
+```
+and we have correlation parameters $`\rho_k`$, $`k = 1, \dotsc, m-1`$.
+
+We use a heterogeneous covariance structure to allow for different
+within subject variances. So here we can identify
+``` math
+\theta = (\log(\sigma_1), \dotsc, \log(\sigma_m), f(\rho_1), \dotsc, f(\rho_{m-1}))
+```
+and we have in total $`2m - 1`$ variance parameters. This is similar to
+the heterogeneous ante-dependence structure, but the correlation
+parameters are used differently in the construction of $`P`$. Assuming a
+constant variance yields a homogeneous Toeplitz covariance structure
+with total $`m`$ variance parameters.
+
+### Homogeneous (`ar1`) and Heterogeneous (`ar1h`) Autoregressive
+
+The autoregressive covariance structure can be motivated by the
+corresponding state-space equation
+``` math
+y_{it} = \varphi y_{i,t-1} + \varepsilon_t
+```
+where the white noise $`\varepsilon_t`$ has a normal distribution with
+mean zero and a constant variance. It can be shown that this gives
+correlations
+``` math
+\rho_{ij} = \rho^{\left\vert i - j\right\vert}.
+```
+where $`\rho`$ is related to $`\varphi`$ and the variance and is the
+single correlation parameter here.
+
+Assuming a constant variance in the state-space equation yields a
+homogeneous autoregressive covariance structure with total only $`k=2`$
+variance parameters, otherwise we obtain the heterogeneous
+autoregressive covariance structure with $`k = m + 1`$ variance
+parameters.
+
+### Homogeneous (`cs`) and Heterogeneous (`csh`) Compound Symmetry
+
+The compound symmetry covariance structures assume a constant
+correlation between different time points:
+``` math
+\rho_{ij} = \rho
+```
+where $`\rho`$ is the single correlation parameter here.
+
+The permitted range of $`\rho`$ is only from $`-1/(m-1)`$ to $`1`$,
+therefore we use here a different transformation: With the negative
+lower bound for the correlation defined as $`a=1/(m-1)`$, we use
+``` math
+\theta = f(\rho) = \mathop{\mathrm{logit}}((\rho + a) / (1 + a))
+```
+with the inverse
+``` math
+\rho = f^{-1}(\theta) = \mathop{\mathrm{logit}}^{-1}(\theta) (1 + a) - a.
+```
+
+Assuming a constant variance in the state-space equation yields a
+homogeneous compound symmetry covariance structure with total only
+$`k=2`$ variance parameters, otherwise we obtain the heterogeneous
+compound symmetry covariance structure with $`k = m + 1`$ variance
+parameters.
+
+## Spatial Covariance Structure
+
+Spatial covariance structures, unlike other covariance structures, does
+not require that the timepoints are consistent between subjects.
+Instead, as long as the distance between visits can be quantified in
+terms of time and/or other coordinates, the spatial covariance structure
+can be applied. Euclidean distance is the most common case. For each
+subject, the covariance structure can be different. Only homogeneous
+structures are allowed (i.e. a common variance is used).
+
+Please note that while printing the summary of an `mmrm` fit, the
+covariance displayed is a 2 \* 2 square matrix. As the distance will be
+used to derive the corresponding element in that matrix, unit distance
+is used here. The distance matrix is
+
+``` math
+    \begin{pmatrix}
+    0 & 1\\
+    1 & 0\\
+    \end{pmatrix}
+```
+
+### Spatial exponential (`sp_exp`)
+
+For spatial exponential, the covariance structure is defined as follows:
+
+``` math
+  \rho_{ij} = \rho^{d_{ij}}
+```
+
+where $`d_{ij}`$ is the distance between time point $`i`$ and time point
+$`j`$,
+
+A total number of parameters $`k = 2`$ is needed:
+
+The parameterization for $`\theta`$ is a little different from previous
+examples. In previous examples, $`\rho`$ can take values from -1 to 1,
+but here we need to restrict $`\rho`$ to (0, 1). Hence we have the
+following parametrization form:
+
+``` math
+\theta = (\log(\sigma), \mathop{\mathrm{logit}}(\rho))
+```
+
+## References
+
+Gabriel KR (1962). “Ante-dependence Analysis of an Ordered Set of
+Variables.” *The Annals of Mathematical Statistics*, **33**(1), 201–212.
+[https://doi.org/10.1214/aoms/1177704724.](https://doi.org/10.1214/aoms/1177704724)
+
+Toeplitz O (1911). “Zur Theorie Der Quadratischen Und Bilinearen Formen
+von Unendlichvielen Veränderlichen.” *Mathematische Annalen*, **70**(3),
+351–376.
+[https://doi.org/10.1007/BF01564502.](https://doi.org/10.1007/BF01564502)
