@@ -762,6 +762,17 @@ test_that("model.frame can use the exclude argument correctly", {
     c("USUBJID", "AVISIT")
   )
   expect_identical(nrow(out_frame), nrow(component(fit, "x_matrix")))
+  term_attr <- attr(out_frame, "terms")
+  expect_true(!is.null(term_attr))
+  expect_disjunct(
+    labels(term_attr),
+    c("ARMCD", "FEV1")
+  )
+  expect_equal(
+    stats::formula(term_attr),
+    ~ USUBJID + AVISIT,
+    ignore_attr = TRUE
+  )
 })
 
 test_that("model.frame with character reference will return factors", {

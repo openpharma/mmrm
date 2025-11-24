@@ -350,7 +350,23 @@ model.frame.mmrm_tmb <- function(
       c("subject_var", "visit_var", "group_var", "response_var")
     )
     vars_to_exclude <- unlist(formula$formula_parts[exclude])
+    # Need to preserve the attributes and drop terms according
+    # to the excluded variables. Otherwise downstream emmeans
+    # will not work correctly.
+    ret_attrs <- attributes(ret)
+    ret_terms <- ret_attrs$terms
+    term_labels <- labels(ret_terms)
+    drop_inds <- which(term_labels %in% vars_to_exclude)
+    ret_attrs$terms <- stats::drop.terms(
+      ret_terms,
+      drop_inds,
+      keep.response = !("response_var" %in% exclude)
+    )
     ret <- ret[, setdiff(colnames(ret), vars_to_exclude), drop = FALSE]
+    attributes(ret) <- c(
+      attributes(ret),
+      ret_attrs[c("terms", "na.action")]
+    )
   }
   ret
 }
