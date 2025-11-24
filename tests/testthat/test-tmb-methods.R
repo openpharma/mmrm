@@ -752,6 +752,18 @@ test_that("model.frame include all specified variables", {
   expect_identical(colnames(out_frame), c("FEV1", "ARMCD"))
 })
 
+test_that("model.frame can use the exclude argument correctly", {
+  fit <- get_mmrm_group()
+  out_frame <- expect_silent(
+    model.frame(fit, data = fev_data, exclude = c("group_var", "response_var"))
+  )
+  expect_identical(
+    colnames(out_frame),
+    c("USUBJID", "AVISIT")
+  )
+  expect_identical(nrow(out_frame), nrow(component(fit, "x_matrix")))
+})
+
 test_that("model.frame with character reference will return factors", {
   fev_data2 <- fev_data
   fev_data2$ARMCD <- as.character(fev_data2$ARMCD)
