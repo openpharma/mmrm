@@ -278,7 +278,7 @@ test_that("predict will return NA if data contains NA in covariates", {
       fit,
       data = fev_data2[new_order, ],
       include = NULL,
-      drop_response = TRUE,
+      exclude = "response_var",
       na.action = "na.pass"
     )
   )
