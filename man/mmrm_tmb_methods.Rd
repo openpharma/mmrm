@@ -40,6 +40,7 @@
   formula,
   data,
   include = c("subject_var", "visit_var", "group_var", "response_var"),
+  exclude = NULL,
   full,
   na.action = "na.omit",
   ...
@@ -107,8 +108,11 @@ Exception is \code{model.matrix()} passing \code{...} to the default method.}
 
 \item{data}{(\code{data.frame})\cr object in which to construct the frame.}
 
-\item{include}{(\code{character})\cr names of variable types to include.
+\item{include}{(\code{character})\cr names of variable types to include in the model frame creation.
 Must be \code{NULL} or one or more of \code{c("subject_var", "visit_var", "group_var", "response_var")}.}
+
+\item{exclude}{(\code{character})\cr names of variable types to exclude after the model frame creation.
+Same choices as for \code{include}.}
 
 \item{full}{(\code{flag})\cr indicator whether to return full model frame (deprecated).}
 
@@ -143,9 +147,19 @@ Depends on the method, see Functions.
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
 }
 \details{
-\code{include} argument controls the variables the returned model frame will include.
+\code{include} argument controls the variables the model frame will include upon creation.
 Possible options are "response_var", "subject_var", "visit_var" and "group_var", representing the
 response variable, subject variable, visit variable or group variable.
+By default all four variable types are included, which means that the original model frame will be used.
+If only a subset of variable types is requested, the model frame will be constructed freshly, and
+if there are more complete rows (without \code{NA}s) in the required variables than in the original model frame,
+those rows will be included as well.
+
+The \code{exclude} argument can be used to exclude specific variable types after the model frame creation.
+By default no variable types are excluded. The \code{exclude} argument is useful when the original
+model frame should be used as basis (with same incomplete rows omitted), but some variable types should be removed
+afterwards.
+
 \code{character} values in new data will always be factorized according to the data in the fit
 to avoid mismatched in levels or issues in \code{model.matrix}.
 }
