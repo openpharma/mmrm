@@ -1,17 +1,19 @@
 # mmrm 0.3.15.9001
 
-### Additions
+### New Features
 
 - `Anova.mmrm()` now has a `test.statistic` argument allowing the user to choose a Chi-squared test as opposed to the default F-test.
 - `logLik.mmrm_tmb()` now includes a `nobs` attribute containing the number of subjects in the inputted model (i.e., `component(mmrm_object, "n_subjects")`). As a result, `BIC(logLik(mmrm_object))` will now be successfully calculated.
 - `mmrm_control()` now has a `disable_theta_vcov` argument allowing the user to disable computation of the variance-covariance matrix of the covariance parameters. In that case, the `nlminb` optimizer cannot be used and other optimizers should be selected. Avoiding this computation can be useful in cases where the number of covariance parameters is large and computation of this very large matrix is slow and memory-intensive.
+- `model.frame()` has a new argument `exclude` which allows to exclude specific model variables from the returned data frame, *after* creating the initial `model.frame`. This is useful when the same rows should be kept as in the original model fit (e.g. after `na.action` has been applied), but some variables are not needed in the returned data frame. The `terms` attribute of the returned data frame is updated accordingly.
 
 ### Bug Fixes
 
 - Previously, the compound symmetry correlation models (`cs` and `csh`) could have divergence issues, especially when the correlation was negative. This was because the range of the correlation parameter was from -1 to 1, whereas the correct range is between -1/(m-1) and 1, where m is the number of observations per subject. This is fixed now by using another mapping from the real line to the correct range, and therefore compound symmetry correlation models will work more robustly. 
 - Previously, the `predict()` method failed when requesting an unconditional prediction interval. This is fixed now.
 - Previously, the `emp_start()` starting values could only work with variables included directly in `data`. Now they can also work when variables are not included in `data` but are available in the parent environment: The variables will be correctly included in the design matrix. This is achieved by an internal update to `h_mmrm_tmb_data()`.
-- Previously, the `model.frame()` method failed when the model formula included variables from the environment. This is fixed now.
+- Previously, the `model.frame()` method failed when the model formula included variables from the environment. This is fixed now. In addition, whereas `model.frame()` used to apply `na.action` before processing the `include` argument, `na.action` is now applied afterwards. As a result, any variables excluded from `include` are no longer considered when `na.action` is applied. Therefore, in the default case when `na.action = "na.omit"`, this can lead to more rows being kept in the returned data frame compared to previous versions.
+- Previously, the `model.frame()` method did not pass on additional arguments to the `model.frame.default()` method, e.g. `subset`. This is fixed now.
 - Previously, the `vcov()` method returned the asymptotic covariance matrix, even if an adjusted one has been used. This is now fixed and the requested adjusted covariance matrix will be returned. (Please note this was not an issue for downstream `summary()` or `emmeans()` calls, where the adjusted covariance matrix was correctly used.)
 - Previously, type 3 tests in the `Anova.mmrm()` method could give incorrect results which were not compatible with results from `lme4::lmer()` or other software (e.g. when using other than treatment contrasts). This is fixed now. In particular, any combination of contrasts can be used and will yield consistent results.
 - Previously, the naming conventions used in the `Anova.mmrm()` method were not recognized by `broom::tidy()`. This is fixed now by using more standard names for the resulting data frame columns (e.g. `F` instead of `F Statistic` etc.)
