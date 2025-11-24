@@ -273,17 +273,29 @@ h_get_prediction_variance <- function(object, nsim, tmb_data) {
 
 #' @describeIn mmrm_tmb_methods obtains the model frame.
 #' @param data (`data.frame`)\cr object in which to construct the frame.
-#' @param include (`character`)\cr names of variable types to include.
+#' @param include (`character`)\cr names of variable types to include in the model frame creation.
 #'   Must be `NULL` or one or more of `c("subject_var", "visit_var", "group_var", "response_var")`.
+#' @param exclude (`character`)\cr names of variable types to exclude after the model frame creation.
+#'   Same choices as for `include`.
 #' @param full (`flag`)\cr indicator whether to return full model frame (deprecated).
 #' @param na.action (`string`)\cr na action.
 #' @importFrom stats model.frame
 #' @exportS3Method
 #'
 #' @details
-#' `include` argument controls the variables the returned model frame will include.
+#' `include` argument controls the variables the model frame will include upon creation.
 #' Possible options are "response_var", "subject_var", "visit_var" and "group_var", representing the
 #' response variable, subject variable, visit variable or group variable.
+#' By default all four variable types are included, which means that the original model frame will be used.
+#' If only a subset of variable types is requested, the model frame will be constructed freshly, and
+#' if there are more complete rows (without `NA`s) in the required variables than in the original model frame,
+#' those rows will be included as well.
+#'
+#' The `exclude` argument can be used to exclude specific variable types after the model frame creation.
+#' By default no variable types are excluded. The `exclude` argument is useful when the original
+#' model frame should be used as basis (with same incomplete rows omitted), but some variable types should be removed
+#' afterwards.
+#'
 #' `character` values in new data will always be factorized according to the data in the fit
 #' to avoid mismatched in levels or issues in `model.matrix`.
 #'
@@ -295,6 +307,7 @@ model.frame.mmrm_tmb <- function(
   formula,
   data,
   include = c("subject_var", "visit_var", "group_var", "response_var"),
+  exclude = NULL,
   full,
   na.action = "na.omit", # nolint
   ...
@@ -321,7 +334,7 @@ model.frame.mmrm_tmb <- function(
     ret[, "(weights)"] <- NULL
     ret
   } else {
-    # Construct data frame to return to users.
+    # Construct data frame.
     ret <-
       stats::model.frame(
         formula = lst_formula_and_data$formula,
@@ -329,6 +342,15 @@ model.frame.mmrm_tmb <- function(
         na.action = na.action,
         xlev = component(formula, "xlev")
       )
+  }
+  # Exclude requested variable types.
+  if (!is.null(exclude)) {
+    assert_subset(
+      exclude,
+      c("subject_var", "visit_var", "group_var", "response_var")
+    )
+    vars_to_exclude <- unlist(formula$formula_parts[exclude])
+    ret <- ret[, setdiff(colnames(ret), vars_to_exclude), drop = FALSE]
   }
   ret
 }
