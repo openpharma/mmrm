@@ -775,6 +775,17 @@ test_that("model.frame can use the exclude argument correctly", {
   )
 })
 
+test_that("model.frame can use the subset argument correctly", {
+  fit <- get_mmrm_group()
+  out_frame <- expect_silent(
+    model.frame(fit, data = fev_data, subset = ARMCD == "TRT")
+  )
+  expect_identical(
+    nrow(out_frame),
+    sum(fev_data$ARMCD == "TRT" & !is.na(fev_data$FEV1))
+  )
+})
+
 test_that("model.frame with character reference will return factors", {
   fev_data2 <- fev_data
   fev_data2$ARMCD <- as.character(fev_data2$ARMCD)

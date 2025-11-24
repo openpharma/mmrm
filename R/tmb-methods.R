@@ -340,7 +340,8 @@ model.frame.mmrm_tmb <- function(
         formula = lst_formula_and_data$formula,
         data = lst_formula_and_data$data,
         na.action = na.action,
-        xlev = component(formula, "xlev")
+        xlev = component(formula, "xlev"),
+        ...
       )
   }
   # Exclude requested variable types.
