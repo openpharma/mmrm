@@ -225,6 +225,7 @@ h_mmrm_tmb_data <- function(
       lapply(full_frame[is_factor_col], contrasts)
     )
   )
+  assign_complete <- attr(x_matrix, "assign")
   x_cols_aliased <- stats::setNames(
     rep(FALSE, ncol(x_matrix)),
     nm = colnames(x_matrix)
@@ -246,11 +247,11 @@ h_mmrm_tmb_data <- function(
         " by using `accept_singular = TRUE`"
       )
     } else if (identical(singular, "drop")) {
-      assign_attr <- attr(x_matrix, "assign")
+      # assign_attr <- attr(x_matrix, "assign")
       contrasts_attr <- attr(x_matrix, "contrasts")
       x_matrix <- x_matrix[, -cols_to_drop, drop = FALSE]
       x_cols_aliased[cols_to_drop] <- TRUE
-      attr(x_matrix, "assign") <- assign_attr[-cols_to_drop]
+      attr(x_matrix, "assign") <- assign_complete[-cols_to_drop]
       attr(x_matrix, "contrasts") <- contrasts_attr
     }
   }
@@ -298,6 +299,7 @@ h_mmrm_tmb_data <- function(
       data = data,
       x_matrix = x_matrix,
       x_cols_aliased = x_cols_aliased,
+      assign_complete = assign_complete,
       coordinates = coordinates_matrix,
       y_vector = y_vector,
       weights_vector = weights_vector,

@@ -10,8 +10,8 @@ component(
     "beta_vcov", "beta_vcov_complete", "varcor", "score_per_subject", "formula",
     "dataset", "n_groups", "reml", "convergence", "evaluations", "method", "optimizer",
     "conv_message", "call", "theta_est", "beta_est", "beta_est_complete", "beta_aliased",
-    "x_matrix", "y_vector", "neg_log_lik", "jac_list", "theta_vcov", "full_frame",
-    "xlev", "contrasts")
+    "x_matrix", "assign_complete", "y_vector", "neg_log_lik", "jac_list", "theta_vcov",
+    "full_frame", "xlev", "contrasts")
 )
 }
 \arguments{
