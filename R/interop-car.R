@@ -54,7 +54,7 @@ h_type2_contrast <- function(
     !attr(tms, "intercept") &&
     !term_contains_aliased_coefs &&
     length(categorical_covars) &&
-    effect == h_first_term_containing_categorical_var(fcts, categorical_covars)
+    effect == h_first_term_containing_categ(fcts, categorical_covars)
 
   coef_rows <- length(cols) - as.integer(effect_contains_intercept)
   l_mx <-
@@ -98,7 +98,7 @@ h_type2_contrast <- function(
 
 
 
-h_first_term_containing_categorical_var <- function(factors, categorical) {
+h_first_term_containing_categ <- function(factors, categorical) {
   factors <- factors[categorical, , drop = FALSE]
   for (term in colnames(factors))
     if (any(factors[, term] > 0))

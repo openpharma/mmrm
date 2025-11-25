@@ -247,7 +247,6 @@ h_mmrm_tmb_data <- function(
         " by using `accept_singular = TRUE`"
       )
     } else if (identical(singular, "drop")) {
-      # assign_attr <- attr(x_matrix, "assign")
       contrasts_attr <- attr(x_matrix, "contrasts")
       x_matrix <- x_matrix[, -cols_to_drop, drop = FALSE]
       x_cols_aliased[cols_to_drop] <- TRUE
