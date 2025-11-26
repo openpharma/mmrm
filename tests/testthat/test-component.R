@@ -33,6 +33,7 @@ test_that("component works as expected for mmrm_tmb objects", {
       "beta_est_complete",
       "beta_aliased",
       "x_matrix",
+      "assign_complete",
       "y_vector",
       "neg_log_lik",
       "jac_list",
