@@ -34,6 +34,25 @@ test_that("recover_data method works as expected for rank deficient model", {
   expect_named(result, c("RACE", "SEX", "SEX2", "ARMCD", "AVISIT"))
 })
 
+test_that("recover_data method works correctly if subject variable has missing entries", {
+  skip_if_not_installed("emmeans", minimum_version = "1.6")
+
+  data <- fev_data
+  # We take here observation no. 2 because the other variables are not missing.
+  data$USUBJID[2] <- NA
+  assert_number(data$FEV1[2])
+  fit <- mmrm(
+    FEV1 ~ FEV1_BL + ARMCD * AVISIT + ar1(AVISIT | USUBJID),
+    data = data
+  )
+  result <- emmeans::recover_data(fit)
+  expect_data_frame(result, nrows = nrow(fit$tmb_data$x_matrix))
+  expect_named(
+    attributes(result),
+    c("names", "row.names", "class", "call", "terms", "predictors", "responses")
+  )
+})
+
 # emm_basis ----
 
 test_that("emm_basis method works as expected", {
