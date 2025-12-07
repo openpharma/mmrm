@@ -31,14 +31,14 @@ recover_data.mmrm <- function(object, ...) {
   # nolint end
   fun_call <- stats::getCall(object)
   # subject_var is excluded because it should not contain fixed effect.
-  # visit_var is not excluded because emmeans can provide marginal mean
-  # by each visit if visit_var is not spatial.
+  # visit_var is only excluded for spatial covariance structures -
+  # for non-spatial covariance structures, emmeans can provide marginal mean
+  # by each visit so we need visit_var.
   model_frame <- stats::model.frame(
     object,
-    include = c(
-      if (!object$formula_parts$is_spatial) "visit_var" else NULL,
-      "response_var",
-      "group_var"
+    exclude = c(
+      "subject_var",
+      if (object$formula_parts$is_spatial) "visit_var"
     )
   )
   model_terms <- stats::delete.response(stats::terms(model_frame))
@@ -82,10 +82,9 @@ emm_basis.mmrm <- function(
       trms,
       stats::model.frame(
         object,
-        include = c(
-          if (!object$formula_parts$is_spatial) "visit_var" else NULL,
-          "response_var",
-          "group_var"
+        exclude = c(
+          "subject_var",
+          if (object$formula_parts$is_spatial) "visit_var"
         )
       ),
       contrasts.arg = contrasts
