@@ -33,13 +33,17 @@ h_type2_contrast <- function(
   assert_string(effect)
   assert_double(tol, finite = TRUE, len = 1L)
 
-  mx <- component(object, "x_matrix")
+  # The complete model matrix including aliased columns is needed. See below.
+  mx <- component(object, "x_matrix_complete")
   asg <- attr(mx, "assign")
-  asg_complete <- component(object, "assign_complete")
   aliased <- component(object, "beta_aliased")
   formula <- object$formula_parts$model_formula
   tms <- stats::terms(formula)
   fcts <- attr(tms, "factors")[-1L, , drop = FALSE] # Discard the response.
+
+  # We do this because the factors attribute of a terms.object can include 2s.
+  fcts[fcts > 1] <- 1
+
   ods <- attr(tms, "order")
   assert_subset(effect, colnames(fcts))
   idx <- which(effect == colnames(fcts))
@@ -48,11 +52,11 @@ h_type2_contrast <- function(
 
   categorical_covars <- intersect(rownames(fcts), names(xlev))
 
-  term_contains_aliased_coefs <- any(aliased[asg_complete == idx])
-
+  # An effect contains the model's intercept if the model was not built with an
+  # intercept and if the effect is the first one in the model specification to
+  # contain a categorical variable.
   effect_contains_intercept <-
     !attr(tms, "intercept") &&
-    !term_contains_aliased_coefs &&
     length(categorical_covars) &&
     effect == h_first_term_containing_categ(fcts, categorical_covars)
 
@@ -67,23 +71,39 @@ h_type2_contrast <- function(
   if (coef_rows == 0L) {
     return(l_mx)
   }
+
+  # The columns of l_mx that should be replaced with an identity matrix. It will
+  # simply be the effect's columns (cols) unless the effect contains the model's
+  # intercept.
+  i_mtx_cols <- cols
   if (effect_contains_intercept) {
-    l_mx[, cols] <- cbind(-1, diag(rep(1, coef_rows)))
-  } else {
-    l_mx[, cols] <- diag(rep(1, coef_rows))
+    aliased_effect_cols <- intersect(which(aliased), cols)
+    # The column in l_mx that should be replaced with straight -1s. If the
+    # effect contains an aliased column, use the effect's first aliased column.
+    # Otherwise use the effect's first column.
+    drop_col <-
+      if (length(aliased_effect_cols)) aliased_effect_cols[1L] else cols[1L]
+    l_mx[, drop_col] <- -1
+    i_mtx_cols <- setdiff(i_mtx_cols, drop_col)
   }
+  l_mx[, i_mtx_cols] <- diag(coef_rows)
+
   for (i in setdiff(seq_len(ncol(fcts)), idx)) {
+    # This is where replacing the factors attributes' 2s with 1s matters.
     additional_vars <- names(which(fcts[, i] > fcts[, idx]))
-    additional_numeric <- any(!additional_vars %in% names(xlev))
+    additional_numeric <- any(!additional_vars %in% categorical_covars)
     current_col <- which(asg == i)
     if (
       ods[i] >= ods[idx] && all(fcts[, i] >= fcts[, idx]) && !additional_numeric
     ) {
+      # This is where it matters to use the complete design matrix including
+      # aliased columns.
       x1 <- mx[, cols, drop = FALSE]
       x0 <- mx[, -c(cols, current_col), drop = FALSE]
       x2 <- mx[, current_col, drop = FALSE]
-      m <- diag(rep(1, nrow(x0))) - x0 %*% solve(t(x0) %*% x0) %*% t(x0)
-      ret <- solve(t(x1) %*% m %*% x1) %*% t(x1) %*% m %*% x2
+      m <- diag(nrow(x0)) - h_quad_form_mat(x0, solve(crossprod(x0)))
+      crossprod_x1_m <- crossprod(x1, m)
+      ret <- solve(crossprod_x1_m %*% x1) %*% crossprod_x1_m %*% x2
       sub_mat <- if (effect_contains_intercept) {
         ret[-1, ] - ret[1, ]
       } else {
@@ -92,9 +112,14 @@ h_type2_contrast <- function(
       l_mx[, current_col] <- sub_mat
     }
   }
+  # Finally, we drop aliased columns. But we needed them to properly calculate
+  # the others.
+  l_mx <- l_mx[, !aliased, drop = FALSE]
   l_mx[abs(l_mx) < tol] <- 0
   l_mx
 }
+
+
 
 
 

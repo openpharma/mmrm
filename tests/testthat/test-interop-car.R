@@ -76,10 +76,10 @@ test_that("h_get_index works as expected", {
 
 
 
-# h_first_term_containing_categorical_var ----
-test_that("h_first_term_containing_categorical_var", {
+# h_first_term_containing_categ ----
+test_that("h_first_term_containing_categ", {
   expect_identical(
-    h_first_term_containing_categorical_var(
+    h_first_term_containing_categ(
       attr(terms(get_mmrm_no_intercept()), "factors"),
       c("RACE", "SEX")
     ),
