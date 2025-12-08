@@ -225,7 +225,6 @@ h_mmrm_tmb_data <- function(
       lapply(full_frame[is_factor_col], contrasts)
     )
   )
-  # assign_complete <- attr(x_matrix, "assign")
   x_cols_aliased <- stats::setNames(
     rep(FALSE, ncol(x_matrix)),
     nm = colnames(x_matrix)
