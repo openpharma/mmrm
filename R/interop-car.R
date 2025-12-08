@@ -101,7 +101,7 @@ h_type2_contrast <- function(
       x1 <- mx[, cols, drop = FALSE]
       x0 <- mx[, -c(cols, current_col), drop = FALSE]
       x2 <- mx[, current_col, drop = FALSE]
-      m <- diag(nrow(x0)) - h_quad_form_mat(x0, solve(crossprod(x0)))
+      m <- diag(nrow(x0)) - h_quad_form_mat(x0, MASS::ginv(crossprod(x0)))
       crossprod_x1_m <- crossprod(x1, m)
       ret <- solve(crossprod_x1_m %*% x1) %*% crossprod_x1_m %*% x2
       sub_mat <- if (effect_contains_intercept) {
@@ -120,16 +120,14 @@ h_type2_contrast <- function(
 }
 
 
-
-
-
 h_first_term_containing_categ <- function(factors, categorical) {
   factors <- factors[categorical, , drop = FALSE]
-  for (term in colnames(factors))
-    if (any(factors[, term] > 0))
+  for (term in colnames(factors)) {
+    if (any(factors[, term] > 0)) {
       return(term)
+    }
+  }
 }
-
 
 
 #' Obtain Type 3 Contrast for All Effects
