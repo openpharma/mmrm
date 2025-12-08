@@ -68,6 +68,7 @@ h_type2_contrast <- function(
       dimnames = list(NULL, colnames(mx))
     )
   if (coef_rows == 0L) {
+    l_mx <- l_mx[, !component(object, "beta_aliased"), drop = FALSE]
     return(l_mx)
   }
 
