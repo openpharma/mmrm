@@ -36,7 +36,6 @@ h_type2_contrast <- function(
   # The complete model matrix including aliased columns is needed. See below.
   mx <- component(object, "x_matrix_complete")
   asg <- attr(mx, "assign")
-  aliased <- component(object, "beta_aliased")
   formula <- object$formula_parts$model_formula
   tms <- stats::terms(formula)
   fcts <- attr(tms, "factors")[-1L, , drop = FALSE] # Discard the response.
@@ -72,21 +71,15 @@ h_type2_contrast <- function(
     return(l_mx)
   }
 
-  # The columns of l_mx that should be replaced with an identity matrix. It will
-  # simply be the effect's columns (cols) unless the effect contains the model's
-  # intercept.
-  i_mtx_cols <- cols
-  if (effect_contains_intercept) {
-    aliased_effect_cols <- intersect(which(aliased), cols)
-    # The column in l_mx that should be replaced with straight -1s. If the
-    # effect contains an aliased column, use the effect's first aliased column.
-    # Otherwise use the effect's first column.
-    drop_col <-
-      if (length(aliased_effect_cols)) aliased_effect_cols[1L] else cols[1L]
-    l_mx[, drop_col] <- -1
-    i_mtx_cols <- setdiff(i_mtx_cols, drop_col)
-  }
-  l_mx[, i_mtx_cols] <- diag(coef_rows)
+  # The effect's submatrix of l_mx shall simply be an identity matrix unless the
+  # effect contains the model's intercept. In this case, the submatrix has an
+  # extra column that should contain straight -1s.
+  l_mx[, cols] <-
+    if (effect_contains_intercept) {
+      cbind(diag(coef_rows), -1)
+    } else {
+      diag(coef_rows)
+    }
 
   for (i in setdiff(seq_len(ncol(fcts)), idx)) {
     # This is where replacing the factors attributes' 2s with 1s matters.
@@ -114,7 +107,7 @@ h_type2_contrast <- function(
   }
   # Finally, we drop aliased columns. But we needed them to properly calculate
   # the others.
-  l_mx <- l_mx[, !aliased, drop = FALSE]
+  l_mx <- l_mx[, !component(object, "beta_aliased"), drop = FALSE]
   l_mx[abs(l_mx) < tol] <- 0
   l_mx
 }

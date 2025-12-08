@@ -353,6 +353,9 @@ test_that("Anova works as expected", {
   expect_snapshot_tolerance(
     car::Anova(get_mmrm(), type = "III", test.statistic = "Chisq")
   )
+  expect_snapshot_tolerance(
+    car::Anova(get_mmrm_alias_noint(), type = "II", test.statistic = "F")
+  )
 })
 
 test_that("Anova works if covariate are character", {
