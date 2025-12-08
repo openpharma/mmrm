@@ -69,7 +69,7 @@ df_md <- function(object, contrast) {
     contrast <- matrix(contrast, ncol = length(contrast))
   }
   assert_matrix(contrast, ncols = length(component(object, "beta_est")))
-  if (nrow(contrast) == 0) {
+  if (nrow(contrast) == 0 || all(contrast == 0)) {
     return(
       list(
         num_df = 0,

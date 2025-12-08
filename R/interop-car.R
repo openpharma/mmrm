@@ -91,7 +91,7 @@ h_type2_contrast <- function(
   for (i in setdiff(seq_len(ncol(fcts)), idx)) {
     # This is where replacing the factors attributes' 2s with 1s matters.
     additional_vars <- names(which(fcts[, i] > fcts[, idx]))
-    additional_numeric <- any(!additional_vars %in% categorical_covars)
+    additional_numeric <- !all(additional_vars %in% categorical_covars)
     current_col <- which(asg == i)
     if (
       ods[i] >= ods[idx] && all(fcts[, i] >= fcts[, idx]) && !additional_numeric
@@ -118,7 +118,6 @@ h_type2_contrast <- function(
   l_mx[abs(l_mx) < tol] <- 0
   l_mx
 }
-
 
 h_first_term_containing_categ <- function(factors, categorical) {
   factors <- factors[categorical, , drop = FALSE]
