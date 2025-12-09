@@ -46,7 +46,7 @@ the following steps:
 
 Create a contrast matrix $`L`$, with rows equal to the number of
 parameters associated with the effect, columns equal to the number of
-all parameters.
+all parameters, *including aliased parameters*.
 
 1.  All columns of $`L`$ associated with effect not containing $`E_1`$
     (except $`E_1`$) are set to 0.
@@ -55,6 +55,7 @@ all parameters.
 3.  Each of the remaining submatrices of L associated with an effect
     $`E_2`$ that contains $`E_1`$ is
     $`(X_1^\top M X_1)^{-}X_1^\top M X_2`$
+4.  Columns associated with aliased parameters are dropped.
 
 where $`X_0`$ stands for columns of $`X`$ whose associated effect do not
 contain $`E_1`$, $`X_1`$ stands for columns of $`X`$ associated with
@@ -272,6 +273,73 @@ or
 Because SAS will not include the covariate `FEV1_BL` by default, unless
 manually added. However in R we will add `FEV1_BL` by default. Please
 note that in this example we exclude the covariance structure part.
+
+#### Excluding columns due to collinearity
+
+[`mmrm::mmrm()`](https://openpharma.github.io/mmrm/reference/mmrm.md)
+(which employs [`qr()`](https://rdrr.io/r/base/qr.html)) and
+`PROC MIXED` have similar strategies to handle collinearity of model
+parameters. Both prioritize earlier columns in the design matrix,
+excluding a column if it is a linear combination of earlier ones.
+Whereas
+[`mmrm::mmrm()`](https://openpharma.github.io/mmrm/reference/mmrm.md)
+completely excludes such parameters from the model, `PROC MIXED` retains
+them but assigns a coefficient of 0. The presence of these columns is
+necessary for the accurate calculation of type-II contrast matrices.
+
+Therefore, an `mmrm` object contains the full design matrix including
+aliased columns in a component called `x_matrix_complete`. This matrix
+is utilized to calculate the contrast matrices when running a type-II
+ANOVA. Once all values are correctly calculated, the final step in
+contrast matrix creation is to drop the columns corresponding to the
+aliased parameters.
+
+#### Intercept-free models
+
+[`stats::model.matrix()`](https://rdrr.io/r/stats/model.matrix.html) and
+`PROC MIXED` handle intercept-free models in different ways. This has
+important implications for the creation of the contrast matrices used
+for type-II ANOVAs.
+
+##### Intercept-free Models with `stats::model.matrix()`
+
+When the default method of
+[`stats::model.matrix()`](https://rdrr.io/r/stats/model.matrix.html) is
+creating a design matrix for an intercept-free model, it considers the
+terms sequentially. When it encounters the first term to contain a
+categorical variable, it will include the reference level when creating
+this term’s design matrix columns. Therefore, this term de facto
+contains the model’s intercept.
+
+##### Intercept-free Models with `PROC MIXED`
+
+`PROC MIXED`, on the other hand, treats all terms the same regardless of
+the presence or absence of an intercept: it always considers all factor
+levels for all categorical variables when creating design matrix columns
+(see the **Main Effects** and **Implications of the Non-Full-Rank
+Parameterization** sections
+[here](https://support.sas.com/documentation/cdl/en/statug/63033/HTML/default/viewer.htm#statug_mixed_sect023.htm)).
+Therefore, all terms involving categorical variables effectively share
+the model’s intercept.
+
+##### Type-II Contrast Matrices in Intercept-free Models
+
+To accurately run a type-II ANOVA when all levels of a categorical
+variable are represented in a design matrix, one of the levels of each
+categorical variable must contain subtractive (i.e., negative) values
+its corresponding contrast matrix columns. Since `PROC MIXED` includes
+all factor levels of all categorical variables, the incorporation of
+negative values is a commonplace occurrence. Negative values are
+invariably assigned to the last columns, which are always the reference
+levels’ columns.
+
+However, in
+[`mmrm::mmrm()`](https://openpharma.github.io/mmrm/reference/mmrm.md),
+reference level columns only exist in intercept-free models for the
+first term containing a categorical variable. Thus, `mmrm`’s helper
+functions incorporate a special handling step for such
+first-categorical-terms in which their last contrast matrix columns are
+assigned straight -1s.
 
 Goodnight JH (1980). “Tests of Hypotheses in Fixed Effects Linear
 Models.” *Communications in Statistics-Theory and Methods*, **9**(2),

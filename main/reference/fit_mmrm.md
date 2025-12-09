@@ -96,5 +96,5 @@ formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
 data <- fev_data
 system.time(result <- fit_mmrm(formula, data, rep(1, nrow(fev_data))))
 #>    user  system elapsed 
-#>   0.048   0.000   0.047 
+#>   0.048   0.000   0.048 
 ```

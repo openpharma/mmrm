@@ -84,6 +84,9 @@
   [`broom::tidy()`](https://generics.r-lib.org/reference/tidy.html).
   This is fixed now by using more standard names for the resulting data
   frame columns (e.g. `F` instead of `F Statistic` etc.)
+- [`Anova.mmrm()`](https://openpharma.github.io/mmrm/reference/Anova.mmrm.md)
+  can now handle intercept-free models, even when the first effect
+  containing a categorical variable has an aliased parameter.
 
 ## mmrm 0.3.15
 
