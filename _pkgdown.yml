@@ -5,6 +5,7 @@ template:
   bootstrap: 5
   params:
     ganalytics: UA-125641273-1
+  math-rendering: "mathjax"
 
 navbar:
   structure:

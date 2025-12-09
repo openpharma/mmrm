@@ -2631,7 +2631,8 @@ test_that("fit_mmrm throws informative error for non-spatial cov with non-factor
       data = tmp_data,
       weights = rep(1, nrow(tmp_data))
     ),
-    "Time variable must be a factor for non-spatial covariance structures"
+    "Time point variable 'AVISIT' must be a factor",
+    fixed = TRUE
   )
 })
 
