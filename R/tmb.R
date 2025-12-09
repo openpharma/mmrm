@@ -288,7 +288,13 @@ h_mmrm_tmb_data <- function(
     n_visits <- max(subject_n_visits)
   } else {
     assert(identical(ncol(coordinates), 1L))
-    assert_factor(coordinates[[1L]])
+    if (!test_factor(coordinates[[1L]])) {
+      stop(
+        "Time point variable '",
+        formula_parts$visit_var,
+        "' must be a factor."
+      )
+    }
     coordinates_matrix <- as.matrix(as.integer(coordinates[[1L]]) - 1, ncol = 1)
     n_visits <- nlevels(coordinates[[1L]])
     assert_true(all(subject_n_visits <= n_visits))

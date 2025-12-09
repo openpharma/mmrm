@@ -546,6 +546,16 @@ test_that("divergent optimizer will not be marked as success", {
   )
 })
 
+test_that("mmrm provides readable error message when visit variable is not a factor", {
+  fev <- fev_data
+  fev$AVISIT <- as.character(fev$AVISIT)
+  expect_error(
+    mmrm(FEV1 ~ AVISIT + us(AVISIT | USUBJID), data = fev),
+    "Time point variable 'AVISIT' must be a factor.",
+    fixed = TRUE
+  )
+})
+
 test_that("mmrm will use the provided contrast", {
   fev2 <- fev_data
   contrasts(fev2$ARMCD) <- contr.poly(n = 2)
