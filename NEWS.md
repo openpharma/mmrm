@@ -17,6 +17,7 @@
 - Previously, the `vcov()` method returned the asymptotic covariance matrix, even if an adjusted one has been used. This is now fixed and the requested adjusted covariance matrix will be returned. (Please note this was not an issue for downstream `summary()` or `emmeans()` calls, where the adjusted covariance matrix was correctly used.)
 - Previously, type 3 tests in the `Anova.mmrm()` method could give incorrect results which were not compatible with results from `lme4::lmer()` or other software (e.g. when using other than treatment contrasts). This is fixed now. In particular, any combination of contrasts can be used and will yield consistent results.
 - Previously, the naming conventions used in the `Anova.mmrm()` method were not recognized by `broom::tidy()`. This is fixed now by using more standard names for the resulting data frame columns (e.g. `F` instead of `F Statistic` etc.)
+- `Anova.mmrm()` can now handle intercept-free models, even when the first effect containing a categorical variable has an aliased parameter.
 
 # mmrm 0.3.15
 

@@ -27,6 +27,17 @@ df_1d <- function(object, contrast) {
     any.missing = FALSE
   )
   contrast <- as.vector(contrast)
+  if (all(contrast == 0)) {
+    return(
+      list(
+        est = 0,
+        se = NA_real_,
+        df = NA_real_,
+        t_stat = NA_real_,
+        p_val = NA_real_
+      )
+    )
+  }
   switch(
     object$method,
     "Satterthwaite" = h_df_1d_sat(object, contrast),
@@ -69,7 +80,7 @@ df_md <- function(object, contrast) {
     contrast <- matrix(contrast, ncol = length(contrast))
   }
   assert_matrix(contrast, ncols = length(component(object, "beta_est")))
-  if (nrow(contrast) == 0) {
+  if (nrow(contrast) == 0 || all(contrast == 0)) {
     return(
       list(
         num_df = 0,

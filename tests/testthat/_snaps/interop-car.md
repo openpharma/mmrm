@@ -358,3 +358,11 @@
     )), class = c("anova", "data.frame"), row.names = c("RACE", "SEX", 
     "ARMCD", "AVISIT", "ARMCD:AVISIT"), heading = "Analysis of Fixed Effect Table (Type III Chisq tests)")
 
+---
+
+    structure(list(Df = c(1, 1, 2), Res.Df = c(181.541589614454, 
+    181.013496060405, 180.79692360074), F = c(1450.69317380431, 6.74020319540019, 
+    5.20782903861606), "Pr(>F)" = c(1.65725263655674e-88, 0.0102004755330383, 
+    0.00632439007284939)), class = c("anova", "data.frame"), row.names = c("FEV1_BL", 
+    "FEV1_BL:ARMCD", "ARMCD:SEX"), heading = "Analysis of Fixed Effect Table (Type II F tests)")
+

@@ -13,29 +13,6 @@ test_that("car emits a message about mmrm registration on load", {
   expect_message(library(car), "mmrm")
 })
 
-# h_first_contain_categorical ----
-
-test_that("h_first_contain_categorical works as expected", {
-  effect <- "FEV1_BL:AVISIT"
-  factors <- matrix(
-    c(2, 2),
-    nrow = 2L,
-    dimnames = list(c("FEV1_BL", "AVISIT"), c("FEV1_BL:AVISIT"))
-  )
-  categorical <- c("AVISIT")
-  expect_true(h_first_contain_categorical(effect, factors, categorical))
-  factors2 <- matrix(
-    c(1, 0, 0, 0, 2, 2),
-    nrow = 3L,
-    dimnames = list(c("AGE", "FEV1_BL", "AVISIT"), c("AGE", "FEV1_BL:AVISIT"))
-  )
-  expect_true(h_first_contain_categorical(effect, factors2, categorical))
-  categorical2 <- c("NONE")
-  expect_false(h_first_contain_categorical(effect, factors, categorical2))
-  categorical3 <- c("AGE")
-  expect_false(h_first_contain_categorical(effect, factors, categorical3))
-})
-
 # h_obtain_lvls ----
 
 test_that("h_obtain_lvls works as expected", {
@@ -74,6 +51,18 @@ test_that("h_get_index works as expected", {
   )
 })
 
+
+# h_first_term_containing_categ ----
+test_that("h_first_term_containing_categ", {
+  expect_identical(
+    h_first_term_containing_categ(
+      attr(terms(get_mmrm_no_intercept()), "factors"),
+      c("RACE", "SEX")
+    ),
+    "RACE"
+  )
+})
+
 # h_type2_contrast ----
 
 test_that("h_type2_contrast works if intercept is not given", {
@@ -84,6 +73,52 @@ test_that("h_type2_contrast works if intercept is not given", {
   expect_silent(h_type2_contrast(fit, "ARMCD"))
   expect_silent(h_type2_contrast(fit, "AVISIT"))
   expect_silent(h_type2_contrast(fit, "AVISIT:ARMCD"))
+
+  mmrm_trans_dimnames <-
+    list(NULL, colnames(component(get_mmrm_trans(), "x_matrix")))
+  expect_identical(
+    h_type2_contrast(get_mmrm_trans(), "log(FEV1_BL)"),
+    matrix(
+      c(0, 1, rep(0, 7)),
+      nrow = 1,
+      byrow = TRUE,
+      dimnames = mmrm_trans_dimnames
+    )
+  )
+
+  expect_identical(
+    h_type2_contrast(get_mmrm_trans(), "ARMCD:AVISIT"),
+    matrix(
+      rep(rep(c(0, 1), 3), c(6, 1, 9, 1, 9, 1)),
+      nrow = 3,
+      byrow = TRUE,
+      dimnames = mmrm_trans_dimnames
+    )
+  )
+  expect_identical(
+    h_type2_contrast(get_mmrm_trans(), "ARMCD:AVISIT"),
+    matrix(
+      rep(rep(c(0, 1), 3), c(6, 1, 9, 1, 9, 1)),
+      nrow = 3,
+      byrow = TRUE,
+      dimnames = mmrm_trans_dimnames
+    )
+  )
+
+  # Testing an intercept-free model whose first term that contains a categorical
+  # variable also has an aliased coefficient.
+  expect_identical(
+    h_type2_contrast(get_mmrm_alias_noint(), "FEV1_BL:ARMCD"),
+    matrix(
+      c(0, 1, 0, 0),
+      nrow = 1,
+      byrow = TRUE,
+      dimnames = list(
+        NULL,
+        colnames(component(get_mmrm_alias_noint(), "x_matrix"))
+      )
+    )
+  )
 })
 
 # h_type3_contrasts ----
@@ -295,6 +330,9 @@ test_that("Anova works as expected", {
   )
   expect_snapshot_tolerance(
     car::Anova(get_mmrm(), type = "III", test.statistic = "Chisq")
+  )
+  expect_snapshot_tolerance(
+    car::Anova(get_mmrm_alias_noint(), type = "II", test.statistic = "F")
   )
 })
 

@@ -33,41 +33,72 @@ h_type2_contrast <- function(
   assert_string(effect)
   assert_double(tol, finite = TRUE, len = 1L)
 
-  mx <- component(object, "x_matrix")
+  # The complete model matrix including aliased columns is needed. See below.
+  mx <- component(object, "x_matrix_complete")
   asg <- attr(mx, "assign")
   formula <- object$formula_parts$model_formula
-  tms <- terms(formula)
+  tms <- stats::terms(formula)
   fcts <- attr(tms, "factors")[-1L, , drop = FALSE] # Discard the response.
+
+  # We do this because the factors attribute of a terms.object can include 2s.
+  fcts[fcts > 1] <- 1
+
   ods <- attr(tms, "order")
   assert_subset(effect, colnames(fcts))
   idx <- which(effect == colnames(fcts))
   cols <- which(asg == idx)
   xlev <- component(object, "xlev")
-  contains_intercept <- (!0 %in% asg) &&
-    h_first_contain_categorical(effect, fcts, names(xlev))
-  coef_rows <- length(cols) - as.integer(contains_intercept)
-  l_mx <- matrix(0, nrow = coef_rows, ncol = length(asg))
+
+  categorical_covars <- intersect(rownames(fcts), names(xlev))
+
+  # An effect contains the model's intercept if the model was not built with an
+  # intercept and if the effect is the first one in the model specification to
+  # contain a categorical variable.
+  effect_contains_intercept <-
+    !attr(tms, "intercept") &&
+    length(categorical_covars) &&
+    effect == h_first_term_containing_categ(fcts, categorical_covars)
+
+  coef_rows <- length(cols) - as.integer(effect_contains_intercept)
+  l_mx <-
+    matrix(
+      0,
+      nrow = coef_rows,
+      ncol = ncol(mx),
+      dimnames = list(NULL, colnames(mx))
+    )
   if (coef_rows == 0L) {
+    l_mx <- l_mx[, !component(object, "beta_aliased"), drop = FALSE]
     return(l_mx)
   }
-  if (contains_intercept) {
-    l_mx[, cols] <- cbind(-1, diag(rep(1, coef_rows)))
-  } else {
-    l_mx[, cols] <- diag(rep(1, coef_rows))
-  }
+
+  # The effect's submatrix of l_mx shall simply be an identity matrix unless the
+  # effect contains the model's intercept. In this case, the submatrix has an
+  # extra column that should contain straight -1s.
+  l_mx[, cols] <-
+    if (effect_contains_intercept) {
+      cbind(diag(coef_rows), -1)
+    } else {
+      diag(coef_rows)
+    }
+
   for (i in setdiff(seq_len(ncol(fcts)), idx)) {
+    # This is where replacing the factors attributes' 2s with 1s matters.
     additional_vars <- names(which(fcts[, i] > fcts[, idx]))
-    additional_numeric <- any(!additional_vars %in% names(xlev))
+    additional_numeric <- !all(additional_vars %in% categorical_covars)
     current_col <- which(asg == i)
     if (
       ods[i] >= ods[idx] && all(fcts[, i] >= fcts[, idx]) && !additional_numeric
     ) {
+      # This is where it matters to use the complete design matrix including
+      # aliased columns.
       x1 <- mx[, cols, drop = FALSE]
       x0 <- mx[, -c(cols, current_col), drop = FALSE]
       x2 <- mx[, current_col, drop = FALSE]
-      m <- diag(rep(1, nrow(x0))) - x0 %*% solve(t(x0) %*% x0) %*% t(x0)
-      ret <- solve(t(x1) %*% m %*% x1) %*% t(x1) %*% m %*% x2
-      sub_mat <- if (contains_intercept) {
+      m <- diag(nrow(x0)) - h_quad_form_mat(x0, MASS::ginv(crossprod(x0)))
+      crossprod_x1_m <- crossprod(x1, m)
+      ret <- solve(crossprod_x1_m %*% x1) %*% crossprod_x1_m %*% x2
+      sub_mat <- if (effect_contains_intercept) {
         ret[-1, ] - ret[1, ]
       } else {
         ret
@@ -75,9 +106,37 @@ h_type2_contrast <- function(
       l_mx[, current_col] <- sub_mat
     }
   }
+  # Finally, we drop aliased columns. But we needed them to properly calculate
+  # the others.
+  l_mx <- l_mx[, !component(object, "beta_aliased"), drop = FALSE]
   l_mx[abs(l_mx) < tol] <- 0
   l_mx
 }
+
+
+#' Identify the First Term in a Model to Contain a Categorical Variable
+#'
+#' This returns the column name of the leftmost column of `factors` containing a
+#' nonzero value in a row corresponding to a `categorical` variable.
+#'
+#' @param factors (matrix)\cr the `factors` attribute of a [`terms.object`],
+#'   which is a matrix of 0s, 1s, and 2s.
+#' @param categorical (character)\cr a vector of the categorical variables in
+#'   the model whose [`terms.object`] is `factors`.
+#'
+#' @return A `string`: one of the column names of `factors`. If none of the
+#'   columns contain a categorical variable, `NULL` is returned.
+#'
+#' @keywords internal
+h_first_term_containing_categ <- function(factors, categorical) {
+  factors <- factors[categorical, , drop = FALSE]
+  for (term in colnames(factors)) {
+    if (any(factors[, term] > 0)) {
+      return(term)
+    }
+  }
+}
+
 
 #' Obtain Type 3 Contrast for All Effects
 #'
@@ -232,36 +291,6 @@ h_obtain_lvls <- function(var, additional_vars, xlev, factors) {
     post = post_lvls,
     total = total_lvls
   )
-}
-
-#' Check if the Effect is the First Categorical Effect
-#' @param effect (`string`) name of the effect.
-#' @param categorical (`character`) names of the categorical values.
-#' @param factors (`matrix`) the factor matrix.
-#' @keywords internal
-h_first_contain_categorical <- function(effect, factors, categorical) {
-  assert_string(effect)
-  assert_matrix(factors)
-  assert_character(categorical)
-  mt <- match(effect, colnames(factors))
-  varnms <- row.names(factors)
-  # if the effect is not categorical in any value, return FALSE
-  if (!any(varnms[factors[, mt] > 0] %in% categorical)) {
-    return(FALSE)
-  }
-  # keep only categorical rows that is in front of the current factor
-  factors <- factors[
-    row.names(factors) %in% categorical,
-    seq_len(mt - 1L),
-    drop = FALSE
-  ]
-  # if previous cols are all numerical, return TRUE
-  if (ncol(factors) < 1L) {
-    return(TRUE)
-  }
-  col_ind <- apply(factors, 2, prod)
-  # if any of the previous cols are categorical, return FALSE
-  !any(col_ind > 0)
 }
 
 #' Test if the First Vector is Subset of the Second Vector

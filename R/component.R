@@ -41,6 +41,7 @@
 #'      or not.
 #' - `theta_vcov`:  estimated variance-covariance matrix of variance parameters.
 #' - `x_matrix`: design matrix used (excluding aliased columns).
+#' - `x_matrix_complete`: design matrix used, including aliased columns.
 #' - `xlev`: 	a named list of character vectors giving the full set of levels to be assumed for each factor.
 #' - `contrasts`: a list of contrasts used for each factor.
 #' - `y_vector`: response vector used.
@@ -90,6 +91,7 @@ component <- function(
     "beta_est_complete",
     "beta_aliased",
     "x_matrix",
+    "x_matrix_complete",
     "y_vector",
     "neg_log_lik",
     "jac_list",
@@ -162,6 +164,7 @@ component <- function(
     "varcor" = object$cov,
     "score_per_subject" = object$score_per_subject,
     "x_matrix" = object$tmb_data$x_matrix,
+    "x_matrix_complete" = object$tmb_data$x_matrix_complete,
     "xlev" = stats::.getXlevels(terms(object), object$tmb_data$full_frame),
     "contrasts" = attr(object$tmb_data$x_matrix, "contrasts"),
     "theta_vcov" = eval(object$theta_vcov),

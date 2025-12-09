@@ -64,6 +64,7 @@ dotsb
 dotsc
 eigen
 emmeans
+facto
 factorizations
 frac
 funder
@@ -108,6 +109,7 @@ rightarrow
 simeq
 sp
 subfolders
+subtractive
 tabset
 th
 tidymodels
