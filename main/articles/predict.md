@@ -8,95 +8,88 @@ Since residuals can be correlated, potentially existing observed
 outcomes of the same individual can be informative for predicting the
 unobserved valued of the same individual.
 
-Assume that the data is sorted such that
-$`Y_{ij} = y_{ij}, j = k+1, k+2, \dots, p`$ are observed and
-$`Y_{ij}, j = 1, 2, \dots, k`$ are not. The special case of all outcomes
-being unobserved (new individual) is covered with $`k=p`$.
+Assume that the data is sorted such that \\Y\_{ij} = y\_{ij}, j = k+1,
+k+2, \dots, p\\ are observed and \\Y\_{ij}, j = 1, 2, \dots, k\\ are
+not. The special case of all outcomes being unobserved (new individual)
+is covered with \\k=p\\.
 
-Let further
-``` math
-\Sigma_i(X_i, \theta) = \begin{pmatrix} \Sigma_i^{new,new}(X_i,\theta) & \Sigma_i^{new,old}(X_i,\theta)\\ \Sigma_i^{old,new}(X_i,\theta) & \Sigma_i^{old,old}(X_i,\theta)\end{pmatrix}
-```
+Let further \\ \Sigma_i(X_i, \theta) = \begin{pmatrix}
+\Sigma_i^{new,new}(X_i,\theta) & \Sigma_i^{new,old}(X_i,\theta)\\
+\Sigma_i^{old,new}(X_i,\theta) &
+\Sigma_i^{old,old}(X_i,\theta)\end{pmatrix} \\
 
-be a block decomposition where
-$`\Sigma_i^{new,new}(X_i,\theta) = \Big(\big(\Sigma_i(X_i,\theta)\big)_{j,l}\Big)_{j = 1\dots k,\, l = 1\ldots k}`$
-and similarly for the other blocks.
+be a block decomposition where \\\Sigma_i^{new,new}(X_i,\theta) =
+\Big(\big(\Sigma_i(X_i,\theta)\big)\_{j,l}\Big)\_{j = 1\dots k,\\ l =
+1\ldots k}\\ and similarly for the other blocks.
 
-Predictions can then be made based on the conditional distribution
-``` math
-Y_{i, 1\ldots k}\,|\,X_i,Y_{i,k+1\ldots p}=y_{i, k+1\ldots p}\sim\mathcal{N}(\mu_i, A_i)
-```
+Predictions can then be made based on the conditional distribution \\
+Y\_{i, 1\ldots k}\\\|\\X_i,Y\_{i,k+1\ldots p}=y\_{i, k+1\ldots
+p}\sim\mathcal{N}(\mu_i, A_i) \\
 
 with
 
-``` math
-\mu_i(\beta,\theta) = (X_i \ \beta)_{1\ldots k} +  \Sigma_i^{new,old}(X_i,\theta) \, \Big(\big(\Sigma_i^{old,old}(X_i,\theta)\big)^{-1} \big(y_i^{k+1\ldots p} -  (X_i \ \beta)_{k+1\ldots p}\big)\Big)
-```
-and
+\\ \mu_i(\beta,\theta) = (X_i \\ \beta)\_{1\ldots k} +
+\Sigma_i^{new,old}(X_i,\theta) \\
+\Big(\big(\Sigma_i^{old,old}(X_i,\theta)\big)^{-1} \big(y_i^{k+1\ldots
+p} - (X_i \\ \beta)\_{k+1\ldots p}\big)\Big) \\ and
 
-``` math
-A_i(\beta, \theta) = \Sigma_i^{new,new}(X_i,\theta) - \Sigma_i^{old,new}(X_i,\theta) \Big(\Sigma_i^{old,old}(X_i,\theta)\Big)^{-1} \Sigma_i^{new,old}(X_i,\theta) \ .
-```
-Note that $`A_i`$ does not depend on $`\beta`$.
+\\ A_i(\beta, \theta) = \Sigma_i^{new,new}(X_i,\theta) -
+\Sigma_i^{old,new}(X_i,\theta)
+\Big(\Sigma_i^{old,old}(X_i,\theta)\Big)^{-1}
+\Sigma_i^{new,old}(X_i,\theta) \\ . \\ Note that \\A_i\\ does not depend
+on \\\beta\\.
 
 ### Implementation of `predict`
 
 For implementing [`predict()`](https://rdrr.io/r/stats/predict.html),
-only $`\widehat{\mu}_i:=\mu_i(\widehat{\beta},\widehat{\theta})`$ is
+only \\\widehat{\mu}\_i:=\mu_i(\widehat{\beta},\widehat{\theta})\\ is
 required.
 
 For `predict(interval = "confidence")` additionally standard errors are
-required. These could be derived using the delta methods since $`\mu_i`$
-is a function of the estimated model parameters $`\beta`$ and
-$`\theta`$. This would require the Jacobian
-$`\nabla\mu_i(\beta,\theta)|_{\big(\widehat{\beta},\widehat{\theta}\big)}`$
+required. These could be derived using the delta methods since \\\mu_i\\
+is a function of the estimated model parameters \\\beta\\ and
+\\\theta\\. This would require the Jacobian
+\\\nabla\mu_i(\beta,\theta)\|\_{\big(\widehat{\beta},\widehat{\theta}\big)}\\
 in addition to the estimated variance covariance matrix of the parameter
-estimate $`\big(\widehat{\beta},\widehat{\theta}\big)`$,
-$`\widehat{S}`$. Standard errors for $`\widehat{\mu}^{\,(i)}`$ are then
-given by the square root of the diagonal elements of
-``` math
-\Big(\nabla\mu_i(\beta,\theta)|_{\big(\widehat{\beta},\widehat{\theta}\big)}\Big)^\top\quad \widehat{S} \quad \Big(\nabla\mu_i(\beta,\theta)|_{\big(\widehat{\beta},\widehat{\theta}\big)}\Big)
-```
-For `predict(interval = "prediction")` one would use the square root of
-the diagonal elements of
-$`A_i\big(\widehat{\beta},\widehat{\theta}\big)`$ instead. The delta
+estimate \\\big(\widehat{\beta},\widehat{\theta}\big)\\,
+\\\widehat{S}\\. Standard errors for \\\widehat{\mu}^{\\(i)}\\ are then
+given by the square root of the diagonal elements of \\
+\Big(\nabla\mu_i(\beta,\theta)\|\_{\big(\widehat{\beta},\widehat{\theta}\big)}\Big)^\top\quad
+\widehat{S} \quad
+\Big(\nabla\mu_i(\beta,\theta)\|\_{\big(\widehat{\beta},\widehat{\theta}\big)}\Big)
+\\ For `predict(interval = "prediction")` one would use the square root
+of the diagonal elements of
+\\A_i\big(\widehat{\beta},\widehat{\theta}\big)\\ instead. The delta
 method could again be used to make upper and lower boundaries reflect
 parameter estimation uncertainty.
 
 Alternatively, both intervals can be derived using a parametric
-bootstrap sample of the unrestricted parameters $`\theta`$. This would
+bootstrap sample of the unrestricted parameters \\\theta\\. This would
 probably also be easier for the `interval = "prediction"` case.
 
 Please note that for these intervals, we assume that the distribution is
-approximately normal: we use
-$`\mu_{i,j}(\hat\beta, \hat\theta) \pm Z_{\alpha} * sqrt(A_{i, j, j}(\hat\beta, \hat\theta))`$
-to construct it, where $`\mu_{i,j}(\hat\beta, \hat\theta)`$ is the
-$`j`$th element of $`\mu_i(\hat\beta, \hat\theta)`$, and
-$`A_{i, j, j}(\hat\beta, \hat\theta)`$ is the $`j,j`$ element of
-$`A_i(\hat\beta, \hat\theta)`$.
+approximately normal: we use \\\mu\_{i,j}(\hat\beta, \hat\theta) \pm
+Z\_{\alpha} \* sqrt(A\_{i, j, j}(\hat\beta, \hat\theta))\\ to construct
+it, where \\\mu\_{i,j}(\hat\beta, \hat\theta)\\ is the \\j\\th element
+of \\\mu_i(\hat\beta, \hat\theta)\\, and \\A\_{i, j, j}(\hat\beta,
+\hat\theta)\\ is the \\j,j\\ element of \\A_i(\hat\beta, \hat\theta)\\.
 
 ### Parametric Sampling for Prediction Interval
 
 With the conditional variance formula
 
-``` math
-Var(Y_i) = Var(E(Y_i|\theta)) + E(Var(Y_i|\theta))
-```
+\\ Var(Y_i) = Var(E(Y_i\|\theta)) + E(Var(Y_i\|\theta)) \\
 
-and the conditional expectation $`E(Y_i|\theta)`$ and the conditional
-variance $`Var(Y_i|\theta)`$ being already described as
+and the conditional expectation \\E(Y_i\|\theta)\\ and the conditional
+variance \\Var(Y_i\|\theta)\\ being already described as
 
-``` math
-E(Y_i|\theta) = \mu_i(\beta, \theta)
-```
+\\ E(Y_i\|\theta) = \mu_i(\beta, \theta) \\
 
 and
 
-``` math
-Var(Y_i|\theta) = A_i(\beta, \theta),
-```
+\\ Var(Y_i\|\theta) = A_i(\beta, \theta), \\
 
-we can sample on $`\theta`$ and obtain $`\beta`$, then calculate the
+we can sample on \\\theta\\ and obtain \\\beta\\, then calculate the
 variance of conditional mean and the mean of conditional variance.
 
 ### Prediction of Conditional Mean for New Subjects
@@ -104,83 +97,68 @@ variance of conditional mean and the mean of conditional variance.
 If there are no observations for a subject, then the prediction is quite
 simple:
 
-``` math
-  Y_i = X_i \hat\beta
-```
+\\ Y_i = X_i \hat\beta \\
 
 ## Simulate response
 
 To create simulation of responses from a fitted model, we have multiple
-situations: whether this simulation is conditional on both $`\theta`$
-and $`\beta`$ estimates, or it is marginal?
+situations: whether this simulation is conditional on both \\\theta\\
+and \\\beta\\ estimates, or it is marginal?
 
 ### Conditional Simulation
 
 Under conditional simulation setting, the variance-covariance matrix,
-and the expectation of $`Y_i`$ are already given in [Mathematical
+and the expectation of \\Y_i\\ are already given in [Mathematical
 Derivations](#mathematical-derivations).
 
 Please note that in implementation of `predict` function, we only use
-the diagonal elements of $`A_i`$, however, here we need to make use of
-the full matrix $`A_i`$ to obtain correctly correlated simulated
+the diagonal elements of \\A_i\\, however, here we need to make use of
+the full matrix \\A_i\\ to obtain correctly correlated simulated
 observations.
 
 ### Marginal Simulation
 
-To simulate marginally, we take the variance of $`\hat\theta`$ and
-$`\hat\beta`$ into consideration. For each simulation, we first generate
-$`\theta`$ assuming it approximately follows a multivariate normal
-distribution. Then, conditional on the $`\theta`$ we sampled, we
-generate $`\beta`$ also assuming it approximately follows a multivariate
+To simulate marginally, we take the variance of \\\hat\theta\\ and
+\\\hat\beta\\ into consideration. For each simulation, we first generate
+\\\theta\\ assuming it approximately follows a multivariate normal
+distribution. Then, conditional on the \\\theta\\ we sampled, we
+generate \\\beta\\ also assuming it approximately follows a multivariate
 normal distribution.
 
-Now we have $`\theta`$ and $`\beta`$ estimates, and we just follow the
+Now we have \\\theta\\ and \\\beta\\ estimates, and we just follow the
 [conditional simulation](#conditional-simulation).
 
 ### Implementation of `simulate`
 
 To implement `simulate` function, we first ensure that the expectation
-($`\mu`$) and variance-covariance matrix ($`A`$) are generated in
+(\\\mu\\) and variance-covariance matrix (\\A\\) are generated in
 `predict` function, for each of the subjects.
 
-For `simulate(method = "conditional")`, we use the estimated $`\theta`$
-and $`\beta`$ to construct the $`\mu`$ and $`A`$ directly, and generate
-response with $`N(\mu, A)`$ distribution.
+For `simulate(method = "conditional")`, we use the estimated \\\theta\\
+and \\\beta\\ to construct the \\\mu\\ and \\A\\ directly, and generate
+response with \\N(\mu, A)\\ distribution.
 
 For `simulate(method = "marginal")`, for each repetition of simulation,
-we generate $`\theta_{new}`$ from the mmrm fit, where the estimate of
-$`\theta`$ and variance-covariance matrix of $`\theta`$ are provided.
-Using the generated $`\theta_{new}`$, we then obtain the $`\beta_{new}`$
-and its variance-covariance matrix, with $`\theta_{new}`$ and the data
-used in fit.
+we generate \\\theta\_{new}\\ from the mmrm fit, where the estimate of
+\\\theta\\ and variance-covariance matrix of \\\theta\\ are provided.
+Using the generated \\\theta\_{new}\\, we then obtain the
+\\\beta\_{new}\\ and its variance-covariance matrix, with
+\\\theta\_{new}\\ and the data used in fit.
 
-Then we sample $`\beta`$ as follows. We note that on the `C++` side we
+Then we sample \\\beta\\ as follows. We note that on the `C++` side we
 already have the robust Cholesky decomposition of the inverse of its
-asymptotic covariance matrix:
-``` math
-cov(\hat\beta) = (X^\top W X)^{-1} = (LDL^\top)^{-1}
-```
-Hence we make sure to report the lower triangular matrix $`L`$ and the
-diagonal matrix $`D`$ back to the `R` side, and afterwards we can
-generate $`\beta`$ samples as follows:
-``` math
-\beta_{sample} = \beta_{new} + L^{-\top}D^{-1/2}z_{sample}
-```
-where $`z_{sample}`$ is drawn from the standard multivariate normal
-distribution, since
-``` math
-cov(L^{-\top}D^{-1/2}z_{sample}) 
-= L^{-\top}D^{-1/2} I_p D^{-1/2} L^{-1} 
-= L^{-\top}D^{-1}L^{-1} 
-= (LDL^\top)^{-1} 
-= cov(\hat\beta)
-```
-We note that calculating $`w = L^{-\top}D^{-1/2}z_{sample}`$ is
-efficient via backwards solving
-``` math
-L^\top w = D^{-1/2}z_{sample}
-```
-since $`L^\top`$ is upper right triangular.
+asymptotic covariance matrix: \\ cov(\hat\beta) = (X^\top W X)^{-1} =
+(LDL^\top)^{-1} \\ Hence we make sure to report the lower triangular
+matrix \\L\\ and the diagonal matrix \\D\\ back to the `R` side, and
+afterwards we can generate \\\beta\\ samples as follows: \\
+\beta\_{sample} = \beta\_{new} + L^{-\top}D^{-1/2}z\_{sample} \\ where
+\\z\_{sample}\\ is drawn from the standard multivariate normal
+distribution, since \\ cov(L^{-\top}D^{-1/2}z\_{sample}) =
+L^{-\top}D^{-1/2} I_p D^{-1/2} L^{-1} = L^{-\top}D^{-1}L^{-1} =
+(LDL^\top)^{-1} = cov(\hat\beta) \\ We note that calculating \\w =
+L^{-\top}D^{-1/2}z\_{sample}\\ is efficient via backwards solving \\
+L^\top w = D^{-1/2}z\_{sample} \\ since \\L^\top\\ is upper right
+triangular.
 
 Then we simulate the observations once with
 `simulate(method = "conditional", beta = beta_sample, theta = theta_new)`.
@@ -195,32 +173,32 @@ and explain how they relate to each other.
 ### `predict` options
 
 1.  `predict(type = "confidence")` gives the variance of the predictions
-    conditional on the $`\theta`$ estimate, taking into account the
-    uncertainty of estimating $`\beta`$. So here we ignore the
-    uncertainty in estimating $`\theta`$. It also does not add
-    measurement error $`\epsilon`$. We can use this prediction when we
+    conditional on the \\\theta\\ estimate, taking into account the
+    uncertainty of estimating \\\beta\\. So here we ignore the
+    uncertainty in estimating \\\theta\\. It also does not add
+    measurement error \\\epsilon\\. We can use this prediction when we
     are only interested in predicting the mean of the unobserved
-    $`y_i`$, assuming the estimated $`\theta`$ as the true variance
+    \\y_i\\, assuming the estimated \\\theta\\ as the true variance
     parameters.
 2.  `predict(type = "prediction")` in contrast takes into account the
-    full uncertainty, including the variance of $`\theta`$ and the
-    measurement error $`\epsilon`$. We can use this prediction when we
+    full uncertainty, including the variance of \\\theta\\ and the
+    measurement error \\\epsilon\\. We can use this prediction when we
     are interested in reliable confidence intervals for the unobserved
-    $`y_i`$ as well as the observed $`y_i`$, assuming we would like to
+    \\y_i\\ as well as the observed \\y_i\\, assuming we would like to
     predict repeated observations from the same subjects and time
     points.
 
 ### `simulate` options
 
 1.  `simulate(type = "conditional")` simulates observations while
-    keeping the $`\theta`$ and $`\beta`$ estimates fixed. It adds
-    measurement errors $`\epsilon`$ when generating the simulated
+    keeping the \\\theta\\ and \\\beta\\ estimates fixed. It adds
+    measurement errors \\\epsilon\\ when generating the simulated
     values. Hence the mean of the simulated values will be within the
     confidence intervals from `predict(type = "conditional")`.
 2.  `simulate(type = "marginal")` simulates observations while taking
-    into account the uncertainty of $`\beta`$ and $`\theta`$ through
+    into account the uncertainty of \\\beta\\ and \\\theta\\ through
     sampling from their asymptotic frequentist distributions. On top of
-    that, it also adds measurement errors $`\epsilon`$. This hence is
+    that, it also adds measurement errors \\\epsilon\\. This hence is
     using the same distribution as `predict(type = "prediction")`.
 
 ## Comparison with `SAS`
@@ -249,10 +227,10 @@ our `mmrm` package, described as follows:
     is no prediction uncertainty anymore.
 2.  The prediction standard error is different between `mmrm` and `SAS`.
     While in `SAS` the prediction standard error is conditional on the
-    estimated variance parameters $`\theta`$, in `mmrm` the marginal
+    estimated variance parameters \\\theta\\, in `mmrm` the marginal
     prediction standard error is provided. The rationale is that in the
     `mmrm` package we want to take into account the full uncertainty
-    about parameter estimates including $`\theta`$.
+    about parameter estimates including \\\theta\\.
 3.  The prediction intervals in `SAS` are based on the t distribution,
     while currently in `mmrm` we use the normal distribution. We will be
     considering an extension towards using the t distribution in the

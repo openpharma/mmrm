@@ -18,52 +18,52 @@ contrasts for linear hypothesis tests. For more details, see Goodnight
 Before we discuss the testing, it is important that we understand the
 concept of “contained effect”. The definition of “contained effect” is:
 
-For effect $`E_2`$, it is said to contain $`E_1`$ if
+For effect \\E_2\\, it is said to contain \\E_1\\ if
 
 1.  the involved numerical covariate(s) are identical for these two
     effects
-2.  all the categorical covariate(s) associated with $`E_1`$ are also
-    associated with $`E_2`$
+2.  all the categorical covariate(s) associated with \\E_1\\ are also
+    associated with \\E_2\\
 
 For example, for the following model formula
 
-$`Y = A + B + A*B`$
+\\Y = A + B + A\*B\\
 
-using $`E_A`$, $`E_B`$ and $`E_{A*B}`$ to denote the effect for $`A`$,
-$`B`$ and $`A*B`$ respectively, we have
+using \\E_A\\, \\E_B\\ and \\E\_{A\*B}\\ to denote the effect for \\A\\,
+\\B\\ and \\A\*B\\ respectively, we have
 
-1.  If $`A`$ and $`B`$ are both categorical, then $`E_{A*B}`$ contains
-    $`E_{A}`$ and $`E_{B}`$.
-2.  If $`A`$ and $`B`$ are both numerical, then $`E_{A*B}`$ do not
-    contain $`E_{A}`$ or $`E_{B}`$.
-3.  If $`A`$ is categorical and $`B`$ is numerical, then $`E_{A*B}`$
-    contains $`E_{B}`$ but not $`E_{A}`$.
+1.  If \\A\\ and \\B\\ are both categorical, then \\E\_{A\*B}\\ contains
+    \\E\_{A}\\ and \\E\_{B}\\.
+2.  If \\A\\ and \\B\\ are both numerical, then \\E\_{A\*B}\\ do not
+    contain \\E\_{A}\\ or \\E\_{B}\\.
+3.  If \\A\\ is categorical and \\B\\ is numerical, then \\E\_{A\*B}\\
+    contains \\E\_{B}\\ but not \\E\_{A}\\.
 
 ## Type II Hypothesis Testing
 
 For type II hypothesis testing, the contrasts can be obtained through
 the following steps:
 
-Create a contrast matrix $`L`$, with rows equal to the number of
+Create a contrast matrix \\L\\, with rows equal to the number of
 parameters associated with the effect, columns equal to the number of
 all parameters, *including aliased parameters*.
 
-1.  All columns of $`L`$ associated with effect not containing $`E_1`$
-    (except $`E_1`$) are set to 0.
-2.  The submatrix of $`L`$ associated with $`E_1`$ is set to
-    $`(X_1^\top M X_1)^{-}X_1^\top M X_1`$
+1.  All columns of \\L\\ associated with effect not containing \\E_1\\
+    (except \\E_1\\) are set to 0.
+2.  The submatrix of \\L\\ associated with \\E_1\\ is set to \\(X_1^\top
+    M X_1)^{-}X_1^\top M X_1\\
 3.  Each of the remaining submatrices of L associated with an effect
-    $`E_2`$ that contains $`E_1`$ is
-    $`(X_1^\top M X_1)^{-}X_1^\top M X_2`$
+    \\E_2\\ that contains \\E_1\\ is \\(X_1^\top M X_1)^{-}X_1^\top M
+    X_2\\
 4.  Columns associated with aliased parameters are dropped.
 
-where $`X_0`$ stands for columns of $`X`$ whose associated effect do not
-contain $`E_1`$, $`X_1`$ stands for columns of $`X`$ associated with
-$`E_1`$, $`X_2`$ stands for columns of $`X`$ whose associated effect
-contains $`E_1`$, $`M = I - X_0(X_0^\top X_0)^{-}X_0^\top`$, and
-$`Z^{-}`$ stands for the [g2
+where \\X_0\\ stands for columns of \\X\\ whose associated effect do not
+contain \\E_1\\, \\X_1\\ stands for columns of \\X\\ associated with
+\\E_1\\, \\X_2\\ stands for columns of \\X\\ whose associated effect
+contains \\E_1\\, \\M = I - X_0(X_0^\top X_0)^{-}X_0^\top\\, and
+\\Z^{-}\\ stands for the [g2
 inverse](https://blogs.sas.com/content/iml/2018/11/21/generalized-inverses-for-matrices.html)
-of $`Z`$.
+of \\Z\\.
 
 Note: Here we do not allow for singularity in general, so the g2 inverse
 is just the usual inverse. Thus we can use an identity matrix as the
@@ -77,30 +77,20 @@ fit <- mmrm(FEV1 ~ ARMCD + RACE + ARMCD * RACE + ar1(AVISIT | USUBJID), data = f
 ```
 
 For this given example, we would like to test the effect of `RACE`,
-$`E_{RACE}`$. We initialize the contrast matrix with
+\\E\_{RACE}\\. We initialize the contrast matrix with
 
-``` math
-\begin{matrix} 
-\mu & ARMCD & RACE & RACE & ARMCD:RACE & ARMCD:RACE\\
-0 & 0 & 0 & 0 & 0 & 0\\ 
-0 & 0 & 0 & 0 & 0 & 0\\ 
-\end{matrix}
-```
+\\ \begin{matrix} \mu & ARMCD & RACE & RACE & ARMCD:RACE & ARMCD:RACE\\
+0 & 0 & 0 & 0 & 0 & 0\\ 0 & 0 & 0 & 0 & 0 & 0\\ \end{matrix} \\
 
-Please note that this is a $`2\times 6`$ matrix, the rows is the number
+Please note that this is a \\2\times 6\\ matrix, the rows is the number
 of coefficients that is associated with `RACE`, and the columns is the
 total number of coefficients 6.
 
 Then following step 2, we filled in the identity matrix in the
 corresponding submatrix
 
-``` math
-\begin{matrix} 
-\mu & ARMCD & RACE & RACE & ARMCD:RACE & ARMCD:RACE\\
-0 & 0 & 1 & 0 & 0 & 0\\ 
-0 & 0 & 0 & 1 & 0 & 0\\ 
-\end{matrix}
-```
+\\ \begin{matrix} \mu & ARMCD & RACE & RACE & ARMCD:RACE & ARMCD:RACE\\
+0 & 0 & 1 & 0 & 0 & 0\\ 0 & 0 & 0 & 1 & 0 & 0\\ \end{matrix} \\
 
 In the last step, for the last 2 columns, we fill the values with the
 calculated result.
@@ -122,13 +112,9 @@ sub_mat
     ## RACEBlack or African American         0.02751985
     ## RACEWhite                             0.58570969
 
-``` math
-\begin{matrix} 
-\mu & ARMCD & RACE & RACE & ARMCD:RACE & ARMCD:RACE\\
-0 & 0 & 1 & 0 & 0.42618692 & 0.02751985\\ 
-0 & 0 & 0 & 1 & -0.04372702 & 0.58570969\\ 
-\end{matrix}
-```
+\\ \begin{matrix} \mu & ARMCD & RACE & RACE & ARMCD:RACE & ARMCD:RACE\\
+0 & 0 & 1 & 0 & 0.42618692 & 0.02751985\\ 0 & 0 & 0 & 1 & -0.04372702 &
+0.58570969\\ \end{matrix} \\
 
 ## Type III Hypothesis Testing
 
@@ -145,24 +131,24 @@ tests are performed correctly, independently of which contrasts happen
 to be used in the model fitting, we follow this algorithm:
 
 1.  Based on the user specification in the data frame we construct a
-    design matrix, say $`X_t`$ (this could be using all
+    design matrix, say \\X_t\\ (this could be using all
     `contr.treatment` or a mixture of contrasts for factor variables).
 2.  We also construct the design matrix with `contr.sum` for all factor
-    variables, say $`X_c`$.
-3.  We construct the Type III contrast matrices $`L_{c,j}`$ for all
-    terms $`j`$ for the coefficient estimate based on the $`X_c`$ design
+    variables, say \\X_c\\.
+3.  We construct the Type III contrast matrices \\L\_{c,j}\\ for all
+    terms \\j\\ for the coefficient estimate based on the \\X_c\\ design
     matrix:
 
-- All columns of $`L_{c,j}`$ associated with effect not being $`E_j`$
+- All columns of \\L\_{c,j}\\ associated with effect not being \\E_j\\
   are set to 0.
-- The submatrix of $`L_{c,j}`$ associated with $`E_j`$ is set to the
+- The submatrix of \\L\_{c,j}\\ associated with \\E_j\\ is set to the
   identity matrix.
 
-1.  We calculate a correction matrix
-    $`C = (X_c^\top X_c)^{-1} X_c^\top X_t`$ and obtain corrected Type
-    III contrast matrices subsequently as $`L_{t,j} = L_{c,j} C`$.
+1.  We calculate a correction matrix \\C = (X_c^\top X_c)^{-1} X_c^\top
+    X_t\\ and obtain corrected Type III contrast matrices subsequently
+    as \\L\_{t,j} = L\_{c,j} C\\.
 2.  We perform the linear hypothesis tests with the contrast matrices
-    $`L_{t,j}`$ for our coefficient estimate.
+    \\L\_{t,j}\\ for our coefficient estimate.
 
 Note that an intercept term should be included in a model when
 performing Type III tests: otherwise one of the categorical covariates
@@ -194,9 +180,9 @@ reference.
 
 When we conduct the hypothesis testing, we will also face this issue. If
 reference level is different, the testing we have can be different,
-e.g. if we have 3 levels, $`l_1`$, $`l_2`$ and $`l_3`$. In theory we can
-test either $`l_2 - l_1`$, $`l_3 - l_1`$ (using $`l_1`$ as reference),
-or test $`l_1 - l_3`$, $`l_2 - l_3`$ (using $`l_3`$ as reference). But
+e.g. if we have 3 levels, \\l_1\\, \\l_2\\ and \\l_3\\. In theory we can
+test either \\l_2 - l_1\\, \\l_3 - l_1\\ (using \\l_1\\ as reference),
+or test \\l_1 - l_3\\, \\l_2 - l_3\\ (using \\l_3\\ as reference). But
 the result will be slightly different. However, if we have identical
 tests the result will be closer. The following example illustrate this.
 
@@ -224,13 +210,7 @@ reference.
 They both use the following matrix to test the effect of `AVISIT`
 (ignoring other part of contrasts that is not associated with `AVISIT`)
 
-``` math
-\begin{matrix} 
-1 & 0 & 0\\ 
-0 & 1 & 0\\
-0 & 0 & 1\\
-\end{matrix}
-```
+\\ \begin{matrix} 1 & 0 & 0\\ 0 & 1 & 0\\ 0 & 0 & 1\\ \end{matrix} \\
 
 But given that the reference level is different, we are testing
 different things. In SAS we are testing `VIS1 - VIS4`, `VIS2 - VIS4` and
@@ -241,13 +221,7 @@ To correctly test `VIS1 - VIS4`, `VIS2 - VIS4` and `VIS3 - VIS4` in R,
 we need to update the contrast to the following matrix (ignoring the
 other part) to get a closer result.
 
-``` math
-\begin{matrix} 
-0 & 1 & 0\\ 
-0 & 0 & 1\\
--1 & -1 & -1\\
-\end{matrix}
-```
+\\ \begin{matrix} 0 & 1 & 0\\ 0 & 0 & 1\\ -1 & -1 & -1\\ \end{matrix} \\
 
 #### Why Model Covariate Order Changes My Testing in SAS?
 

@@ -15,102 +15,97 @@ model definition is the same as in [Details of the model fitting in
 We are also using the same notation as in the [Details of the
 Kenward-Roger
 calculations](https://openpharma.github.io/mmrm/articles/kenward.md). In
-particular, we assume we have a contrast matrix
-$`C \in \mathbb{R}^{c\times p}`$ with which we want to test the linear
-hypothesis $`C\beta = 0`$. Further, $`W(\hat\theta)`$ is the inverse of
-the Hessian matrix of the log-likelihood function of $`\theta`$
-evaluated at the estimate $`\hat\theta`$, i.e. the observed Fisher
+particular, we assume we have a contrast matrix \\C \in
+\mathbb{R}^{c\times p}\\ with which we want to test the linear
+hypothesis \\C\beta = 0\\. Further, \\W(\hat\theta)\\ is the inverse of
+the Hessian matrix of the log-likelihood function of \\\theta\\
+evaluated at the estimate \\\hat\theta\\, i.e. the observed Fisher
 Information matrix as a consistent estimator of the variance-covariance
-matrix of $`\hat\theta`$.
-$`\Phi(\theta) = \left\{X^\top \Omega(\theta)^{-1} X\right\} ^{-1}`$ is
-the asymptotic covariance matrix of $`\hat\beta`$.
+matrix of \\\hat\theta\\. \\\Phi(\theta) = \left\\X^\top
+\Omega(\theta)^{-1} X\right\\ ^{-1}\\ is the asymptotic covariance
+matrix of \\\hat\beta\\.
 
 #### One-dimensional contrast
 
-We start with the case of a one-dimensional contrast, i.e. $`c = 1`$.
+We start with the case of a one-dimensional contrast, i.e. \\c = 1\\.
 The Satterthwaite adjusted degrees of freedom for the corresponding
-t-test are then defined as:
-``` math
-\hat\nu(\hat\theta) = \frac{2f(\hat\theta)^2}{f{'}(\hat\theta)^\top W(\hat\theta) f{'}(\hat\theta)}
-```
-where $`f(\hat\theta) = C \Phi(\hat\theta) C^\top`$ is the scalar in the
-numerator and we can identify it as the variance estimate for the
-estimated scalar contrast $`C\hat\beta`$. The computational challenge is
-essentially to evaluate the denominator in the expression for
-$`\hat\nu(\hat\theta)`$, which amounts to computing the
-$`k`$-dimensional gradient $`f{'}(\hat\theta)`$ of $`f(\theta)`$ (for
-the given contrast matrix $`C`$) at the estimate $`\hat\theta`$. We
-already have the variance-covariance matrix $`W(\hat\theta)`$ of the
-variance parameter vector $`\theta`$ from the model fitting.
+t-test are then defined as: \\ \hat\nu(\hat\theta) =
+\frac{2f(\hat\theta)^2}{f{'}(\hat\theta)^\top W(\hat\theta)
+f{'}(\hat\theta)} \\ where \\f(\hat\theta) = C \Phi(\hat\theta) C^\top\\
+is the scalar in the numerator and we can identify it as the variance
+estimate for the estimated scalar contrast \\C\hat\beta\\. The
+computational challenge is essentially to evaluate the denominator in
+the expression for \\\hat\nu(\hat\theta)\\, which amounts to computing
+the \\k\\-dimensional gradient \\f{'}(\hat\theta)\\ of \\f(\theta)\\
+(for the given contrast matrix \\C\\) at the estimate \\\hat\theta\\. We
+already have the variance-covariance matrix \\W(\hat\theta)\\ of the
+variance parameter vector \\\theta\\ from the model fitting.
 
 ##### Jacobian approach
 
 However, if we proceeded in a naive way here, we would need to recompute
-the denominator again for every chosen $`C`$. This would be slow, e.g.
-when changing $`C`$ every time we want to test a single coefficient
-within $`\beta`$. It is better to instead evaluate the gradient of the
-matrix valued function $`\Phi(\theta)`$, which is therefore the
-Jacobian, with regards to $`\theta`$,
-$`\mathcal{J}(\theta) = \nabla_\theta \Phi(\theta)`$. Imagine
-$`\mathcal{J}(\theta)`$ as the the 3-dimensional array with $`k`$ faces
-of size $`p\times p`$. Left and right multiplying each face by $`C`$ and
-$`C^\top`$ respectively leads to the $`k`$-dimensional gradient
-$`f'(\theta) = C \mathcal{J}(\theta) C^\top`$. Therefore for each new
-contrast $`C`$ we just need to perform simple matrix multiplications,
-which is fast (see
+the denominator again for every chosen \\C\\. This would be slow, e.g.
+when changing \\C\\ every time we want to test a single coefficient
+within \\\beta\\. It is better to instead evaluate the gradient of the
+matrix valued function \\\Phi(\theta)\\, which is therefore the
+Jacobian, with regards to \\\theta\\, \\\mathcal{J}(\theta) =
+\nabla\_\theta \Phi(\theta)\\. Imagine \\\mathcal{J}(\theta)\\ as the
+the 3-dimensional array with \\k\\ faces of size \\p\times p\\. Left and
+right multiplying each face by \\C\\ and \\C^\top\\ respectively leads
+to the \\k\\-dimensional gradient \\f'(\theta) = C \mathcal{J}(\theta)
+C^\top\\. Therefore for each new contrast \\C\\ we just need to perform
+simple matrix multiplications, which is fast (see
 [`h_gradient()`](https://openpharma.github.io/mmrm/reference/h_gradient.md)
 where this is implemented). Thus, having computed the estimated Jacobian
-$`\mathcal{J}(\hat\theta)`$, it is only a matter of putting the
+\\\mathcal{J}(\hat\theta)\\, it is only a matter of putting the
 different quantities together to compute the estimate of the denominator
-degrees of freedom, $`\hat\nu(\hat\theta)`$.
+degrees of freedom, \\\hat\nu(\hat\theta)\\.
 
 ##### Jacobian calculation
 
-Currently, we evaluate the gradient of $`\Phi(\theta)`$ through function
+Currently, we evaluate the gradient of \\\Phi(\theta)\\ through function
 [`h_jac_list()`](https://openpharma.github.io/mmrm/reference/h_jac_list.md).
 It uses automatic differentiation provided in `TMB`.
 
 We first obtain the Jacobian of the inverse of the covariance matrix of
-coefficient ($`\Phi(\theta)^{-1}`$), following the [Kenward-Roger
+coefficient (\\\Phi(\theta)^{-1}\\), following the [Kenward-Roger
 calculations](https://openpharma.github.io/mmrm/articles/kenward.html#special-considerations-for-mmrm-models).
-Please note that we only need $`P_h`$ matrices.
+Please note that we only need \\P_h\\ matrices.
 
 Then, to obtain the Jacobian of the covariance matrix of coefficient,
 following the
 [algorithm](https://openpharma.github.io/mmrm/articles/kenward.html#derivative-of-the-sigma-1),
-we use $`\Phi(\theta)`$ estimated in the fit to obtain the Jacobian.
+we use \\\Phi(\theta)\\ estimated in the fit to obtain the Jacobian.
 
-The result is a list (of length $`k`$ where $`k`$ is the dimension of
-the variance parameter $`\theta`$) of matrices of $`p \times p`$, where
-$`p`$ is the dimension of $`\beta`$.
+The result is a list (of length \\k\\ where \\k\\ is the dimension of
+the variance parameter \\\theta\\) of matrices of \\p \times p\\, where
+\\p\\ is the dimension of \\\beta\\.
 
 #### Multi-dimensional contrast
 
-When $`c > 1`$ we are testing multiple contrasts at once. Here an
-F-statistic
-``` math
-F = \frac{1}{c} (C\hat\beta)^\top  (C \Phi(\hat\theta) C^\top)^{-1} C^\top (C\hat\beta)
-```
-is calculated, and we are interested in estimating an appropriate
-denominator degrees of freedom for $`F`$, while assuming $`c`$ are the
-numerator degrees of freedom. Note that only in special cases, such as
-orthogonal or balanced designs, the F distribution will be exact under
-the null hypothesis. In general, it is an approximation.
+When \\c \> 1\\ we are testing multiple contrasts at once. Here an
+F-statistic \\ F = \frac{1}{c} (C\hat\beta)^\top (C \Phi(\hat\theta)
+C^\top)^{-1} C^\top (C\hat\beta) \\ is calculated, and we are interested
+in estimating an appropriate denominator degrees of freedom for \\F\\,
+while assuming \\c\\ are the numerator degrees of freedom. Note that
+only in special cases, such as orthogonal or balanced designs, the F
+distribution will be exact under the null hypothesis. In general, it is
+an approximation.
 
 The calculations are described in detail in Christensen (2018), and we
 don’t repeat them here in detail. The implementation is in
 [`h_df_md_sat()`](https://openpharma.github.io/mmrm/reference/h_df_md_sat.md)
 and starts with an eigen-decomposition of the asymptotic
-variance-covariance matrix of the contrast estimate,
-i.e. $`C \Phi(\hat\theta) C^\top`$. The F-statistic can be rewritten as
-a sum of $`t^2`$ statistics based on these eigen-values. The
-corresponding random variables are independent (by design because they
-are derived from the orthogonal eigen-vectors) and essentially have one
-degree of freedom each. Hence, each of the $`t`$ statistics is treated
-as above in the one-dimensional contrast case, i.e. the denominator
-degree of freedom is calculated for each of them. Finally, using
-properties of the F distribution’s expectation, the denominator degree
-of freedom for the whole F statistic is derived.
+variance-covariance matrix of the contrast estimate, i.e. \\C
+\Phi(\hat\theta) C^\top\\. The F-statistic can be rewritten as a sum of
+\\t^2\\ statistics based on these eigen-values. The corresponding random
+variables are independent (by design because they are derived from the
+orthogonal eigen-vectors) and essentially have one degree of freedom
+each. Hence, each of the \\t\\ statistics is treated as above in the
+one-dimensional contrast case, i.e. the denominator degree of freedom is
+calculated for each of them. Finally, using properties of the F
+distribution’s expectation, the denominator degree of freedom for the
+whole F statistic is derived.
 
 ### Satterthwaite degrees of freedom for empirical covariance
 
@@ -127,118 +122,85 @@ calculations](https://openpharma.github.io/mmrm/articles/kenward.md), we
 have the following derivation. For an estimator of variance with the
 following term
 
-``` math
-  v = s c^\top(X^\top X)^{-1}\sum_{i}{X_i^\top A_i \epsilon_i \epsilon_i^\top A_i X_i} (X^\top X)^{-1} c
-```
+\\ v = s c^\top(X^\top X)^{-1}\sum\_{i}{X_i^\top A_i \epsilon_i
+\epsilon_i^\top A_i X_i} (X^\top X)^{-1} c \\
 
-where $`s`$ takes the value of $`\frac{n}{n-1}`$, $`1`$ or
-$`\frac{n-1}{n}`$, and $`A_i`$ takes $`I_i`$,
-$`(I_i - H_{ii})^{-\frac{1}{2}}`$, or $`(I_i - H_{ii})^{-1}`$
-respectively, $`c`$ is a column vector, then $`v`$ can be decomposed
-into the a weighted sum of independent $`\chi_1^2`$ distribution, where
-the weights are the eigenvalues of the $`n\times n`$ matrix $`G`$ with
-elements
-``` math
-  G_{ij} = g_i^\top V g_j
-```
+where \\s\\ takes the value of \\\frac{n}{n-1}\\, \\1\\ or
+\\\frac{n-1}{n}\\, and \\A_i\\ takes \\I_i\\, \\(I_i -
+H\_{ii})^{-\frac{1}{2}}\\, or \\(I_i - H\_{ii})^{-1}\\ respectively,
+\\c\\ is a column vector, then \\v\\ can be decomposed into the a
+weighted sum of independent \\\chi_1^2\\ distribution, where the weights
+are the eigenvalues of the \\n\times n\\ matrix \\G\\ with elements \\
+G\_{ij} = g_i^\top V g_j \\
 
 where
 
-``` math
-  g_i = s^{\frac{1}{2}} (I - H)_i^\top A_i X_i (X^\top X)^{-1} c
-```
-``` math
-  H = X(X^\top X)^{-1}X^\top
-```
+\\ g_i = s^{\frac{1}{2}} (I - H)\_i^\top A_i X_i (X^\top X)^{-1} c \\ \\
+H = X(X^\top X)^{-1}X^\top \\
 
-$`(I - H)_i`$ corresponds to the rows of subject $`i`$.
+\\(I - H)\_i\\ corresponds to the rows of subject \\i\\.
 
-So the degrees of freedom can be represented as
-``` math
-  \nu = \frac{(\sum_{i}\lambda_i)^2}{\sum_{i}{\lambda_i^2}}
-```
+So the degrees of freedom can be represented as \\ \nu =
+\frac{(\sum\_{i}\lambda_i)^2}{\sum\_{i}{\lambda_i^2}} \\
 
-where $`\lambda_i, i = 1, \dotsc, n`$ are the eigenvalues of $`G`$. Bell
-and McCaffrey (2002) also suggests that $`V`$ can be chosen as identify
-matrix, so $`G_{ij} = g_i ^\top g_j`$.
+where \\\lambda_i, i = 1, \dotsc, n\\ are the eigenvalues of \\G\\. Bell
+and McCaffrey (2002) also suggests that \\V\\ can be chosen as identify
+matrix, so \\G\_{ij} = g_i ^\top g_j\\.
 
 Following [Weighted Least Square
 Estimator](https://openpharma.github.io/mmrm/articles/algorithm.html#weighted-least-squares-estimator),
-we can transform the original $`X`$ into $`\tilde{x}`$ to use the above
+we can transform the original \\X\\ into \\\tilde{x}\\ to use the above
 equations.
 
-To avoid repeated computation of matrix $`A_i`$, $`H`$ etc for different
+To avoid repeated computation of matrix \\A_i\\, \\H\\ etc for different
 contrasts, we calculate and cache the following
 
-``` math
-  G^\ast_i = (I - H)_i^\top A_i X_i (X^\top X)^{-1}
-```
-which is a $`\sum_i{m_i} \times p`$ matrix. With different contrasts, we
-need only calculate the following
-``` math
-  g_i = G^\ast_i c
-```
-to obtain a $`\sum_i{m_i} \times 1`$ matrix, $`G`$ can be computed with
-$`g_i`$.
+\\ G^\ast_i = (I - H)\_i^\top A_i X_i (X^\top X)^{-1} \\ which is a
+\\\sum_i{m_i} \times p\\ matrix. With different contrasts, we need only
+calculate the following \\ g_i = G^\ast_i c \\ to obtain a \\\sum_i{m_i}
+\times 1\\ matrix, \\G\\ can be computed with \\g_i\\.
 
 To obtain the degrees of freedom, and to avoid eigen computation on a
 large matrix, we can use the following equation
 
-``` math
-  \nu = \frac{(\sum_{i}\lambda_i)^2}{\sum_{i}{\lambda_i^2}} = \frac{tr(G)^2}{\sum_{i}{\sum_{j}{G_{ij}^2}}}
-```
+\\ \nu = \frac{(\sum\_{i}\lambda_i)^2}{\sum\_{i}{\lambda_i^2}} =
+\frac{tr(G)^2}{\sum\_{i}{\sum\_{j}{G\_{ij}^2}}} \\
 
 The scale parameter is not used throughout the package.
 
 The proof is as following
 
-1.  Proof of
-    ``` math
-      tr(AB) = tr(BA)
-    ```
+1.  Proof of \\ tr(AB) = tr(BA) \\
 
-Let $`A`$ has dimension $`p\times q`$, $`B`$ has dimension $`q\times p`$
-``` math
-  tr(AB) = \sum_{i=1}^{p}{(AB)_{ii}} = \sum_{i=1}^{p}{\sum_{j=1}^{q}{A_{ij}B_{ji}}}
-```
+Let \\A\\ has dimension \\p\times q\\, \\B\\ has dimension \\q\times p\\
+\\ tr(AB) = \sum\_{i=1}^{p}{(AB)\_{ii}} =
+\sum\_{i=1}^{p}{\sum\_{j=1}^{q}{A\_{ij}B\_{ji}}} \\
 
-``` math
-  tr(BA) = \sum_{i=1}^{q}{(BA)_{ii}} = \sum_{i=1}^{q}{\sum_{j=1}^{p}{B_{ij}A_{ji}}}
-```
+\\ tr(BA) = \sum\_{i=1}^{q}{(BA)\_{ii}} =
+\sum\_{i=1}^{q}{\sum\_{j=1}^{p}{B\_{ij}A\_{ji}}} \\
 
-so $`tr(AB) = tr(BA)`$
+so \\tr(AB) = tr(BA)\\
 
-2.  Proof of
-    ``` math
-      tr(G) = \sum_{i}(\lambda_i)
-    ```
-    and
-    ``` math
-      \sum_{i}(\lambda_i^2) = \sum_{i}{\sum_{j}{G_{ij}^2}}
-    ```
-    if $`G = G^\top`$
+2.  Proof of \\ tr(G) = \sum\_{i}(\lambda_i) \\ and \\
+    \sum\_{i}(\lambda_i^2) = \sum\_{i}{\sum\_{j}{G\_{ij}^2}} \\ if \\G =
+    G^\top\\
 
-Following eigen decomposition, we have
-``` math
-  G = Q \Lambda Q^\top
-```
-where $`\Lambda`$ is diagonal matrix, $`Q`$ is orthogonal matrix.
+Following eigen decomposition, we have \\ G = Q \Lambda Q^\top \\ where
+\\\Lambda\\ is diagonal matrix, \\Q\\ is orthogonal matrix.
 
-Using the previous formula that $`tr(AB) = tr(BA)`$, we have
+Using the previous formula that \\tr(AB) = tr(BA)\\, we have
 
-``` math
-  tr(G) = tr(Q \Lambda Q^\top) = tr(\Lambda Q^\top Q) = tr(\Lambda) = \sum_{i}(\lambda_i)
-```
+\\ tr(G) = tr(Q \Lambda Q^\top) = tr(\Lambda Q^\top Q) = tr(\Lambda) =
+\sum\_{i}(\lambda_i) \\
 
-``` math
-  tr(G^\top G) = tr(Q \Lambda Q^\top Q \Lambda Q^\top) = tr(\Lambda^2 Q^\top Q) = tr(\Lambda^2) = \sum_{i}(\lambda_i^2)
-```
+\\ tr(G^\top G) = tr(Q \Lambda Q^\top Q \Lambda Q^\top) = tr(\Lambda^2
+Q^\top Q) = tr(\Lambda^2) = \sum\_{i}(\lambda_i^2) \\
 
-and $`tr(G^\top G)`$ can be further expressed as
+and \\tr(G^\top G)\\ can be further expressed as
 
-``` math
-  tr(G^\top G) = \sum_{i}{(G^\top G)_{ii}} = \sum_{i}{\sum_{j}{G^\top_{ij}G_{ji}}} = \sum_{i}{\sum_{j}{G_{ij}^2}}
-```
+\\ tr(G^\top G) = \sum\_{i}{(G^\top G)\_{ii}} =
+\sum\_{i}{\sum\_{j}{G^\top\_{ij}G\_{ji}}} =
+\sum\_{i}{\sum\_{j}{G\_{ij}^2}} \\
 
 #### Multi-dimensional contrast
 

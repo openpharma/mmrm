@@ -8,44 +8,44 @@ adjustment.
 ## General definition
 
 Using this method, the DF are determined by the grouping level at which
-the term is estimated. Generally, assuming $`G`$ levels of grouping:
+the term is estimated. Generally, assuming \\G\\ levels of grouping:
 
-$`DF_g=N_g-(N_{g-1}+p_g), g=1, ..., G+1`$
+\\DF_g=N_g-(N\_{g-1}+p_g), g=1, ..., G+1\\
 
-where $`N_g`$ is the number of groups at the $`g`$-th grouping level and
-$`p_g`$ is the number of parameters estimated at that level.
+where \\N_g\\ is the number of groups at the \\g\\-th grouping level and
+\\p_g\\ is the number of parameters estimated at that level.
 
-$`N_0=1`$ if the model includes an intercept term and $`N_0=0`$
+\\N_0=1\\ if the model includes an intercept term and \\N_0=0\\
 otherwise. Note however that the DF for the intercept term itself (when
-it is included) are calculated at the $`G+1`$ level, i.e. for the
-intercept we use $`DF_{G+1}`$ degrees of freedom.
+it is included) are calculated at the \\G+1\\ level, i.e. for the
+intercept we use \\DF\_{G+1}\\ degrees of freedom.
 
-We note that general contrasts $`C\beta`$ have not been considered in
+We note that general contrasts \\C\beta\\ have not been considered in
 the literature so far. Here we therefore use a pragmatic approach and
-define that for a general contrast matrix $`C`$ we take the minimum DF
+define that for a general contrast matrix \\C\\ we take the minimum DF
 across the involved coefficients as the DF.
 
 ## MMRM special case
 
 In our case of an MMRM (with only fixed effect terms), there is only a
-single grouping level (subject), so $`G=1`$. This means there are 3
+single grouping level (subject), so \\G=1\\. This means there are 3
 potential “levels” of parameters (Gałecki and Burzykowski (2013)):
 
 - Level 0: The intercept term, assuming the model has been fitted with
   one.
-  - We use $`DF_2`$ degrees of freedom as defined below.
+  - We use \\DF_2\\ degrees of freedom as defined below.
 - Level 1: Effects that change between subjects, but not across
   observations within subjects.
   - These are the “between parameters”.
-  - The corresponding degrees of freedom are
-    $`DF_1 = N_1 - (N_0 + p_1)`$.
+  - The corresponding degrees of freedom are \\DF_1 = N_1 - (N_0 +
+    p_1)\\.
   - In words this can be read as:  
     “Between” DF = “number of subjects” - (“1 if intercept otherwise
     0” + “number of between parameters”).
 - Level 2: Effects that change within subjects.
   - These are the “within parameters”.
-  - The corresponding degrees of freedom are
-    $`DF_2 = N_2 - (N_1 + p_2)`$.
+  - The corresponding degrees of freedom are \\DF_2 = N_2 - (N_1 +
+    p_2)\\.
   - In words this can be read as:  
     “Within” DF = “number of observations” - (“number of subjects” +
     “number of within parameters”).
@@ -116,13 +116,13 @@ Let’s try to calculate the degrees of freedom manually now.
 
 In `fev_data` there are 197 subjects with at least one non-missing
 `FEV1` observation, and 537 non-missing observations in total. Therefore
-we obtain the following numbers of groups $`N_g`$ at the levels
-$`g=1,2`$:
+we obtain the following numbers of groups \\N_g\\ at the levels
+\\g=1,2\\:
 
-- $`N_1 = 197`$
-- $`N_2 = 537`$
+- \\N_1 = 197\\
+- \\N_2 = 537\\
 
-And we note that $`N_0 = 1`$ because we use an intercept term.
+And we note that \\N_0 = 1\\ because we use an intercept term.
 
 Now let’s look at the design matrix:
 
@@ -152,17 +152,17 @@ within-subject effect; it represents study visit, so naturally its value
 changes over repeated observations for each subject. Similarly, the
 interaction of `ARMCD` and `AVISIT` also belongs to level 2.
 
-Therefore we obtain the following numbers of parameters $`p_g`$ at the
-levels $`g=1,2`$:
+Therefore we obtain the following numbers of parameters \\p_g\\ at the
+levels \\g=1,2\\:
 
-- $`p_1 = 2 + 1 + 1 = 4`$
-- $`p_2 = 3 + 3 = 6`$
+- \\p_1 = 2 + 1 + 1 = 4\\
+- \\p_2 = 3 + 3 = 6\\
 
-And we obtain therefore the degrees of freedom $`DF_g`$ at the levels
-$`g=1,2`$:
+And we obtain therefore the degrees of freedom \\DF_g\\ at the levels
+\\g=1,2\\:
 
-- $`DF_1 = N_1 - (N_0 + p_1) = 197 - (1 + 4) = 192`$
-- $`DF_2 = N_2 - (N_1 + p_2) = 537 - (197 + 6) = 334`$
+- \\DF_1 = N_1 - (N_0 + p_1) = 197 - (1 + 4) = 192\\
+- \\DF_2 = N_2 - (N_1 + p_2) = 537 - (197 + 6) = 334\\
 
 So we can finally see that those degrees of freedom are exactly as
 displayed in the summary table above.

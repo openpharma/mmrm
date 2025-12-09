@@ -5,45 +5,38 @@
 Following the notation we have without weights, Bell and McCaffrey
 (2002) and Pustejovsky and Tipton (2018) suggest
 
-``` math
-  v = s C^\top(X^\top W X)^{-1}\sum_{i}{X_i^\top W_i A_i \epsilon_i \epsilon_i^\top A_i W_i X_i} (X^\top W X)^{-1} C
-```
+\\ v = s C^\top(X^\top W X)^{-1}\sum\_{i}{X_i^\top W_i A_i \epsilon_i
+\epsilon_i^\top A_i W_i X_i} (X^\top W X)^{-1} C \\
 
-where $`A_i`$ takes $`I_i`$, $`(I_i - H_{ii})^{-\frac{1}{2}}`$, or
-$`(I_i - H_{ii})^{-1}`$ is unchanged, but $`H`$ is changed
+where \\A_i\\ takes \\I_i\\, \\(I_i - H\_{ii})^{-\frac{1}{2}}\\, or
+\\(I_i - H\_{ii})^{-1}\\ is unchanged, but \\H\\ is changed
 
-``` math
-  H = X (X^\top W X)^{-1} X^\top W
-```
+\\ H = X (X^\top W X)^{-1} X^\top W \\
 
 For the degrees of freedom, we have
 
-``` math
-  G_{ij} = g_i^\top \Phi g_j
-```
+\\ G\_{ij} = g_i^\top \Phi g_j \\
 
 where
 
-``` math
-  g_i = s^{\frac{1}{2}} (I - H)_i^\top A_i W_i X_i (X^\top X)^{-1} C
-```
+\\ g_i = s^{\frac{1}{2}} (I - H)\_i^\top A_i W_i X_i (X^\top X)^{-1} C
+\\
 
 ## Difference of Implementations
 
 Comparing the previous section with our implementation, we can find out
 the differences. Since they have nearly the same symbols, to
-differentiate the different part, we use subscript $`1`$ to denote the
+differentiate the different part, we use subscript \\1\\ to denote the
 implementation suggested by Bell and McCaffrey (2002) and Pustejovsky
-and Tipton (2018), and use $`2`$ to denote the our implementation of
+and Tipton (2018), and use \\2\\ to denote the our implementation of
 covariance estimator in `mmrm`, we have
 
-``` math
-  v_{1} = s C^\top(X^\top W X)^{-1}\sum_{i}{X_i^\top W_i A_{1, i} \epsilon_i \epsilon_i^\top A_{1, i} W_i X_i} (X^\top W X)^{-1} C
-```
+\\ v\_{1} = s C^\top(X^\top W X)^{-1}\sum\_{i}{X_i^\top W_i A\_{1, i}
+\epsilon_i \epsilon_i^\top A\_{1, i} W_i X_i} (X^\top W X)^{-1} C \\
 
-``` math
-  v_{2} = s C^\top(X^\top W X)^{-1}\sum_{i}{X_i^\top L_i A_{2, i} L_i^\top \epsilon_i \epsilon_i^\top L_i A_{2, i} L_i^\top X_i} (X^\top W X)^{-1} C
-```
+\\ v\_{2} = s C^\top(X^\top W X)^{-1}\sum\_{i}{X_i^\top L_i A\_{2, i}
+L_i^\top \epsilon_i \epsilon_i^\top L_i A\_{2, i} L_i^\top X_i} (X^\top
+W X)^{-1} C \\
 
 Here we will prove that they are identical.
 
@@ -51,163 +44,125 @@ Here we will prove that they are identical.
 
 #### Proof for Covariance Estimator
 
-First of all, we assume that all $`A_i`$ matrix, in any form, are
-positive-definite. Comparing $`v_{1}`$ and $`v_{2}`$, we see that the
+First of all, we assume that all \\A_i\\ matrix, in any form, are
+positive-definite. Comparing \\v\_{1}\\ and \\v\_{2}\\, we see that the
 different part is
 
-``` math
-  M_{1, d, i} = W_i A_{1, i}
-```
-and
-``` math
-  M_{2, d, i} = L_i A_{2, i} L_i^\top
-```
+\\ M\_{1, d, i} = W_i A\_{1, i} \\ and \\ M\_{2, d, i} = L_i A\_{2, i}
+L_i^\top \\
 
-Substitute $`H_{1}`$ and $`H_{2}`$ with its expression, we have
+Substitute \\H\_{1}\\ and \\H\_{2}\\ with its expression, we have
 
-``` math
-  M_{1, d, i} = W_i (I_i - X_i (X^\top W X)^{-1} X_i^\top W_i)^d
-```
+\\ M\_{1, d, i} = W_i (I_i - X_i (X^\top W X)^{-1} X_i^\top W_i)^d \\
 
-``` math
-  M_{2, d, i} = L_i (I_i - L_i^\top X_i (X^\top W X)^{-1} X_i^\top L_i)^d L_i^\top
-```
+\\ M\_{2, d, i} = L_i (I_i - L_i^\top X_i (X^\top W X)^{-1} X_i^\top
+L_i)^d L_i^\top \\
 
-Where $`d`$ takes $`0`$, $`-1/2`$ and $`-1`$ respectively.
+Where \\d\\ takes \\0\\, \\-1/2\\ and \\-1\\ respectively.
 
-Apparently, if $`d=0`$, these two are identical because
-$`W_i = L_i L_i^\top`$.
+Apparently, if \\d=0\\, these two are identical because \\W_i = L_i
+L_i^\top\\.
 
-When $`d = -1`$, we have
+When \\d = -1\\, we have
 
-\$\$ M\_{2, -1, i} = L_i (I_i - L_i^\top X_i (X^\top W X)^{-1} X_i^\top
+\\ M\_{2, -1, i} = L_i (I_i - L_i^\top X_i (X^\top W X)^{-1} X_i^\top
 L_i)^{-1} L_i^\top \\ = (L_i^{-1})^{-1} (I_i - L_i^\top X_i (X^\top W
 X)^{-1} X_i^\top L_i)^{-1} ((L_i^\top)^{-1})^{-1} \\ =
 \[((L_i^\top)^{-1})(I_i - L_i^\top X_i (X^\top W X)^{-1} X_i^\top
 L_i)(L_i^{-1})\]^{-1} \\ = \[(L_i^\top)^{-1}L_i^{-1} - X_i (X^\top W
 X)^{-1} X_i^\top\]^{-1} \\ = (W_i^{-1} - X_i (X^\top W X)^{-1}
-X_i^\top)^{-1} \$\$
+X_i^\top)^{-1} \\
 
-\$\$ M\_{1, -1, i} = W_i (I_i - X_i (X^\top W X)^{-1} X_i^\top W_i)^{-1}
+\\ M\_{1, -1, i} = W_i (I_i - X_i (X^\top W X)^{-1} X_i^\top W_i)^{-1}
 \\ = (W_i^{-1})^{-1} (I_i - X_i (X^\top W X)^{-1} X_i^\top W_i)^{-1} \\
 = \[(I_i - X_i (X^\top W X)^{-1} X_i^\top W_i)((W_i^{-1}))\]^{-1} \\ =
-(W_i^{-1} - X_i (X^\top W X)^{-1} X_i^\top)^{-1} \$\$
+(W_i^{-1} - X_i (X^\top W X)^{-1} X_i^\top)^{-1} \\
 
-Obviously, $`M_{2, -1, i} = M_{1, -1, i}`$, and use the following
+Obviously, \\M\_{2, -1, i} = M\_{1, -1, i}\\, and use the following
 notation
 
-``` math
-  M_{2, -1, i} = L_i B_{2, i} L_i^\top
-```
+\\ M\_{2, -1, i} = L_i B\_{2, i} L_i^\top \\
 
-``` math
-  M_{1, -1, i} = W_i B_{1, i}
-```
+\\ M\_{1, -1, i} = W_i B\_{1, i} \\
 
 we have
 
-\$\$ B\_{1, i} = W_i^{-1} L_i B\_{2, i} L_i^\top \\ = (L_i^\top)^{-1}
-B\_{2, i} L_i^\top \$\$
+\\ B\_{1, i} = W_i^{-1} L_i B\_{2, i} L_i^\top \\ = (L_i^\top)^{-1}
+B\_{2, i} L_i^\top \\
 
-When $`d = -1/2`$, we have the following
+When \\d = -1/2\\, we have the following
 
-\$\$ M\_{2, -1/2, i} = L_i (I_i - L_i^\top X_i (X^\top W X)^{-1}
-X_i^\top L_i)^{-1/2} L_i^\top \\ = L_i B\_{2, i}^{1/2} L_i^\top \$\$
+\\ M\_{2, -1/2, i} = L_i (I_i - L_i^\top X_i (X^\top W X)^{-1} X_i^\top
+L_i)^{-1/2} L_i^\top \\ = L_i B\_{2, i}^{1/2} L_i^\top \\
 
-\$\$ M\_{1, -1/2, i} = W_i (I_i - X_i (X^\top W X)^{-1} X_i^\top
-W_i)^{-1/2} \\ = W_i B\_{1, i}^{1/2} \$\$
+\\ M\_{1, -1/2, i} = W_i (I_i - X_i (X^\top W X)^{-1} X_i^\top
+W_i)^{-1/2} \\ = W_i B\_{1, i}^{1/2} \\
 
-Apparently if
-$`B_{1, i}^{1/2} \ne (L_i^\top)^{-1} B_{2, i}^{1/2} L_i^\top`$, we
-should also have
-``` math
-  B_{1, i}^{1/2} B_{1, i}^{1/2} \ne (L_i^\top)^{-1} B_{2, i}^{1/2} L_i^\top (L_i^\top)^{-1} B_{2, i}^{1/2} L_i^\top
-```
+Apparently if \\B\_{1, i}^{1/2} \ne (L_i^\top)^{-1} B\_{2, i}^{1/2}
+L_i^\top\\, we should also have \\ B\_{1, i}^{1/2} B\_{1, i}^{1/2} \ne
+(L_i^\top)^{-1} B\_{2, i}^{1/2} L_i^\top (L_i^\top)^{-1} B\_{2, i}^{1/2}
+L_i^\top \\
 
 leading to
 
-``` math
-  B_{1, i} \ne (L_i^\top)^{-1} B_{2, i} L_i^\top
-```
+\\ B\_{1, i} \ne (L_i^\top)^{-1} B\_{2, i} L_i^\top \\
 
 which is contradictory with our previous result. Thus, these covariance
 estimator are identical.
 
 #### Proof for Degrees of Freedom
 
-To prove
-``` math
-  G_{1, ij} = g_{1, i}^\top \Phi g_{1, j}
-```
-and
-``` math
-  G_{2, ij} = g_{2, i}^\top g_{2, j}
-```
-are identical, we only need to prove that
+To prove \\ G\_{1, ij} = g\_{1, i}^\top \Phi g\_{1, j} \\ and \\ G\_{2,
+ij} = g\_{2, i}^\top g\_{2, j} \\ are identical, we only need to prove
+that
 
-``` math
-  L^{-1} g_{1, i} = g_{mmrm_i}
-```
+\\ L^{-1} g\_{1, i} = g\_{mmrm_i} \\
 
-where $`\Phi = W^{-1}`$ according to our previous expression.
+where \\\Phi = W^{-1}\\ according to our previous expression.
 
-We first expand $`L^{-1} g_{1, i}`$ and $`g_{mmrm_i}`$
+We first expand \\L^{-1} g\_{1, i}\\ and \\g\_{mmrm_i}\\
 
-``` math
-  L^{-1} g_{1, i} = L^{-1} (I - X(X^\top W X)^{-1}X^\top W) S_i^\top A_{1, i}^d W_i X_i (X^\top W X)^{-1} C
-```
+\\ L^{-1} g\_{1, i} = L^{-1} (I - X(X^\top W X)^{-1}X^\top W) S_i^\top
+A\_{1, i}^d W_i X_i (X^\top W X)^{-1} C \\
 
-``` math
-  g_{2, i} = (I - L_i^\top X(X^\top W X)^{-1}X^\top L_i) S_i^\top A_{2, i}^d L_i^\top X_i (X^\top W X)^{-1} C
-```
+\\ g\_{2, i} = (I - L_i^\top X(X^\top W X)^{-1}X^\top L_i) S_i^\top
+A\_{2, i}^d L_i^\top X_i (X^\top W X)^{-1} C \\
 
-where $`S_i`$ is the row selection matrix.
+where \\S_i\\ is the row selection matrix.
 
-We will prove the inner part equal
-``` math
-  L^{-1} (I - X(X^\top W X)^{-1}X^\top W) S_i^\top A_{1, i}^d W_i = (I - L^\top X(X^\top W X)^{-1}X^\top L) S_i^\top A_{2, i}^d L_i^\top
-```
+We will prove the inner part equal \\ L^{-1} (I - X(X^\top W
+X)^{-1}X^\top W) S_i^\top A\_{1, i}^d W_i = (I - L^\top X(X^\top W
+X)^{-1}X^\top L) S_i^\top A\_{2, i}^d L_i^\top \\
 
 With the previous proof of covariance estimators, we already have
 
-``` math
-  M_{1, d, i} = W_i A_{1, i}^d = L_i A_{2, i}^d L_i^\top = M_{2, d, i}
-```
-we then need to prove
-``` math
-  L^{-1} (I - X(X^\top W X)^{-1}X^\top W) S_i^\top = (I - L^\top X(X^\top W X)^{-1}X^\top L) S_i^\top L_i^{-1}
-```
+\\ M\_{1, d, i} = W_i A\_{1, i}^d = L_i A\_{2, i}^d L_i^\top = M\_{2, d,
+i} \\ we then need to prove \\ L^{-1} (I - X(X^\top W X)^{-1}X^\top W)
+S_i^\top = (I - L^\top X(X^\top W X)^{-1}X^\top L) S_i^\top L_i^{-1} \\
 
-and note the relationship between $`(I - X(X^\top W X)^{-1}X^\top W)`$
-and $`(I - L^\top X(X^\top W X)^{-1}X^\top L)`$ has already been proved
+and note the relationship between \\(I - X(X^\top W X)^{-1}X^\top W)\\
+and \\(I - L^\top X(X^\top W X)^{-1}X^\top L)\\ has already been proved
 in covariance estimator section, we only need to prove
 
-``` math
-  L^{-1} (I - X(X^\top W X)^{-1}X^\top W) S_i^\top = (I - L^\top X(X^\top W X)^{-1}X^\top L) S_i^\top L_i^{-1}
-```
+\\ L^{-1} (I - X(X^\top W X)^{-1}X^\top W) S_i^\top = (I - L^\top
+X(X^\top W X)^{-1}X^\top L) S_i^\top L_i^{-1} \\
 
 Apparently
 
-``` math
-  L^{-1} (I - X(X^\top W X)^{-1}X^\top W) S_i^\top = L^{-1} S_i^\top - L^{-1} X(X^\top W X)^{-1}X_i^\top W_i
-```
+\\ L^{-1} (I - X(X^\top W X)^{-1}X^\top W) S_i^\top = L^{-1} S_i^\top -
+L^{-1} X(X^\top W X)^{-1}X_i^\top W_i \\
 
-``` math
-  (I - L^\top X(X^\top W X)^{-1}X^\top L) S_i^\top L_i^{-1} = S_i^\top L_i^{-1} - L^\top X(X^\top W X)^{-1}X_i^\top
-```
+\\ (I - L^\top X(X^\top W X)^{-1}X^\top L) S_i^\top L_i^{-1} = S_i^\top
+L_i^{-1} - L^\top X(X^\top W X)^{-1}X_i^\top \\
 
-And obviously
-``` math
-  L^{-1} S_i^\top = S_i^\top L_i^{-1}
-```
+And obviously \\ L^{-1} S_i^\top = S_i^\top L_i^{-1} \\
 
-``` math
-  L^{-1} X(X^\top W X)^{-1}X_i W_i = L^\top X(X^\top W X)^{-1}X_i^\top
-```
+\\ L^{-1} X(X^\top W X)^{-1}X_i W_i = L^\top X(X^\top W X)^{-1}X_i^\top
+\\
 
-because of the following \$\$ (X(X^\top W X)^{-1}X_i W_i)\_{i} =
+because of the following \\ (X(X^\top W X)^{-1}X_i W_i)\_{i} =
 X_i(X^\top W X)^{-1}X_i W_i \\ = W_i X_i(X^\top W X)^{-1}X_i^\top \\ =
-(W X(X^\top W X)^{-1}X_i^\top)\_{i} \$\$
+(W X(X^\top W X)^{-1}X_i^\top)\_{i} \\
 
 ## Special Considerations in Implementations
 
@@ -243,9 +198,9 @@ but it is not used for the following reason:
 
 In the implementation of the empirical covariance matrix with the
 Satterthwaite degrees of freedom calculation, it is important to avoid
-directly computing the crossproduct of the $`G`$ matrix (i.e.,
-$`G^\top G`$). This is because the $`G`$ matrix can have a large number
-of columns, in situations with many subjects and/or many coefficients,
+directly computing the crossproduct of the \\G\\ matrix (i.e., \\G^\top
+G\\). This is because the \\G\\ matrix can have a large number of
+columns, in situations with many subjects and/or many coefficients,
 leading to significant computational and memory overhead. Instead, the
 current implementation leverages more efficient matrix operations when
 needed using the contrast matrix during the Satterthwaite degrees of

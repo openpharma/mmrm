@@ -24,30 +24,29 @@ and Lipkovich (2017).
 
 Laird and Ware (1982) introduced the basic linear mixed-effects model
 for a single level of grouping to be any model that expresses an
-$`n_i`$-dimensional response (column) vector $`y_i`$ for the $`i`$th
-subject (or, more generally, group or unit) as \$\$ y_i = X_i \beta +
-Z_i b_i + \epsilon_i, \quad i=1,\ldots,M ,\\ b_i \sim
-\mathcal{N}(0,\Psi), \quad \epsilon_i \sim \mathcal{N}(0,\sigma^2I),
-\$\$ where
+\\n_i\\-dimensional response (column) vector \\y_i\\ for the \\i\\th
+subject (or, more generally, group or unit) as \\ y_i = X_i \beta + Z_i
+b_i + \epsilon_i, \quad i=1,\ldots,M ,\\ b_i \sim \mathcal{N}(0,\Psi),
+\quad \epsilon_i \sim \mathcal{N}(0,\sigma^2I), \\ where
 
-- $`\beta`$ is the $`p`$-dimensional vector of fixed effects,
-- $`b`$ is the $`q`$-dimensional vector of random patient-specific
+- \\\beta\\ is the \\p\\-dimensional vector of fixed effects,
+- \\b\\ is the \\q\\-dimensional vector of random patient-specific
   effects,
-- $`X_i`$ (of size $`n_i \times p`$) and $`Z_i`$ (of size
-  $`n_i \times q`$) are known regressor matrices relating observations
-  to the fixed-effects and random-effects, respectively, and
-- $`\epsilon_i`$ is the $`n_i`$-dimensional within-subject error.
+- \\X_i\\ (of size \\n_i \times p\\) and \\Z_i\\ (of size \\n_i \times
+  q\\) are known regressor matrices relating observations to the
+  fixed-effects and random-effects, respectively, and
+- \\\epsilon_i\\ is the \\n_i\\-dimensional within-subject error.
 
-The random effects $`b_i`$ and the within-group errors $`\epsilon_i`$
-are assumed to follow a normal distribution, with means of $`0`$ and
-variance-covariance matrices $`\Psi`$ and $`\sigma^2I`$, where $`I`$ is
+The random effects \\b_i\\ and the within-group errors \\\epsilon_i\\
+are assumed to follow a normal distribution, with means of \\0\\ and
+variance-covariance matrices \\\Psi\\ and \\\sigma^2I\\, where \\I\\ is
 an identity matrix. They are further assumed to be independent for
 different subjects and independent of each other for the same subject.
-The random effects $`b_i`$ describe the shift from the mean of the
+The random effects \\b_i\\ describe the shift from the mean of the
 linear predictor for each subject. As they are defined to have a mean of
-$`0`$, any non-zero mean for a term in the random effects must be
+\\0\\, any non-zero mean for a term in the random effects must be
 expressed as part of the fixed-effects terms. Therefore, the columns of
-$`Z_i`$ are usually a (small) subset of the columns of $`X_i`$.
+\\Z_i\\ are usually a (small) subset of the columns of \\X_i\\.
 
 Mixed models are called “mixed” because they consider both fixed and
 random effects and thus allow considerable modeling flexibility. This is
@@ -64,24 +63,20 @@ within-subject correlation needs to be accounted for by the model.
 The basic linear mixed-effects model can be extended in order to
 incorporate within-subject errors that are heteroscedastic (i.e. have
 unequal variances) and/ or are correlated. For this purpose, we can
-express the within-subject errors as:
-``` math
-  \epsilon_i \sim \mathcal{N}(0,\Lambda_i), \quad i=1,\ldots,M,
-```
-where the $`\Lambda_i`$ are positive-definite matrices parameterized by
-a fixed, generally small set of parameters $`\lambda`$. As in the basic
-model, the within-group errors $`\epsilon_i`$ are assumed to be
-independent for different $`i`$ and independent of the random effects
-$`b_i`$. The variance-covariance matrix of the response vector $`y_i`$,
-``` math
-  \text{Var}(y_i) = \Sigma_i = \left( Z_i \Psi Z_{i}^{T} + \Lambda_i \right),  
-```
-comprises a random-effects component, given by $`Z_i \Psi Z_{i}^{T}`$,
-and a within-subject component, given by $`\Lambda_i`$. When fitting
-such models, there will generally be a “competition” and trade-off
-between the complexities of the two components, and care must be
-exercised to prevent nonidentifiability, or near nonidentifiability, of
-the parameters. This is one of the reasons why it can be advantageous in
+express the within-subject errors as: \\ \epsilon_i \sim
+\mathcal{N}(0,\Lambda_i), \quad i=1,\ldots,M, \\ where the \\\Lambda_i\\
+are positive-definite matrices parameterized by a fixed, generally small
+set of parameters \\\lambda\\. As in the basic model, the within-group
+errors \\\epsilon_i\\ are assumed to be independent for different \\i\\
+and independent of the random effects \\b_i\\. The variance-covariance
+matrix of the response vector \\y_i\\, \\ \text{Var}(y_i) = \Sigma_i =
+\left( Z_i \Psi Z\_{i}^{T} + \Lambda_i \right), \\ comprises a
+random-effects component, given by \\Z_i \Psi Z\_{i}^{T}\\, and a
+within-subject component, given by \\\Lambda_i\\. When fitting such
+models, there will generally be a “competition” and trade-off between
+the complexities of the two components, and care must be exercised to
+prevent nonidentifiability, or near nonidentifiability, of the
+parameters. This is one of the reasons why it can be advantageous in
 practice to use only one of these components as long as it still allows
 to capture all relevant sources of variability. In longitudinal studies
 with only one level of grouping, the within-subject component is
@@ -90,8 +85,8 @@ within-subject correlation, whereas an additional random-effects
 component is often not strictly needed.
 
 Of note, in the literature, the random-effects component and the
-within-subject component are sometimes also referred to as $`R`$ and
-$`G`$, or as $`R`$-side and $`G`$-side random effects (Cnaan, Laird, and
+within-subject component are sometimes also referred to as \\R\\ and
+\\G\\, or as \\R\\-side and \\G\\-side random effects (Cnaan, Laird, and
 Slasor (1997), Littell, Pendergast, and Natarajan (2000)).
 
 ## The MMRM as a special case
@@ -99,52 +94,40 @@ Slasor (1997), Littell, Pendergast, and Natarajan (2000)).
 In a clinical trial setting, one often chooses to directly model the
 variance-covariance structure of the response, i.e. to account for
 within-subject dependencies using the within-group component
-$`\Lambda_i`$, and can omit the random effects component ($`Z_i b_i`$).
-Hence, in this case, $`\text{Var}(y_i)=\Sigma_i=\Lambda_i`$ . This
+\\\Lambda_i\\, and can omit the random effects component (\\Z_i b_i\\).
+Hence, in this case, \\\text{Var}(y_i)=\Sigma_i=\Lambda_i\\ . This
 yields the MMRM with:
 
-``` math
-     y_i = X_i\beta + \epsilon_i, \quad \epsilon_i \sim \mathcal{N}(0,\Sigma_i), \quad i=1,\ldots,M.
-```
+\\ y_i = X_i\beta + \epsilon_i, \quad \epsilon_i \sim
+\mathcal{N}(0,\Sigma_i), \quad i=1,\ldots,M. \\
 
-The $`\Sigma_i`$ matrices are obtained by subsetting the overall
-variance-covariance matrix $`\Sigma \in \mathbb{R}^{m \times m}`$, where
-$`m`$ is the total number of scheduled visits per subject, appropriately
-by
-``` math
-     \Sigma_i = S_i^\top \Sigma S_i ,    
-```
-where $`S_i \in \{0, 1\}^{m \times m_i}`$ is the subject-specific
-‘’subsetting matrix’’ that indicates the visits with available
-observations (see also the vignette on the Details of the Model Fitting
-in `mmrm`).
+The \\\Sigma_i\\ matrices are obtained by subsetting the overall
+variance-covariance matrix \\\Sigma \in \mathbb{R}^{m \times m}\\, where
+\\m\\ is the total number of scheduled visits per subject, appropriately
+by \\ \Sigma_i = S_i^\top \Sigma S_i , \\ where \\S_i \in \\0, 1\\^{m
+\times m_i}\\ is the subject-specific ‘’subsetting matrix’’ that
+indicates the visits with available observations (see also the vignette
+on the Details of the Model Fitting in `mmrm`).
 
-When written as a model for all $`n`$ subjects in a trial, the MMRM is
-represented by
-``` math
-Y = X\beta + \epsilon,
-```
-where $`Y \in \mathbb{R}^N`$ combines all subject-specific observations
-$`y_i`$ such that in total there are $`N = \sum_{i = 1}^{n}{m_i}`$
-observations, $`X \in \mathbb{R}^{N \times p}`$ combines all
-subject-specific design matrices, $`\beta \in \mathbb{R}^p`$ is a vector
-of fixed effects, and $`\epsilon \in \mathbb{R}^N`$ has a multivariate
-normal distribution,
-``` math
-\epsilon \sim N(0, \Omega),
-```
-with $`\Omega \in \mathbb{R}^{N \times N}`$ being a block-diagonal
-matrix, containing the subject-specific $`\Sigma_i`$ on the diagonal
-(and with all other entries being equal to $`0`$).
+When written as a model for all \\n\\ subjects in a trial, the MMRM is
+represented by \\ Y = X\beta + \epsilon, \\ where \\Y \in \mathbb{R}^N\\
+combines all subject-specific observations \\y_i\\ such that in total
+there are \\N = \sum\_{i = 1}^{n}{m_i}\\ observations, \\X \in
+\mathbb{R}^{N \times p}\\ combines all subject-specific design matrices,
+\\\beta \in \mathbb{R}^p\\ is a vector of fixed effects, and \\\epsilon
+\in \mathbb{R}^N\\ has a multivariate normal distribution, \\ \epsilon
+\sim N(0, \Omega), \\ with \\\Omega \in \mathbb{R}^{N \times N}\\ being
+a block-diagonal matrix, containing the subject-specific \\\Sigma_i\\ on
+the diagonal (and with all other entries being equal to \\0\\).
 
 When modeling longitudinal responses in a clinical trial with multiple
-follow-up visits, the linear predictor $`X\beta`$ typically considers
+follow-up visits, the linear predictor \\X\beta\\ typically considers
 fixed effects of baseline values, treatment and visit, as well as
 interactions between treatment and visit, and possibly between baseline
 and visit. Commonly the fixed effects are of most interest and the
-correlation structure $`\Sigma`$ can be viewed as a nuisance quantity.
+correlation structure \\\Sigma\\ can be viewed as a nuisance quantity.
 However, it is important to model it carefully, since it affects
-validity of the estimated variance of $`\beta`$. The `mmrm` package
+validity of the estimated variance of \\\beta\\. The `mmrm` package
 supports a wide range of covariance structures (see also the vignette on
 Covariance Structures in `mmrm`).
 
