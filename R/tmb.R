@@ -624,14 +624,6 @@ fit_mmrm <- function(
     covariance <- h_reconcile_cov_struct(formula, covariance)
     formula_parts <- h_mmrm_tmb_formula_parts(formula, covariance)
 
-    if (
-      !formula_parts$is_spatial && !is.factor(data[[formula_parts$visit_var]])
-    ) {
-      stop(
-        "Time variable must be a factor for non-spatial covariance structures"
-      )
-    }
-
     assert_class(control, "mmrm_control")
     assert_list(control$optimizers, min.len = 1)
     assert_numeric(weights, any.missing = FALSE)
