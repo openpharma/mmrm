@@ -62,6 +62,7 @@ set to \code{NA}.
 or not.
 \item \code{theta_vcov}:  estimated variance-covariance matrix of variance parameters.
 \item \code{x_matrix}: design matrix used (excluding aliased columns).
+\item \code{x_matrix_complete}: design matrix used, including aliased columns.
 \item \code{xlev}: 	a named list of character vectors giving the full set of levels to be assumed for each factor.
 \item \code{contrasts}: a list of contrasts used for each factor.
 \item \code{y_vector}: response vector used.

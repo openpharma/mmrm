@@ -113,6 +113,21 @@ h_type2_contrast <- function(
   l_mx
 }
 
+
+#' Identify the First Term in a Model to Contain a Categorical Variable
+#'
+#' This returns the column name of the leftmost column of `factors` containing a
+#' nonzero value in a row corresponding to a `categorical` variable.
+#'
+#' @param factors (matrix)\cr the `factors` attribute of a [`terms.object`],
+#'   which is a matrix of 0s, 1s, and 2s.
+#' @param categorical (character)\cr a vector of the categorical variables in
+#'   the model whose [`terms.object`] is `factors`.
+#'
+#' @return A `string`: one of the column names of `factors`. If none of the
+#'   columns contain a categorical variable, `NULL` is returned.
+#'
+#' @keywords internal
 h_first_term_containing_categ <- function(factors, categorical) {
   factors <- factors[categorical, , drop = FALSE]
   for (term in colnames(factors)) {
@@ -276,36 +291,6 @@ h_obtain_lvls <- function(var, additional_vars, xlev, factors) {
     post = post_lvls,
     total = total_lvls
   )
-}
-
-#' Check if the Effect is the First Categorical Effect
-#' @param effect (`string`) name of the effect.
-#' @param categorical (`character`) names of the categorical values.
-#' @param factors (`matrix`) the factor matrix.
-#' @keywords internal
-h_first_contain_categorical <- function(effect, factors, categorical) {
-  assert_string(effect)
-  assert_matrix(factors)
-  assert_character(categorical)
-  mt <- match(effect, colnames(factors))
-  varnms <- row.names(factors)
-  # if the effect is not categorical in any value, return FALSE
-  if (!any(varnms[factors[, mt] > 0] %in% categorical)) {
-    return(FALSE)
-  }
-  # keep only categorical rows that is in front of the current factor
-  factors <- factors[
-    row.names(factors) %in% categorical,
-    seq_len(mt - 1L),
-    drop = FALSE
-  ]
-  # if previous cols are all numerical, return TRUE
-  if (ncol(factors) < 1L) {
-    return(TRUE)
-  }
-  col_ind <- apply(factors, 2, prod)
-  # if any of the previous cols are categorical, return FALSE
-  !any(col_ind > 0)
 }
 
 #' Test if the First Vector is Subset of the Second Vector
