@@ -13,29 +13,6 @@ test_that("car emits a message about mmrm registration on load", {
   expect_message(library(car), "mmrm")
 })
 
-# h_first_contain_categorical ----
-
-test_that("h_first_contain_categorical works as expected", {
-  effect <- "FEV1_BL:AVISIT"
-  factors <- matrix(
-    c(2, 2),
-    nrow = 2L,
-    dimnames = list(c("FEV1_BL", "AVISIT"), c("FEV1_BL:AVISIT"))
-  )
-  categorical <- c("AVISIT")
-  expect_true(h_first_contain_categorical(effect, factors, categorical))
-  factors2 <- matrix(
-    c(1, 0, 0, 0, 2, 2),
-    nrow = 3L,
-    dimnames = list(c("AGE", "FEV1_BL", "AVISIT"), c("AGE", "FEV1_BL:AVISIT"))
-  )
-  expect_true(h_first_contain_categorical(effect, factors2, categorical))
-  categorical2 <- c("NONE")
-  expect_false(h_first_contain_categorical(effect, factors, categorical2))
-  categorical3 <- c("AGE")
-  expect_false(h_first_contain_categorical(effect, factors, categorical3))
-})
-
 # h_obtain_lvls ----
 
 test_that("h_obtain_lvls works as expected", {
@@ -73,7 +50,6 @@ test_that("h_get_index works as expected", {
     c(1L, NA)
   )
 })
-
 
 
 # h_first_term_containing_categ ----
@@ -137,8 +113,10 @@ test_that("h_type2_contrast works if intercept is not given", {
       c(0, 1, 0, 0),
       nrow = 1,
       byrow = TRUE,
-      dimnames =
-        list(NULL, colnames(component(get_mmrm_alias_noint(), "x_matrix")))
+      dimnames = list(
+        NULL,
+        colnames(component(get_mmrm_alias_noint(), "x_matrix"))
+      )
     )
   )
 })
