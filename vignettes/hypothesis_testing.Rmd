@@ -261,5 +261,5 @@ When the default method of `stats::model.matrix()` is creating a design matrix f
 
 To accurately run a type-II ANOVA when all levels of a categorical variable are represented in a design matrix, one of the levels of each categorical variable must contain subtractive (i.e., negative) values its corresponding contrast matrix columns. Since `PROC MIXED` includes all factor levels of all categorical variables, the incorporation of negative values is a commonplace occurrence. Negative values are invariably assigned to the last columns, which are always the reference levels' columns. 
 
-However, in `mmrm::mmrm()`, reference level columns only exist in intercept-free models for the first term containing a categorical variable. Thus, mmrm's helper functions incorporate a special handling step for such first-categorical-terms in which their last contrast matrix columns are assigned straight -1s.
+However, in `mmrm::mmrm()`, reference level columns only exist in intercept-free models for the first term containing a categorical variable. Thus, `mmrm`'s helper functions incorporate a special handling step for such first-categorical-terms in which their last contrast matrix columns are assigned straight -1s.
 

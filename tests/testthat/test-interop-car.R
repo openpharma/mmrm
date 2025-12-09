@@ -130,7 +130,7 @@ test_that("h_type2_contrast works if intercept is not given", {
   )
 
   # Testing an intercept-free model whose first term that contains a categorical
-  # variable also has an aliased coefficient
+  # variable also has an aliased coefficient.
   expect_identical(
     h_type2_contrast(get_mmrm_alias_noint(), "FEV1_BL:ARMCD"),
     matrix(
