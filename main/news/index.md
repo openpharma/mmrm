@@ -1,17 +1,12 @@
 # Changelog
 
-## mmrm 0.3.15.9001
+## mmrm 0.3.16
 
 #### New Features
 
 - [`Anova.mmrm()`](https://openpharma.github.io/mmrm/reference/Anova.mmrm.md)
-  now has a `test.statistic` argument allowing the user to choose a
+  now has a `test.statistic` argument allowing the user to choose the
   Chi-squared test as opposed to the default F-test.
-- [`logLik.mmrm_tmb()`](https://openpharma.github.io/mmrm/reference/mmrm_tmb_methods.md)
-  now includes a `nobs` attribute containing the number of subjects in
-  the inputted model (i.e., `component(mmrm_object, "n_subjects")`). As
-  a result, `BIC(logLik(mmrm_object))` will now be successfully
-  calculated.
 - [`mmrm_control()`](https://openpharma.github.io/mmrm/reference/mmrm_control.md)
   now has a `disable_theta_vcov` argument allowing the user to disable
   computation of the variance-covariance matrix of the covariance
@@ -78,15 +73,21 @@
   or other software (e.g. when using other than treatment contrasts).
   This is fixed now. In particular, any combination of contrasts can be
   used and will yield consistent results.
+- [`Anova.mmrm()`](https://openpharma.github.io/mmrm/reference/Anova.mmrm.md)
+  can now handle intercept-free models in type 2 tests, even when the
+  first effect containing a categorical variable has an aliased
+  parameter.
 - Previously, the naming conventions used in the
   [`Anova.mmrm()`](https://openpharma.github.io/mmrm/reference/Anova.mmrm.md)
   method were not recognized by
   [`broom::tidy()`](https://generics.r-lib.org/reference/tidy.html).
   This is fixed now by using more standard names for the resulting data
   frame columns (e.g. `F` instead of `F Statistic` etc.)
-- [`Anova.mmrm()`](https://openpharma.github.io/mmrm/reference/Anova.mmrm.md)
-  can now handle intercept-free models, even when the first effect
-  containing a categorical variable has an aliased parameter.
+- [`logLik.mmrm_tmb()`](https://openpharma.github.io/mmrm/reference/mmrm_tmb_methods.md)
+  now includes an `nobs` attribute containing the number of subjects in
+  the provided model (i.e., `component(mmrm_object, "n_subjects")`). As
+  a result, `BIC(logLik(mmrm_object))` can now be successfully
+  calculated.
 
 ## mmrm 0.3.15
 

@@ -244,15 +244,15 @@ mmrm(fev1 ~ trt * time + us(time | pts), data = out, start = emp_start)
 #>                time6               time12               time24 
 #>           -1.6901336           -1.1984277           -7.3954489 
 #>               time36               time52               time70 
-#>          -11.4078895          -15.8040920          -22.5556524 
+#>          -11.4078895          -15.8040920          -22.5556525 
 #>               time88              time104   trtTreatment:time2 
 #>          -28.2068895          -33.6608067            6.0436315 
 #>   trtTreatment:time6  trtTreatment:time12  trtTreatment:time24 
-#>           27.3686373           49.4246567          107.3638488 
+#>           27.3686373           49.4246568          107.3638490 
 #>  trtTreatment:time36  trtTreatment:time52  trtTreatment:time70 
-#>          161.4310444          233.6438342          316.7387101 
+#>          161.4310446          233.6438344          316.7387105 
 #>  trtTreatment:time88 trtTreatment:time104 
-#>          397.9895967          471.8871913 
+#>          397.9895971          471.8871918 
 #> 
 #> Model Inference Optimization:
 #> Converged with code 0 and message: convergence: rel_reduction_of_f <= factr*epsmch
