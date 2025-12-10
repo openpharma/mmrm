@@ -7,7 +7,13 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Build TMB Fit Result List — h_mmrm_tmb_fit • mmrm</title>
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- mathjax math --><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script><script>
+  window.MathJax = {
+    chtml: {
+      fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
+    }
+  };
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
@@ -33,7 +39,7 @@ optimization results, including setting names, inverting matrices etc.">
 
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.15</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.16</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -86,6 +92,7 @@ optimization results, including setting names, inverting matrices etc.">
     <div class="dropdown-menu" aria-labelledby="dropdown-versions">
     <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
+<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.16">v0.3.16</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.15">v0.3.15</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.14">v0.3.14</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.13">v0.3.13</a>
@@ -118,7 +125,7 @@ optimization results, including setting names, inverting matrices etc.">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Build <code>TMB</code> Fit Result List</h1>
-      <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.15/R/tmb.R" class="external-link"><code>R/tmb.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.16/R/tmb.R" class="external-link"><code>R/tmb.R</code></a></small>
       <div class="d-none name"><code>h_mmrm_tmb_fit.Rd</code></div>
     </div>
 
@@ -130,7 +137,13 @@ optimization results, including setting names, inverting matrices etc.</p>
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a>
 </h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">h_mmrm_tmb_fit</span><span class="op">(</span><span class="va">tmb_object</span>, <span class="va">tmb_opt</span>, <span class="va">formula_parts</span>, <span class="va">tmb_data</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">h_mmrm_tmb_fit</span><span class="op">(</span></span>
+<span>  <span class="va">tmb_object</span>,</span>
+<span>  <span class="va">tmb_opt</span>,</span>
+<span>  <span class="va">formula_parts</span>,</span>
+<span>  <span class="va">tmb_data</span>,</span>
+<span>  disable_theta_vcov <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -159,6 +172,11 @@ optimization results, including setting names, inverting matrices etc.</p>
 </dt>
 <dd><p>(<code>mmrm_tmb_data</code>)<br> produced by <code><a href="h_mmrm_tmb_data.html">h_mmrm_tmb_data()</a></code>.</p></dd>
 
+
+<dt id="arg-disable-theta-vcov">disable_theta_vcov<a class="anchor" aria-label="anchor" href="#arg-disable-theta-vcov"></a>
+</dt>
+<dd><p>(<code>flag</code>)<br> whether calculation of <code>theta_vcov</code> was disabled.</p></dd>
+
 </dl>
 </div>
     <div class="section level2">
@@ -172,7 +190,7 @@ optimization results, including setting names, inverting matrices etc.</p>
 <li><p><code>beta_vcov_inv_L</code>: Lower triangular matrix <code>L</code> of the inverse variance-covariance matrix decomposition.</p></li>
 <li><p><code>beta_vcov_inv_D</code>: vector of diagonal matrix <code>D</code> of the inverse variance-covariance matrix decomposition.</p></li>
 <li><p><code>theta_est</code>: vector of variance parameter estimates.</p></li>
-<li><p><code>theta_vcov</code>: variance-covariance matrix for variance parameter estimates.</p></li>
+<li><p><code>theta_vcov</code>: variance-covariance matrix for variance parameter estimates (if not disabled).</p></li>
 <li><p><code>neg_log_lik</code>: obtained negative log-likelihood.</p></li>
 <li><p><code>formula_parts</code>: input.</p></li>
 <li><p><code>data</code>: input.</p></li>
@@ -201,7 +219,7 @@ as well since they have been available on the <code>C++</code> side already.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

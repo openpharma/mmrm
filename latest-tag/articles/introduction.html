@@ -7,7 +7,13 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Package Introduction • mmrm</title>
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- mathjax math --><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script><script>
+  window.MathJax = {
+    chtml: {
+      fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
+    }
+  };
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
@@ -28,7 +34,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.15</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.16</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -81,6 +87,7 @@
     <div class="dropdown-menu" aria-labelledby="dropdown-versions">
     <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
+<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.16">v0.3.16</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.15">v0.3.15</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.14">v0.3.14</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.13">v0.3.13</a>
@@ -119,7 +126,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Package Introduction</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.15/vignettes/introduction.Rmd" class="external-link"><code>vignettes/introduction.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.16/vignettes/introduction.Rmd" class="external-link"><code>vignettes/introduction.Rmd</code></a></small>
       <div class="d-none name"><code>introduction.Rmd</code></div>
     </div>
 
@@ -276,14 +283,12 @@ starting value usually can make the optimization more efficient. In
 <code>std_start</code> will try to use the identity matrix as the
 covariance, however there are convergence problems for <code>ar1</code>
 and <code>ar1h</code> if the identity matrix is provided, thus for these
-two covariance structures we use
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ρ</mi><mo>=</mo><mn>0.5</mn></mrow><annotation encoding="application/x-tex">\rho=0.5</annotation></semantics></math>
-instead. <code>emp_start</code> will try to use the empirical covariance
-matrix of the residuals of the ordinary least squares model as the
-starting value for unstructured covariance structure. If some timepoints
-are missing from data, identity matrix will be used for that submatrix.
-The correlation between existing and non-existing timepoints are set to
-0.</p>
+two covariance structures we use <span class="math inline">\(\rho=0.5\)</span> instead. <code>emp_start</code>
+will try to use the empirical covariance matrix of the residuals of the
+ordinary least squares model as the starting value for unstructured
+covariance structure. If some timepoints are missing from data, identity
+matrix will be used for that submatrix. The correlation between existing
+and non-existing timepoints are set to 0.</p>
 <p>As the starting values will affect the result, please be cautious on
 choosing the starting values.</p>
 <div class="section level5">
@@ -484,9 +489,9 @@ function call for homogeneous compound symmetry (<code>cs</code>).</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients: </span></span>
 <span><span class="co">#&gt;                   (Intercept) RACEBlack or African American </span></span>
-<span><span class="co">#&gt;                    31.4207077                     0.5357237 </span></span>
+<span><span class="co">#&gt;                    31.4207078                     0.5357236 </span></span>
 <span><span class="co">#&gt;                     RACEWhite                      ARMCDTRT </span></span>
-<span><span class="co">#&gt;                     5.4546329                     3.4305212 </span></span>
+<span><span class="co">#&gt;                     5.4546329                     3.4305211 </span></span>
 <span><span class="co">#&gt;                    AVISITVIS2                    AVISITVIS3 </span></span>
 <span><span class="co">#&gt;                     4.8326353                    10.2395076 </span></span>
 <span><span class="co">#&gt;                    AVISITVIS4           ARMCDTRT:AVISITVIS2 </span></span>
@@ -560,17 +565,17 @@ variable.</p>
 <span><span class="fu"><a href="../reference/mmrm_tmb_methods.html">VarCorr</a></span><span class="op">(</span><span class="va">fit_cs</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $PBO</span></span>
 <span><span class="co">#&gt;           VIS1      VIS2      VIS3      VIS4</span></span>
-<span><span class="co">#&gt; VIS1 37.823638  3.601296  3.601296  3.601296</span></span>
-<span><span class="co">#&gt; VIS2  3.601296 37.823638  3.601296  3.601296</span></span>
-<span><span class="co">#&gt; VIS3  3.601296  3.601296 37.823638  3.601296</span></span>
-<span><span class="co">#&gt; VIS4  3.601296  3.601296  3.601296 37.823638</span></span>
+<span><span class="co">#&gt; VIS1 37.822313  3.600996  3.600996  3.600996</span></span>
+<span><span class="co">#&gt; VIS2  3.600996 37.822313  3.600996  3.600996</span></span>
+<span><span class="co">#&gt; VIS3  3.600996  3.600996 37.822313  3.600996</span></span>
+<span><span class="co">#&gt; VIS4  3.600996  3.600996  3.600996 37.822313</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $TRT</span></span>
 <span><span class="co">#&gt;          VIS1     VIS2     VIS3     VIS4</span></span>
-<span><span class="co">#&gt; VIS1 49.58110 10.98112 10.98112 10.98112</span></span>
-<span><span class="co">#&gt; VIS2 10.98112 49.58110 10.98112 10.98112</span></span>
-<span><span class="co">#&gt; VIS3 10.98112 10.98112 49.58110 10.98112</span></span>
-<span><span class="co">#&gt; VIS4 10.98112 10.98112 10.98112 49.58110</span></span></code></pre></div>
+<span><span class="co">#&gt; VIS1 49.58031 10.98097 10.98097 10.98097</span></span>
+<span><span class="co">#&gt; VIS2 10.98097 49.58031 10.98097 10.98097</span></span>
+<span><span class="co">#&gt; VIS3 10.98097 10.98097 49.58031 10.98097</span></span>
+<span><span class="co">#&gt; VIS4 10.98097 10.98097 10.98097 49.58031</span></span></code></pre></div>
 <p>We can see that the estimated covariance matrices are different in
 different <code>ARMCD</code> groups.</p>
 </div>
@@ -825,7 +830,7 @@ is as follows:</p>
 <span><span class="co">#&gt;  $ aic_list        :List of 4</span></span>
 <span><span class="co">#&gt;   ..$ AIC     : num 3407</span></span>
 <span><span class="co">#&gt;   ..$ BIC     : num 3440</span></span>
-<span><span class="co">#&gt;   ..$ logLik  : num -1694</span></span>
+<span><span class="co">#&gt;   ..$ logLik  :Class 'logLik' : -1694 (df=10)</span></span>
 <span><span class="co">#&gt;   ..$ deviance: num 3387</span></span>
 <span><span class="co">#&gt;  $ call            : language mmrm(formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID), data = fev_data)</span></span>
 <span><span class="co">#&gt;  - attr(*, "class")= chr "summary.mmrm"</span></span></code></pre></div>
@@ -916,9 +921,9 @@ table of goodness of fit statistics:</p>
 <code class="sourceCode R"><span><span class="va">fit</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://generics.r-lib.org/reference/glance.html" class="external-link">glance</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 4</span></span></span>
-<span><span class="co">#&gt;     AIC   BIC logLik deviance</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> <span style="text-decoration: underline;">3</span>407. <span style="text-decoration: underline;">3</span>440. -<span style="color: #BB0000; text-decoration: underline;">1</span><span style="color: #BB0000;">694.</span>    <span style="text-decoration: underline;">3</span>387.</span></span></code></pre></div>
+<span><span class="co">#&gt;     AIC   BIC logLik    deviance</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;logLik&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> <span style="text-decoration: underline;">3</span>407. <span style="text-decoration: underline;">3</span>440. -1693.687    <span style="text-decoration: underline;">3</span>387.</span></span></code></pre></div>
 <p>Finally, we can use the <code>augment</code> method to return a
 merged <code>tibble</code> of the data, fitted values and residuals:</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
@@ -1242,40 +1247,70 @@ by <code><a href="https://rdrr.io/r/graphics/pairs.html" class="external-link">p
 <h3 id="support-for-car">Support for car<a class="anchor" aria-label="anchor" href="#support-for-car"></a>
 </h3>
 <p>This package includes methods that allow <code>mmrm</code> objects to
-be used with the <code><a href="https://rdrr.io/pkg/car/man/Anova.html" class="external-link">car::Anova</a></code> function. <code>Anova</code>
-conducts type II/III hypothesis testing for the effect in
-<code>mmrm</code> models. For example, in order to see if the used
-covariates are related to the response:</p>
+be used with <code><a href="https://rdrr.io/pkg/car/man/Anova.html" class="external-link">car::Anova()</a></code>. This function conducts type
+II/III hypothesis testing for the effects in <code>mmrm</code> models,
+using either F-tests (default) or Chi-squared tests.</p>
+<div class="section level4">
+<h4 id="mathematical-basis">Mathematical basis<a class="anchor" aria-label="anchor" href="#mathematical-basis"></a>
+</h4>
+<p>For each effect, the Chi-squared test statistic is calculated using:
+<span class="math display">\[
+\chi^2=[\mathbf{L}\cdot b]^T\cdot
+[\mathbf{L}\cdot\mathbf{V}\cdot\mathbf{L}^T]^{-1}\cdot\mathbf{L}\cdot b
+\]</span> where <span class="math inline">\(\mathbf{L}\)</span> is the
+desired contrast matrix, <span class="math inline">\(b\)</span> is a
+one-column matrix containing the coefficients of the non-aliased terms
+in the model, and <span class="math inline">\(\mathbf{V}\)</span> is the
+variance-covariance matrix of the coefficients.</p>
+<p>The F-test statistic is calculated by dividing the Chi-squared test
+statistic by the numerator degrees of freedom <span class="math inline">\(\text{df}_\text{num}\)</span>, which is equal to
+the number of parameters associated with the effect and therefore the
+number of rows in the contrast matrix <span class="math inline">\(\mathbf{L}\)</span>. It is also multiplied by a
+scaling factor <span class="math inline">\(\lambda\)</span> (e.g., when
+utilizing the adjusted Kenward-Roger degrees of freedom), which can be
+set to 1 if not needed:</p>
+<p><span class="math display">\[
+F = \lambda\frac{\chi^2}{\text{df}_\text{num}}
+\]</span></p>
+</div>
+<div class="section level4">
+<h4 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
+</h4>
+<p>In order to see if the used covariates are related to the response
+using a type II test:</p>
 <div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-forge.r-project.org/projects/car/" class="external-link">car</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; Loading required package: carData</span></span>
 <span><span class="co">#&gt; mmrm() registered as car::Anova extension</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/car/man/Anova.html" class="external-link">Anova</a></span><span class="op">(</span><span class="va">fit</span>, type <span class="op">=</span> <span class="st">"II"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Analysis of Fixed Effect Table (Type II F tests)</span></span>
-<span><span class="co">#&gt;              Num Df Denom Df F Statistic   Pr(&gt;=F)    </span></span>
-<span><span class="co">#&gt; RACE              2   165.56      36.911 5.545e-14 ***</span></span>
-<span><span class="co">#&gt; SEX               1   166.13       0.376    0.5407    </span></span>
-<span><span class="co">#&gt; ARMCD             1   169.12      31.421 8.296e-08 ***</span></span>
-<span><span class="co">#&gt; AVISIT            3   148.65     142.822 &lt; 2.2e-16 ***</span></span>
-<span><span class="co">#&gt; ARMCD:AVISIT      3   147.91       0.258    0.8555    </span></span>
+<span><span class="co">#&gt;              Df Res.Df        F    Pr(&gt;F)    </span></span>
+<span><span class="co">#&gt; RACE          2 165.56  36.9114 5.545e-14 ***</span></span>
+<span><span class="co">#&gt; SEX           1 166.13   0.3757    0.5407    </span></span>
+<span><span class="co">#&gt; ARMCD         1 169.12  31.4209 8.296e-08 ***</span></span>
+<span><span class="co">#&gt; AVISIT        3 148.65 142.8221 &lt; 2.2e-16 ***</span></span>
+<span><span class="co">#&gt; ARMCD:AVISIT  3 147.91   0.2581    0.8555    </span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span></code></pre></div>
-<p>Note that the degrees of freedom choice is inherited here from the
-initial <code>mmrm</code> fit. In addition, please note that if you see
-results that are slightly different from SAS, it could be because the
-reference level is set differently for categorical covariates. We can
-also use type III hypothesis testing:</p>
+<p>Note that for the F-test, the denominator degrees of freedom choice
+is inherited here from the initial <code>mmrm</code> fit. In addition,
+please note that if you see results that are slightly different from
+SAS, it could be because the reference level is set differently for
+categorical covariates.</p>
+<p>We can also use type III hypothesis testing, this time choosing a
+Chi-squared test statistic:</p>
 <div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/car/man/Anova.html" class="external-link">Anova</a></span><span class="op">(</span><span class="va">fit</span>, type <span class="op">=</span> <span class="st">"III"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Analysis of Fixed Effect Table (Type III F tests)</span></span>
-<span><span class="co">#&gt;              Num Df Denom Df F Statistic   Pr(&gt;=F)    </span></span>
-<span><span class="co">#&gt; RACE              2   165.56      36.911 5.545e-14 ***</span></span>
-<span><span class="co">#&gt; SEX               1   166.13       0.376    0.5407    </span></span>
-<span><span class="co">#&gt; ARMCD             1   168.52      31.663 7.502e-08 ***</span></span>
-<span><span class="co">#&gt; AVISIT            3   148.12     142.112 &lt; 2.2e-16 ***</span></span>
-<span><span class="co">#&gt; ARMCD:AVISIT      3   147.91       0.258    0.8555    </span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/car/man/Anova.html" class="external-link">Anova</a></span><span class="op">(</span><span class="va">fit</span>, type <span class="op">=</span> <span class="st">"III"</span>, test.statistic <span class="op">=</span> <span class="st">"Chisq"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Analysis of Fixed Effect Table (Type III Chisq tests)</span></span>
+<span><span class="co">#&gt;              Df    Chisq Pr(&gt;Chisq)    </span></span>
+<span><span class="co">#&gt; RACE          2  73.8229  &lt; 2.2e-16 ***</span></span>
+<span><span class="co">#&gt; SEX           1   0.3757     0.5399    </span></span>
+<span><span class="co">#&gt; ARMCD         1  31.6631  1.834e-08 ***</span></span>
+<span><span class="co">#&gt; AVISIT        3 426.3367  &lt; 2.2e-16 ***</span></span>
+<span><span class="co">#&gt; ARMCD:AVISIT  3   0.7742     0.8556    </span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span></code></pre></div>
+</div>
 </div>
 </div>
 <div class="section level2">
@@ -2419,7 +2454,7 @@ Also Ben helped us significantly with an example showing how to use
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

@@ -6,16 +6,24 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Creating F-Statistic Test Results For Multi-Dimensional Contrast — h_test_md • mmrm</title>
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Creating F- or Chi-squared-statistic Test Results For Multi-Dimensional Contrast — h_test_md • mmrm</title>
+<!-- mathjax math --><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script><script>
+  window.MathJax = {
+    chtml: {
+      fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
+    }
+  };
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Creating F-Statistic Test Results For Multi-Dimensional Contrast — h_test_md">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Creating F- or Chi-squared-statistic Test Results For Multi-Dimensional Contrast — h_test_md">
 <meta name="description" content="Creates a list of results for multi-dimensional contrasts using
-an F-test statistic and the given degrees of freedom.">
+an F-test statistic and the given degrees of freedom or a Chi-squared test
+statistic.">
 <meta property="og:description" content="Creates a list of results for multi-dimensional contrasts using
-an F-test statistic and the given degrees of freedom.">
+an F-test statistic and the given degrees of freedom or a Chi-squared test
+statistic.">
 <meta property="og:image" content="https://openpharma.github.io/mmrm/logo.svg">
 <!-- Global site tag (gtag.js) - Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=UA-125641273-1"></script><script>
   window.dataLayer = window.dataLayer || [];
@@ -33,7 +41,7 @@ an F-test statistic and the given degrees of freedom.">
 
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.15</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.16</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -86,6 +94,7 @@ an F-test statistic and the given degrees of freedom.">
     <div class="dropdown-menu" aria-labelledby="dropdown-versions">
     <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
+<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.16">v0.3.16</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.15">v0.3.15</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.14">v0.3.14</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.13">v0.3.13</a>
@@ -117,20 +126,21 @@ an F-test statistic and the given degrees of freedom.">
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.svg" class="logo" alt=""><h1>Creating F-Statistic Test Results For Multi-Dimensional Contrast</h1>
-      <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.15/R/testing.R" class="external-link"><code>R/testing.R</code></a></small>
+      <img src="../logo.svg" class="logo" alt=""><h1>Creating F- or Chi-squared-statistic Test Results For Multi-Dimensional Contrast</h1>
+      <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.16/R/testing.R" class="external-link"><code>R/testing.R</code></a></small>
       <div class="d-none name"><code>h_test_md.Rd</code></div>
     </div>
 
     <div class="ref-description section level2">
     <p>Creates a list of results for multi-dimensional contrasts using
-an F-test statistic and the given degrees of freedom.</p>
+an F-test statistic and the given degrees of freedom or a Chi-squared test
+statistic.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a>
 </h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">h_test_md</span><span class="op">(</span><span class="va">object</span>, <span class="va">contrast</span>, <span class="va">df</span>, f_stat_factor <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">h_test_md</span><span class="op">(</span><span class="va">object</span>, <span class="va">contrast</span>, <span class="va">df</span>, f_stat_factor <span class="op">=</span> <span class="fl">1</span>, test <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"F"</span>, <span class="st">"Chisq"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -151,19 +161,29 @@ an F-test statistic and the given degrees of freedom.</p>
 
 <dt id="arg-df">df<a class="anchor" aria-label="anchor" href="#arg-df"></a>
 </dt>
-<dd><p>(<code>number</code>)<br> denominator degrees of freedom for the multi-dimensional contrast.</p></dd>
+<dd><p>(<code>number</code>)<br> denominator degrees of freedom for the
+multi-dimensional contrast for an F-test. Ignored if <code>test = "Chisq"</code>.</p></dd>
 
 
 <dt id="arg-f-stat-factor">f_stat_factor<a class="anchor" aria-label="anchor" href="#arg-f-stat-factor"></a>
 </dt>
-<dd><p>(<code>number</code>)<br> optional scaling factor on top of the standard F-statistic.</p></dd>
+<dd><p>(<code>number</code>)<br> optional scaling factor on top of the
+standard F-statistic. Ignored if <code>test = "Chisq"</code>.</p></dd>
+
+
+<dt id="arg-test">test<a class="anchor" aria-label="anchor" href="#arg-test"></a>
+</dt>
+<dd><p>(<code>string</code>)<br> either <code>"F"</code> or <code>"Chisq"</code>, specifying the kind of
+test to perform.</p></dd>
 
 </dl>
 </div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a>
 </h2>
-    <p>List with <code>num_df</code>, <code>denom_df</code>, <code>f_stat</code> and <code>p_val</code> (2-sided p-value).</p>
+    <p>If <code>test = "F"</code>, a list with <code>num_df</code>, <code>denom_df</code>, <code>f_stat</code> and
+<code>p_val</code>. If <code>test = "Chisq"</code>, a list with <code>df</code>, <code>chisq_stat</code>, and <code>p_val</code>.
+In both cases, p-values are two sided.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -176,7 +196,7 @@ an F-test statistic and the given degrees of freedom.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

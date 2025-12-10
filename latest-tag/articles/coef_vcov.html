@@ -7,7 +7,13 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Coefficients Covariance Matrix Adjustment • mmrm</title>
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- mathjax math --><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script><script>
+  window.MathJax = {
+    chtml: {
+      fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
+    }
+  };
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
@@ -28,7 +34,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.15</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.16</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -81,6 +87,7 @@
     <div class="dropdown-menu" aria-labelledby="dropdown-versions">
     <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
+<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.16">v0.3.16</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.15">v0.3.15</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.14">v0.3.14</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.13">v0.3.13</a>
@@ -119,7 +126,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Coefficients Covariance Matrix Adjustment</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.15/vignettes/coef_vcov.Rmd" class="external-link"><code>vignettes/coef_vcov.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.16/vignettes/coef_vcov.Rmd" class="external-link"><code>vignettes/coef_vcov.Rmd</code></a></small>
       <div class="d-none name"><code>coef_vcov.Rmd</code></div>
     </div>
 
@@ -139,50 +146,39 @@ weighted least square estimator</a>.</p>
 <div class="section level3">
 <h3 id="asymptotic-covariance">Asymptotic Covariance<a class="anchor" aria-label="anchor" href="#asymptotic-covariance"></a>
 </h3>
-<p>Asymptotic covariance are derived based on the estimate of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>.</p>
+<p>Asymptotic covariance are derived based on the estimate of <span class="math inline">\(\beta\)</span>.</p>
 <p>Following the definition in <a href="algorithm.html#linear-model">details in model fitting</a>, we
 have</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>β</mi><mo accent="true">̂</mo></mover><mo>=</mo><mo stretchy="false" form="prefix">(</mo><msup><mi>X</mi><mi>⊤</mi></msup><mi>W</mi><mi>X</mi><msup><mo stretchy="false" form="postfix">)</mo><mrow><mi>−</mi><mn>1</mn></mrow></msup><msup><mi>X</mi><mi>⊤</mi></msup><mi>W</mi><mi>Y</mi></mrow><annotation encoding="application/x-tex">
+<p><span class="math display">\[
   \hat\beta = (X^\top W X)^{-1} X^\top W Y
-</annotation></semantics></math></p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mi>o</mi><mi>v</mi><mo stretchy="false" form="prefix">(</mo><mover><mi>β</mi><mo accent="true">̂</mo></mover><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mo stretchy="false" form="prefix">(</mo><msup><mi>X</mi><mi>⊤</mi></msup><mi>W</mi><mi>X</mi><msup><mo stretchy="false" form="postfix">)</mo><mrow><mi>−</mi><mn>1</mn></mrow></msup><msup><mi>X</mi><mi>⊤</mi></msup><mi>W</mi><mi>c</mi><mi>o</mi><mi>v</mi><mo stretchy="false" form="prefix">(</mo><mi>ϵ</mi><mo stretchy="false" form="postfix">)</mo><mi>W</mi><mi>X</mi><mo stretchy="false" form="prefix">(</mo><msup><mi>X</mi><mi>⊤</mi></msup><mi>W</mi><mi>X</mi><msup><mo stretchy="false" form="postfix">)</mo><mrow><mi>−</mi><mn>1</mn></mrow></msup><mo>=</mo><mo stretchy="false" form="prefix">(</mo><msup><mi>X</mi><mi>⊤</mi></msup><mi>W</mi><mi>X</mi><msup><mo stretchy="false" form="postfix">)</mo><mrow><mi>−</mi><mn>1</mn></mrow></msup></mrow><annotation encoding="application/x-tex">
-  cov(\hat\beta) = (X^\top W X)^{-1} X^\top W cov(\epsilon) W X (X^\top W X)^{-1} = (X^\top W X)^{-1}
-</annotation></semantics></math></p>
-<p>Where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>W</mi><annotation encoding="application/x-tex">W</annotation></semantics></math>
-is the block diagonal matrix of inverse of covariance matrix of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ϵ</mi><annotation encoding="application/x-tex">\epsilon</annotation></semantics></math>.</p>
+\]</span></p>
+<p><span class="math display">\[
+  cov(\hat\beta) = (X^\top W X)^{-1} X^\top W cov(\epsilon) W X (X^\top
+W X)^{-1} = (X^\top W X)^{-1}
+\]</span></p>
+<p>Where <span class="math inline">\(W\)</span> is the block diagonal
+matrix of inverse of covariance matrix of <span class="math inline">\(\epsilon\)</span>.</p>
 </div>
 <div class="section level3">
 <h3 id="empirical-covariance">Empirical Covariance<a class="anchor" aria-label="anchor" href="#empirical-covariance"></a>
 </h3>
 <p>Empirical covariance, also known as the robust sandwich estimator, or
-“CR0”, is derived by replacing the covariance matrix of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ϵ</mi><annotation encoding="application/x-tex">\epsilon</annotation></semantics></math>
-by observed covariance matrix.</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mi>o</mi><mi>v</mi><mo stretchy="false" form="prefix">(</mo><mover><mi>β</mi><mo accent="true">̂</mo></mover><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mo stretchy="false" form="prefix">(</mo><msup><mi>X</mi><mi>⊤</mi></msup><mi>W</mi><mi>X</mi><msup><mo stretchy="false" form="postfix">)</mo><mrow><mi>−</mi><mn>1</mn></mrow></msup><mo stretchy="false" form="prefix">(</mo><munder><mo>∑</mo><mi>i</mi></munder><mrow><msubsup><mi>X</mi><mi>i</mi><mi>⊤</mi></msubsup><msub><mi>W</mi><mi>i</mi></msub><msub><mover><mi>ϵ</mi><mo accent="true">̂</mo></mover><mi>i</mi></msub><msubsup><mover><mi>ϵ</mi><mo accent="true">̂</mo></mover><mi>i</mi><mi>⊤</mi></msubsup><msub><mi>W</mi><mi>i</mi></msub><msub><mi>X</mi><mi>i</mi></msub></mrow><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="prefix">(</mo><msup><mi>X</mi><mi>⊤</mi></msup><mi>W</mi><mi>X</mi><msup><mo stretchy="false" form="postfix">)</mo><mrow><mi>−</mi><mn>1</mn></mrow></msup><mo>=</mo><mo stretchy="false" form="prefix">(</mo><msup><mi>X</mi><mi>⊤</mi></msup><mi>W</mi><mi>X</mi><msup><mo stretchy="false" form="postfix">)</mo><mrow><mi>−</mi><mn>1</mn></mrow></msup><mo stretchy="false" form="prefix">(</mo><munder><mo>∑</mo><mi>i</mi></munder><mrow><msubsup><mi>X</mi><mi>i</mi><mi>⊤</mi></msubsup><msub><mi>L</mi><mi>i</mi></msub><msubsup><mi>L</mi><mi>i</mi><mi>⊤</mi></msubsup><msub><mover><mi>ϵ</mi><mo accent="true">̂</mo></mover><mi>i</mi></msub><msubsup><mover><mi>ϵ</mi><mo accent="true">̂</mo></mover><mi>i</mi><mi>⊤</mi></msubsup><msub><mi>L</mi><mi>i</mi></msub><msubsup><mi>L</mi><mi>i</mi><mi>⊤</mi></msubsup><msub><mi>X</mi><mi>i</mi></msub></mrow><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="prefix">(</mo><msup><mi>X</mi><mi>⊤</mi></msup><mi>W</mi><mi>X</mi><msup><mo stretchy="false" form="postfix">)</mo><mrow><mi>−</mi><mn>1</mn></mrow></msup></mrow><annotation encoding="application/x-tex">
-  cov(\hat\beta) = (X^\top W X)^{-1}(\sum_{i}{X_i^\top W_i \hat\epsilon_i\hat\epsilon_i^\top W_i X_i})(X^\top W X)^{-1}
-  = (X^\top W X)^{-1}(\sum_{i}{X_i^\top L_{i} L_{i}^\top \hat\epsilon_i\hat\epsilon_i^\top L_{i} L_{i}^\top X_i})(X^\top W X)^{-1}
-</annotation></semantics></math></p>
-<p>Where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>W</mi><mi>i</mi></msub><annotation encoding="application/x-tex">W_i</annotation></semantics></math>
-is the block diagonal part for subject
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
-of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>W</mi><annotation encoding="application/x-tex">W</annotation></semantics></math>
-matrix,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mover><mi>ϵ</mi><mo accent="true">̂</mo></mover><mi>i</mi></msub><annotation encoding="application/x-tex">\hat\epsilon_i</annotation></semantics></math>
-is the observed residuals for subject i,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>L</mi><mi>i</mi></msub><annotation encoding="application/x-tex">L_i</annotation></semantics></math>
-is the Cholesky factor of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi mathvariant="normal">Σ</mi><mi>i</mi><mrow><mi>−</mi><mn>1</mn></mrow></msubsup><annotation encoding="application/x-tex">\Sigma_i^{-1}</annotation></semantics></math>
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>W</mi><mi>i</mi></msub><mo>=</mo><msub><mi>L</mi><mi>i</mi></msub><msubsup><mi>L</mi><mi>i</mi><mi>⊤</mi></msubsup></mrow><annotation encoding="application/x-tex">W_i = L_i L_i^\top</annotation></semantics></math>).
-In the sandwich, the score
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>X</mi><mi>i</mi><mi>⊤</mi></msubsup><msub><mi>W</mi><mi>i</mi></msub><msub><mover><mi>ϵ</mi><mo accent="true">̂</mo></mover><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">X_i^\top W_i \hat\epsilon_i</annotation></semantics></math>
-computed for subject
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
-can be accessed by
+“CR0”, is derived by replacing the covariance matrix of <span class="math inline">\(\epsilon\)</span> by observed covariance
+matrix.</p>
+<p><span class="math display">\[
+  cov(\hat\beta) = (X^\top W X)^{-1}(\sum_{i}{X_i^\top W_i
+\hat\epsilon_i\hat\epsilon_i^\top W_i X_i})(X^\top W X)^{-1}
+  = (X^\top W X)^{-1}(\sum_{i}{X_i^\top L_{i} L_{i}^\top
+\hat\epsilon_i\hat\epsilon_i^\top L_{i} L_{i}^\top X_i})(X^\top W
+X)^{-1}
+\]</span></p>
+<p>Where <span class="math inline">\(W_i\)</span> is the block diagonal
+part for subject <span class="math inline">\(i\)</span> of <span class="math inline">\(W\)</span> matrix, <span class="math inline">\(\hat\epsilon_i\)</span> is the observed residuals
+for subject i, <span class="math inline">\(L_i\)</span> is the Cholesky
+factor of <span class="math inline">\(\Sigma_i^{-1}\)</span> (<span class="math inline">\(W_i = L_i L_i^\top\)</span>). In the sandwich, the
+score <span class="math inline">\(X_i^\top W_i \hat\epsilon_i\)</span>
+computed for subject <span class="math inline">\(i\)</span> can be
+accessed by
 <code>component(mmrm_obj, name = "score_per_subject")</code>.</p>
 <p>See the detailed explanation of these formulas in the <a href="empirical_wls.html">Weighted Least Square Empirical Covariance</a>
 vignette.</p>
@@ -192,28 +188,31 @@ vignette.</p>
 </h3>
 <p>Jackknife method in <code>mmrm</code> is the “leave-one-cluster-out”
 method. It is also known as “CR3”. Following <span class="citation">McCaffrey and Bell (2003)</span>, we have</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mi>o</mi><mi>v</mi><mo stretchy="false" form="prefix">(</mo><mover><mi>β</mi><mo accent="true">̂</mo></mover><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mo stretchy="false" form="prefix">(</mo><msup><mi>X</mi><mi>⊤</mi></msup><mi>W</mi><mi>X</mi><msup><mo stretchy="false" form="postfix">)</mo><mrow><mi>−</mi><mn>1</mn></mrow></msup><mo stretchy="false" form="prefix">(</mo><munder><mo>∑</mo><mi>i</mi></munder><mrow><msubsup><mi>X</mi><mi>i</mi><mi>⊤</mi></msubsup><msub><mi>L</mi><mi>i</mi></msub><mo stretchy="false" form="prefix">(</mo><msub><mi>I</mi><mi>i</mi></msub><mo>−</mo><msub><mi>H</mi><mrow><mi>i</mi><mi>i</mi></mrow></msub><msup><mo stretchy="false" form="postfix">)</mo><mrow><mi>−</mi><mn>1</mn></mrow></msup><msubsup><mi>L</mi><mi>i</mi><mi>⊤</mi></msubsup><msub><mover><mi>ϵ</mi><mo accent="true">̂</mo></mover><mi>i</mi></msub><msubsup><mover><mi>ϵ</mi><mo accent="true">̂</mo></mover><mi>i</mi><mi>⊤</mi></msubsup><msub><mi>L</mi><mi>i</mi></msub><mo stretchy="false" form="prefix">(</mo><msub><mi>I</mi><mi>i</mi></msub><mo>−</mo><msub><mi>H</mi><mrow><mi>i</mi><mi>i</mi></mrow></msub><msup><mo stretchy="false" form="postfix">)</mo><mrow><mi>−</mi><mn>1</mn></mrow></msup><msubsup><mi>L</mi><mi>i</mi><mi>⊤</mi></msubsup><msub><mi>X</mi><mi>i</mi></msub></mrow><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="prefix">(</mo><msup><mi>X</mi><mi>⊤</mi></msup><mi>W</mi><mi>X</mi><msup><mo stretchy="false" form="postfix">)</mo><mrow><mi>−</mi><mn>1</mn></mrow></msup></mrow><annotation encoding="application/x-tex">
-  cov(\hat\beta) = (X^\top W X)^{-1}(\sum_{i}{X_i^\top L_{i} (I_{i} - H_{ii})^{-1} L_{i}^\top \hat\epsilon_i\hat\epsilon_i^\top L_{i} (I_{i} - H_{ii})^{-1} L_{i}^\top X_i})(X^\top W X)^{-1}
-</annotation></semantics></math></p>
+<p><span class="math display">\[
+  cov(\hat\beta) = (X^\top W X)^{-1}(\sum_{i}{X_i^\top L_{i} (I_{i} -
+H_{ii})^{-1} L_{i}^\top \hat\epsilon_i\hat\epsilon_i^\top L_{i} (I_{i} -
+H_{ii})^{-1} L_{i}^\top X_i})(X^\top W X)^{-1}
+\]</span></p>
 <p>where</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mrow><mi>i</mi><mi>i</mi></mrow></msub><mo>=</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="false" form="prefix">(</mo><msup><mi>X</mi><mi>⊤</mi></msup><mi>X</mi><msup><mo stretchy="false" form="postfix">)</mo><mrow><mi>−</mi><mn>1</mn></mrow></msup><msubsup><mi>X</mi><mi>i</mi><mi>⊤</mi></msubsup></mrow><annotation encoding="application/x-tex">H_{ii} = X_i(X^\top X)^{-1}X_i^\top</annotation></semantics></math></p>
+<p><span class="math display">\[H_{ii} = X_i(X^\top
+X)^{-1}X_i^\top\]</span></p>
 <p>Please note that in the paper there is an additional scale parameter
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mfrac><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow><mi>n</mi></mfrac><annotation encoding="application/x-tex">\frac{n-1}{n}</annotation></semantics></math>
-where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>
-is the number of subjects, here we do not include this parameter.</p>
+<span class="math inline">\(\frac{n-1}{n}\)</span> where <span class="math inline">\(n\)</span> is the number of subjects, here we do
+not include this parameter.</p>
 </div>
 <div class="section level3">
 <h3 id="bias-reduced-covariance">Bias-Reduced Covariance<a class="anchor" aria-label="anchor" href="#bias-reduced-covariance"></a>
 </h3>
 <p>Bias-reduced method, also known as “CR2”, provides unbiased under
 correct working model. Following <span class="citation">McCaffrey and
-Bell (2003)</span>, we have
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mi>o</mi><mi>v</mi><mo stretchy="false" form="prefix">(</mo><mover><mi>β</mi><mo accent="true">̂</mo></mover><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mo stretchy="false" form="prefix">(</mo><msup><mi>X</mi><mi>⊤</mi></msup><mi>W</mi><mi>X</mi><msup><mo stretchy="false" form="postfix">)</mo><mrow><mi>−</mi><mn>1</mn></mrow></msup><mo stretchy="false" form="prefix">(</mo><munder><mo>∑</mo><mi>i</mi></munder><mrow><msubsup><mi>X</mi><mi>i</mi><mi>⊤</mi></msubsup><msub><mi>L</mi><mi>i</mi></msub><mo stretchy="false" form="prefix">(</mo><msub><mi>I</mi><mi>i</mi></msub><mo>−</mo><msub><mi>H</mi><mrow><mi>i</mi><mi>i</mi></mrow></msub><msup><mo stretchy="false" form="postfix">)</mo><mrow><mi>−</mi><mn>1</mn><mi>/</mi><mn>2</mn></mrow></msup><msubsup><mi>L</mi><mi>i</mi><mi>⊤</mi></msubsup><msub><mover><mi>ϵ</mi><mo accent="true">̂</mo></mover><mi>i</mi></msub><msubsup><mover><mi>ϵ</mi><mo accent="true">̂</mo></mover><mi>i</mi><mi>⊤</mi></msubsup><msub><mi>L</mi><mi>i</mi></msub><mo stretchy="false" form="prefix">(</mo><msub><mi>I</mi><mi>i</mi></msub><mo>−</mo><msub><mi>H</mi><mrow><mi>i</mi><mi>i</mi></mrow></msub><msup><mo stretchy="false" form="postfix">)</mo><mrow><mi>−</mi><mn>1</mn></mrow></msup><msubsup><mi>L</mi><mi>i</mi><mi>⊤</mi></msubsup><msub><mi>X</mi><mi>i</mi></msub></mrow><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="prefix">(</mo><msup><mi>X</mi><mi>⊤</mi></msup><mi>W</mi><mi>X</mi><msup><mo stretchy="false" form="postfix">)</mo><mrow><mi>−</mi><mn>1</mn></mrow></msup></mrow><annotation encoding="application/x-tex">
-  cov(\hat\beta) = (X^\top W X)^{-1}(\sum_{i}{X_i^\top L_{i} (I_{i} - H_{ii})^{-1/2} L_{i}^\top \hat\epsilon_i\hat\epsilon_i^\top L_{i} (I_{i} - H_{ii})^{-1} L_{i}^\top X_i})(X^\top W X)^{-1}
-</annotation></semantics></math></p>
+Bell (2003)</span>, we have <span class="math display">\[
+  cov(\hat\beta) = (X^\top W X)^{-1}(\sum_{i}{X_i^\top L_{i} (I_{i} -
+H_{ii})^{-1/2} L_{i}^\top \hat\epsilon_i\hat\epsilon_i^\top L_{i} (I_{i}
+- H_{ii})^{-1} L_{i}^\top X_i})(X^\top W X)^{-1}
+\]</span></p>
 <p>where</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>H</mi><mrow><mi>i</mi><mi>i</mi></mrow></msub><mo>=</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="false" form="prefix">(</mo><msup><mi>X</mi><mi>⊤</mi></msup><mi>X</mi><msup><mo stretchy="false" form="postfix">)</mo><mrow><mi>−</mi><mn>1</mn></mrow></msup><msubsup><mi>X</mi><mi>i</mi><mi>⊤</mi></msubsup></mrow><annotation encoding="application/x-tex">H_{ii} = X_i(X^\top X)^{-1}X_i^\top</annotation></semantics></math></p>
+<p><span class="math display">\[H_{ii} = X_i(X^\top
+X)^{-1}X_i^\top\]</span></p>
 </div>
 <div class="section level3">
 <h3 id="kenward-roger-covariance">Kenward-Roger Covariance<a class="anchor" aria-label="anchor" href="#kenward-roger-covariance"></a>
@@ -240,7 +239,7 @@ Standard Errors for Linear Regression with Multi-Stage Samples.”</span>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

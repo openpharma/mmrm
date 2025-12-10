@@ -7,7 +7,13 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Between-Within • mmrm</title>
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- mathjax math --><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script><script>
+  window.MathJax = {
+    chtml: {
+      fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
+    }
+  };
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
@@ -28,7 +34,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.15</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.16</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -81,6 +87,7 @@
     <div class="dropdown-menu" aria-labelledby="dropdown-versions">
     <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
+<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.16">v0.3.16</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.15">v0.3.15</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.14">v0.3.14</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.13">v0.3.13</a>
@@ -119,7 +126,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Between-Within</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.15/vignettes/between_within.Rmd" class="external-link"><code>vignettes/between_within.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.16/vignettes/between_within.Rmd" class="external-link"><code>vignettes/between_within.Rmd</code></a></small>
       <div class="d-none name"><code>between_within.Rmd</code></div>
     </div>
 
@@ -133,55 +140,43 @@ originally proposed by <span class="citation">Schluchter and Elashoff
 <h2 id="general-definition">General definition<a class="anchor" aria-label="anchor" href="#general-definition"></a>
 </h2>
 <p>Using this method, the DF are determined by the grouping level at
-which the term is estimated. Generally, assuming
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>G</mi><annotation encoding="application/x-tex">G</annotation></semantics></math>
-levels of grouping:</p>
-<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><msub><mi>F</mi><mi>g</mi></msub><mo>=</mo><msub><mi>N</mi><mi>g</mi></msub><mo>−</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>N</mi><mrow><mi>g</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>+</mo><msub><mi>p</mi><mi>g</mi></msub><mo stretchy="false" form="postfix">)</mo><mo>,</mo><mi>g</mi><mo>=</mo><mn>1</mn><mo>,</mo><mi>.</mi><mi>.</mi><mi>.</mi><mo>,</mo><mi>G</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">DF_g=N_g-(N_{g-1}+p_g), g=1, ..., G+1</annotation></semantics></math></p>
-<p>where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>N</mi><mi>g</mi></msub><annotation encoding="application/x-tex">N_g</annotation></semantics></math>
-is the number of groups at the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>g</mi><annotation encoding="application/x-tex">g</annotation></semantics></math>-th
-grouping level and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mi>g</mi></msub><annotation encoding="application/x-tex">p_g</annotation></semantics></math>
-is the number of parameters estimated at that level.</p>
-<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>N</mi><mn>0</mn></msub><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">N_0=1</annotation></semantics></math>
-if the model includes an intercept term and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>N</mi><mn>0</mn></msub><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">N_0=0</annotation></semantics></math>
-otherwise. Note however that the DF for the intercept term itself (when
-it is included) are calculated at the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">G+1</annotation></semantics></math>
-level, i.e. for the intercept we use
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><msub><mi>F</mi><mrow><mi>G</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">DF_{G+1}</annotation></semantics></math>
-degrees of freedom.</p>
-<p>We note that general contrasts
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mi>β</mi></mrow><annotation encoding="application/x-tex">C\beta</annotation></semantics></math>
-have not been considered in the literature so far. Here we therefore use
-a pragmatic approach and define that for a general contrast matrix
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>C</mi><annotation encoding="application/x-tex">C</annotation></semantics></math>
-we take the minimum DF across the involved coefficients as the DF.</p>
+which the term is estimated. Generally, assuming <span class="math inline">\(G\)</span> levels of grouping:</p>
+<p><span class="math inline">\(DF_g=N_g-(N_{g-1}+p_g), g=1, ...,
+G+1\)</span></p>
+<p>where <span class="math inline">\(N_g\)</span> is the number of
+groups at the <span class="math inline">\(g\)</span>-th grouping level
+and <span class="math inline">\(p_g\)</span> is the number of parameters
+estimated at that level.</p>
+<p><span class="math inline">\(N_0=1\)</span> if the model includes an
+intercept term and <span class="math inline">\(N_0=0\)</span> otherwise.
+Note however that the DF for the intercept term itself (when it is
+included) are calculated at the <span class="math inline">\(G+1\)</span>
+level, i.e. for the intercept we use <span class="math inline">\(DF_{G+1}\)</span> degrees of freedom.</p>
+<p>We note that general contrasts <span class="math inline">\(C\beta\)</span> have not been considered in the
+literature so far. Here we therefore use a pragmatic approach and define
+that for a general contrast matrix <span class="math inline">\(C\)</span> we take the minimum DF across the
+involved coefficients as the DF.</p>
 </div>
 <div class="section level2">
 <h2 id="mmrm-special-case">MMRM special case<a class="anchor" aria-label="anchor" href="#mmrm-special-case"></a>
 </h2>
 <p>In our case of an MMRM (with only fixed effect terms), there is only
-a single grouping level (subject), so
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">G=1</annotation></semantics></math>.
-This means there are 3 potential “levels” of parameters (<span class="citation">Gałecki and Burzykowski (2013)</span>):</p>
+a single grouping level (subject), so <span class="math inline">\(G=1\)</span>. This means there are 3 potential
+“levels” of parameters (<span class="citation">Gałecki and Burzykowski
+(2013)</span>):</p>
 <ul>
 <li>Level 0: The intercept term, assuming the model has been fitted with
 one.
 <ul>
-<li>We use
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><msub><mi>F</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">DF_2</annotation></semantics></math>
-degrees of freedom as defined below.</li>
+<li>We use <span class="math inline">\(DF_2\)</span> degrees of freedom
+as defined below.</li>
 </ul>
 </li>
 <li>Level 1: Effects that change between subjects, but not across
 observations within subjects.
 <ul>
 <li>These are the “between parameters”.</li>
-<li>The corresponding degrees of freedom are
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><msub><mi>F</mi><mn>1</mn></msub><mo>=</mo><msub><mi>N</mi><mn>1</mn></msub><mo>−</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>N</mi><mn>0</mn></msub><mo>+</mo><msub><mi>p</mi><mn>1</mn></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">DF_1 = N_1 - (N_0 + p_1)</annotation></semantics></math>.</li>
+<li>The corresponding degrees of freedom are <span class="math inline">\(DF_1 = N_1 - (N_0 + p_1)\)</span>.</li>
 <li>In words this can be read as:<br>
 “Between” DF = “number of subjects” - (“1 if intercept otherwise 0” +
 “number of between parameters”).</li>
@@ -190,8 +185,7 @@ observations within subjects.
 <li>Level 2: Effects that change within subjects.
 <ul>
 <li>These are the “within parameters”.</li>
-<li>The corresponding degrees of freedom are
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><msub><mi>F</mi><mn>2</mn></msub><mo>=</mo><msub><mi>N</mi><mn>2</mn></msub><mo>−</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>N</mi><mn>1</mn></msub><mo>+</mo><msub><mi>p</mi><mn>2</mn></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">DF_2 = N_2 - (N_1 + p_2)</annotation></semantics></math>.</li>
+<li>The corresponding degrees of freedom are <span class="math inline">\(DF_2 = N_2 - (N_1 + p_2)\)</span>.</li>
 <li>In words this can be read as:<br>
 “Within” DF = “number of observations” - (“number of subjects” + “number
 of within parameters”).</li>
@@ -263,17 +257,13 @@ degrees of freedom method gives as results:</p>
 <p>In <code>fev_data</code> there are 197 subjects with at least one
 non-missing <code>FEV1</code> observation, and 537 non-missing
 observations in total. Therefore we obtain the following numbers of
-groups
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>N</mi><mi>g</mi></msub><annotation encoding="application/x-tex">N_g</annotation></semantics></math>
-at the levels
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mo>=</mo><mn>1</mn><mo>,</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">g=1,2</annotation></semantics></math>:</p>
+groups <span class="math inline">\(N_g\)</span> at the levels <span class="math inline">\(g=1,2\)</span>:</p>
 <ul>
-<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>N</mi><mn>1</mn></msub><mo>=</mo><mn>197</mn></mrow><annotation encoding="application/x-tex">N_1 = 197</annotation></semantics></math></li>
-<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>N</mi><mn>2</mn></msub><mo>=</mo><mn>537</mn></mrow><annotation encoding="application/x-tex">N_2 = 537</annotation></semantics></math></li>
+<li><span class="math inline">\(N_1 = 197\)</span></li>
+<li><span class="math inline">\(N_2 = 537\)</span></li>
 </ul>
-<p>And we note that
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>N</mi><mn>0</mn></msub><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">N_0 = 1</annotation></semantics></math>
-because we use an intercept term.</p>
+<p>And we note that <span class="math inline">\(N_0 = 1\)</span> because
+we use an intercept term.</p>
 <p>Now let’s look at the design matrix:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span>, <span class="fl">1</span><span class="op">)</span></span>
@@ -304,21 +294,17 @@ other hand, <code>AVISIT</code> is a within-subject effect; it
 represents study visit, so naturally its value changes over repeated
 observations for each subject. Similarly, the interaction of
 <code>ARMCD</code> and <code>AVISIT</code> also belongs to level 2.</p>
-<p>Therefore we obtain the following numbers of parameters
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mi>g</mi></msub><annotation encoding="application/x-tex">p_g</annotation></semantics></math>
-at the levels
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mo>=</mo><mn>1</mn><mo>,</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">g=1,2</annotation></semantics></math>:</p>
+<p>Therefore we obtain the following numbers of parameters <span class="math inline">\(p_g\)</span> at the levels <span class="math inline">\(g=1,2\)</span>:</p>
 <ul>
-<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mn>1</mn></msub><mo>=</mo><mn>2</mn><mo>+</mo><mn>1</mn><mo>+</mo><mn>1</mn><mo>=</mo><mn>4</mn></mrow><annotation encoding="application/x-tex">p_1 = 2 + 1 + 1 = 4</annotation></semantics></math></li>
-<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mn>2</mn></msub><mo>=</mo><mn>3</mn><mo>+</mo><mn>3</mn><mo>=</mo><mn>6</mn></mrow><annotation encoding="application/x-tex">p_2 = 3 + 3 = 6</annotation></semantics></math></li>
+<li><span class="math inline">\(p_1 = 2 + 1 + 1 = 4\)</span></li>
+<li><span class="math inline">\(p_2 = 3 + 3 = 6\)</span></li>
 </ul>
-<p>And we obtain therefore the degrees of freedom
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><msub><mi>F</mi><mi>g</mi></msub></mrow><annotation encoding="application/x-tex">DF_g</annotation></semantics></math>
-at the levels
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mo>=</mo><mn>1</mn><mo>,</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">g=1,2</annotation></semantics></math>:</p>
+<p>And we obtain therefore the degrees of freedom <span class="math inline">\(DF_g\)</span> at the levels <span class="math inline">\(g=1,2\)</span>:</p>
 <ul>
-<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><msub><mi>F</mi><mn>1</mn></msub><mo>=</mo><msub><mi>N</mi><mn>1</mn></msub><mo>−</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>N</mi><mn>0</mn></msub><mo>+</mo><msub><mi>p</mi><mn>1</mn></msub><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mn>197</mn><mo>−</mo><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo>+</mo><mn>4</mn><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mn>192</mn></mrow><annotation encoding="application/x-tex">DF_1 = N_1 - (N_0 + p_1) = 197 - (1 + 4) = 192</annotation></semantics></math></li>
-<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><msub><mi>F</mi><mn>2</mn></msub><mo>=</mo><msub><mi>N</mi><mn>2</mn></msub><mo>−</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>N</mi><mn>1</mn></msub><mo>+</mo><msub><mi>p</mi><mn>2</mn></msub><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mn>537</mn><mo>−</mo><mo stretchy="false" form="prefix">(</mo><mn>197</mn><mo>+</mo><mn>6</mn><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mn>334</mn></mrow><annotation encoding="application/x-tex">DF_2 = N_2 - (N_1 + p_2) = 537 - (197 + 6) = 334</annotation></semantics></math></li>
+<li><span class="math inline">\(DF_1 = N_1 - (N_0 + p_1) = 197 - (1 + 4)
+= 192\)</span></li>
+<li><span class="math inline">\(DF_2 = N_2 - (N_1 + p_2) = 537 - (197 +
+6) = 334\)</span></li>
 </ul>
 <p>So we can finally see that those degrees of freedom are exactly as
 displayed in the summary table above.</p>
@@ -372,7 +358,7 @@ Simulation</em>, <strong>37</strong>(1-2), 69–87.
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

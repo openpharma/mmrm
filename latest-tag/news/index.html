@@ -7,7 +7,13 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Changelog • mmrm</title>
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- mathjax math --><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script><script>
+  window.MathJax = {
+    chtml: {
+      fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
+    }
+  };
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
@@ -29,7 +35,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.15</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.16</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -82,6 +88,7 @@
     <div class="dropdown-menu" aria-labelledby="dropdown-versions">
     <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
+<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.16">v0.3.16</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.15">v0.3.15</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.14">v0.3.14</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.13">v0.3.13</a>
@@ -114,9 +121,43 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.15/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.16/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.3.16" id="mmrm-0316">mmrm 0.3.16<a class="anchor" aria-label="anchor" href="#mmrm-0316"></a>
+</h2>
+<div class="section level4">
+<h4 id="new-features-0-3-16">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-3-16"></a>
+</h4>
+<ul>
+<li>
+<code><a href="../reference/Anova.mmrm.html">Anova.mmrm()</a></code> now has a <code>test.statistic</code> argument allowing the user to choose the Chi-squared test as opposed to the default F-test.</li>
+<li>
+<code><a href="../reference/mmrm_control.html">mmrm_control()</a></code> now has a <code>disable_theta_vcov</code> argument allowing the user to disable computation of the variance-covariance matrix of the covariance parameters. In that case, the <code>nlminb</code> optimizer cannot be used and other optimizers should be selected. Avoiding this computation can be useful in cases where the number of covariance parameters is large and computation of this very large matrix is slow and memory-intensive.</li>
+<li>
+<code><a href="https://rdrr.io/r/stats/model.frame.html" class="external-link">model.frame()</a></code> has a new argument <code>exclude</code> which allows to exclude specific model variables from the returned data frame, <em>after</em> creating the initial <code>model.frame</code>. This is useful when the same rows should be kept as in the original model fit (e.g. after <code>na.action</code> has been applied), but some variables are not needed in the returned data frame. The <code>terms</code> attribute of the returned data frame is updated accordingly.</li>
+</ul>
+</div>
+<div class="section level4">
+<h4 id="bug-fixes-0-3-16">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-3-16"></a>
+</h4>
+<ul>
+<li>Previously, the compound symmetry correlation models (<code>cs</code> and <code>csh</code>) could have divergence issues, especially when the correlation was negative. This was because the range of the correlation parameter was from -1 to 1, whereas the correct range is between -1/(m-1) and 1, where m is the number of observations per subject. This is fixed now by using another mapping from the real line to the correct range, and therefore compound symmetry correlation models will work more robustly.</li>
+<li>Previously, the <code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code> method failed when requesting an unconditional prediction interval. This is fixed now.</li>
+<li>Previously, the <code><a href="../reference/emp_start.html">emp_start()</a></code> starting values could only work with variables included directly in <code>data</code>. Now they can also work when variables are not included in <code>data</code> but are available in the parent environment: The variables will be correctly included in the design matrix. This is achieved by an internal update to <code><a href="../reference/h_mmrm_tmb_data.html">h_mmrm_tmb_data()</a></code>.</li>
+<li>Previously, the <code><a href="https://rdrr.io/r/stats/model.frame.html" class="external-link">model.frame()</a></code> method failed when the model formula included variables from the environment. This is fixed now. In addition, whereas <code><a href="https://rdrr.io/r/stats/model.frame.html" class="external-link">model.frame()</a></code> used to apply <code>na.action</code> before processing the <code>include</code> argument, <code>na.action</code> is now applied afterwards. As a result, any variables excluded from <code>include</code> are no longer considered when <code>na.action</code> is applied. Therefore, in the default case when <code>na.action = "na.omit"</code>, this can lead to more rows being kept in the returned data frame compared to previous versions.</li>
+<li>Previously, the <code><a href="https://rdrr.io/r/stats/model.frame.html" class="external-link">model.frame()</a></code> method did not pass on additional arguments to the <code><a href="https://rdrr.io/r/stats/model.frame.html" class="external-link">model.frame.default()</a></code> method, e.g. <code>subset</code>. This is fixed now.</li>
+<li>Previously, the <code><a href="https://rdrr.io/r/stats/vcov.html" class="external-link">vcov()</a></code> method returned the asymptotic covariance matrix, even if an adjusted one has been used. This is now fixed and the requested adjusted covariance matrix will be returned. (Please note this was not an issue for downstream <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> or <code><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html" class="external-link">emmeans()</a></code> calls, where the adjusted covariance matrix was correctly used.)</li>
+<li>Previously, type 3 tests in the <code><a href="../reference/Anova.mmrm.html">Anova.mmrm()</a></code> method could give incorrect results which were not compatible with results from <code><a href="https://rdrr.io/pkg/lme4/man/lmer.html" class="external-link">lme4::lmer()</a></code> or other software (e.g. when using other than treatment contrasts). This is fixed now. In particular, any combination of contrasts can be used and will yield consistent results.</li>
+<li>
+<code><a href="../reference/Anova.mmrm.html">Anova.mmrm()</a></code> can now handle intercept-free models in type 2 tests, even when the first effect containing a categorical variable has an aliased parameter.</li>
+<li>Previously, the naming conventions used in the <code><a href="../reference/Anova.mmrm.html">Anova.mmrm()</a></code> method were not recognized by <code><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">broom::tidy()</a></code>. This is fixed now by using more standard names for the resulting data frame columns (e.g. <code>F</code> instead of <code>F Statistic</code> etc.)</li>
+<li>
+<code><a href="../reference/mmrm_tmb_methods.html">logLik.mmrm_tmb()</a></code> now includes an <code>nobs</code> attribute containing the number of subjects in the provided model (i.e., <code>component(mmrm_object, "n_subjects")</code>). As a result, <code>BIC(logLik(mmrm_object))</code> can now be successfully calculated.</li>
+</ul>
+</div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.15" id="mmrm-0315">mmrm 0.3.15<a class="anchor" aria-label="anchor" href="#mmrm-0315"></a>
 </h2>
@@ -378,7 +419,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

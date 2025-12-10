@@ -7,7 +7,13 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Construction of Model Frame Formula and Data Inputs — h_construct_model_frame_inputs • mmrm</title>
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- mathjax math --><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script><script>
+  window.MathJax = {
+    chtml: {
+      fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
+    }
+  };
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
@@ -39,7 +45,7 @@ The full set is used to identify rows to include in the reduced model frame.">
 
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.15</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.16</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -92,6 +98,7 @@ The full set is used to identify rows to include in the reduced model frame.">
     <div class="dropdown-menu" aria-labelledby="dropdown-versions">
     <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
+<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.16">v0.3.16</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.15">v0.3.15</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.14">v0.3.14</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.13">v0.3.13</a>
@@ -124,12 +131,12 @@ The full set is used to identify rows to include in the reduced model frame.">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Construction of Model Frame Formula and Data Inputs</h1>
-      <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.15/R/tmb-methods.R" class="external-link"><code>R/tmb-methods.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.16/R/tmb-methods.R" class="external-link"><code>R/tmb-methods.R</code></a></small>
       <div class="d-none name"><code>h_construct_model_frame_inputs.Rd</code></div>
     </div>
 
     <div class="ref-description section level2">
-    <p>Input formulas are converted from mmrm-style to a style compatible
+    <p>Input formulas are converted from <code>mmrm</code>-style to a style compatible
 with default <code><a href="https://rdrr.io/r/stats/model.frame.html" class="external-link">stats::model.frame()</a></code> and <code><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">stats::model.matrix()</a></code> methods.</p>
 <p>The full formula is returned so we can construct, for example, the
 <code><a href="https://rdrr.io/r/stats/model.frame.html" class="external-link">model.frame()</a></code> including all columns as well as the requested subset.
@@ -156,18 +163,18 @@ The full set is used to identify rows to include in the reduced model frame.</p>
 <dl>
 <dt id="arg-formula">formula<a class="anchor" aria-label="anchor" href="#arg-formula"></a>
 </dt>
-<dd><p>(<code>mmrm</code>)<br> mmrm fit object.</p></dd>
+<dd><p>(<code>mmrm</code>)<br> fit object.</p></dd>
 
 
 <dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a>
 </dt>
-<dd><p>optional data frame that will be
-passed to <code><a href="https://rdrr.io/r/stats/model.frame.html" class="external-link">model.frame()</a></code> or <code><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix()</a></code></p></dd>
+<dd><p>(<code>data.frame</code>)<br> optional data frame will be
+passed to <code><a href="https://rdrr.io/r/stats/model.frame.html" class="external-link">model.frame()</a></code> or <code><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix()</a></code>.</p></dd>
 
 
 <dt id="arg-include">include<a class="anchor" aria-label="anchor" href="#arg-include"></a>
 </dt>
-<dd><p>(<code>character</code>)<br> names of variable to include</p></dd>
+<dd><p>(<code>character</code>)<br> specification of variables to include.</p></dd>
 
 
 <dt id="arg-full">full<a class="anchor" aria-label="anchor" href="#arg-full"></a>
@@ -179,11 +186,10 @@ passed to <code><a href="https://rdrr.io/r/stats/model.frame.html" class="extern
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a>
 </h2>
-    <p>named list with four elements:</p>
+    <p>A named list with two elements:</p>
 <ul>
 <li><p><code>"formula"</code>: the formula including the columns requested in the <code>include=</code> argument.</p></li>
-<li><p><code>"data"</code>: a data frame including all columns needed in the formula.
-full formula are identical</p></li>
+<li><p><code>"data"</code>: a data frame including all columns needed in the formula.</p></li>
 </ul>
 </div>
 
@@ -197,7 +203,7 @@ full formula are identical</p></li>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

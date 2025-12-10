@@ -7,7 +7,13 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Comparison with other software • mmrm</title>
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- mathjax math --><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script><script>
+  window.MathJax = {
+    chtml: {
+      fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
+    }
+  };
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
@@ -28,7 +34,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.15</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.16</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -81,6 +87,7 @@
     <div class="dropdown-menu" aria-labelledby="dropdown-versions">
     <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
+<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.16">v0.3.16</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.15">v0.3.15</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.14">v0.3.14</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.13">v0.3.13</a>
@@ -119,7 +126,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Comparison with other software</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.15/vignettes/mmrm_review_methods.Rmd" class="external-link"><code>vignettes/mmrm_review_methods.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.16/vignettes/mmrm_review_methods.Rmd" class="external-link"><code>vignettes/mmrm_review_methods.Rmd</code></a></small>
       <div class="d-none name"><code>mmrm_review_methods.Rmd</code></div>
     </div>
 
@@ -810,7 +817,7 @@ reported.</p>
 <div class="section level4">
 <h4 id="fev-data-2">FEV Data<a class="anchor" aria-label="anchor" href="#fev-data-2"></a>
 </h4>
-<p><img src="mmrm-review-treatment-fev-1.png" width="100%"></p>
+<p><img src="mmrm-review-treatment-fev-1.png" class="r-plt" width="100%"></p>
 <p>The R procedures’ estimates are very similar to those output by
 <code>PROC GLIMMIX</code>, though <code>mmrm</code> and <code>gls</code>
 generate the estimates that are closest to those produced when using
@@ -820,7 +827,7 @@ arguments.</p>
 <div class="section level4">
 <h4 id="bcva-data-2">BCVA Data<a class="anchor" aria-label="anchor" href="#bcva-data-2"></a>
 </h4>
-<p><img src="mmrm-review-treatment-bcva-1.png" width="100%"><img src="mmrm-review-treatment-bcva-2.png" width="100%"></p>
+<p><img src="mmrm-review-treatment-bcva-1.png" class="r-plt" width="100%"><img src="mmrm-review-treatment-bcva-2.png" class="r-plt" width="100%"></p>
 <p><code>mmrm</code>, <code>gls</code> and <code>lmer</code> produce
 estimates that are virtually identical to <code>PROC GLIMMIX</code>’s,
 while <code>glmmTMB</code> does not. This is likely explained by
@@ -925,7 +932,7 @@ missingness is presented in the table below.</p>
 </table>
 <p>The convergence rates of all implementations for stratified by
 missingness level is presented in the plot below.</p>
-<p><img src="mmrm-review-convergence-rate-missingness-1.png" width="100%"></p>
+<p><img src="mmrm-review-convergence-rate-missingness-1.png" class="r-plt" width="100%"></p>
 <p><code>mmrm</code>, <code>gls</code>, and <code>PROC GLIMMIX</code>
 are resilient to missingness, only exhibiting some convergence problems
 in the scenarios with the most missingness. These implementations
@@ -978,36 +985,36 @@ type II error rates.</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt;  [1] ggplot2_3.5.2           emmeans_1.11.1          knitr_1.50             </span></span>
-<span><span class="co">#&gt;  [4] sasr_0.1.5              glmmTMB_1.1.11          nlme_3.1-168           </span></span>
-<span><span class="co">#&gt;  [7] lme4_1.1-37             Matrix_1.7-3            mmrm_0.3.15            </span></span>
-<span><span class="co">#&gt; [10] stringr_1.5.1           microbenchmark_1.5.0    purrr_1.0.4            </span></span>
+<span><span class="co">#&gt;  [1] ggplot2_4.0.1           emmeans_2.0.0           knitr_1.50             </span></span>
+<span><span class="co">#&gt;  [4] sasr_0.1.5              glmmTMB_1.1.13          nlme_3.1-168           </span></span>
+<span><span class="co">#&gt;  [7] lme4_1.1-38             Matrix_1.7-4            mmrm_0.3.16            </span></span>
+<span><span class="co">#&gt; [10] stringr_1.6.0           microbenchmark_1.5.0    purrr_1.2.0            </span></span>
 <span><span class="co">#&gt; [13] dplyr_1.1.4             clusterGeneration_1.3.8 MASS_7.3-65            </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] gtable_0.3.6        TMB_1.9.17          xfun_0.52          </span></span>
+<span><span class="co">#&gt;  [1] gtable_0.3.6        TMB_1.9.18          xfun_0.54          </span></span>
 <span><span class="co">#&gt;  [4] bslib_0.9.0         htmlwidgets_1.6.4   lattice_0.22-7     </span></span>
 <span><span class="co">#&gt;  [7] numDeriv_2016.8-1.1 vctrs_0.6.5         tools_4.5.0        </span></span>
 <span><span class="co">#&gt; [10] Rdpack_2.6.4        generics_0.1.4      sandwich_3.1-1     </span></span>
-<span><span class="co">#&gt; [13] tibble_3.2.1        pkgconfig_2.0.3     checkmate_2.3.2    </span></span>
-<span><span class="co">#&gt; [16] RColorBrewer_1.1-3  desc_1.4.3          lifecycle_1.0.4    </span></span>
-<span><span class="co">#&gt; [19] farver_2.1.2        compiler_4.5.0      textshaping_1.0.1  </span></span>
-<span><span class="co">#&gt; [22] codetools_0.2-20    htmltools_0.5.8.1   sass_0.4.10        </span></span>
-<span><span class="co">#&gt; [25] yaml_2.3.10         pillar_1.10.2       pkgdown_2.1.3      </span></span>
-<span><span class="co">#&gt; [28] nloptr_2.2.1        jquerylib_0.1.4     cachem_1.1.0       </span></span>
-<span><span class="co">#&gt; [31] reformulas_0.4.1    boot_1.3-31         multcomp_1.4-28    </span></span>
-<span><span class="co">#&gt; [34] tidyselect_1.2.1    digest_0.6.37       mvtnorm_1.3-3      </span></span>
-<span><span class="co">#&gt; [37] stringi_1.8.7       labeling_0.4.3      splines_4.5.0      </span></span>
-<span><span class="co">#&gt; [40] fastmap_1.2.0       grid_4.5.0          cli_3.6.5          </span></span>
-<span><span class="co">#&gt; [43] magrittr_2.0.3      dichromat_2.0-0.1   survival_3.8-3     </span></span>
-<span><span class="co">#&gt; [46] TH.data_1.1-3       withr_3.0.2         scales_1.4.0       </span></span>
-<span><span class="co">#&gt; [49] backports_1.5.0     estimability_1.5.1  rmarkdown_2.29     </span></span>
-<span><span class="co">#&gt; [52] reticulate_1.42.0   ragg_1.4.0          zoo_1.8-14         </span></span>
-<span><span class="co">#&gt; [55] png_0.1-8           coda_0.19-4.1       evaluate_1.0.3     </span></span>
-<span><span class="co">#&gt; [58] rbibutils_2.3       mgcv_1.9-3          rlang_1.1.6        </span></span>
-<span><span class="co">#&gt; [61] Rcpp_1.0.14         xtable_1.8-4        glue_1.8.0         </span></span>
-<span><span class="co">#&gt; [64] minqa_1.2.8         jsonlite_2.0.0      R6_2.6.1           </span></span>
-<span><span class="co">#&gt; [67] systemfonts_1.2.3   fs_1.6.6</span></span></code></pre>
+<span><span class="co">#&gt; [13] tibble_3.3.0        pkgconfig_2.0.3     checkmate_2.3.3    </span></span>
+<span><span class="co">#&gt; [16] RColorBrewer_1.1-3  S7_0.2.1            desc_1.4.3         </span></span>
+<span><span class="co">#&gt; [19] lifecycle_1.0.4     farver_2.1.2        compiler_4.5.0     </span></span>
+<span><span class="co">#&gt; [22] textshaping_1.0.4   codetools_0.2-20    htmltools_0.5.9    </span></span>
+<span><span class="co">#&gt; [25] sass_0.4.10         yaml_2.3.11         pillar_1.11.1      </span></span>
+<span><span class="co">#&gt; [28] pkgdown_2.2.0       nloptr_2.2.1        jquerylib_0.1.4    </span></span>
+<span><span class="co">#&gt; [31] cachem_1.1.0        reformulas_0.4.2    boot_1.3-32        </span></span>
+<span><span class="co">#&gt; [34] multcomp_1.4-29     tidyselect_1.2.1    digest_0.6.39      </span></span>
+<span><span class="co">#&gt; [37] mvtnorm_1.3-3       stringi_1.8.7       labeling_0.4.3     </span></span>
+<span><span class="co">#&gt; [40] splines_4.5.0       fastmap_1.2.0       grid_4.5.0         </span></span>
+<span><span class="co">#&gt; [43] cli_3.6.5           magrittr_2.0.4      dichromat_2.0-0.1  </span></span>
+<span><span class="co">#&gt; [46] survival_3.8-3      TH.data_1.1-5       withr_3.0.2        </span></span>
+<span><span class="co">#&gt; [49] scales_1.4.0        backports_1.5.0     estimability_1.5.1 </span></span>
+<span><span class="co">#&gt; [52] rmarkdown_2.30      reticulate_1.44.1   ragg_1.5.0         </span></span>
+<span><span class="co">#&gt; [55] zoo_1.8-14          png_0.1-8           coda_0.19-4.1      </span></span>
+<span><span class="co">#&gt; [58] evaluate_1.0.5      rbibutils_2.4       mgcv_1.9-4         </span></span>
+<span><span class="co">#&gt; [61] rlang_1.1.6         Rcpp_1.1.0          xtable_1.8-4       </span></span>
+<span><span class="co">#&gt; [64] glue_1.8.0          minqa_1.2.8         jsonlite_2.0.0     </span></span>
+<span><span class="co">#&gt; [67] R6_2.6.1            systemfonts_1.3.1   fs_1.6.6</span></span></code></pre>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
@@ -1020,7 +1027,7 @@ type II error rates.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

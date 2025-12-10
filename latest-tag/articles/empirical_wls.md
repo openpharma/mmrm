@@ -1,0 +1,225 @@
+# Details of Weighted Least Square Empirical Covariance
+
+## Weighted Least Square (WLS) Empirical Covariance
+
+Following the notation we have without weights, Bell and McCaffrey
+(2002) and Pustejovsky and Tipton (2018) suggest
+
+\\ v = s C^\top(X^\top W X)^{-1}\sum\_{i}{X_i^\top W_i A_i \epsilon_i
+\epsilon_i^\top A_i W_i X_i} (X^\top W X)^{-1} C \\
+
+where \\A_i\\ takes \\I_i\\, \\(I_i - H\_{ii})^{-\frac{1}{2}}\\, or
+\\(I_i - H\_{ii})^{-1}\\ is unchanged, but \\H\\ is changed
+
+\\ H = X (X^\top W X)^{-1} X^\top W \\
+
+For the degrees of freedom, we have
+
+\\ G\_{ij} = g_i^\top \Phi g_j \\
+
+where
+
+\\ g_i = s^{\frac{1}{2}} (I - H)\_i^\top A_i W_i X_i (X^\top X)^{-1} C
+\\
+
+## Difference of Implementations
+
+Comparing the previous section with our implementation, we can find out
+the differences. Since they have nearly the same symbols, to
+differentiate the different part, we use subscript \\1\\ to denote the
+implementation suggested by Bell and McCaffrey (2002) and Pustejovsky
+and Tipton (2018), and use \\2\\ to denote the our implementation of
+covariance estimator in `mmrm`, we have
+
+\\ v\_{1} = s C^\top(X^\top W X)^{-1}\sum\_{i}{X_i^\top W_i A\_{1, i}
+\epsilon_i \epsilon_i^\top A\_{1, i} W_i X_i} (X^\top W X)^{-1} C \\
+
+\\ v\_{2} = s C^\top(X^\top W X)^{-1}\sum\_{i}{X_i^\top L_i A\_{2, i}
+L_i^\top \epsilon_i \epsilon_i^\top L_i A\_{2, i} L_i^\top X_i} (X^\top
+W X)^{-1} C \\
+
+Here we will prove that they are identical.
+
+### Proof of Identity
+
+#### Proof for Covariance Estimator
+
+First of all, we assume that all \\A_i\\ matrix, in any form, are
+positive-definite. Comparing \\v\_{1}\\ and \\v\_{2}\\, we see that the
+different part is
+
+\\ M\_{1, d, i} = W_i A\_{1, i} \\ and \\ M\_{2, d, i} = L_i A\_{2, i}
+L_i^\top \\
+
+Substitute \\H\_{1}\\ and \\H\_{2}\\ with its expression, we have
+
+\\ M\_{1, d, i} = W_i (I_i - X_i (X^\top W X)^{-1} X_i^\top W_i)^d \\
+
+\\ M\_{2, d, i} = L_i (I_i - L_i^\top X_i (X^\top W X)^{-1} X_i^\top
+L_i)^d L_i^\top \\
+
+Where \\d\\ takes \\0\\, \\-1/2\\ and \\-1\\ respectively.
+
+Apparently, if \\d=0\\, these two are identical because \\W_i = L_i
+L_i^\top\\.
+
+When \\d = -1\\, we have
+
+\\ M\_{2, -1, i} = L_i (I_i - L_i^\top X_i (X^\top W X)^{-1} X_i^\top
+L_i)^{-1} L_i^\top \\ = (L_i^{-1})^{-1} (I_i - L_i^\top X_i (X^\top W
+X)^{-1} X_i^\top L_i)^{-1} ((L_i^\top)^{-1})^{-1} \\ =
+\[((L_i^\top)^{-1})(I_i - L_i^\top X_i (X^\top W X)^{-1} X_i^\top
+L_i)(L_i^{-1})\]^{-1} \\ = \[(L_i^\top)^{-1}L_i^{-1} - X_i (X^\top W
+X)^{-1} X_i^\top\]^{-1} \\ = (W_i^{-1} - X_i (X^\top W X)^{-1}
+X_i^\top)^{-1} \\
+
+\\ M\_{1, -1, i} = W_i (I_i - X_i (X^\top W X)^{-1} X_i^\top W_i)^{-1}
+\\ = (W_i^{-1})^{-1} (I_i - X_i (X^\top W X)^{-1} X_i^\top W_i)^{-1} \\
+= \[(I_i - X_i (X^\top W X)^{-1} X_i^\top W_i)((W_i^{-1}))\]^{-1} \\ =
+(W_i^{-1} - X_i (X^\top W X)^{-1} X_i^\top)^{-1} \\
+
+Obviously, \\M\_{2, -1, i} = M\_{1, -1, i}\\, and use the following
+notation
+
+\\ M\_{2, -1, i} = L_i B\_{2, i} L_i^\top \\
+
+\\ M\_{1, -1, i} = W_i B\_{1, i} \\
+
+we have
+
+\\ B\_{1, i} = W_i^{-1} L_i B\_{2, i} L_i^\top \\ = (L_i^\top)^{-1}
+B\_{2, i} L_i^\top \\
+
+When \\d = -1/2\\, we have the following
+
+\\ M\_{2, -1/2, i} = L_i (I_i - L_i^\top X_i (X^\top W X)^{-1} X_i^\top
+L_i)^{-1/2} L_i^\top \\ = L_i B\_{2, i}^{1/2} L_i^\top \\
+
+\\ M\_{1, -1/2, i} = W_i (I_i - X_i (X^\top W X)^{-1} X_i^\top
+W_i)^{-1/2} \\ = W_i B\_{1, i}^{1/2} \\
+
+Apparently if \\B\_{1, i}^{1/2} \ne (L_i^\top)^{-1} B\_{2, i}^{1/2}
+L_i^\top\\, we should also have \\ B\_{1, i}^{1/2} B\_{1, i}^{1/2} \ne
+(L_i^\top)^{-1} B\_{2, i}^{1/2} L_i^\top (L_i^\top)^{-1} B\_{2, i}^{1/2}
+L_i^\top \\
+
+leading to
+
+\\ B\_{1, i} \ne (L_i^\top)^{-1} B\_{2, i} L_i^\top \\
+
+which is contradictory with our previous result. Thus, these covariance
+estimator are identical.
+
+#### Proof for Degrees of Freedom
+
+To prove \\ G\_{1, ij} = g\_{1, i}^\top \Phi g\_{1, j} \\ and \\ G\_{2,
+ij} = g\_{2, i}^\top g\_{2, j} \\ are identical, we only need to prove
+that
+
+\\ L^{-1} g\_{1, i} = g\_{mmrm_i} \\
+
+where \\\Phi = W^{-1}\\ according to our previous expression.
+
+We first expand \\L^{-1} g\_{1, i}\\ and \\g\_{mmrm_i}\\
+
+\\ L^{-1} g\_{1, i} = L^{-1} (I - X(X^\top W X)^{-1}X^\top W) S_i^\top
+A\_{1, i}^d W_i X_i (X^\top W X)^{-1} C \\
+
+\\ g\_{2, i} = (I - L_i^\top X(X^\top W X)^{-1}X^\top L_i) S_i^\top
+A\_{2, i}^d L_i^\top X_i (X^\top W X)^{-1} C \\
+
+where \\S_i\\ is the row selection matrix.
+
+We will prove the inner part equal \\ L^{-1} (I - X(X^\top W
+X)^{-1}X^\top W) S_i^\top A\_{1, i}^d W_i = (I - L^\top X(X^\top W
+X)^{-1}X^\top L) S_i^\top A\_{2, i}^d L_i^\top \\
+
+With the previous proof of covariance estimators, we already have
+
+\\ M\_{1, d, i} = W_i A\_{1, i}^d = L_i A\_{2, i}^d L_i^\top = M\_{2, d,
+i} \\ we then need to prove \\ L^{-1} (I - X(X^\top W X)^{-1}X^\top W)
+S_i^\top = (I - L^\top X(X^\top W X)^{-1}X^\top L) S_i^\top L_i^{-1} \\
+
+and note the relationship between \\(I - X(X^\top W X)^{-1}X^\top W)\\
+and \\(I - L^\top X(X^\top W X)^{-1}X^\top L)\\ has already been proved
+in covariance estimator section, we only need to prove
+
+\\ L^{-1} (I - X(X^\top W X)^{-1}X^\top W) S_i^\top = (I - L^\top
+X(X^\top W X)^{-1}X^\top L) S_i^\top L_i^{-1} \\
+
+Apparently
+
+\\ L^{-1} (I - X(X^\top W X)^{-1}X^\top W) S_i^\top = L^{-1} S_i^\top -
+L^{-1} X(X^\top W X)^{-1}X_i^\top W_i \\
+
+\\ (I - L^\top X(X^\top W X)^{-1}X^\top L) S_i^\top L_i^{-1} = S_i^\top
+L_i^{-1} - L^\top X(X^\top W X)^{-1}X_i^\top \\
+
+And obviously \\ L^{-1} S_i^\top = S_i^\top L_i^{-1} \\
+
+\\ L^{-1} X(X^\top W X)^{-1}X_i W_i = L^\top X(X^\top W X)^{-1}X_i^\top
+\\
+
+because of the following \\ (X(X^\top W X)^{-1}X_i W_i)\_{i} =
+X_i(X^\top W X)^{-1}X_i W_i \\ = W_i X_i(X^\top W X)^{-1}X_i^\top \\ =
+(W X(X^\top W X)^{-1}X_i^\top)\_{i} \\
+
+## Special Considerations in Implementations
+
+### Pseudo Inverse of a Matrix
+
+Empirical covariance matrix is involved with the inverse of a matrix, or
+symmetric square root of a matrix. To calculate this, we usually
+requires that the matrix is positive-definite. However, Young (2016)
+suggest that this is not always assured in practice.
+
+Thus, following Pustejovsky and Tipton (2018), we use the pseudo inverse
+to avoid this. We follow the following logic (see the corresponding
+`C++` function `pseudoInverseSqrt`) to obtain the pseudo inverse:
+
+1.  Conduct singular value decomposition.
+2.  Use `cpow` to obtain the square root of the reciprocals of singular
+    values, if the value is larger than a computational threshold;
+    otherwise replace the value with 0.
+3.  Reconstruct the pseudo inverse matrix from modified singular values
+    and U/V matrix.
+
+In `Eigen` package, the pseudo inverse method is already implemented in
+[`Eigen::CompleteOrthogonalDecomposition< MatrixType_ >::pseudoInverse`](https://libeigen.gitlab.io/docs/classEigen_1_1CompleteOrthogonalDecomposition.html#a6260bd1050a28dd59733233d93eb6bed),
+but it is not used for the following reason:
+
+1.  The pseudo inverse method is not stable and can lead to `NAN` in
+    calculations.
+2.  To find out the symmetric square root, singular value decomposition
+    is still needed, so not using the method but instead calculating
+    directly the square root of the pseudo inverse can be simpler.
+
+### Avoiding the Crossproduct of the G Matrix
+
+In the implementation of the empirical covariance matrix with the
+Satterthwaite degrees of freedom calculation, it is important to avoid
+directly computing the crossproduct of the \\G\\ matrix (i.e., \\G^\top
+G\\). This is because the \\G\\ matrix can have a large number of
+columns, in situations with many subjects and/or many coefficients,
+leading to significant computational and memory overhead. Instead, the
+current implementation leverages more efficient matrix operations when
+needed using the contrast matrix during the Satterthwaite degrees of
+freedom calculation. This approach ensures that the calculation remains
+feasible and efficient even for large datasets, without any numerical
+differences.
+
+## References
+
+Bell RM, McCaffrey DF (2002). “Bias Reduction in Standard Errors for
+Linear Regression with Multi-Stage Samples.” *Survey Methodology*,
+**28**(2), 169–182.
+
+Pustejovsky JE, Tipton E (2018). “Small-Sample Methods for
+Cluster-Robust Variance Estimation and Hypothesis Testing in Fixed
+Effects Models.” *Journal of Business & Economic Statistics*, **36**(4),
+672–683.
+
+Young A (2016). “Improved, Nearly Exact, Statistical Inference with
+Robust and Clustered Covariance Matrices Using Effective Degrees of
+Freedom Corrections.” *Manuscript, London School of Economics*,.
+Retrieved from <https://personal.lse.ac.uk/YoungA/Improved.pdf>

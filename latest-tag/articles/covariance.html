@@ -7,7 +7,13 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Covariance Structures • mmrm</title>
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- mathjax math --><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script><script>
+  window.MathJax = {
+    chtml: {
+      fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
+    }
+  };
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
@@ -28,7 +34,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.15</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.16</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -81,6 +87,7 @@
     <div class="dropdown-menu" aria-labelledby="dropdown-versions">
     <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
+<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.16">v0.3.16</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.15">v0.3.15</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.14">v0.3.14</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.13">v0.3.13</a>
@@ -119,7 +126,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Covariance Structures</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.15/vignettes/covariance.Rmd" class="external-link"><code>vignettes/covariance.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.16/vignettes/covariance.Rmd" class="external-link"><code>vignettes/covariance.Rmd</code></a></small>
       <div class="d-none name"><code>covariance.Rmd</code></div>
     </div>
 
@@ -135,27 +142,23 @@ and introduce these here.</p>
 <div class="section level3">
 <h3 id="covariance-and-correlation-matrices">Covariance and Correlation Matrices<a class="anchor" aria-label="anchor" href="#covariance-and-correlation-matrices"></a>
 </h3>
-<p>The symmetric and positive definite covariance matrix
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Σ</mi><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><msubsup><mi>σ</mi><mn>1</mn><mn>2</mn></msubsup></mtd><mtd columnalign="center" style="text-align: center"><msub><mi>σ</mi><mn>12</mn></msub></mtd><mtd columnalign="center" style="text-align: center"><mi>…</mi></mtd><mtd columnalign="center" style="text-align: center"><mi>…</mi></mtd><mtd columnalign="center" style="text-align: center"><msub><mi>σ</mi><mrow><mn>1</mn><mi>m</mi></mrow></msub></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><msub><mi>σ</mi><mn>21</mn></msub></mtd><mtd columnalign="center" style="text-align: center"><msubsup><mi>σ</mi><mn>2</mn><mn>2</mn></msubsup></mtd><mtd columnalign="center" style="text-align: center"><msub><mi>σ</mi><mn>23</mn></msub></mtd><mtd columnalign="center" style="text-align: center"><mi>…</mi></mtd><mtd columnalign="center" style="text-align: center"><msub><mi>σ</mi><mrow><mn>2</mn><mi>m</mi></mrow></msub></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mi>⋮</mi></mtd><mtd columnalign="center" style="text-align: center"></mtd><mtd columnalign="center" style="text-align: center"><mo>⋱</mo></mtd><mtd columnalign="center" style="text-align: center"></mtd><mtd columnalign="center" style="text-align: center"><mi>⋮</mi></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mi>⋮</mi></mtd><mtd columnalign="center" style="text-align: center"></mtd><mtd columnalign="center" style="text-align: center"></mtd><mtd columnalign="center" style="text-align: center"><mo>⋱</mo></mtd><mtd columnalign="center" style="text-align: center"><mi>⋮</mi></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><msub><mi>σ</mi><mrow><mi>m</mi><mn>1</mn></mrow></msub></mtd><mtd columnalign="center" style="text-align: center"><mi>…</mi></mtd><mtd columnalign="center" style="text-align: center"><mi>…</mi></mtd><mtd columnalign="center" style="text-align: center"><msub><mi>σ</mi><mrow><mi>m</mi><mo>,</mo><mi>m</mi><mo>−</mo><mn>1</mn></mrow></msub></mtd><mtd columnalign="center" style="text-align: center"><msubsup><mi>σ</mi><mi>m</mi><mn>2</mn></msubsup></mtd></mtr></mtable><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+<p>The symmetric and positive definite covariance matrix <span class="math display">\[
 \Sigma = \begin{pmatrix}
-\sigma_1^2 &amp; \sigma_{12} &amp; \dots &amp; \dots &amp; \sigma_{1m} \\
-\sigma_{21} &amp; \sigma_2^2 &amp; \sigma_{23} &amp; \dots &amp; \sigma_{2m}\\
+\sigma_1^2 &amp; \sigma_{12} &amp; \dots &amp; \dots &amp; \sigma_{1m}
+\\
+\sigma_{21} &amp; \sigma_2^2 &amp; \sigma_{23} &amp; \dots &amp;
+\sigma_{2m}\\
 \vdots &amp; &amp; \ddots &amp; &amp; \vdots \\
 \vdots &amp; &amp; &amp; \ddots &amp; \vdots \\
-\sigma_{m1} &amp; \dots &amp; \dots &amp; \sigma_{m,m-1} &amp; \sigma_m^2
+\sigma_{m1} &amp; \dots &amp; \dots &amp; \sigma_{m,m-1} &amp;
+\sigma_m^2
 \end{pmatrix}
-</annotation></semantics></math> is parametrized by a vector of variance
-parameters
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi><mo>=</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>θ</mi><mn>1</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>θ</mi><mi>k</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mi>⊤</mi></msup></mrow><annotation encoding="application/x-tex">\theta = (\theta_1, \dotsc, \theta_k)^\top</annotation></semantics></math>.
-The meaning and the number
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>)
-of variance parameters is different for each covariance structure.</p>
-<p>In many covariance structures we use the decomposition
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Σ</mi><mo>=</mo><mi>D</mi><mi>P</mi><mi>D</mi></mrow><annotation encoding="application/x-tex">
+\]</span> is parametrized by a vector of variance parameters <span class="math inline">\(\theta = (\theta_1, \dotsc,
+\theta_k)^\top\)</span>. The meaning and the number (<span class="math inline">\(k\)</span>) of variance parameters is different
+for each covariance structure.</p>
+<p>In many covariance structures we use the decomposition <span class="math display">\[
 \Sigma = DPD
-</annotation></semantics></math> where the diagonal standard deviation
-matrix is
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><msub><mi>σ</mi><mn>1</mn></msub></mtd><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd><mtd columnalign="center" style="text-align: center"><mi>⋯</mi></mtd><mtd columnalign="center" style="text-align: center"></mtd><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd><mtd columnalign="center" style="text-align: center"><msub><mi>σ</mi><mn>2</mn></msub></mtd><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd><mtd columnalign="center" style="text-align: center"><mi>⋯</mi></mtd><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mi>⋮</mi></mtd><mtd columnalign="center" style="text-align: center"></mtd><mtd columnalign="center" style="text-align: center"><mo>⋱</mo></mtd><mtd columnalign="center" style="text-align: center"><mo>⋱</mo></mtd><mtd columnalign="center" style="text-align: center"><mi>⋮</mi></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"></mtd><mtd columnalign="center" style="text-align: center"></mtd><mtd columnalign="center" style="text-align: center"></mtd><mtd columnalign="center" style="text-align: center"><msub><mi>σ</mi><mrow><mi>m</mi><mo>−</mo><mn>1</mn></mrow></msub></mtd><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd><mtd columnalign="center" style="text-align: center"><mi>⋯</mi></mtd><mtd columnalign="center" style="text-align: center"></mtd><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd><mtd columnalign="center" style="text-align: center"><msub><mi>σ</mi><mi>m</mi></msub></mtd></mtr></mtable><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+\]</span> where the diagonal standard deviation matrix is <span class="math display">\[
 D = \begin{pmatrix}
 \sigma_1 &amp; 0 &amp; \cdots &amp; &amp; 0 \\
 0 &amp; \sigma_2 &amp; 0 &amp; \cdots &amp; 0 \\
@@ -163,52 +166,45 @@ D = \begin{pmatrix}
 &amp;  &amp; &amp; \sigma_{m-1} &amp; 0 \\
 0 &amp; \cdots &amp; &amp; 0 &amp; \sigma_m
 \end{pmatrix}
-</annotation></semantics></math> with entries
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>σ</mi><mi>i</mi></msub><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\sigma_i &gt; 0</annotation></semantics></math>,
-and the symmetric correlation matrix
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>P</mi><annotation encoding="application/x-tex">P</annotation></semantics></math>
-is
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><msub><mi>ρ</mi><mn>12</mn></msub></mtd><mtd columnalign="center" style="text-align: center"><msub><mi>ρ</mi><mn>13</mn></msub></mtd><mtd columnalign="center" style="text-align: center"><mi>⋯</mi></mtd><mtd columnalign="center" style="text-align: center"><mi>⋯</mi></mtd><mtd columnalign="center" style="text-align: center"><msub><mi>ρ</mi><mrow><mn>1</mn><mo>,</mo><mi>m</mi><mo>−</mo><mn>1</mn></mrow></msub></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><msub><mi>ρ</mi><mn>12</mn></msub></mtd><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><msub><mi>ρ</mi><mn>23</mn></msub></mtd><mtd columnalign="center" style="text-align: center"><mo>⋱</mo></mtd><mtd columnalign="center" style="text-align: center"></mtd><mtd columnalign="center" style="text-align: center"><mi>⋮</mi></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><msub><mi>ρ</mi><mn>13</mn></msub></mtd><mtd columnalign="center" style="text-align: center"><msub><mi>ρ</mi><mn>23</mn></msub></mtd><mtd columnalign="center" style="text-align: center"><mo>⋱</mo></mtd><mtd columnalign="center" style="text-align: center"><mo>⋱</mo></mtd><mtd columnalign="center" style="text-align: center"><mo>⋱</mo></mtd><mtd columnalign="center" style="text-align: center"><mi>⋮</mi></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mi>⋮</mi></mtd><mtd columnalign="center" style="text-align: center"><mo>⋱</mo></mtd><mtd columnalign="center" style="text-align: center"><mo>⋱</mo></mtd><mtd columnalign="center" style="text-align: center"><mo>⋱</mo></mtd><mtd columnalign="center" style="text-align: center"><msub><mi>ρ</mi><mrow><mi>m</mi><mo>−</mo><mn>2</mn><mo>,</mo><mi>m</mi><mo>−</mo><mn>1</mn></mrow></msub></mtd><mtd columnalign="center" style="text-align: center"><msub><mi>ρ</mi><mrow><mi>m</mi><mo>−</mo><mn>2</mn><mo>,</mo><mi>m</mi></mrow></msub></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mi>⋮</mi></mtd><mtd columnalign="center" style="text-align: center"></mtd><mtd columnalign="center" style="text-align: center"><mo>⋱</mo></mtd><mtd columnalign="center" style="text-align: center"><msub><mi>ρ</mi><mrow><mi>m</mi><mo>−</mo><mn>2</mn><mo>,</mo><mi>m</mi><mo>−</mo><mn>1</mn></mrow></msub></mtd><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><msub><mi>ρ</mi><mrow><mi>m</mi><mo>−</mo><mn>1</mn><mo>,</mo><mi>m</mi></mrow></msub></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><msub><mi>ρ</mi><mrow><mn>1</mn><mo>,</mo><mi>m</mi><mo>−</mo><mn>1</mn></mrow></msub></mtd><mtd columnalign="center" style="text-align: center"><mi>⋯</mi></mtd><mtd columnalign="center" style="text-align: center"><mi>⋯</mi></mtd><mtd columnalign="center" style="text-align: center"><msub><mi>ρ</mi><mrow><mi>m</mi><mo>−</mo><mn>2</mn><mo>,</mo><mi>m</mi></mrow></msub></mtd><mtd columnalign="center" style="text-align: center"><msub><mi>ρ</mi><mrow><mi>m</mi><mo>−</mo><mn>1</mn><mo>,</mo><mi>m</mi></mrow></msub></mtd><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd></mtr></mtable><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+\]</span> with entries <span class="math inline">\(\sigma_i &gt;
+0\)</span>, and the symmetric correlation matrix <span class="math inline">\(P\)</span> is <span class="math display">\[
 P = \begin{pmatrix}
-  1 &amp; \rho_{12}   &amp; \rho_{13} &amp; \cdots &amp; \cdots &amp; \rho_{1,m-1} \\
-  \rho_{12} &amp; 1      &amp; \rho_{23} &amp; \ddots &amp;        &amp; \vdots \\
-  \rho_{13} &amp; \rho_{23}      &amp; \ddots &amp; \ddots &amp; \ddots &amp; \vdots \\
- \vdots &amp; \ddots &amp; \ddots &amp; \ddots &amp; \rho_{m-2,m-1} &amp; \rho_{m-2,m} \\
- \vdots &amp;        &amp; \ddots &amp; \rho_{m-2,m-1}    &amp; 1    &amp; \rho_{m-1,m} \\
-\rho_{1, m-1} &amp; \cdots &amp; \cdots &amp; \rho_{m-2,m} &amp; \rho_{m-1,m}    &amp; 1
+  1 &amp; \rho_{12}   &amp; \rho_{13} &amp; \cdots &amp; \cdots &amp;
+\rho_{1,m-1} \\
+  \rho_{12} &amp; 1      &amp; \rho_{23} &amp; \ddots &amp;        &amp;
+\vdots \\
+  \rho_{13} &amp; \rho_{23}      &amp; \ddots &amp; \ddots &amp; \ddots
+&amp; \vdots \\
+\vdots &amp; \ddots &amp; \ddots &amp; \ddots &amp; \rho_{m-2,m-1} &amp;
+\rho_{m-2,m} \\
+\vdots &amp;        &amp; \ddots &amp; \rho_{m-2,m-1}    &amp;
+1    &amp; \rho_{m-1,m} \\
+\rho_{1, m-1} &amp; \cdots &amp; \cdots &amp; \rho_{m-2,m} &amp;
+\rho_{m-1,m}    &amp; 1
 \end{pmatrix}
-</annotation></semantics></math> with entries
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ρ</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>∈</mo><mo stretchy="false" form="prefix">(</mo><mi>−</mi><mn>1</mn><mo>,</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\rho_{ij} \in (-1, 1)</annotation></semantics></math>.
-Since these covariance structures assume different variances for each
-time point they are called “heterogeneous” covariance structures.
-Assuming a constant
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>σ</mi><mo>=</mo><msub><mi>σ</mi><mn>1</mn></msub><mo>=</mo><mi>⋯</mi><mo>=</mo><msub><mi>σ</mi><mi>m</mi></msub></mrow><annotation encoding="application/x-tex">\sigma = \sigma_1 = \dotsb = \sigma_m</annotation></semantics></math>
-gives a “homogeneous” covariance structure instead.</p>
+\]</span> with entries <span class="math inline">\(\rho_{ij} \in (-1,
+1)\)</span>. Since these covariance structures assume different
+variances for each time point they are called “heterogeneous” covariance
+structures. Assuming a constant <span class="math inline">\(\sigma =
+\sigma_1 = \dotsb = \sigma_m\)</span> gives a “homogeneous” covariance
+structure instead.</p>
 </div>
 <div class="section level3">
 <h3 id="transformation-to-variance-parameters">Transformation to Variance Parameters<a class="anchor" aria-label="anchor" href="#transformation-to-variance-parameters"></a>
 </h3>
-<p>For standard deviation parameters
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>σ</mi><annotation encoding="application/x-tex">\sigma</annotation></semantics></math>
-we use the natural logarithm
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>log</mi><mo>⁡</mo><mo stretchy="false" form="prefix">(</mo><mi>σ</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\log(\sigma)</annotation></semantics></math>
-to map them to
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ℝ</mi><annotation encoding="application/x-tex">\mathbb{R}</annotation></semantics></math>.
-For correlation parameters
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ρ</mi><annotation encoding="application/x-tex">\rho</annotation></semantics></math>
-we consistently use the transformation
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi><mo>=</mo><mi>f</mi><mo stretchy="false" form="prefix">(</mo><mi>ρ</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mi>sign</mi><mo>⁡</mo><mo stretchy="false" form="prefix">(</mo><mi>ρ</mi><mo stretchy="false" form="postfix">)</mo><msqrt><mfrac><msup><mi>ρ</mi><mn>2</mn></msup><mrow><mn>1</mn><mo>−</mo><msup><mi>ρ</mi><mn>2</mn></msup></mrow></mfrac></msqrt></mrow><annotation encoding="application/x-tex">
-\theta = f(\rho) = \mathop{\mathrm{sign}}(\rho) \sqrt{\frac{\rho^2}{1 - \rho^2}}
-</annotation></semantics></math> which maps the correlation parameter to
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi><mo>∈</mo><mi>ℝ</mi></mrow><annotation encoding="application/x-tex">\theta \in \mathbb{R}</annotation></semantics></math>.
-It has the inverse
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ρ</mi><mo>=</mo><msup><mi>f</mi><mrow><mi>−</mi><mn>1</mn></mrow></msup><mo stretchy="false" form="prefix">(</mo><mi>θ</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mfrac><mi>θ</mi><msqrt><mrow><mn>1</mn><mo>+</mo><msup><mi>θ</mi><mn>2</mn></msup></mrow></msqrt></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">
+<p>For standard deviation parameters <span class="math inline">\(\sigma\)</span> we use the natural logarithm <span class="math inline">\(\log(\sigma)\)</span> to map them to <span class="math inline">\(\mathbb{R}\)</span>.</p>
+<p>For correlation parameters <span class="math inline">\(\rho\)</span>
+we mostly use the transformation <span class="math display">\[
+\theta = f(\rho) = \mathop{\mathrm{sign}}(\rho) \sqrt{\frac{\rho^2}{1 -
+\rho^2}}
+\]</span> which maps the correlation parameter to <span class="math inline">\(\theta \in \mathbb{R}\)</span>. It has the inverse
+<span class="math display">\[
 \rho = f^{-1}(\theta) = \frac{\theta}{\sqrt{1 + \theta^2}}.
-</annotation></semantics></math> This is important because the resulting
-variance parameters
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>θ</mi><annotation encoding="application/x-tex">\theta</annotation></semantics></math>
-can be optimized without constraints over the whole of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ℝ</mi><annotation encoding="application/x-tex">\mathbb{R}</annotation></semantics></math>.</p>
+\]</span> This is important because the resulting variance parameters
+<span class="math inline">\(\theta\)</span> can be optimized without
+constraints over the whole of <span class="math inline">\(\mathbb{R}\)</span>. We use different
+transformations for the compound symmetry and spatial exponential
+covariance structures, as explained below.</p>
 </div>
 </div>
 <div class="section level2">
@@ -218,9 +214,9 @@ can be optimized without constraints over the whole of
 <h3 id="unstructured-us">Unstructured (<code>us</code>)<a class="anchor" aria-label="anchor" href="#unstructured-us"></a>
 </h3>
 <p>Any covariance matrix can be represented by this saturated
-correlation structure. Here
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>=</mo><mi>m</mi><mo stretchy="false" form="prefix">(</mo><mi>m</mi><mo>+</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo><mi>/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">k = m (m+1) / 2</annotation></semantics></math>.
-See the <a href="algorithm.html">algorithm vignette</a> for details.</p>
+correlation structure. Here <span class="math inline">\(k = m (m+1) /
+2\)</span>. See the <a href="algorithm.html">algorithm vignette</a> for
+details.</p>
 </div>
 <div class="section level3">
 <h3 id="homogeneous-ad-and-heterogeneous-ante-dependence-adh">Homogeneous (<code>ad</code>) and Heterogeneous Ante-dependence
@@ -229,23 +225,17 @@ See the <a href="algorithm.html">algorithm vignette</a> for details.</p>
 <p>The ante-dependence correlation structure <span class="citation">(Gabriel 1962)</span> is useful for balanced designs
 where the observations are not necessarily equally spaced in time. Here
 we use an order one ante-dependence model, where the correlation matrix
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>P</mi><annotation encoding="application/x-tex">P</annotation></semantics></math>
-has elements
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ρ</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><munderover><mo>∏</mo><mrow><mi>k</mi><mo>=</mo><mi>i</mi></mrow><mrow><mi>j</mi><mo>−</mo><mn>1</mn></mrow></munderover><msub><mi>ρ</mi><mi>k</mi></msub><mi>.</mi></mrow><annotation encoding="application/x-tex">
+<span class="math inline">\(P\)</span> has elements <span class="math display">\[
 \rho_{ij} = \prod_{k=i}^{j-1} \rho_k.
-</annotation></semantics></math> So we have correlation parameters
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ρ</mi><mi>k</mi></msub><annotation encoding="application/x-tex">\rho_k</annotation></semantics></math>,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>=</mo><mn>1</mn><mo>,</mo><mi>…</mi><mo>,</mo><mi>m</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">k = 1, \dotsc, m-1</annotation></semantics></math>.</p>
+\]</span> So we have correlation parameters <span class="math inline">\(\rho_k\)</span>, <span class="math inline">\(k =
+1, \dotsc, m-1\)</span>.</p>
 <p>We use a heterogeneous covariance structure to allow for different
-within subject variances. So here we can identify
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi><mo>=</mo><mo stretchy="false" form="prefix">(</mo><mi>log</mi><mo>⁡</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>σ</mi><mn>1</mn></msub><mo stretchy="false" form="postfix">)</mo><mo>,</mo><mi>…</mi><mo>,</mo><mi>log</mi><mo>⁡</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>σ</mi><mi>m</mi></msub><mo stretchy="false" form="postfix">)</mo><mo>,</mo><mi>f</mi><mo stretchy="false" form="prefix">(</mo><msub><mi>ρ</mi><mn>1</mn></msub><mo stretchy="false" form="postfix">)</mo><mo>,</mo><mi>…</mi><mo>,</mo><mi>f</mi><mo stretchy="false" form="prefix">(</mo><msub><mi>ρ</mi><mrow><mi>m</mi><mo>−</mo><mn>1</mn></mrow></msub><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">
-\theta = (\log(\sigma_1), \dotsc, \log(\sigma_m), f(\rho_1), \dotsc, f(\rho_{m-1}))
-</annotation></semantics></math> and we have in total
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mi>m</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">2m - 1</annotation></semantics></math>
-variance parameters. Assuming a constant variance yields a homogeneous
-ante-dependence covariance structure with total
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
-variance parameters.</p>
+within subject variances. So here we can identify <span class="math display">\[
+\theta = (\log(\sigma_1), \dotsc, \log(\sigma_m), f(\rho_1), \dotsc,
+f(\rho_{m-1}))
+\]</span> and we have in total <span class="math inline">\(2m -
+1\)</span> variance parameters. Assuming a constant variance yields a
+homogeneous ante-dependence covariance structure with total <span class="math inline">\(m\)</span> variance parameters.</p>
 <p>Note our naming convention for the homogeneous and heterogeneous
 covariance structures that a suffix <code>h</code> is used to denote the
 heterogeneous version, e.g, <code>ad</code> for homogeneous and
@@ -261,83 +251,76 @@ SAS.</p>
 </h3>
 <p>Toeplitz matrices <span class="citation">(Toeplitz 1911)</span> are
 diagonal-constant matrices. Here we can model the correlation matrix as
-a Toeplitz matrix:
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><msub><mi>ρ</mi><mn>1</mn></msub></mtd><mtd columnalign="center" style="text-align: center"><msub><mi>ρ</mi><mn>2</mn></msub></mtd><mtd columnalign="center" style="text-align: center"><mi>⋯</mi></mtd><mtd columnalign="center" style="text-align: center"><mi>⋯</mi></mtd><mtd columnalign="center" style="text-align: center"><msub><mi>ρ</mi><mrow><mi>m</mi><mo>−</mo><mn>1</mn></mrow></msub></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><msub><mi>ρ</mi><mn>1</mn></msub></mtd><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><msub><mi>ρ</mi><mn>1</mn></msub></mtd><mtd columnalign="center" style="text-align: center"><mo>⋱</mo></mtd><mtd columnalign="center" style="text-align: center"></mtd><mtd columnalign="center" style="text-align: center"><mi>⋮</mi></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><msub><mi>ρ</mi><mn>2</mn></msub></mtd><mtd columnalign="center" style="text-align: center"><msub><mi>ρ</mi><mn>1</mn></msub></mtd><mtd columnalign="center" style="text-align: center"><mo>⋱</mo></mtd><mtd columnalign="center" style="text-align: center"><mo>⋱</mo></mtd><mtd columnalign="center" style="text-align: center"><mo>⋱</mo></mtd><mtd columnalign="center" style="text-align: center"><mi>⋮</mi></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mi>⋮</mi></mtd><mtd columnalign="center" style="text-align: center"><mo>⋱</mo></mtd><mtd columnalign="center" style="text-align: center"><mo>⋱</mo></mtd><mtd columnalign="center" style="text-align: center"><mo>⋱</mo></mtd><mtd columnalign="center" style="text-align: center"><msub><mi>ρ</mi><mn>1</mn></msub></mtd><mtd columnalign="center" style="text-align: center"><msub><mi>ρ</mi><mn>2</mn></msub></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mi>⋮</mi></mtd><mtd columnalign="center" style="text-align: center"></mtd><mtd columnalign="center" style="text-align: center"><mo>⋱</mo></mtd><mtd columnalign="center" style="text-align: center"><msub><mi>ρ</mi><mn>1</mn></msub></mtd><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><msub><mi>ρ</mi><mn>1</mn></msub></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><msub><mi>ρ</mi><mrow><mi>m</mi><mo>−</mo><mn>1</mn></mrow></msub></mtd><mtd columnalign="center" style="text-align: center"><mi>⋯</mi></mtd><mtd columnalign="center" style="text-align: center"><mi>⋯</mi></mtd><mtd columnalign="center" style="text-align: center"><msub><mi>ρ</mi><mn>2</mn></msub></mtd><mtd columnalign="center" style="text-align: center"><msub><mi>ρ</mi><mn>1</mn></msub></mtd><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd></mtr></mtable><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+a Toeplitz matrix: <span class="math display">\[
 P = \begin{pmatrix}
-  1 &amp; \rho_1   &amp; \rho_2 &amp; \cdots &amp; \cdots &amp; \rho_{m-1} \\
-  \rho_1 &amp; 1      &amp; \rho_1 &amp; \ddots &amp;        &amp; \vdots \\
-  \rho_2 &amp; \rho_1      &amp; \ddots &amp; \ddots &amp; \ddots &amp; \vdots \\
- \vdots &amp; \ddots &amp; \ddots &amp; \ddots &amp; \rho_1 &amp; \rho_2 \\
- \vdots &amp;        &amp; \ddots &amp; \rho_1    &amp; 1    &amp; \rho_1 \\
-\rho_{m-1} &amp; \cdots &amp; \cdots &amp; \rho_2    &amp; \rho_1    &amp; 1
+  1 &amp; \rho_1   &amp; \rho_2 &amp; \cdots &amp; \cdots &amp;
+\rho_{m-1} \\
+  \rho_1 &amp; 1      &amp; \rho_1 &amp; \ddots &amp;        &amp;
+\vdots \\
+  \rho_2 &amp; \rho_1      &amp; \ddots &amp; \ddots &amp; \ddots &amp;
+\vdots \\
+\vdots &amp; \ddots &amp; \ddots &amp; \ddots &amp; \rho_1 &amp; \rho_2
+\\
+\vdots &amp;        &amp; \ddots &amp; \rho_1    &amp; 1    &amp; \rho_1
+\\
+\rho_{m-1} &amp; \cdots &amp; \cdots &amp; \rho_2    &amp;
+\rho_1    &amp; 1
 \end{pmatrix}
-</annotation></semantics></math> This means that the correlation between
-two time points only depends on the distance between them, i.e.
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ρ</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>ρ</mi><mrow><mo stretchy="true" form="prefix">|</mo><mi>i</mi><mo>−</mo><mi>j</mi><mo stretchy="true" form="postfix">|</mo></mrow></msub></mrow><annotation encoding="application/x-tex">
+\]</span> This means that the correlation between two time points only
+depends on the distance between them, i.e. <span class="math display">\[
 \rho_{ij} = \rho_{\left\vert i - j\right\vert}
-</annotation></semantics></math> and we have correlation parameters
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ρ</mi><mi>k</mi></msub><annotation encoding="application/x-tex">\rho_k</annotation></semantics></math>,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>=</mo><mn>1</mn><mo>,</mo><mi>…</mi><mo>,</mo><mi>m</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">k = 1, \dotsc, m-1</annotation></semantics></math>.</p>
+\]</span> and we have correlation parameters <span class="math inline">\(\rho_k\)</span>, <span class="math inline">\(k =
+1, \dotsc, m-1\)</span>.</p>
 <p>We use a heterogeneous covariance structure to allow for different
-within subject variances. So here we can identify
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi><mo>=</mo><mo stretchy="false" form="prefix">(</mo><mi>log</mi><mo>⁡</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>σ</mi><mn>1</mn></msub><mo stretchy="false" form="postfix">)</mo><mo>,</mo><mi>…</mi><mo>,</mo><mi>log</mi><mo>⁡</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>σ</mi><mi>m</mi></msub><mo stretchy="false" form="postfix">)</mo><mo>,</mo><mi>f</mi><mo stretchy="false" form="prefix">(</mo><msub><mi>ρ</mi><mn>1</mn></msub><mo stretchy="false" form="postfix">)</mo><mo>,</mo><mi>…</mi><mo>,</mo><mi>f</mi><mo stretchy="false" form="prefix">(</mo><msub><mi>ρ</mi><mrow><mi>m</mi><mo>−</mo><mn>1</mn></mrow></msub><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">
-\theta = (\log(\sigma_1), \dotsc, \log(\sigma_m), f(\rho_1), \dotsc, f(\rho_{m-1}))
-</annotation></semantics></math> and we have in total
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mi>m</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">2m - 1</annotation></semantics></math>
-variance parameters. This is similar to the heterogeneous
+within subject variances. So here we can identify <span class="math display">\[
+\theta = (\log(\sigma_1), \dotsc, \log(\sigma_m), f(\rho_1), \dotsc,
+f(\rho_{m-1}))
+\]</span> and we have in total <span class="math inline">\(2m -
+1\)</span> variance parameters. This is similar to the heterogeneous
 ante-dependence structure, but the correlation parameters are used
-differently in the construction of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>P</mi><annotation encoding="application/x-tex">P</annotation></semantics></math>.
-Assuming a constant variance yields a homogeneous Toeplitz covariance
-structure with total
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>
-variance parameters.</p>
+differently in the construction of <span class="math inline">\(P\)</span>. Assuming a constant variance yields a
+homogeneous Toeplitz covariance structure with total <span class="math inline">\(m\)</span> variance parameters.</p>
 </div>
 <div class="section level3">
 <h3 id="homogeneous-ar1-and-heterogeneous-ar1h-autoregressive">Homogeneous (<code>ar1</code>) and Heterogeneous (<code>ar1h</code>)
 Autoregressive<a class="anchor" aria-label="anchor" href="#homogeneous-ar1-and-heterogeneous-ar1h-autoregressive"></a>
 </h3>
 <p>The autoregressive covariance structure can be motivated by the
-corresponding state-space equation
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mrow><mi>i</mi><mi>t</mi></mrow></msub><mo>=</mo><mi>φ</mi><msub><mi>y</mi><mrow><mi>i</mi><mo>,</mo><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>+</mo><msub><mi>ε</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">
+corresponding state-space equation <span class="math display">\[
 y_{it} = \varphi y_{i,t-1} + \varepsilon_t
-</annotation></semantics></math> where the white noise
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ε</mi><mi>t</mi></msub><annotation encoding="application/x-tex">\varepsilon_t</annotation></semantics></math>
-has a normal distribution with mean zero and a constant variance. It can
-be shown that this gives correlations
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ρ</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msup><mi>ρ</mi><mrow><mo stretchy="true" form="prefix">|</mo><mi>i</mi><mo>−</mo><mi>j</mi><mo stretchy="true" form="postfix">|</mo></mrow></msup><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\]</span> where the white noise <span class="math inline">\(\varepsilon_t\)</span> has a normal distribution
+with mean zero and a constant variance. It can be shown that this gives
+correlations <span class="math display">\[
 \rho_{ij} = \rho^{\left\vert i - j\right\vert}.
-</annotation></semantics></math> where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ρ</mi><annotation encoding="application/x-tex">\rho</annotation></semantics></math>
-is related to
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>φ</mi><annotation encoding="application/x-tex">\varphi</annotation></semantics></math>
-and the variance and is the single correlation parameter here.</p>
+\]</span> where <span class="math inline">\(\rho\)</span> is related to
+<span class="math inline">\(\varphi\)</span> and the variance and is the
+single correlation parameter here.</p>
 <p>Assuming a constant variance in the state-space equation yields a
-homogeneous autoregressive covariance structure with total only
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>=</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">k=2</annotation></semantics></math>
-variance parameters, otherwise we obtain the heterogeneous
-autoregressive covariance structure with
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>=</mo><mi>m</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">k = m + 1</annotation></semantics></math>
-variance parameters.</p>
+homogeneous autoregressive covariance structure with total only <span class="math inline">\(k=2\)</span> variance parameters, otherwise we
+obtain the heterogeneous autoregressive covariance structure with <span class="math inline">\(k = m + 1\)</span> variance parameters.</p>
 </div>
 <div class="section level3">
 <h3 id="homogeneous-cs-and-heterogeneous-csh-compound-symmetry">Homogeneous (<code>cs</code>) and Heterogeneous (<code>csh</code>)
 Compound Symmetry<a class="anchor" aria-label="anchor" href="#homogeneous-cs-and-heterogeneous-csh-compound-symmetry"></a>
 </h3>
 <p>The compound symmetry covariance structures assume a constant
-correlation between different time points:
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ρ</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>ρ</mi></mrow><annotation encoding="application/x-tex">
+correlation between different time points: <span class="math display">\[
 \rho_{ij} = \rho
-</annotation></semantics></math> where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ρ</mi><annotation encoding="application/x-tex">\rho</annotation></semantics></math>
-is the single correlation parameter here.</p>
+\]</span> where <span class="math inline">\(\rho\)</span> is the single
+correlation parameter here.</p>
+<p>The permitted range of <span class="math inline">\(\rho\)</span> is
+only from <span class="math inline">\(-1/(m-1)\)</span> to <span class="math inline">\(1\)</span>, therefore we use here a different
+transformation: With the negative lower bound for the correlation
+defined as <span class="math inline">\(a=1/(m-1)\)</span>, we use <span class="math display">\[
+\theta = f(\rho) = \mathop{\mathrm{logit}}((\rho + a) / (1 + a))
+\]</span> with the inverse <span class="math display">\[
+\rho = f^{-1}(\theta) = \mathop{\mathrm{logit}}^{-1}(\theta) (1 + a) -
+a.
+\]</span></p>
 <p>Assuming a constant variance in the state-space equation yields a
-homogeneous compound symmetry covariance structure with total only
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>=</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">k=2</annotation></semantics></math>
-variance parameters, otherwise we obtain the heterogeneous compound
-symmetry covariance structure with
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>=</mo><mi>m</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">k = m + 1</annotation></semantics></math>
-variance parameters.</p>
+homogeneous compound symmetry covariance structure with total only <span class="math inline">\(k=2\)</span> variance parameters, otherwise we
+obtain the heterogeneous compound symmetry covariance structure with
+<span class="math inline">\(k = m + 1\)</span> variance parameters.</p>
 </div>
 </div>
 <div class="section level2">
@@ -354,39 +337,33 @@ structures are allowed (i.e. a common variance is used).</p>
 fit, the covariance displayed is a 2 * 2 square matrix. As the distance
 will be used to derive the corresponding element in that matrix, unit
 distance is used here. The distance matrix is</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"></mtd></mtr></mtable><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">
+<p><span class="math display">\[
     \begin{pmatrix}
     0 &amp; 1\\
     1 &amp; 0\\
     \end{pmatrix}
-</annotation></semantics></math></p>
+\]</span></p>
 <div class="section level3">
 <h3 id="spatial-exponential-sp_exp">Spatial exponential (<code>sp_exp</code>)<a class="anchor" aria-label="anchor" href="#spatial-exponential-sp_exp"></a>
 </h3>
 <p>For spatial exponential, the covariance structure is defined as
 follows:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ρ</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msup><mi>ρ</mi><msub><mi>d</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></msup></mrow><annotation encoding="application/x-tex">
+<p><span class="math display">\[
   \rho_{ij} = \rho^{d_{ij}}
-</annotation></semantics></math></p>
-<p>where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>d</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><annotation encoding="application/x-tex">d_{ij}</annotation></semantics></math>
-is the distance between time point
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
-and time point
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>,</p>
-<p>A total number of parameters
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>=</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">k = 2</annotation></semantics></math>
-is needed:</p>
-<p>The parameterization for
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>θ</mi><annotation encoding="application/x-tex">\theta</annotation></semantics></math>
+\]</span></p>
+<p>where <span class="math inline">\(d_{ij}\)</span> is the distance
+between time point <span class="math inline">\(i\)</span> and time point
+<span class="math inline">\(j\)</span>,</p>
+<p>A total number of parameters <span class="math inline">\(k =
+2\)</span> is needed:</p>
+<p>The parameterization for <span class="math inline">\(\theta\)</span>
 is a little different from previous examples. In previous examples,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ρ</mi><annotation encoding="application/x-tex">\rho</annotation></semantics></math>
-can take values from -1 to 1, but here we need to restrict
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ρ</mi><annotation encoding="application/x-tex">\rho</annotation></semantics></math>
-to (0, 1). Hence we have the following parametrization form.</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>θ</mi><mo>=</mo><mo stretchy="false" form="prefix">(</mo><mi>log</mi><mo>⁡</mo><mo stretchy="false" form="prefix">(</mo><mi>σ</mi><mo stretchy="false" form="postfix">)</mo><mo>,</mo><mi>logit</mi><mo>⁡</mo><mo stretchy="false" form="prefix">(</mo><mi>ρ</mi><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">
-  \theta = (\log(\sigma), \mathop{\mathrm{logit}}(\rho))
-</annotation></semantics></math></p>
+<span class="math inline">\(\rho\)</span> can take values from -1 to 1,
+but here we need to restrict <span class="math inline">\(\rho\)</span>
+to (0, 1). Hence we have the following parametrization form:</p>
+<p><span class="math display">\[
+\theta = (\log(\sigma), \mathop{\mathrm{logit}}(\rho))
+\]</span></p>
 </div>
 </div>
 <div class="section level2">
@@ -417,7 +394,7 @@ Bilinearen <span>Formen</span> von Unendlichvielen
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>
