@@ -27,7 +27,6 @@ Mallinckrodt
 Mancuso
 Nikolas
 ORCID
-Optimizers
 Peng
 Raphson
 SAS's
@@ -97,14 +96,11 @@ nlminb
 nonidentifiability
 num
 onLoad
-optimizers
-parametrized
 pearson
 pkgdown
 plc
 pmatrix
 pre
-reproducibility
 rightarrow
 simeq
 sp
@@ -115,9 +111,7 @@ th
 tidymodels
 toep
 toeph
-unadjusted
 unreproducible
-unscaled
 untracked
 vairance
 varepsilon

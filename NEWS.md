@@ -1,9 +1,8 @@
-# mmrm 0.3.15.9001
+# mmrm 0.3.16
 
 ### New Features
 
-- `Anova.mmrm()` now has a `test.statistic` argument allowing the user to choose a Chi-squared test as opposed to the default F-test.
-- `logLik.mmrm_tmb()` now includes a `nobs` attribute containing the number of subjects in the inputted model (i.e., `component(mmrm_object, "n_subjects")`). As a result, `BIC(logLik(mmrm_object))` will now be successfully calculated.
+- `Anova.mmrm()` now has a `test.statistic` argument allowing the user to choose the Chi-squared test as opposed to the default F-test.
 - `mmrm_control()` now has a `disable_theta_vcov` argument allowing the user to disable computation of the variance-covariance matrix of the covariance parameters. In that case, the `nlminb` optimizer cannot be used and other optimizers should be selected. Avoiding this computation can be useful in cases where the number of covariance parameters is large and computation of this very large matrix is slow and memory-intensive.
 - `model.frame()` has a new argument `exclude` which allows to exclude specific model variables from the returned data frame, *after* creating the initial `model.frame`. This is useful when the same rows should be kept as in the original model fit (e.g. after `na.action` has been applied), but some variables are not needed in the returned data frame. The `terms` attribute of the returned data frame is updated accordingly.
 
@@ -16,8 +15,9 @@
 - Previously, the `model.frame()` method did not pass on additional arguments to the `model.frame.default()` method, e.g. `subset`. This is fixed now.
 - Previously, the `vcov()` method returned the asymptotic covariance matrix, even if an adjusted one has been used. This is now fixed and the requested adjusted covariance matrix will be returned. (Please note this was not an issue for downstream `summary()` or `emmeans()` calls, where the adjusted covariance matrix was correctly used.)
 - Previously, type 3 tests in the `Anova.mmrm()` method could give incorrect results which were not compatible with results from `lme4::lmer()` or other software (e.g. when using other than treatment contrasts). This is fixed now. In particular, any combination of contrasts can be used and will yield consistent results.
+- `Anova.mmrm()` can now handle intercept-free models in type 2 tests, even when the first effect containing a categorical variable has an aliased parameter.
 - Previously, the naming conventions used in the `Anova.mmrm()` method were not recognized by `broom::tidy()`. This is fixed now by using more standard names for the resulting data frame columns (e.g. `F` instead of `F Statistic` etc.)
-- `Anova.mmrm()` can now handle intercept-free models, even when the first effect containing a categorical variable has an aliased parameter.
+- `logLik.mmrm_tmb()` now includes an `nobs` attribute containing the number of subjects in the provided model (i.e., `component(mmrm_object, "n_subjects")`). As a result, `BIC(logLik(mmrm_object))` can now be successfully calculated.
 
 # mmrm 0.3.15
 
