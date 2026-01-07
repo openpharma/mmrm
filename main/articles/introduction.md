@@ -248,11 +248,11 @@ mmrm(fev1 ~ trt * time + us(time | pts), data = out, start = emp_start)
 #>               time88              time104   trtTreatment:time2 
 #>          -28.2068895          -33.6608067            6.0436315 
 #>   trtTreatment:time6  trtTreatment:time12  trtTreatment:time24 
-#>           27.3686373           49.4246568          107.3638490 
+#>           27.3686373           49.4246568          107.3638489 
 #>  trtTreatment:time36  trtTreatment:time52  trtTreatment:time70 
-#>          161.4310446          233.6438344          316.7387105 
+#>          161.4310445          233.6438343          316.7387104 
 #>  trtTreatment:time88 trtTreatment:time104 
-#>          397.9895971          471.8871918 
+#>          397.9895969          471.8871916 
 #> 
 #> Model Inference Optimization:
 #> Converged with code 0 and message: convergence: rel_reduction_of_f <= factr*epsmch
@@ -343,15 +343,15 @@ fit_opt
 #> 
 #> Coefficients: 
 #>                   (Intercept) RACEBlack or African American 
-#>                   30.96768936                    1.50467465 
+#>                    30.9676894                     1.5046749 
 #>                     RACEWhite                      ARMCDTRT 
-#>                    5.61310613                    3.77554452 
+#>                     5.6131055                     3.7755437 
 #>                    AVISITVIS2                    AVISITVIS3 
-#>                    4.82858600                   10.33317622 
+#>                     4.8285859                    10.3331766 
 #>                    AVISITVIS4           ARMCDTRT:AVISITVIS2 
-#>                   15.05257117                   -0.01735504 
+#>                    15.0525711                    -0.0173532 
 #>           ARMCDTRT:AVISITVIS3           ARMCDTRT:AVISITVIS4 
-#>                   -0.66752133                    0.63095590 
+#>                    -0.6675203                     0.6309573 
 #> 
 #> Model Inference Optimization:
 #> Converged with code 0 and message: No message provided.
@@ -1163,11 +1163,11 @@ pairs(lsmeans_by_visit, reverse = TRUE)
 #> 
 #> AVISIT = VIS2:
 #>  contrast  estimate    SE  df t.ratio p.value
-#>  TRT - PBO     3.73 0.859 145   4.346  <.0001
+#>  TRT - PBO     3.73 0.859 145   4.346 <0.0001
 #> 
 #> AVISIT = VIS3:
 #>  contrast  estimate    SE  df t.ratio p.value
-#>  TRT - PBO     3.08 0.690 131   4.467  <.0001
+#>  TRT - PBO     3.08 0.690 131   4.467 <0.0001
 #> 
 #> AVISIT = VIS4:
 #>  contrast  estimate    SE  df t.ratio p.value

@@ -537,14 +537,14 @@ implementations considered produce similar empirical biases, variances,
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #>  [1] ggplot2_4.0.1           emmeans_2.0.0           knitr_1.50             
+    #>  [1] ggplot2_4.0.1           emmeans_2.0.1           knitr_1.51             
     #>  [4] sasr_0.1.5              glmmTMB_1.1.13          nlme_3.1-168           
     #>  [7] lme4_1.1-38             Matrix_1.7-4            mmrm_0.3.16            
     #> [10] stringr_1.6.0           microbenchmark_1.5.0    purrr_1.2.0            
     #> [13] dplyr_1.1.4             clusterGeneration_1.3.8 MASS_7.3-65            
     #> 
     #> loaded via a namespace (and not attached):
-    #>  [1] gtable_0.3.6        TMB_1.9.18          xfun_0.54          
+    #>  [1] gtable_0.3.6        TMB_1.9.19          xfun_0.55          
     #>  [4] bslib_0.9.0         htmlwidgets_1.6.4   lattice_0.22-7     
     #>  [7] numDeriv_2016.8-1.1 vctrs_0.6.5         tools_4.5.0        
     #> [10] Rdpack_2.6.4        generics_0.1.4      sandwich_3.1-1     
@@ -552,18 +552,19 @@ implementations considered produce similar empirical biases, variances,
     #> [16] RColorBrewer_1.1-3  S7_0.2.1            desc_1.4.3         
     #> [19] lifecycle_1.0.4     farver_2.1.2        compiler_4.5.0     
     #> [22] textshaping_1.0.4   codetools_0.2-20    htmltools_0.5.9    
-    #> [25] sass_0.4.10         yaml_2.3.11         pillar_1.11.1      
+    #> [25] sass_0.4.10         yaml_2.3.12         pillar_1.11.1      
     #> [28] pkgdown_2.2.0       nloptr_2.2.1        jquerylib_0.1.4    
-    #> [31] cachem_1.1.0        reformulas_0.4.2    boot_1.3-32        
+    #> [31] cachem_1.1.0        reformulas_0.4.3    boot_1.3-32        
     #> [34] multcomp_1.4-29     tidyselect_1.2.1    digest_0.6.39      
     #> [37] mvtnorm_1.3-3       stringi_1.8.7       labeling_0.4.3     
     #> [40] splines_4.5.0       fastmap_1.2.0       grid_4.5.0         
     #> [43] cli_3.6.5           magrittr_2.0.4      dichromat_2.0-0.1  
     #> [46] survival_3.8-3      TH.data_1.1-5       withr_3.0.2        
     #> [49] scales_1.4.0        backports_1.5.0     estimability_1.5.1 
-    #> [52] rmarkdown_2.30      reticulate_1.44.1   ragg_1.5.0         
-    #> [55] zoo_1.8-14          png_0.1-8           coda_0.19-4.1      
-    #> [58] evaluate_1.0.5      rbibutils_2.4       mgcv_1.9-4         
-    #> [61] rlang_1.1.6         Rcpp_1.1.0          xtable_1.8-4       
-    #> [64] glue_1.8.0          minqa_1.2.8         jsonlite_2.0.0     
-    #> [67] R6_2.6.1            systemfonts_1.3.1   fs_1.6.6
+    #> [52] rmarkdown_2.30      otel_0.2.0          reticulate_1.44.1  
+    #> [55] png_0.1-8           ragg_1.5.0          zoo_1.8-15         
+    #> [58] coda_0.19-4.1       evaluate_1.0.5      rbibutils_2.4      
+    #> [61] mgcv_1.9-4          rlang_1.1.6         Rcpp_1.1.0         
+    #> [64] xtable_1.8-4        glue_1.8.0          minqa_1.2.8        
+    #> [67] jsonlite_2.0.0      R6_2.6.1            systemfonts_1.3.1  
+    #> [70] fs_1.6.6

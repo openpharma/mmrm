@@ -2,6 +2,8 @@
 
 ## mmrm 0.3.16
 
+CRAN release: 2025-12-09
+
 #### New Features
 
 - [`Anova.mmrm()`](https://openpharma.github.io/mmrm/reference/Anova.mmrm.md)
