@@ -31,11 +31,11 @@ if (require(emmeans)) {
 #> 
 #> AVISIT = VIS2:
 #>  contrast  estimate    SE  df t.ratio p.value
-#>  TRT - PBO     3.73 0.859 145   4.346  <.0001
+#>  TRT - PBO     3.73 0.859 145   4.346 <0.0001
 #> 
 #> AVISIT = VIS3:
 #>  contrast  estimate    SE  df t.ratio p.value
-#>  TRT - PBO     3.08 0.690 131   4.467  <.0001
+#>  TRT - PBO     3.08 0.690 131   4.467 <0.0001
 #> 
 #> AVISIT = VIS4:
 #>  contrast  estimate    SE  df t.ratio p.value

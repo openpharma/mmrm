@@ -1,4 +1,4 @@
-pandoc: 3.7.0.2
+pandoc: 3.8.3
 pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
@@ -15,7 +15,7 @@ articles:
   package_structure: package_structure.html
   predict: predict.html
   satterthwaite: satterthwaite.html
-last_built: 2025-12-10T08:15Z
+last_built: 2026-01-09T00:50Z
 urls:
   reference: https://openpharma.github.io/mmrm/latest-tag/reference
   article: https://openpharma.github.io/mmrm/latest-tag/articles

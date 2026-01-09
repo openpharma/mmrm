@@ -12,6 +12,7 @@ specified, as well as the defaults of `reml = TRUE` and
 `control = mmrm_control()`.
 
 ``` r
+
 library(mmrm)
 fit <- mmrm(
   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
@@ -39,6 +40,7 @@ printout of the estimated coefficients and the model convergence
 information:
 
 ``` r
+
 fit
 #> mmrm fit
 #> 
@@ -72,6 +74,7 @@ provides the coefficients table with Satterthwaite degrees of freedom as
 well as the covariance matrix estimate:
 
 ``` r
+
 summary(fit)
 #> mmrm fit
 #> 
@@ -142,6 +145,7 @@ defined design matrix is singular, not drop unobserved visit levels. For
 example:
 
 ``` r
+
 mmrm_control(
   method = "Kenward-Roger",
   optimizer = c("L-BFGS-B", "BFGS"),
@@ -180,6 +184,7 @@ Here we provide an example where the `std_start` fails. In the following
 code chunk, we will create a dummy dataset for mmrm analysis.
 
 ``` r
+
 gen_data <- function(
     n = 100,
     mu = -100 / 52,
@@ -218,6 +223,7 @@ In the generated data, the variance is not in the same scale across
 visits.
 
 ``` r
+
 vapply(split(out$fev1, out$time), sd, FUN.VALUE = 1)
 #>         0         2         6        12        24        36        52        70 
 #>  278.6079  319.0589  482.4172  799.9107 1491.1440 2194.5776 3140.0768 4204.9355 
@@ -228,6 +234,7 @@ vapply(split(out$fev1, out$time), sd, FUN.VALUE = 1)
 Using `emp_start` as the starting value, `mmrm` will converge fast.
 
 ``` r
+
 mmrm(fev1 ~ trt * time + us(time | pts), data = out, start = emp_start)
 #> mmrm fit
 #> 
@@ -244,15 +251,15 @@ mmrm(fev1 ~ trt * time + us(time | pts), data = out, start = emp_start)
 #>                time6               time12               time24 
 #>           -1.6901336           -1.1984277           -7.3954489 
 #>               time36               time52               time70 
-#>          -11.4078895          -15.8040920          -22.5556524 
+#>          -11.4078895          -15.8040920          -22.5556525 
 #>               time88              time104   trtTreatment:time2 
-#>          -28.2068895          -33.6608067            6.0436315 
+#>          -28.2068896          -33.6608068            6.0436315 
 #>   trtTreatment:time6  trtTreatment:time12  trtTreatment:time24 
-#>           27.3686373           49.4246567          107.3638488 
+#>           27.3686373           49.4246568          107.3638489 
 #>  trtTreatment:time36  trtTreatment:time52  trtTreatment:time70 
-#>          161.4310444          233.6438342          316.7387101 
+#>          161.4310445          233.6438343          316.7387104 
 #>  trtTreatment:time88 trtTreatment:time104 
-#>          397.9895967          471.8871913 
+#>          397.9895969          471.8871916 
 #> 
 #> Model Inference Optimization:
 #> Converged with code 0 and message: convergence: rel_reduction_of_f <= factr*epsmch
@@ -264,6 +271,7 @@ details, here e.g. choosing `nlminb` with increased maximum number of
 function evaluations and iterations.
 
 ``` r
+
 mmrm(
   fev1 ~ trt * time + us(time | pts),
   data = out,
@@ -279,6 +287,7 @@ Users can specify if REML should be used (default) or if ML should be
 used in optimization.
 
 ``` r
+
 fit_ml <- mmrm(
   formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data,
@@ -326,6 +335,7 @@ uses both the gradient and the Hessian (by default but can be switch
 off) for the optimization.
 
 ``` r
+
 fit_opt <- mmrm(
   formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data,
@@ -343,15 +353,15 @@ fit_opt
 #> 
 #> Coefficients: 
 #>                   (Intercept) RACEBlack or African American 
-#>                   30.96768936                    1.50467465 
+#>                    30.9676894                     1.5046749 
 #>                     RACEWhite                      ARMCDTRT 
-#>                    5.61310613                    3.77554452 
+#>                     5.6131055                     3.7755437 
 #>                    AVISITVIS2                    AVISITVIS3 
-#>                    4.82858600                   10.33317622 
+#>                     4.8285859                    10.3331766 
 #>                    AVISITVIS4           ARMCDTRT:AVISITVIS2 
-#>                   15.05257117                   -0.01735504 
+#>                    15.0525711                    -0.0173532 
 #>           ARMCDTRT:AVISITVIS3           ARMCDTRT:AVISITVIS4 
-#>                   -0.66752133                    0.63095590 
+#>                    -0.6675203                     0.6309573 
 #> 
 #> Model Inference Optimization:
 #> Converged with code 0 and message: No message provided.
@@ -366,6 +376,7 @@ vignette](https://openpharma.github.io/mmrm/articles/covariance.md).
 Below we see the function call for homogeneous compound symmetry (`cs`).
 
 ``` r
+
 fit_cs <- mmrm(
   formula = FEV1 ~ RACE + ARMCD * AVISIT + cs(AVISIT | USUBJID),
   data = fev_data,
@@ -410,6 +421,7 @@ Users can perform weighted MMRM by specifying a numeric vector `weights`
 with positive values.
 
 ``` r
+
 fit_wt <- mmrm(
   formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data,
@@ -453,6 +465,7 @@ specify the group variable.
 Here is an example of how we use `ARMCD` as group variable.
 
 ``` r
+
 fit_cs <- mmrm(
   formula = FEV1 ~ RACE + ARMCD * AVISIT + cs(AVISIT | ARMCD / USUBJID),
   data = fev_data,
@@ -493,6 +506,7 @@ A list of all allowed `method` is
 4.  “Between-Within”
 
 ``` r
+
 fit_kr <- mmrm(
   formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data,
@@ -509,6 +523,7 @@ the adjustment method), looking at the `summary` we see the method and
 the correspondingly adjusted standard errors and degrees of freedom:
 
 ``` r
+
 summary(fit_kr)
 #> mmrm fit
 #> 
@@ -567,6 +582,7 @@ Note that if you would like to match SAS results for an unstructured
 covariance model, you can use the linear Kenward-Roger approximation:
 
 ``` r
+
 fit_kr_lin <- mmrm(
   formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data,
@@ -605,6 +621,7 @@ Covariance](https://openpharma.github.io/mmrm/articles/empirical_wls.md).
 An example of using other variance-covariance is:
 
 ``` r
+
 fit_emp <- mmrm(
   formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data,
@@ -627,6 +644,7 @@ visit level explicitly, using the `drop_visit_levels = FALSE` choice.
 Second we fit the model by default without this option.
 
 ``` r
+
 sparse_data <- fev_data[fev_data$AVISIT != "VIS3", ]
 sparse_result <- mmrm(
   FEV1 ~ RACE + ar1(AVISIT | USUBJID),
@@ -647,6 +665,7 @@ We see that we get a message about the dropped visit level by default.
 Now we can compare the estimated correlation matrices:
 
 ``` r
+
 cov2cor(VarCorr(sparse_result))
 #>            VIS1      VIS2      VIS3       VIS4
 #> VIS1 1.00000000 0.4051834 0.1641736 0.06652042
@@ -684,6 +703,7 @@ The `summary` method for `mmrm` objects provides easy access to
 frequently needed model components.
 
 ``` r
+
 fit <- mmrm(
   formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data
@@ -695,6 +715,7 @@ From this summary object, you can easily retrieve the coefficients
 table.
 
 ``` r
+
 fit_summary$coefficients
 #>                                  Estimate Std. Error       df     t value
 #> (Intercept)                   30.96769899  0.8293349 187.9132 37.34040185
@@ -724,6 +745,7 @@ Other model parameters and metadata available in the summary object is
 as follows:
 
 ``` r
+
 str(fit_summary)
 #> List of 15
 #>  $ cov_type        : chr "us"
@@ -767,6 +789,7 @@ different types of residuals:
     so these residuals should be interpreted with caution.
 
 ``` r
+
 fit <- mmrm(
   formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data
@@ -780,6 +803,7 @@ residuals_resp <- residuals(fit, type = "response")
     of the covariance structure, compared to the raw residuals.
 
 ``` r
+
 residuals_pearson <- residuals(fit, type = "pearson")
 ```
 
@@ -790,6 +814,7 @@ residuals_pearson <- residuals(fit, type = "pearson")
     to check for normality (@galecki2013linear).
 
 ``` r
+
 residuals_norm <- residuals(fit, type = "normalized")
 ```
 
@@ -806,6 +831,7 @@ For example, we can apply the `tidy` method to return a summary table of
 coefficient estimates:
 
 ``` r
+
 fit |>
   tidy()
 #> # A tibble: 10 × 6
@@ -827,6 +853,7 @@ We can also specify some details to request confidence intervals of
 specific confidence level:
 
 ``` r
+
 fit |>
   tidy(conf.int = TRUE, conf.level = 0.9)
 #> # A tibble: 10 × 8
@@ -848,6 +875,7 @@ Or we can apply the `glance` method to return a summary table of
 goodness of fit statistics:
 
 ``` r
+
 fit |>
   glance()
 #> # A tibble: 1 × 4
@@ -860,6 +888,7 @@ Finally, we can use the `augment` method to return a merged `tibble` of
 the data, fitted values and residuals:
 
 ``` r
+
 fit |>
   augment()
 #> # A tibble: 537 × 8
@@ -882,6 +911,7 @@ Also here we can specify details for the prediction intervals and type
 of residuals via the arguments:
 
 ``` r
+
 fit |>
   augment(interval = "confidence", type.residuals = "normalized")
 #> # A tibble: 537 × 11
@@ -911,6 +941,7 @@ function. The default will output all supported components.
 For example, a user may want information about convergence:
 
 ``` r
+
 component(fit, name = c("convergence", "evaluations", "conv_message"))
 #> $convergence
 #> [1] 0
@@ -926,6 +957,7 @@ component(fit, name = c("convergence", "evaluations", "conv_message"))
 or the original low-level call:
 
 ``` r
+
 component(fit, name = "call")
 #> mmrm(formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID), 
 #>     data = fev_data)
@@ -935,6 +967,7 @@ the user could also ask for all provided components by not specifying
 the `name` argument.
 
 ``` r
+
 component(fit)
 ```
 
@@ -953,6 +986,7 @@ Kenward-Roger calculations. It may be useful for other packages that
 want to fit the model without the adjustment calculations.
 
 ``` r
+
 fit_mmrm(
   formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data,
@@ -1003,6 +1037,7 @@ Compute the test of a one-dimensional (vector) contrast for a `mmrm`
 object with Satterthwaite degrees of freedom.
 
 ``` r
+
 fit <- mmrm(
   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data
@@ -1031,6 +1066,7 @@ df_1d(fit, contrast)
 This works similarly when choosing a Kenward-Roger adjustment:
 
 ``` r
+
 fit_kr <- mmrm(
   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data,
@@ -1067,6 +1103,7 @@ Compute the test of a multi-dimensional (matrix) contrast for the above
 defined `mmrm` object with Satterthwaite degrees of freedom:
 
 ``` r
+
 contrast <- matrix(data = 0, nrow = 2, ncol = length(component(fit, "beta_est")))
 contrast[1, 2] <- contrast[2, 3] <- 1
 
@@ -1087,6 +1124,7 @@ df_md(fit, contrast)
 And for the Kenward-Roger adjustment:
 
 ``` r
+
 df_md(fit_kr, contrast)
 #> $num_df
 #> [1] 2
@@ -1116,6 +1154,7 @@ example, in order to see the least-square means by visit and by
 treatment arm:
 
 ``` r
+
 library(emmeans)
 #> mmrm() registered as emmeans extension
 #> Welcome to emmeans.
@@ -1156,6 +1195,7 @@ returned by
 earlier:
 
 ``` r
+
 pairs(lsmeans_by_visit, reverse = TRUE)
 #> AVISIT = VIS1:
 #>  contrast  estimate    SE  df t.ratio p.value
@@ -1163,11 +1203,11 @@ pairs(lsmeans_by_visit, reverse = TRUE)
 #> 
 #> AVISIT = VIS2:
 #>  contrast  estimate    SE  df t.ratio p.value
-#>  TRT - PBO     3.73 0.859 145   4.346  <.0001
+#>  TRT - PBO     3.73 0.859 145   4.346 <0.0001
 #> 
 #> AVISIT = VIS3:
 #>  contrast  estimate    SE  df t.ratio p.value
-#>  TRT - PBO     3.08 0.690 131   4.467  <.0001
+#>  TRT - PBO     3.08 0.690 131   4.467 <0.0001
 #> 
 #> AVISIT = VIS4:
 #>  contrast  estimate    SE  df t.ratio p.value
@@ -1188,6 +1228,7 @@ returned by [`pairs()`](https://rdrr.io/r/graphics/pairs.html) .
 This is similar to the `LSMEANS` in SAS, with `CL` and `DIFF` options.
 
 ``` r
+
 confint(pairs(lsmeans_by_visit, reverse = TRUE))
 #> AVISIT = VIS1:
 #>  contrast  estimate    SE  df lower.CL upper.CL
@@ -1242,6 +1283,7 @@ In order to see if the used covariates are related to the response using
 a type II test:
 
 ``` r
+
 library(car)
 #> Loading required package: carData
 #> mmrm() registered as car::Anova extension
@@ -1267,6 +1309,7 @@ We can also use type III hypothesis testing, this time choosing a
 Chi-squared test statistic:
 
 ``` r
+
 Anova(fit, type = "III", test.statistic = "Chisq")
 #> Analysis of Fixed Effect Table (Type III Chisq tests)
 #>              Df    Chisq Pr(>Chisq)    
@@ -1287,6 +1330,7 @@ Anova(fit, type = "III", test.statistic = "Chisq")
 is an example of how such a workflow would be constructed.
 
 ``` r
+
 library(tidymodels)
 ```
 
@@ -1303,6 +1347,7 @@ First we define the direct method to fit an `mmrm` model using the
   call.
 
 ``` r
+
 model <- linear_reg() |>
   set_engine("mmrm", method = "Satterthwaite") |>
   fit(FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID), fev_data)
@@ -1339,6 +1384,7 @@ We can also pass in the full `mmrm_control` object into the
 `set_engine()` call:
 
 ``` r
+
 model_with_control <- linear_reg() |>
   set_engine("mmrm", control = mmrm_control(method = "Satterthwaite")) |>
   fit(FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID), fev_data)
@@ -1350,6 +1396,7 @@ Lastly, we can also obtain predictions with the
 [`predict()`](https://rdrr.io/r/stats/predict.html) method:
 
 ``` r
+
 predict(model, new_data = fev_data)
 #> # A tibble: 800 × 1
 #>    .pred
@@ -1380,6 +1427,7 @@ On the other hand, when using `type = "raw"` we can customize the
 calculations via the `opts` list:
 
 ``` r
+
 predict(
   model,
   new_data = fev_data,
@@ -2199,6 +2247,7 @@ Similarly, we can also use the
 to add predicted values to a new data set:
 
 ``` r
+
 augment(model, new_data = fev_data) |>
   select(USUBJID, AVISIT, .resid, .pred)
 #> # A tibble: 800 × 4
@@ -2234,6 +2283,7 @@ We can leverage the `workflows` package in order to fit the same model.
 - Lastly, we fit the model
 
 ``` r
+
 mmrm_spec <- linear_reg() |>
   set_engine("mmrm", method = "Satterthwaite")
 
@@ -2284,6 +2334,7 @@ into a dummy variable and creating an interaction term with the new
 dummy variable and each visit.
 
 ``` r
+
 mmrm_recipe <- recipe(FEV1 ~ ., data = fev_data) |>
   step_dummy(ARMCD) |>
   step_interact(terms = ~ starts_with("ARMCD"):AVISIT)
@@ -2293,6 +2344,7 @@ Using `prep()` and `juice()` we can see what the transformed data that
 will be used in the model fit looks like.
 
 ``` r
+
 mmrm_recipe |>
   prep() |>
   juice()
@@ -2324,6 +2376,7 @@ covariance structures in the pipeline while keeping the data preparation
 step independent.
 
 ``` r
+
 mmrm_spec_with_cov <- linear_reg() |>
   set_engine(
     "mmrm",
@@ -2335,6 +2388,7 @@ mmrm_spec_with_cov <- linear_reg() |>
 We combine these steps into a workflow:
 
 ``` r
+
 (mmrm_wflow_nocov <- workflow() |>
   add_model(mmrm_spec_with_cov, formula = FEV1 ~ SEX) |>
   add_recipe(mmrm_recipe))
@@ -2361,6 +2415,7 @@ We combine these steps into a workflow:
 Last step is to fit the data with the workflow object
 
 ``` r
+
 (fit_tidy <- fit(mmrm_wflow_nocov, data = fev_data))
 #> Warning: Categorical variables used in `step_interact()` should probably be avoided;
 #> This can lead to differences in dummy variable values that are produced by
@@ -2399,6 +2454,7 @@ To retrieve the fit object from within the workflow object run the
 following
 
 ``` r
+
 fit_tidy |>
   hardhat::extract_fit_engine()
 #> mmrm fit

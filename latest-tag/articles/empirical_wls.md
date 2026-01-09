@@ -185,7 +185,7 @@ to avoid this. We follow the following logic (see the corresponding
     and U/V matrix.
 
 In `Eigen` package, the pseudo inverse method is already implemented in
-[`Eigen::CompleteOrthogonalDecomposition< MatrixType_ >::pseudoInverse`](https://libeigen.gitlab.io/docs/classEigen_1_1CompleteOrthogonalDecomposition.html#a6260bd1050a28dd59733233d93eb6bed),
+[`Eigen::CompleteOrthogonalDecomposition< MatrixType_ >::pseudoInverse`](https://libeigen.gitlab.io/eigen/docs-nightly/classEigen_1_1CompleteOrthogonalDecomposition.html),
 but it is not used for the following reason:
 
 1.  The pseudo inverse method is not stable and can lead to `NAN` in

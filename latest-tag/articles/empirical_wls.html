@@ -34,7 +34,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.16</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.17</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -87,6 +87,7 @@
     <div class="dropdown-menu" aria-labelledby="dropdown-versions">
     <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
+<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.17">v0.3.17</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.16">v0.3.16</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.15">v0.3.15</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.14">v0.3.14</a>
@@ -126,7 +127,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Details of Weighted Least Square Empirical Covariance</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.16/vignettes/empirical_wls.Rmd" class="external-link"><code>vignettes/empirical_wls.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.17/vignettes/empirical_wls.Rmd" class="external-link"><code>vignettes/empirical_wls.Rmd</code></a></small>
       <div class="d-none name"><code>empirical_wls.Rmd</code></div>
     </div>
 
@@ -345,7 +346,7 @@ threshold; otherwise replace the value with 0.</li>
 and U/V matrix.</li>
 </ol>
 <p>In <code>Eigen</code> package, the pseudo inverse method is already
-implemented in <a href="https://libeigen.gitlab.io/docs/classEigen_1_1CompleteOrthogonalDecomposition.html#a6260bd1050a28dd59733233d93eb6bed" class="external-link"><code>Eigen::CompleteOrthogonalDecomposition&lt; MatrixType_ &gt;::pseudoInverse</code></a>,
+implemented in <a href="https://libeigen.gitlab.io/eigen/docs-nightly/classEigen_1_1CompleteOrthogonalDecomposition.html" class="external-link"><code>Eigen::CompleteOrthogonalDecomposition&lt; MatrixType_ &gt;::pseudoInverse</code></a>,
 but it is not used for the following reason:</p>
 <ol style="list-style-type: decimal">
 <li>The pseudo inverse method is not stable and can lead to
