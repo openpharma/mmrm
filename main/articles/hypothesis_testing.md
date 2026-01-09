@@ -72,6 +72,7 @@ submatrix in step 2.
 Using `fev_data` to create our example, we have
 
 ``` r
+
 library(mmrm)
 fit <- mmrm(FEV1 ~ ARMCD + RACE + ARMCD * RACE + ar1(AVISIT | USUBJID), data = fev_data)
 ```
@@ -96,6 +97,7 @@ In the last step, for the last 2 columns, we fill the values with the
 calculated result.
 
 ``` r
+
 x <- component(fit, "x_matrix")
 x0 <- x[, c(1, 2)]
 x1 <- x[, c(3, 4)]
@@ -199,6 +201,7 @@ Assume in SAS we have the following model
 And in R we have the following model
 
 ``` r
+
 fit <- mmrm(FEV1 ~ ARMCD + AVISIT + ARMCD * AVISIT + ar1(AVISIT | USUBJID), data = fev_data)
 Anova(fit)
 ```

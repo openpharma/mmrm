@@ -44,7 +44,7 @@ files for different topics, for example:
 The `design/SAS/` folder contains programs to run MMRM models in SAS and
 the corresponding SAS outputs. The results will be used for integration
 tests (see [integration
-tests](https://openpharma.github.io/mmrm/CONTRIBUTING.html#add-integration-tests)).
+tests](https://openpharma.github.io/mmrm/latest-tag/CONTRIBUTING.html#add-integration-tests)).
 
 #### `TMB`
 

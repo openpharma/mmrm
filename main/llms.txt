@@ -71,6 +71,7 @@ means estimates by using `emmeans`.
 You can install the current release version from *CRAN* with:
 
 ``` r
+
 install.packages("mmrm")
 ```
 
@@ -79,6 +80,7 @@ install.packages("mmrm")
 You can install the current development version from *R-Universe* with:
 
 ``` r
+
 install.packages(
   "mmrm",
   repos = c("https://openpharma.r-universe.dev", "https://cloud.r-project.org")
@@ -93,6 +95,7 @@ Alternatively, you can install the current development version from
 *GitHub* with:
 
 ``` r
+
 if (!require("remotes")) {
   install.packages("remotes")
 }
@@ -109,6 +112,7 @@ vignette](https://openpharma.github.io/mmrm/main/articles/introduction.html)
 or get started by trying out the example:
 
 ``` r
+
 library(mmrm)
 fit <- mmrm(
   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
@@ -136,6 +140,7 @@ printout of the estimated coefficients and the model convergence
 information:
 
 ``` r
+
 fit
 #> mmrm fit
 #> 
@@ -169,6 +174,7 @@ provides the coefficients table with Satterthwaite degrees of freedom as
 well as the covariance matrix estimate:
 
 ``` r
+
 summary(fit)
 #> mmrm fit
 #> 

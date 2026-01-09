@@ -56,6 +56,7 @@ Let’s look at a concrete example and what the “between-within” degrees
 of freedom method gives as results:
 
 ``` r
+
 fit <- mmrm(
   formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = fev_data,
@@ -127,6 +128,7 @@ And we note that \\N_0 = 1\\ because we use an intercept term.
 Now let’s look at the design matrix:
 
 ``` r
+
 head(model.matrix(fit), 1)
 #>   (Intercept) RACEBlack or African American RACEWhite SEXFemale ARMCDTRT
 #> 2           1                             1         0         1        1

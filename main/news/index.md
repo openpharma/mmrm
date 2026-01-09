@@ -1,5 +1,14 @@
 # Changelog
 
+## mmrm 0.3.17
+
+CRAN release: 2026-01-08
+
+#### Miscellaneous
+
+- Added `Rcpp` specific flag to avoid warnings when using the upcoming
+  new version of `Rcpp`.
+
 ## mmrm 0.3.16
 
 CRAN release: 2025-12-09

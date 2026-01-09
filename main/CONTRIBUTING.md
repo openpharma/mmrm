@@ -179,6 +179,7 @@ create a new test file, with a name prefix of “test-”.
 In each test case, use the following structure:
 
 ``` r
+
 test_that("function_name does something as expected", {
   result <- function_name(input)
   expected <- hardcoded_result
