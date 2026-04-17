@@ -41,7 +41,11 @@ get_mmrm_no_intercept <- function() {
 }
 
 .mmrm_alias_noint <- mmrm(
-  FEV1 ~ ARMCD:FEV1_BL + FEV1_BL - 1 + ARMCD:SEX + ar1(as.ordered(AVISIT) | USUBJID),
+  FEV1 ~ ARMCD:FEV1_BL +
+    FEV1_BL -
+    1 +
+    ARMCD:SEX +
+    ar1(as.ordered(AVISIT) | USUBJID),
   data = fev_data
 )
 

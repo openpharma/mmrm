@@ -1,3 +1,8 @@
+# mmrm 0.3.18
+
+### New Features
+- `emp_start()` now supports all non-spatial covariance structure types, not just unstructured. Parametrized covariance structures now use a simple moment-matching procedure to identify a reasonable empirical starting value.
+
 # mmrm 0.3.17
 
 ### Miscellaneous

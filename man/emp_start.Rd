@@ -11,6 +11,7 @@ emp_start(
   visit_var,
   subject_var,
   subject_groups,
+  cov_type,
   ...
 )
 }
@@ -19,7 +20,8 @@ emp_start(
 
 \item{x_matrix}{(\code{matrix}) design matrix.}
 
-\item{full_frame}{(\code{data.frame}) full data frame used for model fitting.}
+\item{full_frame}{(\code{data.frame}) full data frame used for
+model fitting.}
 
 \item{visit_var}{(\code{string})\cr visit variable.}
 
@@ -27,17 +29,23 @@ emp_start(
 
 \item{subject_groups}{(\code{factor})\cr subject group assignment.}
 
+\item{cov_type}{(\code{string})\cr covariance structure type.}
+
 \item{...}{not used.}
 }
 \value{
 A numeric vector of starting values.
 }
 \description{
-Obtain empirical start value for unstructured covariance
+Obtain empirical start value
+for the covariance parameters.
 }
 \details{
-This \code{emp_start} only works for unstructured covariance structure.
-It uses linear regression to first obtain the coefficients and use the residuals
-to obtain the empirical variance-covariance, and it is then used to obtain the
-starting values.
+\code{emp_start} supports all non-spatial covariance types.
+It uses linear regression to first obtain the coefficients
+and uses the residuals to obtain the empirical
+variance-covariance matrix. This is then decomposed into
+standard deviations and correlations which are mapped to the
+appropriate theta parameterization for the specified
+covariance type.
 }

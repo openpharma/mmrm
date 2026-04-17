@@ -651,6 +651,18 @@ test_that("mmrm works for character covariate using emp_start", {
   )
 })
 
+test_that("emp_start works as start function for all non-spatial covariance types", {
+  cov_types <- c("us", "toep", "toeph", "ar1", "ar1h", "ad", "adh", "cs", "csh")
+  for (cov_type in cov_types) {
+    formula <- stats::as.formula(
+      paste("FEV1 ~ ARMCD +", cov_type, "(AVISIT | USUBJID)")
+    )
+    expect_silent(
+      mmrm(formula = formula, data = fev_data, start = emp_start)
+    )
+  }
+})
+
 test_that("mmrm still works for deprecated 'automatic' optimizer", {
   expect_warning(
     mmrm(
