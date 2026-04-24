@@ -73,11 +73,8 @@ emm_basis.mmrm <- function(
   )
   contrasts <- component(object, "contrasts")
   model_mat <- stats::model.matrix(trms, model_frame, contrasts.arg = contrasts)
-  beta_hat <- component(object, "beta_est")
-  nbasis <- if (length(beta_hat) < ncol(model_mat)) {
-    kept <- match(names(beta_hat), colnames(model_mat))
-    beta_hat <- NA * model_mat[1L, ]
-    beta_hat[kept] <- component(object, "beta_est")
+  beta_hat <- component(object, "beta_est_complete")
+  nbasis <- if (anyNA(beta_hat)) {
     orig_model_mat <- stats::model.matrix(
       trms,
       stats::model.frame(
@@ -101,7 +98,7 @@ emm_basis.mmrm <- function(
     X = model_mat,
     bhat = beta_hat,
     nbasis = nbasis,
-    V = component(object, "beta_vcov"),
+    V = component(object, "beta_vcov_complete"),
     dffun = dffun,
     dfargs = dfargs
   )
