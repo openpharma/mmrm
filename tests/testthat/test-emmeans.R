@@ -344,3 +344,23 @@ test_that("emmeans gives d.f. close to what is expected for weighted model", {
   )
   expect_equal(result_contrasts_df, expected_contrasts_df, tolerance = 1e-2)
 })
+
+test_that("emmeans also works when the visit variable is contained only in an interaction term", {
+  skip_if_not_installed("emmeans", minimum_version = "1.6")
+
+  fit <- mmrm(
+    FEV1 ~ ARMCD + FEV1_BL:AVISIT + us(AVISIT | USUBJID),
+    data = fev_data
+  )
+  result <- expect_silent(emmeans::emmeans(fit, ~ ARMCD | AVISIT))
+})
+
+test_that("emmeans also works when the visit variable is not part of the covariates", {
+  skip_if_not_installed("emmeans", minimum_version = "1.6")
+
+  fit <- mmrm(
+    FEV1 ~ ARMCD + FEV1_BL:RACE + us(AVISIT | USUBJID),
+    data = fev_data
+  )
+  result <- expect_silent(emmeans::emmeans(fit, ~ ARMCD | AVISIT))
+})
