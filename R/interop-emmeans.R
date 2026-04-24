@@ -38,7 +38,8 @@ recover_data.mmrm <- function(object, ...) {
     object,
     exclude = c(
       "subject_var",
-      if (object$formula_parts$is_spatial) "visit_var"
+      "visit_var"
+      # if (object$formula_parts$is_spatial) "visit_var"
     )
   )
   model_terms <- stats::delete.response(stats::terms(model_frame))
