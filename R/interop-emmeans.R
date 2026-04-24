@@ -41,7 +41,10 @@ recover_data.mmrm <- function(object, ...) {
       if (object$formula_parts$is_spatial) "visit_var"
     )
   )
-  model_terms <- stats::delete.response(stats::terms(model_frame))
+  model_terms <- stats::terms(
+    object,
+    include = if (!object$formula_parts$is_spatial) "visit_var"
+  )
   emmeans::recover_data(
     fun_call,
     trms = model_terms,
@@ -98,7 +101,7 @@ emm_basis.mmrm <- function(
     X = model_mat,
     bhat = beta_hat,
     nbasis = nbasis,
-    V = component(object, "beta_vcov_complete"),
+    V = component(object, "beta_vcov"),
     dffun = dffun,
     dfargs = dfargs
   )
