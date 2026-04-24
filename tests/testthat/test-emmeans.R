@@ -353,6 +353,14 @@ test_that("emmeans also works when the visit variable is contained only in an in
     data = fev_data
   )
   result <- expect_silent(emmeans::emmeans(fit, ~ ARMCD | AVISIT))
+
+  fit2 <- mmrm(
+    FEV1 ~ ARMCD + AVISIT:FEV1_BL + us(AVISIT | USUBJID),
+    data = fev_data
+  )
+  result2 <- expect_silent(emmeans::emmeans(fit2, ~ ARMCD | AVISIT))
+
+  expect_equal(result, result2, ignore_attr = TRUE)
 })
 
 test_that("emmeans also works when the visit variable is not part of the covariates", {
