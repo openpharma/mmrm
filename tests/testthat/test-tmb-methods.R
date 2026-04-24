@@ -846,6 +846,30 @@ test_that("model.frame works with environment variables with missing values and 
   result <- expect_silent(model.frame(fit, data = fev_data))
 })
 
+test_that("model.frame retains order of interaction terms when not dropping variables", {
+  fit <- mmrm(
+    FEV1 ~ ARMCD + FEV1_BL:AVISIT + us(AVISIT | USUBJID),
+    data = fev_data
+  )
+  result <- expect_silent(model.frame(fit))
+  form <- formula(result)
+  expect_equal(
+    form,
+    FEV1 ~ ARMCD + USUBJID + AVISIT + FEV1_BL:AVISIT,
+    ignore_attr = TRUE
+  )
+})
+
+test_that("model.frame retains order of interaction terms when dropping variables", {
+  fit <- mmrm(
+    FEV1 ~ ARMCD + FEV1_BL:AVISIT + us(AVISIT | USUBJID),
+    data = fev_data
+  )
+  result <- expect_silent(model.frame(fit, exclude = "subject_var"))
+  form <- formula(result)
+  expect_equal(form, FEV1 ~ ARMCD + AVISIT + FEV1_BL:AVISIT, ignore_attr = TRUE)
+})
+
 # model.matrix ----
 
 test_that("model.matrix works as expected with defaults", {
