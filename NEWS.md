@@ -1,3 +1,9 @@
+# mmrm 0.3.17.9000
+
+### Bug Fixes
+
+- Previously, having the visit variable only in an interaction term in the model could lead to failed `emmeans()` evaluation. Similarly, there could be other interaction variable problems potentially with `emmeans()`, due to the change in the order which is automatically applied by `terms()` used internally. This is now fixed.
+
 # mmrm 0.3.17
 
 ### Miscellaneous
