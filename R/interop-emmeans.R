@@ -112,6 +112,16 @@ emm_basis.mmrm <- function(
   beta_hat <- component(object, "beta_est")
   nbasis <- if (length(beta_hat) < ncol(model_mat)) {
     kept <- h_match_coefs(names(beta_hat), colnames(model_mat))
+    if (anyNA(kept)) {
+      unmatched <- names(beta_hat)[is.na(kept)]
+      stop(
+        paste0(
+          "Failed to match coefficient name(s) to model matrix columns: ",
+          paste(unmatched, collapse = ", ")
+        ),
+        call. = FALSE
+      )
+    }
     beta_hat <- NA * model_mat[1L, ]
     beta_hat[kept] <- component(object, "beta_est")
     orig_model_mat <- stats::model.matrix(
