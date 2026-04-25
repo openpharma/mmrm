@@ -360,7 +360,10 @@ test_that("emmeans also works when the visit variable is contained only in an in
   )
   result2 <- expect_silent(emmeans::emmeans(fit2, ~ ARMCD | AVISIT))
 
-  expect_equal(result, result2, ignore_attr = TRUE)
+  expect_equal(
+    as.data.frame(result),
+    as.data.frame(result2)
+  )
 })
 
 test_that("emmeans also works when the visit variable is not part of the covariates", {
