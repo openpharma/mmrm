@@ -21,6 +21,42 @@
 #' @name emmeans_support
 NULL
 
+#' Match coefficient names against model matrix columns
+#'
+#' This helper is robust against re-ordering of interaction terms, e.g.
+#' `A:B` vs `B:A` and `A:B:C` vs any permutation.
+#'
+#' @keywords internal
+#' @noRd
+h_match_coefs <- function(coef_names, model_colnames) {
+  canon_interaction <- function(x) {
+    split_terms <- strsplit(x, ":", fixed = TRUE)
+    vapply(
+      split_terms,
+      FUN.VALUE = character(1),
+      function(term_parts) {
+        if (length(term_parts) <= 1L) {
+          term_parts
+        } else {
+          paste(sort(term_parts), collapse = ":")
+        }
+      }
+    )
+  }
+
+  kept <- match(coef_names, model_colnames)
+  idx_na <- is.na(kept)
+
+  if (any(idx_na)) {
+    kept[idx_na] <- match(
+      canon_interaction(coef_names[idx_na]),
+      canon_interaction(model_colnames)
+    )
+  }
+
+  kept
+}
+
 #' Returns a `data.frame` for `emmeans` Purposes
 #'
 #' @seealso See [emmeans::recover_data()] for background.
@@ -75,7 +111,17 @@ emm_basis.mmrm <- function(
   model_mat <- stats::model.matrix(trms, model_frame, contrasts.arg = contrasts)
   beta_hat <- component(object, "beta_est")
   nbasis <- if (length(beta_hat) < ncol(model_mat)) {
-    kept <- match(names(beta_hat), colnames(model_mat))
+    kept <- h_match_coefs(names(beta_hat), colnames(model_mat))
+    if (anyNA(kept)) {
+      unmatched <- names(beta_hat)[is.na(kept)]
+      stop(
+        paste0(
+          "Failed to match coefficient name(s) to model matrix columns: ",
+          paste(unmatched, collapse = ", ")
+        ),
+        call. = FALSE
+      )
+    }
     beta_hat <- NA * model_mat[1L, ]
     beta_hat[kept] <- component(object, "beta_est")
     orig_model_mat <- stats::model.matrix(
