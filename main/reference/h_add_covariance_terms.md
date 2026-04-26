@@ -12,12 +12,12 @@ h_add_covariance_terms(f, covariance)
 
 - f:
 
-  (`formula`)  
+  (`formula`)\
   a formula to which covariance structure terms should be added.
 
 - covariance:
 
-  (`cov_struct`)  
+  (`cov_struct`)\
   a covariance structure object from which additional variables should
   be sourced.
 

@@ -14,7 +14,7 @@ h_check_fits_all_data_same(fits)
 
 - fits:
 
-  (`list`)  
+  (`list`)\
   list of `mmrm` fits.
 
 ## Value

@@ -12,7 +12,7 @@ tmb_cov_type(cov)
 
 - cov:
 
-  (`cov_struct`)  
+  (`cov_struct`)\
   a covariance structure object.
 
 ## Value

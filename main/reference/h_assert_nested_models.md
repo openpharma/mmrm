@@ -12,12 +12,12 @@ h_assert_nested_models(model_basic, model_augmented, any_reml)
 
 - model_basic, model_augmented:
 
-  (`mmrm`)  
+  (`mmrm`)\
   model fits.
 
 - any_reml:
 
-  (`flag`)  
+  (`flag`)\
   `TRUE` or `FALSE` indicating whether or not either model used REML
   estimation.
 

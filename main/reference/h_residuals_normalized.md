@@ -14,7 +14,7 @@ h_residuals_normalized(object)
 
 - object:
 
-  (`mmrm_tmb`)  
+  (`mmrm_tmb`)\
   the fitted MMRM.
 
 ## Value

@@ -17,12 +17,12 @@ register_on_load(
 
 - pkg:
 
-  (`string`)  
+  (`string`)\
   package name.
 
 - ver:
 
-  (`character`)  
+  (`character`)\
   of length 2 whose elements can be provided to
   [`numeric_version()`](https://rdrr.io/r/base/numeric_version.html),
   representing a minimum and maximum (inclusive) version requirement for
@@ -31,14 +31,14 @@ register_on_load(
 
 - callback:
 
-  (`function(...) ANY`)  
+  (`function(...) ANY`)\
   a callback to execute upon package load. Note that no arguments are
   passed to this function. Any necessary data must be provided upon
   construction.
 
 - message:
 
-  (`NULL` or `string`)  
+  (`NULL` or `string`)\
   an optional message to print after the callback is executed upon
   successful registration.
 

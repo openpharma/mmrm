@@ -12,7 +12,7 @@ h_valid_formula(formula)
 
 - formula:
 
-  (`formula`)  
+  (`formula`)\
   to check.
 
 ## Details

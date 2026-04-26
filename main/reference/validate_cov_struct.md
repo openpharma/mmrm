@@ -12,7 +12,7 @@ validate_cov_struct(x)
 
 - x:
 
-  (`cov_struct`)  
+  (`cov_struct`)\
   a covariance structure object.
 
 ## Value

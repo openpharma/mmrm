@@ -13,7 +13,7 @@ h_df_to_tibble(data)
 
 - data:
 
-  (`data.frame`)  
+  (`data.frame`)\
   what to coerce.
 
 ## Value

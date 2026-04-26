@@ -16,18 +16,18 @@ h_quad_form_mat(mat, center)
 
 - vec:
 
-  (`numeric`)  
+  (`numeric`)\
   interpreted as a row vector.
 
 - center:
 
-  (`matrix`)  
+  (`matrix`)\
   square numeric matrix with the same dimensions as `x` as the center of
   the quadratic form.
 
 - mat:
 
-  (`matrix`)  
+  (`matrix`)\
   numeric matrix to be multiplied left and right of `center`, therefore
   needs to have as many columns as there are rows and columns in
   `center`.

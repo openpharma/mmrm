@@ -12,7 +12,7 @@ fill_names(x)
 
 - x:
 
-  (`character` or `list`)  
+  (`character` or `list`)\
   value whose names should be completed from element values.
 
 ## Value

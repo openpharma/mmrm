@@ -13,7 +13,7 @@ h_check_covar_nesting(model_basic, model_augmented)
 
 - model_basic, model_augmented:
 
-  (`mmrm_tmb_formula_parts`)  
+  (`mmrm_tmb_formula_parts`)\
   the `formula_parts` element of an `mmrm` model fit.
 
 ## Value

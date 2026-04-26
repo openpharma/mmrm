@@ -16,22 +16,22 @@ h_kr_df(v0, l, w, p)
 
 - v0:
 
-  (`matrix`)  
+  (`matrix`)\
   unadjusted covariance matrix.
 
 - l:
 
-  (`matrix`)  
+  (`matrix`)\
   linear combination matrix.
 
 - w:
 
-  (`matrix`)  
+  (`matrix`)\
   hessian matrix.
 
 - p:
 
-  (`matrix`)  
+  (`matrix`)\
   P matrix from
   [`h_get_kr_comp()`](https://openpharma.github.io/mmrm/reference/h_get_kr_comp.md).
 

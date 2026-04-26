@@ -12,7 +12,7 @@ h_dataset_sort_all(data)
 
 - data:
 
-  (`data.frame`)  
+  (`data.frame`)\
   a data frame to be sorted.
 
 ## Value

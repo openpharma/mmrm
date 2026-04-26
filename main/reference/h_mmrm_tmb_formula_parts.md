@@ -15,12 +15,12 @@ h_mmrm_tmb_formula_parts(
 
 - formula:
 
-  (`formula`)  
+  (`formula`)\
   Original formula.
 
 - covariance:
 
-  (`cov_struct`)  
+  (`cov_struct`)\
   A covariance structure from which additional formula parts should be
   added.
 

@@ -25,29 +25,29 @@ fit_single_optimizer(
 
 - formula:
 
-  (`formula`)  
+  (`formula`)\
   the model formula, see details.
 
 - data:
 
-  (`data`)  
+  (`data`)\
   the data to be used for the model.
 
 - weights:
 
-  (`vector`)  
+  (`vector`)\
   an optional vector of weights to be used in the fitting process.
   Should be `NULL` or a numeric vector.
 
 - reml:
 
-  (`flag`)  
+  (`flag`)\
   whether restricted maximum likelihood (REML) estimation is used,
   otherwise maximum likelihood (ML) is used.
 
 - covariance:
 
-  (`cov_struct`)  
+  (`cov_struct`)\
   a covariance structure type definition as produced with
   [`cov_struct()`](https://openpharma.github.io/mmrm/reference/cov_struct.md),
   or value that can be coerced to a covariance structure using
@@ -57,12 +57,12 @@ fit_single_optimizer(
 
 - tmb_data:
 
-  (`mmrm_tmb_data`)  
+  (`mmrm_tmb_data`)\
   object.
 
 - formula_parts:
 
-  (`mmrm_tmb_formula_parts`)  
+  (`mmrm_tmb_formula_parts`)\
   object.
 
 - ...:
@@ -72,7 +72,7 @@ fit_single_optimizer(
 
 - control:
 
-  (`mmrm_control`)  
+  (`mmrm_control`)\
   object.
 
 ## Value

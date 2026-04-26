@@ -23,40 +23,40 @@ mmrm_control(
 
 - n_cores:
 
-  (`count`)  
+  (`count`)\
   number of cores to be used.
 
 - method:
 
-  (`string`)  
+  (`string`)\
   adjustment method for degrees of freedom.
 
 - vcov:
 
-  (`string`)  
+  (`string`)\
   coefficients covariance matrix adjustment method.
 
 - start:
 
-  (`NULL`, `numeric` or `function`)  
+  (`NULL`, `numeric` or `function`)\
   optional start values for variance parameters. See details for more
   information.
 
 - accept_singular:
 
-  (`flag`)  
+  (`flag`)\
   whether singular design matrices are reduced to full rank
   automatically and additional coefficient estimates will be missing.
 
 - drop_visit_levels:
 
-  (`flag`)  
+  (`flag`)\
   whether to drop levels for visit variable, if visit variable is a
   factor, see details.
 
 - disable_theta_vcov:
 
-  (`flag`)  
+  (`flag`)\
   whether to disable calculation of variance-covariance matrix for
   variance parameters. This can speed up fitting when there are many
   variance parameters, see details.
@@ -68,7 +68,7 @@ mmrm_control(
 
 - optimizers:
 
-  (`list`)  
+  (`list`)\
   optimizer specification, created with
   [`h_get_optimizers()`](https://openpharma.github.io/mmrm/reference/h_get_optimizers.md).
   Please note that optimizers using the Hessian will not be compatible
@@ -205,7 +205,7 @@ mmrm_control(
 #>             gr1, con)
 #>     res
 #> }
-#> <bytecode: 0x55ba644d8180>
+#> <bytecode: 0x561a9c8ac1c0>
 #> <environment: namespace:stats>
 #> attr(,"args")
 #> attr(,"args")$control
@@ -239,7 +239,7 @@ mmrm_control(
 #>   )
 #>   rep(start_value, n_groups)
 #> }
-#> <bytecode: 0x55ba63aadb38>
+#> <bytecode: 0x561a9d3a3080>
 #> <environment: namespace:mmrm>
 #> 
 #> $accept_singular

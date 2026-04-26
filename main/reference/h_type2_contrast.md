@@ -12,7 +12,7 @@ h_type2_contrast(object, effect, tol = sqrt(.Machine$double.eps))
 
 - object:
 
-  (`mmrm`)  
+  (`mmrm`)\
   the fitted MMRM.
 
 - effect:

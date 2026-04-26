@@ -15,7 +15,7 @@ h_split_control(control, ...)
 
 - control:
 
-  (`mmrm_control`)  
+  (`mmrm_control`)\
   object.
 
 - ...:

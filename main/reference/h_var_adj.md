@@ -15,35 +15,35 @@ h_var_adj(v, w, p, q, r, linear = FALSE)
 
 - v:
 
-  (`matrix`)  
+  (`matrix`)\
   unadjusted covariance matrix.
 
 - w:
 
-  (`matrix`)  
+  (`matrix`)\
   hessian matrix.
 
 - p:
 
-  (`matrix`)  
+  (`matrix`)\
   P matrix from
   [`h_get_kr_comp()`](https://openpharma.github.io/mmrm/reference/h_get_kr_comp.md).
 
 - q:
 
-  (`matrix`)  
+  (`matrix`)\
   Q matrix from
   [`h_get_kr_comp()`](https://openpharma.github.io/mmrm/reference/h_get_kr_comp.md).
 
 - r:
 
-  (`matrix`)  
+  (`matrix`)\
   R matrix from
   [`h_get_kr_comp()`](https://openpharma.github.io/mmrm/reference/h_get_kr_comp.md).
 
 - linear:
 
-  (`flag`)  
+  (`flag`)\
   whether to use linear Kenward-Roger approximation.
 
 ## Value

@@ -18,12 +18,12 @@ Anova.mmrm(
 
 - mod:
 
-  (`mmrm`)  
+  (`mmrm`)\
   the fitted MMRM.
 
 - type:
 
-  (`string`)  
+  (`string`)\
   either `"II"`, `"III"`, `"2"`, or `"3"`, indicating the type of test
   to perform.
 
@@ -33,7 +33,7 @@ Anova.mmrm(
 
 - test.statistic:
 
-  (`string`)  
+  (`string`)\
   either `"F` or `"Chisq"`, indicating the kind of test to perform.
 
 - ...:

@@ -1,5 +1,19 @@
 # Changelog
 
+## mmrm 0.3.17.9000
+
+#### Bug Fixes
+
+- Previously, having the visit variable only in an interaction term in
+  the model could lead to failed
+  [`emmeans()`](https://rvlenth.github.io/emmeans/reference/emmeans.html)
+  evaluation. Similarly, there could be other interaction variable
+  problems potentially with
+  [`emmeans()`](https://rvlenth.github.io/emmeans/reference/emmeans.html),
+  due to the change in the order which is automatically applied by
+  [`terms()`](https://rdrr.io/r/stats/terms.html) used internally. This
+  is now fixed.
+
 ## mmrm 0.3.17
 
 CRAN release: 2026-01-08

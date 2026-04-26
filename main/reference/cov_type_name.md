@@ -12,7 +12,7 @@ cov_type_name(type)
 
 - type:
 
-  (`string`)  
+  (`string`)\
   either a full name or abbreviate covariance structure type name to
   convert to a long-form type.
 

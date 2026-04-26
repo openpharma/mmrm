@@ -13,15 +13,15 @@ h_print_cov(cov_type, n_theta, n_groups)
 
 - cov_type:
 
-  (`string`)  
+  (`string`)\
   covariance structure abbreviation.
 
 - n_theta:
 
-  (`count`)  
+  (`count`)\
   number of variance parameters.
 
 - n_groups:
 
-  (`count`)  
+  (`count`)\
   number of groups.

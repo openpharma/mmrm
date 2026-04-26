@@ -13,7 +13,7 @@ h_tr(x)
 
 - x:
 
-  (`matrix`)  
+  (`matrix`)\
   square matrix input.
 
 ## Value

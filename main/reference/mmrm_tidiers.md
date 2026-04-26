@@ -28,18 +28,18 @@ augment(
 
 - x:
 
-  (`mmrm`)  
+  (`mmrm`)\
   fitted model.
 
 - conf.int:
 
-  (`flag`)  
+  (`flag`)\
   if `TRUE` columns for the lower (`conf.low`) and upper bounds
   (`conf.high`) of coefficient estimates are included.
 
 - conf.level:
 
-  (`number`)  
+  (`number`)\
   defines the range of the optional confidence internal.
 
 - ...:
@@ -52,22 +52,22 @@ augment(
 
 - newdata:
 
-  (`data.frame` or `NULL`)  
+  (`data.frame` or `NULL`)\
   optional new data frame.
 
 - interval:
 
-  (`string`)  
+  (`string`)\
   type of interval calculation.
 
 - se_fit:
 
-  (`flag`)  
+  (`flag`)\
   whether to return standard errors of fit.
 
 - type.residuals:
 
-  (`string`)  
+  (`string`)\
   passed on to
   [`residuals.mmrm_tmb()`](https://openpharma.github.io/mmrm/reference/mmrm_tmb_methods.md).
 

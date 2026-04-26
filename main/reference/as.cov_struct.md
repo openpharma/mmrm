@@ -24,7 +24,7 @@ as.cov_struct(x, warn_partial = TRUE, ...)
 
 - warn_partial:
 
-  (`flag`)  
+  (`flag`)\
   whether to emit a warning when parts of the formula are disregarded.
 
 ## Value

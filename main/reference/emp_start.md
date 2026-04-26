@@ -32,17 +32,17 @@ emp_start(
 
 - visit_var:
 
-  (`string`)  
+  (`string`)\
   visit variable.
 
 - subject_var:
 
-  (`string`)  
+  (`string`)\
   subject id variable.
 
 - subject_groups:
 
-  (`factor`)  
+  (`factor`)\
   subject group assignment.
 
 - ...:

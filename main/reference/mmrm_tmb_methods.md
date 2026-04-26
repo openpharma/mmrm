@@ -88,12 +88,12 @@ simulate(
 
 - object:
 
-  (`mmrm_tmb`)  
+  (`mmrm_tmb`)\
   the fitted MMRM object.
 
 - complete:
 
-  (`flag`)  
+  (`flag`)\
   whether to include potential non-estimable coefficients.
 
 - ...:
@@ -104,80 +104,80 @@ simulate(
 
 - newdata:
 
-  (`data.frame`)  
+  (`data.frame`)\
   optional new data, otherwise data from `object` is used.
 
 - se.fit:
 
-  (`flag`)  
+  (`flag`)\
   indicator if standard errors are required.
 
 - interval:
 
-  (`string`)  
+  (`string`)\
   type of interval calculation. Can be abbreviated.
 
 - level:
 
-  (`number`)  
+  (`number`)\
   tolerance/confidence level.
 
 - nsim:
 
-  (`count`)  
+  (`count`)\
   number of simulations to use.
 
 - conditional:
 
-  (`flag`)  
+  (`flag`)\
   indicator if the prediction is conditional on the observation or not.
 
 - formula:
 
-  (`mmrm_tmb`)  
+  (`mmrm_tmb`)\
   same as `object`.
 
 - data:
 
-  (`data.frame`)  
+  (`data.frame`)\
   object in which to construct the frame.
 
 - include:
 
-  (`character`)  
+  (`character`)\
   names of variable types to include in the model frame creation. Must
   be `NULL` or one or more of
   `c("subject_var", "visit_var", "group_var", "response_var")`.
 
 - exclude:
 
-  (`character`)  
+  (`character`)\
   names of variable types to exclude after the model frame creation.
   Same choices as for `include`.
 
 - full:
 
-  (`flag`)  
+  (`flag`)\
   indicator whether to return full model frame (deprecated).
 
 - na.action:
 
-  (`string`)  
+  (`string`)\
   na action.
 
 - use_response:
 
-  (`flag`)  
+  (`flag`)\
   whether to use the response for complete rows.
 
 - contrasts.arg:
 
-  (`list`)  
+  (`list`)\
   contrasts to be used.
 
 - x:
 
-  (`mmrm_tmb`)  
+  (`mmrm_tmb`)\
   same as `object`.
 
 - sigma:
@@ -186,18 +186,18 @@ simulate(
 
 - corrected:
 
-  (`flag`)  
+  (`flag`)\
   whether corrected AIC should be calculated.
 
 - k:
 
-  (`number`)  
+  (`number`)\
   the penalty per parameter to be used; default `k = 2` is the classical
   AIC.
 
 - type:
 
-  (`string`)  
+  (`string`)\
   unscaled (`response`), `pearson` or `normalized`. Default is
   `response`, and this is the only type available for use with models
   with a spatial covariance structure.
@@ -209,7 +209,7 @@ simulate(
 
 - method:
 
-  (`string`)  
+  (`string`)\
   simulation method to use. If "conditional", simulated values are
   sampled given the estimated covariance matrix of `object`. If
   "marginal", the variance of the estimated covariance matrix is taken
@@ -3695,7 +3695,7 @@ terms(object)
 #> attr(,"response")
 #> [1] 1
 #> attr(,".Environment")
-#> <environment: 0x55ba62997308>
+#> <environment: 0x561aa2ee2320>
 terms(object, include = "subject_var")
 #> ~RACE + SEX + ARMCD + AVISIT + USUBJID + ARMCD:AVISIT
 #> attr(,"variables")
@@ -3717,14 +3717,14 @@ terms(object, include = "subject_var")
 #> attr(,"response")
 #> [1] 0
 #> attr(,".Environment")
-#> <environment: 0x55ba62997308>
+#> <environment: 0x561aa2ee2320>
 # Log likelihood given the estimated parameters:
 logLik(object)
 #> 'log Lik.' -1693.225 (df=10)
 # Formula which was used:
 formula(object)
 #> FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
-#> <environment: 0x55ba62997308>
+#> <environment: 0x561aa2ee2320>
 # Variance-covariance matrix estimate for coefficients:
 vcov(object)
 #>                               (Intercept) RACEBlack or African American

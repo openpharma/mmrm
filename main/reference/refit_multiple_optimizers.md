@@ -12,7 +12,7 @@ refit_multiple_optimizers(fit, ..., control = mmrm_control(...))
 
 - fit:
 
-  (`mmrm_fit`)  
+  (`mmrm_fit`)\
   original model fit from
   [`fit_single_optimizer()`](https://openpharma.github.io/mmrm/reference/fit_single_optimizer.md).
 
@@ -23,7 +23,7 @@ refit_multiple_optimizers(fit, ..., control = mmrm_control(...))
 
 - control:
 
-  (`mmrm_control`)  
+  (`mmrm_control`)\
   object.
 
 ## Value

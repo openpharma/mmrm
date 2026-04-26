@@ -18,7 +18,7 @@ cov_struct(
 
 - type:
 
-  (`string`)  
+  (`string`)\
   the name of the covariance structure type to use. For available
   options, see
   [`cov_types()`](https://openpharma.github.io/mmrm/reference/covariance_types.md).
@@ -28,25 +28,25 @@ cov_struct(
 
 - visits:
 
-  (`character`)  
+  (`character`)\
   a vector of variable names to use for the longitudinal terms of the
   covariance structure. Multiple terms are only permitted for the
   `"spatial"` covariance type.
 
 - subject:
 
-  (`string`)  
+  (`string`)\
   the name of the variable that encodes a subject identifier.
 
 - group:
 
-  (`string`)  
+  (`string`)\
   optionally, the name of the variable that encodes a grouping variable
   for subjects.
 
 - heterogeneous:
 
-  (`flag`)  
+  (`flag`)\
 
 ## Value
 

@@ -14,14 +14,14 @@ h_first_term_containing_categ(factors, categorical)
 
 - factors:
 
-  (matrix)  
+  (matrix)\
   the `factors` attribute of a
   [`terms.object`](https://rdrr.io/r/stats/terms.object.html), which is
   a matrix of 0s, 1s, and 2s.
 
 - categorical:
 
-  (character)  
+  (character)\
   a vector of the categorical variables in the model whose
   [`terms.object`](https://rdrr.io/r/stats/terms.object.html) is
   `factors`.

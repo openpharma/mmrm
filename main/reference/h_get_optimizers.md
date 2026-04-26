@@ -17,24 +17,24 @@ h_get_optimizers(
 
 - optimizer:
 
-  (`character`)  
+  (`character`)\
   names of built-in optimizers to try, subset of "L-BFGS-B", "BFGS",
   "CG" and "nlminb".
 
 - optimizer_fun:
 
-  (`function` or `list` of `function`)  
+  (`function` or `list` of `function`)\
   alternatively to `optimizer`, an optimizer function or a list of
   optimizer functions can be passed directly here.
 
 - optimizer_args:
 
-  (`list`)  
+  (`list`)\
   additional arguments for `optimizer_fun`.
 
 - optimizer_control:
 
-  (`list`)  
+  (`list`)\
   passed to argument `control` in `optimizer_fun`.
 
 ## Value

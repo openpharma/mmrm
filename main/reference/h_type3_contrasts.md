@@ -13,7 +13,7 @@ h_type3_contrasts(object, tol = sqrt(.Machine$double.eps))
 
 - object:
 
-  (`mmrm`)  
+  (`mmrm`)\
   the fitted MMRM.
 
 - tol:

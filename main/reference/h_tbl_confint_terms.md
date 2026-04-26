@@ -13,7 +13,7 @@ h_tbl_confint_terms(x, ...)
 
 - x:
 
-  (`mmrm`)  
+  (`mmrm`)\
   fit object.
 
 - ...:

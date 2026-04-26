@@ -15,7 +15,7 @@ h_get_cov_default(
 
 - method:
 
-  (`string`)  
+  (`string`)\
   degrees of freedom method.
 
 ## Value

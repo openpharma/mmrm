@@ -14,7 +14,7 @@ h_coef_table(object)
 
 - object:
 
-  (`mmrm`)  
+  (`mmrm`)\
   model fit.
 
 ## Value

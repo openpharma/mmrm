@@ -18,12 +18,12 @@ position_symbol(x, sym, ...)
 
 - x:
 
-  (`list` of `language`)  
+  (`list` of `language`)\
   a list of language objects in which to search for a specific symbol.
 
 - sym:
 
-  (`name` or `symbol` or `character`)  
+  (`name` or `symbol` or `character`)\
   a symbol to search for in `x`.
 
 - ...:

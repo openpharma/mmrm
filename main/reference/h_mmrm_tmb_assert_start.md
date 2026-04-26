@@ -12,7 +12,7 @@ h_mmrm_tmb_assert_start(tmb_object)
 
 - tmb_object:
 
-  (`list`)  
+  (`list`)\
   created with
   [`TMB::MakeADFun()`](https://rdrr.io/pkg/TMB/man/MakeADFun.html).
 

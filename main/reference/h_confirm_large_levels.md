@@ -13,7 +13,7 @@ h_confirm_large_levels(x)
 
 - x:
 
-  (`numeric`)  
+  (`numeric`)\
   number of visit levels.
 
 ## Value

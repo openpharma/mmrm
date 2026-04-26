@@ -20,12 +20,12 @@ component(
 
 - object:
 
-  (`mmrm_tmb`)  
+  (`mmrm_tmb`)\
   the fitted MMRM.
 
 - name:
 
-  (`character`)  
+  (`character`)\
   the component(s) to be retrieved.
 
 ## Value

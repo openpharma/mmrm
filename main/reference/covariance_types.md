@@ -15,13 +15,13 @@ cov_types(
 
 - form:
 
-  (`character`)  
+  (`character`)\
   covariance structure type name form. One or more of `"name"`, `"abbr"`
   (abbreviation), or `"habbr"` (heterogeneous abbreviation).
 
 - filter:
 
-  (`character`)  
+  (`character`)\
   covariance structure type filter. One or more of `"heterogeneous"` or
   `"spatial"`.
 

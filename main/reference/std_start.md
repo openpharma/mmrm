@@ -12,17 +12,17 @@ std_start(cov_type, n_visits, n_groups, ...)
 
 - cov_type:
 
-  (`string`)  
+  (`string`)\
   name of the covariance structure.
 
 - n_visits:
 
-  (`int`)  
+  (`int`)\
   number of visits.
 
 - n_groups:
 
-  (`int`)  
+  (`int`)\
   number of groups.
 
 - ...:

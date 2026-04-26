@@ -12,7 +12,7 @@ formula_rhs(f)
 
 - f:
 
-  (`formula`)  
+  (`formula`)\
   a formula.
 
 ## Value

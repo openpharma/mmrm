@@ -23,47 +23,47 @@ h_mmrm_tmb_data(
 
 - formula_parts:
 
-  (`mmrm_tmb_formula_parts`)  
+  (`mmrm_tmb_formula_parts`)\
   list with formula parts from
   [`h_mmrm_tmb_formula_parts()`](https://openpharma.github.io/mmrm/reference/h_mmrm_tmb_formula_parts.md).
 
 - data:
 
-  (`data.frame`)  
+  (`data.frame`)\
   which contains variables used in `formula_parts`.
 
 - weights:
 
-  (`vector`)  
+  (`vector`)\
   weights to be used in the fitting process.
 
 - reml:
 
-  (`flag`)  
+  (`flag`)\
   whether restricted maximum likelihood (REML) estimation is used,
   otherwise maximum likelihood (ML) is used.
 
 - singular:
 
-  (`string`)  
+  (`string`)\
   choices of method deal with rank-deficient matrices. "error" to stop
   the function return the error, "drop" to drop these columns, and
   "keep" to keep all the columns.
 
 - drop_visit_levels:
 
-  (`flag`)  
+  (`flag`)\
   whether to drop levels for visit variable, if visit variable is a
   factor.
 
 - allow_na_response:
 
-  (`flag`)  
+  (`flag`)\
   whether NA in response is allowed.
 
 - drop_levels:
 
-  (`flag`)  
+  (`flag`)\
   whether drop levels for covariates. If not dropped could lead to
   singular matrix.
 

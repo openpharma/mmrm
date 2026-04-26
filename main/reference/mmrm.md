@@ -22,23 +22,23 @@ mmrm(
 
 - formula:
 
-  (`formula`)  
+  (`formula`)\
   the model formula, see details.
 
 - data:
 
-  (`data`)  
+  (`data`)\
   the data to be used for the model.
 
 - weights:
 
-  (`vector`)  
+  (`vector`)\
   an optional vector of weights to be used in the fitting process.
   Should be `NULL` or a numeric vector.
 
 - covariance:
 
-  (`cov_struct`)  
+  (`cov_struct`)\
   a covariance structure type definition as produced with
   [`cov_struct()`](https://openpharma.github.io/mmrm/reference/cov_struct.md),
   or value that can be coerced to a covariance structure using
@@ -48,13 +48,13 @@ mmrm(
 
 - reml:
 
-  (`flag`)  
+  (`flag`)\
   whether restricted maximum likelihood (REML) estimation is used,
   otherwise maximum likelihood (ML) is used.
 
 - control:
 
-  (`mmrm_control`)  
+  (`mmrm_control`)\
   fine-grained fitting specifications list created with
   [`mmrm_control()`](https://openpharma.github.io/mmrm/reference/mmrm_control.md).
 

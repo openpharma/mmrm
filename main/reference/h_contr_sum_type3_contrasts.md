@@ -13,7 +13,7 @@ h_contr_sum_type3_contrasts(object)
 
 - object:
 
-  (`mmrm`)  
+  (`mmrm`)\
   the fitted MMRM.
 
 ## Value

@@ -13,22 +13,22 @@ h_print_call(call, n_obs, n_subjects, n_timepoints)
 
 - call:
 
-  (`call`)  
+  (`call`)\
   original
   [`mmrm()`](https://openpharma.github.io/mmrm/reference/mmrm.md)
   function call.
 
 - n_obs:
 
-  (`int`)  
+  (`int`)\
   number of observations.
 
 - n_subjects:
 
-  (`int`)  
+  (`int`)\
   number of subjects.
 
 - n_timepoints:
 
-  (`int`)  
+  (`int`)\
   number of timepoints.

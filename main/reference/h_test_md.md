@@ -14,29 +14,29 @@ h_test_md(object, contrast, df, f_stat_factor = 1, test = c("F", "Chisq"))
 
 - object:
 
-  (`mmrm`)  
+  (`mmrm`)\
   the MMRM fit.
 
 - contrast:
 
-  (`matrix`)  
+  (`matrix`)\
   numeric contrast matrix.
 
 - df:
 
-  (`number`)  
+  (`number`)\
   denominator degrees of freedom for the multi-dimensional contrast for
   an F-test. Ignored if `test = "Chisq"`.
 
 - f_stat_factor:
 
-  (`number`)  
+  (`number`)\
   optional scaling factor on top of the standard F-statistic. Ignored if
   `test = "Chisq"`.
 
 - test:
 
-  (`string`)  
+  (`string`)\
   either `"F"` or `"Chisq"`, specifying the kind of test to perform.
 
 ## Value

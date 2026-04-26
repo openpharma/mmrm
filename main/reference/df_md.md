@@ -15,12 +15,12 @@ df_md(object, contrast)
 
 - object:
 
-  (`mmrm`)  
+  (`mmrm`)\
   the MMRM fit.
 
 - contrast:
 
-  (`matrix`)  
+  (`matrix`)\
   numeric contrast matrix, if given a `numeric` then this is coerced to
   a row vector. Note that this should not include elements for singular
   coefficient estimates, i.e. only refer to the actually estimated

@@ -13,12 +13,12 @@ h_df_md_from_1d(object, contrast)
 
 - object:
 
-  (`mmrm`)  
+  (`mmrm`)\
   model fit.
 
 - contrast:
 
-  (`numeric`)  
+  (`numeric`)\
   one-dimensional contrast.
 
 ## Value

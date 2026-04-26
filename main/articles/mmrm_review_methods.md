@@ -516,7 +516,7 @@ implementations considered produce similar empirical biases, variances,
 
     #> R version 4.5.2 (2025-10-31)
     #> Platform: x86_64-pc-linux-gnu
-    #> Running under: Ubuntu 24.04.3 LTS
+    #> Running under: Ubuntu 24.04.4 LTS
     #> 
     #> Matrix products: default
     #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -537,34 +537,32 @@ implementations considered produce similar empirical biases, variances,
     #> [1] stats     graphics  grDevices utils     datasets  methods   base     
     #> 
     #> other attached packages:
-    #>  [1] ggplot2_4.0.1           emmeans_2.0.1           knitr_1.51             
-    #>  [4] sasr_0.1.5              glmmTMB_1.1.13          nlme_3.1-168           
-    #>  [7] lme4_1.1-38             Matrix_1.7-4            mmrm_0.3.17            
-    #> [10] stringr_1.6.0           microbenchmark_1.5.0    purrr_1.2.0            
-    #> [13] dplyr_1.1.4             clusterGeneration_1.3.8 MASS_7.3-65            
+    #>  [1] ggplot2_4.0.3           emmeans_2.0.3           knitr_1.51             
+    #>  [4] sasr_0.1.5              glmmTMB_1.1.14          nlme_3.1-169           
+    #>  [7] lme4_2.0-1              Matrix_1.7-5            mmrm_0.3.17.9000       
+    #> [10] stringr_1.6.0           microbenchmark_1.5.0    purrr_1.2.2            
+    #> [13] dplyr_1.2.1             clusterGeneration_1.3.8 MASS_7.3-65            
     #> 
     #> loaded via a namespace (and not attached):
-    #>  [1] gtable_0.3.6        TMB_1.9.19          xfun_0.55          
-    #>  [4] bslib_0.9.0         htmlwidgets_1.6.4   lattice_0.22-7     
-    #>  [7] numDeriv_2016.8-1.1 vctrs_0.6.5         tools_4.5.2        
-    #> [10] Rdpack_2.6.4        generics_0.1.4      sandwich_3.1-1     
-    #> [13] tibble_3.3.0        pkgconfig_2.0.3     checkmate_2.3.3    
-    #> [16] RColorBrewer_1.1-3  S7_0.2.1            desc_1.4.3         
+    #>  [1] gtable_0.3.6        TMB_1.9.21          xfun_0.57          
+    #>  [4] bslib_0.10.0        htmlwidgets_1.6.4   lattice_0.22-9     
+    #>  [7] numDeriv_2016.8-1.1 vctrs_0.7.3         tools_4.5.2        
+    #> [10] Rdpack_2.6.6        generics_0.1.4      sandwich_3.1-1     
+    #> [13] tibble_3.3.1        pkgconfig_2.0.3     checkmate_2.3.4    
+    #> [16] RColorBrewer_1.1-3  S7_0.2.1-1          desc_1.4.3         
     #> [19] lifecycle_1.0.5     farver_2.1.2        compiler_4.5.2     
-    #> [22] textshaping_1.0.4   codetools_0.2-20    htmltools_0.5.9    
-    #> [25] sass_0.4.10         yaml_2.3.12         pillar_1.11.1      
-    #> [28] pkgdown_2.2.0       nloptr_2.2.1        jquerylib_0.1.4    
-    #> [31] cachem_1.1.0        reformulas_0.4.3.1  boot_1.3-32        
-    #> [34] multcomp_1.4-29     tidyselect_1.2.1    digest_0.6.39      
-    #> [37] mvtnorm_1.3-3       stringi_1.8.7       labeling_0.4.3     
-    #> [40] splines_4.5.2       fastmap_1.2.0       grid_4.5.2         
-    #> [43] cli_3.6.5           magrittr_2.0.4      dichromat_2.0-0.1  
-    #> [46] survival_3.8-3      TH.data_1.1-5       withr_3.0.2        
-    #> [49] scales_1.4.0        backports_1.5.0     estimability_1.5.1 
-    #> [52] rmarkdown_2.30      otel_0.2.0          reticulate_1.44.1  
-    #> [55] png_0.1-8           ragg_1.5.0          zoo_1.8-15         
-    #> [58] coda_0.19-4.1       evaluate_1.0.5      rbibutils_2.4      
-    #> [61] mgcv_1.9-4          rlang_1.1.6         Rcpp_1.1.0         
-    #> [64] xtable_1.8-4        glue_1.8.0          minqa_1.2.8        
-    #> [67] jsonlite_2.0.0      R6_2.6.1            systemfonts_1.3.1  
-    #> [70] fs_1.6.6
+    #> [22] textshaping_1.0.5   htmltools_0.5.9     sass_0.4.10        
+    #> [25] yaml_2.3.12         pillar_1.11.1       pkgdown_2.2.0      
+    #> [28] nloptr_2.2.1        jquerylib_0.1.4     cachem_1.1.0       
+    #> [31] reformulas_0.4.4    boot_1.3-32         tidyselect_1.2.1   
+    #> [34] digest_0.6.39       mvtnorm_1.3-7       stringi_1.8.7      
+    #> [37] labeling_0.4.3      splines_4.5.2       fastmap_1.2.0      
+    #> [40] grid_4.5.2          cli_3.6.6           magrittr_2.0.5     
+    #> [43] dichromat_2.0-0.1   withr_3.0.2         scales_1.4.0       
+    #> [46] backports_1.5.1     estimability_1.5.1  rmarkdown_2.31     
+    #> [49] otel_0.2.0          reticulate_1.46.0   ragg_1.5.2         
+    #> [52] zoo_1.8-15          png_0.1-9           coda_0.19-4.1      
+    #> [55] evaluate_1.0.5      rbibutils_2.4.1     mgcv_1.9-4         
+    #> [58] rlang_1.2.0         Rcpp_1.1.1-1        xtable_1.8-8       
+    #> [61] glue_1.8.1          minqa_1.2.8         jsonlite_2.0.0     
+    #> [64] R6_2.6.1            systemfonts_1.3.2   fs_2.1.0

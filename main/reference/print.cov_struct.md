@@ -13,7 +13,7 @@ print(x, ...)
 
 - x:
 
-  (`cov_struct`)  
+  (`cov_struct`)\
   a covariance structure object.
 
 - ...:

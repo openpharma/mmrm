@@ -13,12 +13,12 @@ h_print_aic_list(aic_list, digits = 1)
 
 - aic_list:
 
-  (`list`)  
+  (`list`)\
   list as part of from
   [`summary.mmrm()`](https://openpharma.github.io/mmrm/reference/mmrm_methods.md).
 
 - digits:
 
-  (`number`)  
+  (`number`)\
   number of decimal places used with
   [`round()`](https://rdrr.io/r/base/Round.html).

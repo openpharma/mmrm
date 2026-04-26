@@ -15,7 +15,7 @@ h_df_bw_calc(object)
 
 - object:
 
-  (`mmrm`)  
+  (`mmrm`)\
   the fitted MMRM.
 
 ## Value

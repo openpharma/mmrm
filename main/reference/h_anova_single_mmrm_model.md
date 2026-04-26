@@ -14,7 +14,7 @@ h_anova_single_mmrm_model(object)
 
 - object:
 
-  (`mmrm`)  
+  (`mmrm`)\
   an `mmrm` object.
 
 ## Value

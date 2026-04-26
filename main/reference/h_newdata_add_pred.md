@@ -13,23 +13,23 @@ h_newdata_add_pred(x, newdata, se_fit, interval, ...)
 
 - x:
 
-  (`mmrm`)  
+  (`mmrm`)\
   fit.
 
 - newdata:
 
-  (`data.frame`)  
+  (`data.frame`)\
   data to predict.
 
 - se_fit:
 
-  (`flag`)  
+  (`flag`)\
   whether to return standard error of prediction, can only be used when
   `interval` is not "none".
 
 - interval:
 
-  (`string`)  
+  (`string`)\
   type of interval.
 
 - ...:
