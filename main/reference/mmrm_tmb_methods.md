@@ -3695,7 +3695,7 @@ terms(object)
 #> attr(,"response")
 #> [1] 1
 #> attr(,".Environment")
-#> <environment: 0x561aa2ee2320>
+#> <environment: 0x556e19dccb90>
 terms(object, include = "subject_var")
 #> ~RACE + SEX + ARMCD + AVISIT + USUBJID + ARMCD:AVISIT
 #> attr(,"variables")
@@ -3717,14 +3717,14 @@ terms(object, include = "subject_var")
 #> attr(,"response")
 #> [1] 0
 #> attr(,".Environment")
-#> <environment: 0x561aa2ee2320>
+#> <environment: 0x556e19dccb90>
 # Log likelihood given the estimated parameters:
 logLik(object)
 #> 'log Lik.' -1693.225 (df=10)
 # Formula which was used:
 formula(object)
 #> FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
-#> <environment: 0x561aa2ee2320>
+#> <environment: 0x556e19dccb90>
 # Variance-covariance matrix estimate for coefficients:
 vcov(object)
 #>                               (Intercept) RACEBlack or African American
