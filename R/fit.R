@@ -374,6 +374,16 @@ mmrm_control <- function(
 #'   as produced with [cov_struct()], or value that can be coerced to a
 #'   covariance structure using [as.cov_struct()]. If no value is provided,
 #'   a structure is derived from the provided formula.
+#' @param contrasts (`list` or `NULL`)\cr an optional named list of contrast
+#'   matrices or contrast functions (like [stats::contr.sum] or
+#'   [stats::contr.poly]) for specific factor variables, matching the
+#'   `contrasts` argument in [stats::lm()]. The list names must correspond to
+#'   factor variable names in the model formula. When `NULL` (the default),
+#'   the contrasts set on the factor variables in `data` are used. If a
+#'   contrast matrix has rownames that include levels not present in `data`,
+#'   those levels are preserved and the corresponding model matrix columns
+#'   are marked as aliased (not estimable), enabling prediction on new data
+#'   containing those levels.
 #' @param gcomp_fixed_vars (`character` or `NULL`)\cr names of variables to
 #'   treat as fixed in the G-computation correction. When non-`NULL`, enables
 #'   the correction in [`emmeans_support`], producing the average treatment
@@ -474,6 +484,7 @@ mmrm <- function(
   data,
   weights = NULL,
   covariance = NULL,
+  contrasts = NULL,
   reml = TRUE,
   gcomp_fixed_vars = NULL,
   control = mmrm_control(...),
@@ -483,6 +494,7 @@ mmrm <- function(
   assert_class(control, "mmrm_control")
   assert_list(control$optimizers, min.len = 1)
   assert_character(gcomp_fixed_vars, min.len = 1L, null.ok = TRUE)
+  assert_list(contrasts, null.ok = TRUE, names = "unique")
 
   if (control$method %in% c("Kenward-Roger", "Kenward-Roger-Linear") && !reml) {
     stop("Kenward-Roger only works for REML")
@@ -517,7 +529,8 @@ mmrm <- function(
     reml,
     singular = if (control$accept_singular) "drop" else "error",
     drop_visit_levels = control$drop_visit_levels,
-    allow_na_response = FALSE
+    allow_na_response = FALSE,
+    contrasts = contrasts
   )
   fit <- structure("", class = "try-error")
   names_all_optimizers <- names(control$optimizers)

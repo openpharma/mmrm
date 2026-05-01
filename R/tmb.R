@@ -177,12 +177,37 @@ h_mmrm_tmb_data <- function(
   }
   full_frame <- full_frame[data_order, ]
 
+  contrasts_preserve_vars <- NULL
+  if (!is.null(contrasts)) {
+    formula_factors <- intersect(
+      names(contrasts),
+      names(which(vapply(full_frame, is.factor, logical(1L))))
+    )
+    for (var_name in formula_factors) {
+      contr_val <- contrasts[[var_name]]
+      if (is.matrix(contr_val)) {
+        contr_levels <- rownames(contr_val)
+        if (!is.null(contr_levels)) {
+          observed_levels <- levels(full_frame[[var_name]])
+          all_levels <- union(observed_levels, contr_levels)
+          if (!identical(levels(full_frame[[var_name]]), contr_levels)) {
+            full_frame[[var_name]] <- factor(
+              full_frame[[var_name]],
+              levels = all_levels
+            )
+          }
+        }
+        contrasts_preserve_vars <- c(contrasts_preserve_vars, var_name)
+      }
+    }
+  }
+
   if (drop_levels) {
     full_frame <- h_drop_levels(
       full_frame,
       formula_parts$subject_var,
       formula_parts$visit_var,
-      names(xlev)
+      c(names(xlev), contrasts_preserve_vars)
     )
   }
   has_response <- !identical(attr(attr(full_frame, "terms"), "response"), 0L)
@@ -586,6 +611,9 @@ h_mmrm_tmb_fit <- function(
 #'   or value that can be coerced to a covariance structure using
 #'   [as.cov_struct()]. If no value is provided, a structure is derived from
 #'   the provided formula.
+#' @param contrasts (`list` or `NULL`)\cr an optional named list of contrast
+#'   matrices or contrast functions for specific factor variables, see
+#'   [mmrm()] for details.
 #' @param control (`mmrm_control`)\cr list of control options produced by
 #'   [mmrm_control()].
 #' @inheritParams fit_single_optimizer
@@ -618,6 +646,7 @@ fit_mmrm <- function(
   covariance = NULL,
   tmb_data,
   formula_parts,
+  contrasts = NULL,
   control = mmrm_control()
 ) {
   if (missing(formula_parts) || missing(tmb_data)) {
@@ -634,7 +663,8 @@ fit_mmrm <- function(
       weights,
       reml,
       singular = if (control$accept_singular) "drop" else "error",
-      drop_visit_levels = control$drop_visit_levels
+      drop_visit_levels = control$drop_visit_levels,
+      contrasts = contrasts
     )
   } else {
     assert_class(tmb_data, "mmrm_tmb_data")

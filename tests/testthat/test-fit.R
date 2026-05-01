@@ -1027,3 +1027,67 @@ test_that("mmrm gives warning if not reproducible TMB option is used", {
   )
   TMB::config(tmbad_deterministic_hash = 1, DLL = "mmrm")
 })
+
+# mmrm contrasts argument ----
+
+test_that("mmrm accepts contrasts argument with contrast function", {
+  fit <- mmrm(
+    FEV1 ~ ARMCD * AVISIT + ar1(AVISIT | USUBJID),
+    data = fev_data,
+    contrasts = list(ARMCD = contr.SAS)
+  )
+  expect_class(fit, "mmrm")
+  x_contrasts <- component(fit, "contrasts")
+  expect_true("ARMCD" %in% names(x_contrasts))
+})
+
+test_that("mmrm accepts explicit contrast matrix matching data levels", {
+  contr_mat <- contr.sum(nlevels(fev_data$ARMCD))
+  rownames(contr_mat) <- levels(fev_data$ARMCD)
+  fit <- mmrm(
+    FEV1 ~ RACE + ARMCD * AVISIT + ar1(AVISIT | USUBJID),
+    data = fev_data,
+    contrasts = list(ARMCD = contr_mat)
+  )
+  expect_class(fit, "mmrm")
+})
+
+test_that("mmrm with extra-level contrasts allows prediction on new data", {
+  all_race_levels <- levels(fev_data$RACE)
+  missing_level <- all_race_levels[1]
+  fev_sub <- fev_data[fev_data$RACE != missing_level, ]
+  
+  
+  contr_mat <- contr.treatment(length(all_race_levels))
+  rownames(contr_mat) <- all_race_levels
+
+  fit <- mmrm(
+    FEV1 ~ RACE + ARMCD * AVISIT + ar1(AVISIT | USUBJID),
+    data = fev_sub,
+    contrasts = list(RACE = contr_mat)
+  )
+
+  aliased <- component(fit, "beta_aliased")
+  missing_cols <- grep(missing_level, names(aliased), value = TRUE)
+  expect_true(all(aliased[missing_cols]))
+
+  xlev <- component(fit, "xlev")
+  expect_true(setequal(all_race_levels, xlev$RACE))
+
+  expect_warning(
+    preds <- predict(fit, newdata = fev_data),
+    "co-linear"
+  )
+  expect_numeric(preds, len = nrow(fev_data))
+})
+
+test_that("mmrm validates contrasts argument", {
+  expect_error(
+    mmrm(
+      FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+      data = fev_data,
+      contrasts = "not a list"
+    ),
+    "list"
+  )
+})

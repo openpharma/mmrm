@@ -1,3 +1,9 @@
+# mmrm 0.3.xx
+
+### New Features
+
+- `mmrm()` and `fit_mmrm()` now accept a `contrasts` argument, allowing users to specify contrast matrices or functions for factor variables, matching the interface of `lm()`. When an explicit contrast matrix includes levels not present in the fitting data, those levels are preserved in the model and marked as aliased, enabling prediction on new data containing those levels (#562).
+
 # mmrm 0.3.17.9000
 
 ### Bug Fixes
