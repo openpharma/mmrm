@@ -374,6 +374,14 @@ mmrm_control <- function(
 #'   as produced with [cov_struct()], or value that can be coerced to a
 #'   covariance structure using [as.cov_struct()]. If no value is provided,
 #'   a structure is derived from the provided formula.
+#' @param gcomp_fixed_vars (`character` or `NULL`)\cr names of variables to
+#'   treat as fixed in the G-computation correction. When non-`NULL`, enables
+#'   the correction in [`emmeans_support`], producing the average treatment
+#'   effect (ATE) with corrected standard errors. The visit variable
+#'   (identified from the covariance structure) is computed separately per
+#'   level. All other named variables are treated as intervention (subjects
+#'   pooled across levels). All variables not named are averaged over using
+#'   each subject's actual values. Defaults to `NULL` (no correction).
 #' @param control (`mmrm_control`)\cr fine-grained fitting specifications list
 #'   created with [mmrm_control()].
 #' @param ... arguments passed to [mmrm_control()].
@@ -467,12 +475,14 @@ mmrm <- function(
   weights = NULL,
   covariance = NULL,
   reml = TRUE,
+  gcomp_fixed_vars = NULL,
   control = mmrm_control(...),
   ...
 ) {
   assert_false(!missing(control) && !missing(...))
   assert_class(control, "mmrm_control")
   assert_list(control$optimizers, min.len = 1)
+  assert_character(gcomp_fixed_vars, min.len = 1L, null.ok = TRUE)
 
   if (control$method %in% c("Kenward-Roger", "Kenward-Roger-Linear") && !reml) {
     stop("Kenward-Roger only works for REML")
@@ -494,6 +504,12 @@ mmrm <- function(
   } else {
     attr(weights, which = "dataname") <- deparse(match.call()$weights)
   }
+
+  # Validate G-computation fixed variables if specified.
+  if (!is.null(gcomp_fixed_vars)) {
+    assert_subset(gcomp_fixed_vars, names(data))
+  }
+
   tmb_data <- h_mmrm_tmb_data(
     formula_parts,
     data,
@@ -587,6 +603,20 @@ mmrm <- function(
     }
   } else {
     stop("Unrecognized coefficent variance-covariance method!")
+  }
+
+  # G-computation correction: store metadata for emmeans hook.
+  fit$gcomp_fixed_vars <- gcomp_fixed_vars
+  if (!is.null(gcomp_fixed_vars)) {
+    # Store subject-level covariate data from the ORIGINAL data (pre-NA-removal).
+    # This includes subjects with observed covariates but missing outcomes,
+    # who contribute to the G-computation average but not to beta estimation.
+    subject_var <- formula_parts$subject_var
+    subj_rows <- !duplicated(data[[subject_var]])
+    model_vars <- all.vars(formula_parts$model_formula)
+    keep_vars <- intersect(c(subject_var, model_vars), names(data))
+    fit$gcomp_subject_data <- data[subj_rows, keep_vars, drop = FALSE]
+    rownames(fit$gcomp_subject_data) <- NULL
   }
 
   class(fit) <- c("mmrm", class(fit))

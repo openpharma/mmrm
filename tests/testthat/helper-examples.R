@@ -206,6 +206,26 @@ get_mmrm_cs <- function() {
   .mmrm_example_cs
 }
 
+.mmrm_gcomp_formula <- FEV1 ~ FEV1_BL + ARMCD * AVISIT + us(AVISIT | USUBJID)
+.mmrm_gcomp <- mmrm(
+  .mmrm_gcomp_formula,
+  data = fev_data,
+  gcomp_fixed_vars = c("ARMCD", "AVISIT")
+)
+get_mmrm_gcomp <- function() {
+  .mmrm_gcomp
+}
+
+.mmrm_gcomp_additive_formula <- FEV1 ~ FEV1_BL + ARMCD + AVISIT + us(AVISIT | USUBJID)
+.mmrm_gcomp_additive <- mmrm(
+  .mmrm_gcomp_additive_formula,
+  data = fev_data,
+  gcomp_fixed_vars = c("ARMCD", "AVISIT")
+)
+get_mmrm_gcomp_additive <- function() {
+  .mmrm_gcomp_additive
+}
+
 
 square_matrix <- function(values_by_row) {
   n <- length(values_by_row)

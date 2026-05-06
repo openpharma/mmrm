@@ -108,6 +108,7 @@ NeedsCompilation: yes
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Collate:
+    'gcomp.R'
     'between-within.R'
     'catch-routine-registration.R'
     'component.R'

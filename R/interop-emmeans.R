@@ -139,15 +139,89 @@ emm_basis.mmrm <- function(
   } else {
     estimability::all.estble
   }
-  dfargs <- list(object = object)
-  dffun <- function(k, dfargs) {
-    mmrm::df_md(dfargs$object, contrast = k)$denom_df
+
+  # Start with the model-based covariance.
+  V <- component(object, "beta_vcov")
+
+  if (!is.null(object$gcomp_fixed_vars)) {
+    # Detect aliased coefficient positions before any modifications.
+    aliased_pos <- which(is.na(beta_hat))
+
+    # Apply G-computation correction if specified.
+    visit_var <- object$formula_parts$visit_var
+    V_corrected_est <- V  # default: no correction
+    if (visit_var %in% names(grid)) {
+      # Save original model_mat dimensions. When aliased coefficients exist,
+      # h_match_coefs expands model_mat beyond length(beta_est). The correction
+      # works in estimable-coefficient space, then we re-expand to match.
+      orig_ncol <- ncol(model_mat)
+      orig_colnames <- colnames(model_mat)
+
+      correction <- h_gcomp_emm_correction(object, model_mat, grid)
+      V_corrected_est <- V + correction$delta  # p_est x p_est (estimable only)
+
+      # Re-expand L_global if h_match_coefs added columns for aliased coefs.
+      # Use h_match_coefs (not match) to handle A:B vs B:A reordering.
+      L_est <- correction$L_global
+      if (ncol(L_est) < orig_ncol && length(aliased_pos) > 0) {
+        est_pos <- setdiff(seq_len(orig_ncol), aliased_pos)
+
+        # Expand L_global to full width with zeros for aliased columns.
+        L_exp <- matrix(0, nrow = nrow(L_est), ncol = orig_ncol)
+        colnames(L_exp) <- orig_colnames
+        col_map <- h_match_coefs(colnames(L_est), orig_colnames)
+        col_map <- col_map[!is.na(col_map)]
+        L_exp[, col_map] <- L_est
+        model_mat <- L_exp
+
+        # Expand V to full width with zeros for aliased row/column.
+        # This is returned to emmeans for X %*% V %*% t(X).
+        V_full <- matrix(0, nrow = orig_ncol, ncol = orig_ncol)
+        V_full[est_pos, est_pos] <- V_corrected_est
+        V <- V_full
+
+        # Zero NA in bhat so 0*NA doesn't propagate.
+        beta_hat[aliased_pos] <- 0
+
+        # All grid rows are estimable through L_global (aliased col is zero).
+        nbasis <- estimability::all.estble
+      } else {
+        model_mat <- L_est
+        V <- V_corrected_est
+      }
+    }
+    # dffun operates in estimable-coefficient space (p_est dimensions).
+    # Strip aliased positions from k before passing to df_md.
+    dfargs <- list(
+      object = object,
+      V_corrected = V_corrected_est,
+      aliased_pos = aliased_pos
+    )
+    dffun <- function(k, dfargs) {
+      obj <- dfargs$object
+      if (is.null(obj$vcov) || identical(obj$vcov, "Asymptotic")) {
+        obj$beta_vcov <- dfargs$V_corrected
+      } else {
+        obj$beta_vcov_adj <- dfargs$V_corrected
+      }
+      k_est <- k
+      if (length(dfargs$aliased_pos) > 0 && length(k) > nrow(dfargs$V_corrected)) {
+        k_est <- k[-dfargs$aliased_pos]
+      }
+      mmrm::df_md(obj, contrast = k_est)$denom_df
+    }
+  } else {
+    dfargs <- list(object = object)
+    dffun <- function(k, dfargs) {
+      mmrm::df_md(dfargs$object, contrast = k)$denom_df
+    }
   }
+
   list(
     X = model_mat,
     bhat = beta_hat,
     nbasis = nbasis,
-    V = component(object, "beta_vcov"),
+    V = V,
     dffun = dffun,
     dfargs = dfargs
   )
