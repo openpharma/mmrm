@@ -104,6 +104,42 @@ test_that("h_gcomp_emm_correction returns PSD delta and L_global", {
   expect_matrix(correction$L_global, nrows = nrow(rg@grid), ncols = p)
 })
 
+test_that("h_gcomp_emm_correction trims wider model_mat from h_match_coefs expansion", {
+  skip_if_not_installed("emmeans", minimum_version = "1.6")
+
+  fit <- get_mmrm_gcomp()
+  rg <- emmeans::ref_grid(fit)
+
+  # Simulate h_match_coefs expansion: add an extra column for an aliased coef.
+  linfct <- rg@linfct
+  extra <- matrix(0, nrow = nrow(linfct), ncol = 1)
+  colnames(extra) <- "ALIASED:COEF"
+  model_mat_wide <- cbind(linfct, extra)
+
+  correction <- h_gcomp_emm_correction(fit, model_mat_wide, rg@grid)
+
+  p <- length(component(fit, "beta_est"))
+  expect_matrix(correction$delta, nrows = p, ncols = p)
+  expect_matrix(correction$L_global, nrows = nrow(rg@grid), ncols = p)
+})
+
+test_that("h_gcomp_emm_correction uses pseudoinverse when LLt is singular", {
+  skip_if_not_installed("emmeans", minimum_version = "1.6")
+
+  # Additive model: p < K, so L_global has rank < K and LLt is singular.
+  # K = 8 (2 arms x 4 visits), p = 5 (intercept + FEV1_BL + ARMCD + 3 AVISIT).
+  fit <- get_mmrm_gcomp_additive()
+  rg <- emmeans::ref_grid(fit)
+  correction <- h_gcomp_emm_correction(fit, rg@linfct, rg@grid)
+
+  p <- length(component(fit, "beta_est"))
+  expect_matrix(correction$delta, nrows = p, ncols = p)
+  expect_true(isSymmetric(correction$delta, tol = sqrt(.Machine$double.eps)))
+
+  eigen_vals <- eigen(correction$delta, symmetric = TRUE, only.values = TRUE)$values
+  expect_true(all(eigen_vals >= -sqrt(.Machine$double.eps)))
+})
+
 # emmeans integration ----
 
 test_that("emmeans with gcomp produces larger SEs than without", {
@@ -183,7 +219,10 @@ test_that("gcomp correction works with singular design matrix", {
     control = mmrm_control(accept_singular = TRUE),
     gcomp_fixed_vars = c("ARMCD", "AVISIT")
   )
-  emm <- as.data.frame(expect_silent(emmeans::emmeans(fit, ~ ARMCD | AVISIT)))
+  # Aliased models emit "Results may be misleading" messages from emmeans.
+  emm <- as.data.frame(suppressMessages(
+    emmeans::emmeans(fit, ~ ARMCD | AVISIT)
+  ))
   expect_true(all(is.finite(emm$SE)))
   expect_true(all(emm$SE > 0))
 })
