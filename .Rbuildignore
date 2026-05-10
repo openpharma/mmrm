@@ -21,3 +21,4 @@ simulations
 ^data-raw$
 ^cache$
 ^[.]?air[.]toml$
+^\.claude$

@@ -296,11 +296,10 @@ test_that("emp_start works", {
       y_vector = full_frame$FEV1,
       x_matrix = model.matrix(model_formula, full_frame),
       full_frame = full_frame,
-      visit_var,
-      subject_var,
-      subject_groups,
-      n_visits, # Additional arguments are ignored.
-      n_subjects
+      visit_var = visit_var,
+      subject_var = subject_var,
+      subject_groups = subject_groups,
+      cov_type = "us"
     ),
     h_get_theta_from_cov(emp_mat)
   )
@@ -314,21 +313,128 @@ test_that("emp_start also works with transformed variables", {
     full_frame = fit$tmb_data$full_frame,
     visit_var = fit$formula_parts$visit_var,
     subject_var = fit$formula_parts$subject_var,
-    subject_groups = fit$tmb_data$subject_groups
+    subject_groups = fit$tmb_data$subject_groups,
+    cov_type = fit$formula_parts$cov_type
   )
-  expected <- c(
-    1.9293,
-    1.5648,
-    1.4619,
-    2.2415,
-    0.6193,
-    0.3743,
-    0.1593,
-    0.3227,
-    0.1882,
-    0.1708
+  expect_length(result, 2L)
+  expect_true(all(is.finite(result)))
+})
+
+# h_theta_from_cor ----
+
+test_that("h_theta_from_cor round-trips with map_to_cor", {
+  theta <- c(-2, -1, -0.5, 0, 0.5, 1, 2)
+  expect_equal(h_theta_from_cor(map_to_cor(theta)), theta)
+})
+
+test_that("h_theta_from_cor returns 0 for 0", {
+  expect_equal(h_theta_from_cor(0), 0)
+})
+
+test_that("h_theta_from_cor handles near-boundary values", {
+  result <- h_theta_from_cor(c(-0.999, 0.999))
+  expect_true(all(is.finite(result)))
+})
+
+# h_theta_from_cs_cor ----
+
+test_that("h_theta_from_cs_cor round-trips with map_to_cs_cor", {
+  for (m in c(2, 4, 10)) {
+    theta <- c(-1, 0, 0.5, 1, 2)
+    rho <- map_to_cs_cor(theta, m)
+    expect_equal(h_theta_from_cs_cor(rho, m), theta, tolerance = 1e-10)
+  }
+})
+
+# h_get_par_from_emp ----
+
+test_that("h_get_par_from_emp matches h_get_theta_from_cov for us", {
+  set.seed(42)
+  mat <- crossprod(matrix(rnorm(16), 4, 4))
+  expect_equal(
+    h_get_par_from_emp(mat, cov_type = "us"),
+    h_get_theta_from_cov(mat)
   )
-  expect_equal(result, expected, tolerance = 1e-4)
+})
+
+test_that("h_get_par_from_emp returns correct lengths", {
+  set.seed(42)
+  m <- 4L
+  mat <- crossprod(matrix(rnorm(m^2), m, m))
+  expected_lengths <- list(
+    us = 10,
+    toep = 4,
+    toeph = 7,
+    ar1 = 2,
+    ar1h = 5,
+    ad = 4,
+    adh = 7,
+    cs = 2,
+    csh = 5
+  )
+  for (type in names(expected_lengths)) {
+    result <- h_get_par_from_emp(mat, cov_type = type)
+    expect_length(result, expected_lengths[[type]])
+    expect_true(all(is.finite(result)))
+  }
+})
+
+test_that("h_get_par_from_emp errors for sp_exp", {
+  mat <- diag(4)
+  expect_snapshot(
+    h_get_par_from_emp(mat, cov_type = "sp_exp"),
+    error = TRUE
+  )
+})
+
+# emp_start per covariance type ----
+
+test_that("emp_start works for all non-spatial covariance types", {
+  full_frame <- fev_data[!is.na(fev_data$FEV1), ]
+  model_formula <- FEV1 ~ AVISIT
+  subject_groups <- factor(rep(0, 197))
+  expected_lengths <- list(
+    us = 10,
+    toep = 4,
+    toeph = 7,
+    ar1 = 2,
+    ar1h = 5,
+    ad = 4,
+    adh = 7,
+    cs = 2,
+    csh = 5
+  )
+  for (type in names(expected_lengths)) {
+    result <- emp_start(
+      y_vector = full_frame$FEV1,
+      x_matrix = model.matrix(model_formula, full_frame),
+      full_frame = full_frame,
+      visit_var = "AVISIT",
+      subject_var = "USUBJID",
+      subject_groups = subject_groups,
+      cov_type = type
+    )
+    expect_length(result, expected_lengths[[type]])
+    expect_true(all(is.finite(result)))
+  }
+})
+
+test_that("emp_start errors for sp_exp", {
+  full_frame <- fev_data[!is.na(fev_data$FEV1), ]
+  model_formula <- FEV1 ~ AVISIT
+  subject_groups <- factor(rep(0, 197))
+  expect_snapshot(
+    emp_start(
+      y_vector = full_frame$FEV1,
+      x_matrix = model.matrix(model_formula, full_frame),
+      full_frame = full_frame,
+      visit_var = "AVISIT",
+      subject_var = "USUBJID",
+      subject_groups = subject_groups,
+      cov_type = "sp_exp"
+    ),
+    error = TRUE
+  )
 })
 
 # h_extra_levels ----

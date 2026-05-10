@@ -401,21 +401,27 @@ std_start <- function(cov_type, n_visits, n_groups, ...) {
 
 #' Empirical Starting Value
 #'
-#' @description Obtain empirical start value for unstructured covariance
+#' @description Obtain empirical start value
+#'   for the covariance parameters.
 #'
 #' @param y_vector (`numeric`) response variable.
 #' @param x_matrix (`matrix`) design matrix.
-#' @param full_frame (`data.frame`) full data frame used for model fitting.
+#' @param full_frame (`data.frame`) full data frame used for
+#'   model fitting.
 #' @param visit_var (`string`)\cr visit variable.
 #' @param subject_var (`string`)\cr subject id variable.
 #' @param subject_groups (`factor`)\cr subject group assignment.
+#' @param cov_type (`string`)\cr covariance structure type.
 #' @param ... not used.
 #'
 #' @details
-#' This `emp_start` only works for unstructured covariance structure.
-#' It uses linear regression to first obtain the coefficients and use the residuals
-#' to obtain the empirical variance-covariance, and it is then used to obtain the
-#' starting values.
+#' `emp_start` supports all non-spatial covariance types.
+#' It uses linear regression to first obtain the coefficients
+#' and uses the residuals to obtain the empirical
+#' variance-covariance matrix. This is then decomposed into
+#' standard deviations and correlations which are mapped to the
+#' appropriate theta parameterization for the specified
+#' covariance type.
 #'
 #' @return A numeric vector of starting values.
 #'
@@ -427,6 +433,7 @@ emp_start <- function(
   visit_var,
   subject_var,
   subject_groups,
+  cov_type,
   ...
 ) {
   assert_numeric(y_vector)
@@ -454,7 +461,7 @@ emp_start <- function(
       stats::cov(res_mat[x, , drop = FALSE], use = "pairwise.complete.obs")
     }
   )
-  unlist(lapply(emp_covs, h_get_theta_from_cov))
+  unlist(lapply(emp_covs, h_get_par_from_emp, cov_type = cov_type))
 }
 
 #' Obtain Theta from Covariance Matrix
@@ -482,6 +489,60 @@ h_get_theta_from_cov <- function(covariance) {
   mat <- t(solve(diag(diag(emp_chol)), emp_chol))
   ret <- c(log(diag(emp_chol)), mat[upper.tri(mat)])
   unname(ret)
+}
+
+# h_theta_from_cor ----
+
+#' @keywords internal
+h_theta_from_cor <- function(rho) {
+  rho <- pmin(pmax(rho, -1 + 1e-6), 1 - 1e-6)
+  sign(rho) * sqrt(rho^2 / (1 - rho^2))
+}
+
+# h_theta_from_cs_cor ----
+
+#' @keywords internal
+h_theta_from_cs_cor <- function(rho, m) {
+  a <- 1 / (m - 1)
+  rho <- pmin(pmax(rho, -a + 1e-6), 1 - 1e-6)
+  stats::qlogis((rho + a) / (1 + a))
+}
+
+# h_get_par_from_emp ----
+
+#' @keywords internal
+h_get_par_from_emp <- function(emp_cov, cov_type, ...) {
+  m <- nrow(emp_cov)
+  emp_cov[is.na(emp_cov)] <- 0
+  diag(emp_cov)[diag(emp_cov) <= 0] <- 1
+  sds <- sqrt(diag(emp_cov))
+  d_inv <- diag(1 / sds, nrow = m)
+  p_mat <- d_inv %*% emp_cov %*% d_inv
+  diag(p_mat) <- 1
+  adj_cors <- p_mat[cbind(2:m, 1:(m - 1))]
+  lag_cors <- vapply(
+    seq_len(m - 1),
+    function(k) {
+      mean(p_mat[row(p_mat) - col(p_mat) == k])
+    },
+    numeric(1)
+  )
+  mean_lag1 <- mean(adj_cors)
+  mean_all_cor <- mean(p_mat[upper.tri(p_mat)])
+  log_mean_sd <- log(mean(sds))
+  switch(
+    cov_type,
+    us = h_get_theta_from_cov(emp_cov),
+    toep = c(log_mean_sd, h_theta_from_cor(lag_cors)),
+    toeph = c(log(sds), h_theta_from_cor(lag_cors)),
+    ar1 = c(log_mean_sd, h_theta_from_cor(mean_lag1)),
+    ar1h = c(log(sds), h_theta_from_cor(mean_lag1)),
+    ad = c(log_mean_sd, h_theta_from_cor(adj_cors)),
+    adh = c(log(sds), h_theta_from_cor(adj_cors)),
+    cs = c(log_mean_sd, h_theta_from_cs_cor(mean_all_cor, m)),
+    csh = c(log(sds), h_theta_from_cs_cor(mean_all_cor, m)),
+    sp_exp = stop("Empirical start not implemented for spatial covariance.")
+  )
 }
 
 #' Register S3 Method

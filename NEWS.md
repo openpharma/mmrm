@@ -3,6 +3,7 @@
 ### New Features
 
 - `mmrm()` and `fit_mmrm()` now accept a `contrasts` argument, allowing users to specify contrast matrices or functions for factor variables, matching the interface of `lm()`. When an explicit contrast matrix includes levels not present in the fitting data, those levels are preserved in the model and marked as aliased, enabling prediction on new data containing those levels (#562).
+- `emp_start()` now supports all non-spatial covariance structure types, not just unstructured. Parametrized covariance structures now use a simple moment-matching procedure to identify a reasonable empirical starting value.
 
 # mmrm 0.3.17.9000
 
