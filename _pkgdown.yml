@@ -46,6 +46,7 @@ articles:
     contents:
       - coef_vcov
       - empirical_wls
+      - model_robust_estimator
   - title: Algorithm Details
     navbar: Algorithm Details
     contents:
