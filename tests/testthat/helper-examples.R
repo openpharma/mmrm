@@ -214,7 +214,7 @@ get_mmrm_cs <- function() {
 .mmrm_gcomp <- mmrm(
   .mmrm_gcomp_formula,
   data = fev_data,
-  gcomp_fixed_vars = c("ARMCD", "AVISIT")
+  control = mmrm_control(emmeans_gcomp_vars = c("ARMCD", "AVISIT"))
 )
 get_mmrm_gcomp <- function() {
   .mmrm_gcomp
@@ -224,7 +224,7 @@ get_mmrm_gcomp <- function() {
 .mmrm_gcomp_additive <- mmrm(
   .mmrm_gcomp_additive_formula,
   data = fev_data,
-  gcomp_fixed_vars = c("ARMCD", "AVISIT")
+  control = mmrm_control(emmeans_gcomp_vars = c("ARMCD", "AVISIT"))
 )
 get_mmrm_gcomp_additive <- function() {
   .mmrm_gcomp_additive

@@ -8,7 +8,7 @@ h_gcomp_emm_correction(object, model_mat, grid)
 }
 \arguments{
 \item{object}{(\code{mmrm})\cr the fitted MMRM with
-\code{gcomp_fixed_vars} set.}
+\code{emmeans_gcomp_vars} set.}
 
 \item{model_mat}{(\code{matrix})\cr the L matrix from the emmeans reference grid.}
 

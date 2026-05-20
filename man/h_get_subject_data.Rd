@@ -14,7 +14,7 @@ A \code{data.frame} with one row per subject.
 }
 \description{
 Returns one row per subject with covariate data. Uses the
-stored \code{gcomp_subject_data} from the original dataset when available
+stored \code{emmeans_gcomp_subject_data} from the original dataset when available
 (includes subjects with missing outcomes), otherwise falls back to
 the fitted model's complete-case frame.
 }

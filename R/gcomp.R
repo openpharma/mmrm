@@ -12,7 +12,7 @@ NULL
 #' Get Subject-Level Covariate Data
 #'
 #' @description Returns one row per subject with covariate data. Uses the
-#'   stored `gcomp_subject_data` from the original dataset when available
+#'   stored `emmeans_gcomp_subject_data` from the original dataset when available
 #'   (includes subjects with missing outcomes), otherwise falls back to
 #'   the fitted model's complete-case frame.
 #'
@@ -23,8 +23,8 @@ NULL
 #' @keywords internal
 h_get_subject_data <- function(object) {
   assert_class(object, "mmrm")
-  if (!is.null(object$gcomp_subject_data)) {
-    return(object$gcomp_subject_data)
+  if (!is.null(object$emmeans_gcomp_subject_data)) {
+    return(object$emmeans_gcomp_subject_data)
   }
   full_frame <- object$tmb_data$full_frame
   subject_var <- object$formula_parts$subject_var
@@ -76,9 +76,10 @@ h_compute_potential_outcomes <- function(
   K <- nrow(counterfactual_grid)
   n_subj <- nrow(subj_data)
   p <- length(beta_hat)
-  vhat <- matrix(NA_real_, nrow = n_subj, ncol = K)
-  L_global <- matrix(NA_real_, nrow = K, ncol = p)
 
+  # Stack all K counterfactual assignments into one data frame.
+  # One model.frame + model.matrix call instead of K.
+  nd_list <- vector("list", K)
   for (k in seq_len(K)) {
     nd <- subj_data
     nd[[visit_var]] <- factor(visit_value, levels = levels(full_frame[[visit_var]]))
@@ -90,13 +91,21 @@ h_compute_potential_outcomes <- function(
         nd[[var_name]] <- val
       }
     }
+    nd_list[[k]] <- nd
+  }
+  nd_stacked <- do.call(rbind, nd_list)
 
-    mf <- stats::model.frame(model_terms, data = nd, na.action = stats::na.pass)
-    X_k <- stats::model.matrix(model_terms, data = mf, contrasts.arg = contrasts_arg)
+  mf <- stats::model.frame(model_terms, data = nd_stacked, na.action = stats::na.pass)
+  X_all <- stats::model.matrix(model_terms, data = mf, contrasts.arg = contrasts_arg)
+  X_all <- X_all[, names(beta_hat), drop = FALSE]
+  X_all[is.na(X_all)] <- 0
 
-    X_k <- X_k[, names(beta_hat), drop = FALSE]
-    X_k[is.na(X_k)] <- 0
-
+  # Split back into K blocks of n_subj rows.
+  vhat <- matrix(NA_real_, nrow = n_subj, ncol = K)
+  L_global <- matrix(NA_real_, nrow = K, ncol = p)
+  for (k in seq_len(K)) {
+    rows <- ((k - 1L) * n_subj + 1L):(k * n_subj)
+    X_k <- X_all[rows, , drop = FALSE]
     vhat[, k] <- as.vector(X_k %*% beta_clean)
     L_global[k, ] <- colMeans(X_k, na.rm = TRUE)
   }
@@ -111,7 +120,7 @@ h_compute_potential_outcomes <- function(
 #'   G-computation estimator with correct standard errors.
 #'
 #' @param object (`mmrm`)\cr the fitted MMRM with
-#'   `gcomp_fixed_vars` set.
+#'   `emmeans_gcomp_vars` set.
 #' @param model_mat (`matrix`)\cr the L matrix from the emmeans reference grid.
 #' @param grid (`data.frame`)\cr the reference grid from emmeans.
 #'
@@ -125,7 +134,7 @@ h_gcomp_emm_correction <- function(object, model_mat, grid) {
   assert_matrix(model_mat, mode = "numeric")
   assert_data_frame(grid)
 
-  fixed_vars <- object$gcomp_fixed_vars
+  fixed_vars <- object$emmeans_gcomp_vars
   visit_var <- object$formula_parts$visit_var
 
   assert_character(fixed_vars, min.len = 1L)

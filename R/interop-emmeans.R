@@ -143,7 +143,7 @@ emm_basis.mmrm <- function(
   # Start with the model-based covariance.
   V <- component(object, "beta_vcov")
 
-  if (!is.null(object$gcomp_fixed_vars)) {
+  if (!is.null(object$emmeans_gcomp_vars)) {
     # Detect aliased coefficient positions before any modifications.
     aliased_pos <- which(is.na(beta_hat))
 

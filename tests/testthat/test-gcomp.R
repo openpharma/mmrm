@@ -1,40 +1,40 @@
-# mmrm() gcomp_fixed_vars argument ----
+# mmrm_control() emmeans_gcomp_vars argument ----
 
-test_that("mmrm accepts gcomp_fixed_vars", {
+test_that("mmrm accepts emmeans_gcomp_vars", {
   fit <- mmrm(
     FEV1 ~ FEV1_BL + ARMCD * AVISIT + us(AVISIT | USUBJID),
     data = fev_data,
-    gcomp_fixed_vars = c("ARMCD", "AVISIT")
+    control = mmrm_control(emmeans_gcomp_vars = c("ARMCD", "AVISIT"))
   )
-  expect_identical(fit$gcomp_fixed_vars, c("ARMCD", "AVISIT"))
-  expect_data_frame(fit$gcomp_subject_data)
+  expect_identical(fit$emmeans_gcomp_vars, c("ARMCD", "AVISIT"))
+  expect_data_frame(fit$emmeans_gcomp_subject_data)
 })
 
-test_that("mmrm without gcomp_fixed_vars has NULL fields", {
+test_that("mmrm without emmeans_gcomp_vars has NULL fields", {
   fit <- mmrm(
     FEV1 ~ FEV1_BL + ARMCD * AVISIT + us(AVISIT | USUBJID),
     data = fev_data
   )
-  expect_null(fit$gcomp_fixed_vars)
-  expect_null(fit$gcomp_subject_data)
+  expect_null(fit$emmeans_gcomp_vars)
+  expect_null(fit$emmeans_gcomp_subject_data)
 })
 
-test_that("mmrm errors if gcomp_fixed_vars variable not in data", {
+test_that("mmrm errors if emmeans_gcomp_vars variable not in data", {
   expect_error(
     mmrm(
       FEV1 ~ FEV1_BL + ARMCD * AVISIT + us(AVISIT | USUBJID),
       data = fev_data,
-      gcomp_fixed_vars = c("NONEXISTENT", "AVISIT")
+      control = mmrm_control(emmeans_gcomp_vars = c("NONEXISTENT", "AVISIT"))
     ),
     "subset"
   )
 })
 
-test_that("gcomp_fixed_vars does not change model fit", {
+test_that("emmeans_gcomp_vars does not change model fit", {
   fit_with <- mmrm(
     FEV1 ~ FEV1_BL + ARMCD * AVISIT + us(AVISIT | USUBJID),
     data = fev_data,
-    gcomp_fixed_vars = c("ARMCD", "AVISIT")
+    control = mmrm_control(emmeans_gcomp_vars = c("ARMCD", "AVISIT"))
   )
   fit_without <- mmrm(
     FEV1 ~ FEV1_BL + ARMCD * AVISIT + us(AVISIT | USUBJID),
@@ -181,8 +181,10 @@ test_that("gcomp correction works with Kenward-Roger", {
   fit <- mmrm(
     FEV1 ~ FEV1_BL + ARMCD + ar1(AVISIT | USUBJID),
     data = fev_data,
-    method = "Kenward-Roger",
-    gcomp_fixed_vars = c("ARMCD", "AVISIT")
+    control = mmrm_control(
+      method = "Kenward-Roger",
+      emmeans_gcomp_vars = c("ARMCD", "AVISIT")
+    )
   )
   emm <- as.data.frame(expect_silent(emmeans::emmeans(fit, ~ ARMCD | AVISIT)))
   expect_true(all(is.finite(emm$SE)))
@@ -196,9 +198,11 @@ test_that("gcomp correction works with Empirical vcov", {
   fit <- mmrm(
     FEV1 ~ FEV1_BL + ARMCD + ar1(AVISIT | USUBJID),
     data = fev_data,
-    vcov = "Empirical",
-    method = "Residual",
-    gcomp_fixed_vars = c("ARMCD", "AVISIT")
+    control = mmrm_control(
+      vcov = "Empirical",
+      method = "Residual",
+      emmeans_gcomp_vars = c("ARMCD", "AVISIT")
+    )
   )
   emm <- as.data.frame(expect_silent(emmeans::emmeans(fit, ~ ARMCD | AVISIT)))
   expect_true(all(is.finite(emm$SE)))
@@ -216,8 +220,10 @@ test_that("gcomp correction works with singular design matrix", {
   fit <- mmrm(
     FEV1 ~ FEV1_BL + ARMCD * AVISIT + ARMCD2 + us(AVISIT | USUBJID),
     data = dat,
-    control = mmrm_control(accept_singular = TRUE),
-    gcomp_fixed_vars = c("ARMCD", "AVISIT")
+    control = mmrm_control(
+      accept_singular = TRUE,
+      emmeans_gcomp_vars = c("ARMCD", "AVISIT")
+    )
   )
   # Aliased models emit "Results may be misleading" messages from emmeans.
   emm <- as.data.frame(suppressMessages(

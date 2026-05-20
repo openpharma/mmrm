@@ -14,7 +14,8 @@ test_that("mmrm_control works as expected", {
       vcov = "Asymptotic",
       n_cores = 1L,
       drop_visit_levels = TRUE,
-      disable_theta_vcov = FALSE
+      disable_theta_vcov = FALSE,
+      emmeans_gcomp_vars = NULL
     ),
     class = "mmrm_control"
   )

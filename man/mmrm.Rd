@@ -11,7 +11,6 @@ mmrm(
   covariance = NULL,
   contrasts = NULL,
   reml = TRUE,
-  gcomp_fixed_vars = NULL,
   control = mmrm_control(...),
   ...
 )
@@ -42,15 +41,6 @@ containing those levels.}
 
 \item{reml}{(\code{flag})\cr whether restricted maximum likelihood (REML)
 estimation is used, otherwise maximum likelihood (ML) is used.}
-
-\item{gcomp_fixed_vars}{(\code{character} or \code{NULL})\cr names of variables to
-treat as fixed in the G-computation correction. When non-\code{NULL}, enables
-the correction in \code{\link{emmeans_support}}, producing the average treatment
-effect (ATE) with corrected standard errors. The visit variable
-(identified from the covariance structure) is computed separately per
-level. All other named variables are treated as intervention (subjects
-pooled across levels). All variables not named are averaged over using
-each subject's actual values. Defaults to \code{NULL} (no correction).}
 
 \item{control}{(\code{mmrm_control})\cr fine-grained fitting specifications list
 created with \code{\link[=mmrm_control]{mmrm_control()}}.}
