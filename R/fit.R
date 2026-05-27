@@ -229,7 +229,7 @@ refit_multiple_optimizers <- function(fit, ..., control = mmrm_control(...)) {
 #'   (identified from the covariance structure) is computed separately per
 #'   level. All other named variables are treated as intervention (subjects
 #'   pooled across levels). All variables not named are averaged over using
-#'   each subject's actual values. Defaults to `NULL` (no correction).
+#'   each subject's actual values.
 #' @param ... additional arguments passed to [h_get_optimizers()].
 #'
 #' @details
