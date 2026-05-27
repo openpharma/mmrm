@@ -2,7 +2,7 @@
 
 ### New Features
 
-- `mmrm()` and `fit_mmrm()` now accept a `contrasts` argument, allowing users to specify contrast matrices or functions for factor variables, matching the interface of `lm()`. When an explicit contrast matrix includes levels not present in the fitting data, those levels are preserved in the model and marked as aliased, enabling prediction on new data containing those levels (#562).
+- `mmrm()` and `fit_mmrm()` now accept a `contrasts` argument, allowing users to specify contrast matrices or functions for factor variables, matching the interface of `lm()`. When an explicit contrast matrix includes levels not present in the fitting data, those levels are preserved in the model and marked as aliased, enabling prediction on new data containing those levels.
 - `emp_start()` now supports all non-spatial covariance structure types, not just unstructured. Parametrized covariance structures now use a simple moment-matching procedure to identify a reasonable empirical starting value.
 - `mmrm_control()` gains `emmeans_gcomp_vars` argument, enabling G-computation correction in `emmeans()` output for models with covariate-by-treatment interactions. When set, `emmeans()` returns the average treatment effect (ATE) with standard errors that account for covariate variability across subjects. See `?emmeans_support` for details.
 
