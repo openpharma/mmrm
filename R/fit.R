@@ -496,7 +496,6 @@ mmrm <- function(
   assert_class(control, "mmrm_control")
   assert_list(control$optimizers, min.len = 1)
   assert_list(contrasts, null.ok = TRUE, names = "unique")
-  emmeans_gcomp_vars <- control$emmeans_gcomp_vars
 
   if (control$method %in% c("Kenward-Roger", "Kenward-Roger-Linear") && !reml) {
     stop("Kenward-Roger only works for REML")
@@ -517,11 +516,6 @@ mmrm <- function(
     weights <- rep(1, nrow(data))
   } else {
     attr(weights, which = "dataname") <- deparse(match.call()$weights)
-  }
-
-  # Validate G-computation fixed variables if specified.
-  if (!is.null(emmeans_gcomp_vars)) {
-    assert_subset(emmeans_gcomp_vars, names(data))
   }
 
   tmb_data <- h_mmrm_tmb_data(
@@ -621,9 +615,15 @@ mmrm <- function(
   }
 
   # G-computation correction: store metadata for emmeans hook.
+  # Subject data must be captured from the original `data` argument here,
+  # not from tmb_data$full_frame later, because tmb_data drops rows with
+  # missing outcomes. The G-computation average should include all subjects
+  # with observed covariates.
+  emmeans_gcomp_vars <- control$emmeans_gcomp_vars
   fit$emmeans_gcomp_vars <- emmeans_gcomp_vars
   if (!is.null(emmeans_gcomp_vars)) {
-    # Store subject-level covariate data from the ORIGINAL data (pre-NA-removal).
+    assert_subset(emmeans_gcomp_vars, names(data))
+    # Store subject-level covariate data from the original data (pre-NA-removal).
     # This includes subjects with observed covariates but missing outcomes,
     # who contribute to the G-computation average but not to beta estimation.
     subject_var <- formula_parts$subject_var

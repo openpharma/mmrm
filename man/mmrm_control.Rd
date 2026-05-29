@@ -44,7 +44,7 @@ treatment effect (ATE) with corrected standard errors. The visit variable
 (identified from the covariance structure) is computed separately per
 level. All other named variables are treated as intervention (subjects
 pooled across levels). All variables not named are averaged over using
-each subject's actual values. Defaults to \code{NULL} (no correction).}
+each subject's actual values.}
 
 \item{...}{additional arguments passed to \code{\link[=h_get_optimizers]{h_get_optimizers()}}.}
 
