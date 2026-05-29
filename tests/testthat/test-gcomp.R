@@ -142,7 +142,7 @@ test_that("h_gcomp_emm_correction uses pseudoinverse when LLt is singular", {
 
 # emmeans integration ----
 
-test_that("emmeans with gcomp produces larger SEs than without", {
+test_that("emmeans with gcomp outputs message and produces larger SEs than without", {
   skip_if_not_installed("emmeans", minimum_version = "1.6")
 
   fit_corr <- get_mmrm_gcomp()
@@ -151,10 +151,33 @@ test_that("emmeans with gcomp produces larger SEs than without", {
     data = fev_data
   )
 
-  emm_corr <- as.data.frame(expect_silent(emmeans::emmeans(fit_corr, ~ ARMCD | AVISIT)))
+  emm_corr <- as.data.frame(expect_message(
+    emmeans::emmeans(fit_corr, ~ ARMCD | AVISIT),
+    "G-computation correction applied"
+  ))
   emm_std <- as.data.frame(expect_silent(emmeans::emmeans(fit_std, ~ ARMCD | AVISIT)))
 
   expect_true(all(emm_corr$SE >= emm_std$SE - sqrt(.Machine$double.eps)))
+})
+
+test_that("gcomp correction matches reference values on fev_data", {
+  skip_if_not_installed("emmeans", minimum_version = "1.6")
+
+  fit <- get_mmrm_gcomp()
+  emm <- as.data.frame(suppressMessages(
+    emmeans::emmeans(fit, ~ ARMCD | AVISIT)
+  ))
+  # Reference values from independent validation.
+  expected_emmeans <- c(
+    32.618448, 37.283436, 37.47562, 41.843852,
+    42.950618, 46.517238, 47.989686, 53.001744
+  )
+  expected_ses <- c(
+    0.773949, 0.787878, 0.613805, 0.609102,
+    0.524801, 0.577069, 1.210581, 1.213523
+  )
+  expect_equal(emm$emmean, expected_emmeans, tolerance = 1e-4)
+  expect_equal(emm$SE, expected_ses, tolerance = 1e-4)
 })
 
 test_that("additive model contrasts are unaffected by gcomp correction", {
@@ -166,8 +189,12 @@ test_that("additive model contrasts are unaffected by gcomp correction", {
     data = fev_data
   )
 
-  pairs_corr <- as.data.frame(pairs(expect_silent(emmeans::emmeans(fit_corr, ~ ARMCD | AVISIT))))
-  pairs_std <- as.data.frame(pairs(expect_silent(emmeans::emmeans(fit_std, ~ ARMCD | AVISIT))))
+  pairs_corr <- as.data.frame(pairs(suppressMessages(
+    emmeans::emmeans(fit_corr, ~ ARMCD | AVISIT)
+  )))
+  pairs_std <- as.data.frame(pairs(expect_silent(
+    emmeans::emmeans(fit_std, ~ ARMCD | AVISIT)
+  )))
 
   ratio <- pairs_corr$SE / pairs_std$SE
   expect_true(all(ratio >= 0.99 & ratio <= 1.01))
@@ -186,7 +213,7 @@ test_that("gcomp correction works with Kenward-Roger", {
       emmeans_gcomp_vars = c("ARMCD", "AVISIT")
     )
   )
-  emm <- as.data.frame(expect_silent(emmeans::emmeans(fit, ~ ARMCD | AVISIT)))
+  emm <- as.data.frame(suppressMessages(emmeans::emmeans(fit, ~ ARMCD | AVISIT)))
   expect_true(all(is.finite(emm$SE)))
   expect_true(all(emm$SE > 0))
   expect_true(all(is.finite(emm$df)))
@@ -204,7 +231,7 @@ test_that("gcomp correction works with Empirical vcov", {
       emmeans_gcomp_vars = c("ARMCD", "AVISIT")
     )
   )
-  emm <- as.data.frame(expect_silent(emmeans::emmeans(fit, ~ ARMCD | AVISIT)))
+  emm <- as.data.frame(suppressMessages(emmeans::emmeans(fit, ~ ARMCD | AVISIT)))
   expect_true(all(is.finite(emm$SE)))
   expect_true(all(emm$SE > 0))
 })
