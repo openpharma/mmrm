@@ -61,6 +61,17 @@ h_mmrm_tmb_formula_parts <- function(
 #' @param drop_visit_levels (`flag`)\cr whether to drop levels for visit variable, if visit variable is a factor.
 #' @param allow_na_response (`flag`)\cr whether NA in response is allowed.
 #' @param drop_levels (`flag`)\cr whether drop levels for covariates. If not dropped could lead to singular matrix.
+#' @param xlev (`list` or `NULL`)\cr list of X levels produced by stats::.getXlevels
+#' @param contrasts (`list` or `NULL`)\cr an optional named list of contrast
+#'   matrices or contrast functions (like [stats::contr.sum] or
+#'   [stats::contr.poly]) for specific factor variables, matching the
+#'   `contrasts` argument in [stats::lm()]. The list names must correspond to
+#'   factor variable names in the model formula. When `NULL` (the default),
+#'   the contrasts set on the factor variables in `data` are used. If a
+#'   contrast matrix has rownames that include levels not present in `data`,
+#'   those levels are preserved and the corresponding model matrix columns
+#'   are marked as aliased (not estimable), enabling prediction on new data
+#'   containing those levels.
 #'
 #' @return List of class `mmrm_tmb_data` with elements:
 #' - `full_frame`: `data.frame` with `n` rows containing all variables needed in the model.
@@ -177,29 +188,14 @@ h_mmrm_tmb_data <- function(
   }
   full_frame <- full_frame[data_order, ]
 
-  contrasts_preserve_vars <- NULL
+  # model.matrix.default considers character, factor, and logical variables as factors (isF)
   if (!is.null(contrasts)) {
     formula_factors <- intersect(
       names(contrasts),
-      names(which(vapply(full_frame, is.factor, logical(1L))))
+      names(which(vapply(full_frame, \(x) is.factor(x) || is.character(x) || is.logical(x), logical(1L))))
     )
-    for (var_name in formula_factors) {
-      contr_val <- contrasts[[var_name]]
-      if (is.matrix(contr_val)) {
-        contr_levels <- rownames(contr_val)
-        if (!is.null(contr_levels)) {
-          observed_levels <- levels(full_frame[[var_name]])
-          all_levels <- union(observed_levels, contr_levels)
-          if (!identical(levels(full_frame[[var_name]]), contr_levels)) {
-            full_frame[[var_name]] <- factor(
-              full_frame[[var_name]],
-              levels = all_levels
-            )
-          }
-        }
-        contrasts_preserve_vars <- c(contrasts_preserve_vars, var_name)
-      }
-    }
+    # don't drop factorlike variables that have explicit contrasts
+    no_drop_lvls <- names(which(vapply(formula_factors, \(x) !is.null(contrasts[[x]]), logical(1L))))
   }
 
   if (drop_levels) {
@@ -207,7 +203,7 @@ h_mmrm_tmb_data <- function(
       full_frame,
       formula_parts$subject_var,
       formula_parts$visit_var,
-      c(names(xlev), contrasts_preserve_vars)
+      c(names(xlev), no_drop_lvls)
     )
   }
   has_response <- !identical(attr(attr(full_frame, "terms"), "response"), 0L)
