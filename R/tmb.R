@@ -189,6 +189,7 @@ h_mmrm_tmb_data <- function(
   full_frame <- full_frame[data_order, ]
 
   # model.matrix.default considers character, factor, and logical variables as factors (isF)
+  no_drop_lvls <- NULL
   if (!is.null(contrasts)) {
     formula_factors <- intersect(
       names(contrasts),

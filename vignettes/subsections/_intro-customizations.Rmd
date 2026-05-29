@@ -322,9 +322,9 @@ explicitly.
 
 ## Fine control over design matrix
 
-In some scenarios, we may want to control how the design matrix is constructed in finer detail. This can be especially of interest if there are factor levels not present in the current dataset, which nonetheless are valid levels that should not result in later errors (for example, when using `predict` functions). In the example below, `mmrm` might not run if only one factor level is available. The `contrast()` function is unable to understand 
+In some scenarios, we may want to control how the design matrix is constructed in finer detail. This can be especially of interest if there are factor levels not present in the current dataset, which nonetheless are valid levels that should not result in later errors (for example, when using `predict` functions). In the example below, `mmrm` might not run if only one factor level is available.
 
-```{r}
+```{r contrasts-fail-example, error = TRUE}
 ex_data <- fev_data[!(fev_data$RACE == "White" & fev_data$SEX == "Male"),]
 fit_subgroup1 <- mmrm(
   formula = FEV1 ~ SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
@@ -339,12 +339,11 @@ fit_subgroup2 <- mmrm(
 
 emmeans::emmeans(fit_subgroup1, ~ARMCD|AVISIT, data=fev_data, weights="proportional")
 emmeans::emmeans(fit_subgroup2, ~ARMCD|AVISIT, data=fev_data, weights="proportional")
-
 ```
 
 By setting the contrasts argument specifically, just like in `lm()`, we can avoid this error.
 
-```{r}
+```{r contrasts-setup}
 contr_mat <- contr.sum(nlevels(ex_data$SEX))
 rownames(contr_mat) <- levels(fev_data$SEX)
 contr_mat
@@ -352,7 +351,7 @@ contr_mat
 
 Now the subgroup analysis code will run correctly, even when emmeans averages over the baseline values that aren't subgroup-specific.
 
-```{r}
+```{r contrasts-fix-example}
 fit_subgroup1 <- mmrm(
   formula = FEV1 ~ SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
   data = ex_data[ex_data$RACE == "White",],
@@ -368,5 +367,4 @@ fit_subgroup2 <- mmrm(
 
 emmeans::emmeans(fit_subgroup1, ~ARMCD|AVISIT, data=fev_data, weights="proportional")
 emmeans::emmeans(fit_subgroup2, ~ARMCD|AVISIT, data=fev_data, weights="proportional")
-
 ```
