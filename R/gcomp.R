@@ -12,15 +12,20 @@ NULL
 #' Get Subject-Level Covariate Data
 #'
 #' @description Returns one row per subject with covariate data. Uses the
-#'   stored `emmeans_gcomp_subject_data` from the original dataset when available
-#'   (includes subjects with missing outcomes), otherwise falls back to
-#'   the fitted model's complete-case frame.
+#'   stored `emmeans_gcomp_subject_data` from the original dataset when
+#'   available (includes subjects with missing outcomes), otherwise falls
+#'   back to the fitted model's complete case frame.
+#'
+#' @note If time varying covariates are present, only the first observed
+#'   value per subject is retained. The intended use is for baseline
+#'   (pre-randomization) covariates that are constant across visits.
 #'
 #' @param object (`mmrm`)\cr the fitted MMRM.
 #'
 #' @return A `data.frame` with one row per subject.
 #'
 #' @keywords internal
+#' @noRd
 h_get_subject_data <- function(object) {
   assert_class(object, "mmrm")
   if (!is.null(object$emmeans_gcomp_subject_data)) {
@@ -48,10 +53,14 @@ h_get_subject_data <- function(object) {
 #'   variables (excluding visit) to loop over.
 #'
 #' @return A list with:
-#'   - `vhat`: `matrix` of fitted potential outcomes (n x K).
-#'   - `L_global`: `matrix` of globally-weighted contrast rows (K x p).
+#'   - `vhat`: `matrix` of fitted potential outcomes (n_subjects x K),
+#'     where n_subjects is the number of rows in `subj_data` and K is the
+#'     number of rows in `counterfactual_grid`.
+#'   - `L_global`: `matrix` of globally weighted contrast rows (K x p),
+#'     where p is the number of estimable model coefficients.
 #'
 #' @keywords internal
+#' @noRd
 h_compute_potential_outcomes <- function(
   object,
   subj_data,
@@ -78,24 +87,26 @@ h_compute_potential_outcomes <- function(
   p <- length(beta_hat)
 
   # Stack all K counterfactual assignments into one data frame.
-  # One model.frame + model.matrix call instead of K.
-  nd_list <- vector("list", K)
+  # (for efficiency reasons, we can just do one model.frame and model.matrix call below instead of K).
+  cf_list <- vector("list", K)
   for (k in seq_len(K)) {
-    nd <- subj_data
-    nd[[visit_var]] <- factor(visit_value, levels = levels(full_frame[[visit_var]]))
+    subj_cf <- subj_data
+    subj_cf[[visit_var]] <- factor(
+      visit_value, levels = levels(full_frame[[visit_var]])
+    )
     for (var_name in names(counterfactual_grid)) {
       val <- counterfactual_grid[[var_name]][k]
-      if (is.factor(full_frame[[var_name]])) {
-        nd[[var_name]] <- factor(val, levels = levels(full_frame[[var_name]]))
+      subj_cf[[var_name]] <- if (is.factor(full_frame[[var_name]])) {
+        factor(val, levels = levels(full_frame[[var_name]]))
       } else {
-        nd[[var_name]] <- val
+        val
       }
     }
-    nd_list[[k]] <- nd
+    cf_list[[k]] <- subj_cf
   }
-  nd_stacked <- do.call(rbind, nd_list)
+  cf_stacked <- do.call(rbind, cf_list)
 
-  mf <- stats::model.frame(model_terms, data = nd_stacked, na.action = stats::na.pass)
+  mf <- stats::model.frame(model_terms, data = cf_stacked, na.action = stats::na.pass)
   X_all <- stats::model.matrix(model_terms, data = mf, contrasts.arg = contrasts_arg)
   X_all <- X_all[, names(beta_hat), drop = FALSE]
   X_all[is.na(X_all)] <- 0
@@ -113,55 +124,38 @@ h_compute_potential_outcomes <- function(
   list(vhat = vhat, L_global = L_global)
 }
 
-#' Compute G-computation Correction for emmeans Integration
+#' Compute Per Visit Variance Contributions and Global L Matrix
 #'
-#' @description Computes the corrected L matrix (global covariate weighting)
-#'   and the p x p variance correction matrix. Together these produce the
-#'   G-computation estimator with correct standard errors.
+#' @description For each visit, computes subject level potential outcomes,
+#'   the sample covariance of those outcomes (divided by n), and the
+#'   globally weighted L matrix rows. Assembles these into the full
+#'   block diagonal S matrix and global L matrix across all visits.
 #'
-#' @param object (`mmrm`)\cr the fitted MMRM with
-#'   `emmeans_gcomp_vars` set.
-#' @param model_mat (`matrix`)\cr the L matrix from the emmeans reference grid.
-#' @param grid (`data.frame`)\cr the reference grid from emmeans.
+#' @param object (`mmrm`)\cr the fitted MMRM.
+#' @param model_mat (`matrix`)\cr the L matrix from the emmeans reference
+#'   grid (n_grid x p).
+#' @param grid (`data.frame`)\cr the emmeans reference grid.
+#' @param fixed_vars (`character`)\cr names of the fixed (intervention)
+#'   variables.
+#' @param visit_var (`string`)\cr name of the visit variable.
 #'
 #' @return A list with:
-#'   - `delta`: `matrix` p x p positive semi-definite correction.
-#'   - `L_global`: `matrix` n_grid x p globally-weighted L matrix.
+#'   - `S_full`: `matrix` (n_grid x n_grid) block-diagonal sample covariance
+#'     of potential outcomes divided by n, with blocks corresponding to visits.
+#'   - `L_global`: `matrix` (n_grid x p) globally-weighted L matrix rows.
 #'
 #' @keywords internal
-h_gcomp_emm_correction <- function(object, model_mat, grid) {
-  assert_class(object, "mmrm")
-  assert_matrix(model_mat, mode = "numeric")
-  assert_data_frame(grid)
-
-  fixed_vars <- object$emmeans_gcomp_vars
-  visit_var <- object$formula_parts$visit_var
-
-  assert_character(fixed_vars, min.len = 1L)
-  assert_string(visit_var)
-
+#' @noRd
+h_gcomp_visit_contributions <- function(object, model_mat, grid,
+                                         fixed_vars, visit_var) {
   subj_data <- h_get_subject_data(object)
   full_frame <- object$tmb_data$full_frame
   n_subj <- nrow(subj_data)
-
   visit_levels <- levels(full_frame[[visit_var]])
   cell_vars <- setdiff(fixed_vars, visit_var)
 
-  beta_names <- names(component(object, "beta_est"))
-  # The emmeans grid model matrix may have extra columns (e.g. from
-  # interaction reordering) that do not appear in beta_est. Trim to
-  # match the coefficient vector, since estimability::nonest.basis
-  # only handles rank deficiency within the fitted coefficient set.
-  if (ncol(model_mat) > length(beta_names)) {
-    keep_cols <- match(beta_names, colnames(model_mat))
-    keep_cols <- keep_cols[!is.na(keep_cols)]
-    model_mat <- model_mat[, keep_cols, drop = FALSE]
-  }
-
-  p <- ncol(model_mat)
   n_grid <- nrow(model_mat)
   grid_visit <- as.character(grid[[visit_var]])
-
   S_full <- matrix(0, nrow = n_grid, ncol = n_grid)
   L_global <- model_mat
 
@@ -202,22 +196,62 @@ h_gcomp_emm_correction <- function(object, model_mat, grid) {
     }
   }
 
-  L <- L_global
-  LLt <- L %*% t(L)
+  list(S_full = S_full, L_global = L_global)
+}
 
-  LLt_inv <- tryCatch(
-    solve(LLt),
-    error = function(e) {
-      svd_result <- svd(LLt)
-      tol <- max(dim(LLt)) * max(svd_result$d) * .Machine$double.eps
-      d_inv <- ifelse(svd_result$d > tol, 1 / svd_result$d, 0)
-      svd_result$v %*% diag(d_inv) %*% t(svd_result$u)
-    }
+#' Compute G-computation Correction for emmeans Integration
+#'
+#' @description Computes the corrected L matrix (global covariate weighting)
+#'   and the variance correction matrix delta. Together these produce the
+#'   G-computation estimator with correct standard errors. Delta is a
+#'   p x p positive semi-definite matrix (where p is the number of estimable
+#'   model coefficients) that is added to the model-based covariance.
+#'
+#' @param object (`mmrm`)\cr the fitted MMRM with
+#'   `emmeans_gcomp_vars` set.
+#' @param model_mat (`matrix`)\cr the L matrix from the emmeans reference
+#'   grid (n_grid x p).
+#' @param grid (`data.frame`)\cr the reference grid from emmeans.
+#'
+#' @return A list with:
+#'   - `delta`: `matrix` (p x p) positive semi-definite correction, where
+#'     p is the number of estimable model coefficients.
+#'   - `L_global`: `matrix` (n_grid x p) globally-weighted L matrix.
+#'
+#' @keywords internal
+#' @noRd
+h_gcomp_emm_correction <- function(object, model_mat, grid) {
+  assert_class(object, "mmrm")
+  assert_matrix(model_mat, mode = "numeric")
+  assert_data_frame(grid)
+
+  fixed_vars <- object$emmeans_gcomp_vars
+  visit_var <- object$formula_parts$visit_var
+
+  assert_character(fixed_vars, min.len = 1L)
+  assert_string(visit_var)
+
+  beta_names <- names(component(object, "beta_est"))
+  # The emmeans grid model matrix may have extra columns (e.g. from
+  # interaction reordering) that do not appear in beta_est. Trim to
+  # match the coefficient vector, since estimability::nonest.basis
+  # only handles rank deficiency within the fitted coefficient set.
+  if (ncol(model_mat) > length(beta_names)) {
+    keep_cols <- match(beta_names, colnames(model_mat))
+    keep_cols <- keep_cols[!is.na(keep_cols)]
+    model_mat <- model_mat[, keep_cols, drop = FALSE]
+  }
+
+  contributions <- h_gcomp_visit_contributions(
+    object, model_mat, grid, fixed_vars, visit_var
   )
+  S_full <- contributions$S_full
+  L <- contributions$L_global
 
-  delta <- t(L) %*% LLt_inv %*% S_full %*% LLt_inv %*% L
+  LLt_ginv <- MASS::ginv(tcrossprod(L))
+  delta <- crossprod(L, LLt_ginv) %*% S_full %*% (LLt_ginv %*% L)
   V <- component(object, "beta_vcov")
   dimnames(delta) <- dimnames(V)
 
-  list(delta = delta, L_global = L_global)
+  list(delta = delta, L_global = L)
 }
