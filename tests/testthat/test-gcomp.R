@@ -151,10 +151,11 @@ test_that("emmeans with gcomp outputs message and produces larger SEs than witho
     data = fev_data
   )
 
-  emm_corr <- as.data.frame(expect_message(
-    emmeans::emmeans(fit_corr, ~ ARMCD | AVISIT),
+  expect_message(
+    emm_corr <- emmeans::emmeans(fit_corr, ~ ARMCD | AVISIT),
     "G-computation correction applied"
-  ))
+  )
+  emm_corr <- as.data.frame(emm_corr)
   emm_std <- as.data.frame(expect_silent(emmeans::emmeans(fit_std, ~ ARMCD | AVISIT)))
 
   expect_true(all(emm_corr$SE >= emm_std$SE - sqrt(.Machine$double.eps)))

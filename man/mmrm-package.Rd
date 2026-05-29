@@ -32,6 +32,8 @@ Authors:
   \item Daniel Leibovitz \email{daniel.leibovitz@roche.com}
   \item Daniel D. Sjoberg \email{sjobergd@gene.com} (\href{https://orcid.org/0000-0003-0862-2018}{ORCID})
   \item Nikolas Ivan Krieger \email{nikolas.krieger@experis.com} (\href{https://orcid.org/0000-0002-4581-3545}{ORCID})
+  \item Arryn Panagos \email{panagos_arryn@lilly.com} (\href{https://orcid.org/0000-0003-0452-2095}{ORCID})
+  \item Jeremiah Jones \email{jeremiah.jones@lilly.com} (\href{https://orcid.org/0000-0003-1239-2542}{ORCID})
 }
 
 Other contributors:
