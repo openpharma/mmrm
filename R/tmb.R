@@ -188,7 +188,12 @@ h_mmrm_tmb_data <- function(
   }
   full_frame <- full_frame[data_order, ]
 
-  # model.matrix.default considers character, factor, and logical variables as factors (isF)
+  # Contrasts following the same as what's done in lm(). The user gives contrast
+  # matrices or functions are passed to model.matrix(). With lm(), missing
+  # factor levels are silently dropped. With contrasts, when a contrast matrix
+  # includes levels not present in the data, those levels are kept and the model
+  # matrix columns are marked aliased. This allows for prediction on new data
+  # that have those levels.
   no_drop_lvls <- NULL
   if (!is.null(contrasts)) {
     formula_factors <- intersect(

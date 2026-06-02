@@ -1039,6 +1039,7 @@ test_that("mmrm accepts contrasts argument with contrast function", {
   expect_class(fit, "mmrm")
   x_contrasts <- component(fit, "contrasts")
   expect_true("ARMCD" %in% names(x_contrasts))
+  expect_equal(coef(fit)["ARMCDPBO"], c(ARMCDPBO = -4.479807), tolerance = 1e-4)
 })
 
 test_that("mmrm accepts explicit contrast matrix matching data levels", {
@@ -1056,8 +1057,8 @@ test_that("mmrm with extra-level contrasts allows prediction on new data", {
   all_race_levels <- levels(fev_data$RACE)
   missing_level <- all_race_levels[1]
   fev_sub <- fev_data[fev_data$RACE != missing_level, ]
-  
-  
+
+
   contr_mat <- contr.treatment(length(all_race_levels))
   rownames(contr_mat) <- all_race_levels
 
