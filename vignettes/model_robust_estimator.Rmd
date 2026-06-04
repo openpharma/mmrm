@@ -27,7 +27,9 @@ After fitting a particular MMRM, one must commonly answer the question:
 
 > What was the mean value of the outcome variable in a treatment group?
 
-One method to answer this question is to use G-computation to estimate the marginal means of each treatment group. In this section, we describe the G-computation estimator in the context of the MMRM and describe an approach to variance estimation.
+One method to answer this question is to use G-computation to estimate the marginal means
+of each treatment group. In this section, we describe the G-computation estimator in the context 
+of the MMRM and describe an approach to variance estimation.
 
 ## G-Computation Estimator
 
