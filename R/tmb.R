@@ -631,9 +631,6 @@ h_mmrm_tmb_fit <- function(
 #' @param contrasts (`list` or `NULL`)\cr an optional named list of contrast
 #'   matrices or contrast functions for specific factor variables, see
 #'   [mmrm()] for details.
-#' @param emmeans_gcomp_vars (`character` or `NULL`)\cr names of variables
-#'   treated as fixed for G-computation correction. Stored in the returned
-#'   list for downstream use in the emmeans hook.
 #' @param control (`mmrm_control`)\cr list of control options produced by
 #'   [mmrm_control()].
 #' @inheritParams fit_single_optimizer
