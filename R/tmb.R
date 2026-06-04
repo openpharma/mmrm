@@ -94,6 +94,7 @@ h_mmrm_tmb_formula_parts <- function(
 #' - `reml`: `int` specifying whether REML estimation is used (1), otherwise ML (0).
 #' - `subject_groups`: `factor` specifying the grouping for each subject.
 #' - `n_groups`: `int` with the number of total groups
+#' - `emmeans_gcomp_vars`: `character` or `NULL` with the G-computation variable names.
 #'
 #' @details Note that the `subject_var` must not be factor but can also be character.
 #'   If it is character, then it will be converted to factor internally. Here
@@ -112,7 +113,8 @@ h_mmrm_tmb_data <- function(
   allow_na_response = FALSE,
   drop_levels = TRUE,
   xlev = NULL,
-  contrasts = NULL
+  contrasts = NULL,
+  emmeans_gcomp_vars = NULL
 ) {
   assert_class(formula_parts, "mmrm_tmb_formula_parts")
   assert_data_frame(data)
@@ -120,6 +122,10 @@ h_mmrm_tmb_data <- function(
   assert_flag(reml)
   singular <- match.arg(singular)
   assert_flag(drop_visit_levels)
+  assert_character(emmeans_gcomp_vars, min.len = 1L, null.ok = TRUE)
+  if (!is.null(emmeans_gcomp_vars)) {
+    assert_subset(emmeans_gcomp_vars, names(data))
+  }
 
   data <- data.frame(data, weights)
   # Weights is always the last column.
@@ -354,7 +360,8 @@ h_mmrm_tmb_data <- function(
       subject_groups = subject_groups,
       n_groups = n_groups
     ),
-    class = "mmrm_tmb_data"
+    class = "mmrm_tmb_data",
+    emmeans_gcomp_vars = emmeans_gcomp_vars
   )
 }
 
@@ -624,6 +631,9 @@ h_mmrm_tmb_fit <- function(
 #' @param contrasts (`list` or `NULL`)\cr an optional named list of contrast
 #'   matrices or contrast functions for specific factor variables, see
 #'   [mmrm()] for details.
+#' @param emmeans_gcomp_vars (`character` or `NULL`)\cr names of variables
+#'   treated as fixed for G-computation correction. Stored in the returned
+#'   list for downstream use in the emmeans hook.
 #' @param control (`mmrm_control`)\cr list of control options produced by
 #'   [mmrm_control()].
 #' @inheritParams fit_single_optimizer

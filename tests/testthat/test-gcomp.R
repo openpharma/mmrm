@@ -7,7 +7,7 @@ test_that("mmrm accepts emmeans_gcomp_vars", {
     control = mmrm_control(emmeans_gcomp_vars = c("ARMCD", "AVISIT"))
   )
   expect_identical(fit$emmeans_gcomp_vars, c("ARMCD", "AVISIT"))
-  expect_data_frame(fit$emmeans_gcomp_subject_data)
+  expect_identical(attr(fit$tmb_data, "emmeans_gcomp_vars"), c("ARMCD", "AVISIT"))
 })
 
 test_that("mmrm without emmeans_gcomp_vars has NULL fields", {
@@ -16,7 +16,7 @@ test_that("mmrm without emmeans_gcomp_vars has NULL fields", {
     data = fev_data
   )
   expect_null(fit$emmeans_gcomp_vars)
-  expect_null(fit$emmeans_gcomp_subject_data)
+  expect_null(attr(fit$tmb_data, "emmeans_gcomp_vars"))
 })
 
 test_that("mmrm errors if emmeans_gcomp_vars variable not in data", {

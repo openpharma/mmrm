@@ -616,7 +616,7 @@ mmrm <- function(
   }
 
   # G-computation vars stored in tmb_data for emmeans hook
-  fit$emmeans_gcomp_vars <- tmb_data$emmeans_gcomp_vars
+  fit$emmeans_gcomp_vars <- attr(tmb_data, "emmeans_gcomp_vars")
 
   class(fit) <- c("mmrm", class(fit))
   fit
