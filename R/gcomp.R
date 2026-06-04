@@ -247,8 +247,8 @@ h_gcomp_emm_correction <- function(object, model_mat, grid) {
   S_full <- contributions$S_full
   L <- contributions$L_global
 
-  LLt_ginv <- MASS::ginv(tcrossprod(L))
-  delta <- crossprod(L, LLt_ginv) %*% S_full %*% (LLt_ginv %*% L)
+  llt_ginv_l <- MASS::ginv(tcrossprod(L)) %*% L
+  delta <- t(llt_ginv_l) %*% S_full %*% llt_ginv_l
   V <- component(object, "beta_vcov")
   dimnames(delta) <- dimnames(V)
 
