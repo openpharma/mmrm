@@ -182,14 +182,14 @@ h_mmrm_tmb_data <- function(
     )
   }
   if (identical(formula_parts$is_spatial, FALSE)) {
-    h_confirm_large_levels(length(levels(full_frame[[
-      formula_parts$visit_var
-    ]])))
+    h_confirm_large_levels(
+      nlevels(full_frame[[formula_parts$visit_var]])
+    )
   }
   full_frame <- full_frame[data_order, ]
 
   # Contrasts following the same as what's done in lm(). The user gives contrast
-  # matrices or functions are passed to model.matrix(). With lm(), missing
+  # matrices or functions which are passed to model.matrix(). With lm(), missing
   # factor levels are silently dropped. With contrasts, when a contrast matrix
   # includes levels not present in the data, those levels are kept and the model
   # matrix columns are marked aliased. This allows for prediction on new data
@@ -198,10 +198,18 @@ h_mmrm_tmb_data <- function(
   if (!is.null(contrasts)) {
     formula_factors <- intersect(
       names(contrasts),
-      names(which(vapply(full_frame, \(x) is.factor(x) || is.character(x) || is.logical(x), logical(1L))))
+      names(which(vapply(
+        full_frame,
+        \(x) is.factor(x) || is.character(x) || is.logical(x),
+        logical(1L)
+      )))
     )
     # don't drop factorlike variables that have explicit contrasts
-    no_drop_lvls <- names(which(vapply(formula_factors, \(x) !is.null(contrasts[[x]]), logical(1L))))
+    no_drop_lvls <- names(which(vapply(
+      formula_factors,
+      \(x) !is.null(contrasts[[x]]),
+      logical(1L)
+    )))
   }
 
   if (drop_levels) {
@@ -404,7 +412,7 @@ h_mmrm_tmb_assert_start <- function(tmb_object) {
   if (is.na(tmb_object$fn(tmb_object$par))) {
     stop("negative log-likelihood is NaN at starting parameter values")
   }
-  if (any(is.na(tmb_object$gr(tmb_object$par)))) {
+  if (anyNA(tmb_object$gr(tmb_object$par))) {
     stop("some elements of gradient are NaN at starting parameter values")
   }
 }
@@ -639,7 +647,7 @@ h_mmrm_tmb_fit <- function(
 #' @examples
 #' formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
 #' data <- fev_data
-#' system.time(result <- fit_mmrm(formula, data, rep(1, nrow(fev_data))))
+#' result <- fit_mmrm(formula, data, rep(1, nrow(fev_data)))
 fit_mmrm <- function(
   formula,
   data,
