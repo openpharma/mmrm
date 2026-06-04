@@ -14,7 +14,8 @@ h_mmrm_tmb_data(
   allow_na_response = FALSE,
   drop_levels = TRUE,
   xlev = NULL,
-  contrasts = NULL
+  contrasts = NULL,
+  emmeans_gcomp_vars = NULL
 )
 }
 \arguments{
@@ -73,6 +74,7 @@ observed visits for each subjects. So the sum of this vector equals \code{n}.
 \item \code{reml}: \code{int} specifying whether REML estimation is used (1), otherwise ML (0).
 \item \code{subject_groups}: \code{factor} specifying the grouping for each subject.
 \item \code{n_groups}: \code{int} with the number of total groups
+\item \code{emmeans_gcomp_vars}: \code{character} or \code{NULL} with the G-computation variable names.
 }
 }
 \description{

@@ -44,6 +44,10 @@ matrices or contrast functions for specific factor variables, see
 
 \item{control}{(\code{mmrm_control})\cr list of control options produced by
 \code{\link[=mmrm_control]{mmrm_control()}}.}
+
+\item{emmeans_gcomp_vars}{(\code{character} or \code{NULL})\cr names of variables
+treated as fixed for G-computation correction. Stored in the returned
+list for downstream use in the emmeans hook.}
 }
 \value{
 List of class \code{mmrm_tmb}, see \code{\link[=h_mmrm_tmb_fit]{h_mmrm_tmb_fit()}} for details.
