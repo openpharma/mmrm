@@ -526,7 +526,8 @@ mmrm <- function(
     singular = if (control$accept_singular) "drop" else "error",
     drop_visit_levels = control$drop_visit_levels,
     allow_na_response = FALSE,
-    contrasts = contrasts
+    contrasts = contrasts,
+    emmeans_gcomp_vars = control$emmeans_gcomp_vars
   )
   fit <- structure("", class = "try-error")
   names_all_optimizers <- names(control$optimizers)
@@ -614,25 +615,8 @@ mmrm <- function(
     stop("Unrecognized coefficent variance-covariance method!")
   }
 
-  # G-computation correction: store metadata for emmeans hook.
-  # Subject data must be captured from the original `data` argument here,
-  # not from tmb_data$full_frame later, because tmb_data drops rows with
-  # missing outcomes. The G-computation average should include all subjects
-  # with observed covariates.
-  emmeans_gcomp_vars <- control$emmeans_gcomp_vars
-  fit$emmeans_gcomp_vars <- emmeans_gcomp_vars
-  if (!is.null(emmeans_gcomp_vars)) {
-    assert_subset(emmeans_gcomp_vars, names(data))
-    # Store subject-level covariate data from the original data (pre-NA-removal).
-    # This includes subjects with observed covariates but missing outcomes,
-    # who contribute to the G-computation average but not to beta estimation.
-    subject_var <- formula_parts$subject_var
-    subj_rows <- !duplicated(data[[subject_var]])
-    model_vars <- all.vars(formula_parts$model_formula)
-    keep_vars <- intersect(c(subject_var, model_vars), names(data))
-    fit$emmeans_gcomp_subject_data <- data[subj_rows, keep_vars, drop = FALSE]
-    rownames(fit$emmeans_gcomp_subject_data) <- NULL
-  }
+  # G-computation vars stored in tmb_data for emmeans hook
+  fit$emmeans_gcomp_vars <- tmb_data$emmeans_gcomp_vars
 
   class(fit) <- c("mmrm", class(fit))
   fit

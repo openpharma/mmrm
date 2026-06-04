@@ -70,5 +70,5 @@ Always use only the first optimizer if multiple optimizers are provided.
 \examples{
 formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
 data <- fev_data
-system.time(result <- fit_mmrm(formula, data, rep(1, nrow(fev_data))))
+result <- fit_mmrm(formula, data, rep(1, nrow(fev_data)))
 }

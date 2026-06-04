@@ -28,12 +28,11 @@ NULL
 #' @noRd
 h_get_subject_data <- function(object) {
   assert_class(object, "mmrm")
-  if (!is.null(object$emmeans_gcomp_subject_data)) {
-    return(object$emmeans_gcomp_subject_data)
-  }
-  full_frame <- object$tmb_data$full_frame
+  original_data <- object$tmb_data$data
   subject_var <- object$formula_parts$subject_var
-  subj_data <- full_frame[!duplicated(full_frame[[subject_var]]), , drop = FALSE]
+  model_vars <- all.vars(object$formula_parts$model_formula)
+  keep_vars <- intersect(c(subject_var, model_vars), names(original_data))
+  subj_data <- original_data[!duplicated(original_data[[subject_var]]), keep_vars, drop = FALSE]
   rownames(subj_data) <- NULL
   subj_data
 }
