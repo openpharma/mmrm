@@ -50,6 +50,11 @@ contrast matrix has rownames that include levels not present in \code{data},
 those levels are preserved and the corresponding model matrix columns
 are marked as aliased (not estimable), enabling prediction on new data
 containing those levels.}
+
+\item{emmeans_gcomp_vars}{(\code{character} or \code{NULL})\cr names of variables
+treated as fixed for G-computation correction. Stored as a
+comma separated string in the returned list for downstream use
+in the emmeans hook.}
 }
 \value{
 List of class \code{mmrm_tmb_data} with elements:
