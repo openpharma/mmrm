@@ -358,10 +358,11 @@ h_mmrm_tmb_data <- function(
       is_spatial_int = as.integer(formula_parts$is_spatial),
       reml = as.integer(reml),
       subject_groups = subject_groups,
-      n_groups = n_groups
+      n_groups = n_groups,
+      emmeans_gcomp_vars = if (!is.null(emmeans_gcomp_vars))
+        paste(emmeans_gcomp_vars, collapse = ",") else ""
     ),
-    class = "mmrm_tmb_data",
-    emmeans_gcomp_vars = emmeans_gcomp_vars
+    class = "mmrm_tmb_data"
   )
 }
 

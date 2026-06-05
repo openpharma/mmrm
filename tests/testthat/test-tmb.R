@@ -193,7 +193,8 @@ test_that("h_mmrm_tmb_data works as expected", {
       "is_spatial_int",
       "reml",
       "subject_groups",
-      "n_groups"
+      "n_groups",
+      "emmeans_gcomp_vars"
     )
   )
   expect_matrix(result$x_matrix, nrows = 537, ncols = 3, any.missing = FALSE)
@@ -244,7 +245,8 @@ test_that("h_mmrm_tmb_data works as expected with allow_na_response", {
       "is_spatial_int",
       "reml",
       "subject_groups",
-      "n_groups"
+      "n_groups",
+      "emmeans_gcomp_vars"
     )
   )
   expect_matrix(result$x_matrix, nrows = 800, ncols = 3, any.missing = FALSE)
@@ -297,7 +299,8 @@ test_that("h_mmrm_tmb_data do not allow NA in covariates with allow_na_response"
       "is_spatial_int",
       "reml",
       "subject_groups",
-      "n_groups"
+      "n_groups",
+      "emmeans_gcomp_vars"
     )
   )
   expect_matrix(result$x_matrix, nrows = 780, ncols = 3, any.missing = FALSE)
@@ -347,7 +350,8 @@ test_that("h_mmrm_tmb_data works as expected for grouped covariance", {
       "is_spatial_int",
       "reml",
       "subject_groups",
-      "n_groups"
+      "n_groups",
+      "emmeans_gcomp_vars"
     )
   )
   expect_matrix(result$x_matrix, nrows = 537, ncols = 3, any.missing = FALSE)
@@ -397,7 +401,8 @@ test_that("h_mmrm_tmb_data works as expected for mutli-dimensional spatial expon
       "is_spatial_int",
       "reml",
       "subject_groups",
-      "n_groups"
+      "n_groups",
+      "emmeans_gcomp_vars"
     )
   )
   expect_matrix(result$x_matrix, nrows = 537, ncols = 3, any.missing = FALSE)

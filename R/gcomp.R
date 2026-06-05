@@ -224,7 +224,8 @@ h_gcomp_emm_correction <- function(object, model_mat, grid) {
   assert_matrix(model_mat, mode = "numeric")
   assert_data_frame(grid)
 
-  fixed_vars <-  attr(object$tmb_data, "emmeans_gcomp_vars")
+  gcomp_str <- object$tmb_data$emmeans_gcomp_vars
+  fixed_vars <- if (nzchar(gcomp_str)) strsplit(gcomp_str, ",")[[1]] else NULL
   visit_var <- object$formula_parts$visit_var
 
   assert_character(fixed_vars, min.len = 1L)
