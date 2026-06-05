@@ -145,7 +145,12 @@ emm_basis.mmrm <- function(
 
   if (!is.null(object$emmeans_gcomp_vars)) {
     gcomp_result <- h_emm_basis_gcomp(
-      object, model_mat, beta_hat, nbasis, V, grid
+      object,
+      model_mat,
+      beta_hat,
+      nbasis,
+      V,
+      grid
     )
     model_mat <- gcomp_result$model_mat
     beta_hat <- gcomp_result$beta_hat
@@ -153,7 +158,9 @@ emm_basis.mmrm <- function(
     V <- gcomp_result$V
     dfargs <- gcomp_result$dfargs
     dffun <- gcomp_result$dffun
-    message("G-computation correction applied, so the emmeans will produce the correct average treatment effect.")
+    message(
+      "G-computation correction applied, so emmeans will produce the correct average treatment effect."
+    )
   } else {
     dfargs <- list(object = object)
     dffun <- function(k, dfargs) {
@@ -252,7 +259,9 @@ h_emm_basis_gcomp <- function(object, model_mat, beta_hat, nbasis, V, grid) {
       obj$beta_vcov_adj <- dfargs$V_corrected
     }
     k_est <- k
-    if (length(dfargs$aliased_pos) > 0 && length(k) > nrow(dfargs$V_corrected)) {
+    if (
+      length(dfargs$aliased_pos) > 0 && length(k) > nrow(dfargs$V_corrected)
+    ) {
       k_est <- k[-dfargs$aliased_pos]
     }
     mmrm::df_md(obj, contrast = k_est)$denom_df
