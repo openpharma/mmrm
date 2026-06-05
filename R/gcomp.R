@@ -11,10 +11,9 @@ NULL
 
 #' Get Subject-Level Covariate Data
 #'
-#' @description Returns one row per subject with covariate data. Uses the
-#'   stored `emmeans_gcomp_subject_data` from the original dataset when
-#'   available (includes subjects with missing outcomes), otherwise falls
-#'   back to the fitted model's complete case frame.
+#' @description Returns one row per subject with covariate data. Pulls
+#'   subject level data from the original dataset stored in `tmb_data$data`,
+#'   and includes subjects with missing outcomes.
 #'
 #' @note If time varying covariates are present, only the first observed
 #'   value per subject is retained. The intended use is for baseline
