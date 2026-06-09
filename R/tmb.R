@@ -363,8 +363,7 @@ h_mmrm_tmb_data <- function(
       reml = as.integer(reml),
       subject_groups = subject_groups,
       n_groups = n_groups,
-      emmeans_gcomp_vars = if (!is.null(emmeans_gcomp_vars))
-        paste(emmeans_gcomp_vars, collapse = ",") else ""
+      emmeans_gcomp_vars = emmeans_gcomp_vars
     ),
     class = "mmrm_tmb_data"
   )
@@ -698,8 +697,10 @@ fit_mmrm <- function(
     start = control$start,
     n_groups = tmb_data$n_groups
   )
+  tmb_data_tmb <- tmb_data
+  tmb_data_tmb$emmeans_gcomp_vars <- NULL
   tmb_object <- TMB::MakeADFun(
-    data = tmb_data,
+    data = tmb_data_tmb,
     parameters = tmb_parameters,
     hessian = TRUE,
     DLL = "mmrm",

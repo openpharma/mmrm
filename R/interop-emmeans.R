@@ -143,7 +143,7 @@ emm_basis.mmrm <- function(
   # Start with the model-based covariance.
   V <- component(object, "beta_vcov")
 
-  if (nzchar(object$tmb_data$emmeans_gcomp_vars)) {
+  if (!is.null(object$tmb_data$emmeans_gcomp_vars)) {
     gcomp_result <- h_emm_basis_gcomp(
       object,
       model_mat,
