@@ -72,10 +72,9 @@ h_mmrm_tmb_formula_parts <- function(
 #'   those levels are preserved and the corresponding model matrix columns
 #'   are marked as aliased (not estimable), enabling prediction on new data
 #'   containing those levels.
-#' @param emmeans_gcomp_vars (`character` or `NULL`)\cr names of variables
-#'   treated as fixed for G-computation correction. Stored as a
-#'   comma separated string in the returned list for downstream use
-#'   in the emmeans hook.
+#' @param emmeans_gcomp_vars (`character` or `NULL`)
+#'   treated as fixed for G-computation correction. Stored as a character
+#'   vector in the returned list for downstream use in the emmeans hook.
 #'
 #' @return List of class `mmrm_tmb_data` with elements:
 #' - `full_frame`: `data.frame` with `n` rows containing all variables needed in the model.
