@@ -328,20 +328,20 @@ which nonetheless are valid levels that should not result in later errors (for e
 In the example below, `emmeans` fails when averaging over factor levels the model never saw.
 
 ```{r contrasts-fail-example, error = TRUE}
-ex_data <- fev_data[!(fev_data$RACE == "White" & fev_data$SEX == "Male"),]
+ex_data <- fev_data[!(fev_data$RACE == "White" & fev_data$SEX == "Male"), ]
 fit_subgroup1 <- mmrm(
   formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
-  data = ex_data[ex_data$SEX == "Female",],
+  data = ex_data[ex_data$SEX == "Female", ],
   vcov = "Asymptotic"
 )
 fit_subgroup2 <- mmrm(
   formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
-  data = ex_data[ex_data$SEX == "Male",],
+  data = ex_data[ex_data$SEX == "Male", ],
   vcov = "Asymptotic"
 )
 
-emmeans::emmeans(fit_subgroup1, ~ARMCD|AVISIT, data = fev_data, weights = "proportional")
-emmeans::emmeans(fit_subgroup2, ~ARMCD|AVISIT, data = fev_data, weights = "proportional")
+emmeans::emmeans(fit_subgroup1, ~ ARMCD | AVISIT, data = fev_data, weights = "proportional")
+emmeans::emmeans(fit_subgroup2, ~ ARMCD | AVISIT, data = fev_data, weights = "proportional")
 ```
 
 By setting the contrasts argument specifically, just like in `lm()`, we can avoid this error:
@@ -358,17 +358,17 @@ over the baseline values that aren't subgroup-specific:
 ```{r contrasts-fix-example}
 fit_subgroup1 <- mmrm(
   formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
-  data = ex_data[ex_data$SEX == "Female",],
+  data = ex_data[ex_data$SEX == "Female", ],
   vcov = "Asymptotic",
   contrasts = list(RACE = contr_mat)
 )
 fit_subgroup2 <- mmrm(
   formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
-  data = ex_data[ex_data$SEX == "Male",],
+  data = ex_data[ex_data$SEX == "Male", ],
   vcov = "Asymptotic",
   contrasts = list(RACE = contr_mat)
 )
 
-emmeans::emmeans(fit_subgroup1, ~ARMCD|AVISIT, data = fev_data, weights = "proportional")
-emmeans::emmeans(fit_subgroup2, ~ARMCD|AVISIT, data = fev_data, weights = "proportional")
+emmeans::emmeans(fit_subgroup1, ~ ARMCD | AVISIT, data = fev_data, weights = "proportional")
+emmeans::emmeans(fit_subgroup2, ~ ARMCD | AVISIT, data = fev_data, weights = "proportional")
 ```
