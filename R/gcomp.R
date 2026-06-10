@@ -228,6 +228,7 @@ h_gcomp_emm_correction <- function(object, model_mat, grid) {
 
   assert_character(fixed_vars, min.len = 1L)
   assert_string(visit_var)
+  assert_subset(visit_var, names(object$tmb_data$full_frame))
 
   beta_names <- names(component(object, "beta_est"))
   # The emmeans grid model matrix may have extra columns (e.g. from

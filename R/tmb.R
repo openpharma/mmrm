@@ -697,6 +697,7 @@ fit_mmrm <- function(
     n_groups = tmb_data$n_groups
   )
   tmb_data_tmb <- tmb_data
+  # TMB::MakeADFun() rejects character vectors, so strip emmeans_gcomp_vars
   tmb_data_tmb$emmeans_gcomp_vars <- NULL
   tmb_object <- TMB::MakeADFun(
     data = tmb_data_tmb,
