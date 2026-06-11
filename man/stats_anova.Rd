@@ -46,7 +46,7 @@ via \code{\link[=logLik.mmrm_tmb]{logLik.mmrm_tmb()}}.
 \item \code{AIC}: Akaike's "An Information Criterion" of the model fit, obtained via
 \code{\link[stats:AIC]{stats::AIC()}}.
 \item \code{BIC}: the Bayesian Information Criterion of the model fit, obtained via
-\code{\link[stats:AIC]{stats::BIC()}}.
+\code{\link[stats:BIC]{stats::BIC()}}.
 \item \code{logLik}: the log likelihood of the model fit, obtained via
 \code{\link[=logLik.mmrm_tmb]{logLik.mmrm_tmb()}}.
 \item \code{call}: the \link{call} that created the model fit, obtained via \code{\link[=component]{component()}}

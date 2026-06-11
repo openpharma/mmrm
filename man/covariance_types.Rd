@@ -127,8 +127,8 @@ respectively, out of total \eqn{m} time points, \eqn{1 \leq i, j \leq m}.
 }
 
 \seealso{
-Other covariance types: 
-\code{\link{as.cov_struct}()},
-\code{\link{cov_struct}()}
+Other covariance types:
+\code{\link[=as.cov_struct]{as.cov_struct()}},
+\code{\link[=cov_struct]{cov_struct()}}
 }
 \concept{covariance types}

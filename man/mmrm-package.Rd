@@ -20,6 +20,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Daniel Sabanes Bove \email{daniel.sabanes_bove@rconis.com} (\href{https://orcid.org/0000-0002-0176-9239}{ORCID})
   \item Liming Li \email{liming.li1@astrazeneca.com} (\href{https://orcid.org/0009-0008-6870-0878}{ORCID})
   \item Julia Dedic \email{julia.dedic@roche.com}
   \item Doug Kelkhoff \email{doug.kelkhoff@roche.com}

@@ -29,8 +29,8 @@ covariance structure using \code{\link[=as.cov_struct]{as.cov_struct()}}. If no 
 a structure is derived from the provided formula.}
 
 \item{contrasts}{(\code{list} or \code{NULL})\cr an optional named list of contrast
-matrices or contrast functions (like \link[stats:contrast]{stats::contr.sum} or
-\link[stats:contrast]{stats::contr.poly}) for specific factor variables, matching the
+matrices or contrast functions (like \link[stats:contr.sum]{stats::contr.sum} or
+\link[stats:contr.poly]{stats::contr.poly}) for specific factor variables, matching the
 \code{contrasts} argument in \code{\link[stats:lm]{stats::lm()}}. The list names must correspond to
 factor variable names in the model formula. When \code{NULL} (the default),
 the contrasts set on the factor variables in \code{data} are used. If a

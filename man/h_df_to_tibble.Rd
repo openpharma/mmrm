@@ -19,6 +19,6 @@ This is used in \code{\link[=h_newdata_add_pred]{h_newdata_add_pred()}}.
 This is only a thin wrapper around \code{\link[tibble:as_tibble]{tibble::as_tibble()}}, except
 giving a useful error message and it checks for \code{rownames} and adds them
 as a new column \code{.rownames} if they are not just a numeric sequence as
-per the \code{\link[tibble:rownames]{tibble::has_rownames()}} decision.
+per the \code{\link[tibble:has_rownames]{tibble::has_rownames()}} decision.
 }
 \keyword{internal}
