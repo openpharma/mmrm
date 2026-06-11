@@ -78,7 +78,7 @@ gen_data <- function(
   out$trt <- factor(out$trt)
   out$time <- factor(out$time)
   out$pts <- factor(out$pts)
-  return(out)
+  out
 }
 set.seed(123)
 out <- gen_data()

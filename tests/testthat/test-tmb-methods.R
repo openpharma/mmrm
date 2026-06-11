@@ -218,8 +218,8 @@ test_that("predict works for unconditional prediction of multi-variable response
 test_that("predict warns on aliased variables", {
   new_fev_data <- rbind(
     fev_data,
-    fev_data %>%
-      dplyr::filter(ARMCD == fev_data$ARMCD[1], AVISIT == "VIS1") %>%
+    fev_data |>
+      dplyr::filter(ARMCD == fev_data$ARMCD[1], AVISIT == "VIS1") |>
       dplyr::mutate(
         AVISIT = "VIS5",
         FEV1 = rnorm(dplyr::n(), mean = 45, sd = 5)
@@ -374,7 +374,6 @@ test_that("mmrm with extra-level contrasts allows prediction on new data", {
   all_race_levels <- levels(fev_data$RACE)
   missing_level <- all_race_levels[1]
   fev_sub <- fev_data[fev_data$RACE != missing_level, ]
-
 
   contr_mat <- contr.treatment(length(all_race_levels))
   rownames(contr_mat) <- all_race_levels

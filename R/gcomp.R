@@ -31,7 +31,11 @@ h_get_subject_data <- function(object) {
   subject_var <- object$formula_parts$subject_var
   model_vars <- all.vars(object$formula_parts$model_formula)
   keep_vars <- intersect(c(subject_var, model_vars), names(original_data))
-  subj_data <- original_data[!duplicated(original_data[[subject_var]]), keep_vars, drop = FALSE]
+  subj_data <- original_data[
+    !duplicated(original_data[[subject_var]]),
+    keep_vars,
+    drop = FALSE
+  ]
   rownames(subj_data) <- NULL
   subj_data
 }
@@ -80,7 +84,7 @@ h_compute_potential_outcomes <- function(
   model_formula <- object$formula_parts$model_formula
   model_terms <- stats::delete.response(stats::terms(model_formula))
 
-  K <- nrow(counterfactual_grid)
+  K <- nrow(counterfactual_grid) # nolint
   n_subj <- nrow(subj_data)
   p <- length(beta_hat)
 
@@ -90,7 +94,8 @@ h_compute_potential_outcomes <- function(
   for (k in seq_len(K)) {
     subj_cf <- subj_data
     subj_cf[[visit_var]] <- factor(
-      visit_value, levels = levels(full_frame[[visit_var]])
+      visit_value,
+      levels = levels(full_frame[[visit_var]])
     )
     for (var_name in names(counterfactual_grid)) {
       val <- counterfactual_grid[[var_name]][k]
@@ -104,19 +109,28 @@ h_compute_potential_outcomes <- function(
   }
   cf_stacked <- do.call(rbind, cf_list)
 
-  mf <- stats::model.frame(model_terms, data = cf_stacked, na.action = stats::na.pass)
-  X_all <- stats::model.matrix(model_terms, data = mf, contrasts.arg = contrasts_arg)
-  X_all <- X_all[, names(beta_hat), drop = FALSE]
-  X_all[is.na(X_all)] <- 0
+  mf <- stats::model.frame(
+    model_terms,
+    data = cf_stacked,
+    na.action = stats::na.pass
+  )
+  # nolint next
+  X_all <- stats::model.matrix(
+    model_terms,
+    data = mf,
+    contrasts.arg = contrasts_arg
+  )
+  X_all <- X_all[, names(beta_hat), drop = FALSE] # nolint
+  X_all[is.na(X_all)] <- 0 # nolint
 
   # Split back into K blocks of n_subj rows.
   vhat <- matrix(NA_real_, nrow = n_subj, ncol = K)
-  L_global <- matrix(NA_real_, nrow = K, ncol = p)
+  L_global <- matrix(NA_real_, nrow = K, ncol = p) # nolint
   for (k in seq_len(K)) {
     rows <- ((k - 1L) * n_subj + 1L):(k * n_subj)
-    X_k <- X_all[rows, , drop = FALSE]
+    X_k <- X_all[rows, , drop = FALSE] # nolint
     vhat[, k] <- as.vector(X_k %*% beta_clean)
-    L_global[k, ] <- colMeans(X_k, na.rm = TRUE)
+    L_global[k, ] <- colMeans(X_k, na.rm = TRUE) # nolint
   }
 
   list(vhat = vhat, L_global = L_global)
@@ -144,8 +158,13 @@ h_compute_potential_outcomes <- function(
 #'
 #' @keywords internal
 #' @noRd
-h_gcomp_visit_contributions <- function(object, model_mat, grid,
-                                         fixed_vars, visit_var) {
+h_gcomp_visit_contributions <- function(
+  object,
+  model_mat,
+  grid,
+  fixed_vars,
+  visit_var
+) {
   subj_data <- h_get_subject_data(object)
   full_frame <- object$tmb_data$full_frame
   n_subj <- nrow(subj_data)
@@ -154,12 +173,14 @@ h_gcomp_visit_contributions <- function(object, model_mat, grid,
 
   n_grid <- nrow(model_mat)
   grid_visit <- as.character(grid[[visit_var]])
-  S_full <- matrix(0, nrow = n_grid, ncol = n_grid)
-  L_global <- model_mat
+  S_full <- matrix(0, nrow = n_grid, ncol = n_grid) # nolint
+  L_global <- model_mat # nolint
 
   for (v in visit_levels) {
     v_mask <- grid_visit == v
-    if (!any(v_mask)) next
+    if (!any(v_mask)) {
+      next
+    }
     v_indices <- which(v_mask)
 
     grid_at_v <- grid[v_indices, cell_vars, drop = FALSE]
@@ -175,21 +196,29 @@ h_gcomp_visit_contributions <- function(object, model_mat, grid,
     )
 
     sigma_v <- stats::cov(po$vhat, use = "pairwise.complete.obs")
-    S_t <- sigma_v / n_subj
+    S_t <- sigma_v / n_subj # nolint
 
-    cf_keys <- apply(cf_grid, 1, function(r) paste(as.character(r), collapse = "|"))
-    grid_keys <- apply(grid_at_v, 1, function(r) paste(as.character(r), collapse = "|"))
+    cf_keys <- apply(cf_grid, 1, function(r) {
+      paste(as.character(r), collapse = "|")
+    })
+    grid_keys <- apply(grid_at_v, 1, function(r) {
+      paste(as.character(r), collapse = "|")
+    })
 
     for (ii in seq_along(v_indices)) {
       ki <- match(grid_keys[ii], cf_keys)
-      if (is.na(ki)) next
+      if (is.na(ki)) {
+        next
+      }
 
-      L_global[v_indices[ii], ] <- po$L_global[ki, ]
+      L_global[v_indices[ii], ] <- po$L_global[ki, ] # nolint
 
       for (jj in seq_along(v_indices)) {
         kj <- match(grid_keys[jj], cf_keys)
-        if (is.na(kj)) next
-        S_full[v_indices[ii], v_indices[jj]] <- S_t[ki, kj]
+        if (is.na(kj)) {
+          next
+        }
+        S_full[v_indices[ii], v_indices[jj]] <- S_t[ki, kj] # nolint
       }
     }
   }
@@ -242,14 +271,18 @@ h_gcomp_emm_correction <- function(object, model_mat, grid) {
   }
 
   contributions <- h_gcomp_visit_contributions(
-    object, model_mat, grid, fixed_vars, visit_var
+    object,
+    model_mat,
+    grid,
+    fixed_vars,
+    visit_var
   )
-  S_full <- contributions$S_full
-  L <- contributions$L_global
+  S_full <- contributions$S_full # nolint
+  L <- contributions$L_global # nolint
 
   llt_ginv_l <- MASS::ginv(tcrossprod(L)) %*% L
   delta <- t(llt_ginv_l) %*% S_full %*% llt_ginv_l
-  V <- component(object, "beta_vcov")
+  V <- component(object, "beta_vcov") # nolint
   dimnames(delta) <- dimnames(V)
 
   list(delta = delta, L_global = L)

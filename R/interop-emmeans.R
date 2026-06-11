@@ -141,7 +141,7 @@ emm_basis.mmrm <- function(
   }
 
   # Start with the model-based covariance.
-  V <- component(object, "beta_vcov")
+  V <- component(object, "beta_vcov") # nolint
 
   if (!is.null(object$tmb_data$emmeans_gcomp_vars)) {
     gcomp_result <- h_emm_basis_gcomp(
@@ -155,7 +155,7 @@ emm_basis.mmrm <- function(
     model_mat <- gcomp_result$model_mat
     beta_hat <- gcomp_result$beta_hat
     nbasis <- gcomp_result$nbasis
-    V <- gcomp_result$V
+    V <- gcomp_result$V # nolint
     dfargs <- gcomp_result$dfargs
     dffun <- gcomp_result$dffun
     message(
@@ -197,12 +197,13 @@ emm_basis.mmrm <- function(
 #'
 #' @keywords internal
 #' @noRd
+# nolint next
 h_emm_basis_gcomp <- function(object, model_mat, beta_hat, nbasis, V, grid) {
   # Detect aliased coefficient positions before any modifications.
   aliased_pos <- which(is.na(beta_hat))
 
   visit_var <- object$formula_parts$visit_var
-  V_corrected_est <- V
+  V_corrected_est <- V # nolint
 
   if (visit_var %in% names(grid)) {
     # Save original model_mat dimensions. When aliased coefficients exist,
@@ -212,26 +213,26 @@ h_emm_basis_gcomp <- function(object, model_mat, beta_hat, nbasis, V, grid) {
     orig_colnames <- colnames(model_mat)
 
     correction <- h_gcomp_emm_correction(object, model_mat, grid)
-    V_corrected_est <- V + correction$delta
+    V_corrected_est <- V + correction$delta # nolint
 
     # Re-expand L_global if h_match_coefs added columns for aliased coefs.
     # Use h_match_coefs (not match) to handle A:B vs B:A reordering.
-    L_est <- correction$L_global
+    L_est <- correction$L_global # nolint
     if (ncol(L_est) < orig_ncol && length(aliased_pos) > 0) {
       est_pos <- setdiff(seq_len(orig_ncol), aliased_pos)
 
       # Expand L_global to full width with zeros for aliased columns.
-      L_exp <- matrix(0, nrow = nrow(L_est), ncol = orig_ncol)
-      colnames(L_exp) <- orig_colnames
+      L_exp <- matrix(0, nrow = nrow(L_est), ncol = orig_ncol) # nolint
+      colnames(L_exp) <- orig_colnames # nolint
       col_map <- h_match_coefs(colnames(L_est), orig_colnames)
       col_map <- col_map[!is.na(col_map)]
-      L_exp[, col_map] <- L_est
+      L_exp[, col_map] <- L_est # nolint
       model_mat <- L_exp
 
       # Expand V to full width with zeros for aliased row/column.
-      V_full <- matrix(0, nrow = orig_ncol, ncol = orig_ncol)
-      V_full[est_pos, est_pos] <- V_corrected_est
-      V <- V_full
+      V_full <- matrix(0, nrow = orig_ncol, ncol = orig_ncol) # nolint
+      V_full[est_pos, est_pos] <- V_corrected_est # nolint
+      V <- V_full # nolint
 
       # Zero NA in bhat so 0*NA doesn't propagate.
       beta_hat[aliased_pos] <- 0
@@ -240,7 +241,7 @@ h_emm_basis_gcomp <- function(object, model_mat, beta_hat, nbasis, V, grid) {
       nbasis <- estimability::all.estble
     } else {
       model_mat <- L_est
-      V <- V_corrected_est
+      V <- V_corrected_est # nolint
     }
   }
 
