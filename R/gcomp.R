@@ -207,17 +207,13 @@ h_gcomp_visit_contributions <- function(
 
     for (ii in seq_along(v_indices)) {
       ki <- match(grid_keys[ii], cf_keys)
-      if (is.na(ki)) {
-        next
-      }
+      if (is.na(ki)) next # nocov
 
       L_global[v_indices[ii], ] <- po$L_global[ki, ] # nolint
 
       for (jj in seq_along(v_indices)) {
         kj <- match(grid_keys[jj], cf_keys)
-        if (is.na(kj)) {
-          next
-        }
+        if (is.na(kj)) next # nocov
         S_full[v_indices[ii], v_indices[jj]] <- S_t[ki, kj] # nolint
       }
     }

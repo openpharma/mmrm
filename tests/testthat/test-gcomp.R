@@ -83,6 +83,20 @@ test_that("potential outcomes differ between treatments", {
   expect_false(abs(mean(po$vhat[, 1]) - mean(po$vhat[, 2])) < 1e-10)
 })
 
+test_that("h_compute_potential_outcomes handles numeric counterfactual variable", {
+  dat <- fev_data
+  dat$NUMERIC_TRT <- as.numeric(dat$ARMCD)
+  fit <- mmrm(
+    FEV1 ~ FEV1_BL + NUMERIC_TRT * AVISIT + us(AVISIT | USUBJID),
+    data = dat,
+    control = mmrm_control(emmeans_gcomp_vars = c("NUMERIC_TRT", "AVISIT"))
+  )
+  subj_data <- h_get_subject_data(fit)
+  cf_grid <- data.frame(NUMERIC_TRT = c(1, 2))
+  po <- h_compute_potential_outcomes(fit, subj_data, "VIS4", "AVISIT", cf_grid)
+  expect_matrix(po$vhat, nrows = nrow(subj_data), ncols = 2L)
+})
+
 # h_gcomp_emm_correction ----
 
 test_that("h_gcomp_emm_correction returns PSD delta and L_global", {
@@ -197,6 +211,42 @@ test_that("additive model contrasts are unaffected by gcomp correction", {
 
   ratio <- pairs_corr$SE / pairs_std$SE
   expect_true(all(ratio >= 0.99 & ratio <= 1.01))
+})
+
+test_that("gcomp works with numeric fixed variable", {
+  skip_if_not_installed("emmeans", minimum_version = "1.6")
+  dat <- fev_data
+  dat$NUMERIC_TRT <- as.numeric(dat$ARMCD)
+  fit <- mmrm(
+    FEV1 ~ FEV1_BL + NUMERIC_TRT * AVISIT + us(AVISIT | USUBJID),
+    data = dat,
+    control = mmrm_control(emmeans_gcomp_vars = c("NUMERIC_TRT", "AVISIT"))
+  )
+  emm <- as.data.frame(suppressMessages(emmeans::emmeans(fit, ~ NUMERIC_TRT | AVISIT)))
+  expect_true(all(is.finite(emm$SE)))
+})
+
+
+test_that("gcomp works when emmeans grid has subset of visits", {
+  skip_if_not_installed("emmeans", minimum_version = "1.6")
+  fit <- get_mmrm_gcomp()
+  emm <- as.data.frame(suppressMessages(
+    emmeans::emmeans(fit, ~ ARMCD | AVISIT, at = list(AVISIT = "VIS4"))
+  ))
+  expect_equal(nrow(emm), 2L)
+  expect_true(all(is.finite(emm$SE)))
+})
+
+test_that("h_gcomp_visit_contributions skips visits not in grid", {
+  skip_if_not_installed("emmeans", minimum_version = "1.6")
+  fit <- get_mmrm_gcomp()
+  rg <- emmeans::ref_grid(fit, at = list(AVISIT = "VIS4"))
+  # Grid only has VIS4, but data has VIS1-VIS4. VIS1/VIS2/VIS3 should be skipped
+  contributions <- h_gcomp_visit_contributions(
+    fit, rg@linfct, rg@grid, c("ARMCD", "AVISIT"), "AVISIT"
+  )
+  expect_matrix(contributions$S_full, nrows = nrow(rg@grid), ncols = nrow(rg@grid))
+  expect_matrix(contributions$L_global, nrows = nrow(rg@grid))
 })
 
 # Compatibility with vcov methods ----
