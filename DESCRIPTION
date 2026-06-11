@@ -1,7 +1,7 @@
 Type: Package
 Package: mmrm
 Title: Mixed Models for Repeated Measures
-Version: 0.3.17.9036
+Version: 0.3.17.9037
 Authors@R: c(
     person("Daniel", "Sabanes Bove", , "daniel.sabanes_bove@rconis.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-0176-9239")),
@@ -105,6 +105,7 @@ VignetteBuilder:
     knitr
 RdMacros:
     Rdpack
+Config/roxygen2/version: 8.0.0
 Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-US
@@ -137,4 +138,3 @@ Collate:
     'interop-parsnip.R'
     'interop-car.R'
     'zzz.R'
-Config/roxygen2/version: 8.0.0
