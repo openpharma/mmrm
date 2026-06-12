@@ -222,6 +222,14 @@ refit_multiple_optimizers <- function(fit, ..., control = mmrm_control(...)) {
 #' @param disable_theta_vcov (`flag`)\cr whether to disable calculation of
 #'   variance-covariance matrix for variance parameters. This can speed up fitting
 #'   when there are many variance parameters, see details.
+#' @param emmeans_gcomp_vars (`character` or `NULL`)\cr names of variables to
+#'   treat as fixed in the G-computation correction for emmeans. When non-`NULL`,
+#'   enables the correction in [`emmeans_support`], producing the average
+#'   treatment effect (ATE) with corrected standard errors. The visit variable
+#'   (identified from the covariance structure) is computed separately per
+#'   level. All other named variables are treated as intervention (subjects
+#'   pooled across levels). All variables not named are averaged over using
+#'   each subject's actual values.
 #' @param ... additional arguments passed to [h_get_optimizers()].
 #'
 #' @details
@@ -282,11 +290,13 @@ mmrm_control <- function(
   accept_singular = TRUE,
   drop_visit_levels = TRUE,
   disable_theta_vcov = FALSE,
+  emmeans_gcomp_vars = NULL,
   ...,
   optimizers = h_get_optimizers(...)
 ) {
   assert_count(n_cores, positive = TRUE)
   assert_character(method)
+  assert_character(emmeans_gcomp_vars, min.len = 1L, null.ok = TRUE)
   if (is.null(start)) {
     start <- std_start
   }
@@ -352,7 +362,8 @@ mmrm_control <- function(
       vcov = vcov,
       n_cores = as.integer(n_cores),
       drop_visit_levels = drop_visit_levels,
-      disable_theta_vcov = disable_theta_vcov
+      disable_theta_vcov = disable_theta_vcov,
+      emmeans_gcomp_vars = emmeans_gcomp_vars
     ),
     class = "mmrm_control"
   )
@@ -374,6 +385,16 @@ mmrm_control <- function(
 #'   as produced with [cov_struct()], or value that can be coerced to a
 #'   covariance structure using [as.cov_struct()]. If no value is provided,
 #'   a structure is derived from the provided formula.
+#' @param contrasts (`list` or `NULL`)\cr an optional named list of contrast
+#'   matrices or contrast functions (like [stats::contr.sum] or
+#'   [stats::contr.poly]) for specific factor variables, matching the
+#'   `contrasts` argument in [stats::lm()]. The list names must correspond to
+#'   factor variable names in the model formula. When `NULL` (the default),
+#'   the contrasts set on the factor variables in `data` are used. If a
+#'   contrast matrix has rownames that include levels not present in `data`,
+#'   those levels are preserved and the corresponding model matrix columns
+#'   are marked as aliased (not estimable), enabling prediction on new data
+#'   containing those levels.
 #' @param control (`mmrm_control`)\cr fine-grained fitting specifications list
 #'   created with [mmrm_control()].
 #' @param ... arguments passed to [mmrm_control()].
@@ -466,6 +487,7 @@ mmrm <- function(
   data,
   weights = NULL,
   covariance = NULL,
+  contrasts = NULL,
   reml = TRUE,
   control = mmrm_control(...),
   ...
@@ -473,6 +495,7 @@ mmrm <- function(
   assert_false(!missing(control) && !missing(...))
   assert_class(control, "mmrm_control")
   assert_list(control$optimizers, min.len = 1)
+  assert_list(contrasts, null.ok = TRUE, names = "unique")
 
   if (control$method %in% c("Kenward-Roger", "Kenward-Roger-Linear") && !reml) {
     stop("Kenward-Roger only works for REML")
@@ -494,6 +517,7 @@ mmrm <- function(
   } else {
     attr(weights, which = "dataname") <- deparse(match.call()$weights)
   }
+
   tmb_data <- h_mmrm_tmb_data(
     formula_parts,
     data,
@@ -501,7 +525,9 @@ mmrm <- function(
     reml,
     singular = if (control$accept_singular) "drop" else "error",
     drop_visit_levels = control$drop_visit_levels,
-    allow_na_response = FALSE
+    allow_na_response = FALSE,
+    contrasts = contrasts,
+    emmeans_gcomp_vars = control$emmeans_gcomp_vars
   )
   fit <- structure("", class = "try-error")
   names_all_optimizers <- names(control$optimizers)

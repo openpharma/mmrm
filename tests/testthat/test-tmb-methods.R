@@ -218,8 +218,8 @@ test_that("predict works for unconditional prediction of multi-variable response
 test_that("predict warns on aliased variables", {
   new_fev_data <- rbind(
     fev_data,
-    fev_data %>%
-      dplyr::filter(ARMCD == fev_data$ARMCD[1], AVISIT == "VIS1") %>%
+    fev_data |>
+      dplyr::filter(ARMCD == fev_data$ARMCD[1], AVISIT == "VIS1") |>
       dplyr::mutate(
         AVISIT = "VIS5",
         FEV1 = rnorm(dplyr::n(), mean = 45, sd = 5)
@@ -370,7 +370,35 @@ test_that("predict works if contrast provided", {
   ))
 })
 
-## integration test with SAS ----
+test_that("mmrm with extra-level contrasts allows prediction on new data", {
+  all_race_levels <- levels(fev_data$RACE)
+  missing_level <- all_race_levels[1]
+  fev_sub <- fev_data[fev_data$RACE != missing_level, ]
+
+  contr_mat <- contr.treatment(length(all_race_levels))
+  rownames(contr_mat) <- all_race_levels
+
+  fit <- mmrm(
+    FEV1 ~ RACE + ARMCD * AVISIT + ar1(AVISIT | USUBJID),
+    data = fev_sub,
+    contrasts = list(RACE = contr_mat)
+  )
+
+  aliased <- component(fit, "beta_aliased")
+  missing_cols <- grep(missing_level, names(aliased), value = TRUE)
+  expect_true(all(aliased[missing_cols]))
+
+  xlev <- component(fit, "xlev")
+  expect_true(setequal(all_race_levels, xlev$RACE))
+
+  expect_warning(
+    preds <- predict(fit, newdata = fev_data),
+    "co-linear"
+  )
+  expect_numeric(preds, len = nrow(fev_data))
+})
+
+# integration test with SAS ----
 
 test_that("predict gives same result with sas in unstructured satterthwaite/Kenward-Roger", {
   fit <- mmrm(

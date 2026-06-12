@@ -12,6 +12,7 @@ mmrm_control(
   accept_singular = TRUE,
   drop_visit_levels = TRUE,
   disable_theta_vcov = FALSE,
+  emmeans_gcomp_vars = NULL,
   ...,
   optimizers = h_get_optimizers(...)
 )
@@ -35,6 +36,15 @@ if visit variable is a factor, see details.}
 \item{disable_theta_vcov}{(\code{flag})\cr whether to disable calculation of
 variance-covariance matrix for variance parameters. This can speed up fitting
 when there are many variance parameters, see details.}
+
+\item{emmeans_gcomp_vars}{(\code{character} or \code{NULL})\cr names of variables to
+treat as fixed in the G-computation correction for emmeans. When non-\code{NULL},
+enables the correction in \code{\link{emmeans_support}}, producing the average
+treatment effect (ATE) with corrected standard errors. The visit variable
+(identified from the covariance structure) is computed separately per
+level. All other named variables are treated as intervention (subjects
+pooled across levels). All variables not named are averaged over using
+each subject's actual values.}
 
 \item{...}{additional arguments passed to \code{\link[=h_get_optimizers]{h_get_optimizers()}}.}
 

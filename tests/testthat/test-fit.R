@@ -1027,3 +1027,39 @@ test_that("mmrm gives warning if not reproducible TMB option is used", {
   )
   TMB::config(tmbad_deterministic_hash = 1, DLL = "mmrm")
 })
+
+# mmrm contrasts argument ----
+
+test_that("mmrm accepts contrasts argument with contrast function", {
+  fit <- mmrm(
+    FEV1 ~ ARMCD * AVISIT + ar1(AVISIT | USUBJID),
+    data = fev_data,
+    contrasts = list(ARMCD = contr.SAS)
+  )
+  expect_class(fit, "mmrm")
+  x_contrasts <- component(fit, "contrasts")
+  expect_true("ARMCD" %in% names(x_contrasts))
+  expect_equal(coef(fit)["ARMCDPBO"], c(ARMCDPBO = -4.479807), tolerance = 1e-4)
+})
+
+test_that("mmrm accepts explicit contrast matrix matching data levels", {
+  contr_mat <- contr.sum(nlevels(fev_data$ARMCD))
+  rownames(contr_mat) <- levels(fev_data$ARMCD)
+  fit <- mmrm(
+    FEV1 ~ RACE + ARMCD * AVISIT + ar1(AVISIT | USUBJID),
+    data = fev_data,
+    contrasts = list(ARMCD = contr_mat)
+  )
+  expect_class(fit, "mmrm")
+})
+
+test_that("mmrm validates contrasts argument", {
+  expect_error(
+    mmrm(
+      FEV1 ~ ARMCD + ar1(AVISIT | USUBJID),
+      data = fev_data,
+      contrasts = "not a list"
+    ),
+    "list"
+  )
+})

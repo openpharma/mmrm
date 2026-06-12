@@ -28,6 +28,7 @@ Mancuso
 Nikolas
 ORCID
 Peng
+Penrose
 Raphson
 SAS's
 SICI
@@ -67,6 +68,7 @@ facto
 factorizations
 frac
 funder
+getXlevels
 hj
 ih
 ihj
@@ -88,6 +90,7 @@ mathbf
 mathcal
 mathop
 mathrm
+misspecification
 na
 nabla
 ne
@@ -101,14 +104,19 @@ pkgdown
 plc
 pmatrix
 pre
+qquad
 rightarrow
 simeq
 sp
 subfolders
 subtractive
+tJ
+tJi
 tabset
 th
 tidymodels
+tj
+tji
 toep
 toeph
 unreproducible

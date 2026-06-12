@@ -61,6 +61,20 @@ h_mmrm_tmb_formula_parts <- function(
 #' @param drop_visit_levels (`flag`)\cr whether to drop levels for visit variable, if visit variable is a factor.
 #' @param allow_na_response (`flag`)\cr whether NA in response is allowed.
 #' @param drop_levels (`flag`)\cr whether drop levels for covariates. If not dropped could lead to singular matrix.
+#' @param xlev (`list` or `NULL`)\cr list of X levels produced by stats::.getXlevels
+#' @param contrasts (`list` or `NULL`)\cr an optional named list of contrast
+#'   matrices or contrast functions (like [stats::contr.sum] or
+#'   [stats::contr.poly]) for specific factor variables, matching the
+#'   `contrasts` argument in [stats::lm()]. The list names must correspond to
+#'   factor variable names in the model formula. When `NULL` (the default),
+#'   the contrasts set on the factor variables in `data` are used. If a
+#'   contrast matrix has rownames that include levels not present in `data`,
+#'   those levels are preserved and the corresponding model matrix columns
+#'   are marked as aliased (not estimable), enabling prediction on new data
+#'   containing those levels.
+#' @param emmeans_gcomp_vars (`character` or `NULL`)
+#'   treated as fixed for G-computation correction. Stored as a character
+#'   vector in the returned list for downstream use in the emmeans hook.
 #'
 #' @return List of class `mmrm_tmb_data` with elements:
 #' - `full_frame`: `data.frame` with `n` rows containing all variables needed in the model.
@@ -83,6 +97,7 @@ h_mmrm_tmb_formula_parts <- function(
 #' - `reml`: `int` specifying whether REML estimation is used (1), otherwise ML (0).
 #' - `subject_groups`: `factor` specifying the grouping for each subject.
 #' - `n_groups`: `int` with the number of total groups
+#' - `emmeans_gcomp_vars`: `character` or `NULL` with the G-computation variable names.
 #'
 #' @details Note that the `subject_var` must not be factor but can also be character.
 #'   If it is character, then it will be converted to factor internally. Here
@@ -101,7 +116,8 @@ h_mmrm_tmb_data <- function(
   allow_na_response = FALSE,
   drop_levels = TRUE,
   xlev = NULL,
-  contrasts = NULL
+  contrasts = NULL,
+  emmeans_gcomp_vars = NULL
 ) {
   assert_class(formula_parts, "mmrm_tmb_formula_parts")
   assert_data_frame(data)
@@ -109,6 +125,10 @@ h_mmrm_tmb_data <- function(
   assert_flag(reml)
   singular <- match.arg(singular)
   assert_flag(drop_visit_levels)
+  assert_character(emmeans_gcomp_vars, min.len = 1L, null.ok = TRUE)
+  if (!is.null(emmeans_gcomp_vars)) {
+    assert_subset(emmeans_gcomp_vars, names(data))
+  }
 
   data <- data.frame(data, weights)
   # Weights is always the last column.
@@ -171,18 +191,42 @@ h_mmrm_tmb_data <- function(
     )
   }
   if (identical(formula_parts$is_spatial, FALSE)) {
-    h_confirm_large_levels(length(levels(full_frame[[
-      formula_parts$visit_var
-    ]])))
+    h_confirm_large_levels(
+      nlevels(full_frame[[formula_parts$visit_var]])
+    )
   }
   full_frame <- full_frame[data_order, ]
+
+  # Contrasts following the same as what's done in lm(). The user gives contrast
+  # matrices or functions which are passed to model.matrix(). With lm(), missing
+  # factor levels are silently dropped. With contrasts, when a contrast matrix
+  # includes levels not present in the data, those levels are kept and the model
+  # matrix columns are marked aliased. This allows for prediction on new data
+  # that have those levels.
+  no_drop_lvls <- NULL
+  if (!is.null(contrasts)) {
+    formula_factors <- intersect(
+      names(contrasts),
+      names(which(vapply(
+        full_frame,
+        \(x) is.factor(x) || is.character(x) || is.logical(x),
+        logical(1L)
+      )))
+    )
+    # don't drop factorlike variables that have explicit contrasts
+    no_drop_lvls <- names(which(vapply(
+      formula_factors,
+      \(x) !is.null(contrasts[[x]]),
+      logical(1L)
+    )))
+  }
 
   if (drop_levels) {
     full_frame <- h_drop_levels(
       full_frame,
       formula_parts$subject_var,
       formula_parts$visit_var,
-      names(xlev)
+      c(names(xlev), no_drop_lvls)
     )
   }
   has_response <- !identical(attr(attr(full_frame, "terms"), "response"), 0L)
@@ -317,7 +361,8 @@ h_mmrm_tmb_data <- function(
       is_spatial_int = as.integer(formula_parts$is_spatial),
       reml = as.integer(reml),
       subject_groups = subject_groups,
-      n_groups = n_groups
+      n_groups = n_groups,
+      emmeans_gcomp_vars = emmeans_gcomp_vars
     ),
     class = "mmrm_tmb_data"
   )
@@ -377,7 +422,7 @@ h_mmrm_tmb_assert_start <- function(tmb_object) {
   if (is.na(tmb_object$fn(tmb_object$par))) {
     stop("negative log-likelihood is NaN at starting parameter values")
   }
-  if (any(is.na(tmb_object$gr(tmb_object$par)))) {
+  if (anyNA(tmb_object$gr(tmb_object$par))) {
     stop("some elements of gradient are NaN at starting parameter values")
   }
 }
@@ -586,6 +631,9 @@ h_mmrm_tmb_fit <- function(
 #'   or value that can be coerced to a covariance structure using
 #'   [as.cov_struct()]. If no value is provided, a structure is derived from
 #'   the provided formula.
+#' @param contrasts (`list` or `NULL`)\cr an optional named list of contrast
+#'   matrices or contrast functions for specific factor variables, see
+#'   [mmrm()] for details.
 #' @param control (`mmrm_control`)\cr list of control options produced by
 #'   [mmrm_control()].
 #' @inheritParams fit_single_optimizer
@@ -609,7 +657,7 @@ h_mmrm_tmb_fit <- function(
 #' @examples
 #' formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
 #' data <- fev_data
-#' system.time(result <- fit_mmrm(formula, data, rep(1, nrow(fev_data))))
+#' result <- fit_mmrm(formula, data, rep(1, nrow(fev_data)))
 fit_mmrm <- function(
   formula,
   data,
@@ -618,6 +666,7 @@ fit_mmrm <- function(
   covariance = NULL,
   tmb_data,
   formula_parts,
+  contrasts = NULL,
   control = mmrm_control()
 ) {
   if (missing(formula_parts) || missing(tmb_data)) {
@@ -634,7 +683,8 @@ fit_mmrm <- function(
       weights,
       reml,
       singular = if (control$accept_singular) "drop" else "error",
-      drop_visit_levels = control$drop_visit_levels
+      drop_visit_levels = control$drop_visit_levels,
+      contrasts = contrasts
     )
   } else {
     assert_class(tmb_data, "mmrm_tmb_data")
@@ -646,8 +696,11 @@ fit_mmrm <- function(
     start = control$start,
     n_groups = tmb_data$n_groups
   )
+  tmb_data_tmb <- tmb_data
+  # TMB::MakeADFun() rejects character vectors, so strip emmeans_gcomp_vars
+  tmb_data_tmb$emmeans_gcomp_vars <- NULL
   tmb_object <- TMB::MakeADFun(
-    data = tmb_data,
+    data = tmb_data_tmb,
     parameters = tmb_parameters,
     hessian = TRUE,
     DLL = "mmrm",

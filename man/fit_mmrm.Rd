@@ -12,6 +12,7 @@ fit_mmrm(
   covariance = NULL,
   tmb_data,
   formula_parts,
+  contrasts = NULL,
   control = mmrm_control()
 )
 }
@@ -36,6 +37,10 @@ the provided formula.}
 
 \item{formula_parts}{(\code{mmrm_tmb_formula_parts})\cr list with formula parts
 from \code{\link[=h_mmrm_tmb_formula_parts]{h_mmrm_tmb_formula_parts()}}.}
+
+\item{contrasts}{(\code{list} or \code{NULL})\cr an optional named list of contrast
+matrices or contrast functions for specific factor variables, see
+\code{\link[=mmrm]{mmrm()}} for details.}
 
 \item{control}{(\code{mmrm_control})\cr list of control options produced by
 \code{\link[=mmrm_control]{mmrm_control()}}.}
@@ -65,5 +70,5 @@ Always use only the first optimizer if multiple optimizers are provided.
 \examples{
 formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
 data <- fev_data
-system.time(result <- fit_mmrm(formula, data, rep(1, nrow(fev_data))))
+result <- fit_mmrm(formula, data, rep(1, nrow(fev_data)))
 }

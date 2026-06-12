@@ -14,7 +14,8 @@ test_that("mmrm_control works as expected", {
       vcov = "Asymptotic",
       n_cores = 1L,
       drop_visit_levels = TRUE,
-      disable_theta_vcov = FALSE
+      disable_theta_vcov = FALSE,
+      emmeans_gcomp_vars = NULL
     ),
     class = "mmrm_control"
   )
@@ -192,7 +193,8 @@ test_that("h_mmrm_tmb_data works as expected", {
       "is_spatial_int",
       "reml",
       "subject_groups",
-      "n_groups"
+      "n_groups",
+      "emmeans_gcomp_vars"
     )
   )
   expect_matrix(result$x_matrix, nrows = 537, ncols = 3, any.missing = FALSE)
@@ -243,7 +245,8 @@ test_that("h_mmrm_tmb_data works as expected with allow_na_response", {
       "is_spatial_int",
       "reml",
       "subject_groups",
-      "n_groups"
+      "n_groups",
+      "emmeans_gcomp_vars"
     )
   )
   expect_matrix(result$x_matrix, nrows = 800, ncols = 3, any.missing = FALSE)
@@ -296,7 +299,8 @@ test_that("h_mmrm_tmb_data do not allow NA in covariates with allow_na_response"
       "is_spatial_int",
       "reml",
       "subject_groups",
-      "n_groups"
+      "n_groups",
+      "emmeans_gcomp_vars"
     )
   )
   expect_matrix(result$x_matrix, nrows = 780, ncols = 3, any.missing = FALSE)
@@ -346,7 +350,8 @@ test_that("h_mmrm_tmb_data works as expected for grouped covariance", {
       "is_spatial_int",
       "reml",
       "subject_groups",
-      "n_groups"
+      "n_groups",
+      "emmeans_gcomp_vars"
     )
   )
   expect_matrix(result$x_matrix, nrows = 537, ncols = 3, any.missing = FALSE)
@@ -396,7 +401,8 @@ test_that("h_mmrm_tmb_data works as expected for mutli-dimensional spatial expon
       "is_spatial_int",
       "reml",
       "subject_groups",
-      "n_groups"
+      "n_groups",
+      "emmeans_gcomp_vars"
     )
   )
   expect_matrix(result$x_matrix, nrows = 537, ncols = 3, any.missing = FALSE)
@@ -1166,6 +1172,7 @@ test_that("h_mmrm_tmb_extract_cov works as expected", {
     drop_visit_levels = TRUE
   )
   tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL)
+  tmb_data$emmeans_gcomp_vars <- NULL
   tmb_object <- TMB::MakeADFun(
     data = tmb_data,
     parameters = tmb_parameters,
@@ -1209,6 +1216,7 @@ test_that("h_mmrm_tmb_extract_cov works as expected for group covariance", {
     start = NULL,
     n_groups = 2L
   )
+  tmb_data$emmeans_gcomp_vars <- NULL
   tmb_object <- TMB::MakeADFun(
     data = tmb_data,
     parameters = tmb_parameters,
@@ -1259,6 +1267,7 @@ test_that("h_mmrm_tmb_fit works as expected", {
     drop_visit_levels = TRUE
   )
   tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL)
+  tmb_data$emmeans_gcomp_vars <- NULL
   tmb_object <- TMB::MakeADFun(
     data = tmb_data,
     parameters = tmb_parameters,
@@ -1371,6 +1380,7 @@ test_that("h_mmrm_tmb_fit works as expected for grouped covariance", {
     start = NULL,
     n_groups = tmb_data$n_groups
   )
+  tmb_data$emmeans_gcomp_vars <- NULL
   tmb_object <- TMB::MakeADFun(
     data = tmb_data,
     parameters = tmb_parameters,
@@ -1446,6 +1456,7 @@ test_that("h_mmrm_tmb_fit works as expected when theta_vcov calculation is disab
     drop_visit_levels = TRUE
   )
   tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL)
+  tmb_data$emmeans_gcomp_vars <- NULL
   tmb_object <- TMB::MakeADFun(
     data = tmb_data,
     parameters = tmb_parameters,
@@ -2651,6 +2662,7 @@ test_that("get_covariance_lower_chol errors when an invalid covariance type is u
   tmb_parameters <- h_mmrm_tmb_parameters(formula_parts, tmb_data, start = NULL)
 
   tmb_data$cov_type <- "gaaah"
+  tmb_data$emmeans_gcomp_vars <- NULL
   expect_error(
     TMB::MakeADFun(
       data = tmb_data,
@@ -2662,6 +2674,7 @@ test_that("get_covariance_lower_chol errors when an invalid covariance type is u
     "Unknown covariance type 'gaaah'"
   )
   tmb_data$is_spatial <- TRUE
+  tmb_data$emmeans_gcomp_vars <- NULL
   expect_error(
     TMB::MakeADFun(
       data = tmb_data,

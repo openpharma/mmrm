@@ -41,7 +41,11 @@ get_mmrm_no_intercept <- function() {
 }
 
 .mmrm_alias_noint <- mmrm(
-  FEV1 ~ ARMCD:FEV1_BL + FEV1_BL - 1 + ARMCD:SEX + ar1(as.ordered(AVISIT) | USUBJID),
+  FEV1 ~ ARMCD:FEV1_BL +
+    FEV1_BL -
+    1 +
+    ARMCD:SEX +
+    ar1(as.ordered(AVISIT) | USUBJID),
   data = fev_data
 )
 
@@ -204,6 +208,26 @@ get_mmrm_smaller_data <- function() {
 .mmrm_example_cs <- mmrm(.mmrm_formula_cs, fev_data)
 get_mmrm_cs <- function() {
   .mmrm_example_cs
+}
+
+.mmrm_gcomp_formula <- FEV1 ~ FEV1_BL + ARMCD * AVISIT + us(AVISIT | USUBJID)
+.mmrm_gcomp <- mmrm(
+  .mmrm_gcomp_formula,
+  data = fev_data,
+  control = mmrm_control(emmeans_gcomp_vars = c("ARMCD", "AVISIT"))
+)
+get_mmrm_gcomp <- function() {
+  .mmrm_gcomp
+}
+
+.mmrm_gcomp_additive_formula <- FEV1 ~ FEV1_BL + ARMCD + AVISIT + us(AVISIT | USUBJID)
+.mmrm_gcomp_additive <- mmrm(
+  .mmrm_gcomp_additive_formula,
+  data = fev_data,
+  control = mmrm_control(emmeans_gcomp_vars = c("ARMCD", "AVISIT"))
+)
+get_mmrm_gcomp_additive <- function() {
+  .mmrm_gcomp_additive
 }
 
 
