@@ -12,6 +12,7 @@ mmrm(
   data,
   weights = NULL,
   covariance = NULL,
+  contrasts = NULL,
   reml = TRUE,
   control = mmrm_control(...),
   ...
@@ -45,6 +46,21 @@ mmrm(
   [`as.cov_struct()`](https://openpharma.github.io/mmrm/reference/as.cov_struct.md).
   If no value is provided, a structure is derived from the provided
   formula.
+
+- contrasts:
+
+  (`list` or `NULL`)\
+  an optional named list of contrast matrices or contrast functions
+  (like [stats::contr.sum](https://rdrr.io/r/stats/contrast.html) or
+  [stats::contr.poly](https://rdrr.io/r/stats/contrast.html)) for
+  specific factor variables, matching the `contrasts` argument in
+  [`stats::lm()`](https://rdrr.io/r/stats/lm.html). The list names must
+  correspond to factor variable names in the model formula. When `NULL`
+  (the default), the contrasts set on the factor variables in `data` are
+  used. If a contrast matrix has rownames that include levels not
+  present in `data`, those levels are preserved and the corresponding
+  model matrix columns are marked as aliased (not estimable), enabling
+  prediction on new data containing those levels.
 
 - reml:
 

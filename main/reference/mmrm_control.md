@@ -14,6 +14,7 @@ mmrm_control(
   accept_singular = TRUE,
   drop_visit_levels = TRUE,
   disable_theta_vcov = FALSE,
+  emmeans_gcomp_vars = NULL,
   ...,
   optimizers = h_get_optimizers(...)
 )
@@ -60,6 +61,18 @@ mmrm_control(
   whether to disable calculation of variance-covariance matrix for
   variance parameters. This can speed up fitting when there are many
   variance parameters, see details.
+
+- emmeans_gcomp_vars:
+
+  (`character` or `NULL`)\
+  names of variables to treat as fixed in the G-computation correction
+  for emmeans. When non-`NULL`, enables the correction in
+  [`emmeans_support`](https://openpharma.github.io/mmrm/reference/emmeans_support.md),
+  producing the average treatment effect (ATE) with corrected standard
+  errors. The visit variable (identified from the covariance structure)
+  is computed separately per level. All other named variables are
+  treated as intervention (subjects pooled across levels). All variables
+  not named are averaged over using each subject's actual values.
 
 - ...:
 
@@ -205,7 +218,7 @@ mmrm_control(
 #>             gr1, con)
 #>     res
 #> }
-#> <bytecode: 0x556e1de32498>
+#> <bytecode: 0x5556bdff4838>
 #> <environment: namespace:stats>
 #> attr(,"args")
 #> attr(,"args")$control
@@ -239,7 +252,7 @@ mmrm_control(
 #>   )
 #>   rep(start_value, n_groups)
 #> }
-#> <bytecode: 0x556e1e8f04f8>
+#> <bytecode: 0x5556c19bebf8>
 #> <environment: namespace:mmrm>
 #> 
 #> $accept_singular
@@ -259,6 +272,9 @@ mmrm_control(
 #> 
 #> $disable_theta_vcov
 #> [1] FALSE
+#> 
+#> $emmeans_gcomp_vars
+#> NULL
 #> 
 #> attr(,"class")
 #> [1] "mmrm_control"

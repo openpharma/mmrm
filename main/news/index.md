@@ -1,5 +1,28 @@
 # Changelog
 
+## mmrm 0.3.17.9038
+
+#### New Features
+
+- [`mmrm()`](https://openpharma.github.io/mmrm/reference/mmrm.md) and
+  [`fit_mmrm()`](https://openpharma.github.io/mmrm/reference/fit_mmrm.md)
+  now accept a `contrasts` argument, allowing users to specify contrast
+  matrices or functions for factor variables, matching the interface of
+  [`lm()`](https://rdrr.io/r/stats/lm.html). When an explicit contrast
+  matrix includes levels not present in the fitting data, those levels
+  are preserved in the model and marked as aliased, enabling prediction
+  on new data containing those levels.
+- [`mmrm_control()`](https://openpharma.github.io/mmrm/reference/mmrm_control.md)
+  gains `emmeans_gcomp_vars` argument, enabling G-computation correction
+  in
+  [`emmeans()`](https://rvlenth.github.io/emmeans/reference/emmeans.html)
+  output for models with covariate-by-treatment interactions. When set,
+  [`emmeans()`](https://rvlenth.github.io/emmeans/reference/emmeans.html)
+  returns the average treatment effect (ATE) with standard errors that
+  account for covariate variability across subjects. See
+  [`?emmeans_support`](https://openpharma.github.io/mmrm/reference/emmeans_support.md)
+  for details.
+
 ## mmrm 0.3.17.9000
 
 #### Bug Fixes

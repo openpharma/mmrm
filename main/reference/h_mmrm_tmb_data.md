@@ -15,7 +15,8 @@ h_mmrm_tmb_data(
   allow_na_response = FALSE,
   drop_levels = TRUE,
   xlev = NULL,
-  contrasts = NULL
+  contrasts = NULL,
+  emmeans_gcomp_vars = NULL
 )
 ```
 
@@ -67,6 +68,32 @@ h_mmrm_tmb_data(
   whether drop levels for covariates. If not dropped could lead to
   singular matrix.
 
+- xlev:
+
+  (`list` or `NULL`)\
+  list of X levels produced by stats::.getXlevels
+
+- contrasts:
+
+  (`list` or `NULL`)\
+  an optional named list of contrast matrices or contrast functions
+  (like [stats::contr.sum](https://rdrr.io/r/stats/contrast.html) or
+  [stats::contr.poly](https://rdrr.io/r/stats/contrast.html)) for
+  specific factor variables, matching the `contrasts` argument in
+  [`stats::lm()`](https://rdrr.io/r/stats/lm.html). The list names must
+  correspond to factor variable names in the model formula. When `NULL`
+  (the default), the contrasts set on the factor variables in `data` are
+  used. If a contrast matrix has rownames that include levels not
+  present in `data`, those levels are preserved and the corresponding
+  model matrix columns are marked as aliased (not estimable), enabling
+  prediction on new data containing those levels.
+
+- emmeans_gcomp_vars:
+
+  (`character` or `NULL`) treated as fixed for G-computation correction.
+  Stored as a character vector in the returned list for downstream use
+  in the emmeans hook.
+
 ## Value
 
 List of class `mmrm_tmb_data` with elements:
@@ -111,6 +138,9 @@ List of class `mmrm_tmb_data` with elements:
 - `subject_groups`: `factor` specifying the grouping for each subject.
 
 - `n_groups`: `int` with the number of total groups
+
+- `emmeans_gcomp_vars`: `character` or `NULL` with the G-computation
+  variable names.
 
 ## Details
 

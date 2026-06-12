@@ -12,10 +12,11 @@ articles:
   kenward: kenward.html
   methodological_introduction: methodological_introduction.html
   mmrm_review_methods: mmrm_review_methods.html
+  model_robust_estimator: model_robust_estimator.html
   package_structure: package_structure.html
   predict: predict.html
   satterthwaite: satterthwaite.html
-last_built: 2026-04-27T06:23Z
+last_built: 2026-06-12T00:39Z
 urls:
   reference: https://openpharma.github.io/mmrm/reference
   article: https://openpharma.github.io/mmrm/articles

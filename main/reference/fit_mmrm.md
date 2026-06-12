@@ -17,6 +17,7 @@ fit_mmrm(
   covariance = NULL,
   tmb_data,
   formula_parts,
+  contrasts = NULL,
   control = mmrm_control()
 )
 ```
@@ -65,6 +66,14 @@ fit_mmrm(
   list with formula parts from
   [`h_mmrm_tmb_formula_parts()`](https://openpharma.github.io/mmrm/reference/h_mmrm_tmb_formula_parts.md).
 
+- contrasts:
+
+  (`list` or `NULL`)\
+  an optional named list of contrast matrices or contrast functions for
+  specific factor variables, see
+  [`mmrm()`](https://openpharma.github.io/mmrm/reference/mmrm.md) for
+  details.
+
 - control:
 
   (`mmrm_control`)\
@@ -94,7 +103,5 @@ Always use only the first optimizer if multiple optimizers are provided.
 ``` r
 formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
 data <- fev_data
-system.time(result <- fit_mmrm(formula, data, rep(1, nrow(fev_data))))
-#>    user  system elapsed 
-#>   0.052   0.000   0.052 
+result <- fit_mmrm(formula, data, rep(1, nrow(fev_data)))
 ```
