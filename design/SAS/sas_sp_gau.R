@@ -38,3 +38,23 @@ programs <- list(
   c("sas_sp_gau2_reml.sas", "reml", "visitn visitn2")
 )
 for (p in programs) write_sas(p[1], p[2], p[3])
+
+# Kenward-Roger reference (default and first-order / linear).
+writeLines(
+  'libname xptfile xport "fev.xpt";
+proc copy inlib=xptfile outlib=work; run;
+
+PROC MIXED DATA = dat cl method=reml;
+  CLASS USUBJID ARMCD;
+  MODEL FEV1 = ARMCD / ddfm=kenwardroger solution chisq;
+  REPEATED / subject=USUBJID type=sp(gau)(visitn visitn2) rcorr;
+RUN;
+
+PROC MIXED DATA = dat cl method=reml;
+  CLASS USUBJID ARMCD;
+  MODEL FEV1 = ARMCD / ddfm=kenwardroger(firstorder) solution chisq;
+  REPEATED / subject=USUBJID type=sp(gau)(visitn visitn2) rcorr;
+RUN;
+',
+  "sas_sp_gau_kr.sas"
+)
