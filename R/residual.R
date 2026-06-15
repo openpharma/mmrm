@@ -24,7 +24,12 @@ h_df_1d_res <- function(object, contrast) {
 #' @keywords internal
 h_df_md_res <- function(object, contrast) {
   assert_class(object, "mmrm")
-  assert_matrix(contrast, mode = "numeric", any.missing = FALSE, ncols = length(component(object, "beta_est")))
+  assert_matrix(
+    contrast,
+    mode = "numeric",
+    any.missing = FALSE,
+    ncols = length(component(object, "beta_est"))
+  )
 
   df <- component(object, "n_obs") - length(component(object, "beta_est"))
 

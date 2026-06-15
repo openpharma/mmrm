@@ -1,11 +1,12 @@
 Type: Package
 Package: mmrm
 Title: Mixed Models for Repeated Measures
-Version: 0.3.14.9002
+Version: 0.3.17.9038
 Authors@R: c(
     person("Daniel", "Sabanes Bove", , "daniel.sabanes_bove@rconis.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-0176-9239")),
-    person("Liming", "Li", , "liming.li1@astrazeneca.com", role = "aut", comment = c(ORCID = "0009-0008-6870-0878")),
+    person("Liming", "Li", , "liming.li1@astrazeneca.com", role = "aut",
+           comment = c(ORCID = "0009-0008-6870-0878")),
     person("Julia", "Dedic", , "julia.dedic@roche.com", role = "aut"),
     person("Doug", "Kelkhoff", , "doug.kelkhoff@roche.com", role = "aut"),
     person("Kevin", "Kunzmann", , "kevin.kunzmann@boehringer-ingelheim.com", role = "aut"),
@@ -22,6 +23,10 @@ Authors@R: c(
            comment = c(ORCID = "0000-0002-4581-3545")),
     person("Lukas A.", "Widmer", role = "ctb",
            comment = c(ORCID = "0000-0003-1471-3493")),
+    person("Arryn", "Panagos", , "panagos_arryn@lilly.com", role = "aut",
+           comment = c(ORCID = "0000-0003-0452-2095")),
+    person("Jeremiah", "Jones", , "jeremiah.jones@lilly.com", role = "aut",
+           comment = c(ORCID = "0000-0003-1239-2542")),
     person("Boehringer Ingelheim Ltd.", role = c("cph", "fnd")),
     person("Gilead Sciences, Inc.", role = c("cph", "fnd")),
     person("F. Hoffmann-La Roche AG", role = c("cph", "fnd")),
@@ -46,11 +51,12 @@ License: Apache License 2.0
 URL: https://openpharma.github.io/mmrm/
 BugReports: https://github.com/openpharma/mmrm/issues
 Depends:
-    R (>= 4.0)
+    R (>= 4.1)
 Imports:
     checkmate (>= 2.0),
     generics,
     lifecycle,
+    MASS,
     Matrix,
     methods,
     nlme,
@@ -63,6 +69,7 @@ Imports:
     TMB (>= 1.9.1),
     utils
 Suggests:
+    broom,
     broom.helpers,
     car (>= 3.1.2),
     cli,
@@ -76,7 +83,7 @@ Suggests:
     hardhat,
     knitr,
     lme4,
-    MASS,
+    lmerTest,
     microbenchmark,
     mockery,
     parallelly (>= 1.32.0),
@@ -98,14 +105,15 @@ VignetteBuilder:
     knitr
 RdMacros:
     Rdpack
+Config/roxygen2/version: 8.0.0
 Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-US
 LazyData: true
 NeedsCompilation: yes
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
 Collate:
+    'gcomp.R'
     'between-within.R'
     'catch-routine-registration.R'
     'component.R'

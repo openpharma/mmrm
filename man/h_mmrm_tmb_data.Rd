@@ -14,7 +14,8 @@ h_mmrm_tmb_data(
   allow_na_response = FALSE,
   drop_levels = TRUE,
   xlev = NULL,
-  contrasts = NULL
+  contrasts = NULL,
+  emmeans_gcomp_vars = NULL
 )
 }
 \arguments{
@@ -36,6 +37,23 @@ stop the function return the error, "drop" to drop these columns, and "keep" to 
 \item{allow_na_response}{(\code{flag})\cr whether NA in response is allowed.}
 
 \item{drop_levels}{(\code{flag})\cr whether drop levels for covariates. If not dropped could lead to singular matrix.}
+
+\item{xlev}{(\code{list} or \code{NULL})\cr list of X levels produced by stats::.getXlevels}
+
+\item{contrasts}{(\code{list} or \code{NULL})\cr an optional named list of contrast
+matrices or contrast functions (like \link[stats:contr.sum]{stats::contr.sum} or
+\link[stats:contr.poly]{stats::contr.poly}) for specific factor variables, matching the
+\code{contrasts} argument in \code{\link[stats:lm]{stats::lm()}}. The list names must correspond to
+factor variable names in the model formula. When \code{NULL} (the default),
+the contrasts set on the factor variables in \code{data} are used. If a
+contrast matrix has rownames that include levels not present in \code{data},
+those levels are preserved and the corresponding model matrix columns
+are marked as aliased (not estimable), enabling prediction on new data
+containing those levels.}
+
+\item{emmeans_gcomp_vars}{(\code{character} or \code{NULL})
+treated as fixed for G-computation correction. Stored as a character
+vector in the returned list for downstream use in the emmeans hook.}
 }
 \value{
 List of class \code{mmrm_tmb_data} with elements:
@@ -60,6 +78,7 @@ observed visits for each subjects. So the sum of this vector equals \code{n}.
 \item \code{reml}: \code{int} specifying whether REML estimation is used (1), otherwise ML (0).
 \item \code{subject_groups}: \code{factor} specifying the grouping for each subject.
 \item \code{n_groups}: \code{int} with the number of total groups
+\item \code{emmeans_gcomp_vars}: \code{character} or \code{NULL} with the G-computation variable names.
 }
 }
 \description{

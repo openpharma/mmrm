@@ -5,6 +5,7 @@ template:
   bootstrap: 5
   params:
     ganalytics: UA-125641273-1
+  math-rendering: "mathjax"
 
 navbar:
   structure:
@@ -45,6 +46,7 @@ articles:
     contents:
       - coef_vcov
       - empirical_wls
+      - model_robust_estimator
   - title: Algorithm Details
     navbar: Algorithm Details
     contents:
@@ -77,6 +79,7 @@ reference:
       - mmrm_methods
       - mmrm_tidiers
       - mmrm_tmb_methods
+      - stats_anova
   - title: Covariance Structures
     contents:
       - cov_struct

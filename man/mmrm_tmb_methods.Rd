@@ -40,12 +40,19 @@
   formula,
   data,
   include = c("subject_var", "visit_var", "group_var", "response_var"),
+  exclude = NULL,
   full,
   na.action = "na.omit",
   ...
 )
 
-\method{model.matrix}{mmrm_tmb}(object, data, use_response = TRUE, ...)
+\method{model.matrix}{mmrm_tmb}(
+  object,
+  data,
+  use_response = TRUE,
+  contrasts.arg = attr(object$tmb_data$x_matrix, "contrasts"),
+  ...
+)
 
 \method{terms}{mmrm_tmb}(x, include = "response_var", ...)
 
@@ -101,14 +108,19 @@ Exception is \code{model.matrix()} passing \code{...} to the default method.}
 
 \item{data}{(\code{data.frame})\cr object in which to construct the frame.}
 
-\item{include}{(\code{character})\cr names of variable types to include.
+\item{include}{(\code{character})\cr names of variable types to include in the model frame creation.
 Must be \code{NULL} or one or more of \code{c("subject_var", "visit_var", "group_var", "response_var")}.}
+
+\item{exclude}{(\code{character})\cr names of variable types to exclude after the model frame creation.
+Same choices as for \code{include}.}
 
 \item{full}{(\code{flag})\cr indicator whether to return full model frame (deprecated).}
 
 \item{na.action}{(\code{string})\cr na action.}
 
 \item{use_response}{(\code{flag})\cr whether to use the response for complete rows.}
+
+\item{contrasts.arg}{(\code{list})\cr contrasts to be used.}
 
 \item{x}{(\code{mmrm_tmb})\cr same as \code{object}.}
 
@@ -135,9 +147,19 @@ Depends on the method, see Functions.
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
 }
 \details{
-\code{include} argument controls the variables the returned model frame will include.
+\code{include} argument controls the variables the model frame will include upon creation.
 Possible options are "response_var", "subject_var", "visit_var" and "group_var", representing the
 response variable, subject variable, visit variable or group variable.
+By default all four variable types are included, which means that the original model frame will be used.
+If only a subset of variable types is requested, the model frame will be constructed freshly, and
+if there are more complete rows (without \code{NA}s) in the required variables than in the original model frame,
+those rows will be included as well.
+
+The \code{exclude} argument can be used to exclude specific variable types after the model frame creation.
+By default no variable types are excluded. The \code{exclude} argument is useful when the original
+model frame should be used as basis (with same incomplete rows omitted), but some variable types should be removed
+afterwards.
+
 \code{character} values in new data will always be factorized according to the data in the fit
 to avoid mismatched in levels or issues in \code{model.matrix}.
 }
@@ -160,6 +182,12 @@ columns and one row per input data row.
 \item \code{terms(mmrm_tmb)}: obtains the terms object.
 
 \item \code{logLik(mmrm_tmb)}: obtains the attained log likelihood value.
+Includes as attributes the number of variance parameters \code{n_param}, number
+of estimated coefficients \code{n_coef}, degrees of freedom \code{df}, and number of
+subjects \code{nobs}. The \code{nobs} attribute is so named so that if this
+function's results are passed to \code{stats::BIC()}, the BIC value will be
+calculated correctly. Resulting value is of class
+\code{\link[stats:logLik]{logLik}}.
 
 \item \code{formula(mmrm_tmb)}: obtains the used formula.
 
@@ -193,6 +221,13 @@ where n is the number of rows in \code{newdata},
 and m is the number \code{nsim} of simulated responses.
 
 }}
+\note{
+If the response in the formula is a complicated expression, e.g. with multiple
+variables, and not all variables are provided in \code{newdata}, a warning is issued.
+In this case it is recommended to provide all variables in the \code{newdata} data set,
+and manually set the response variables to \code{NA} as needed for obtaining unconditional
+predictions e.g.
+}
 \examples{
 formula <- FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
 object <- fit_mmrm(formula, fev_data, weights = rep(1, nrow(fev_data)))

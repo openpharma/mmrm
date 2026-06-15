@@ -36,7 +36,12 @@ h_get_kr_comp <- function(tmb_data, theta) {
 #' @keywords internal
 h_df_md_kr <- function(object, contrast) {
   assert_class(object, "mmrm")
-  assert_matrix(contrast, mode = "numeric", any.missing = FALSE, ncols = length(component(object, "beta_est")))
+  assert_matrix(
+    contrast,
+    mode = "numeric",
+    any.missing = FALSE,
+    ncols = length(component(object, "beta_est"))
+  )
   if (component(object, "reml") != 1) {
     stop("Kenward-Roger is only for REML")
   }
@@ -159,8 +164,16 @@ h_var_adj <- function(v, w, p, q, r, linear = FALSE) {
   theta_per_group <- nrow(q) / nrow(p)
   n_groups <- n_theta / theta_per_group
   assert_matrix(p, nrows = n_theta * n_visits)
-  assert_matrix(q, nrows = theta_per_group^2 * n_groups * n_visits, ncols = n_visits)
-  assert_matrix(r, nrows = theta_per_group^2 * n_groups * n_visits, ncols = n_visits)
+  assert_matrix(
+    q,
+    nrows = theta_per_group^2 * n_groups * n_visits,
+    ncols = n_visits
+  )
+  assert_matrix(
+    r,
+    nrows = theta_per_group^2 * n_groups * n_visits,
+    ncols = n_visits
+  )
   if (linear) {
     r <- matrix(0, nrow = nrow(r), ncol = ncol(r))
   }
@@ -175,15 +188,30 @@ h_var_adj <- function(v, w, p, q, r, linear = FALSE) {
       jid <- (j - 1) * n_beta + 1
       ii <- i - (gi - 1) * theta_per_group
       jj <- j - (gi - 1) * theta_per_group
-      ijid <- ((ii - 1) * theta_per_group + jj - 1) * n_beta + (gi - 1) * n_beta * theta_per_group^2 + 1
+      ijid <- ((ii - 1) * theta_per_group + jj - 1) *
+        n_beta +
+        (gi - 1) * n_beta * theta_per_group^2 +
+        1
       if (gi != gj) {
-        ret <- ret + 2 * w[i, j] * v %*% (-p[iid:(iid + n_beta - 1), ] %*% v %*% p[jid:(jid + n_beta - 1), ]) %*% v
+        ret <- ret +
+          2 *
+            w[i, j] *
+            v %*%
+              (-p[iid:(iid + n_beta - 1), ] %*%
+                v %*%
+                p[jid:(jid + n_beta - 1), ]) %*%
+              v
       } else {
-        ret <- ret + 2 * w[i, j] * v %*% (
-          q[ijid:(ijid + n_beta - 1), ] -
-            p[iid:(iid + n_beta - 1), ] %*% v %*% p[jid:(jid + n_beta - 1), ] -
-            1 / 4 * r[ijid:(ijid + n_beta - 1), ]
-        ) %*% v
+        ret <- ret +
+          2 *
+            w[i, j] *
+            v %*%
+              (q[ijid:(ijid + n_beta - 1), ] -
+                p[iid:(iid + n_beta - 1), ] %*%
+                  v %*%
+                  p[jid:(jid + n_beta - 1), ] -
+                1 / 4 * r[ijid:(ijid + n_beta - 1), ]) %*%
+              v
       }
     }
   }

@@ -1,5 +1,6 @@
 
 <!-- markdownlint-disable-file -->
+
 <!-- README.md needs to be generated from README.Rmd. Please edit that file -->
 
 # mmrm <img src="man/figures/logo.svg" align="right" width="175" />

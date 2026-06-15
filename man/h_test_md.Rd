@@ -2,24 +2,33 @@
 % Please edit documentation in R/testing.R
 \name{h_test_md}
 \alias{h_test_md}
-\title{Creating F-Statistic Test Results For Multi-Dimensional Contrast}
+\title{Creating F- or Chi-squared-statistic Test Results For Multi-Dimensional
+Contrast}
 \usage{
-h_test_md(object, contrast, df, f_stat_factor = 1)
+h_test_md(object, contrast, df, f_stat_factor = 1, test = c("F", "Chisq"))
 }
 \arguments{
 \item{object}{(\code{mmrm})\cr the MMRM fit.}
 
 \item{contrast}{(\code{matrix})\cr numeric contrast matrix.}
 
-\item{df}{(\code{number})\cr denominator degrees of freedom for the multi-dimensional contrast.}
+\item{df}{(\code{number})\cr denominator degrees of freedom for the
+multi-dimensional contrast for an F-test. Ignored if \code{test = "Chisq"}.}
 
-\item{f_stat_factor}{(\code{number})\cr optional scaling factor on top of the standard F-statistic.}
+\item{f_stat_factor}{(\code{number})\cr optional scaling factor on top of the
+standard F-statistic. Ignored if \code{test = "Chisq"}.}
+
+\item{test}{(\code{string})\cr either \code{"F"} or \code{"Chisq"}, specifying the kind of
+test to perform.}
 }
 \value{
-List with \code{num_df}, \code{denom_df}, \code{f_stat} and \code{p_val} (2-sided p-value).
+If \code{test = "F"}, a list with \code{num_df}, \code{denom_df}, \code{f_stat} and
+\code{p_val}. If \code{test = "Chisq"}, a list with \code{df}, \code{chisq_stat}, and \code{p_val}.
+In both cases, p-values are two sided.
 }
 \description{
 Creates a list of results for multi-dimensional contrasts using
-an F-test statistic and the given degrees of freedom.
+an F-test statistic and the given degrees of freedom or a Chi-squared test
+statistic.
 }
 \keyword{internal}

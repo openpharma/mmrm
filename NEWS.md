@@ -1,14 +1,54 @@
-# mmrm 0.3.14.9002
+# mmrm 0.3.17.9038
+
+### New Features
+
+- `mmrm()` and `fit_mmrm()` now accept a `contrasts` argument, allowing users to specify contrast matrices or functions for factor variables, matching the interface of `lm()`. When an explicit contrast matrix includes levels not present in the fitting data, those levels are preserved in the model and marked as aliased, enabling prediction on new data containing those levels.
+- `mmrm_control()` gains `emmeans_gcomp_vars` argument, enabling G-computation correction in `emmeans()` output for models with covariate-by-treatment interactions. When set, `emmeans()` returns the average treatment effect (ATE) with standard errors that account for covariate variability across subjects. See `?emmeans_support` for details.
+- `mmrm` now supports the spatial Gaussian (`sp_gau`) covariance structure.
+
+# mmrm 0.3.17.9000
+
+### Bug Fixes
+
+- Previously, having the visit variable only in an interaction term in the model could lead to failed `emmeans()` evaluation. Similarly, there could be other interaction variable problems potentially with `emmeans()`, due to the change in the order which is automatically applied by `terms()` used internally. This is now fixed.
+
+# mmrm 0.3.17
+
+### Miscellaneous
+
+- Added `Rcpp` specific flag to avoid warnings when using the upcoming new version of `Rcpp`.
+
+# mmrm 0.3.16
+
+### New Features
+
+- `Anova.mmrm()` now has a `test.statistic` argument allowing the user to choose the Chi-squared test as opposed to the default F-test.
+- `mmrm_control()` now has a `disable_theta_vcov` argument allowing the user to disable computation of the variance-covariance matrix of the covariance parameters. In that case, the `nlminb` optimizer cannot be used and other optimizers should be selected. Avoiding this computation can be useful in cases where the number of covariance parameters is large and computation of this very large matrix is slow and memory-intensive.
+- `model.frame()` has a new argument `exclude` which allows to exclude specific model variables from the returned data frame, *after* creating the initial `model.frame`. This is useful when the same rows should be kept as in the original model fit (e.g. after `na.action` has been applied), but some variables are not needed in the returned data frame. The `terms` attribute of the returned data frame is updated accordingly.
+
+### Bug Fixes
+
+- Previously, the compound symmetry correlation models (`cs` and `csh`) could have divergence issues, especially when the correlation was negative. This was because the range of the correlation parameter was from -1 to 1, whereas the correct range is between -1/(m-1) and 1, where m is the number of observations per subject. This is fixed now by using another mapping from the real line to the correct range, and therefore compound symmetry correlation models will work more robustly. 
+- Previously, the `predict()` method failed when requesting an unconditional prediction interval. This is fixed now.
+- Previously, the `emp_start()` starting values could only work with variables included directly in `data`. Now they can also work when variables are not included in `data` but are available in the parent environment: The variables will be correctly included in the design matrix. This is achieved by an internal update to `h_mmrm_tmb_data()`.
+- Previously, the `model.frame()` method failed when the model formula included variables from the environment. This is fixed now. In addition, whereas `model.frame()` used to apply `na.action` before processing the `include` argument, `na.action` is now applied afterwards. As a result, any variables excluded from `include` are no longer considered when `na.action` is applied. Therefore, in the default case when `na.action = "na.omit"`, this can lead to more rows being kept in the returned data frame compared to previous versions.
+- Previously, the `model.frame()` method did not pass on additional arguments to the `model.frame.default()` method, e.g. `subset`. This is fixed now.
+- Previously, the `vcov()` method returned the asymptotic covariance matrix, even if an adjusted one has been used. This is now fixed and the requested adjusted covariance matrix will be returned. (Please note this was not an issue for downstream `summary()` or `emmeans()` calls, where the adjusted covariance matrix was correctly used.)
+- Previously, type 3 tests in the `Anova.mmrm()` method could give incorrect results which were not compatible with results from `lme4::lmer()` or other software (e.g. when using other than treatment contrasts). This is fixed now. In particular, any combination of contrasts can be used and will yield consistent results.
+- `Anova.mmrm()` can now handle intercept-free models in type 2 tests, even when the first effect containing a categorical variable has an aliased parameter.
+- Previously, the naming conventions used in the `Anova.mmrm()` method were not recognized by `broom::tidy()`. This is fixed now by using more standard names for the resulting data frame columns (e.g. `F` instead of `F Statistic` etc.)
+- `logLik.mmrm_tmb()` now includes an `nobs` attribute containing the number of subjects in the provided model (i.e., `component(mmrm_object, "n_subjects")`). As a result, `BIC(logLik(mmrm_object))` can now be successfully calculated.
+
+# mmrm 0.3.15
+
+### New Features
+
+- `mmrm` now returns score per subject in empirical covariance. It can be accessed by `component(obj, name = "score_per_subject")`. 
 
 ### Bug Fixes
 
 - Previously, when fitting a model with empirical covariance matrix estimation to a data set with a large number of subjects and/or a large number of coefficients, the model fitting could take very long and exhaust the memory in the worst case. This was due to an inefficient implementation of a matrix needed only in case of Satterthwaite degrees of freedom adjustment. This is fixed now, by returning the matrix `empirical_g_mat` in the `mmrm` object, instead of the previous `empirical_df_mat` matrix. The model fit is now much faster and does not exhaust the memory anymore. If old model fit objects are used, the `empirical_df_mat` will still be used correctly, however a deprecation warning will be issued. Please consider re-fitting the model to get the new `empirical_g_mat` matrix.
 - Previously, when compiling `mmrm` from source using a `TMB` version below 1.9.15, and installing a newer `TMB` of version 1.9.15 or above, would render the `mmrm` package unusable. This is fixed now, by checking in the dynamic library of `mmrm` whether the version of `TMB` has been sufficient.
-
-### New Features
-
-- `mmrm` now returns score per subject in empirical covariance. It can be accessed by `component(obj, name = "score_per_subject")`. 
-- `mmrm` now support spatial Gaussian covariance matrix.
 
 # mmrm 0.3.14
 

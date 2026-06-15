@@ -36,7 +36,10 @@ test_that("df_md uses correct function on Kenward-Roger method fit", {
   contrast_md <- matrix(0, nrow = 2, ncol = length(object_kr$beta_est))
   contrast_md[2, 1] <- 1
   contrast_md[1, 2] <- 1
-  expect_identical(df_md(object_kr, contrast_md), h_df_md_kr(object_kr, contrast_md))
+  expect_identical(
+    df_md(object_kr, contrast_md),
+    h_df_md_kr(object_kr, contrast_md)
+  )
 })
 
 test_that("df_md uses correct function on Kenward-Roger-Linear method fit", {
@@ -44,7 +47,10 @@ test_that("df_md uses correct function on Kenward-Roger-Linear method fit", {
   contrast_md <- matrix(0, nrow = 2, ncol = length(object_kr$beta_est))
   contrast_md[2, 1] <- 1
   contrast_md[1, 2] <- 1
-  expect_identical(df_md(object_kr, contrast_md), h_df_md_kr(object_kr, contrast_md))
+  expect_identical(
+    df_md(object_kr, contrast_md),
+    h_df_md_kr(object_kr, contrast_md)
+  )
 })
 
 test_that("df_md uses correct function on Between-Within method fit", {
@@ -52,7 +58,10 @@ test_that("df_md uses correct function on Between-Within method fit", {
   contrast_md <- matrix(0, nrow = 2, ncol = length(object_bw$beta_est))
   contrast_md[2, 1] <- 1
   contrast_md[1, 2] <- 1
-  expect_identical(df_md(object_bw, contrast_md), h_df_md_bw(object_bw, contrast_md))
+  expect_identical(
+    df_md(object_bw, contrast_md),
+    h_df_md_bw(object_bw, contrast_md)
+  )
 })
 
 test_that("df_md return df=0 and other stat all NA if empty matrix provided", {
@@ -91,4 +100,9 @@ test_that("h_test_md works as expected", {
   expect_list(result)
   expect_named(result, c("num_df", "denom_df", "f_stat", "p_val"))
   expect_snapshot_tolerance(result)
+
+  result_chisq <- expect_silent(h_test_md(object, contrast_md, test = "Chisq"))
+  expect_list(result_chisq)
+  expect_named(result_chisq, c("df", "chisq_stat", "p_val"))
+  expect_snapshot_tolerance(result_chisq)
 })

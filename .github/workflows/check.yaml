@@ -52,10 +52,10 @@ jobs:
     uses: insightsengineering/r.pkg.template/.github/workflows/spelling.yaml@main
   vbump:
     name: Version Bump 🤜🤛
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'openpharma/mmrm'
     uses: insightsengineering/r.pkg.template/.github/workflows/version-bump.yaml@main
     secrets:
-      REPO_GITHUB_TOKEN: ${{ secrets.REPO_GITHUB_TOKEN }}
+      REPO_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   version:
     name: Version Check 🏁
     uses: insightsengineering/r.pkg.template/.github/workflows/version.yaml@main

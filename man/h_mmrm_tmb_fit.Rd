@@ -4,7 +4,13 @@
 \alias{h_mmrm_tmb_fit}
 \title{Build \code{TMB} Fit Result List}
 \usage{
-h_mmrm_tmb_fit(tmb_object, tmb_opt, formula_parts, tmb_data)
+h_mmrm_tmb_fit(
+  tmb_object,
+  tmb_opt,
+  formula_parts,
+  tmb_data,
+  disable_theta_vcov = FALSE
+)
 }
 \arguments{
 \item{tmb_object}{(\code{list})\cr created with \code{\link[TMB:MakeADFun]{TMB::MakeADFun()}}.}
@@ -15,6 +21,8 @@ h_mmrm_tmb_fit(tmb_object, tmb_opt, formula_parts, tmb_data)
 \code{\link[=h_mmrm_tmb_formula_parts]{h_mmrm_tmb_formula_parts()}}.}
 
 \item{tmb_data}{(\code{mmrm_tmb_data})\cr produced by \code{\link[=h_mmrm_tmb_data]{h_mmrm_tmb_data()}}.}
+
+\item{disable_theta_vcov}{(\code{flag})\cr whether calculation of \code{theta_vcov} was disabled.}
 }
 \value{
 List of class \code{mmrm_tmb} with:
@@ -25,7 +33,7 @@ List of class \code{mmrm_tmb} with:
 \item \code{beta_vcov_inv_L}: Lower triangular matrix \code{L} of the inverse variance-covariance matrix decomposition.
 \item \code{beta_vcov_inv_D}: vector of diagonal matrix \code{D} of the inverse variance-covariance matrix decomposition.
 \item \code{theta_est}: vector of variance parameter estimates.
-\item \code{theta_vcov}: variance-covariance matrix for variance parameter estimates.
+\item \code{theta_vcov}: variance-covariance matrix for variance parameter estimates (if not disabled).
 \item \code{neg_log_lik}: obtained negative log-likelihood.
 \item \code{formula_parts}: input.
 \item \code{data}: input.

@@ -2,12 +2,16 @@ library(sasr)
 df2sd(fev_data, "data")
 
 run_sas_mmrm <- function(method = c("ml", "reml"), cov = "UN") {
-  sascode <- sprintf("
+  sascode <- sprintf(
+    "
       PROC MIXED DATA = data cl method=%s;
         CLASS ARMCD(ref = 'PBO') AVISIT(ref = 'VIS4') SEX(ref='Male') USUBJID;
         MODEL FEV1 = ARMCD SEX/ ddfm=satterthwaite chisq solution cl ;
         REPEATED AVISIT / subject=USUBJID type=%s r rcorr;
-      RUN;", method, cov)
+      RUN;",
+    method,
+    cov
+  )
   run_sas(sascode)
 }
 

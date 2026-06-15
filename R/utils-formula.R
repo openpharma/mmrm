@@ -43,7 +43,10 @@ h_drop_covariance_terms <- function(f) {
   }
   stats::update(
     f,
-    stats::as.formula(paste(update_str, deparse(attr(terms, "variables")[[covariance_terms[[1]] + 1]])))
+    stats::as.formula(paste(
+      update_str,
+      deparse(attr(terms, "variables")[[covariance_terms[[1]] + 1]])
+    ))
   )
 }
 
@@ -84,7 +87,10 @@ h_add_covariance_terms <- function(f, covariance) {
 h_add_terms <- function(f, adds, drop_response = FALSE) {
   assert_character(adds, null.ok = TRUE)
   if (length(adds) > 0L) {
-    add_terms <- stats::as.formula(sprintf(". ~ . + %s", paste(adds, collapse = "+")))
+    add_terms <- stats::as.formula(sprintf(
+      ". ~ . + %s",
+      paste(adds, collapse = "+")
+    ))
     f <- stats::update(f, add_terms)
   }
   if (drop_response && length(f) == 3L) {

@@ -11,7 +11,6 @@
 #'
 #' @return The compound symmetry covariance matrix estimate obtained by glmmTMB.
 compute_glmmtmb_covar_mat <- function(fit) {
-
   ## extract components of heterogeneous compound symmetry covariance matrix
   ## estimate
   corr_fit_attributes <- attributes(glmmTMB::VarCorr(fit)[["cond"]]$participant)
@@ -22,7 +21,8 @@ compute_glmmtmb_covar_mat <- function(fit) {
 
   ## compute the unweighted covariance matrix
   unweighted_covar_mat <- outer(
-    corr_fit_attributes$stddev, corr_fit_attributes$stddev
+    corr_fit_attributes$stddev,
+    corr_fit_attributes$stddev
   )
 
   ## haddamard product of correlation coefficient with unweighted covariance
@@ -71,7 +71,6 @@ compute_sasr_covar_mat <- function(fit) {
 #'
 #' @return The fit argument's estimated repeated measures covariance matrix.
 get_covar_mat <- function(fit) {
-
   ## extract the covariance matrix from the fit object
   if (class(fit)[1] == "gls") {
     covar_mat <- nlme::getVarCov(fit)
@@ -79,7 +78,8 @@ get_covar_mat <- function(fit) {
     covar_mat <- compute_glmmtmb_covar_mat(fit)
   } else if (class(fit)[1] == "mmrm") {
     covar_mat <- mmrm::VarCorr(fit)
-  } else if (class(fit)[1] == "data.frame") { # SAS PROC MIXED
+  } else if (class(fit)[1] == "data.frame") {
+    # SAS PROC MIXED
     covar_mat <- compute_sasr_covar_mat(fit)
   }
 
@@ -108,11 +108,11 @@ get_covar_mat <- function(fit) {
 #' @return A tibble of simulation replicates containing the Frobenius loss of
 #'   every model fit.
 frobenius_loss_fun <- function(fit_results, true_covar_mat_ls) {
-
   fit_results %>%
     dplyr::mutate(
       frobenius_loss = purrr::map2_dbl(
-        fit, .dgp_name,
+        fit,
+        .dgp_name,
         function(f, dgp_name) {
           est_covar_mat <- get_covar_mat(f)
           true_covar_mat <- true_covar_mat_ls[[dgp_name]]
@@ -121,7 +121,6 @@ frobenius_loss_fun <- function(fit_results, true_covar_mat_ls) {
       )
     ) %>%
     dplyr::select(-fit)
-
 }
 
 #' Compute the Spectral norm losses
@@ -140,11 +139,11 @@ frobenius_loss_fun <- function(fit_results, true_covar_mat_ls) {
 #' @return A tibble of simulation replicates containing the Frobenius loss of
 #'   every model fit.
 spectral_loss_fun <- function(fit_results, true_covar_mat_ls) {
-
   fit_results %>%
     dplyr::mutate(
       spectral_loss = purrr::map2_dbl(
-        fit, .dgp_name,
+        fit,
+        .dgp_name,
         function(f, dgp_name) {
           est_covar_mat <- get_covar_mat(f)
           true_covar_mat <- true_covar_mat_ls[[dgp_name]]
@@ -153,7 +152,6 @@ spectral_loss_fun <- function(fit_results, true_covar_mat_ls) {
       )
     ) %>%
     dplyr::select(-fit)
-
 }
 
 
@@ -172,7 +170,6 @@ spectral_loss_fun <- function(fit_results, true_covar_mat_ls) {
 #' @return A tibble of simulation replicates containing the squared error loss
 #'   for each parameter of the intra-observation covariance matrix.
 csh_param_sq_err_loss_fun <- function(fit_results, true_covar_mat_ls) {
-
   ## extract the true variance parameter values
   hom_vars <- diag(true_covar_mat_ls[[1]])
   het_vars <- diag(true_covar_mat_ls[[2]])
@@ -185,7 +182,8 @@ csh_param_sq_err_loss_fun <- function(fit_results, true_covar_mat_ls) {
   fit_results %>%
     dplyr::mutate(
       sq_err_loss = purrr::map2_dfr(
-        fit, .dgp_name,
+        fit,
+        .dgp_name,
         function(f, dgp_name) {
           ## extract the estimated variances and correlation
           est_covar_mat <- get_covar_mat(f)
@@ -193,22 +191,21 @@ csh_param_sq_err_loss_fun <- function(fit_results, true_covar_mat_ls) {
           corr_est <- est_covar_mat[1, 2] / sqrt(vars_est[1] * vars_est[2])
 
           ## assemble the true parameter vector
-          if (dgp_name == "hom_rct")
+          if (dgp_name == "hom_rct") {
             true_params <- c(hom_vars, hom_corr)
-          else
+          } else {
             true_params <- c(het_vars, het_corr)
+          }
 
           ## compute the squared error loss
           loss <- (c(vars_est, corr_est) - true_params)^2
           names(loss) <- c(paste0("var_t0", seq_len(9)), "var_t10", "corr")
           return(loss)
-
         }
       )
     ) %>%
     dplyr::select(-fit) %>%
     tidyr::unnest(cols = sq_err_loss)
-
 }
 
 #' Bias of heterogeneous compound symmetry matrix parameters
@@ -227,7 +224,6 @@ csh_param_sq_err_loss_fun <- function(fit_results, true_covar_mat_ls) {
 #'   intra-observation covariance matrix, stratified by data-generating process,
 #'   method and sample size.
 csh_param_bias_fun <- function(fit_results, true_covar_mat_ls) {
-
   ## extract the true variance parameter values
   hom_vars <- diag(true_covar_mat_ls[[1]])
   het_vars <- diag(true_covar_mat_ls[[2]])
@@ -241,9 +237,9 @@ csh_param_bias_fun <- function(fit_results, true_covar_mat_ls) {
   fit_results %>%
     dplyr::mutate(
       accuracy = purrr::map2_dfr(
-        fit, .dgp_name,
+        fit,
+        .dgp_name,
         function(f, dgp_name) {
-
           ## extract the estimated covariance matrix from the model fit
           est_covar_mat <- get_covar_mat(f)
 
@@ -257,22 +253,22 @@ csh_param_bias_fun <- function(fit_results, true_covar_mat_ls) {
           corr_est <- est_covar_mat[1, 2] / sqrt(vars_est[1] * vars_est[2])
 
           ## assemble the true parameter vector
-          if (dgp_name == "hom_rct")
+          if (dgp_name == "hom_rct") {
             true_params <- c(hom_vars, hom_corr)
-          else
+          } else {
             true_params <- c(het_vars, het_corr)
+          }
 
           ## compute the squared error loss
           accuracy <- c(vars_est, corr_est) - true_params
           names(accuracy) <- c(paste0("var_t0", seq_len(9)), "var_t10", "corr")
           return(accuracy)
-
         }
       )
     ) %>%
     dplyr::select(-fit) %>%
     tidyr::unnest(cols = accuracy) %>%
-    dplyr::group_by(dplyr::across({{strata_vars}})) %>%
+    dplyr::group_by(dplyr::across({{ strata_vars }})) %>%
     dplyr::summarize(
       var_t01 = mean(var_t01),
       var_t02 = mean(var_t02),
@@ -287,5 +283,4 @@ csh_param_bias_fun <- function(fit_results, true_covar_mat_ls) {
       corr = mean(corr),
       .groups = "drop"
     )
-
 }

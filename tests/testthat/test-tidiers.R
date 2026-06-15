@@ -72,7 +72,12 @@ test_that("augment returns prediction with confidence interval", {
 
 test_that("augment returns prediction with confidence interval with level", {
   object <- get_mmrm()
-  result <- augment(object, newdata = object$data, interval = "confidence", level = 0.9)
+  result <- augment(
+    object,
+    newdata = object$data,
+    interval = "confidence",
+    level = 0.9
+  )
   result_ci <- result[, c(".fitted", ".se.fit", ".lower", ".upper")]
   expected <- tibble::as_tibble(predict(
     object,
@@ -88,7 +93,12 @@ test_that("augment returns prediction with confidence interval with level", {
 test_that("augment returns prediction with prediction interval", {
   object <- get_mmrm()
   set.seed(132)
-  result <- augment(object, newdata = object$data, interval = "prediction", nsim = 10L)
+  result <- augment(
+    object,
+    newdata = object$data,
+    interval = "prediction",
+    nsim = 10L
+  )
   result_pi <- result[, c(".fitted", ".se.fit", ".lower", ".upper")]
   set.seed(132)
   expected <- tibble::as_tibble(predict(
@@ -105,7 +115,13 @@ test_that("augment returns prediction with prediction interval", {
 test_that("augment returns prediction with prediction interval with level", {
   object <- get_mmrm()
   set.seed(132)
-  result <- augment(object, newdata = object$data, interval = "prediction", level = 0.9, nsim = 10L)
+  result <- augment(
+    object,
+    newdata = object$data,
+    interval = "prediction",
+    level = 0.9,
+    nsim = 10L
+  )
   result_pi <- result[, c(".fitted", ".se.fit", ".lower", ".upper")]
   set.seed(132)
   expected <- tibble::as_tibble(predict(
@@ -172,7 +188,10 @@ test_that("h_newdata_add_pred works as expected when se_fit and interval request
     interval = "confidence"
   ))
   expect_tibble(result, nrows = nrow(object$data))
-  expect_names(names(result), must.include = c(".fitted", ".lower", ".upper", ".se.fit"))
+  expect_names(
+    names(result),
+    must.include = c(".fitted", ".lower", ".upper", ".se.fit")
+  )
   expect_numeric(result$.fitted, any.missing = FALSE)
   expect_numeric(result$.lower, any.missing = FALSE)
   expect_numeric(result$.upper, any.missing = FALSE)

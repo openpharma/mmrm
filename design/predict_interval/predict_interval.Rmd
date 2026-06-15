@@ -35,7 +35,7 @@ and
 confidence interval is calculated as the variance of $\hat{y}$
 
 \[
-  Var(\hat{y_{new}}) = X_{new} cov(\beta) X_{new}^\top
+  \text{Var}(\hat{y_{new}}) = X_{new} cov(\beta) X_{new}^\top
 \]
 
 and we can use normal approximation (1.96 +- sd) to obtain the interval.
@@ -49,7 +49,7 @@ for prediction interval, we have
 \]
 
 \[
-  Var(y_new|\theta) = X_{new} cov(\beta) X_{new}^\top + \Sigma
+  \text{Var}(y_new|\theta) = X_{new} cov(\beta) X_{new}^\top + \Sigma
 \]
 where $\Sigma$ and $\beta$ are all function of $\theta$
 
@@ -60,17 +60,17 @@ where $\Sigma$ and $\beta$ are all function of $\theta$
 and
 
 \[
-  Var(y_{new}) = Var(E(y_{new}|\theta)) + E(Var(y_{new}|\theta))
+  \text{Var}(y_{new}) = \text{Var}(\text{E}(y_{new}|\theta)) + \text{E}(\text{Var}(y_{new}|\theta))
 \]
 
 ## Sampling approach
 
-To obtain $Var(y_{new})$, we need to integrate over $\theta$ to obtain the expected variance and vairance of expectation.
+To obtain $\text{Var}(y_{new})$, we need to integrate over $\theta$ to obtain the expected variance and variance of expectation.
 
 However, if we use simulation based approach, we can:
 
 1. Sample $\theta$
-2. Obtain $Var(y_{new}|\theta)$ and $E(y_{new}|\theta)$
+2. Obtain $\text{Var}(y_{new}|\theta)$ and $\text{E}(y_{new}|\theta)$
 3. Summarize over $\theta$
 
 to obtain the variance.

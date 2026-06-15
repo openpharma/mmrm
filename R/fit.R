@@ -32,15 +32,16 @@
 #' )
 #' attr(mod_fit, "converged")
 fit_single_optimizer <- function(
-    formula,
-    data,
-    weights,
-    reml = TRUE,
-    covariance = NULL,
-    tmb_data,
-    formula_parts,
-    ...,
-    control = mmrm_control(...)) {
+  formula,
+  data,
+  weights,
+  reml = TRUE,
+  covariance = NULL,
+  tmb_data,
+  formula_parts,
+  ...,
+  control = mmrm_control(...)
+) {
   to_remove <- list(
     # Transient visit to invalid parameters.
     warnings = c("NA/NaN function evaluation")
@@ -214,8 +215,21 @@ refit_multiple_optimizers <- function(fit, ..., control = mmrm_control(...)) {
 #' @param accept_singular (`flag`)\cr whether singular design matrices are reduced
 #'   to full rank automatically and additional coefficient estimates will be missing.
 #' @param optimizers (`list`)\cr optimizer specification, created with [h_get_optimizers()].
+#'   Please note that optimizers using the Hessian will not be compatible with
+#'   `disable_theta_vcov = TRUE` and an error will be raised in that case.
 #' @param drop_visit_levels (`flag`)\cr whether to drop levels for visit variable,
 #'   if visit variable is a factor, see details.
+#' @param disable_theta_vcov (`flag`)\cr whether to disable calculation of
+#'   variance-covariance matrix for variance parameters. This can speed up fitting
+#'   when there are many variance parameters, see details.
+#' @param emmeans_gcomp_vars (`character` or `NULL`)\cr names of variables to
+#'   treat as fixed in the G-computation correction for emmeans. When non-`NULL`,
+#'   enables the correction in [`emmeans_support`], producing the average
+#'   treatment effect (ATE) with corrected standard errors. The visit variable
+#'   (identified from the covariance structure) is computed separately per
+#'   level. All other named variables are treated as intervention (subjects
+#'   pooled across levels). All variables not named are averaged over using
+#'   each subject's actual values.
 #' @param ... additional arguments passed to [h_get_optimizers()].
 #'
 #' @details
@@ -254,6 +268,12 @@ refit_multiple_optimizers <- function(fit, ..., control = mmrm_control(...)) {
 #'   By default or if `NULL` is provided, `std_start` will be used.
 #'   Other implemented methods include `emp_start`.
 #'
+#' - Disabling the `theta_vcov` calculation can speed up the fitting process when there are many variance
+#'   parameters. However, this has also drawbacks. We can no longer check that the variance parameter estimates
+#'   are indeed at a local maximum of the log-likelihood surface, and therefore convergence issues might go unnoticed.
+#'   In addition, some covariance matrix adjustment methods (e.g., Kenward-Roger) require `theta_vcov` to be calculated.
+#'   These will then raise errors.
+#'
 #' @return List of class `mmrm_control` with the control parameters.
 #' @export
 #'
@@ -263,16 +283,20 @@ refit_multiple_optimizers <- function(fit, ..., control = mmrm_control(...)) {
 #'   optimizer_args = list(method = "L-BFGS-B")
 #' )
 mmrm_control <- function(
-    n_cores = 1L,
-    method = c("Satterthwaite", "Kenward-Roger", "Residual", "Between-Within"),
-    vcov = NULL,
-    start = std_start,
-    accept_singular = TRUE,
-    drop_visit_levels = TRUE,
-    ...,
-    optimizers = h_get_optimizers(...)) {
+  n_cores = 1L,
+  method = c("Satterthwaite", "Kenward-Roger", "Residual", "Between-Within"),
+  vcov = NULL,
+  start = std_start,
+  accept_singular = TRUE,
+  drop_visit_levels = TRUE,
+  disable_theta_vcov = FALSE,
+  emmeans_gcomp_vars = NULL,
+  ...,
+  optimizers = h_get_optimizers(...)
+) {
   assert_count(n_cores, positive = TRUE)
   assert_character(method)
+  assert_character(emmeans_gcomp_vars, min.len = 1L, null.ok = TRUE)
   if (is.null(start)) {
     start <- std_start
   }
@@ -283,6 +307,7 @@ mmrm_control <- function(
   )
   assert_flag(accept_singular)
   assert_flag(drop_visit_levels)
+  assert_flag(disable_theta_vcov)
   assert_list(optimizers, names = "unique", types = c("function", "partial"))
   assert_string(vcov, null.ok = TRUE)
   method <- match.arg(method)
@@ -311,6 +336,23 @@ mmrm_control <- function(
       "or Kenward-Roger-Linear covariance!"
     ))
   }
+  if (disable_theta_vcov) {
+    if (vcov %in% c("Kenward-Roger", "Kenward-Roger-Linear")) {
+      stop("Kenward-Roger requires theta_vcov calculation!")
+    }
+    uses_hessian <- lapply(
+      optimizers,
+      attr,
+      "use_hessian"
+    )
+    uses_hessian <- vapply(uses_hessian, isTRUE, logical(1))
+    if (any(uses_hessian)) {
+      stop(
+        "Disabling theta_vcov calculation is incompatible with optimizers using Hessian: ",
+        toString(names(optimizers[uses_hessian]))
+      )
+    }
+  }
   structure(
     list(
       optimizers = optimizers,
@@ -319,7 +361,9 @@ mmrm_control <- function(
       method = method,
       vcov = vcov,
       n_cores = as.integer(n_cores),
-      drop_visit_levels = drop_visit_levels
+      drop_visit_levels = drop_visit_levels,
+      disable_theta_vcov = disable_theta_vcov,
+      emmeans_gcomp_vars = emmeans_gcomp_vars
     ),
     class = "mmrm_control"
   )
@@ -341,6 +385,16 @@ mmrm_control <- function(
 #'   as produced with [cov_struct()], or value that can be coerced to a
 #'   covariance structure using [as.cov_struct()]. If no value is provided,
 #'   a structure is derived from the provided formula.
+#' @param contrasts (`list` or `NULL`)\cr an optional named list of contrast
+#'   matrices or contrast functions (like [stats::contr.sum] or
+#'   [stats::contr.poly]) for specific factor variables, matching the
+#'   `contrasts` argument in [stats::lm()]. The list names must correspond to
+#'   factor variable names in the model formula. When `NULL` (the default),
+#'   the contrasts set on the factor variables in `data` are used. If a
+#'   contrast matrix has rownames that include levels not present in `data`,
+#'   those levels are preserved and the corresponding model matrix columns
+#'   are marked as aliased (not estimable), enabling prediction on new data
+#'   containing those levels.
 #' @param control (`mmrm_control`)\cr fine-grained fitting specifications list
 #'   created with [mmrm_control()].
 #' @param ... arguments passed to [mmrm_control()].
@@ -429,16 +483,19 @@ mmrm_control <- function(
 #'   control = mmrm_control(method = "Kenward-Roger")
 #' )
 mmrm <- function(
-    formula,
-    data,
-    weights = NULL,
-    covariance = NULL,
-    reml = TRUE,
-    control = mmrm_control(...),
-    ...) {
+  formula,
+  data,
+  weights = NULL,
+  covariance = NULL,
+  contrasts = NULL,
+  reml = TRUE,
+  control = mmrm_control(...),
+  ...
+) {
   assert_false(!missing(control) && !missing(...))
   assert_class(control, "mmrm_control")
   assert_list(control$optimizers, min.len = 1)
+  assert_list(contrasts, null.ok = TRUE, names = "unique")
 
   if (control$method %in% c("Kenward-Roger", "Kenward-Roger-Linear") && !reml) {
     stop("Kenward-Roger only works for REML")
@@ -460,6 +517,7 @@ mmrm <- function(
   } else {
     attr(weights, which = "dataname") <- deparse(match.call()$weights)
   }
+
   tmb_data <- h_mmrm_tmb_data(
     formula_parts,
     data,
@@ -467,7 +525,9 @@ mmrm <- function(
     reml,
     singular = if (control$accept_singular) "drop" else "error",
     drop_visit_levels = control$drop_visit_levels,
-    allow_na_response = FALSE
+    allow_na_response = FALSE,
+    contrasts = contrasts,
+    emmeans_gcomp_vars = control$emmeans_gcomp_vars
   )
   fit <- structure("", class = "try-error")
   names_all_optimizers <- names(control$optimizers)

@@ -9,6 +9,7 @@ mmrm(
   data,
   weights = NULL,
   covariance = NULL,
+  contrasts = NULL,
   reml = TRUE,
   control = mmrm_control(...),
   ...
@@ -26,6 +27,17 @@ the fitting process. Should be \code{NULL} or a numeric vector.}
 as produced with \code{\link[=cov_struct]{cov_struct()}}, or value that can be coerced to a
 covariance structure using \code{\link[=as.cov_struct]{as.cov_struct()}}. If no value is provided,
 a structure is derived from the provided formula.}
+
+\item{contrasts}{(\code{list} or \code{NULL})\cr an optional named list of contrast
+matrices or contrast functions (like \link[stats:contr.sum]{stats::contr.sum} or
+\link[stats:contr.poly]{stats::contr.poly}) for specific factor variables, matching the
+\code{contrasts} argument in \code{\link[stats:lm]{stats::lm()}}. The list names must correspond to
+factor variable names in the model formula. When \code{NULL} (the default),
+the contrasts set on the factor variables in \code{data} are used. If a
+contrast matrix has rownames that include levels not present in \code{data},
+those levels are preserved and the corresponding model matrix columns
+are marked as aliased (not estimable), enabling prediction on new data
+containing those levels.}
 
 \item{reml}{(\code{flag})\cr whether restricted maximum likelihood (REML)
 estimation is used, otherwise maximum likelihood (ML) is used.}

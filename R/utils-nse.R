@@ -126,7 +126,10 @@ is_infix <- function(name) {
 #'
 #' @keywords internal
 format_symbols <- function(x) {
-  paste0(collapse = ", ", lapply(x, function(i) {
-    utils::capture.output(as.symbol(i))
-  }))
+  paste0(
+    collapse = ", ",
+    lapply(x, function(i) {
+      utils::capture.output(as.symbol(i))
+    })
+  )
 }

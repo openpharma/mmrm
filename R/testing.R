@@ -21,9 +21,25 @@
 #' df_1d(object, contrast)
 df_1d <- function(object, contrast) {
   assert_class(object, "mmrm")
-  assert_numeric(contrast, len = length(component(object, "beta_est")), any.missing = FALSE)
+  assert_numeric(
+    contrast,
+    len = length(component(object, "beta_est")),
+    any.missing = FALSE
+  )
   contrast <- as.vector(contrast)
-  switch(object$method,
+  if (all(contrast == 0)) {
+    return(
+      list(
+        est = 0,
+        se = NA_real_,
+        df = NA_real_,
+        t_stat = NA_real_,
+        p_val = NA_real_
+      )
+    )
+  }
+  switch(
+    object$method,
     "Satterthwaite" = h_df_1d_sat(object, contrast),
     "Kenward-Roger" = h_df_1d_kr(object, contrast),
     "Residual" = h_df_1d_res(object, contrast),
@@ -37,7 +53,7 @@ df_1d <- function(object, contrast) {
 #'
 #' @description `r lifecycle::badge("stable")`
 #' Calculates the estimate, standard error, degrees of freedom,
-#' t statistic and p-value for one-dimensional contrast, depending on the method
+#' t statistic and p-value for m-dimensional contrast, depending on the method
 #' used in [mmrm()].
 #'
 #' @param object (`mmrm`)\cr the MMRM fit.
@@ -64,7 +80,7 @@ df_md <- function(object, contrast) {
     contrast <- matrix(contrast, ncol = length(contrast))
   }
   assert_matrix(contrast, ncols = length(component(object, "beta_est")))
-  if (nrow(contrast) == 0) {
+  if (nrow(contrast) == 0 || all(contrast == 0)) {
     return(
       list(
         num_df = 0,
@@ -74,7 +90,8 @@ df_md <- function(object, contrast) {
       )
     )
   }
-  switch(object$method,
+  switch(
+    object$method,
     "Satterthwaite" = h_df_md_sat(object, contrast),
     "Kenward-Roger" = h_df_md_kr(object, contrast),
     "Residual" = h_df_md_res(object, contrast),
@@ -94,9 +111,7 @@ df_md <- function(object, contrast) {
 #' @return List with `est`, `se`, `df`, `t_stat` and `p_val` (2-sided p-value).
 #'
 #' @keywords internal
-h_test_1d <- function(object,
-                      contrast,
-                      df) {
+h_test_1d <- function(object, contrast, df) {
   assert_class(object, "mmrm")
   assert_numeric(contrast, len = length(component(object, "beta_est")))
   assert_number(df, lower = .Machine$double.xmin)
@@ -116,43 +131,74 @@ h_test_1d <- function(object,
   )
 }
 
-#' Creating F-Statistic Test Results For Multi-Dimensional Contrast
+#' Creating F- or Chi-squared-statistic Test Results For Multi-Dimensional
+#' Contrast
 #'
 #' @description Creates a list of results for multi-dimensional contrasts using
-#' an F-test statistic and the given degrees of freedom.
+#'   an F-test statistic and the given degrees of freedom or a Chi-squared test
+#'   statistic.
 #'
 #' @inheritParams df_md
 #' @param contrast (`matrix`)\cr numeric contrast matrix.
-#' @param df (`number`)\cr denominator degrees of freedom for the multi-dimensional contrast.
-#' @param f_stat_factor (`number`)\cr optional scaling factor on top of the standard F-statistic.
+#' @param df (`number`)\cr denominator degrees of freedom for the
+#'   multi-dimensional contrast for an F-test. Ignored if `test = "Chisq"`.
+#' @param f_stat_factor (`number`)\cr optional scaling factor on top of the
+#'   standard F-statistic. Ignored if `test = "Chisq"`.
+#' @param test (`string`)\cr either `"F"` or `"Chisq"`, specifying the kind of
+#'   test to perform.
 #'
-#' @return List with `num_df`, `denom_df`, `f_stat` and `p_val` (2-sided p-value).
+#' @return If `test = "F"`, a list with `num_df`, `denom_df`, `f_stat` and
+#'   `p_val`. If `test = "Chisq"`, a list with `df`, `chisq_stat`, and `p_val`.
+#'   In both cases, p-values are two sided.
 #'
 #' @keywords internal
-h_test_md <- function(object,
-                      contrast,
-                      df,
-                      f_stat_factor = 1) {
+h_test_md <- function(
+  object,
+  contrast,
+  df,
+  f_stat_factor = 1,
+  test = c("F", "Chisq")
+) {
+  test <- match.arg(test)
   assert_class(object, "mmrm")
-  assert_matrix(contrast, ncols = length(component(object, "beta_est")))
+  beta <- component(object, "beta_est")
+  assert_matrix(contrast, ncols = length(beta))
+
+  if (test == "F") {
+    assert_number(df, lower = .Machine$double.xmin)
+    assert_number(f_stat_factor, lower = .Machine$double.xmin)
+  }
+
+  prec_contrast <- solve(h_quad_form_mat(
+    contrast,
+    component(object, "beta_vcov")
+  ))
+  contrast_est <- tcrossprod(beta, contrast)
+  chisq_statistic <- as.numeric(h_quad_form_mat(contrast_est, prec_contrast))
+
   num_df <- nrow(contrast)
-  assert_number(df, lower = .Machine$double.xmin)
-  assert_number(f_stat_factor, lower = .Machine$double.xmin)
 
-  prec_contrast <- solve(h_quad_form_mat(contrast, component(object, "beta_vcov")))
-  contrast_est <- component(object, "beta_est") %*% t(contrast)
-  f_statistic <- as.numeric(f_stat_factor / num_df * h_quad_form_mat(contrast_est, prec_contrast))
-  p_val <- stats::pf(
-    q = f_statistic,
-    df1 = num_df,
-    df2 = df,
-    lower.tail = FALSE
-  )
+  out <-
+    if (test == "F") {
+      f_statistic <- f_stat_factor / num_df * chisq_statistic
 
-  list(
-    num_df = num_df,
-    denom_df = df,
-    f_stat = f_statistic,
-    p_val = p_val
-  )
+      p_val <- stats::pf(
+        q = f_statistic,
+        df1 = num_df,
+        df2 = df,
+        lower.tail = FALSE
+      )
+
+      list(
+        num_df = num_df,
+        denom_df = df,
+        f_stat = f_statistic,
+        p_val = p_val
+      )
+    } else {
+      p_val <- stats::pchisq(chisq_statistic, df = num_df, lower.tail = FALSE)
+      list(df = num_df, chisq_stat = chisq_statistic, p_val = p_val)
+    }
+
+  out
 }

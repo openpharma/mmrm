@@ -1,4 +1,12 @@
-generate_data <- function(n_sample_size, n_rep, n_visits, fixed = fixed_effect, missing_level = "no", trt_visit_coef = 0, ...) {
+generate_data <- function(
+  n_sample_size,
+  n_rep,
+  n_visits,
+  fixed = fixed_effect,
+  missing_level = "no",
+  trt_visit_coef = 0,
+  ...
+) {
   n_obs <- n_sample_size * n_rep
   # participant ID
   participant <- seq_len(n_obs)
@@ -19,9 +27,21 @@ generate_data <- function(n_sample_size, n_rep, n_visits, fixed = fixed_effect, 
     visit = rep(seq_len(n_visits), n_obs)
   )
   chgfix <- fixed_effect(ret, trt_visit_coef = trt_visit_coef, ...)
-  error_us <- as.vector(t(MASS::mvrnorm(n_obs, rep(0, n_visits), compute_unstructured_matrix(n_visits))))
-  error_csh <- as.vector(t(MASS::mvrnorm(n_obs, rep(0, n_visits), compute_csh_matrix(n_visits))))
-  error_toeph <- as.vector(t(MASS::mvrnorm(n_obs, rep(0, n_visits), compute_topelitz_matrix(n_visits))))
+  error_us <- as.vector(t(MASS::mvrnorm(
+    n_obs,
+    rep(0, n_visits),
+    compute_unstructured_matrix(n_visits)
+  )))
+  error_csh <- as.vector(t(MASS::mvrnorm(
+    n_obs,
+    rep(0, n_visits),
+    compute_csh_matrix(n_visits)
+  )))
+  error_toeph <- as.vector(t(MASS::mvrnorm(
+    n_obs,
+    rep(0, n_visits),
+    compute_topelitz_matrix(n_visits)
+  )))
   ret$chgus <- chgfix + error_us
   ret$chgtoeph <- chgfix + error_toeph
   ret$chgcsh <- chgfix + error_csh
@@ -32,14 +52,18 @@ generate_data <- function(n_sample_size, n_rep, n_visits, fixed = fixed_effect, 
 }
 
 fixed_effect <- function(
-    df, intercept = 5,
-    base_bcva_coef = 0,
-    strata_2_coef = -1,
-    strata_3_coef = 1,
-    trt_coef = 0,
-    visit_coef = 0.25,
-    trt_visit_coef = 0, ...) {
-  intercept + base_bcva_coef * df$bcva_bl +
+  df,
+  intercept = 5,
+  base_bcva_coef = 0,
+  strata_2_coef = -1,
+  strata_3_coef = 1,
+  trt_coef = 0,
+  visit_coef = 0.25,
+  trt_visit_coef = 0,
+  ...
+) {
+  intercept +
+    base_bcva_coef * df$bcva_bl +
     strata_2_coef * (df$strata == 2) +
     strata_3_coef * (df$strata == 3) +
     trt_coef * df$trt +
@@ -87,18 +111,27 @@ missing_at_random <- function(covars_df, type, ...) {
   }
   if (type == "low") {
     prob_miss <- plogis(
-      -(5 - 0.01 * covars_df$bcva_bl + 0.5 * (covars_df$strata == 2) +
-        1 * (covars_df$strata == 3) - 0.25 * covars_df$visit)
+      -(5 -
+        0.01 * covars_df$bcva_bl +
+        0.5 * (covars_df$strata == 2) +
+        1 * (covars_df$strata == 3) -
+        0.25 * covars_df$visit)
     )
   } else if (type == "high") {
     prob_miss <- plogis(
-      -(5 - 0.01 * covars_df$bcva_bl + 0.5 * (covars_df$strata == 2) +
-        1 * (covars_df$strata == 3) - 0.4 * covars_df$visit)
+      -(5 -
+        0.01 * covars_df$bcva_bl +
+        0.5 * (covars_df$strata == 2) +
+        1 * (covars_df$strata == 3) -
+        0.4 * covars_df$visit)
     )
   } else if (type == "extreme") {
     prob_miss <- plogis(
-      -(5 - 0.02 * covars_df$bcva_bl + 0.5 * (covars_df$strata == 2) +
-        1 * (covars_df$strata == 3) - 0.5 * covars_df$visit)
+      -(5 -
+        0.02 * covars_df$bcva_bl +
+        0.5 * (covars_df$strata == 2) +
+        1 * (covars_df$strata == 3) -
+        0.5 * covars_df$visit)
     )
   }
 

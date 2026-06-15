@@ -270,7 +270,8 @@ h_df_md_sat <- function(object, contrast) {
   assert_number(rank_cont_cov, lower = .Machine$double.xmin)
   rank_seq <- seq_len(rank_cont_cov)
   vctrs_cont_prod <- crossprod(eigen_cont_cov_vctrs, contrast)[
-    rank_seq, ,
+    rank_seq,
+    ,
     drop = FALSE
   ]
 

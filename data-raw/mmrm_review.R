@@ -37,11 +37,15 @@ df2sd_long <- function(data, name, block = 500, n_try = 10) {
       stop("not successful")
     }
   }
-  sas_code <- sprintf("
+  sas_code <- sprintf(
+    "
     data %s;
     set %s;
     run;
-  ", name, paste(sprintf("%s_%i", name, rev(seq_len(n))), collapse = " "))
+  ",
+    name,
+    paste(sprintf("%s_%i", name, rev(seq_len(n))), collapse = " ")
+  )
   run_sas(sas_code)
 }
 
@@ -202,7 +206,9 @@ generate_covariates <- function(n_obs, n_visits = 10) {
 }
 
 # helper function for randomly generating unstructured covariance matrix
-compute_unstructured_matrix <- function(vars = seq(from = 1, by = 0.5, length.out = 10)) {
+compute_unstructured_matrix <- function(
+  vars = seq(from = 1, by = 0.5, length.out = 10)
+) {
   n_visits <- length(vars)
   corr_mat <- abs(cov2cor(
     clusterGeneration::genPositiveDefMat(dim = n_visits)$Sigma
@@ -214,15 +220,16 @@ compute_unstructured_matrix <- function(vars = seq(from = 1, by = 0.5, length.ou
 
 # helper function for generating BCVA data
 generate_outcomes <- function(
-    covars_df,
-    cov_mat,
-    intercept = 5,
-    base_bcva_coef = 1,
-    strata_2_coef = -1,
-    strata_3_coef = 1,
-    trt_coef = 1,
-    visit_coef = 0.25,
-    trt_visit_coef = 0.25) {
+  covars_df,
+  cov_mat,
+  intercept = 5,
+  base_bcva_coef = 1,
+  strata_2_coef = -1,
+  strata_3_coef = 1,
+  trt_coef = 1,
+  visit_coef = 0.25,
+  trt_visit_coef = 0.25
+) {
   # construct the model matrix
   model_mat <- model.matrix(
     ~ base_bcva + strata + trt * visit_num,
@@ -233,11 +240,19 @@ generate_outcomes <- function(
   n_visits <- nrow(cov_mat)
   n_obs <- nrow(covars_df) / n_visits
   effect_coefs <- c(
-    intercept, base_bcva_coef, strata_2_coef, strata_3_coef,
-    trt_coef, visit_coef, trt_visit_coef
+    intercept,
+    base_bcva_coef,
+    strata_2_coef,
+    strata_3_coef,
+    trt_coef,
+    visit_coef,
+    trt_visit_coef
   )
-  as.vector(model_mat %*% effect_coefs +
-    as.vector(t(MASS::mvrnorm(n_obs, rep(0, n_visits), cov_mat))))
+  as.vector(
+    model_mat %*%
+      effect_coefs +
+      as.vector(t(MASS::mvrnorm(n_obs, rep(0, n_visits), cov_mat)))
+  )
 }
 
 # MAR helper function
@@ -247,20 +262,32 @@ missing_at_random <- function(covars_df, type) {
     prob_miss <- 0
   } else if (type == "mild") {
     prob_miss <- plogis(
-      -(5 - 0.01 * covars_df$base_bcva + 0.5 * (covars_df$strata == 2) +
-        1 * (covars_df$strata == 3) - 0.3 * covars_df$visit_num - 0.2 *
+      -(5 -
+        0.01 * covars_df$base_bcva +
+        0.5 * (covars_df$strata == 2) +
+        1 * (covars_df$strata == 3) -
+        0.3 * covars_df$visit_num -
+        0.2 *
           (covars_df$trt == 0))
     )
   } else if (type == "moderate") {
     prob_miss <- plogis(
-      -(5 - 0.01 * covars_df$base_bcva + 0.5 * (covars_df$strata == 2) +
-        1 * (covars_df$strata == 3) - 0.4 * covars_df$visit_num - 0.5 *
+      -(5 -
+        0.01 * covars_df$base_bcva +
+        0.5 * (covars_df$strata == 2) +
+        1 * (covars_df$strata == 3) -
+        0.4 * covars_df$visit_num -
+        0.5 *
           (covars_df$trt == 0))
     )
   } else if (type == "high") {
     prob_miss <- plogis(
-      -(5 - 0.02 * covars_df$base_bcva + 0.5 * (covars_df$strata == 2) +
-        1 * (covars_df$strata == 3) - 0.5 * covars_df$visit_num - 1 *
+      -(5 -
+        0.02 * covars_df$base_bcva +
+        0.5 * (covars_df$strata == 2) +
+        1 * (covars_df$strata == 3) -
+        0.5 * covars_df$visit_num -
+        1 *
           (covars_df$trt == 0))
     )
   }
@@ -274,15 +301,17 @@ missing_at_random <- function(covars_df, type) {
 
 # BCVA data-generating process
 rct_dgp_fun <- function(
-    n_obs = 1000,
-    outcome_covar_mat = compute_unstructured_matrix(),
-    trt_coef = 0.25,
-    visit_coef = 0.25,
-    trt_visit_coef = 0.25,
-    missing_type = "moderate") {
+  n_obs = 1000,
+  outcome_covar_mat = compute_unstructured_matrix(),
+  trt_coef = 0.25,
+  visit_coef = 0.25,
+  trt_visit_coef = 0.25,
+  missing_type = "moderate"
+) {
   # generate the covariates
   covars_df <- generate_covariates(
-    n_obs = n_obs, n_visits = nrow(outcome_covar_mat)
+    n_obs = n_obs,
+    n_visits = nrow(outcome_covar_mat)
   )
 
   # generate the outcomes
@@ -321,7 +350,9 @@ rct_dgp_fun <- function(
         levels = paste0("VIS", str_pad(seq_len(10), width = 2, pad = "0"))
       ),
       ARMCD = ifelse(trt == 1, "TRT", "CTL"),
-      RACE = ifelse(strata == 1, "Black",
+      RACE = ifelse(
+        strata == 1,
+        "Black",
         ifelse(strata == 2, "Asian", "White")
       ),
       BCVA_BL = base_bcva,
@@ -378,7 +409,7 @@ get_convergence_rates_sas <- function(missingness_level) {
         method = "PROC GLIMMIX",
         converged = sas_converged
       )
-      return(results)
+      results
     }
   ) %>%
     group_by(method) %>%
@@ -392,7 +423,10 @@ cr_mild_missing <- get_convergence_rates_sas("mild")
 cr_moderate_missing <- get_convergence_rates_sas("moderate")
 cr_high_missing <- get_convergence_rates_sas("high")
 cr_all_sas <- bind_rows(
-  cr_no_missing, cr_mild_missing, cr_moderate_missing, cr_high_missing
+  cr_no_missing,
+  cr_mild_missing,
+  cr_moderate_missing,
+  cr_high_missing
 )
 
 # FEV data: convergence time ----
@@ -427,7 +461,13 @@ mb <- microbenchmark(
 partial_conv_time_tbl_fev <- mb %>%
   summary() %>%
   dplyr::arrange(median) %>%
-  dplyr::select(expression = expr, median, lower = lq, upper = uq, evaluations = neval)
+  dplyr::select(
+    expression = expr,
+    median,
+    lower = lq,
+    upper = uq,
+    evaluations = neval
+  )
 
 # BCVA data: convergence time ----
 mb <- microbenchmark(
@@ -461,7 +501,13 @@ mb <- microbenchmark(
 partial_conv_time_tbl_bcva <- mb %>%
   summary() %>%
   dplyr::arrange(median) %>%
-  dplyr::select(expression = expr, median, lower = lq, upper = uq, evaluations = neval)
+  dplyr::select(
+    expression = expr,
+    median,
+    lower = lq,
+    upper = uq,
+    evaluations = neval
+  )
 
 
 # Estimations FEV ----
@@ -645,7 +691,10 @@ get_convergence_rates <- function(missingness_level) {
       ## mmrm
       safe_mmrm <- safely(mmrm)
       mmrm_fit <- safe_mmrm(
-        formula = BCVA_CHG ~ BCVA_BL + RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
+        formula = BCVA_CHG ~ BCVA_BL +
+          RACE +
+          ARMCD * AVISIT +
+          us(AVISIT | USUBJID),
         data = miss_df
       )
       mmrm_converged <- is.null(mmrm_fit$error)
@@ -657,10 +706,12 @@ get_convergence_rates <- function(missingness_level) {
         data = miss_df[complete.cases(miss_df), ],
         control = lmerControl(check.nobs.vs.nRE = "ignore")
       )
-      lmer_converged <- all(!str_detect(
-        lmer_fit@optinfo$conv$lme4$messages,
-        "Model failed to converge"
-      ))
+      lmer_converged <- all(
+        !str_detect(
+          lmer_fit@optinfo$conv$lme4$messages,
+          "Model failed to converge"
+        )
+      )
 
       ## nlme
       safe_gls <- safely(gls)
@@ -683,12 +734,14 @@ get_convergence_rates <- function(missingness_level) {
       results <- tibble(
         method = c("mmrm", "lmer", "gls", "glmmTMB"),
         converged = c(
-          mmrm_converged, lmer_converged, gls_converged,
+          mmrm_converged,
+          lmer_converged,
+          gls_converged,
           glmmtmb_converged
         )
       )
 
-      return(results)
+      results
     }
   ) %>%
     group_by(method) %>%
@@ -702,7 +755,10 @@ cr_mild_missing <- get_convergence_rates("mild")
 cr_moderate_missing <- get_convergence_rates("moderate")
 cr_high_missing <- get_convergence_rates("high")
 cr_all <- bind_rows(
-  cr_no_missing, cr_mild_missing, cr_moderate_missing, cr_high_missing
+  cr_no_missing,
+  cr_mild_missing,
+  cr_moderate_missing,
+  cr_high_missing
 )
 
 cached_mmrm_results <- list(

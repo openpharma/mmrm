@@ -54,11 +54,12 @@ we have
 For type II hypothesis testing, the contrasts can be obtained through the following steps:
 
 Create a contrast matrix $L$, with rows equal to the number of parameters associated with the effect,
-columns equal to the number of all parameters.
+columns equal to the number of all parameters, *including aliased parameters*.
 
 1. All columns of $L$ associated with effect not containing $E_1$ (except $E_1$) are set to 0.
 1. The submatrix of $L$ associated with $E_1$ is set to $(X_1^\top M X_1)^{-}X_1^\top M X_1$
 1. Each of the remaining submatrices of L associated with an effect $E_2$ that contains $E_1$ is $(X_1^\top M X_1)^{-}X_1^\top M X_2$
+1. Columns associated with aliased parameters are dropped.
 
 where $X_0$ stands for columns of $X$ whose associated effect do not contain $E_1$,
 $X_1$ stands for columns of $X$ associated with $E_1$,
@@ -68,7 +69,6 @@ and $Z^{-}$ stands for the [g2 inverse](https://blogs.sas.com/content/iml/2018/1
 
 Note: Here we do not allow for singularity in general, so the g2 inverse is just the usual inverse.
 Thus we can use an identity matrix as the submatrix in step 2.
-
 
 Using `fev_data` to create our example, we have
 
@@ -123,64 +123,21 @@ $$
 
 # Type III Hypothesis Testing
 
-For type III hypothesis testing, we assume that the hypothesis tested should be the same for all
+For Type III hypothesis testing, we assume that the hypothesis tested should be the same for all
 designs with the same general form of estimable functions.
-It can be defined with the following steps:
 
-Create a contrast matrix $L$, with rows equal to the number of parameters associated with the effect,
-columns equal to the number of all parameters.
+An important consideration for Type III testing is that it should be performed with orthogonal contrasts for the categorical covariates. In R this can be achieved via using e.g. the `contr.sum` contrasts for the categorical covariates. 
+However, the default in R are treatment contrasts, via `contr.treatment`. Therefore, to ensure that Type III tests are performed correctly, independently of which contrasts happen to be used in the model fitting, we follow this algorithm:
 
-1. All columns of $L$ associated with effect not containing $E_1$ (except $E_1$) are set to 0.
-1. The submatrix of $L$ associated with $E_1$ is set to identity matrix.
-1. For each of the remaining submatrices of L associated with an effect $E_2$ that contains $E_1$, equate the
-values.
+1. Based on the user specification in the data frame we construct a design matrix, say $X_t$ (this could be using all `contr.treatment` or a mixture of contrasts for factor variables).
+1. We also construct the design matrix with `contr.sum` for all factor variables, say $X_c$.
+1. We construct the Type III contrast matrices $L_{c,j}$ for all terms $j$ for the coefficient estimate based on the $X_c$ design matrix:
+  - All columns of $L_{c,j}$ associated with effect not being $E_j$ are set to 0.
+  - The submatrix of $L_{c,j}$ associated with $E_j$ is set to the identity matrix.
+1. We calculate a correction matrix $C = (X_c^\top X_c)^{-1} X_c^\top X_t$ and obtain corrected Type III contrast matrices subsequently as $L_{t,j} = L_{c,j} C$.
+1. We perform the linear hypothesis tests with the contrast matrices $L_{t,j}$ for our coefficient estimate.
 
-Here equate the values means that, given that the coefficients in step 2 are all 1 (diagonal), in step 3
-this 1 is divided by the total number of new levels.
-
-Using the same example for type II testing, we also would like to test the effect of `RACE`, $E_{RACE}$.
-We initialize the contrast matrix with
-
-$$
-\begin{matrix} 
-\mu & ARMCD & RACE & RACE & ARMCD:RACE & ARMCD:RACE\\
-0 & 0 & 0 & 0 & 0 & 0\\ 
-0 & 0 & 0 & 0 & 0 & 0\\ 
-\end{matrix}
-$$
-
-Then following step 2, we filled in the identity matrix in the corresponding submatrix
-
-$$
-\begin{matrix} 
-\mu & ARMCD & RACE & RACE & ARMCD:RACE & ARMCD:RACE\\
-0 & 0 & 1 & 0 & 0 & 0\\ 
-0 & 0 & 0 & 1 & 0 & 0\\ 
-\end{matrix}
-$$
-
-In the last step, for the last 2 columns, we fill the values to equate the coefficients in the sub matrix.
-We use the coefficients for `RACE`, and divide it by the additional levels
-(there is interaction between `ARMCD` and `RACE`, the additional covariate `ARMCD` has 2 levels)
-and we get 0.5 for the coefficients.
-
-$$
-\begin{matrix} 
-\mu & ARMCD & RACE & RACE & ARMCD:RACE & ARMCD:RACE\\
-0 & 0 & 1 & 0 & 0.5 & 0\\ 
-0 & 0 & 0 & 1 & 0 & 0.5\\ 
-\end{matrix}
-$$
-
-Similarly, if we are testing the effect of `ARMCD` we will have the following contrast because
-`RACE` has 3 levels.
-
-$$
-\begin{matrix} 
-\mu & ARMCD & RACE & RACE & ARMCD:RACE & ARMCD:RACE\\
-0 & 1 & 0 & 0 & \frac{1}{3} & \frac{1}{3}\\ 
-\end{matrix}
-$$
+Note that an intercept term should be included in a model when performing Type III tests: otherwise one of the categorical covariates will have an arbitrary high test statistic value. This behavior is different from SAS, but consistent with other `car::Anova()` results e.g. from linear or generalized linear models. In order to guide the user, a warning message is issued when Type III tests are requested for models without an intercept.
 
 # Hypothesis Testing in SAS
 
@@ -281,3 +238,28 @@ FEV1 ~ ARMCD * SEX + ARMCD:FEV1_BL
 Because SAS will not include the covariate `FEV1_BL` by default, unless manually added.
 However in R we will add `FEV1_BL` by default.
 Please note that in this example we exclude the covariance structure part.
+
+### Excluding columns due to collinearity
+
+`mmrm::mmrm()` (which employs `qr()`) and `PROC MIXED` have similar strategies to handle collinearity of model parameters. Both prioritize earlier columns in the design matrix, excluding a column if it is a linear combination of earlier ones. Whereas `mmrm::mmrm()` completely excludes such parameters from the model, `PROC MIXED` retains them but assigns a coefficient of 0. The presence of these columns is necessary for the accurate calculation of type-II contrast matrices. 
+
+Therefore, an `mmrm` object contains the full design matrix including aliased columns in a component called `x_matrix_complete`. This matrix is utilized to calculate the contrast matrices when running a type-II ANOVA. Once all values are correctly calculated, the final step in contrast matrix creation is to drop the columns corresponding to the aliased parameters.
+
+### Intercept-free models
+
+`stats::model.matrix()` and `PROC MIXED` handle intercept-free models in different ways. This has important implications for the creation of the contrast matrices used for type-II ANOVAs.
+
+#### Intercept-free Models with `stats::model.matrix()`
+
+When the default method of `stats::model.matrix()` is creating a design matrix for an intercept-free model, it considers the terms sequentially. When it encounters the first term to contain a categorical variable, it will include the reference level when creating this term's design matrix columns. Therefore, this term de facto contains the model's intercept.
+
+#### Intercept-free Models with `PROC MIXED`
+
+`PROC MIXED`, on the other hand, treats all terms the same regardless of the presence or absence of an intercept: it always considers all factor levels for all categorical variables when creating design matrix columns (see the **Main Effects** and **Implications of the Non-Full-Rank Parameterization** sections [here](https://support.sas.com/documentation/cdl/en/statug/63033/HTML/default/viewer.htm#statug_mixed_sect023.htm)). Therefore, all terms involving categorical variables effectively share the model's intercept. 
+
+#### Type-II Contrast Matrices in Intercept-free Models
+
+To accurately run a type-II ANOVA when all levels of a categorical variable are represented in a design matrix, one of the levels of each categorical variable must contain subtractive (i.e., negative) values its corresponding contrast matrix columns. Since `PROC MIXED` includes all factor levels of all categorical variables, the incorporation of negative values is a commonplace occurrence. Negative values are invariably assigned to the last columns, which are always the reference levels' columns. 
+
+However, in `mmrm::mmrm()`, reference level columns only exist in intercept-free models for the first term containing a categorical variable. Thus, `mmrm`'s helper functions incorporate a special handling step for such first-categorical-terms in which their last contrast matrix columns are assigned straight -1s.
+

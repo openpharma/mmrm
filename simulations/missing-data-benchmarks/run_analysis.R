@@ -19,7 +19,13 @@ source("programs/analyze_data.R")
 
 data <- arrow::read_parquet(input_data)
 
-ret <- analyze_data(data, method, covar_rsp, covar_type, identical(reml, "reml"))
+ret <- analyze_data(
+  data,
+  method,
+  covar_rsp,
+  covar_type,
+  identical(reml, "reml")
+)
 
 ret$missingness <- missingness
 ret$n <- n

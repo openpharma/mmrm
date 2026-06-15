@@ -20,3 +20,4 @@ simulations
 ^Meta$
 ^data-raw$
 ^cache$
+^[.]?air[.]toml$

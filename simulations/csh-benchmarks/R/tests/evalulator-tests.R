@@ -28,8 +28,7 @@ dt_ls <- rct_dgp_fun(
 true_covar_mat <- outer(sqrt(outcome_vars), sqrt(outcome_vars)) * outcome_cor
 diag(true_covar_mat) <- outcome_vars
 
-test_that("get_covar_mat() constructs accurate estimates from mmrm fits",
-{
+test_that("get_covar_mat() constructs accurate estimates from mmrm fits", {
   library(mmrm)
   output <- mmrm_wrapper_fun(
     participant = dt_ls$participant,
@@ -42,8 +41,7 @@ test_that("get_covar_mat() constructs accurate estimates from mmrm fits",
   expect_equal(above_element_wise_tol, 0)
 })
 
-test_that("get_covar_mat() constructs accurate estimates from glmmTMB fits",
-{
+test_that("get_covar_mat() constructs accurate estimates from glmmTMB fits", {
   library(glmmTMB)
   output <- glmmTMB_wrapper_fun(
     participant = dt_ls$participant,
@@ -56,8 +54,7 @@ test_that("get_covar_mat() constructs accurate estimates from glmmTMB fits",
   expect_equal(above_element_wise_tol, 0)
 })
 
-test_that("get_covar_mat() constructs accurate estimates from nlme fits",
-{
+test_that("get_covar_mat() constructs accurate estimates from nlme fits", {
   library(nlme)
   output <- nlme_wrapper_fun(
     participant = dt_ls$participant,
@@ -70,8 +67,7 @@ test_that("get_covar_mat() constructs accurate estimates from nlme fits",
   expect_equal(above_element_wise_tol, 0)
 })
 
-test_that("get_covar_mat() constructs accurate estimates from PROC MIXED fits",
-{
+test_that("get_covar_mat() constructs accurate estimates from PROC MIXED fits", {
   library(nlme)
   output <- proc_mixed_fun(
     participant = dt_ls$participant,

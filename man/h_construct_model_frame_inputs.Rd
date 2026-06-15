@@ -13,25 +13,24 @@ h_construct_model_frame_inputs(
 )
 }
 \arguments{
-\item{formula}{(\code{mmrm})\cr mmrm fit object.}
+\item{formula}{(\code{mmrm})\cr fit object.}
 
-\item{data}{optional data frame that will be
-passed to \code{model.frame()} or \code{model.matrix()}}
+\item{data}{(\code{data.frame})\cr optional data frame will be
+passed to \code{model.frame()} or \code{model.matrix()}.}
 
-\item{include}{(\code{character})\cr names of variable to include}
+\item{include}{(\code{character})\cr specification of variables to include.}
 
 \item{full}{(\code{flag})\cr indicator whether to return full model frame (deprecated).}
 }
 \value{
-named list with four elements:
+A named list with two elements:
 \itemize{
 \item \code{"formula"}: the formula including the columns requested in the \verb{include=} argument.
 \item \code{"data"}: a data frame including all columns needed in the formula.
-full formula are identical
 }
 }
 \description{
-Input formulas are converted from mmrm-style to a style compatible
+Input formulas are converted from \code{mmrm}-style to a style compatible
 with default \code{\link[stats:model.frame]{stats::model.frame()}} and \code{\link[stats:model.matrix]{stats::model.matrix()}} methods.
 
 The full formula is returned so we can construct, for example, the
