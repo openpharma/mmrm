@@ -46,7 +46,13 @@ be coded as a factor.
 sp_exp
 \tab spatial exponential
 \tab \eqn{2}
-\tab \eqn{\sigma^{2}\rho^{-d_{ij}}}
+\tab \eqn{\sigma^{2}\rho^{d_{ij}}}
+\cr
+
+sp_gau
+\tab spatial Gaussian
+\tab \eqn{2}
+\tab \eqn{\sigma^{2}\rho^{d_{ij}^2}}
 
 }
 

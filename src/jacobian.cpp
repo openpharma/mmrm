@@ -27,7 +27,7 @@ List get_jacobian(List mmrm_fit, NumericVector theta, NumericMatrix beta_vcov) {
   int p = x.cols();
   matrix<double> P = matrix<double>::Zero(p * n_theta, p);
   // Use map to hold these base class pointers (can also work for child class objects).
-  auto derivatives_by_group = cache_obj<double, derivatives_base<double>, derivatives_sp_exp<double>, derivatives_nonspatial<double>>(theta_v, n_groups, is_spatial, cov_type, n_visits);
+  auto derivatives_by_group = derivatives_cache<double>(theta_v, n_groups, is_spatial, cov_type, n_visits);
   for (int i = 0; i < n_subjects; i++) {
     int start_i = subject_zero_inds[i];
     int n_visits_i = subject_n_visits[i];

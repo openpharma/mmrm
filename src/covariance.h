@@ -190,7 +190,7 @@ matrix<T> get_spatial_covariance_lower_chol(const vector<T>& theta, const matrix
     result = get_spatial_exponential<T>(theta, distance);
   } else if (cov_type == "sp_gau") {
     result = get_spatial_gaussian<T>(theta, distance);
-  }else {
+  } else {
     Rf_error("%s", ("Unknown spatial covariance type '" + cov_type + "'.").c_str());
   }
   return result;

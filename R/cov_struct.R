@@ -152,11 +152,14 @@ COV_TYPES <- local({
 #' sp_exp
 #' \tab spatial exponential
 #' \tab \eqn{2}
-#' \tab \eqn{\sigma^{2}\rho^{-d_{ij}}}
+#' \tab \eqn{\sigma^{2}\rho^{d_{ij}}}
+#' \cr
+#'
 #' sp_gau
-#' \tab spatial Guassian
+#' \tab spatial Gaussian
 #' \tab \eqn{2}
-#' \tab \eqn{\sigma^{2}\rho^{-d_{ij}^2}}
+#' \tab \eqn{\sigma^{2}\rho^{d_{ij}^2}}
+#'
 #' }
 #'
 #' where \eqn{d_{ij}} denotes the Euclidean distance between time points
