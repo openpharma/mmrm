@@ -72,7 +72,7 @@ test_that("h_split_control split the control args based on optimizers", {
   controls <- h_split_control(control)
   expect_identical(length(controls), length(control$optimizers))
   non_opt <- c("start", "accept_singular", "method", "n_cores")
-  for (i in seq_len(length(controls))) {
+  for (i in seq_along(controls)) {
     expect_identical(controls[[i]]$optimizers[[1]], control$optimizers[[i]])
     expect_identical(controls[[i]][non_opt], control[non_opt])
   }
@@ -83,7 +83,7 @@ test_that("h_split_control split the control args with updated arguments", {
   start <- c(1, 2, 3)
   method <- "Kenward-Roger"
   controls <- h_split_control(control, start = start, method = method)
-  for (i in seq_len(length(controls))) {
+  for (i in seq_along(controls)) {
     expect_identical(controls[[i]][["start"]], start)
     expect_identical(controls[[i]][["method"]], method)
   }
