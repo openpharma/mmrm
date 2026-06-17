@@ -259,7 +259,7 @@ For spatial Gaussian, the covariance structure is defined as follows:
   \rho_{ij} = \rho^{d_{ij}^2}
 \]
 
-where $d_{ij}$ is the distance between time point $i$ and time point $j$,
+where $d_{ij}$ is the distance between time point $i$ and time point $j$.
 
 The parameterization is the same as spatial exponential.
 
