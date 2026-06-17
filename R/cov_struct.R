@@ -42,7 +42,8 @@ COV_TYPES <- local({
       type("auto-regressive order one", "ar1", "ar1h", TRUE, FALSE),
       type("ante-dependence", "ad", "adh", TRUE, FALSE),
       type("compound symmetry", "cs", "csh", TRUE, FALSE),
-      type("spatial exponential", "sp_exp", NA, FALSE, TRUE)
+      type("spatial exponential", "sp_exp", NA, FALSE, TRUE),
+      type("spatial Gaussian", "sp_gau", NA, FALSE, TRUE)
     )
   )
 })
@@ -151,7 +152,13 @@ COV_TYPES <- local({
 #' sp_exp
 #' \tab spatial exponential
 #' \tab \eqn{2}
-#' \tab \eqn{\sigma^{2}\rho^{-d_{ij}}}
+#' \tab \eqn{\sigma^{2}\rho^{d_{ij}}}
+#' \cr
+#'
+#' sp_gau
+#' \tab spatial Gaussian
+#' \tab \eqn{2}
+#' \tab \eqn{\sigma^{2}\rho^{d_{ij}^2}}
 #'
 #' }
 #'
@@ -229,7 +236,7 @@ tmb_cov_type <- function(cov) {
 #'
 #' @examples
 #' cov_struct("csh", "AVISITN", "USUBJID")
-#' cov_struct("spatial", c("VISITA", "VISITB"), group = "GRP", subject = "SBJ")
+#' cov_struct("spatial exp", c("VISITA", "VISITB"), group = "GRP", subject = "SBJ")
 #'
 #' @family covariance types
 #' @export
@@ -386,7 +393,7 @@ print.cov_struct <- function(x, ...) {
 #' sp_exp(coord1, coord2 | group / subject)
 #' ```
 #'
-#' Note that only `sp_exp` (spatial) covariance structures may provide multiple
+#' Note that only spatial covariance structures may provide multiple
 #' coordinates, which identify the Euclidean distance between the time points.
 #'
 #' @param x an object from which to derive a covariance structure. See object

@@ -2528,6 +2528,89 @@ test_that("fit_mmrm works with sp_exp covariance structure and REML(2-dimension)
   expect_equal(exp(result$theta_est[1]), 87.8870, tolerance = 1e-3)
 })
 
+
+## spatial gaussian ----
+
+test_that("fit_mmrm works with sp_gau covariance structure and ML", {
+  formula <- FEV1 ~ sp_gau(VISITN | USUBJID)
+  result <- fit_mmrm(
+    formula,
+    fev_data,
+    weights = rep(1, nrow(fev_data)),
+    reml = FALSE
+  )
+  expect_class(result, "mmrm_tmb")
+  # See design/SAS/sas_sp_gau_ml.txt for the source of numbers.
+  expect_equal(deviance(result), 3871.0583, tolerance = 1e-4)
+  expect_equal(as.numeric(result$beta_est[1]), 42.3539, tolerance = 1e-4)
+  expect_equal(
+    sqrt(-1 / plogis(result$theta_est[2], log.p = TRUE)),
+    1.0853,
+    tolerance = 1e-3
+  )
+  expect_equal(exp(result$theta_est[1]), 88.4874, tolerance = 1e-3)
+})
+
+test_that("fit_mmrm works with sp_gau covariance structure and ML(2-dimension)", {
+  formula <- FEV1 ~ sp_gau(VISITN, VISITN2 | USUBJID)
+  result <- fit_mmrm(
+    formula,
+    fev_data,
+    weights = rep(1, nrow(fev_data)),
+    reml = FALSE
+  )
+  expect_class(result, "mmrm_tmb")
+  # See design/SAS/sas_sp_gau2_ml.txt for the source of numbers.
+  expect_equal(deviance(result), 3891.3791, tolerance = 1e-4)
+  expect_equal(as.numeric(result$beta_est[1]), 42.2192, tolerance = 1e-4)
+  expect_equal(
+    sqrt(-1 / plogis(result$theta_est[2], log.p = TRUE)),
+    1.4052,
+    tolerance = 1e-3
+  )
+  expect_equal(exp(result$theta_est[1]), 89.7880, tolerance = 1e-3)
+})
+
+test_that("fit_mmrm works with sp_gau covariance structure and REML", {
+  formula <- FEV1 ~ sp_gau(VISITN | USUBJID)
+  result <- fit_mmrm(
+    formula,
+    fev_data,
+    weights = rep(1, nrow(fev_data)),
+    reml = TRUE
+  )
+  expect_class(result, "mmrm_tmb")
+  # See design/SAS/sas_sp_gau_reml.txt for the source of numbers.
+  expect_equal(deviance(result), 3870.6985, tolerance = 1e-4)
+  expect_equal(as.numeric(result$beta_est[1]), 42.3542, tolerance = 1e-4)
+  expect_equal(
+    sqrt(-1 / plogis(result$theta_est[2], log.p = TRUE)),
+    1.0871,
+    tolerance = 1e-3
+  )
+  expect_equal(exp(result$theta_est[1]), 88.7170, tolerance = 1e-3)
+})
+
+test_that("fit_mmrm works with sp_gau covariance structure and REML(2-dimension)", {
+  formula <- FEV1 ~ sp_gau(VISITN, VISITN2 | USUBJID)
+  result <- fit_mmrm(
+    formula,
+    fev_data,
+    weights = rep(1, nrow(fev_data)),
+    reml = TRUE
+  )
+  expect_class(result, "mmrm_tmb")
+  # See design/SAS/sas_sp_gau2_reml.txt for the source of numbers.
+  expect_equal(deviance(result), 3891.0600, tolerance = 1e-4)
+  expect_equal(as.numeric(result$beta_est[1]), 42.2195, tolerance = 1e-4)
+  expect_equal(
+    sqrt(-1 / plogis(result$theta_est[2], log.p = TRUE)),
+    1.4086,
+    tolerance = 1e-3
+  )
+  expect_equal(exp(result$theta_est[1]), 90.0242, tolerance = 1e-3)
+})
+
 ## misc ----
 
 test_that("fit_mmrm also works with character ID variable", {

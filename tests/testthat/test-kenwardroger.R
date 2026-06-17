@@ -199,6 +199,16 @@ test_that("h_get_kr_comp works as expected on grouped spatial mmrm", {
   expect_snapshot_tolerance(fit$kr_comp)
 })
 
+test_that("h_get_kr_comp works as expected on spatial Gaussian mmrm", {
+  fit <- mmrm(
+    FEV1 ~ ARMCD + sp_gau(VISITN, VISITN2 | USUBJID),
+    data = fev_data,
+    reml = TRUE,
+    method = "Kenward-Roger"
+  )
+  expect_snapshot_tolerance(fit$kr_comp)
+})
+
 # df_1d ----
 
 ## auto-regressive ----
@@ -481,6 +491,25 @@ test_that("kr linear give similar results as SAS for spatial exponential", {
   )
   res <- df_1d(fit, contrast = c(0, 1))
   expected <- c(0.90527620094771, 195.584197921463)
+  expect_equal(res$df, expected[2], tolerance = 1e-3)
+  expect_equal(res$se, expected[1], tolerance = 1e-3)
+})
+
+## Spatial Gaussian ----
+
+### kr linear
+
+test_that("kr linear give similar results as SAS for spatial Gaussian", {
+  fit <- mmrm(
+    FEV1 ~ ARMCD + sp_gau(VISITN, VISITN2 | USUBJID),
+    data = fev_data,
+    method = "Kenward-Roger",
+    vcov = "Kenward-Roger-Linear"
+  )
+  res <- df_1d(fit, contrast = c(0, 1))
+  # See design/SAS/sas_sp_gau_kr.txt for the source of numbers
+  # (ddfm=kenwardroger(firstorder)).
+  expected <- c(0.9028, 250.2326)
   expect_equal(res$df, expected[2], tolerance = 1e-3)
   expect_equal(res$se, expected[1], tolerance = 1e-3)
 })

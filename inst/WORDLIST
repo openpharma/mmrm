@@ -27,6 +27,7 @@ Mallinckrodt
 Mancuso
 Nikolas
 ORCID
+Optimizers
 Peng
 Penrose
 Raphson
@@ -68,6 +69,7 @@ facto
 factorizations
 frac
 funder
+gau
 getXlevels
 hj
 ih
@@ -99,12 +101,16 @@ nlminb
 nonidentifiability
 num
 onLoad
+optimizers
+parametrized
 pearson
 pkgdown
 plc
 pmatrix
 pre
 qquad
+reparameterization
+reproducibility
 rightarrow
 simeq
 sp
@@ -115,11 +121,14 @@ tJi
 tabset
 th
 tidymodels
+timepoint
 tj
 tji
 toep
 toeph
+unadjusted
 unreproducible
+unscaled
 untracked
 vairance
 varepsilon

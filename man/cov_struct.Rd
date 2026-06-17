@@ -38,7 +38,7 @@ A \code{cov_struct} object.
 }
 \examples{
 cov_struct("csh", "AVISITN", "USUBJID")
-cov_struct("spatial", c("VISITA", "VISITB"), group = "GRP", subject = "SBJ")
+cov_struct("spatial exp", c("VISITA", "VISITB"), group = "GRP", subject = "SBJ")
 
 }
 \seealso{
