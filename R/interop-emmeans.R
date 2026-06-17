@@ -69,12 +69,17 @@ recover_data.mmrm <- function(object, ...) {
   # subject_var is excluded because it should not contain fixed effect.
   # visit_var is only excluded for spatial covariance structures -
   # for non-spatial covariance structures, emmeans can provide marginal mean
-  # by each visit so we need visit_var.
+  # by each visit so we need visit_var. Also exclude visit_var when it has only
+  # one level (emmeans cannot contrast it).
+  visit_var <- object$formula_parts$visit_var
+  exclude_visit <- object$formula_parts$is_spatial ||
+    nlevels(object$tmb_data$full_frame[[visit_var]]) < 2L
+
   model_frame <- stats::model.frame(
     object,
     exclude = c(
       "subject_var",
-      if (object$formula_parts$is_spatial) "visit_var"
+      if (exclude_visit) "visit_var"
     )
   )
   model_terms <- stats::delete.response(stats::terms(model_frame))
