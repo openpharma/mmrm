@@ -4,6 +4,7 @@
 
 - `mmrm()` and `fit_mmrm()` now accept a `contrasts` argument, allowing users to specify contrast matrices or functions for factor variables, matching the interface of `lm()`. When an explicit contrast matrix includes levels not present in the fitting data, those levels are preserved in the model and marked as aliased, enabling prediction on new data containing those levels.
 - `mmrm_control()` gains `emmeans_gcomp_vars` argument, enabling G-computation correction in `emmeans()` output for models with covariate-by-treatment interactions. When set, `emmeans()` returns the average treatment effect (ATE) with standard errors that account for covariate variability across subjects. See `?emmeans_support` for details.
+- `mmrm` now supports the spatial Gaussian (`sp_gau`) covariance structure.
 
 # mmrm 0.3.17.9000
 

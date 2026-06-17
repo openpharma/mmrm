@@ -71,7 +71,7 @@ test_that("fit_single_optimizer gives error messages", {
     paste(
       "Covariance structure must be specified in formula.",
       "Possible covariance structures include:",
-      "us, toep, toeph, ar1, ar1h, ad, adh, cs, csh, sp_exp"
+      "us, toep, toeph, ar1, ar1h, ad, adh, cs, csh, sp_exp, sp_gau"
     ),
     fixed = TRUE
   )

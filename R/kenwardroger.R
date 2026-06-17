@@ -117,8 +117,8 @@ h_kr_df <- function(v0, l, w, p) {
   a1 <- 0
   a2 <- 0
   # see vignettes/kenward.Rmd#283
-  for (i in seq_len(length(pl))) {
-    for (j in seq_len(length(pl))) {
+  for (i in seq_along(pl)) {
+    for (j in seq_along(pl)) {
       a1 <- a1 + w[i, j] * h_tr(mv0pv0[[i]]) * h_tr(mv0pv0[[j]])
       a2 <- a2 + w[i, j] * h_tr(mv0pv0[[i]] %*% mv0pv0[[j]])
     }

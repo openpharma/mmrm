@@ -221,4 +221,68 @@ struct derivatives_sp_exp: public lower_chol_spatial<Type>, virtual derivatives_
   }
 };
 
+
+// derivatives_sp_gau struct is created to obtain the exact derivatives of spatial Gaussian
+// covariance structure, and its inverse.
+// Inherit from sp_exp because of similar parameterization; only the sigma
+// derivatives differ (square the distance). Inverse / inverse-derivative logic
+// is reused from the base via the virtual get_sigma_derivative1 dispatch.
+template <class Type>
+struct derivatives_sp_gau: public derivatives_sp_exp<Type> {
+  derivatives_sp_gau() {
+    // This default constructor is needed because the use of `[]` in maps.
+  }
+  derivatives_sp_gau(vector<Type> theta, std::string cov_type): derivatives_sp_exp<Type>(theta, cov_type) {
+  }
+  // Obtain first order derivatives
+  matrix<Type> get_sigma_derivative1(std::vector<int> visits, matrix<Type> dist) override {
+    matrix<Type> ret(2 * dist.rows(), dist.cols());
+    // partial sigma / partial theta_1 = sigma.
+    auto sigma = this->get_sigma(visits, dist);
+    ret.block(0, 0, dist.rows(), dist.cols()) = sigma;
+    ret.block(dist.rows(), 0, dist.rows(), dist.cols()) = sigma.array() * dist.array().square() * (1 - this->rho);
+    return ret;
+  }
+  // Obtain second order derivatives.
+  matrix<Type> get_sigma_derivative2(std::vector<int> visits, matrix<Type> dist) override {
+    matrix<Type> ret(4 * dist.rows(), dist.cols());
+    auto sigma = this->get_sigma(visits, dist);
+    ret.block(0, 0, dist.rows(), dist.cols()) = sigma;
+    Type rho_r = 1 - this->rho;
+    auto dtheta1dtheta2 = sigma.array() * dist.array().square() * rho_r;
+    ret.block(dist.rows(), 0, dist.rows(), dist.cols()) =  dtheta1dtheta2;
+    ret.block(dist.rows() * 2, 0, dist.rows(), dist.cols()) = dtheta1dtheta2;
+    matrix<Type> dtheta2s = dtheta1dtheta2 * (dist.array().square() * rho_r - this->rho);
+    ret.block(dist.rows() * 3, 0, dist.rows(), dist.cols()) = dtheta2s;
+    return ret;
+  }
+};
+
+// Cache of per-group derivatives objects, with cov_type-aware dispatch for
+// spatial structures (sp_exp / sp_gau). Mirrors `cache_obj` but selects the
+// concrete spatial subclass at runtime so analytic derivatives match cov_type.
+template <class Type>
+struct derivatives_cache {
+  std::map<int, std::shared_ptr<derivatives_base<Type>>> cache;
+  int n_groups;
+  bool is_spatial;
+  int n_visits;
+  derivatives_cache(vector<Type> theta, int n_groups, bool is_spatial, std::string cov_type, int n_visits): n_groups(n_groups), is_spatial(is_spatial), n_visits(n_visits) {
+    int theta_one_group_size = theta.size() / n_groups;
+    for (int r = 0; r < n_groups; r++) {
+      vector<Type> theta_r = theta.segment(r * theta_one_group_size, theta_one_group_size);
+      if (is_spatial) {
+        if (cov_type == "sp_exp") {
+          this->cache[r] = std::make_shared<derivatives_sp_exp<Type>>(theta_r, cov_type);
+        } else if (cov_type == "sp_gau") {
+          this->cache[r] = std::make_shared<derivatives_sp_gau<Type>>(theta_r, cov_type);
+        } else {
+          Rf_error("%s", ("Unknown spatial covariance type '" + cov_type + "'.").c_str());
+        }
+      } else {
+        this->cache[r] = std::make_shared<derivatives_nonspatial<Type>>(theta_r, n_visits, cov_type);
+      }
+    }
+  }
+};
 #endif
