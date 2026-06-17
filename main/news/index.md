@@ -22,6 +22,8 @@
   account for covariate variability across subjects. See
   [`?emmeans_support`](https://openpharma.github.io/mmrm/reference/emmeans_support.md)
   for details.
+- `mmrm` now supports the spatial Gaussian (`sp_gau`) covariance
+  structure.
 
 ## mmrm 0.3.17.9000
 

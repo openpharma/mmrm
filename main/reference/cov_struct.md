@@ -67,7 +67,7 @@ cov_struct("csh", "AVISITN", "USUBJID")
 #> 
 #>   AVISITN | USUBJID
 #>  
-cov_struct("spatial", c("VISITA", "VISITB"), group = "GRP", subject = "SBJ")
+cov_struct("spatial exp", c("VISITA", "VISITB"), group = "GRP", subject = "SBJ")
 #> <covariance structure>
 #> spatial exponential:
 #> 

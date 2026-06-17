@@ -324,6 +324,58 @@ Second-order derivatives can be written as:
 \frac{\partial{\sigma\rho^{d\_{ij}}{d\_{ij}}(1-\rho)}}{\partial\theta_2}\\
 = \sigma\rho^{d\_{ij}}{d\_{ij}}(1-\rho)(d\_{ij} (1-\rho) - \rho) \\
 
+#### Spatial Gaussian Derivatives
+
+For spatial Gaussian covariance structure, we use the same
+parameterization as spatial exponential, with the squared distance in
+the exponent:
+
+\\\theta = (\theta_1,\theta_2)\\ \\\sigma = e^{\theta_1}\\ \\\rho =
+\frac{e^{\theta_2}}{1 + e^{\theta_2}}\\
+
+\\\Sigma\_{ij} = \sigma \rho^{d\_{ij}^2}\\ where \\d\_{ij}\\ is the
+distance between time point \\i\\ and time point \\j\\.
+
+The derivations parallel the spatial exponential case, with \\d\_{ij}\\
+replaced by \\d\_{ij}^2\\ where it appears as an exponent of \\\rho\\
+(and as a multiplicative factor brought down by the chain rule). The
+first-order derivatives are:
+
+\\ \frac{\partial{\Sigma\_{ij}}}{\partial\theta_1} =
+\frac{\partial\sigma}{\partial\theta_1} \rho^{d\_{ij}^2}\\ =
+e^{\theta_1}\rho^{d\_{ij}^2} \\ = \Sigma\_{ij} \\
+
+\\ \frac{\partial{\Sigma\_{ij}}}{\partial\theta_2} =
+\sigma\frac{\partial{\rho^{d\_{ij}^2}}}{\partial\theta_2} \\ =
+\sigma\rho^{d\_{ij}^2-1}{d\_{ij}^2}\frac{\partial\rho}{\partial\theta_2}\\
+= \sigma\rho^{d\_{ij}^2-1}{d\_{ij}^2}\rho(1-\rho) \\ = \sigma
+\rho^{d\_{ij}^2} {d\_{ij}^2} (1-\rho) \\
+
+Second-order derivatives:
+
+\\ \frac{\partial^2{\Sigma\_{ij}}}{\partial\theta_1\partial\theta_1}\\ =
+\frac{\partial\Sigma\_{ij}}{\partial\theta_1}\\ = \Sigma\_{ij} \\
+
+\\ \frac{\partial^2{\Sigma\_{ij}}}{\partial\theta_1\partial\theta_2} =
+\frac{\partial^2{\Sigma\_{ij}}}{\partial\theta_2\partial\theta_1} \\ =
+\frac{\partial\Sigma\_{ij}}{\partial\theta_2}\\ =
+\sigma\rho^{d\_{ij}^2}{d\_{ij}^2}(1-\rho) \\
+
+\\ \frac{\partial^2{\Sigma\_{ij}}}{\partial\theta_2\partial\theta_2}\\ =
+\frac{\partial{\sigma\rho^{d\_{ij}^2}{d\_{ij}^2}(1-\rho)}}{\partial\theta_2}\\
+= \sigma\rho^{d\_{ij}^2}{d\_{ij}^2}(1-\rho)(d\_{ij}^2 (1-\rho) - \rho)
+\\
+
+As discussed in [Parameterization methods and
+Kenward-Roger](#parameterization-methods-and-kenward-roger), the
+inverse-logit reparameterization of \\\rho\\ produces non-zero
+second-order derivatives where SAS’s natural \\(0, 1)\\-scaled
+parameterization would give zero. The likelihood, \\\beta\\ estimates
+and KR-Linear adjusted standard errors all match SAS to numerical
+precision; small (typically sub-percent) differences remain on the
+default Kenward-Roger standard error. To reproduce SAS exactly, use the
+linear Kenward-Roger approximation.
+
 ## References
 
 Kackar RN, Harville DA (1984). “Approximations for Standard Errors of
