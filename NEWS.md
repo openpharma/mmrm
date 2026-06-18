@@ -6,10 +6,9 @@
 - `mmrm_control()` gains `emmeans_gcomp_vars` argument, enabling G-computation correction in `emmeans()` output for models with covariate-by-treatment interactions. When set, `emmeans()` returns the average treatment effect (ATE) with standard errors that account for covariate variability across subjects. See `?emmeans_support` for details.
 - `mmrm` now supports the spatial Gaussian (`sp_gau`) covariance structure.
 
-# mmrm 0.3.17.9000
-
 ### Bug Fixes
 
+- Previously, using `emmeans()` on a model fitted to a dataset with only a single visit would fail, because the visit variable was always included in the design matrix and a contrast could not be constructed for this factor variable having only a single level. This is now fixed.
 - Previously, having the visit variable only in an interaction term in the model could lead to failed `emmeans()` evaluation. Similarly, there could be other interaction variable problems potentially with `emmeans()`, due to the change in the order which is automatically applied by `terms()` used internally. This is now fixed.
 
 # mmrm 0.3.17
