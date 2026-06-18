@@ -375,3 +375,35 @@ test_that("emmeans also works when the visit variable is not part of the covaria
   )
   result <- expect_silent(emmeans::emmeans(fit, ~ ARMCD | AVISIT))
 })
+
+test_that("emmeans works for single-visit MMRM (ANCOVA edge case)", {
+  skip_if_not_installed("emmeans", minimum_version = "1.6")
+  mydata <- droplevels(fev_data[fev_data$AVISIT == "VIS1", ])
+  fm <- mmrm(FEV1 ~ FEV1_BL + ARMCD + us(AVISIT | USUBJID), data = mydata)
+  emm <- as.data.frame(emmeans::emmeans(fm, ~ ARMCD))
+  expect_equal(nrow(emm), 2L)
+  expect_true(all(is.finite(emm$SE)))
+})
+
+test_that("single-visit MMRM emmeans matches lm", {
+  skip_if_not_installed("emmeans", minimum_version = "1.6")
+  mydata <- droplevels(fev_data[fev_data$AVISIT == "VIS1", ])
+  fm_mmrm <- mmrm(FEV1 ~ FEV1_BL + ARMCD + us(AVISIT | USUBJID), data = mydata)
+  fm_lm <- lm(FEV1 ~ FEV1_BL + ARMCD, data = mydata)
+  emm_mmrm <- as.data.frame(emmeans::emmeans(fm_mmrm, ~ ARMCD))
+  emm_lm <- as.data.frame(emmeans::emmeans(fm_lm, ~ ARMCD))
+  expect_equal(emm_mmrm$emmean, emm_lm$emmean, tolerance = 1e-4)
+  expect_equal(emm_mmrm$SE, emm_lm$SE, tolerance = 1e-4)
+})
+
+test_that("emmeans works for single-visit MMRM without droplevels", {
+  skip_if_not_installed("emmeans", minimum_version = "1.6")
+  mydata <- fev_data[fev_data$AVISIT == "VIS1", ]
+  expect_message(
+    fm <- mmrm(FEV1 ~ FEV1_BL + ARMCD + us(AVISIT | USUBJID), data = mydata),
+    "dropped visits"
+  )
+  emm <- as.data.frame(emmeans::emmeans(fm, ~ ARMCD))
+  expect_equal(nrow(emm), 2L)
+  expect_true(all(is.finite(emm$SE)))
+})
