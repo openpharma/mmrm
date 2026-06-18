@@ -25,10 +25,14 @@
 - `mmrm` now supports the spatial Gaussian (`sp_gau`) covariance
   structure.
 
-## mmrm 0.3.17.9000
-
 #### Bug Fixes
 
+- Previously, using
+  [`emmeans()`](https://rvlenth.github.io/emmeans/reference/emmeans.html)
+  on a model fitted to a dataset with only a single visit would fail,
+  because the visit variable was always included in the design matrix
+  and a contrast could not be constructed for this factor variable
+  having only a single level. This is now fixed.
 - Previously, having the visit variable only in an interaction term in
   the model could lead to failed
   [`emmeans()`](https://rvlenth.github.io/emmeans/reference/emmeans.html)
