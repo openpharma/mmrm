@@ -539,12 +539,12 @@ implementations considered produce similar empirical biases, variances,
     #> other attached packages:
     #>  [1] ggplot2_4.0.3           emmeans_2.0.3           knitr_1.51             
     #>  [4] sasr_0.1.5              glmmTMB_1.1.14          nlme_3.1-169           
-    #>  [7] lme4_2.0-1              Matrix_1.7-5            mmrm_0.3.17.9038       
+    #>  [7] lme4_2.0-1              Matrix_1.7-5            mmrm_0.3.18            
     #> [10] stringr_1.6.0           microbenchmark_1.5.0    purrr_1.2.2            
     #> [13] dplyr_1.2.1             clusterGeneration_1.3.8 MASS_7.3-65            
     #> 
     #> loaded via a namespace (and not attached):
-    #>  [1] gtable_0.3.6        TMB_1.9.21          xfun_0.58          
+    #>  [1] gtable_0.3.6        TMB_1.9.21          xfun_0.59          
     #>  [4] bslib_0.11.0        htmlwidgets_1.6.4   lattice_0.22-9     
     #>  [7] numDeriv_2016.8-1.1 vctrs_0.7.3         tools_4.5.2        
     #> [10] Rdpack_2.6.6        generics_0.1.4      sandwich_3.1-1     
@@ -558,7 +558,7 @@ implementations considered produce similar empirical biases, variances,
     #> [34] digest_0.6.39       mvtnorm_1.4-1       stringi_1.8.7      
     #> [37] labeling_0.4.3      splines_4.5.2       fastmap_1.2.0      
     #> [40] grid_4.5.2          cli_3.6.6           magrittr_2.0.5     
-    #> [43] dichromat_2.0-0.1   withr_3.0.2         scales_1.4.0       
+    #> [43] dichromat_2.0-0.1   withr_3.0.3         scales_1.4.0       
     #> [46] backports_1.5.1     estimability_1.5.1  rmarkdown_2.31     
     #> [49] otel_0.2.0          reticulate_1.46.0   ragg_1.5.2         
     #> [52] zoo_1.8-15          png_0.1-9           coda_0.19-4.1      

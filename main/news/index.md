@@ -1,6 +1,8 @@
 # Changelog
 
-## mmrm 0.3.17.9038
+## mmrm 0.3.18
+
+CRAN release: 2026-06-19
 
 #### New Features
 
