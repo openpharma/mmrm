@@ -14,23 +14,23 @@ h_assert_lrt_suitability(fits, refit, dfs, is_reml)
 
 - fits:
 
-  (`list`)  
+  (`list`)\
   list of `mmrm` fits.
 
 - refit:
 
-  (`flag`)  
+  (`flag`)\
   `TRUE` or `FALSE` indicating whether or not the user gave permission
   to refit models to make all models suitable for LRT.
 
 - dfs:
 
-  (`numeric`)  
+  (`numeric`)\
   vector of the degrees of freedom for each element of `fits`.
 
 - is_reml:
 
-  (`logical`)  
+  (`logical`)\
   vector indicating whether or not REML was used for each element of
   `fits`.
 

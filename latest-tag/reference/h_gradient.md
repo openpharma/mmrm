@@ -13,13 +13,13 @@ h_gradient(jac_list, contrast)
 
 - jac_list:
 
-  (`list`)  
+  (`list`)\
   Jacobian list produced e.g. by
   [`h_jac_list()`](https://openpharma.github.io/mmrm/reference/h_jac_list.md).
 
 - contrast:
 
-  (`numeric`)  
+  (`numeric`)\
   contrast vector, which needs to have the same number of elements as
   there are rows and columns in each element of `jac_list`.
 

@@ -15,12 +15,12 @@ h_generate_new_name(x, env)
 
 - x:
 
-  (`string`)  
+  (`string`)\
   a candidate name.
 
 - env:
 
-  (`environment`)  
+  (`environment`)\
   an [environment](https://rdrr.io/r/base/environment.html) whose
   bindings (and whose parents' bindings) are checked to ensure that they
   do not include the returned value.

@@ -12,11 +12,11 @@ h_optimizer_fun(optimizer = c("L-BFGS-B", "BFGS", "CG", "nlminb"))
 
 - optimizer:
 
-  (`character`)  
+  (`character`)\
   vector of optimizers.
 
 ## Value
 
-A (`list`)  
+A (`list`)\
 of optimizer functions generated from
 [`h_partial_fun_args()`](https://openpharma.github.io/mmrm/reference/h_partial_fun_args.md).

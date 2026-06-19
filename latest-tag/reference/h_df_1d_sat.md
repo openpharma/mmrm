@@ -14,12 +14,12 @@ h_df_1d_sat(object, contrast)
 
 - object:
 
-  (`mmrm`)  
+  (`mmrm`)\
   the MMRM fit.
 
 - contrast:
 
-  (`numeric`)  
+  (`numeric`)\
   contrast vector. Note that this should not include elements for
   singular coefficient estimates, i.e. only refer to the actually
   estimated coefficients.

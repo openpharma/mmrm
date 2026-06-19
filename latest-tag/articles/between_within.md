@@ -39,14 +39,14 @@ potential “levels” of parameters (Gałecki and Burzykowski (2013)):
   - These are the “between parameters”.
   - The corresponding degrees of freedom are \\DF_1 = N_1 - (N_0 +
     p_1)\\.
-  - In words this can be read as:  
+  - In words this can be read as:\
     “Between” DF = “number of subjects” - (“1 if intercept otherwise
     0” + “number of between parameters”).
 - Level 2: Effects that change within subjects.
   - These are the “within parameters”.
   - The corresponding degrees of freedom are \\DF_2 = N_2 - (N_1 +
     p_2)\\.
-  - In words this can be read as:  
+  - In words this can be read as:\
     “Within” DF = “number of observations” - (“number of subjects” +
     “number of within parameters”).
 

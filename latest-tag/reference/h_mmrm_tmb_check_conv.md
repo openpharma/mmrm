@@ -12,12 +12,12 @@ h_mmrm_tmb_check_conv(tmb_opt, mmrm_tmb)
 
 - tmb_opt:
 
-  (`list`)  
+  (`list`)\
   optimization result.
 
 - mmrm_tmb:
 
-  (`mmrm_tmb`)  
+  (`mmrm_tmb`)\
   result from
   [`h_mmrm_tmb_fit()`](https://openpharma.github.io/mmrm/reference/h_mmrm_tmb_fit.md).
 

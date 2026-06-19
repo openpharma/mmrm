@@ -14,8 +14,8 @@
     }
   };
 </script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Fit an MMRM — mmrm">
 <meta name="description" content="
@@ -39,7 +39,7 @@ This is the main function fitting the MMRM.">
 
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.17</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.18</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,6 +70,7 @@ This is the main function fitting the MMRM.">
     <li><h6 class="dropdown-header" data-toc-skip>Coefficient Covariance</h6></li>
     <li><a class="dropdown-item" href="../articles/coef_vcov.html">Coefficients Covariance Matrix Adjustment</a></li>
     <li><a class="dropdown-item" href="../articles/empirical_wls.html">Details of Weighted Least Square Empirical Covariance</a></li>
+    <li><a class="dropdown-item" href="../articles/model_robust_estimator.html">Model-Robust Variance Estimator for G-Computation</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Algorithm Details</h6></li>
     <li><a class="dropdown-item" href="../articles/algorithm.html">Model Fitting Algorithm</a></li>
@@ -92,6 +93,7 @@ This is the main function fitting the MMRM.">
     <div class="dropdown-menu" aria-labelledby="dropdown-versions">
     <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
+<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.18">v0.3.18</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.17">v0.3.17</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.16">v0.3.16</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.15">v0.3.15</a>
@@ -126,7 +128,7 @@ This is the main function fitting the MMRM.">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Fit an MMRM</h1>
-      <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.17/R/fit.R" class="external-link"><code>R/fit.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.18/R/fit.R" class="external-link"><code>R/fit.R</code></a></small>
       <div class="d-none name"><code>mmrm.Rd</code></div>
     </div>
 
@@ -143,6 +145,7 @@ This is the main function fitting the MMRM.">
 <span>  <span class="va">data</span>,</span>
 <span>  weights <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  covariance <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  contrasts <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  reml <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  control <span class="op">=</span> <span class="fu"><a href="mmrm_control.html">mmrm_control</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -177,6 +180,20 @@ the fitting process. Should be <code>NULL</code> or a numeric vector.</p></dd>
 as produced with <code><a href="cov_struct.html">cov_struct()</a></code>, or value that can be coerced to a
 covariance structure using <code><a href="as.cov_struct.html">as.cov_struct()</a></code>. If no value is provided,
 a structure is derived from the provided formula.</p></dd>
+
+
+<dt id="arg-contrasts">contrasts<a class="anchor" aria-label="anchor" href="#arg-contrasts"></a>
+</dt>
+<dd><p>(<code>list</code> or <code>NULL</code>)<br> an optional named list of contrast
+matrices or contrast functions (like <a href="https://rdrr.io/r/stats/contrast.html" class="external-link">stats::contr.sum</a> or
+<a href="https://rdrr.io/r/stats/contrast.html" class="external-link">stats::contr.poly</a>) for specific factor variables, matching the
+<code>contrasts</code> argument in <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">stats::lm()</a></code>. The list names must correspond to
+factor variable names in the model formula. When <code>NULL</code> (the default),
+the contrasts set on the factor variables in <code>data</code> are used. If a
+contrast matrix has rownames that include levels not present in <code>data</code>,
+those levels are preserved and the corresponding model matrix columns
+are marked as aliased (not estimable), enabling prediction on new data
+containing those levels.</p></dd>
 
 
 <dt id="arg-reml">reml<a class="anchor" aria-label="anchor" href="#arg-reml"></a>
@@ -291,7 +308,7 @@ the number of visit levels exceeds the maximum.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Daniel Sabanes Bove, Liming Li, Julia Dedic, Doug Kelkhoff, Kevin Kunzmann, Brian Matthew Lang, Christian Stock, Ya Wang, Dan James, Jonathan Sidi, Daniel Leibovitz, Daniel D. Sjoberg, Nikolas Ivan Krieger, Boehringer Ingelheim Ltd., Gilead Sciences, Inc., F. Hoffmann-La Roche AG, Merck Sharp &amp; Dohme, Inc., AstraZeneca plc, inferential.biostatistics GmbH.</p>
+  <p>Developed by Daniel Sabanes Bove, Liming Li, Julia Dedic, Doug Kelkhoff, Kevin Kunzmann, Brian Matthew Lang, Christian Stock, Ya Wang, Dan James, Jonathan Sidi, Daniel Leibovitz, Daniel D. Sjoberg, Nikolas Ivan Krieger, Arryn Panagos, Jeremiah Jones, Boehringer Ingelheim Ltd., Gilead Sciences, Inc., F. Hoffmann-La Roche AG, Merck Sharp &amp; Dohme, Inc., AstraZeneca plc, inferential.biostatistics GmbH.</p>
 </div>
 
 <div class="pkgdown-footer-right">

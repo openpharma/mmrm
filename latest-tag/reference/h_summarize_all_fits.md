@@ -12,7 +12,7 @@ h_summarize_all_fits(all_fits)
 
 - all_fits:
 
-  (`list` of `mmrm_fit` or `try-error`)  
+  (`list` of `mmrm_fit` or `try-error`)\
   list of fits.
 
 ## Value

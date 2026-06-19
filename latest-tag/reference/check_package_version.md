@@ -12,12 +12,12 @@ check_package_version(pkg, ver = c(NA_character_, NA_character_))
 
 - pkg:
 
-  (`string`)  
+  (`string`)\
   package name.
 
 - ver:
 
-  (`character`)  
+  (`character`)\
   of length 2 whose elements can be provided to
   [`numeric_version()`](https://rdrr.io/r/base/numeric_version.html),
   representing a minimum and maximum (inclusive) version requirement for

@@ -14,25 +14,25 @@ h_mmrm_tmb_extract_cov(tmb_report, tmb_data, visit_var, is_spatial)
 
 - tmb_report:
 
-  (`list`)  
+  (`list`)\
   report created with
   [`TMB::MakeADFun()`](https://rdrr.io/pkg/TMB/man/MakeADFun.html)
   report function.
 
 - tmb_data:
 
-  (`mmrm_tmb_data`)  
+  (`mmrm_tmb_data`)\
   produced by
   [`h_mmrm_tmb_data()`](https://openpharma.github.io/mmrm/reference/h_mmrm_tmb_data.md).
 
 - visit_var:
 
-  (`character`)  
+  (`character`)\
   character vector of the visit variable
 
 - is_spatial:
 
-  (`flag`)  
+  (`flag`)\
   indicator whether the covariance structure is spatial.
 
 ## Value

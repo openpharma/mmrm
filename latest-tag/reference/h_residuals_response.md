@@ -14,7 +14,7 @@ h_residuals_response(object)
 
 - object:
 
-  (`mmrm_tmb`)  
+  (`mmrm_tmb`)\
   the fitted MMRM.
 
 ## Value

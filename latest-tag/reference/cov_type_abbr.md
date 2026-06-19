@@ -12,7 +12,7 @@ cov_type_abbr(type)
 
 - type:
 
-  (`string`)  
+  (`string`)\
   either a full name or abbreviate covariance structure type name to
   collapse into an abbreviated type.
 

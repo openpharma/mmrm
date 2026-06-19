@@ -18,7 +18,7 @@ drop_elements(x, n)
 
 - n:
 
-  (`integer`)  
+  (`integer`)\
   the number of terms to drop.
 
 ## Value

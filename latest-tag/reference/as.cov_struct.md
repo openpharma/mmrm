@@ -24,7 +24,7 @@ as.cov_struct(x, warn_partial = TRUE, ...)
 
 - warn_partial:
 
-  (`flag`)  
+  (`flag`)\
   whether to emit a warning when parts of the formula are disregarded.
 
 ## Value
@@ -47,9 +47,9 @@ For example, formulas may include terms such as
     cp(time | group / subject)
     sp_exp(coord1, coord2 | group / subject)
 
-Note that only `sp_exp` (spatial) covariance structures may provide
-multiple coordinates, which identify the Euclidean distance between the
-time points.
+Note that only spatial covariance structures may provide multiple
+coordinates, which identify the Euclidean distance between the time
+points.
 
 ## Methods (by class)
 

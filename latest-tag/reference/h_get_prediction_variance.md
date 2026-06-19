@@ -13,15 +13,15 @@ h_get_prediction_variance(object, nsim, tmb_data)
 
 - object:
 
-  (`mmrm_tmb`)  
+  (`mmrm_tmb`)\
   the fitted MMRM.
 
 - nsim:
 
-  (`count`)  
+  (`count`)\
   number of samples.
 
 - tmb_data:
 
-  (`mmrm_tmb_data`)  
+  (`mmrm_tmb_data`)\
   object.

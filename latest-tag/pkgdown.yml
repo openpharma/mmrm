@@ -1,4 +1,4 @@
-pandoc: 3.8.3
+pandoc: '3.9'
 pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
@@ -12,10 +12,11 @@ articles:
   kenward: kenward.html
   methodological_introduction: methodological_introduction.html
   mmrm_review_methods: mmrm_review_methods.html
+  model_robust_estimator: model_robust_estimator.html
   package_structure: package_structure.html
   predict: predict.html
   satterthwaite: satterthwaite.html
-last_built: 2026-01-09T00:50Z
+last_built: 2026-06-19T12:54Z
 urls:
   reference: https://openpharma.github.io/mmrm/reference
   article: https://openpharma.github.io/mmrm/articles

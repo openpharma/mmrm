@@ -12,7 +12,7 @@ h_partial_fun_args(fun, ..., additional_attr = list())
 
 - fun:
 
-  (`function`)  
+  (`function`)\
   to be wrapped.
 
 - ...:
@@ -21,7 +21,7 @@ h_partial_fun_args(fun, ..., additional_attr = list())
 
 - additional_attr:
 
-  (`list`)  
+  (`list`)\
   of additional attributes to apply to the result.
 
 ## Value

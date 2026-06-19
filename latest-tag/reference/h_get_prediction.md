@@ -12,22 +12,22 @@ h_get_prediction(tmb_data, theta, beta, beta_vcov)
 
 - tmb_data:
 
-  (`mmrm_tmb_data`)  
+  (`mmrm_tmb_data`)\
   object.
 
 - theta:
 
-  (`numeric`)  
+  (`numeric`)\
   theta value.
 
 - beta:
 
-  (`numeric`)  
+  (`numeric`)\
   beta value.
 
 - beta_vcov:
 
-  (`matrix`)  
+  (`matrix`)\
   beta_vcov matrix.
 
 ## Value

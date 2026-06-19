@@ -15,12 +15,12 @@ h_within_or_between(x_matrix, subject_ids)
 
 - x_matrix:
 
-  (`matrix`)  
+  (`matrix`)\
   the design matrix with column names.
 
 - subject_ids:
 
-  (`factor`)  
+  (`factor`)\
   the subject IDs.
 
 ## Value

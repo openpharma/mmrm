@@ -12,12 +12,12 @@ h_reconcile_cov_struct(formula = NULL, covariance = NULL)
 
 - formula:
 
-  (`formula`)  
+  (`formula`)\
   the model formula, see details.
 
 - covariance:
 
-  (`cov_struct`)  
+  (`cov_struct`)\
   a covariance structure type definition as produced with
   [`cov_struct()`](https://openpharma.github.io/mmrm/reference/cov_struct.md),
   or value that can be coerced to a covariance structure using

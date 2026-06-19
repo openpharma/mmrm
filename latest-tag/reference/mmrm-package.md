@@ -17,6 +17,9 @@ Useful links:
 
 Authors:
 
+- Daniel Sabanes Bove <daniel.sabanes_bove@rconis.com>
+  ([ORCID](https://orcid.org/0000-0002-0176-9239))
+
 - Liming Li <liming.li1@astrazeneca.com>
   ([ORCID](https://orcid.org/0009-0008-6870-0878))
 
@@ -43,6 +46,12 @@ Authors:
 
 - Nikolas Ivan Krieger <nikolas.krieger@experis.com>
   ([ORCID](https://orcid.org/0000-0002-4581-3545))
+
+- Arryn Panagos <panagos_arryn@lilly.com>
+  ([ORCID](https://orcid.org/0000-0003-0452-2095))
+
+- Jeremiah Jones <jeremiah.jones@lilly.com>
+  ([ORCID](https://orcid.org/0000-0003-1239-2542))
 
 Other contributors:
 

@@ -15,13 +15,13 @@ h_get_kr_comp(tmb_data, theta)
 
 - tmb_data:
 
-  (`mmrm_tmb_data`)  
+  (`mmrm_tmb_data`)\
   produced by
   [`h_mmrm_tmb_data()`](https://openpharma.github.io/mmrm/reference/h_mmrm_tmb_data.md).
 
 - theta:
 
-  (`numeric`)  
+  (`numeric`)\
   theta estimate.
 
 ## Value

@@ -13,17 +13,17 @@ h_add_terms(f, adds, drop_response = FALSE)
 
 - f:
 
-  (`formula`)  
+  (`formula`)\
   a formula to be updated.
 
 - adds:
 
-  (`character`)  
+  (`character`)\
   representation of elements to be added.
 
 - drop_response:
 
-  (`flag`)  
+  (`flag`)\
   whether response should be dropped.
 
 ## Value

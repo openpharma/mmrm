@@ -27,24 +27,24 @@ h_construct_model_frame_inputs(
 
 - formula:
 
-  (`mmrm`)  
+  (`mmrm`)\
   fit object.
 
 - data:
 
-  (`data.frame`)  
+  (`data.frame`)\
   optional data frame will be passed to
   [`model.frame()`](https://rdrr.io/r/stats/model.frame.html) or
   [`model.matrix()`](https://rdrr.io/r/stats/model.matrix.html).
 
 - include:
 
-  (`character`)  
+  (`character`)\
   specification of variables to include.
 
 - full:
 
-  (`flag`)  
+  (`flag`)\
   indicator whether to return full model frame (deprecated).
 
 ## Value

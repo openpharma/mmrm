@@ -14,6 +14,7 @@ mmrm_control(
   accept_singular = TRUE,
   drop_visit_levels = TRUE,
   disable_theta_vcov = FALSE,
+  emmeans_gcomp_vars = NULL,
   ...,
   optimizers = h_get_optimizers(...)
 )
@@ -23,43 +24,55 @@ mmrm_control(
 
 - n_cores:
 
-  (`count`)  
+  (`count`)\
   number of cores to be used.
 
 - method:
 
-  (`string`)  
+  (`string`)\
   adjustment method for degrees of freedom.
 
 - vcov:
 
-  (`string`)  
+  (`string`)\
   coefficients covariance matrix adjustment method.
 
 - start:
 
-  (`NULL`, `numeric` or `function`)  
+  (`NULL`, `numeric` or `function`)\
   optional start values for variance parameters. See details for more
   information.
 
 - accept_singular:
 
-  (`flag`)  
+  (`flag`)\
   whether singular design matrices are reduced to full rank
   automatically and additional coefficient estimates will be missing.
 
 - drop_visit_levels:
 
-  (`flag`)  
+  (`flag`)\
   whether to drop levels for visit variable, if visit variable is a
   factor, see details.
 
 - disable_theta_vcov:
 
-  (`flag`)  
+  (`flag`)\
   whether to disable calculation of variance-covariance matrix for
   variance parameters. This can speed up fitting when there are many
   variance parameters, see details.
+
+- emmeans_gcomp_vars:
+
+  (`character` or `NULL`)\
+  names of variables to treat as fixed in the G-computation correction
+  for emmeans. When non-`NULL`, enables the correction in
+  [`emmeans_support`](https://openpharma.github.io/mmrm/reference/emmeans_support.md),
+  producing the average treatment effect (ATE) with corrected standard
+  errors. The visit variable (identified from the covariance structure)
+  is computed separately per level. All other named variables are
+  treated as intervention (subjects pooled across levels). All variables
+  not named are averaged over using each subject's actual values.
 
 - ...:
 
@@ -68,7 +81,7 @@ mmrm_control(
 
 - optimizers:
 
-  (`list`)  
+  (`list`)\
   optimizer specification, created with
   [`h_get_optimizers()`](https://openpharma.github.io/mmrm/reference/h_get_optimizers.md).
   Please note that optimizers using the Hessian will not be compatible
@@ -205,7 +218,7 @@ mmrm_control(
 #>             gr1, con)
 #>     res
 #> }
-#> <bytecode: 0x56234c637248>
+#> <bytecode: 0x55f00813ed40>
 #> <environment: namespace:stats>
 #> attr(,"args")
 #> attr(,"args")$control
@@ -235,11 +248,12 @@ mmrm_control(
 #>     adh = rep(0, 2 * n_visits - 1),
 #>     cs = rep(0, 2),
 #>     csh = rep(0, n_visits + 1),
-#>     sp_exp = rep(0, 2)
+#>     sp_exp = rep(0, 2),
+#>     sp_gau = rep(0, 2)
 #>   )
 #>   rep(start_value, n_groups)
 #> }
-#> <bytecode: 0x56234bbff828>
+#> <bytecode: 0x55f008e025d8>
 #> <environment: namespace:mmrm>
 #> 
 #> $accept_singular
@@ -259,6 +273,9 @@ mmrm_control(
 #> 
 #> $disable_theta_vcov
 #> [1] FALSE
+#> 
+#> $emmeans_gcomp_vars
+#> NULL
 #> 
 #> attr(,"class")
 #> [1] "mmrm_control"

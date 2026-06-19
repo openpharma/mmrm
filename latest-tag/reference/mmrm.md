@@ -12,6 +12,7 @@ mmrm(
   data,
   weights = NULL,
   covariance = NULL,
+  contrasts = NULL,
   reml = TRUE,
   control = mmrm_control(...),
   ...
@@ -22,23 +23,23 @@ mmrm(
 
 - formula:
 
-  (`formula`)  
+  (`formula`)\
   the model formula, see details.
 
 - data:
 
-  (`data`)  
+  (`data`)\
   the data to be used for the model.
 
 - weights:
 
-  (`vector`)  
+  (`vector`)\
   an optional vector of weights to be used in the fitting process.
   Should be `NULL` or a numeric vector.
 
 - covariance:
 
-  (`cov_struct`)  
+  (`cov_struct`)\
   a covariance structure type definition as produced with
   [`cov_struct()`](https://openpharma.github.io/mmrm/reference/cov_struct.md),
   or value that can be coerced to a covariance structure using
@@ -46,15 +47,30 @@ mmrm(
   If no value is provided, a structure is derived from the provided
   formula.
 
+- contrasts:
+
+  (`list` or `NULL`)\
+  an optional named list of contrast matrices or contrast functions
+  (like [stats::contr.sum](https://rdrr.io/r/stats/contrast.html) or
+  [stats::contr.poly](https://rdrr.io/r/stats/contrast.html)) for
+  specific factor variables, matching the `contrasts` argument in
+  [`stats::lm()`](https://rdrr.io/r/stats/lm.html). The list names must
+  correspond to factor variable names in the model formula. When `NULL`
+  (the default), the contrasts set on the factor variables in `data` are
+  used. If a contrast matrix has rownames that include levels not
+  present in `data`, those levels are preserved and the corresponding
+  model matrix columns are marked as aliased (not estimable), enabling
+  prediction on new data containing those levels.
+
 - reml:
 
-  (`flag`)  
+  (`flag`)\
   whether restricted maximum likelihood (REML) estimation is used,
   otherwise maximum likelihood (ML) is used.
 
 - control:
 
-  (`mmrm_control`)  
+  (`mmrm_control`)\
   fine-grained fitting specifications list created with
   [`mmrm_control()`](https://openpharma.github.io/mmrm/reference/mmrm_control.md).
 

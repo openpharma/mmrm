@@ -15,13 +15,13 @@ cov_types(
 
 - form:
 
-  (`character`)  
+  (`character`)\
   covariance structure type name form. One or more of `"name"`, `"abbr"`
   (abbreviation), or `"habbr"` (heterogeneous abbreviation).
 
 - filter:
 
-  (`character`)  
+  (`character`)\
   covariance structure type filter. One or more of `"heterogeneous"` or
   `"spatial"`.
 
@@ -45,7 +45,8 @@ coded as a factor.
 |  |  |  |  |
 |----|----|----|----|
 | **Structure** | **Description** | **Parameters** | **\\(i, j)\\ element** |
-| sp_exp | spatial exponential | \\2\\ | \\\sigma^{2}\rho^{-d\_{ij}}\\ |
+| sp_exp | spatial exponential | \\2\\ | \\\sigma^{2}\rho^{d\_{ij}}\\ |
+| sp_gau | spatial Gaussian | \\2\\ | \\\sigma^{2}\rho^{d\_{ij}^2}\\ |
 
 where \\d\_{ij}\\ denotes the Euclidean distance between time points
 \\i\\ and \\j\\.

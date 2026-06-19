@@ -12,7 +12,7 @@ is_infix(name)
 
 - name:
 
-  (`symbol` or `name` or `string`)  
+  (`symbol` or `name` or `string`)\
   a possible reference to an infix operator to check.
 
 ## Value

@@ -14,8 +14,8 @@
     }
   };
 </script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Control Parameters for Fitting an MMRM — mmrm_control">
 <meta name="description" content="
@@ -41,7 +41,7 @@ control function.">
 
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.17</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.18</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -72,6 +72,7 @@ control function.">
     <li><h6 class="dropdown-header" data-toc-skip>Coefficient Covariance</h6></li>
     <li><a class="dropdown-item" href="../articles/coef_vcov.html">Coefficients Covariance Matrix Adjustment</a></li>
     <li><a class="dropdown-item" href="../articles/empirical_wls.html">Details of Weighted Least Square Empirical Covariance</a></li>
+    <li><a class="dropdown-item" href="../articles/model_robust_estimator.html">Model-Robust Variance Estimator for G-Computation</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Algorithm Details</h6></li>
     <li><a class="dropdown-item" href="../articles/algorithm.html">Model Fitting Algorithm</a></li>
@@ -94,6 +95,7 @@ control function.">
     <div class="dropdown-menu" aria-labelledby="dropdown-versions">
     <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
+<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.18">v0.3.18</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.17">v0.3.17</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.16">v0.3.16</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.15">v0.3.15</a>
@@ -128,7 +130,7 @@ control function.">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Control Parameters for Fitting an MMRM</h1>
-      <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.17/R/fit.R" class="external-link"><code>R/fit.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.18/R/fit.R" class="external-link"><code>R/fit.R</code></a></small>
       <div class="d-none name"><code>mmrm_control.Rd</code></div>
     </div>
 
@@ -149,6 +151,7 @@ control function.</p>
 <span>  accept_singular <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  drop_visit_levels <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  disable_theta_vcov <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  emmeans_gcomp_vars <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span>,</span>
 <span>  optimizers <span class="op">=</span> <span class="fu"><a href="h_get_optimizers.html">h_get_optimizers</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -198,6 +201,18 @@ if visit variable is a factor, see details.</p></dd>
 <dd><p>(<code>flag</code>)<br> whether to disable calculation of
 variance-covariance matrix for variance parameters. This can speed up fitting
 when there are many variance parameters, see details.</p></dd>
+
+
+<dt id="arg-emmeans-gcomp-vars">emmeans_gcomp_vars<a class="anchor" aria-label="anchor" href="#arg-emmeans-gcomp-vars"></a>
+</dt>
+<dd><p>(<code>character</code> or <code>NULL</code>)<br> names of variables to
+treat as fixed in the G-computation correction for emmeans. When non-<code>NULL</code>,
+enables the correction in <code><a href="emmeans_support.html">emmeans_support</a></code>, producing the average
+treatment effect (ATE) with corrected standard errors. The visit variable
+(identified from the covariance structure) is computed separately per
+level. All other named variables are treated as intervention (subjects
+pooled across levels). All variables not named are averaged over using
+each subject's actual values.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a>
@@ -353,7 +368,7 @@ These will then raise errors.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             gr1, con)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     res</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x56234c637248&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55f00813ed40&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: namespace:stats&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"args")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"args")$control</span>
@@ -383,11 +398,12 @@ These will then raise errors.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     adh = rep(0, 2 * n_visits - 1),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     cs = rep(0, 2),</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     csh = rep(0, n_visits + 1),</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     sp_exp = rep(0, 2)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     sp_exp = rep(0, 2),</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     sp_gau = rep(0, 2)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   )</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   rep(start_value, n_groups)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x56234bbff828&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55f008e025d8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: namespace:mmrm&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $accept_singular</span>
@@ -408,6 +424,9 @@ These will then raise errors.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $disable_theta_vcov</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $emmeans_gcomp_vars</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "mmrm_control"</span>
 </code></pre></div>
@@ -418,7 +437,7 @@ These will then raise errors.</p></li>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Daniel Sabanes Bove, Liming Li, Julia Dedic, Doug Kelkhoff, Kevin Kunzmann, Brian Matthew Lang, Christian Stock, Ya Wang, Dan James, Jonathan Sidi, Daniel Leibovitz, Daniel D. Sjoberg, Nikolas Ivan Krieger, Boehringer Ingelheim Ltd., Gilead Sciences, Inc., F. Hoffmann-La Roche AG, Merck Sharp &amp; Dohme, Inc., AstraZeneca plc, inferential.biostatistics GmbH.</p>
+  <p>Developed by Daniel Sabanes Bove, Liming Li, Julia Dedic, Doug Kelkhoff, Kevin Kunzmann, Brian Matthew Lang, Christian Stock, Ya Wang, Dan James, Jonathan Sidi, Daniel Leibovitz, Daniel D. Sjoberg, Nikolas Ivan Krieger, Arryn Panagos, Jeremiah Jones, Boehringer Ingelheim Ltd., Gilead Sciences, Inc., F. Hoffmann-La Roche AG, Merck Sharp &amp; Dohme, Inc., AstraZeneca plc, inferential.biostatistics GmbH.</p>
 </div>
 
 <div class="pkgdown-footer-right">

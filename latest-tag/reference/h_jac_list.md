@@ -13,18 +13,18 @@ h_jac_list(tmb_data, theta_est, beta_vcov)
 
 - tmb_data:
 
-  (`mmrm_tmb_data`)  
+  (`mmrm_tmb_data`)\
   produced by
   [`h_mmrm_tmb_data()`](https://openpharma.github.io/mmrm/reference/h_mmrm_tmb_data.md).
 
 - theta_est:
 
-  (`numeric`)  
+  (`numeric`)\
   variance parameters point estimate.
 
 - beta_vcov:
 
-  (`matrix`)  
+  (`matrix`)\
   vairance covariance matrix of coefficients.
 
 ## Value

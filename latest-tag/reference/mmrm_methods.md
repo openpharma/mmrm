@@ -24,7 +24,7 @@ confint(object, parm, level = 0.95, ...)
 
 - object:
 
-  (`mmrm`)  
+  (`mmrm`)\
   the fitted MMRM including Jacobian and call etc.
 
 - ...:
@@ -37,7 +37,7 @@ Depends on the method, see Details and Functions.
 
 ## Details
 
-While printing the summary of (`mmrm`)  
+While printing the summary of (`mmrm`)\
 object, the following will be displayed:
 
 1.  Formula. The formula used in the model.

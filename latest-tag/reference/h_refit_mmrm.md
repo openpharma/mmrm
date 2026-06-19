@@ -16,12 +16,12 @@ h_refit_mmrm(fit, data)
 
 - fit:
 
-  (`mmrm`)  
+  (`mmrm`)\
   an `mmrm` object to be refit.
 
 - data:
 
-  (`data frame`)  
+  (`data frame`)\
   a data frame upon which `fit` is to be refit.
 
 ## Value

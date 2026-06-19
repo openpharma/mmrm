@@ -12,7 +12,7 @@ h_extract_covariance_terms(f)
 
 - f:
 
-  (`formula`)  
+  (`formula`)\
   a formula from which covariance terms should be extracted.
 
 ## Value

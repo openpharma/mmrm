@@ -28,6 +28,8 @@
   Adjustment](https://openpharma.github.io/mmrm/articles/coef_vcov.md):
 - [Details of Weighted Least Square Empirical
   Covariance](https://openpharma.github.io/mmrm/articles/empirical_wls.md):
+- [Model-Robust Variance Estimator for
+  G-Computation](https://openpharma.github.io/mmrm/articles/model_robust_estimator.md):
 
 ### Algorithm Details
 

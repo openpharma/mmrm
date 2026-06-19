@@ -14,28 +14,28 @@ h_get_empirical(tmb_data, theta, beta, beta_vcov, type)
 
 - tmb_data:
 
-  (`mmrm_tmb_data`)  
+  (`mmrm_tmb_data`)\
   produced by
   [`h_mmrm_tmb_data()`](https://openpharma.github.io/mmrm/reference/h_mmrm_tmb_data.md).
 
 - theta:
 
-  (`numeric`)  
+  (`numeric`)\
   theta estimate.
 
 - beta:
 
-  (`numeric`)  
+  (`numeric`)\
   beta estimate.
 
 - beta_vcov:
 
-  (`matrix`)  
+  (`matrix`)\
   covariance of beta estimate.
 
 - type:
 
-  (`string`)  
+  (`string`)\
   type of empirical method, including "Empirical", "Empirical-Jackknife"
   and "Empirical-Bias-Reduced".
 

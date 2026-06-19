@@ -179,6 +179,17 @@ following parametrization form:
 
 \\ \theta = (\log(\sigma), \mathop{\mathrm{logit}}(\rho)) \\
 
+### Spatial Gaussian (`sp_gau`)
+
+For spatial Gaussian, the covariance structure is defined as follows:
+
+\\ \rho\_{ij} = \rho^{d\_{ij}^2} \\
+
+where \\d\_{ij}\\ is the distance between time point \\i\\ and time
+point \\j\\.
+
+The parameterization is the same as spatial exponential.
+
 ## References
 
 Gabriel KR (1962). “Ante-dependence Analysis of an Ordered Set of

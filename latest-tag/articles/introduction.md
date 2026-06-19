@@ -213,7 +213,7 @@ gen_data <- function(
   out$trt <- factor(out$trt)
   out$time <- factor(out$time)
   out$pts <- factor(out$pts)
-  return(out)
+  out
 }
 set.seed(123)
 out <- gen_data()
@@ -684,6 +684,139 @@ We see that when using the default, second result, we just drop the
 correlation between `VIS2` and `VIS4` the same as the correlation
 between `VIS1` and `VIS2`. Hence we get a smaller correlation estimate
 here compared to the first result, which includes `VIS3` explicitly.
+
+### Fine control over design matrix
+
+In some scenarios, we may want to control how the design matrix is
+constructed in finer detail. This can be especially of interest if there
+are factor levels not present in the current dataset, which nonetheless
+are valid levels that should not result in later errors (for example,
+when using `predict` functions). In the example below, `emmeans` fails
+when averaging over factor levels the model never saw.
+
+``` r
+
+ex_data <- fev_data[!(fev_data$RACE == "White" & fev_data$SEX == "Male"), ]
+fit_subgroup1 <- mmrm(
+  formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = ex_data[ex_data$SEX == "Female", ],
+  vcov = "Asymptotic"
+)
+fit_subgroup2 <- mmrm(
+  formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = ex_data[ex_data$SEX == "Male", ],
+  vcov = "Asymptotic"
+)
+#> Some factor levels are dropped due to singular design matrix: RACE
+
+emmeans::emmeans(fit_subgroup1, ~ ARMCD | AVISIT, data = fev_data, weights = "proportional")
+#> mmrm() registered as emmeans extension
+#> AVISIT = VIS1:
+#>  ARMCD emmean    SE   df lower.CL upper.CL
+#>  PBO     34.8 1.050 76.2     32.7     36.9
+#>  TRT     36.8 1.100 76.2     34.7     39.0
+#> 
+#> AVISIT = VIS2:
+#>  ARMCD emmean    SE   df lower.CL upper.CL
+#>  PBO     37.8 0.834 80.9     36.1     39.4
+#>  TRT     40.5 0.770 77.2     39.0     42.0
+#> 
+#> AVISIT = VIS3:
+#>  ARMCD emmean    SE   df lower.CL upper.CL
+#>  PBO     44.2 0.618 70.9     42.9     45.4
+#>  TRT     46.5 0.628 71.6     45.3     47.8
+#> 
+#> AVISIT = VIS4:
+#>  ARMCD emmean    SE   df lower.CL upper.CL
+#>  PBO     48.9 1.700 69.2     45.5     52.3
+#>  TRT     52.8 1.660 68.8     49.5     56.1
+#> 
+#> Results are averaged over the levels of: RACE 
+#> Confidence level used: 0.95
+emmeans::emmeans(fit_subgroup2, ~ ARMCD | AVISIT, data = fev_data, weights = "proportional")
+#> Error in `contrasts<-`:
+#> ! wrong number of contrast matrix rows
+```
+
+By setting the contrasts argument specifically, just like in
+[`lm()`](https://rdrr.io/r/stats/lm.html), we can avoid this error:
+
+``` r
+
+contr_mat <- contr.sum(nlevels(ex_data$RACE))
+rownames(contr_mat) <- levels(fev_data$RACE)
+contr_mat
+#>                           [,1] [,2]
+#> Asian                        1    0
+#> Black or African American    0    1
+#> White                       -1   -1
+```
+
+Now the subgroup analysis code will run correctly, even when `emmeans`
+averages over the baseline values that aren’t subgroup-specific:
+
+``` r
+
+fit_subgroup1 <- mmrm(
+  formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = ex_data[ex_data$SEX == "Female", ],
+  vcov = "Asymptotic",
+  contrasts = list(RACE = contr_mat)
+)
+fit_subgroup2 <- mmrm(
+  formula = FEV1 ~ RACE + ARMCD * AVISIT + us(AVISIT | USUBJID),
+  data = ex_data[ex_data$SEX == "Male", ],
+  vcov = "Asymptotic",
+  contrasts = list(RACE = contr_mat)
+)
+
+emmeans::emmeans(fit_subgroup1, ~ ARMCD | AVISIT, data = fev_data, weights = "proportional")
+#> AVISIT = VIS1:
+#>  ARMCD emmean    SE   df lower.CL upper.CL
+#>  PBO     34.8 1.050 76.2     32.7     36.9
+#>  TRT     36.8 1.100 76.2     34.7     39.0
+#> 
+#> AVISIT = VIS2:
+#>  ARMCD emmean    SE   df lower.CL upper.CL
+#>  PBO     37.8 0.834 80.9     36.1     39.4
+#>  TRT     40.5 0.770 77.2     39.0     42.0
+#> 
+#> AVISIT = VIS3:
+#>  ARMCD emmean    SE   df lower.CL upper.CL
+#>  PBO     44.2 0.618 70.9     42.9     45.4
+#>  TRT     46.5 0.628 71.6     45.3     47.8
+#> 
+#> AVISIT = VIS4:
+#>  ARMCD emmean    SE   df lower.CL upper.CL
+#>  PBO     48.9 1.700 69.2     45.5     52.3
+#>  TRT     52.8 1.660 68.8     49.5     56.1
+#> 
+#> Results are averaged over the levels of: RACE 
+#> Confidence level used: 0.95
+emmeans::emmeans(fit_subgroup2, ~ ARMCD | AVISIT, data = fev_data, weights = "proportional")
+#> AVISIT = VIS1:
+#>  ARMCD emmean SE df asymp.LCL asymp.UCL
+#>  PBO   nonEst NA NA        NA        NA
+#>  TRT   nonEst NA NA        NA        NA
+#> 
+#> AVISIT = VIS2:
+#>  ARMCD emmean SE df asymp.LCL asymp.UCL
+#>  PBO   nonEst NA NA        NA        NA
+#>  TRT   nonEst NA NA        NA        NA
+#> 
+#> AVISIT = VIS3:
+#>  ARMCD emmean SE df asymp.LCL asymp.UCL
+#>  PBO   nonEst NA NA        NA        NA
+#>  TRT   nonEst NA NA        NA        NA
+#> 
+#> AVISIT = VIS4:
+#>  ARMCD emmean SE df asymp.LCL asymp.UCL
+#>  PBO   nonEst NA NA        NA        NA
+#>  TRT   nonEst NA NA        NA        NA
+#> 
+#> Results are averaged over the levels of: RACE 
+#> Confidence level used: 0.95
+```
 
 ## Extraction of model features
 
@@ -1156,7 +1289,6 @@ treatment arm:
 ``` r
 
 library(emmeans)
-#> mmrm() registered as emmeans extension
 #> Welcome to emmeans.
 #> Caution: You lose important information if you filter this package's results.
 #> See '? untidy'

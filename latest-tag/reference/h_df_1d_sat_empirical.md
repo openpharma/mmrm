@@ -16,12 +16,12 @@ h_df_1d_sat_empirical(object, contrast_matrix)
 
 - object:
 
-  (`mmrm`)  
+  (`mmrm`)\
   the MMRM fit.
 
 - contrast_matrix:
 
-  (`matrix`)  
+  (`matrix`)\
   contrast matrix with number of subjects times number of coefficients
   as the number of columns.
 

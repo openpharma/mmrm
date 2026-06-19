@@ -13,7 +13,7 @@ h_fits_common_data(fits)
 
 - fits:
 
-  (`list`)  
+  (`list`)\
   list of `mmrm` fits.
 
 ## Value

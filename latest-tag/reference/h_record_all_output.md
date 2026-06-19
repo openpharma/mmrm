@@ -15,19 +15,19 @@ h_record_all_output(expr, remove = list(), divergence = list())
 
 - expr:
 
-  (`expression`)  
+  (`expression`)\
   to be executed.
 
 - remove:
 
-  (`list`)  
+  (`list`)\
   optional list with elements `warnings`, `errors`, `messages` which can
   be character vectors, which will be removed from the results if
   specified.
 
 - divergence:
 
-  (`list`)  
+  (`list`)\
   optional list similar as `remove`, but these character vectors will be
   moved to the `divergence` result and signal that the fit did not
   converge.

@@ -1,5 +1,50 @@
 # Changelog
 
+## mmrm 0.3.18
+
+CRAN release: 2026-06-19
+
+#### New Features
+
+- [`mmrm()`](https://openpharma.github.io/mmrm/reference/mmrm.md) and
+  [`fit_mmrm()`](https://openpharma.github.io/mmrm/reference/fit_mmrm.md)
+  now accept a `contrasts` argument, allowing users to specify contrast
+  matrices or functions for factor variables, matching the interface of
+  [`lm()`](https://rdrr.io/r/stats/lm.html). When an explicit contrast
+  matrix includes levels not present in the fitting data, those levels
+  are preserved in the model and marked as aliased, enabling prediction
+  on new data containing those levels.
+- [`mmrm_control()`](https://openpharma.github.io/mmrm/reference/mmrm_control.md)
+  gains `emmeans_gcomp_vars` argument, enabling G-computation correction
+  in
+  [`emmeans()`](https://rvlenth.github.io/emmeans/reference/emmeans.html)
+  output for models with covariate-by-treatment interactions. When set,
+  [`emmeans()`](https://rvlenth.github.io/emmeans/reference/emmeans.html)
+  returns the average treatment effect (ATE) with standard errors that
+  account for covariate variability across subjects. See
+  [`?emmeans_support`](https://openpharma.github.io/mmrm/reference/emmeans_support.md)
+  for details.
+- `mmrm` now supports the spatial Gaussian (`sp_gau`) covariance
+  structure.
+
+#### Bug Fixes
+
+- Previously, using
+  [`emmeans()`](https://rvlenth.github.io/emmeans/reference/emmeans.html)
+  on a model fitted to a dataset with only a single visit would fail,
+  because the visit variable was always included in the design matrix
+  and a contrast could not be constructed for this factor variable
+  having only a single level. This is now fixed.
+- Previously, having the visit variable only in an interaction term in
+  the model could lead to failed
+  [`emmeans()`](https://rvlenth.github.io/emmeans/reference/emmeans.html)
+  evaluation. Similarly, there could be other interaction variable
+  problems potentially with
+  [`emmeans()`](https://rvlenth.github.io/emmeans/reference/emmeans.html),
+  due to the change in the order which is automatically applied by
+  [`terms()`](https://rdrr.io/r/stats/terms.html) used internally. This
+  is now fixed.
+
 ## mmrm 0.3.17
 
 CRAN release: 2026-01-08

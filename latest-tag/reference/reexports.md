@@ -5,6 +5,6 @@ to see their documentation.
 
 - generics:
 
-  [`augment`](https://generics.r-lib.org/reference/augment.html),
-  [`glance`](https://generics.r-lib.org/reference/glance.html),
-  [`tidy`](https://generics.r-lib.org/reference/tidy.html)
+  [`augment()`](https://generics.r-lib.org/reference/augment.html),
+  [`glance()`](https://generics.r-lib.org/reference/glance.html),
+  [`tidy()`](https://generics.r-lib.org/reference/tidy.html)

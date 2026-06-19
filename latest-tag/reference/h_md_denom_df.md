@@ -12,7 +12,7 @@ h_md_denom_df(t_stat_df)
 
 - t_stat_df:
 
-  (`numeric`)  
+  (`numeric`)\
   `n` t-statistic derived degrees of freedom.
 
 ## Value

@@ -78,16 +78,18 @@ of \\\mu_i(\hat\beta, \hat\theta)\\, and \\A\_{i, j, j}(\hat\beta,
 
 With the conditional variance formula
 
-\\ Var(Y_i) = Var(E(Y_i\|\theta)) + E(Var(Y_i\|\theta)) \\
+\\ \text{Var}(Y_i) = \text{Var}(\text{E}(Y_i\|\theta)) +
+\text{E}(\text{Var}(Y_i\|\theta)) \\
 
-and the conditional expectation \\E(Y_i\|\theta)\\ and the conditional
-variance \\Var(Y_i\|\theta)\\ being already described as
+and the conditional expectation \\\text{E}(Y_i\|\theta)\\ and the
+conditional variance \\\text{Var}(Y_i\|\theta)\\ being already described
+as
 
-\\ E(Y_i\|\theta) = \mu_i(\beta, \theta) \\
+\\ \text{E}(Y_i\|\theta) = \mu_i(\beta, \theta) \\
 
 and
 
-\\ Var(Y_i\|\theta) = A_i(\beta, \theta), \\
+\\ \text{Var}(Y_i\|\theta) = A_i(\beta, \theta), \\
 
 we can sample on \\\theta\\ and obtain \\\beta\\, then calculate the
 variance of conditional mean and the mean of conditional variance.

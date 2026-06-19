@@ -16,25 +16,25 @@ anova(object, ..., test = TRUE, refit = FALSE)
 
 - object:
 
-  (`mmrm`)  
+  (`mmrm`)\
   an `mmrm` model fit.
 
 - ...:
 
-  (`mmrm`)  
+  (`mmrm`)\
   optional `mmrm` model fits. If left empty, the significance of each
   term in `object` will be calculated.
 
 - test:
 
-  (`flag`)  
+  (`flag`)\
   indicating whether the output should include likelihood ratio test
   (LRT) results comparing the model fits to one another. Defaults to
   `TRUE`. Ignored if `...` is empty.
 
 - refit:
 
-  (`flag`)  
+  (`flag`)\
   indicating whether the models should be refitted with the dataset
   consisting of their shared set of observations before performing
   diagnostics and testing. This is ignored if the models already share

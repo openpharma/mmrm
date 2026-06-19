@@ -19,30 +19,30 @@ h_mmrm_tmb_fit(
 
 - tmb_object:
 
-  (`list`)  
+  (`list`)\
   created with
   [`TMB::MakeADFun()`](https://rdrr.io/pkg/TMB/man/MakeADFun.html).
 
 - tmb_opt:
 
-  (`list`)  
+  (`list`)\
   optimization result.
 
 - formula_parts:
 
-  (`mmrm_tmb_formula_parts`)  
+  (`mmrm_tmb_formula_parts`)\
   produced by
   [`h_mmrm_tmb_formula_parts()`](https://openpharma.github.io/mmrm/reference/h_mmrm_tmb_formula_parts.md).
 
 - tmb_data:
 
-  (`mmrm_tmb_data`)  
+  (`mmrm_tmb_data`)\
   produced by
   [`h_mmrm_tmb_data()`](https://openpharma.github.io/mmrm/reference/h_mmrm_tmb_data.md).
 
 - disable_theta_vcov:
 
-  (`flag`)  
+  (`flag`)\
   whether calculation of `theta_vcov` was disabled.
 
 ## Value

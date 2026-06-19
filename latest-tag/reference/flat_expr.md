@@ -17,7 +17,7 @@ flatten_expr(expr)
 
 - call, expr:
 
-  (`language`)  
+  (`language`)\
   a language object to flatten.
 
 ## Value

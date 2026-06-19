@@ -13,19 +13,19 @@ h_test_1d(object, contrast, df)
 
 - object:
 
-  (`mmrm`)  
+  (`mmrm`)\
   the MMRM fit.
 
 - contrast:
 
-  (`numeric`)  
+  (`numeric`)\
   contrast vector. Note that this should not include elements for
   singular coefficient estimates, i.e. only refer to the actually
   estimated coefficients.
 
 - df:
 
-  (`number`)  
+  (`number`)\
   degrees of freedom for the one-dimensional contrast.
 
 ## Value

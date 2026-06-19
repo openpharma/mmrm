@@ -13,7 +13,7 @@ h_check_columns_nested(data_basic, data_augmented)
 
 - data_basic, data_augmented:
 
-  (`data.frame`)  
+  (`data.frame`)\
   data frames to be compared.
 
 ## Value

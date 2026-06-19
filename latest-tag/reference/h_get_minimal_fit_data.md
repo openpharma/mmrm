@@ -13,7 +13,7 @@ h_get_minimal_fit_data(fit)
 
 - fit:
 
-  (`mmrm`)  
+  (`mmrm`)\
   a fitted `mmrm` model.
 
 ## Value
