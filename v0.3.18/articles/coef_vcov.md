@@ -1,0 +1,92 @@
+# Coefficients Covariance Matrix Adjustment
+
+Here we describe the variance-covariance matrix adjustment of
+coefficients.
+
+## Introduction
+
+To estimate the covariance matrix of coefficients, there are many ways.
+In `mmrm` package, we implemented asymptotic, empirical, Jackknife and
+Kenward-Roger methods. For simplicity, the following derivation are all
+for unweighted mmrm. For weighted mmrm, we can follow the [details of
+weighted least square
+estimator](https://openpharma.github.io/mmrm/articles/algorithm.html#weighted-least-squares-estimator).
+
+### Asymptotic Covariance
+
+Asymptotic covariance are derived based on the estimate of \\\beta\\.
+
+Following the definition in [details in model
+fitting](https://openpharma.github.io/mmrm/articles/algorithm.html#linear-model),
+we have
+
+\\ \hat\beta = (X^\top W X)^{-1} X^\top W Y \\
+
+\\ cov(\hat\beta) = (X^\top W X)^{-1} X^\top W cov(\epsilon) W X (X^\top
+W X)^{-1} = (X^\top W X)^{-1} \\
+
+Where \\W\\ is the block diagonal matrix of inverse of covariance matrix
+of \\\epsilon\\.
+
+### Empirical Covariance
+
+Empirical covariance, also known as the robust sandwich estimator, or
+“CR0”, is derived by replacing the covariance matrix of \\\epsilon\\ by
+observed covariance matrix.
+
+\\ cov(\hat\beta) = (X^\top W X)^{-1}(\sum\_{i}{X_i^\top W_i
+\hat\epsilon_i\hat\epsilon_i^\top W_i X_i})(X^\top W X)^{-1} = (X^\top W
+X)^{-1}(\sum\_{i}{X_i^\top L\_{i} L\_{i}^\top
+\hat\epsilon_i\hat\epsilon_i^\top L\_{i} L\_{i}^\top X_i})(X^\top W
+X)^{-1} \\
+
+Where \\W_i\\ is the block diagonal part for subject \\i\\ of \\W\\
+matrix, \\\hat\epsilon_i\\ is the observed residuals for subject i,
+\\L_i\\ is the Cholesky factor of \\\Sigma_i^{-1}\\ (\\W_i = L_i
+L_i^\top\\). In the sandwich, the score \\X_i^\top W_i \hat\epsilon_i\\
+computed for subject \\i\\ can be accessed by
+`component(mmrm_obj, name = "score_per_subject")`.
+
+See the detailed explanation of these formulas in the [Weighted Least
+Square Empirical
+Covariance](https://openpharma.github.io/mmrm/articles/empirical_wls.md)
+vignette.
+
+### Jackknife Covariance
+
+Jackknife method in `mmrm` is the “leave-one-cluster-out” method. It is
+also known as “CR3”. Following McCaffrey and Bell (2003), we have
+
+\\ cov(\hat\beta) = (X^\top W X)^{-1}(\sum\_{i}{X_i^\top L\_{i}
+(I\_{i} - H\_{ii})^{-1} L\_{i}^\top \hat\epsilon_i\hat\epsilon_i^\top
+L\_{i} (I\_{i} - H\_{ii})^{-1} L\_{i}^\top X_i})(X^\top W X)^{-1} \\
+
+where
+
+\\H\_{ii} = X_i(X^\top X)^{-1}X_i^\top\\
+
+Please note that in the paper there is an additional scale parameter
+\\\frac{n-1}{n}\\ where \\n\\ is the number of subjects, here we do not
+include this parameter.
+
+### Bias-Reduced Covariance
+
+Bias-reduced method, also known as “CR2”, provides unbiased under
+correct working model. Following McCaffrey and Bell (2003), we have \\
+cov(\hat\beta) = (X^\top W X)^{-1}(\sum\_{i}{X_i^\top L\_{i} (I\_{i} -
+H\_{ii})^{-1/2} L\_{i}^\top \hat\epsilon_i\hat\epsilon_i^\top L\_{i}
+(I\_{i} - H\_{ii})^{-1} L\_{i}^\top X_i})(X^\top W X)^{-1} \\
+
+where
+
+\\H\_{ii} = X_i(X^\top X)^{-1}X_i^\top\\
+
+### Kenward-Roger Covariance
+
+Kenward-Roger covariance is an adjusted covariance matrix for small
+sample size. Details can be found in
+[Kenward-Roger](https://openpharma.github.io/mmrm/articles/kenward.html#mathematical-details-of-kenward-roger-method)
+
+McCaffrey, Daniel F, and Robert M Bell. 2003. “Bias Reduction in
+Standard Errors for Linear Regression with Multi-Stage Samples.”
+*Quality Control and Applied Statistics* 48 (6): 677–82.
