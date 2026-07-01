@@ -559,7 +559,7 @@ implementations considered produce similar empirical biases, variances,
     #> [37] labeling_0.4.3      splines_4.5.2       fastmap_1.2.0      
     #> [40] grid_4.5.2          cli_3.6.6           magrittr_2.0.5     
     #> [43] dichromat_2.0-0.1   withr_3.0.3         scales_1.4.0       
-    #> [46] backports_1.5.1     estimability_1.5.1  rmarkdown_2.31     
+    #> [46] backports_1.5.1     estimability_2.0.0  rmarkdown_2.31     
     #> [49] otel_0.2.0          reticulate_1.46.0   ragg_1.5.2         
     #> [52] zoo_1.8-15          png_0.1-9           coda_0.19-4.1      
     #> [55] evaluate_1.0.5      rbibutils_2.4.1     mgcv_1.9-4         
