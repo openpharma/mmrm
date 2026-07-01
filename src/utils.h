@@ -28,7 +28,9 @@ T1 subset_matrix(T1 input, T2 index1, T2 index2) {
 
 template <typename T1, typename T2>
 T1 subset_matrix(T1 input, T2 index1) {
-  #if EIGEN_VERSION_AT_LEAST(3,4,0)
+  #if EIGEN_VERSION_AT_LEAST(5,0,0)
+    T1 ret = input(index1, Eigen::indexing::all);
+  #elif EIGEN_VERSION_AT_LEAST(3,4,0)
     T1 ret = input(index1, Eigen::all);
   #else
     T1 ret(index1.size(), input.cols());
