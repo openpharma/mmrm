@@ -253,7 +253,7 @@ mmrm(fev1 ~ trt * time + us(time | pts), data = out, start = emp_start)
 #>               time36               time52               time70 
 #>          -11.4078895          -15.8040920          -22.5556525 
 #>               time88              time104   trtTreatment:time2 
-#>          -28.2068895          -33.6608067            6.0436315 
+#>          -28.2068896          -33.6608068            6.0436315 
 #>   trtTreatment:time6  trtTreatment:time12  trtTreatment:time24 
 #>           27.3686373           49.4246568          107.3638489 
 #>  trtTreatment:time36  trtTreatment:time52  trtTreatment:time70 
