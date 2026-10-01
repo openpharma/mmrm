@@ -1,0 +1,461 @@
+# Can we optimize the Kenward-Roger calculations for unstructured covariance matrices?
+
+Of interest is the combination:
+
+- Kenward-Roger degrees of freedom
+- Kenward-Roger linear approximation for the variance-covariance matrix
+- unstructured covariance matrix
+
+We have observed that if the number of visits gets larger (e.g. above 10 visits), the computational burden of the Kenward-Roger calculations for unstructured covariance matrices increases significantly: We have seen examples where it takes several minutes with Kenward-Roger but only a few seconds for Satterthwaite degrees of freedom.
+
+The questions are:
+
+1. Can the current implementation, as described on the theory side in the dedicated vignette, be (a lot) optimized potentially for this special case?
+1. If not, are there alternative further approximations we could consider in the math to reduce the computational complexity (and pay with some loss of accuracy)? Either there might be something published already or we might come up with an approximation ourselves.
+
+
+## Findings
+
+**Yes: substantial exact optimization is possible. Further statistical
+approximation should not be the first step.** 
+
+The linear option currently pays
+for second derivatives which it discards, and constructs all parameter-pair
+components before contracting them with the covariance of the estimated
+covariance parameters. 
+
+Both costs can be avoided. Degrees of freedom can also
+be calculated in the contrast space instead of the full coefficient space.
+
+This investigation concerns the implementation at commit
+`3bea7c793a9f678d222879169ba4d1e81a3a73b0` (`mmrm` 0.3.18).
+Here "exact" means equivalent to the **existing linear KR formulas**, up to
+floating-point error; KR itself remains a small-sample approximation.
+The [companion R script](optimize-kr-for-unstructured.R) contains a research
+prototype and numerical checks. It does not change the package implementation.
+
+## A reproducible timing example
+
+This example has 300 subjects, 18 visits, two treatment arms, visit-specific
+baseline effects, and monotone dropout after visits 10–18. The data-generating
+covariance is AR(1), but **both fits estimate the same unstructured covariance**
+(171 parameters). The fixed-effect model has 54 coefficients. Dropout avoids
+the special complete-data multivariate-regression case in which linear KR
+inflation can vanish.
+
+```r
+library(mmrm)
+set.seed(20261001)
+n <- 300L
+m <- 18L
+dat <- expand.grid(visit = seq_len(m), id = seq_len(n))
+dat$id <- factor(dat$id)
+dat$trt <- factor(rep(rep(c("A", "B"), each = n / 2), each = m))
+dat$baseline <- rep(rnorm(n), each = m)
+Sigma <- 0.5^abs(outer(seq_len(m), seq_len(m), "-"))
+e <- matrix(rnorm(n * m), n, m) %*% chol(Sigma)
+dat$y <- 0.3 * dat$baseline + 0.2 * (dat$trt == "B") + as.vector(t(e))
+last <- sample(10:m, n, replace = TRUE)
+dat <- dat[dat$visit <= rep(last, each = m), ]
+dat$visit <- factor(dat$visit)
+f <- y ~ (baseline + trt) * visit + us(visit | id)
+
+t_sat <- system.time(sat <- mmrm(f, dat,
+  control = mmrm_control(method = "Satterthwaite")))
+t_kr <- system.time(kr <- mmrm(f, dat,
+  control = mmrm_control(method = "Kenward-Roger", vcov = "Kenward-Roger-Linear")))
+c(Satterthwaite = t_sat[["elapsed"]], KR_linear = t_kr[["elapsed"]])
+stopifnot(isTRUE(all.equal(coef(sat), coef(kr))))
+```
+
+Both use REML and the same default optimizer settings. In particular,
+`method = "Kenward-Roger"` alone would use the full second-order covariance
+adjustment, so the explicit `vcov` setting is essential here. These timings
+include fitting and covariance preparation, but exclude `summary()`,
+`emmeans()`, or other requested contrasts.
+
+Measured on 2026-10-01 using the **installed** `mmrm` 0.3.18 package, R 4.6.1,
+TMB 1.9.25, the default R BLAS, and an Apple M5 MacBook Pro with 32 GB RAM
+(macOS 27.0.1):
+
+| Visits | Subjects | Satterthwaite, full fit | KR-linear, full fit | Exact prototype, post-fit only |
+|--:|--:|--:|--:|--:|
+| 15 | 300 | 2.660 s | 42.521 s | 0.485 s |
+| **18** | **300** | **5.038 s** | **121.550 s (2.03 min)** | **0.865 s** |
+
+The code above produces the 18-visit row, with 4,244 observed rows; change
+`m` to 15 for the smaller case. The requested minutes-versus-seconds difference
+is therefore reproducible with a medium-sized dataset: about **24 times**
+longer for KR-linear in the 18-visit run. Coefficient estimates were identical.
+
+These are single elapsed-time measurements without profiling, not medians or
+isolated-machine benchmarks: a separate local-build experiment overlapped part
+of the runs. Hardware, build flags, missingness, and fixed-effect dimension
+change the absolute times. The existing local compiled library was substantially
+slower; it is not the library used for this table. The installed R bodies of
+`h_get_kr_comp`, `h_var_adj`, and `h_kr_df` agree with the checkout inspected here.
+
+The prototype column measures **only** the replacement post-fit covariance
+calculation, using the fitted model and its already computed $W$ and $\Phi$.
+It excludes fitting, Hessian computation, and contrast inference. It is not an
+end-to-end timing of an optimized `mmrm()` implementation, and should not be
+compared to the full-fit columns as an end-to-end speedup.
+
+To reproduce the prototype comparison as well, run from the repository root:
+
+```r
+library(mmrm) # Or pkgload::load_all() to benchmark the local checkout.
+source("design/optimize-kr-for-unstructured.R")
+b <- benchmark_kr() # Repeats both fits; deliberately not run on source().
+check_kr_contractions()
+sessionInfo()
+```
+
+## Question 1: exact optimizations
+
+### Where the current implementation spends work
+
+Write $n$ for the number of subjects, $m$ for the number of possible visits,
+$p$ for the number of fixed-effect coefficients, and $k=m(m+1)/2$ for the
+number of covariance parameters in one unstructured covariance group.
+Already at 15 visits, $k=120$ and $k^2=14,400$; at 20 visits,
+$k=210$ and $k^2=44,100$.
+
+An exploratory 20-visit local-build run was stopped after more than 15 minutes;
+98% of its captured R profiling samples were in `h_get_kr_comp()`. This is a
+**partial profile**, not a completed fit timing. R profiling cannot separate
+the C++ derivative-cache and subject-loop costs; the distinctions below come
+from reading the implementation.
+
+The relevant call path is:
+
+- [`R/fit.R`](../R/fit.R): `mmrm()` calls `h_get_kr_comp()`, then `h_var_adj()`.
+- [`src/derivatives.h`](../src/derivatives.h): `derivatives()` computes both
+  first and second derivatives using nested automatic differentiation.
+  `derivatives_nonspatial` caches both, including subsets for missing-visit patterns.
+- [`src/kr_comp.cpp`](../src/kr_comp.cpp): `get_pqr()` constructs $P$, $Q$,
+  and $R$ using loops over subjects and all covariance-parameter pairs.
+- [`R/kenwardroger.R`](../R/kenwardroger.R): `h_var_adj(linear = TRUE)`
+  replaces the already computed $R$ with a new zero matrix. It still traverses
+  every pair and repeatedly multiplies by the unadjusted coefficient covariance.
+  Later, `h_kr_df()` traverses every pair again for each requested contrast.
+
+For one covariance group, each of $Q$ and $R$ stores $k^2p^2$ doubles.
+At $m=20,p=41$, that is approximately **566 MiB each**, excluding copies.
+A full second-derivative array contains $k^2m^2$ doubles, approximately
+135 MiB at 20 visits; the cache adds another array for each distinct missingness
+pattern, with the corresponding smaller visit dimension. Cache accessors also
+return matrices by value. Memory allocation and copying therefore matter as
+well as arithmetic. The nominal $Q/R$ storage grows as $m^4p^2$, and as $m^6$
+when $p$ grows proportionally to the number of visits.
+
+There is a **related opportunity** in [`src/jacobian.cpp`](../src/jacobian.cpp):
+Satterthwaite uses the same derivative cache, which currently initializes
+second derivatives even though that path needs only first derivatives.
+Thus the timing comparison understates what an optimized first-derivative
+path could achieve for both methods.
+
+### First step: skip unused work and contract before storing
+
+Pass a derivative-order/linear flag from `mmrm()` through the C++ interface.
+For KR-linear, do not construct second derivatives, their missing-pattern
+caches, or $R$. Adapt the R interface so that an absent $R$ is allowed; merely
+passing zeros retains much of the allocation cost. Keep the full second-order
+path for ordinary KR. For unstructured covariance, first derivatives can be
+obtained analytically from the existing Cholesky parameterization, avoiding AD
+without changing the optimizer or parameter estimates.
+
+Let $\Phi$ denote the unadjusted coefficient covariance and let $W$ denote
+`component(fit, "theta_vcov")`. This is a **covariance matrix**, the inverse of
+the observed negative-log-likelihood Hessian, not the Hessian itself. Some
+internal argument descriptions currently call it a Hessian.
+For linear KR the only required covariance adjustment is
+
+\[
+\Phi_A=\Phi+2\Phi(S_Q-S_P)\Phi,\qquad
+S_Q=\sum_{h,j}W_{hj}Q_{hj},\qquad
+S_P=\sum_{h,j}W_{hj}P_h\Phi P_j.
+\]
+
+Compute $S_Q$ and $S_P$ directly, keeping only $P$ for subsequent inference.
+Move the two outer multiplications by $\Phi$ outside the pair sum.
+Even a streaming version of the existing loops removes $O(k^2p^2)$ storage.
+Symmetry, precomputed products, and moving remaining R loops to C++ provide
+additional improvements, but do not alone eliminate pairwise arithmetic.
+
+### An exact directional contraction removes the subject-level pair loop
+
+The following is an algebraic derivation from the vignette's formulas, not a
+new statistical approximation. Factor a positive-definite $W=BB^\top$ and put
+
+\[
+D_{i\ell}=\sum_h B_{h\ell}\frac{\partial\Sigma_i}{\partial\theta_h},
+\qquad A_i=\Sigma_i^{-1},\qquad U_i=A_iX_i,
+\qquad \widetilde P_\ell=-\sum_i U_i^\top D_{i\ell}U_i.
+\]
+
+Then, with all $k$ directions retained,
+
+\[
+S_Q=\sum_{i,\ell}U_i^\top D_{i\ell}A_iD_{i\ell}U_i,
+\qquad S_P=\sum_\ell\widetilde P_\ell\Phi\widetilde P_\ell.
+\]
+
+Expanding $BB^\top$ proves equality to the double sums. Missing visits and
+known weights enter through $\Sigma_i$ and its derivatives exactly as in the
+vignette. Cache the directional derivatives and inverse covariance by
+covariance group and observed-visit pattern; apply weights by scaling $X_i$
+by the square roots of the observation weights, as the current C++ code does.
+
+For full visits, forming directional derivatives once costs roughly
+$O(k^2m^2)$ and factoring $W$ costs $O(k^3)$. The subject work can then be
+organized as $O(nk(m^2p+mp^2))$, followed by $O(kp^3)$ for $S_P$,
+instead of a subject loop over $k^2$ pairs. These are dense-arithmetic counts,
+not measured speed guarantees. All $k$ directions are kept; no low-rank
+assumption is required. If $W$ is not positive definite, investigate the fit or
+use a signed symmetric factorization; silently clipping eigenvalues changes
+results.
+
+For grouped covariance, $Q$ has no cross-group subject contributions, but
+$W$ need not be block diagonal: REML couples groups through the fixed effects.
+Retain cross-group terms in $S_P$ and in degrees of freedom. Factoring the full
+$W$ handles this automatically.
+
+### A further specialization for unstructured covariance
+
+The companion prototype uses a second exact route. Define
+$\eta=\operatorname{vech}(\Sigma)$ and
+$J=\partial\eta/\partial\theta^\top$. Keep fitting in the existing Cholesky
+coordinates and transform only the post-fit contractions:
+
+\[
+W_\eta=JW_\theta J^\top.
+\]
+
+The derivatives $E_a=\partial\Sigma/\partial\eta_a$ have only one nonzero
+entry for a variance, or two symmetric entries for a covariance. The chain
+rule gives $P_{\theta,h}=\sum_a J_{ah}P_{\eta,a}$ and the analogous bilinear
+identity for $Q$. Consequently, contracting with $W_\eta$ gives exactly the
+same linear adjustment and KR degrees of freedom as contracting in $\theta$.
+This is an algebraic identity for the supplied $W_\theta$; it does not require
+refitting or replacing observed information with expected information.
+
+For a subject, absorb the weights into $X_i$ and write
+$A_i=(S_i^\top\Sigma S_i)^{-1}$ and $U_i=A_iX_i$. If $a(u,s)$ denotes the
+index of the symmetric covariance entry $(u,s)$ in $\eta$, form
+
+\[
+(K_i)_{uv}=\sum_{s,t}(A_i)_{st}
+  (W_\eta)_{a(u,s),a(t,v)},\qquad
+S_Q=\sum_i U_i^\top K_iU_i.
+\]
+
+Indices in this equation run over the subject's observed visits and are
+mapped back to the full visit indices in $a$. Equivalently, embed $A_i$ into
+an $m\times m$ zero matrix and use a precomputed reshuffling of $W_\eta$.
+This replaces all $Q_{hj}$ by a tensor contraction costing at most $O(m^4)$
+per visit pattern, followed by ordinary small matrix products. The prototype
+also flattens $P$ into a $p^2\times k$ matrix and multiplies it by $W_\eta$
+once when evaluating $S_P$. It uses neither $Q$ nor $R$ arrays.
+
+Dropping $R$ in a nonlinear parameterization is already the requested linear
+approximation. Do not infer that these transformations preserve **full** KR:
+the second-derivative term needs separate treatment. Likewise, do not replace
+$W_\eta$ by a separately derived covariance estimator and assume equivalence.
+
+### Degrees of freedom in the contrast space
+
+Use the package's convention: a rank-$c$ contrast matrix $L$ has $c$ rows
+and $p$ columns. Set $H=L\Phi L^\top=TT^\top$ and
+
+\[
+F_h=T^{-1}L\Phi P_h\Phi L^\top T^{-\top}.
+\]
+
+Cyclic invariance of trace gives the vignette's quantities as
+
+\[
+A_1=t^\top Wt,\qquad t_h=\operatorname{tr}(F_h),\qquad
+A_2=\sum_{h,j}W_{hj}\langle F_h,F_j\rangle_F.
+\]
+
+Here each $F_h$ is a symmetric $c\times c$ matrix. Store its vectorization
+as a column of $F$ and compute $A_2=\operatorname{sum}((FW)\odot F)$.
+The expensive pairwise products of $p\times p$ matrices in `h_kr_df()` become
+a dense contraction in dimension $c^2$. The remaining scalar KR formulas
+are unchanged. If the factorization $W=BB^\top$ is already available, use
+$\widetilde F_\ell=\sum_h B_{h\ell}F_h$ and calculate
+$A_1=\sum_\ell\operatorname{tr}(\widetilde F_\ell)^2$ and
+$A_2=\sum_\ell\|\widetilde F_\ell\|_F^2$. This optimization applies
+beyond unstructured covariance.
+
+For a one-dimensional contrast $l$, put
+$a_h=l^\top\Phi P_h\Phi l/(l^\top\Phi l)$. Then
+$A_1=A_2=a^\top Wa$, $\nu=2/(a^\top Wa)$, and $\lambda=1$.
+Since $\partial\Phi/\partial\theta_h=-\Phi P_h\Phi$, these are precisely
+the usual scalar Satterthwaite degrees of freedom based on the **unadjusted**
+variance. The KR-linear standard error still uses $\Phi_A$, so the tests and
+confidence intervals need not agree. Multi-dimensional inference also retains
+the KR scaling and degrees-of-freedom formulas.
+
+### Numerical evidence and implementation order
+
+The R prototype was checked against the current package on `fev_data`, using
+`FEV1 ~ ARMCD * AVISIT + FEV1_BL + us(AVISIT | USUBJID)`. These data contain
+missing visits. A second fit used unequal positive observation weights,
+`runif(nrow(fev_data), 0.5, 2)` with seed 42. Contrasts selected the first
+coefficient and the first three coefficients, respectively.
+
+| Weights | Contrast rank | Maximum absolute covariance error | Absolute df error | Absolute F-scale error |
+|:--|--:|--:|--:|--:|
+| Equal | 1 | $6.22\times10^{-15}$ | $9.95\times10^{-13}$ | $2.22\times10^{-16}$ |
+| Equal | 3 | $6.22\times10^{-15}$ | $1.99\times10^{-12}$ | $2.22\times10^{-16}$ |
+| Unequal | 1 | $2.22\times10^{-15}$ | $9.09\times10^{-12}$ | 0 |
+| Unequal | 3 | $2.22\times10^{-15}$ | $4.09\times10^{-12}$ | $4.44\times10^{-16}$ |
+
+The checks enforce `all.equal()` tolerances of $10^{-10}$ for covariance and
+$10^{-9}$ for degrees of freedom and F scaling. They run with
+`check_kr_contractions()` in the companion script. The independently
+constructed first derivatives also agreed with the existing stacked $P$
+components after mapping back to the Cholesky coordinates (maximum absolute
+difference $1.09\times10^{-11}$ on the unweighted fit).
+
+On the 18-visit example, the maximum absolute difference in the adjusted
+covariance was **$4.58\times10^{-16}$**. Thus the fast prototype reproduces the
+existing linear covariance adjustment on the timing example itself, as well
+as on the weighted/missing-visit small cases.
+
+For contrasts selecting the last coefficient and the last three coefficients:
+
+| Contrast rank | Current `h_kr_df()` | Contrast-space prototype | Absolute df error | Absolute F-scale error |
+|--:|--:|--:|--:|--:|
+| 1 | 1.501 s | 0.011 s | $4.97\times10^{-14}$ | 0 |
+| 3 | 1.490 s | 0.002 s | 0 | $3.33\times10^{-16}$ |
+
+The corresponding degrees of freedom were 49.51143 and 68.88673; F scaling
+was 1 and 0.9726017, respectively. These are individual post-fit timings;
+sub-millisecond precision or stable speedup factors should not be inferred
+from a single short run. The 15-visit prototype also matched the adjusted
+covariance (maximum absolute difference $2.15\times10^{-16}$).
+
+**Recommended implementation order:**
+
+1. Introduce first-derivative-only caches and skip $R$ for KR-linear and
+   Satterthwaite. This is a small, independently reviewable change.
+2. Implement contrast-space degrees of freedom, including the scalar shortcut.
+3. Implement a contracted covariance backend, using full-rank directions or
+   the sparse unstructured basis. Preserve cross-group $W$ contributions.
+4. Benchmark the integrated path and verify coefficient covariance, standard
+   errors, scalar and multi-dimensional degrees of freedom, F scaling, and
+   p-values against the existing implementation. Include complete data,
+   monotone and intermittent missingness, weights, grouped covariance,
+   multiple contrast ranks, and poorly conditioned but valid fits.
+
+The research prototype deliberately recomputes pattern-level products per subject
+for readability; a production backend can cache them. It covers one covariance group; it is not a production
+replacement. Its mathematical identities do not establish numerical stability
+for every ill-conditioned fit. Use relative as well as absolute tolerances
+when implementing the production regression checks.
+
+## Question 2: further approximations and published alternatives
+
+The premise is not met: exact optimization already has substantial
+potential. The following alternatives are useful context, but should remain
+separate statistical choices.
+
+### Published methods and their scope
+
+**First-order KR is already selected.** SAS documents that `FIRSTORDER`/`LINEAR`
+eliminates second derivatives from the covariance adjustment. It therefore
+supports skipping those calculations, rather than introducing another
+approximation under the same name.
+[SAS PROC MIXED documentation](https://support.sas.com/documentation/cdl/en/statug/67523/HTML/default/statug_mixed_syntax10.htm).
+
+**KR2 addresses accuracy for nonlinear covariance parameterizations.**
+Kenward and Roger (2009) derive a term accounting for covariance-parameter
+estimator bias that was missing from the earlier expansion. This is not, on
+the evidence reviewed, a computational shortcut for the present unstructured
+linear target.
+[Kenward and Roger (2009)](https://doi.org/10.1016/j.csda.2008.12.013).
+
+**Monotone dropout permits a specialized closed-form route.** Tang derives
+REML and KR variance estimators for unstructured MMRM with monotone missingness
+and visit-specific coefficients for a common vector of subject-level
+covariates. This is a promising additional specialized backend under those
+assumptions. It does not directly cover arbitrary time-varying designs,
+intermittent missingness, weights, or grouped covariance. Its information and
+variance-estimation conventions would need comparison with `mmrm` before
+claiming identical output. Do not discard observed data or singly impute
+intermittent gaps just to qualify for this shortcut.
+[Tang (2017), Sections 2.1–2.3](https://arxiv.org/html/1611.00087v2).
+
+**Satterthwaite is the existing inexpensive alternative.** With asymptotic
+coefficient covariance it omits the KR covariance inflation. As shown above,
+scalar degrees of freedom can agree while standard errors differ. Whether
+that loss of adjustment is acceptable depends on coverage and type-I error,
+especially with small samples, substantial dropout, or many covariance
+parameters. A smaller covariance model can reduce $k$, but changes the fitted
+model; it is not merely a cheaper calculation of the same KR adjustment.
+
+The `pbkrtest` paper describes KR and parametric bootstrap inference for
+linear mixed models. Bootstrap is useful for validation but generally entails
+many refits, so it is not a natural seconds-level replacement here.
+[Halekoh and Højsgaard (2014)](https://www.jstatsoft.org/article/view/v059i09).
+
+### An exploratory approximation: retain fewer uncertainty directions
+
+This is a proposal derived from the contractions above, **not a method
+validated by this investigation or a claimed published KR algorithm**.
+With $W=\sum_{\ell=1}^k\lambda_\ell u_\ell u_\ell^\top$, retain $r<k$
+terms and use the corresponding $r$ directions in the adjustment and in
+$A_1,A_2$. Per-subject directional work becomes proportional to $r$.
+The initial dense factorization still costs $O(k^3)$, and the fit and Hessian
+costs are unchanged.
+
+There is a useful diagnostic and a risk. In stacked notation define
+$Z_\ell=\Omega^{-1/2}D_\ell\Omega^{-1}X$ and let
+$\mathcal H=\Omega^{-1/2}X\Phi X^\top\Omega^{-1/2}$, an orthogonal
+projection. Each full-rank directional contribution to $S_Q-S_P$ is
+
+\[
+Z_\ell^\top(I-\mathcal H)Z_\ell\succeq0.
+\]
+
+Discarding directions therefore reduces the linear covariance adjustment
+when $W$ is positive semidefinite. For scalar inference it also decreases
+$A_2$, increasing degrees of freedom. Both changes can make inference less
+conservative. An eigenvalue cutoff is coordinate- and scale-dependent;
+retaining 99% of the trace of $W$ is not a guarantee of accurate contrast
+variances or p-values. Any investigation should track the actual omitted
+contrast contributions, increase $r$ until standard errors and degrees of
+freedom stabilize, and assess coverage and type-I error by simulation against
+the full calculation. No such statistical validation was performed here.
+
+A diagonal or block-diagonal approximation to $W$ has similar accuracy
+concerns and is not invariant to reparameterization. In particular, dropping
+cross-group blocks is not justified by independent subjects alone. Given the
+exact alternatives, neither truncation nor deleting parameter correlations is
+recommended as the default optimization.
+
+## Summary: applicability beyond unstructured covariance
+
+The opportunities extend to other covariance structures and to all three
+inference methods. The size of the speedup depends on the covariance structure
+and model dimensions.
+
+- **Satterthwaite:** For non-spatial structures, the shared derivative machinery
+  currently computes unused second derivatives. Skipping these should improve
+  speed.
+- **Kenward–Roger:** More efficient matrix contractions and calculations in the
+  smaller contrast space apply across covariance structures. Full KR still
+  needs its second-derivative contribution.
+- **Kenward–Roger–Linear:** Benefits from those general KR improvements and can
+  entirely skip second derivatives and the $R$ component.
+- **Unstructured covariance:** Offers additional specialization and particularly
+  large savings because its number of covariance parameters grows quadratically
+  with the number of visits.
+
+These changes can preserve the existing statistical results. The large speedup
+was demonstrated numerically for **unstructured KR-linear**; the other cases
+need benchmarking before promising similarly large gains. Structures with only
+a few covariance parameters, such as AR(1), will likely benefit less.
