@@ -171,11 +171,11 @@ the observed negative-log-likelihood Hessian, not the Hessian itself. Some
 internal argument descriptions currently call it a Hessian.
 For linear KR the only required covariance adjustment is
 
-\[
+$$
 \Phi_A=\Phi+2\Phi(S_Q-S_P)\Phi,\qquad
 S_Q=\sum_{h,j}W_{hj}Q_{hj},\qquad
 S_P=\sum_{h,j}W_{hj}P_h\Phi P_j.
-\]
+$$
 
 Compute $S_Q$ and $S_P$ directly, keeping only $P$ for subsequent inference.
 Move the two outer multiplications by $\Phi$ outside the pair sum.
@@ -188,18 +188,18 @@ additional improvements, but do not alone eliminate pairwise arithmetic.
 The following is an algebraic derivation from the vignette's formulas, not a
 new statistical approximation. Factor a positive-definite $W=BB^\top$ and put
 
-\[
+$$
 D_{i\ell}=\sum_h B_{h\ell}\frac{\partial\Sigma_i}{\partial\theta_h},
 \qquad A_i=\Sigma_i^{-1},\qquad U_i=A_iX_i,
 \qquad \widetilde P_\ell=-\sum_i U_i^\top D_{i\ell}U_i.
-\]
+$$
 
 Then, with all $k$ directions retained,
 
-\[
+$$
 S_Q=\sum_{i,\ell}U_i^\top D_{i\ell}A_iD_{i\ell}U_i,
 \qquad S_P=\sum_\ell\widetilde P_\ell\Phi\widetilde P_\ell.
-\]
+$$
 
 Expanding $BB^\top$ proves equality to the double sums. Missing visits and
 known weights enter through $\Sigma_i$ and its derivatives exactly as in the
@@ -228,9 +228,9 @@ $\eta=\operatorname{vech}(\Sigma)$ and
 $J=\partial\eta/\partial\theta^\top$. Keep fitting in the existing Cholesky
 coordinates and transform only the post-fit contractions:
 
-\[
+$$
 W_\eta=JW_\theta J^\top.
-\]
+$$
 
 The derivatives $E_a=\partial\Sigma/\partial\eta_a$ have only one nonzero
 entry for a variance, or two symmetric entries for a covariance. The chain
@@ -244,11 +244,11 @@ For a subject, absorb the weights into $X_i$ and write
 $A_i=(S_i^\top\Sigma S_i)^{-1}$ and $U_i=A_iX_i$. If $a(u,s)$ denotes the
 index of the symmetric covariance entry $(u,s)$ in $\eta$, form
 
-\[
+$$
 (K_i)_{uv}=\sum_{s,t}(A_i)_{st}
   (W_\eta)_{a(u,s),a(t,v)},\qquad
 S_Q=\sum_i U_i^\top K_iU_i.
-\]
+$$
 
 Indices in this equation run over the subject's observed visits and are
 mapped back to the full visit indices in $a$. Equivalently, embed $A_i$ into
@@ -268,16 +268,16 @@ $W_\eta$ by a separately derived covariance estimator and assume equivalence.
 Use the package's convention: a rank-$c$ contrast matrix $L$ has $c$ rows
 and $p$ columns. Set $H=L\Phi L^\top=TT^\top$ and
 
-\[
+$$
 F_h=T^{-1}L\Phi P_h\Phi L^\top T^{-\top}.
-\]
+$$
 
 Cyclic invariance of trace gives the vignette's quantities as
 
-\[
+$$
 A_1=t^\top Wt,\qquad t_h=\operatorname{tr}(F_h),\qquad
 A_2=\sum_{h,j}W_{hj}\langle F_h,F_j\rangle_F.
-\]
+$$
 
 Here each $F_h$ is a symmetric $c\times c$ matrix. Store its vectorization
 as a column of $F$ and compute $A_2=\operatorname{sum}((FW)\odot F)$.
@@ -417,9 +417,9 @@ $Z_\ell=\Omega^{-1/2}D_\ell\Omega^{-1}X$ and let
 $\mathcal H=\Omega^{-1/2}X\Phi X^\top\Omega^{-1/2}$, an orthogonal
 projection. Each full-rank directional contribution to $S_Q-S_P$ is
 
-\[
+$$
 Z_\ell^\top(I-\mathcal H)Z_\ell\succeq0.
-\]
+$$
 
 Discarding directions therefore reduces the linear covariance adjustment
 when $W$ is positive semidefinite. For scalar inference it also decreases
