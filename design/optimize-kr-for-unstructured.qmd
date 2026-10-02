@@ -34,6 +34,14 @@ floating-point error; KR itself remains a small-sample approximation.
 The [companion R script](optimize-kr-for-unstructured.R) contains a research
 prototype and numerical checks. It does not change the package implementation.
 
+**Integrated result (2026-10-02):** Steps 1–4 are implemented and verified.
+On matched release builds, full KR-linear fits went from **83.12 to 5.274 s**
+at 15 visits and **238.56 to 10.058 s** at 18 visits. A larger 18-visit case
+went from **11.45 minutes to 26.66 s**. These are complete package fits,
+including optimization and Hessian/covariance preparation. See
+[step 4](#step-4-integrated-validation-and-end-to-end-benchmarks-2026-10-02)
+for the paired timings, inference checks, and numerical limitations.
+
 ## A reproducible timing example
 
 This example has 300 subjects, 18 visits, two treatment arms, visit-specific
@@ -338,7 +346,160 @@ parameter, and invalid contraction inputs. Existing full-KR snapshots and
 SAS comparisons pass. Both theory vignettes were updated and rendered
 successfully.
 
+### Step 4: integrated validation and end-to-end benchmarks (2026-10-02)
+
+The integrated regressions in
+[`test-kr-integrated.R`](../tests/testthat/test-kr-integrated.R) fit
+`mmrm(method = "Kenward-Roger", vcov = "Kenward-Roger-Linear")` and compare
+the public results against **both retained old formulas**: the pairwise
+covariance backend plus `h_var_adj(linear = TRUE)`, and the frozen
+coefficient-space degrees-of-freedom calculation. Comparing two fits through
+the new `h_kr_df()` alone would not independently validate the df optimization.
+
+The tests cross complete data, explicit monotone dropout (including subjects
+with only one visit), and intermittent gaps with equal/unequal weights and
+one/two covariance groups. They check coefficient covariance, every
+coefficient's summary (standard error, scalar df, t statistic, and p-value),
+and dense nonorthogonal contrasts of ranks 1, 2, 3, and the full coefficient
+dimension. They also compare F scaling, F statistics, and multi-dimensional
+df and p-values. Log p-values are checked to avoid hiding differences in
+tiny tail probabilities behind an absolute tolerance. Separate Satterthwaite
+fits verify that coefficient estimates, covariance-parameter estimates, and
+unadjusted covariance are unchanged. Single-visit fits, zero/empty contrasts,
+singular hypotheses, and the non-REML guards are covered.
+
+Ordinary integrated comparisons use a $10^{-9}$ tolerance and an absolute
+bound on covariance differences in standardized coefficient coordinates.
+Additional **actual fitted models**, rather than just synthetic supplied $W$,
+exercise poor conditioning: unequal visit-specific residual scales produce
+a residual covariance condition number of about $3.3\times10^6$ (tested at
+$10^{-8}$); a scaled baseline and nearly collinear baselines produce
+coefficient covariance condition numbers of about $2.4\times10^6$ and
+$1.6\times10^7$ (tested at $10^{-7}$). These fits converge and have positive
+definite unadjusted coefficient and covariance-parameter covariance matrices.
+
+There is a measured numerical limit: an even more collinear, converged fit
+has a coefficient covariance condition number of about $1.4\times10^{10}$.
+For that case, the retained pairwise and integrated calculations differ by
+up to $3.85\times10^{-5}$ in standardized covariance, $4.51\times10^{-6}$
+in relative coefficient standard errors, $1.67\times10^{-5}$ in relative
+contrast df, $1.06\times10^{-6}$ in absolute F scaling, and
+$5.78\times10^{-5}$ in relative F statistics. The largest absolute log
+p-value difference across the four dense contrast ranks is
+$9.88\times10^{-5}$. That edge case is retained with an explicitly looser
+$10^{-3}$ comparison tolerance. Algebraic equivalence does not guarantee
+ordinary floating-point tolerances near numerical singularity; no fitting
+algorithm or statistical approximation was changed to conceal this limit.
+
+Final validation: the full R/C++ suite passes with **4,119 passing
+expectations, zero failures or warnings**, and one existing multicore skip.
+`covr::environment_coverage()` over the package namespace while running the
+entire suite reports **97.76% overall R line coverage**, **100% of
+`R/kenwardroger.R`** (all six KR functions), and **99.32% of `R/fit.R`**.
+Every line of the integrated KR-linear dispatch is exercised. These are R
+coverage measurements; the compiled C++ direction, derivative-cache, and
+missing-pattern tests also run in the full suite. Existing full-KR snapshots,
+SAS comparisons, and the all-covariance-structure component checks pass.
+
+`benchmark_kr_integrated()` in the companion script reproduces the original
+300-subject, 15/18-visit data, **including dropout starting at visit 10 in both
+cases**. It records full-fit elapsed and CPU times, times `summary()`
+separately, and evaluates dense contrasts of ranks 1, 2, 3, and $p$ plus a
+scalar t-test. It saves a compact numerical snapshot, so separate baseline
+and optimized R sessions can be checked with `check_kr_integrated()`. The
+comparison includes covariance, standard errors, df, F scaling, statistics,
+and p-values, including log tails. All fitting, Hessian, and covariance
+preparation work is included in the full-fit timing; no prototype-only
+calculation is substituted for a complete fit.
+
+The baseline is `fc9cc2336` (before step 1), and the integrated code is
+`168cda8b4` (after step 3; step 4 adds tests and benchmark helpers). Both
+were installed into separate temporary libraries with `R CMD INSTALL
+--preclean`, using the same production C++ **release flags (`-O2`)**, Apple
+clang 21.0.0, R 4.6.1, TMB 1.9.25, and default R BLAS on the same M5 MacBook
+Pro. These final measurements were sequential, with no overlapping test,
+coverage, compilation, or other benchmark jobs. `caffeinate -is` kept the
+machine awake; full-fit elapsed and CPU times in the three large examples
+agree to within about 2%. A preliminary
+18-visit timing series contained a large elapsed-time outlier and was
+discarded in full, then rerun in isolation. Each expensive baseline is one
+measurement; optimized full-fit times are medians of three measurements,
+with garbage collection before every fit. Summary times are single calls.
+
+| Subjects | Visits | Observations | Old KR-linear, full fit | Integrated KR-linear, full fit | Reduction | Speedup | Integrated Satterthwaite, full fit |
+|--:|--:|--:|--:|--:|--:|--:|--:|
+| 300 | 15 | 3,798 | 83.120 s | **5.274 s** | 93.7% | 15.8 times | 5.246 s |
+| 300 | 18 | 4,244 | 238.560 s | **10.058 s** | 95.8% | 23.7 times | 9.739 s |
+| 900 | 18 | 12,679 | **686.799 s (11.45 min)** | **26.660 s** | 96.1% | 25.8 times | 25.774 s |
+
+The 15-visit model has 45 coefficients and 120 covariance parameters;
+both 18-visit models have 54 coefficients and 171 covariance parameters.
+The larger case changes only the subject count in the same seeded generator.
+The optimized KR-linear fits are now within about 0.5–3.5% of Satterthwaite's
+fit time on these examples. Fit optimization and the Hessian therefore account
+for most of the remaining runtime.
+
+These paired measurements answer the end-to-end question that the earlier
+prototype-only column could not answer. Absolute baseline times differ from
+the original **installed-package** 42.521/121.550 s measurements; compare
+before/after values **within this matched-build table**, rather than mixing
+timing sessions or comparing post-fit prototype time with a full fit.
+
+Inference savings also matter when the user asks for a coefficient summary:
+
+| Subjects | Visits | Old `summary()` | Integrated `summary()` | Old fit + summary | Integrated fit + summary | Combined speedup |
+|--:|--:|--:|--:|--:|--:|--:|
+| 300 | 15 | 44.581 s | 0.055 s | 127.701 s | **5.329 s** | 24.0 times |
+| 300 | 18 | 160.599 s | 0.105 s | 399.159 s | **10.163 s** | 39.3 times |
+| 900 | 18 | 164.903 s | 0.105 s | **851.702 s (14.20 min)** | **26.765 s** | 31.8 times |
+
+For all three large examples, coefficient and covariance-parameter estimates
+were **identical** across builds. The maximum absolute covariance error was
+$3.06\times10^{-15}$, the maximum relative coefficient SE error was
+$9.52\times10^{-14}$, the maximum absolute contrast df error was
+$9.75\times10^{-11}$, the maximum absolute F-scaling error was
+$2.34\times10^{-15}$, and the maximum absolute log p-value error was
+$1.04\times10^{-12}$. All complete snapshots pass the $10^{-8}$ comparison,
+including coefficient summaries and all four contrast ranks.
+
+`benchmark_kr_cases()` additionally times the **12 combinations** of the
+three missingness patterns, one/two covariance groups, and equal/unequal
+weights, plus four poorly conditioned scenarios. All 16 small-case snapshots
+also agree at their stated tolerances. Their single full-fit timings range
+from 0.041–0.090 s before to 0.025–0.066 s after (about 1.36–1.72 times faster);
+these short measurements establish scenario coverage, not precise speedup
+estimates. The [recorded comparisons](optimize-kr-for-unstructured-integrated.csv)
+contain all **19 scenarios**, including CPU times, summary and contrast
+timings, covariance/SE/df/F-scaling/log-tail errors, and repetition counts.
+
+To reproduce, build the two revisions into separate libraries with identical
+flags and run in separate R sessions, sourcing this updated helper in both:
+
+```r
+# Start R under: caffeinate -is Rscript benchmark.R
+.libPaths(c("/path/to/baseline-or-integrated-library", .libPaths()))
+library(mmrm)
+source("/path/to/updated/checkout/design/optimize-kr-for-unstructured.R")
+b15 <- benchmark_kr_integrated(n = 300L, m = 15L, repetitions = 1L)
+b18 <- benchmark_kr_integrated(n = 300L, m = 18L, repetitions = 1L)
+big <- benchmark_kr_integrated(n = 900L, m = 18L, repetitions = 1L)
+cases <- benchmark_kr_cases()
+saveRDS(list(b15 = b15, b18 = b18, big = big, cases = cases), "before-results.rds")
+# Use "after-results.rds" in the integrated session.
+# Use repetitions = 3L for the optimized measurements above.
+# Later, read both sessions' saved results:
+before <- readRDS("before-results.rds")
+after <- readRDS("after-results.rds")
+check_kr_integrated(before$b18, after$b18)
+# For the extreme_design scenario, explicitly use tolerance = 1e-3;
+# for collinear_design use 1e-7, matching the tests and documented limits.
+```
+
 ## Question 1: exact optimizations
+
+The following cost analysis describes the original implementation at the
+investigation commit above. The completed implementation and its measurements
+are recorded in steps 1–4.
 
 ### Where the current implementation spends work
 
@@ -575,11 +736,12 @@ covariance (maximum absolute difference $2.15\times10^{-16}$).
 3. **Implemented (2026-10-02):** Contracted linear covariance backend using
    full-rank directions for $S_Q$ and the full $W$ for $S_P$, preserving
    cross-group contributions. See the incremental full-fit timings above.
-4. Benchmark the integrated path and verify coefficient covariance, standard
-   errors, scalar and multi-dimensional degrees of freedom, F scaling, and
-   p-values against the existing implementation. Include complete data,
-   monotone and intermittent missingness, weights, grouped covariance,
-   multiple contrast ranks, and poorly conditioned but valid fits.
+4. **Implemented (2026-10-02):** Benchmark the integrated path end to end and
+   verify coefficient covariance, standard errors, scalar and multi-dimensional
+   degrees of freedom, F scaling, and p-values against both retained old
+   formulas and separate baseline-build fits. Includes complete data, monotone
+   and intermittent missingness, weights, grouped covariance, multiple contrast
+   ranks, and poorly conditioned but valid fits. See the step-4 results above.
 
 The research prototype deliberately recomputes pattern-level products per subject
 for readability; a production backend can cache them. It covers one covariance group; it is not a production
@@ -673,19 +835,22 @@ The opportunities extend to other covariance structures and to all three
 inference methods. The size of the speedup depends on the covariance structure
 and model dimensions.
 
-- **Satterthwaite:** For non-spatial structures, the shared derivative machinery
-  currently computes unused second derivatives. Skipping these should improve
-  speed.
-- **Kenward–Roger:** More efficient matrix contractions and calculations in the
-  smaller contrast space apply across covariance structures. Full KR still
-  needs its second-derivative contribution.
-- **Kenward–Roger–Linear:** Benefits from those general KR improvements and can
-  entirely skip second derivatives and the $R$ component.
-- **Unstructured covariance:** Offers additional specialization and particularly
-  large savings because its number of covariance parameters grows quadratically
-  with the number of visits.
+- **Satterthwaite:** The shared derivative machinery now requests only first
+  derivatives, including for non-spatial missing-pattern caches.
+- **Kenward–Roger:** Contrast-space degrees of freedom are implemented across
+  covariance structures. Full KR retains its second-derivative covariance
+  adjustment.
+- **Kenward–Roger–Linear:** First-derivative-only caches, contracted covariance
+  adjustment, and contrast-space df are implemented across covariance
+  structures, omitting second derivatives, $R$, and the $Q$ block array.
+- **Unstructured covariance:** The integrated implementation demonstrates large
+  end-to-end savings as the covariance-parameter count grows quadratically with
+  visits. The additional sparse covariance-coordinate specialization remains
+  a research prototype.
 
-These changes can preserve the existing statistical results. The large speedup
-was demonstrated numerically for **unstructured KR-linear**; the other cases
-need benchmarking before promising similarly large gains. Structures with only
-a few covariance parameters, such as AR(1), will likely benefit less.
+The integrated regressions preserve the existing linear KR formulas and
+quantify floating-point limitations for extreme conditioning. Large
+end-to-end speedups are measured for **unstructured KR-linear**; other
+structures pass numerical component checks but need timing measurements before
+promising similarly large gains. Structures with only a few covariance
+parameters, such as AR(1), will likely benefit less.
