@@ -111,9 +111,13 @@ Satterthwaite continues to use its cached Jacobian through
 The equality uses the **unadjusted** covariance \\\Phi\\ and the same
 \\W\\; KR standard errors still use the adjusted covariance \\\Phi_A\\,
 so equal scalar degrees of freedom do not imply equal test statistics,
-p-values, or confidence intervals. For multiple contrasts, KR uses a
-normalized contrast-space contraction of its moment quantities; the
-Satterthwaite eigen-decomposition described below remains unchanged.
+p-values, or confidence intervals. The same \\P_h\\ matrices also enter
+the [contracted linear KR covariance
+adjustment](https://openpharma.github.io/mmrm/articles/kenward.html#contracted-linear-covariance-adjustment),
+which does not affect the Satterthwaite calculations. For multiple
+contrasts, KR uses a normalized contrast-space contraction of its moment
+quantities; the Satterthwaite eigen-decomposition described below
+remains unchanged.
 
 #### Multi-dimensional contrast
 

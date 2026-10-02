@@ -8,7 +8,7 @@ if method is "Kenward-Roger".
 ## Usage
 
 ``` r
-h_get_kr_comp(tmb_data, theta, linear = FALSE)
+h_get_kr_comp(tmb_data, theta, linear = FALSE, w = NULL)
 ```
 
 ## Arguments
@@ -29,6 +29,12 @@ h_get_kr_comp(tmb_data, theta, linear = FALSE)
   (`flag`)\
   whether to omit second derivatives and the R component.
 
+- w:
+
+  (`matrix` or `NULL`)\
+  covariance of the covariance parameters. Supply with `linear = TRUE`
+  to contract Q without constructing its blocks.
+
 ## Value
 
 Named list with elements:
@@ -38,6 +44,9 @@ Named list with elements:
 - `Q`: `matrix` of \\Q\\ component.
 
 - `R`: `matrix` of \\R\\ component, or `NULL` when `linear = TRUE`.
+
+- `S_Q`: contracted Q sum when `w` is supplied; `Q` and `R` are then
+  `NULL`.
 
 ## Details
 
@@ -51,3 +60,14 @@ stacked so that the \\Q\_{ij}\\ and \\R\_{ij}\\ is stacked from \\j\\
 then to \\i\\, i.e. \\R\_{i1}\\, \\R\_{i2}\\, etc. \\Q\\ and \\R\\ only
 contains intra-group results and inter-group results should be all zero
 matrices so they are not stacked in the result.
+
+Supplying `w` for linear KR instead retains `P` and contracts Q into the
+single matrix `S_Q`, without storing Q blocks, see the section
+"Contracted linear covariance adjustment" in
+[`vignette("kenward", package = "mmrm")`](https://openpharma.github.io/mmrm/articles/kenward.md).
+The symmetric part of `w` is used, and non-finite entries in `w` give a
+non-finite `S_Q`.
+[`mmrm()`](https://openpharma.github.io/mmrm/reference/mmrm.md) always
+supplies `w` for linear KR. Calling with `linear = TRUE` but without `w`
+gives the pairwise `P` and `Q` blocks, which tests use as an independent
+reference.
