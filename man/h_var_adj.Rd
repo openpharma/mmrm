@@ -26,7 +26,7 @@ The matrix of adjusted covariance matrix.
 \description{
 Obtains the Kenward-Roger adjusted covariance matrix for the
 coefficient estimates.
-Used in \code{\link[=mmrm]{mmrm()}} fitting if method is "Kenward-Roger" or "Kenward-Roger-Linear".
+Used in \code{\link[=mmrm]{mmrm()}} fitting if vcov is "Kenward-Roger".
 }
 \details{
 \code{\link[=mmrm]{mmrm()}} uses this function for full Kenward-Roger only, and

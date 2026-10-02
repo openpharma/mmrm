@@ -50,7 +50,8 @@ h_get_kr_comp <- function(tmb_data, theta, linear = FALSE, w = NULL) {
 
 #' Calculation of Kenward-Roger Degrees of Freedom for Multi-Dimensional Contrast
 #'
-#' @description Used in [df_md()] if method is "Kenward-Roger" or "Kenward-Roger-Linear".
+#' @description Used in [df_md()] if method is "Kenward-Roger", i.e. for both
+#'   "Kenward-Roger" and "Kenward-Roger-Linear" vcov.
 #'
 #' @inheritParams h_df_md_sat
 #' @inherit h_df_md_sat return
@@ -76,8 +77,8 @@ h_df_md_kr <- function(object, contrast) {
 
 #' Calculation of Kenward-Roger Degrees of Freedom for One-Dimensional Contrast
 #'
-#' @description Used in [df_1d()] if method is
-#' "Kenward-Roger" or "Kenward-Roger-Linear".
+#' @description Used in [df_1d()] if method is "Kenward-Roger", i.e. for both
+#'   "Kenward-Roger" and "Kenward-Roger-Linear" vcov.
 #'
 #' @inheritParams h_df_1d_sat
 #' @inherit h_df_1d_sat return
@@ -174,7 +175,7 @@ h_kr_df <- function(v0, l, w, p) {
 #'
 #' @description Obtains the Kenward-Roger adjusted covariance matrix for the
 #'   coefficient estimates.
-#' Used in [mmrm()] fitting if method is "Kenward-Roger" or "Kenward-Roger-Linear".
+#' Used in [mmrm()] fitting if vcov is "Kenward-Roger".
 #'
 #' @param v (`matrix`)\cr unadjusted covariance matrix.
 #' @param w (`matrix`)\cr covariance matrix of the estimated covariance parameters.
