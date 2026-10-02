@@ -8,7 +8,7 @@ if method is "Kenward-Roger".
 ## Usage
 
 ``` r
-h_get_kr_comp(tmb_data, theta)
+h_get_kr_comp(tmb_data, theta, linear = FALSE)
 ```
 
 ## Arguments
@@ -24,6 +24,11 @@ h_get_kr_comp(tmb_data, theta)
   (`numeric`)\
   theta estimate.
 
+- linear:
+
+  (`flag`)\
+  whether to omit second derivatives and the R component.
+
 ## Value
 
 Named list with elements:
@@ -32,7 +37,7 @@ Named list with elements:
 
 - `Q`: `matrix` of \\Q\\ component.
 
-- `R`: `matrix` of \\R\\ component.
+- `R`: `matrix` of \\R\\ component, or `NULL` when `linear = TRUE`.
 
 ## Details
 

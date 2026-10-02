@@ -37,9 +37,10 @@ h_var_adj(v, w, p, q, r, linear = FALSE)
 
 - r:
 
-  (`matrix`)\
+  (`matrix` or `NULL`)\
   R matrix from
   [`h_get_kr_comp()`](https://openpharma.github.io/mmrm/reference/h_get_kr_comp.md).
+  May be `NULL` for the linear approximation.
 
 - linear:
 

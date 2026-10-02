@@ -27,6 +27,12 @@ CRAN release: 2026-06-19
 - `mmrm` now supports the spatial Gaussian (`sp_gau`) covariance
   structure.
 
+#### Miscellaneous
+
+- Satterthwaite, empirical and linear Kenward-Roger covariance
+  preparation now skip unused second derivatives. Linear Kenward-Roger
+  also omits the `R` component and its allocation.
+
 #### Bug Fixes
 
 - Previously, using

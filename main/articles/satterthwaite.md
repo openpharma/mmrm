@@ -70,7 +70,15 @@ It uses automatic differentiation provided in `TMB`.
 We first obtain the Jacobian of the inverse of the covariance matrix of
 coefficient (\\\Phi(\theta)^{-1}\\), following the [Kenward-Roger
 calculations](https://openpharma.github.io/mmrm/articles/kenward.html#special-considerations-for-mmrm-models).
-Please note that we only need \\P_h\\ matrices.
+Please note that we only need \\P_h\\ matrices. The Satterthwaite
+implementation therefore initializes a first-derivative-only cache: for
+non-spatial covariance structures, it differentiates the Cholesky factor
+once and caches the covariance and inverse covariance first derivatives
+for each observed-visit pattern. It does not run nested automatic
+differentiation or allocate second-derivative caches. Spatial covariance
+first derivatives are evaluated analytically on demand. Neither
+\\Q\_{hj}\\ nor \\R\_{hj}\\ is constructed for the Satterthwaite
+Jacobian; the gradient and degrees-of-freedom formulas remain unchanged.
 
 Then, to obtain the Jacobian of the covariance matrix of coefficient,
 following the

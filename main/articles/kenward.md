@@ -224,6 +224,21 @@ are constant, and having \\G_i\\ in addition to \\S_i\\ does not change
 the algorithms and we can simply multiply the formulas with
 \\G_i^{-1/2}\\, similarly as above for the subsetting matrix.
 
+#### Implementation notes
+
+For `vcov = "Kenward-Roger-Linear"`, the implementation calculates and
+caches only first derivatives of the subject covariance matrices and
+their inverses. For non-spatial covariance structures, automatic
+differentiation is applied once to the Cholesky factor; the nested
+differentiation for second derivatives is skipped. Missing-visit
+patterns cache only the required first derivatives. The \\P\\ and \\Q\\
+components are unchanged, while \\R\\ is neither calculated nor
+allocated (`kr_comp$R` is `NULL`). The covariance adjustment omits the
+\\R\\ term directly. Full Kenward-Roger still computes second
+derivatives and \\R\\. Spatial covariance derivatives are evaluated
+analytically on demand, and the linear path likewise skips their second
+derivatives. The degrees-of-freedom formulas are unchanged.
+
 ### Inference
 
 Suppose we are testing the linear combination of \\\beta\\, \\C\beta\\
