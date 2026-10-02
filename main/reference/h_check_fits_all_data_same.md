@@ -35,7 +35,7 @@ For efficiency, the inspection takes place in this order:
 
 3.  The columns in common among adjacent datasets are sorted and
     compared using
-    [`all.equal()`](https://rdrr.io/r/base/all.equal.html) with
+    [`base::all.equal()`](https://rdrr.io/r/base/all.equal.html) with
     `check.attributes = FALSE`.
 
 This function is more efficient than running

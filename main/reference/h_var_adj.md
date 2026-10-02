@@ -21,7 +21,7 @@ h_var_adj(v, w, p, q, r, linear = FALSE)
 - w:
 
   (`matrix`)\
-  hessian matrix.
+  covariance matrix of the estimated covariance parameters.
 
 - p:
 

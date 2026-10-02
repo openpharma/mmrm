@@ -17,13 +17,12 @@ Kenward-Roger
 calculations](https://openpharma.github.io/mmrm/articles/kenward.md). In
 particular, we assume we have a contrast matrix \\C \in
 \mathbb{R}^{c\times p}\\ with which we want to test the linear
-hypothesis \\C\beta = 0\\. Further, \\W(\hat\theta)\\ is the inverse of
-the Hessian matrix of the log-likelihood function of \\\theta\\
-evaluated at the estimate \\\hat\theta\\, i.e. the observed Fisher
-Information matrix as a consistent estimator of the variance-covariance
-matrix of \\\hat\theta\\. \\\Phi(\theta) = \left\\X^\top
-\Omega(\theta)^{-1} X\right\\ ^{-1}\\ is the asymptotic covariance
-matrix of \\\hat\beta\\.
+hypothesis \\C\beta = 0\\. Further, \\W(\hat\theta)\\ is the covariance
+estimate of \\\hat\theta\\: the inverse observed information, obtained
+by inverting the Hessian of the negative log-likelihood evaluated at
+\\\hat\theta\\ (the restricted likelihood for REML fits). \\\Phi(\theta)
+= \left\\X^\top \Omega(\theta)^{-1} X\right\\ ^{-1}\\ is the asymptotic
+covariance matrix of \\\hat\beta\\.
 
 #### One-dimensional contrast
 
@@ -89,12 +88,39 @@ The result is a list (of length \\k\\ where \\k\\ is the dimension of
 the variance parameter \\\theta\\) of matrices of \\p \times p\\, where
 \\p\\ is the dimension of \\\beta\\.
 
+##### Connection to the scalar Kenward-Roger shortcut
+
+For a REML fit, the [Kenward-Roger
+implementation](https://openpharma.github.io/mmrm/articles/kenward.html#one-dimensional-shortcut)
+can obtain the same scalar degrees of freedom directly from its cached
+\\P_h\\ matrices. Write \\C = l^\top\\. The Jacobian identity
+
+\\ \frac{\partial\Phi}{\partial\theta_h} = -\Phi P_h\Phi \\
+
+implies \\f'\_h = -l^\top\Phi P_h\Phi l\\. Define \\a_h = -f'\_h/f\\.
+The Satterthwaite formula therefore becomes
+
+\\ \hat\nu = \frac{2}{a^\top Wa}. \\
+
+For one-dimensional KR, \\A_1 = A_2 = a^\top Wa\\ and the F scale is
+exactly \\\lambda = 1\\.
+[`h_kr_df()`](https://openpharma.github.io/mmrm/reference/h_kr_df.md)
+uses this scalar shortcut for both full and linear KR, while
+Satterthwaite continues to use its cached Jacobian through
+[`h_gradient()`](https://openpharma.github.io/mmrm/reference/h_gradient.md).
+The equality uses the **unadjusted** covariance \\\Phi\\ and the same
+\\W\\; KR standard errors still use the adjusted covariance \\\Phi_A\\,
+so equal scalar degrees of freedom do not imply equal test statistics,
+p-values, or confidence intervals. For multiple contrasts, KR uses a
+normalized contrast-space contraction of its moment quantities; the
+Satterthwaite eigen-decomposition described below remains unchanged.
+
 #### Multi-dimensional contrast
 
 When \\c \> 1\\ we are testing multiple contrasts at once. Here an
 F-statistic \\ F = \frac{1}{c} (C\hat\beta)^\top (C \Phi(\hat\theta)
-C^\top)^{-1} C^\top (C\hat\beta) \\ is calculated, and we are interested
-in estimating an appropriate denominator degrees of freedom for \\F\\,
+C^\top)^{-1} (C\hat\beta) \\ is calculated, and we are interested in
+estimating an appropriate denominator degrees of freedom for \\F\\,
 while assuming \\c\\ are the numerator degrees of freedom. Note that
 only in special cases, such as orthogonal or balanced designs, the F
 distribution will be exact under the null hypothesis. In general, it is

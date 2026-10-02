@@ -33,7 +33,7 @@ For efficiency, the inspection takes place in this order:
     the second dataset.
 
 3.  The columns in common are sorted and compared using
-    [`all.equal()`](https://rdrr.io/r/base/all.equal.html) with
+    [`base::all.equal()`](https://rdrr.io/r/base/all.equal.html) with
     `check.attributes = FALSE`.
 
 ## See also

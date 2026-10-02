@@ -539,7 +539,7 @@ implementations considered produce similar empirical biases, variances,
     #> other attached packages:
     #>  [1] ggplot2_4.0.3           emmeans_2.0.4           knitr_1.52             
     #>  [4] sasr_0.1.5              glmmTMB_1.1.15.2        nlme_3.1-171           
-    #>  [7] lme4_2.0-6              Matrix_1.7-6            mmrm_0.3.18            
+    #>  [7] lme4_2.0-6              Matrix_1.7-6            mmrm_0.3.18.9000       
     #> [10] stringr_1.6.0           microbenchmark_1.5.0    purrr_1.2.2            
     #> [13] dplyr_1.2.1             clusterGeneration_1.3.8 MASS_7.3-66            
     #> 

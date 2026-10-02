@@ -1,5 +1,20 @@
 # Changelog
 
+## mmrm 0.3.18.9000
+
+#### Miscellaneous
+
+- Satterthwaite, empirical and linear Kenward-Roger covariance
+  preparation now skip unused second derivatives. Linear Kenward-Roger
+  also omits the `R` component and its allocation.
+- Kenward-Roger degrees of freedom now use contrast-space matrix
+  contractions and a direct scalar shortcut, preserving the existing
+  formulas while reducing contrast inference time.
+- For one-dimensional Kenward-Roger contrasts whose variance does not
+  depend on the covariance parameters (zero moment), the degrees of
+  freedom are now `Inf` with F scaling `1`, which is the limit of the
+  formulas, instead of `NaN`.
+
 ## mmrm 0.3.18
 
 CRAN release: 2026-06-19
@@ -26,12 +41,6 @@ CRAN release: 2026-06-19
   for details.
 - `mmrm` now supports the spatial Gaussian (`sp_gau`) covariance
   structure.
-
-#### Miscellaneous
-
-- Satterthwaite, empirical and linear Kenward-Roger covariance
-  preparation now skip unused second derivatives. Linear Kenward-Roger
-  also omits the `R` component and its allocation.
 
 #### Bug Fixes
 
