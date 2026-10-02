@@ -269,14 +269,20 @@ $Q_{hj}$ are zero. Each block is factored by Cholesky when positive definite,
 with a signed symmetric eigenfactorization otherwise. Every eigenvalue is
 retained, including negative eigenvalues; no clipping or rank truncation is
 applied. This preserves the algebraic contraction for the supplied $W$.
-For $S_P$, `h_var_adj()` flattens $P_h$, multiplies once by the **full** $W$,
+The factorization uses the symmetric part of each block, since $W$ is an
+inverse Hessian that is symmetric only up to rounding. A non-finite $W$ is not
+rejected: as before, `mmrm()` only warns about it, and $S_Q$ and the adjusted
+covariance become non-finite, matching the pairwise backend.
+For $S_P$, `h_var_adj_contracted()` flattens $P_h$, multiplies once by the **full** $W$,
 and sums $k$ matrix products instead of traversing $k^2$ pairs. Cross-group
 $W$ contributions remain in this contraction and in degrees of freedom.
 The two outer multiplications by $\Phi$ are performed once. Fitting coordinates,
 optimizer, coefficient estimates, and the linear KR formulas are unchanged.
 Full KR retains its existing second-order backend. The original pairwise
 backend remains available internally by omitting `w` from `h_get_kr_comp()`
-and `s_q` from `h_var_adj()`, providing an independent regression reference.
+and using `h_var_adj(linear = TRUE)`, providing an independent regression
+reference for tests. Both C++ backends share the `kr_data` helper for
+unpacking the fitted data and subject visits.
 
 The same `benchmark_kr_steps()` helper gives another incremental comparison:
 **100 subjects, six visits, 473 observations, 21 covariance parameters, and
@@ -305,7 +311,7 @@ the incremental debug timings, not with the installed-package or prototype
 measurements. To reproduce, run the same commands given for step 1 in each
 checkout, using `benchmark_kr_steps(n = 100L, m = 6L, repetitions = 3L)`.
 
-Validation: the full R/C++ test suite passes **3,471 expectations with zero
+Validation: the full R/C++ test suite passes **3,486 expectations with zero
 failures or warnings**, with two existing skips (an empty C++ test and a
 multicore test). Focused `covr::function_coverage()` instrumentation reports
 **100% line coverage of both `h_get_kr_comp()` and `h_var_adj()`**. New tests

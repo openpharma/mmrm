@@ -16,8 +16,14 @@
 #' For \eqn{P} matrix, it is stacked sequentially. For \eqn{Q} and \eqn{R} matrix, it is stacked so
 #' that the \eqn{Q_{ij}} and \eqn{R_{ij}} is stacked from \eqn{j} then to \eqn{i}, i.e. \eqn{R_{i1}}, \eqn{R_{i2}}, etc.
 #' \eqn{Q} and \eqn{R} only contains intra-group results and inter-group results should be all zero matrices
-#' so they are not stacked in the result. Supplying `w` for linear KR instead
-#' retains `P` and contracts Q into the single matrix `S_Q`, without storing Q blocks.
+#' so they are not stacked in the result.
+#'
+#' Supplying `w` for linear KR instead retains `P` and contracts Q into the single
+#' matrix `S_Q`, without storing Q blocks, see the section "Contracted linear covariance
+#' adjustment" in `vignette("kenward", package = "mmrm")`. The symmetric part of `w` is
+#' used, and non-finite entries in `w` give a non-finite `S_Q`.
+#' [mmrm()] always supplies `w` for linear KR. Calling with `linear = TRUE` but without `w`
+#' gives the pairwise `P` and `Q` blocks, which tests use as an independent reference.
 #'
 #' @return Named list with elements:
 #' - `P`: `matrix` of \eqn{P} component.
@@ -31,10 +37,13 @@ h_get_kr_comp <- function(tmb_data, theta, linear = FALSE, w = NULL) {
   assert_class(theta, "numeric")
   assert_flag(linear)
   if (!is.null(w)) {
-    assert_true(linear)
-    assert_matrix(w, mode = "numeric", nrows = length(theta), ncols = length(theta), any.missing = FALSE)
-    assert_true(all(is.finite(w)))
-    assert_true(isSymmetric(w, tol = 1e-8, tol1 = 1e-8))
+    if (!linear) {
+      stop(
+        "`w` can only be supplied with `linear = TRUE`, ",
+        "because full Kenward-Roger needs the pairwise Q and R components"
+      )
+    }
+    assert_matrix(w, mode = "numeric", nrows = length(theta), ncols = length(theta))
   }
   .Call(`_mmrm_get_pqr`, PACKAGE = "mmrm", tmb_data, theta, linear, w)
 }
@@ -170,40 +179,24 @@ h_kr_df <- function(v0, l, w, p) {
 #' @param v (`matrix`)\cr unadjusted covariance matrix.
 #' @param w (`matrix`)\cr covariance matrix of the estimated covariance parameters.
 #' @param p (`matrix`)\cr P matrix from [h_get_kr_comp()].
-#' @param q (`matrix` or `NULL`)\cr Q matrix from [h_get_kr_comp()].
-#'   May be `NULL` when `s_q` is supplied.
+#' @param q (`matrix`)\cr Q matrix from [h_get_kr_comp()].
 #' @param r (`matrix` or `NULL`)\cr R matrix from [h_get_kr_comp()].
 #'   May be `NULL` for the linear approximation.
 #' @param linear (`flag`)\cr whether to use linear Kenward-Roger approximation.
-#' @param s_q (`matrix` or `NULL`)\cr precontracted sum of Q components.
-#'   When supplied for linear KR, `q` and `r` are unused.
+#'
+#' @details [mmrm()] uses this function for full Kenward-Roger only, and
+#'   [h_var_adj_contracted()] for the linear approximation. The pairwise linear
+#'   path is kept as an independent reference for tests.
 #'
 #' @return The matrix of adjusted covariance matrix.
 #'
 #' @keywords internal
-h_var_adj <- function(v, w, p, q, r, linear = FALSE, s_q = NULL) {
+h_var_adj <- function(v, w, p, q, r, linear = FALSE) {
   assert_flag(linear)
   n_beta <- ncol(v)
   assert_matrix(v, nrows = n_beta)
   n_theta <- ncol(w)
   assert_matrix(w, nrows = n_theta)
-  if (!is.null(s_q)) {
-    assert_true(linear)
-    assert_matrix(p, ncols = n_beta, nrows = n_beta * n_theta)
-    assert_matrix(s_q, nrows = n_beta, ncols = n_beta)
-    # Flatten each P_h into a column and contract once with the full W.
-    # Cross-group W entries contribute here even though Q has no such blocks.
-    p_flat <- matrix(vapply(seq_len(n_theta), function(h) {
-      rows <- (h - 1L) * n_beta + seq_len(n_beta)
-      as.vector(p[rows, , drop = FALSE])
-    }, numeric(n_beta * n_beta)), nrow = n_beta * n_beta)
-    pw <- p_flat %*% w
-    s_p <- matrix(0, n_beta, n_beta)
-    for (h in seq_len(n_theta)) {
-      s_p <- s_p + matrix(p_flat[, h], n_beta) %*% v %*% matrix(pw[, h], n_beta)
-    }
-    return(v + 2 * v %*% (s_q - s_p) %*% v)
-  }
   n_visits <- ncol(p)
   theta_per_group <- nrow(q) / nrow(p)
   n_groups <- n_theta / theta_per_group
@@ -221,7 +214,7 @@ h_var_adj <- function(v, w, p, q, r, linear = FALSE, s_q = NULL) {
     )
   }
 
-  # see vignettes/kenward.Rmd#131
+  # See the adjusted covariance formula in vignettes/kenward.Rmd.
   ret <- v
   for (i in seq_len(n_theta)) {
     for (j in seq_len(n_theta)) {
@@ -255,4 +248,40 @@ h_var_adj <- function(v, w, p, q, r, linear = FALSE, s_q = NULL) {
     }
   }
   ret
+}
+
+#' Obtain the Contracted Linear Adjusted Covariance Matrix
+#'
+#' @description Obtains the linear Kenward-Roger adjusted covariance matrix for the
+#'   coefficient estimates from the `P` matrices and the contracted `S_Q`.
+#' Used in [mmrm()] fitting if vcov is "Kenward-Roger-Linear".
+#'
+#' @inheritParams h_var_adj
+#' @param s_q (`matrix`)\cr contracted Q sum `S_Q` from [h_get_kr_comp()] called with `w`.
+#'
+#' @details See the section "Contracted linear covariance adjustment" in
+#'   `vignette("kenward", package = "mmrm")`. The full `w` is used, so that
+#'   cross-group covariance parameter covariances contribute.
+#'
+#' @return The matrix of adjusted covariance matrix.
+#'
+#' @keywords internal
+h_var_adj_contracted <- function(v, w, p, s_q) {
+  n_beta <- ncol(v)
+  assert_matrix(v, nrows = n_beta)
+  n_theta <- ncol(w)
+  assert_matrix(w, nrows = n_theta)
+  assert_matrix(p, nrows = n_beta * n_theta, ncols = n_beta)
+  assert_matrix(s_q, nrows = n_beta, ncols = n_beta)
+  # Column h of p_flat is vec(P_h), so column h of p_bar is vec(sum_j W_hj P_j).
+  p_flat <- matrix(
+    aperm(array(p, c(n_beta, n_theta, n_beta)), c(1L, 3L, 2L)),
+    ncol = n_theta
+  )
+  p_bar <- p_flat %*% t(w)
+  s_p <- matrix(0, n_beta, n_beta)
+  for (h in seq_len(n_theta)) {
+    s_p <- s_p + matrix(p_flat[, h], n_beta) %*% v %*% matrix(p_bar[, h], n_beta)
+  }
+  v + 2 * v %*% (s_q - s_p) %*% v
 }

@@ -128,21 +128,9 @@ and linear KR, while Satterthwaite continues to use its cached Jacobian
 through `h_gradient()`. The equality uses the **unadjusted** covariance
 $\Phi$ and the same $W$; KR standard errors still use the adjusted
 covariance $\Phi_A$, so equal scalar degrees of freedom do not imply equal
-test statistics, p-values, or confidence intervals.
-
-The [contracted linear KR covariance backend](kenward.html#contracted-linear-covariance-adjustment)
-retains these same $P_h$ matrices in the original fitting coordinates. It
-calculates $S_Q=\sum_{h,j}W_{hj}Q_{hj}$ using all covariance uncertainty
-directions, and $S_P=\sum_{h,j}W_{hj}P_h\Phi P_j$ using a matrix contraction
-with the full $W$, then forms $\Phi_A=\Phi+2\Phi(S_Q-S_P)\Phi$. The
-parameter-pair $Q$ and $R$ arrays are omitted for KR-linear. This exact
-contraction changes covariance preparation, leaving the scalar df identity
-above intact. Cross-group entries of $W$ contribute to $S_P$ and to
-$a^\top Wa$ even though subjects have group-specific covariance matrices.
-Satterthwaite continues to prepare only its Jacobian and uses the unadjusted
-$\Phi$; it needs neither contracted covariance sum.
-
-For multiple contrasts,
+test statistics, p-values, or confidence intervals. The same $P_h$ matrices
+also enter the [contracted linear KR covariance adjustment](kenward.html#contracted-linear-covariance-adjustment),
+which does not affect the Satterthwaite calculations. For multiple contrasts,
 KR uses a normalized contrast-space contraction of its moment quantities;
 the Satterthwaite eigen-decomposition described below remains unchanged.
 

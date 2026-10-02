@@ -3,7 +3,7 @@
 ### Miscellaneous
 
 - Satterthwaite, empirical and linear Kenward-Roger covariance preparation now skip unused second derivatives. Linear Kenward-Roger also omits the `R` component and its allocation.
-- Linear Kenward-Roger covariance preparation now contracts `Q` using all uncertainty directions and contracts `P` with the full covariance parameter covariance, preserving cross-group contributions without allocating parameter-pair `Q` blocks.
+- Linear Kenward-Roger (`vcov = "Kenward-Roger-Linear"`) now calculates the adjusted coefficient covariance from contracted sums instead of looping over all pairs of covariance parameters. This is substantially faster for models with many covariance parameters, e.g. unstructured covariance with many visits, and gives the same results up to floating-point error. Consequently, the `kr_comp` element of such fits now contains `P` and the contracted matrix `S_Q`, while `Q` and `R` are `NULL`. Full Kenward-Roger fits are unchanged.
 - Kenward-Roger degrees of freedom now use contrast-space matrix contractions and a direct scalar shortcut, preserving the existing formulas while reducing contrast inference time.
 - For one-dimensional Kenward-Roger contrasts whose variance does not depend on the covariance parameters (zero moment), the degrees of freedom are now `Inf` with F scaling `1`, which is the limit of the formulas, instead of `NaN`.
 

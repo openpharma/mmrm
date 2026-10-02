@@ -37,7 +37,13 @@ the total number of theta and number of groups, if the fit is a grouped mmrm.
 For \eqn{P} matrix, it is stacked sequentially. For \eqn{Q} and \eqn{R} matrix, it is stacked so
 that the \eqn{Q_{ij}} and \eqn{R_{ij}} is stacked from \eqn{j} then to \eqn{i}, i.e. \eqn{R_{i1}}, \eqn{R_{i2}}, etc.
 \eqn{Q} and \eqn{R} only contains intra-group results and inter-group results should be all zero matrices
-so they are not stacked in the result. Supplying \code{w} for linear KR instead
-retains \code{P} and contracts Q into the single matrix \code{S_Q}, without storing Q blocks.
+so they are not stacked in the result.
+
+Supplying \code{w} for linear KR instead retains \code{P} and contracts Q into the single
+matrix \code{S_Q}, without storing Q blocks, see the section "Contracted linear covariance
+adjustment" in \code{vignette("kenward", package = "mmrm")}. The symmetric part of \code{w} is
+used, and non-finite entries in \code{w} give a non-finite \code{S_Q}.
+\code{\link[=mmrm]{mmrm()}} always supplies \code{w} for linear KR. Calling with \code{linear = TRUE} but without \code{w}
+gives the pairwise \code{P} and \code{Q} blocks, which tests use as an independent reference.
 }
 \keyword{internal}

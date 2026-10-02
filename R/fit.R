@@ -435,7 +435,9 @@ mmrm_control <- function(
 #' Additional contents depend on `vcov` (see [mmrm_control()]):
 #' - If Kenward-Roger covariance matrix is used, `kr_comp` contains necessary
 #' components and `beta_vcov_adj` includes the adjusted coefficients covariance
-#' matrix.
+#' matrix. For `"Kenward-Roger"` these components are `P`, `Q` and `R`. For
+#' `"Kenward-Roger-Linear"` they are `P` and the contracted matrix `S_Q`, while
+#' `Q` and `R` are `NULL`.
 #' - If Empirical covariance matrix is used, `beta_vcov_adj` contains the
 #' corresponding coefficients covariance matrix estimate. In addition,
 #' `empirical_g_mat` contains the empirical g matrix, which is used to calculate
@@ -580,19 +582,26 @@ mmrm <- function(
   fit$call$formula <- formula
   fit$method <- control$method
   fit$vcov <- control$vcov
-  if (control$vcov %in% c("Kenward-Roger", "Kenward-Roger-Linear")) {
-    fit$kr_comp <- h_get_kr_comp(
-      fit$tmb_data, fit$theta_est,
-      linear = (control$vcov == "Kenward-Roger-Linear"),
-      w = if (control$vcov == "Kenward-Roger-Linear") component(fit, "theta_vcov") else NULL
-    )
+  if (identical(control$vcov, "Kenward-Roger")) {
+    fit$kr_comp <- h_get_kr_comp(fit$tmb_data, fit$theta_est)
     fit$beta_vcov_adj <- h_var_adj(
       v = fit$beta_vcov,
       w = component(fit, "theta_vcov"),
       p = fit$kr_comp$P,
       q = fit$kr_comp$Q,
-      r = fit$kr_comp$R,
-      linear = (control$vcov == "Kenward-Roger-Linear"),
+      r = fit$kr_comp$R
+    )
+  } else if (identical(control$vcov, "Kenward-Roger-Linear")) {
+    theta_vcov <- component(fit, "theta_vcov")
+    fit$kr_comp <- h_get_kr_comp(
+      fit$tmb_data, fit$theta_est,
+      linear = TRUE,
+      w = theta_vcov
+    )
+    fit$beta_vcov_adj <- h_var_adj_contracted(
+      v = fit$beta_vcov,
+      w = theta_vcov,
+      p = fit$kr_comp$P,
       s_q = fit$kr_comp$S_Q
     )
   } else if (

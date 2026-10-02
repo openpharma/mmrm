@@ -822,7 +822,7 @@ test_that("contracted covariance agrees across all covariance structures and mis
       expected_q <- h_kr_q_sum(legacy$Q, w, fit$tmb_data$n_groups)
       expect_equal(actual$S_Q, expected_q, tolerance = 1e-10, info = info)
       expected <- h_var_adj(fit$beta_vcov, w, legacy$P, legacy$Q, NULL, linear = TRUE)
-      covariance <- h_var_adj(fit$beta_vcov, w, actual$P, NULL, NULL, linear = TRUE, s_q = actual$S_Q)
+      covariance <- h_var_adj_contracted(fit$beta_vcov, w, actual$P, actual$S_Q)
       expect_equal(covariance, expected, tolerance = 1e-10, info = info)
       expect_equal(covariance, t(covariance), tolerance = 1e-12, info = info)
       # Absolute checks supplement all.equal's relative-scale comparisons.
@@ -831,8 +831,7 @@ test_that("contracted covariance agrees across all covariance structures and mis
       group <- rep(seq_len(fit$tmb_data$n_groups), each = ncol(w) / fit$tmb_data$n_groups)
       block_w <- w
       block_w[outer(group, group, "!=")] <- 0
-      without_cross <- h_var_adj(fit$beta_vcov, block_w, actual$P, NULL, NULL,
-        linear = TRUE, s_q = actual$S_Q)
+      without_cross <- h_var_adj_contracted(fit$beta_vcov, block_w, actual$P, actual$S_Q)
       expect_gt(max(abs(w - block_w)), 1e-8, label = info)
       expect_gt(max(abs(covariance - without_cross)), 1e-9, label = info)
     }
@@ -850,7 +849,7 @@ test_that("contracted covariance retains signed and small directions on poorly c
     expected_q <- h_kr_q_sum(legacy$Q, w, 1L)
     expect_equal(actual$S_Q, expected_q, tolerance = 1e-10)
     v <- diag(c(1e-6, 10))
-    expect_equal(h_var_adj(v, w, actual$P, NULL, NULL, linear = TRUE, s_q = actual$S_Q),
+    expect_equal(h_var_adj_contracted(v, w, actual$P, actual$S_Q),
       h_var_adj(v, w, legacy$P, legacy$Q, NULL, linear = TRUE), tolerance = 1e-10)
   }
   w <- matrix(0, k, k)
@@ -870,18 +869,38 @@ test_that("contracted covariance supports one coefficient and one covariance par
   expect_equal(dim(fit$kr_comp$S_Q), c(1L, 1L))
 })
 
-test_that("contracted covariance validates W and rejects full KR requests", {
+test_that("contracted covariance rejects full KR requests and invalid dimensions", {
   fit <- get_mmrm_kr()
   k <- length(fit$theta_est)
-  expect_error(h_get_kr_comp(fit$tmb_data, fit$theta_est, w = diag(k)), "TRUE")
+  expect_error(h_get_kr_comp(fit$tmb_data, fit$theta_est, w = diag(k)), "linear = TRUE")
   expect_error(h_get_kr_comp(fit$tmb_data, fit$theta_est, linear = TRUE, w = diag(k + 1L)), "rows")
-  w <- diag(k)
-  w[1, 2] <- 0.1
-  expect_error(h_get_kr_comp(fit$tmb_data, fit$theta_est, linear = TRUE, w = w), "TRUE")
-  w[1, 2] <- Inf
-  expect_error(h_get_kr_comp(fit$tmb_data, fit$theta_est, linear = TRUE, w = w), "TRUE")
-  w[1, 2] <- NA_real_
-  expect_error(h_get_kr_comp(fit$tmb_data, fit$theta_est, linear = TRUE, w = w), "missing")
-  expect_error(h_var_adj(diag(2), diag(1), diag(2), NULL, NULL, s_q = diag(2)), "TRUE")
-  expect_error(h_var_adj(diag(2), diag(1), diag(2), NULL, NULL, linear = TRUE, s_q = diag(3)), "rows")
+  expect_error(h_var_adj_contracted(diag(2), diag(1), diag(2), diag(3)), "rows")
+})
+
+test_that("contracted covariance uses the symmetric part of a slightly asymmetric W", {
+  fit <- mmrm(FEV1 ~ ARMCD + us(AVISIT | USUBJID), fev_data)
+  w <- component(fit, "theta_vcov")
+  w[1, 2] <- w[1, 2] * (1 + 1e-6)
+  legacy <- h_get_kr_comp(fit$tmb_data, fit$theta_est, linear = TRUE)
+  actual <- h_get_kr_comp(fit$tmb_data, fit$theta_est, linear = TRUE, w = w)
+  expected_q <- h_kr_q_sum(legacy$Q, (w + t(w)) / 2, 1L)
+  expect_equal(actual$S_Q, expected_q, tolerance = 1e-10)
+  expect_equal(h_var_adj_contracted(fit$beta_vcov, w, actual$P, actual$S_Q),
+    h_var_adj(fit$beta_vcov, w, legacy$P, legacy$Q, NULL, linear = TRUE), tolerance = 1e-8)
+})
+
+test_that("contracted covariance carries on with non-finite W like the pairwise backend", {
+  fit <- mmrm(FEV1 ~ ARMCD + us(AVISIT | USUBJID), fev_data)
+  legacy <- h_get_kr_comp(fit$tmb_data, fit$theta_est, linear = TRUE)
+  for (value in c(NA_real_, NaN, Inf)) {
+    w <- component(fit, "theta_vcov")
+    w[1, 2] <- w[2, 1] <- value
+    actual <- h_get_kr_comp(fit$tmb_data, fit$theta_est, linear = TRUE, w = w)
+    expect_equal(actual$P, legacy$P, tolerance = 1e-12)
+    expect_true(all(is.nan(actual$S_Q)))
+    covariance <- h_var_adj_contracted(fit$beta_vcov, w, actual$P, actual$S_Q)
+    expected <- h_var_adj(fit$beta_vcov, w, legacy$P, legacy$Q, NULL, linear = TRUE)
+    expect_true(all(!is.finite(covariance)))
+    expect_true(all(!is.finite(expected)))
+  }
 })
