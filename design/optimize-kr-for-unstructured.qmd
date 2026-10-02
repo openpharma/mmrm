@@ -174,6 +174,85 @@ Satterthwaite Jacobian identity $-\Phi P_h\Phi$ and rejection of an absent $R$
 for full KR. Existing SAS comparisons and full-KR component snapshots continue
 to pass. Both theory vignettes were updated and rendered successfully.
 
+### Step 2: contrast-space degrees of freedom (2026-10-02)
+
+`h_kr_df()` now forms the normalized $c\times c$ matrices $F_h$ and
+contracts their traces and vectorizations with the full $W$, replacing the
+parameter-pair loop over coefficient-space matrices. For a scalar contrast,
+it directly calculates $m = 2/(a^\top Wa)$ and returns $\lambda = 1$.
+Both full and linear KR use this path, for all covariance structures.
+Cross-group entries of $W$ remain included. The unadjusted covariance is used
+for degrees of freedom, while standard errors and test statistics continue
+to use the KR-adjusted covariance. Numerically singular multi-dimensional
+hypotheses are still rejected: a reciprocal-condition check retains the
+previous `solve()` threshold because Cholesky alone can accept a singular
+matrix after roundoff. A contrast covariance that is not positive definite,
+or a scalar contrast without positive variance, now raises an informative
+error. For a scalar contrast with zero moment, the limit $m = \infty$,
+$\lambda = 1$ is returned instead of the previous `NaN`.
+
+The new `benchmark_kr_df_steps()` helper uses the **same 100-subject,
+six-visit dataset as the step-1 benchmark**: 473 observations, 21 covariance
+parameters, and 18 fixed-effect coefficients. It fits KR-linear once outside
+the timed region, then requests the last coefficient or the last three
+coefficients. Each measurement batches **1,000 calls** to `h_kr_df()`;
+the table reports median elapsed time across three batches, divided by 1,000.
+Garbage collection precedes each batch. These timings measure **post-fit
+degrees-of-freedom calculation only**; they exclude fitting, covariance
+preparation, standard errors, p-values, and package loading/compilation.
+Step 2 does not change the fit-time work measured in the step-1 table.
+
+| Implementation | Scalar contrast, per call | Rank-3 contrast, per call |
+|:--|--:|--:|
+| After step 1 / before step 2 | 5.059 ms | 4.886 ms |
+| After step 2 | 0.044 ms | 0.065 ms |
+
+On this case, scalar df calculation is about **115 times faster**, and
+rank-3 df calculation is about **75 times faster**. These speedups apply
+only to the timed df calculation. The raw 1,000-call batch times were
+5.139/4.870/5.059 s (scalar) and 4.891/4.866/4.886 s (rank 3) before,
+and 0.046/0.044/0.042 s and 0.066/0.065/0.065 s after step 2.
+The resulting df were 28.51364 and 42.58682, with F scaling 1 and
+0.9586308, respectively; both implementations agreed within $10^{-9}$
+relative tolerance.
+
+The baseline is the saved R implementation at
+`e94556e3fae6d4389c7b56024003304fdd880733` (after step 1). Both implementations
+used the same fitted model, compiler settings, and local compiled library as
+step 1, with R 4.6.1, TMB 1.9.25, and the default R BLAS on the same MacBook Pro.
+The final timing run did not overlap the test or vignette-rendering jobs.
+
+To reproduce across checkouts, run the following in separate R sessions;
+source the updated helper in both. The helper also accepts `df_fun` to compare
+a saved old function against the new function on the same fitted model.
+
+```r
+pkgload::load_all("/path/to/checkout", debug = TRUE, helpers = FALSE)
+source("/path/to/updated/checkout/design/optimize-kr-for-unstructured.R")
+times <- benchmark_kr_df_steps(n = 100L, m = 6L, repetitions = 3L,
+                               calls = 1000L)
+sessionInfo()
+```
+
+Validation: the full R/C++ suite passes with **3,076 passing expectations,
+zero failures or warnings**, and two existing skips (an empty test and a
+multicore test). Focused `covr::function_coverage()` instrumentation gives
+**100% line coverage of `h_kr_df()`**. New regression tests retain the previous
+coefficient-space implementation as an independent oracle and compare df,
+F scaling, scalar standard errors and t statistics, and multi-dimensional
+F statistics and p-values for full and linear KR. They cover complete and
+missing visits, equal and unequal weights, unstructured/AR(1)/spatial
+exponential/spatial Gaussian covariance, grouped covariance with nonzero
+cross-group $W$, dense nonorthogonal contrasts of ranks 1, 2, 3, and $p$,
+invertible contrast transformations, a single coefficient or covariance
+parameter, an ill-conditioned positive-definite covariance, rescaling,
+scalar boundary moments, incompatible dimensions, singular and non-positive-definite
+hypotheses, and one fit with `vcov = "Kenward-Roger-Linear"`. These tests are in
+`test-kenwardroger.R`; the tests fitting models are skipped on CRAN.
+Separate tests compare scalar KR with the Satterthwaite Jacobian-based df
+using unadjusted covariance. Existing SAS comparisons and snapshots pass.
+Both updated theory vignettes render successfully.
+
 ## Question 1: exact optimizations
 
 ### Where the current implementation spends work
@@ -406,7 +485,8 @@ covariance (maximum absolute difference $2.15\times10^{-16}$).
 1. **Implemented (2026-10-02):** Introduce first-derivative-only caches and
    skip $R$ for KR-linear and Satterthwaite. See the incremental timing
    comparison above.
-2. Implement contrast-space degrees of freedom, including the scalar shortcut.
+2. **Implemented (2026-10-02):** Contrast-space degrees of freedom, including
+   the scalar shortcut. See the post-fit incremental timings above.
 3. Implement a contracted covariance backend, using full-rank directions or
    the sparse unstructured basis. Preserve cross-group $W$ contributions.
 4. Benchmark the integrated path and verify coefficient covariance, standard

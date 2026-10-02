@@ -9,7 +9,7 @@ h_var_adj(v, w, p, q, r, linear = FALSE)
 \arguments{
 \item{v}{(\code{matrix})\cr unadjusted covariance matrix.}
 
-\item{w}{(\code{matrix})\cr hessian matrix.}
+\item{w}{(\code{matrix})\cr covariance matrix of the estimated covariance parameters.}
 
 \item{p}{(\code{matrix})\cr P matrix from \code{\link[=h_get_kr_comp]{h_get_kr_comp()}}.}
 

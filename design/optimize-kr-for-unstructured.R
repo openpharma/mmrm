@@ -160,11 +160,9 @@ benchmark_kr <- function(n = 300L, m = 18L) {
   invisible(list(timings = timings, sat = sat, kr = kr, prototype = a))
 }
 
-# Small repeatable full-fit benchmark for tracking implementation steps.
-# Run in separate R sessions with baseline and updated checkouts loaded using
-# the same compiler flags. No prototype calculation or contrast timing.
-benchmark_kr_steps <- function(n = 100L, m = 6L, repetitions = 3L) {
-  stopifnot(n %% 2L == 0L, m >= 2L, repetitions >= 1L)
+# Shared data for the small incremental fit and contrast benchmarks.
+kr_steps_data <- function(n = 100L, m = 6L) {
+  stopifnot(n %% 2L == 0L, m >= 2L)
   set.seed(20261001)
   dat <- expand.grid(visit = seq_len(m), id = seq_len(n))
   dat$id <- factor(dat$id)
@@ -176,6 +174,15 @@ benchmark_kr_steps <- function(n = 100L, m = 6L, repetitions = 3L) {
   last <- sample(seq.int(ceiling(0.6 * m), m), n, replace = TRUE)
   dat <- dat[dat$visit <= rep(last, each = m), ]
   dat$visit <- factor(dat$visit)
+  dat
+}
+
+# Small repeatable full-fit benchmark for tracking implementation steps.
+# Run in separate R sessions with baseline and updated checkouts loaded using
+# the same compiler flags. No prototype calculation or contrast timing.
+benchmark_kr_steps <- function(n = 100L, m = 6L, repetitions = 3L) {
+  stopifnot(repetitions >= 1L)
+  dat <- kr_steps_data(n, m)
   f <- y ~ (baseline + trt) * visit + us(visit | id)
   times <- sapply(c("Satterthwaite", "KR-linear"), function(method) {
     control <- if (method == "Satterthwaite") {
@@ -193,4 +200,32 @@ benchmark_kr_steps <- function(n = 100L, m = 6L, repetitions = 3L) {
   print(times)
   print(apply(times, 2L, median))
   invisible(times)
+}
+
+# Post-fit df benchmark: batch calls so that small elapsed times are measurable.
+# Pass a saved implementation as df_fun to compare on exactly the same fit.
+benchmark_kr_df_steps <- function(n = 100L, m = 6L, repetitions = 3L,
+                                  calls = 100L, df_fun = mmrm:::h_kr_df) {
+  stopifnot(repetitions >= 1L, calls >= 1L)
+  dat <- kr_steps_data(n, m)
+  fit <- mmrm::mmrm(y ~ (baseline + trt) * visit + us(visit | id), dat,
+    control = mmrm::mmrm_control(method = "Kenward-Roger", vcov = "Kenward-Roger-Linear"))
+  v0 <- fit$beta_vcov
+  w <- mmrm::component(fit, "theta_vcov")
+  p <- fit$kr_comp$P
+  n_beta <- ncol(v0)
+  ranks <- c(1L, 3L)
+  contrasts <- lapply(ranks, function(rank) diag(n_beta)[seq.int(n_beta - rank + 1L, n_beta), , drop = FALSE])
+  results <- lapply(contrasts, function(contrast) df_fun(v0, contrast, w, p))
+  times <- vapply(contrasts, function(contrast) {
+    replicate(repetitions, {
+      gc()
+      system.time(for (i in seq_len(calls)) df_fun(v0, contrast, w, p))[["elapsed"]]
+    })
+  }, numeric(repetitions))
+  times <- matrix(times, nrow = repetitions, dimnames = list(NULL, paste0("rank", ranks)))
+  print(times)
+  print(apply(times, 2L, median) / calls)
+  invisible(list(times = times, seconds_per_call = apply(times, 2L, median) / calls,
+    results = results, calls = calls, fit = fit))
 }

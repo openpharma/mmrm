@@ -47,23 +47,27 @@ export(tidy)
 import(checkmate)
 importFrom(Rcpp,evalCpp)
 importFrom(Rdpack,reprompt)
-importFrom(generics,augment)
-importFrom(generics,glance)
-importFrom(generics,tidy)
+importFrom(generics,
+  augment,
+  glance,
+  tidy
+)
 importFrom(methods,is)
 importFrom(nlme,VarCorr)
-importFrom(stats,AIC)
-importFrom(stats,BIC)
-importFrom(stats,coef)
-importFrom(stats,deviance)
-importFrom(stats,drop.terms)
-importFrom(stats,fitted)
-importFrom(stats,formula)
-importFrom(stats,logLik)
-importFrom(stats,model.frame)
-importFrom(stats,predict)
-importFrom(stats,residuals)
-importFrom(stats,simulate)
-importFrom(stats,terms)
-importFrom(stats,vcov)
+importFrom(stats,
+  AIC,
+  BIC,
+  coef,
+  deviance,
+  drop.terms,
+  fitted,
+  formula,
+  logLik,
+  model.frame,
+  predict,
+  residuals,
+  simulate,
+  terms,
+  vcov
+)
 useDynLib(mmrm, .registration = TRUE)
