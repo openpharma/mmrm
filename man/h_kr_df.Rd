@@ -11,7 +11,7 @@ h_kr_df(v0, l, w, p)
 
 \item{l}{(\code{matrix})\cr linear combination matrix.}
 
-\item{w}{(\code{matrix})\cr hessian matrix.}
+\item{w}{(\code{matrix})\cr covariance matrix of the estimated covariance parameters.}
 
 \item{p}{(\code{matrix})\cr P matrix from \code{\link[=h_get_kr_comp]{h_get_kr_comp()}}.}
 }

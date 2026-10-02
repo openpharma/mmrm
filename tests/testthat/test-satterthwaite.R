@@ -300,3 +300,24 @@ test_that("h_df_md_sat works as expected with Empirical covariance matrix", {
   expect_equal(result$f_stat, 37.603, tolerance = 1e-3)
   expect_true(result$p_val < 0.0001)
 })
+# Scalar KR equivalence ----
+
+test_that("scalar KR df equals Satterthwaite based on unadjusted covariance", {
+  formulas <- list(
+    FEV1 ~ ARMCD * AVISIT + FEV1_BL + us(AVISIT | USUBJID),
+    FEV1 ~ ARMCD * AVISIT + FEV1_BL + us(AVISIT | SEX / USUBJID),
+    FEV1 ~ ARMCD * AVISIT + FEV1_BL + ar1(AVISIT | USUBJID),
+    FEV1 ~ ARMCD * AVISIT + FEV1_BL + sp_exp(VISITN, VISITN2 | USUBJID)
+  )
+  for (formula in formulas) {
+    weights <- seq(0.5, 2, length.out = nrow(fev_data))
+    fit <- mmrm(formula, fev_data, weights = weights, method = "Satterthwaite")
+    p <- h_get_kr_comp(fit$tmb_data, fit$theta_est, linear = TRUE)$P
+    n_beta <- length(coef(fit))
+    for (contrast in list(diag(n_beta)[n_beta, ], seq(-1, 1, length.out = n_beta))) {
+      kr <- h_kr_df(fit$beta_vcov, matrix(contrast, nrow = 1), component(fit, "theta_vcov"), p)
+      expect_equal(kr$m, df_1d(fit, contrast)$df, tolerance = 1e-10)
+      expect_identical(kr$lambda, 1)
+    }
+  }
+})

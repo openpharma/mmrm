@@ -9,6 +9,7 @@
 ### Miscellaneous
 
 - Satterthwaite, empirical and linear Kenward-Roger covariance preparation now skip unused second derivatives. Linear Kenward-Roger also omits the `R` component and its allocation.
+- Kenward-Roger degrees of freedom now use contrast-space matrix contractions and a direct scalar shortcut, preserving the existing formulas while reducing contrast inference time.
 
 ### Bug Fixes
 

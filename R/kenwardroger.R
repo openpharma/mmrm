@@ -87,7 +87,7 @@ h_df_1d_kr <- function(object, contrast) {
 #'
 #' @param v0 (`matrix`)\cr unadjusted covariance matrix.
 #' @param l (`matrix`)\cr linear combination matrix.
-#' @param w (`matrix`)\cr hessian matrix.
+#' @param w (`matrix`)\cr covariance matrix of the estimated covariance parameters.
 #' @param p (`matrix`)\cr P matrix from [h_get_kr_comp()].
 #'
 #' @return Named list with elements:
@@ -101,32 +101,36 @@ h_kr_df <- function(v0, l, w, p) {
   assert_matrix(l, ncols = n_beta)
   n_theta <- ncol(w)
   assert_matrix(w, ncols = n_theta, nrows = n_theta)
-  n_visits <- ncol(p)
-  assert_matrix(p, nrows = n_visits * n_theta)
-  # see vignettes/kenward.Rmd#279
-  slvol <- solve(h_quad_form_mat(l, v0))
-  m <- h_quad_form_mat(t(l), slvol)
+  assert_matrix(p, ncols = n_beta, nrows = n_beta * n_theta)
   nl <- nrow(l)
-  mv0 <- m %*% v0
-  pl <- lapply(seq_len(nrow(p) / ncol(p)), function(x) {
-    ii <- (x - 1) * ncol(p) + 1
-    jj <- x * ncol(p)
-    p[ii:jj, ]
-  })
-  mv0pv0 <- lapply(pl, function(x) {
-    mv0 %*% x %*% v0
-  })
-  a1 <- 0
-  a2 <- 0
-  # see vignettes/kenward.Rmd#283
-  for (i in seq_along(pl)) {
-    for (j in seq_along(pl)) {
-      a1 <- a1 + w[i, j] * h_tr(mv0pv0[[i]]) * h_tr(mv0pv0[[j]])
-      a2 <- a2 + w[i, j] * h_tr(mv0pv0[[i]] %*% mv0pv0[[j]])
-    }
+  lv0 <- l %*% v0
+  if (nl == 1L) {
+    # A1 = A2 = a' W a: scalar Satterthwaite based on unadjusted variance.
+    variance <- sum(lv0 * l)
+    a <- vapply(seq_len(n_theta), function(h) {
+      rows <- (h - 1L) * n_beta + seq_len(n_beta)
+      sum(lv0 * (lv0 %*% p[rows, , drop = FALSE])) / variance
+    }, numeric(1L))
+    return(list(m = 2 / h_quad_form_vec(a, w), lambda = 1))
   }
+
+  # Normalize in contrast space: H = T T', Z = T^{-1} L Phi.
+  # See vignettes/kenward.Rmd, "Degrees of freedom in contrast space".
+  h <- tcrossprod(lv0, l)
+  # Cholesky alone can accept a singular hypothesis after roundoff. Retain
+  # the numerical-singularity check used by the previous solve(H) path.
+  if (rcond(h) < .Machine$double.eps) {
+    stop("contrast covariance is numerically singular")
+  }
+  z <- forwardsolve(t(chol(h)), lv0)
+  f <- vapply(seq_len(n_theta), function(h) {
+    rows <- (h - 1L) * n_beta + seq_len(n_beta)
+    as.vector(tcrossprod(z %*% p[rows, , drop = FALSE], z))
+  }, numeric(nl * nl))
+  traces <- colSums(f[seq.int(1L, nl * nl, by = nl + 1L), , drop = FALSE])
+  a1 <- h_quad_form_vec(traces, w)
+  a2 <- sum((f %*% w) * f)
   b <- 1 / (2 * nl) * (a1 + 6 * a2)
-  e <- 1 + a2 / nl
   e_star <- 1 / (1 - a2 / nl)
   g <- ((nl + 1) * a1 - (nl + 4) * a2) / ((nl + 2) * a2)
   denom <- (3 * nl + 2 - 2 * g)

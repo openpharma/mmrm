@@ -274,22 +274,21 @@ formulas are unchanged.
 
 ## Inference
 
-Suppose we are testing the linear combination of $\beta$, $C\beta$ with $C \in \mathbb{R}^{c\times p}$, we can use the following F-statistic
+Suppose we are testing the linear combination of $\beta$, $C\beta$ with a
+full row rank contrast matrix $C \in \mathbb{R}^{c\times p}$. We use the following F-statistic
 \[
-  F = \frac{1}{c} (\hat\beta - \beta)^\top  C (C^\top \hat\Phi_A C)^{-1} C^\top (\hat\beta - \beta)
+  F = \frac{1}{c} (C(\hat\beta - \beta))^\top (C \hat\Phi_A C^\top)^{-1} C(\hat\beta - \beta)
 \]
 and
 \[
   F^* = \lambda F
 \]
-follows exact $F_{c,m}$ distribution.
-
-When we have only one coefficient to test, then $C$ is a column vector containing a single $1$ inside. We can still follow the same calculations as for the multi-dimensional case. This recovers the degrees of freedom results of the Satterthwaite method.
+is approximated by an $F_{c,m}$ distribution.
 
 $\lambda$ and $m$ can be calculated through
 
 \[
-  M = C (C^\top \Phi C)^{-1} C^\top
+  M = C^\top (C \Phi C^\top)^{-1} C
 \]
 
 \[
@@ -326,6 +325,60 @@ $\lambda$ and $m$ can be calculated through
 
 \[m = 4 + \frac{c+2}{c\rho - 1}\]
 \[\lambda = \frac{m}{E^*(m-2)}\]
+
+### Degrees of freedom in contrast space
+
+`h_kr_df()` evaluates the same $A_1$ and $A_2$ in the smaller contrast
+space, for both full and linear Kenward-Roger and all covariance structures.
+Let $H = C\Phi C^\top = TT^\top$, where $T$ is the lower triangular
+Cholesky factor, and set
+
+\[
+  Z = T^{-1}C\Phi, \qquad F_h = ZP_hZ^\top.
+\]
+
+Triangular solves obtain $Z$ without explicitly inverting $H$. Numerically
+singular hypotheses are rejected, as in the previous inverse-based calculation. Each $F_h$
+is a symmetric $c\times c$ matrix. Cyclic invariance of trace gives
+
+\[
+  A_1 = t^\top Wt, \qquad t_h = \operatorname{tr}(F_h), \qquad
+  A_2 = \sum_{h,j} W_{hj}\langle F_h,F_j\rangle_F.
+\]
+
+With $\mathcal{F}$ containing $\operatorname{vec}(F_h)$ as its $h$th
+column, the implementation calculates
+$A_2 = \operatorname{sum}((\mathcal{F}W)\odot\mathcal{F})$.
+This replaces the pairwise products of $p\times p$ matrices by a dense
+contraction with $c^2$ rows. The remaining scalar formulas above are unchanged.
+The full covariance $W$ is retained, including cross-group entries in grouped
+models. Here $W$ is the covariance of the estimated covariance parameters,
+the inverse observed information, rather than the Hessian itself.
+
+### One-dimensional shortcut
+
+For a single row contrast $C = l^\top$, define
+
+\[
+  a_h = \frac{l^\top\Phi P_h\Phi l}{l^\top\Phi l}.
+\]
+
+Then $A_1 = A_2 = a^\top Wa$, and the formulas simplify to
+
+\[
+  m = \frac{2}{a^\top Wa}, \qquad \lambda = 1.
+\]
+
+The implementation uses this shortcut directly, avoiding Cholesky
+normalization and the general moment formulas. It applies to any nonzero
+scalar contrast, including a combination of coefficients. Since
+$\partial\Phi/\partial\theta_h = -\Phi P_h\Phi$, this is exactly the
+[scalar Satterthwaite degrees of freedom](satterthwaite.html#one-dimensional-contrast)
+based on the **unadjusted** variance $l^\top\Phi l$. The standard error and
+test statistic still use $\Phi_A$ for both full and linear KR. Consequently,
+their tests and confidence intervals can differ from Satterthwaite even when
+their scalar degrees of freedom agree. Multi-dimensional KR retains its own
+degrees of freedom and F scaling.
 
 ## Parameterization methods and Kenward-Roger
 
