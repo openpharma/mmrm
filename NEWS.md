@@ -8,7 +8,7 @@
 
 ### Miscellaneous
 
-- Satterthwaite and linear Kenward-Roger covariance preparation now skip unused second derivatives. Linear Kenward-Roger also omits the `R` component and its allocation.
+- Satterthwaite, empirical and linear Kenward-Roger covariance preparation now skip unused second derivatives. Linear Kenward-Roger also omits the `R` component and its allocation.
 
 ### Bug Fixes
 

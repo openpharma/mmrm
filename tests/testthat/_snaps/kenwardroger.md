@@ -2067,13 +2067,13 @@
 
 # h_var_adj works as expected in the standard case for Kenward-Roger
 
-    structure(c(0.444119599330238, -0.444119599330238, -0.444119599330237, 
-    0.922715039314076), dim = c(2L, 2L), dimnames = list(c("(Intercept)", 
+    structure(c(0.442311524488976, -0.442311524488976, -0.442311524488976, 
+    0.918881052484644), dim = c(2L, 2L), dimnames = list(c("(Intercept)", 
     "ARMCDTRT"), c("(Intercept)", "ARMCDTRT")))
 
 # h_var_adj works as expected in the standard case for Kenward-Roger-Linear
 
-    structure(c(0.442311524488976, -0.442311524488976, -0.442311524488976, 
-    0.918881052484644), dim = c(2L, 2L), dimnames = list(c("(Intercept)", 
+    structure(c(0.444119599330238, -0.444119599330238, -0.444119599330237, 
+    0.922715039314076), dim = c(2L, 2L), dimnames = list(c("(Intercept)", 
     "ARMCDTRT"), c("(Intercept)", "ARMCDTRT")))
 

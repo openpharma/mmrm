@@ -120,7 +120,8 @@ KR-linear now initializes only first derivatives, skips the second-derivative
 missing-pattern caches, and returns `R = NULL` without allocating or computing
 $R$. `h_var_adj(linear = TRUE)` omits the $R$ term directly. Satterthwaite's
 Jacobian also requests only first derivatives; it continues to construct
-neither $Q$ nor $R$. Spatial second derivatives are evaluated on demand and
+neither $Q$ nor $R$. Empirical covariance calculations (which need no
+derivatives) likewise request only first derivatives. Spatial second derivatives are evaluated on demand and
 are skipped in the linear path. Full KR retains the existing second-order
 calculation. Analytic unstructured derivatives, contracted $Q$, and
 contrast-space degrees of freedom are left for subsequent steps.
@@ -404,7 +405,7 @@ covariance (maximum absolute difference $2.15\times10^{-16}$).
 
 1. **Implemented (2026-10-02):** Introduce first-derivative-only caches and
    skip $R$ for KR-linear and Satterthwaite. See the incremental timing
-   comparison below.
+   comparison above.
 2. Implement contrast-space degrees of freedom, including the scalar shortcut.
 3. Implement a contracted covariance backend, using full-rank directions or
    the sparse unstructured basis. Preserve cross-group $W$ contributions.

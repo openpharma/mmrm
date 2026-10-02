@@ -168,24 +168,24 @@ benchmark_kr_steps <- function(n = 100L, m = 6L, repetitions = 3L) {
   set.seed(20261001)
   dat <- expand.grid(visit = seq_len(m), id = seq_len(n))
   dat$id <- factor(dat$id)
-  dat$trt <- factor(rep(rep(c('A', 'B'), each = n / 2), each = m))
+  dat$trt <- factor(rep(rep(c("A", "B"), each = n / 2), each = m))
   dat$baseline <- rep(rnorm(n), each = m)
-  sigma <- 0.5^abs(outer(seq_len(m), seq_len(m), '-'))
+  sigma <- 0.5^abs(outer(seq_len(m), seq_len(m), "-"))
   e <- matrix(rnorm(n * m), n, m) %*% chol(sigma)
-  dat$y <- 0.3 * dat$baseline + 0.2 * (dat$trt == 'B') + as.vector(t(e))
+  dat$y <- 0.3 * dat$baseline + 0.2 * (dat$trt == "B") + as.vector(t(e))
   last <- sample(seq.int(ceiling(0.6 * m), m), n, replace = TRUE)
   dat <- dat[dat$visit <= rep(last, each = m), ]
   dat$visit <- factor(dat$visit)
   f <- y ~ (baseline + trt) * visit + us(visit | id)
-  times <- sapply(c('Satterthwaite', 'KR-linear'), function(method) {
-    control <- if (method == 'Satterthwaite') {
+  times <- sapply(c("Satterthwaite", "KR-linear"), function(method) {
+    control <- if (method == "Satterthwaite") {
       mmrm::mmrm_control(method = method)
     } else {
-      mmrm::mmrm_control(method = 'Kenward-Roger', vcov = 'Kenward-Roger-Linear')
+      mmrm::mmrm_control(method = "Kenward-Roger", vcov = "Kenward-Roger-Linear")
     }
     replicate(repetitions, {
       gc()
-      system.time(mmrm::mmrm(f, dat, control = control))[['elapsed']]
+      system.time(mmrm::mmrm(f, dat, control = control))[["elapsed"]]
     })
   })
   times <- matrix(times, nrow = repetitions,
