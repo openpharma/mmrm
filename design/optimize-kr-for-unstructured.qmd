@@ -292,24 +292,31 @@ fit; they exclude loading/compilation, summaries, and contrast inference.
 
 | Implementation | Satterthwaite, full fit | KR-linear, full fit |
 |:--|--:|--:|
-| After step 2 / before step 3 (`31cc46592`) | 0.309 s | 1.253 s |
-| After step 3 | 0.320 s | 0.338 s |
+| Before step 1 (`fc9cc2336`) | 0.660 s | 4.394 s |
+| After step 2 / before step 3 (`31cc46592`) | 0.631 s | 2.478 s |
+| After step 3 | 0.628 s | 0.668 s |
 
 KR-linear took about **73% less time (3.71 times faster)** than the preceding
-implementation on this case. The Satterthwaite difference is within timing
-noise. Individual times were 0.309/0.369/0.308 s and 1.215/1.253/1.257 s
-before, and 0.320/0.375/0.306 s and 0.338/0.344/0.330 s after, for
-Satterthwaite and KR-linear respectively. Relative to the 2.235 s pre-step-1
-median above, the current 0.338 s median is about **6.61 times faster**;
-that comparison spans separate timing sessions.
+implementation on this case, and about **6.58 times faster** than before step 1.
+The Satterthwaite differences are within timing noise. Individual times were
+0.660/0.791/0.632 s and 4.394/4.419/4.378 s before step 1,
+0.631/0.769/0.618 s and 2.478/2.499/2.467 s before step 3, and
+0.628/0.761/0.611 s and 0.668/0.690/0.666 s after step 3, for Satterthwaite
+and KR-linear respectively.
 
-Both step-3 timing sessions used the same local `pkgload` **debug build**
+All three rows come from one timing session, run after the final step-3
+refactoring (shared `kr_data` helper, `h_var_adj_contracted()`). Each checkout
+was loaded in its own R session with the same local `pkgload` **debug build**
 (`-O0`), Apple clang 21.0.0, R 4.6.1, TMB 1.9.25, and default R BLAS on the
-MacBook Pro described above. Neither timing session overlapped tests or
-vignette rendering. These small-case measurements should be compared with
-the incremental debug timings, not with the installed-package or prototype
-measurements. To reproduce, run the same commands given for step 1 in each
-checkout, using `benchmark_kr_steps(n = 100L, m = 6L, repetitions = 3L)`.
+MacBook Pro described above, run sequentially on an otherwise idle machine.
+This session ran on **battery in macOS Low Power Mode**, so all absolute times
+are about twice those in the step-1 and step-2 tables; compare ratios within
+this table rather than absolute times across tables. The KR-linear ratios
+agree with the earlier sessions: 1.77 versus 1.78 from before step 1 to
+before step 3, and 3.71 versus 3.71 for step 3. These small-case measurements
+should not be compared with the installed-package or prototype measurements. To
+reproduce, run the same commands given for step 1 in each checkout, using
+`benchmark_kr_steps(n = 100L, m = 6L, repetitions = 3L)`.
 
 Validation: the full R/C++ test suite passes **3,486 expectations with zero
 failures or warnings**, with two existing skips (an empty C++ test and a
