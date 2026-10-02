@@ -564,7 +564,7 @@ test_that("h_var_adj works as expected in the standard case for Kenward-Roger", 
     p = object_mmrm_kr$kr_comp$P,
     q = object_mmrm_kr$kr_comp$Q,
     r = object_mmrm_kr$kr_comp$R,
-    linear = TRUE
+    linear = FALSE
   ))
 })
 
@@ -576,7 +576,7 @@ test_that("h_var_adj works as expected in the standard case for Kenward-Roger-Li
     p = object_mmrm_kr$kr_comp$P,
     q = object_mmrm_kr$kr_comp$Q,
     r = object_mmrm_kr$kr_comp$R,
-    linear = FALSE
+    linear = TRUE
   ))
 })
 
@@ -596,5 +596,55 @@ test_that("df_md works as expected for Kenward-Roger", {
     result,
     expected,
     tolerance = 1e-4
+  )
+})
+
+# First-derivative-only preparation ----
+
+test_that("h_get_kr_comp with linear = TRUE preserves P, Q and inference while omitting R", {
+  formulas <- list(
+    FEV1 ~ ARMCD * AVISIT + us(AVISIT | USUBJID),
+    FEV1 ~ ARMCD * AVISIT + us(AVISIT | SEX / USUBJID),
+    FEV1 ~ ARMCD * AVISIT + ar1(AVISIT | USUBJID),
+    FEV1 ~ ARMCD * AVISIT + sp_exp(VISITN, VISITN2 | USUBJID),
+    FEV1 ~ ARMCD * AVISIT + sp_gau(VISITN, VISITN2 | SEX / USUBJID)
+  )
+  for (formula in formulas) {
+    for (weighted in c(FALSE, TRUE)) {
+      info <- paste(format(formula), if (weighted) "(weighted)" else "(unweighted)")
+      weights <- if (weighted) seq(0.5, 2, length.out = nrow(fev_data)) else rep(1, nrow(fev_data))
+      fit <- mmrm(formula, fev_data, weights = weights,
+        control = mmrm_control(method = "Kenward-Roger", vcov = "Kenward-Roger-Linear"))
+      full <- h_get_kr_comp(fit$tmb_data, fit$theta_est)
+      expect_null(fit$kr_comp$R, info = info)
+      expect_equal(fit$kr_comp$P, full$P, tolerance = 1e-12, info = info)
+      expect_equal(fit$kr_comp$Q, full$Q, tolerance = 1e-12, info = info)
+      # The previous implementation discarded R by replacing it with zeros.
+      reference <- fit
+      reference$kr_comp <- full
+      reference$beta_vcov_adj <- h_var_adj(fit$beta_vcov, component(fit, "theta_vcov"),
+        full$P, full$Q, matrix(0, nrow(full$R), ncol(full$R)))
+      expect_equal(fit$beta_vcov_adj, reference$beta_vcov_adj, tolerance = 1e-12, info = info)
+      p <- length(coef(fit))
+      expect_equal(df_1d(fit, diag(p)[p, ]), df_1d(reference, diag(p)[p, ]),
+        tolerance = 1e-10, info = info)
+      expect_equal(df_md(fit, diag(p)[(p - 1):p, ]), df_md(reference, diag(p)[(p - 1):p, ]),
+        tolerance = 1e-10, info = info)
+    }
+  }
+})
+
+test_that("h_var_adj requires R for full Kenward-Roger", {
+  object_mmrm_kr <- get_mmrm_kr()
+  expect_error(
+    h_var_adj(
+      v = object_mmrm_kr$beta_vcov,
+      w = component(object_mmrm_kr, "theta_vcov"),
+      p = object_mmrm_kr$kr_comp$P,
+      q = object_mmrm_kr$kr_comp$Q,
+      r = NULL,
+      linear = FALSE
+    ),
+    "matrix"
   )
 })

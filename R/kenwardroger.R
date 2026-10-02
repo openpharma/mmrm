@@ -5,6 +5,7 @@
 #'
 #' @param tmb_data (`mmrm_tmb_data`)\cr produced by [h_mmrm_tmb_data()].
 #' @param theta (`numeric`)\cr theta estimate.
+#' @param linear (`flag`)\cr whether to omit second derivatives and the R component.
 #'
 #' @details the function returns a named list, \eqn{P}, \eqn{Q} and \eqn{R}, which corresponds to the
 #' paper in 1997. The matrices are stacked in columns so that \eqn{P}, \eqn{Q} and \eqn{R} has the same
@@ -18,13 +19,14 @@
 #' @return Named list with elements:
 #' - `P`: `matrix` of \eqn{P} component.
 #' - `Q`: `matrix` of \eqn{Q} component.
-#' - `R`: `matrix` of \eqn{R} component.
+#' - `R`: `matrix` of \eqn{R} component, or `NULL` when `linear = TRUE`.
 #'
 #' @keywords internal
-h_get_kr_comp <- function(tmb_data, theta) {
+h_get_kr_comp <- function(tmb_data, theta, linear = FALSE) {
   assert_class(tmb_data, "mmrm_tmb_data")
   assert_class(theta, "numeric")
-  .Call(`_mmrm_get_pqr`, PACKAGE = "mmrm", tmb_data, theta)
+  assert_flag(linear)
+  .Call(`_mmrm_get_pqr`, PACKAGE = "mmrm", tmb_data, theta, linear)
 }
 
 #' Calculation of Kenward-Roger Degrees of Freedom for Multi-Dimensional Contrast
@@ -148,7 +150,8 @@ h_kr_df <- function(v0, l, w, p) {
 #' @param w (`matrix`)\cr hessian matrix.
 #' @param p (`matrix`)\cr P matrix from [h_get_kr_comp()].
 #' @param q (`matrix`)\cr Q matrix from [h_get_kr_comp()].
-#' @param r (`matrix`)\cr R matrix from [h_get_kr_comp()].
+#' @param r (`matrix` or `NULL`)\cr R matrix from [h_get_kr_comp()].
+#'   May be `NULL` for the linear approximation.
 #' @param linear (`flag`)\cr whether to use linear Kenward-Roger approximation.
 #'
 #' @return The matrix of adjusted covariance matrix.
@@ -169,13 +172,12 @@ h_var_adj <- function(v, w, p, q, r, linear = FALSE) {
     nrows = theta_per_group^2 * n_groups * n_visits,
     ncols = n_visits
   )
-  assert_matrix(
-    r,
-    nrows = theta_per_group^2 * n_groups * n_visits,
-    ncols = n_visits
-  )
-  if (linear) {
-    r <- matrix(0, nrow = nrow(r), ncol = ncol(r))
+  if (!linear) {
+    assert_matrix(
+      r,
+      nrows = theta_per_group^2 * n_groups * n_visits,
+      ncols = n_visits
+    )
   }
 
   # see vignettes/kenward.Rmd#131
@@ -202,16 +204,12 @@ h_var_adj <- function(v, w, p, q, r, linear = FALSE) {
                 p[jid:(jid + n_beta - 1), ]) %*%
               v
       } else {
-        ret <- ret +
-          2 *
-            w[i, j] *
-            v %*%
-              (q[ijid:(ijid + n_beta - 1), ] -
-                p[iid:(iid + n_beta - 1), ] %*%
-                  v %*%
-                  p[jid:(jid + n_beta - 1), ] -
-                1 / 4 * r[ijid:(ijid + n_beta - 1), ]) %*%
-              v
+        adjustment <- q[ijid:(ijid + n_beta - 1), ] -
+          p[iid:(iid + n_beta - 1), ] %*% v %*% p[jid:(jid + n_beta - 1), ]
+        if (!linear) {
+          adjustment <- adjustment - 1 / 4 * r[ijid:(ijid + n_beta - 1), ]
+        }
+        ret <- ret + 2 * w[i, j] * v %*% adjustment %*% v
       }
     }
   }

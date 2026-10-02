@@ -1,5 +1,25 @@
 # h_jac_list ----
 
+test_that("h_jac_list equals -Phi P_h Phi using first derivatives only", {
+  formulas <- list(
+    FEV1 ~ ARMCD * AVISIT + us(AVISIT | USUBJID),
+    FEV1 ~ ARMCD * AVISIT + us(AVISIT | SEX / USUBJID),
+    FEV1 ~ ARMCD * AVISIT + sp_gau(VISITN, VISITN2 | SEX / USUBJID)
+  )
+  for (formula in formulas) {
+    info <- format(formula)
+    fit <- mmrm(formula, fev_data, weights = seq(0.5, 2, length.out = nrow(fev_data)))
+    p <- length(coef(fit))
+    kr_p <- h_get_kr_comp(fit$tmb_data, fit$theta_est, linear = TRUE)$P
+    jac <- h_jac_list(fit$tmb_data, fit$theta_est, fit$beta_vcov)
+    expected <- lapply(seq_along(fit$theta_est), function(h) {
+      rows <- (h - 1) * p + seq_len(p)
+      -fit$beta_vcov %*% kr_p[rows, ] %*% fit$beta_vcov
+    })
+    expect_equal(unname(jac), lapply(expected, unname), tolerance = 1e-10, info = info)
+  }
+})
+
 test_that("h_jac_list works as expected", {
   # Take a spatial exponential because the number of parameters is small.
   fit <- get_mmrm_spatial()

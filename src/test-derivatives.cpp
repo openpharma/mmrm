@@ -26,7 +26,7 @@ context("cho_jacobian") {
 context("derivatives_nonspatial struct works as expected") {
   test_that("derivatives_nonspatial struct correct sigma, inverse and derivatives") {
     vector<double> theta {{1.0, 1.0}};
-    auto mychol = derivatives_nonspatial<double>(theta, 4, "ar1");
+    auto mychol = derivatives_nonspatial<double>(theta, 4, "ar1", true);
     std::vector<int> v1 {0, 1, 2};
     std::vector<int> v_full {0, 1, 2, 3};
     matrix<double> dist(0, 0);
@@ -126,5 +126,34 @@ context("derivatives_sp_exp struct works as expected") {
       -1.169564, 2.367879, -1.169564,
       0, -1.169564,  1.367879;
     expect_equal_matrix(sigma_inv, expected_sigma_inv);
+  }
+}
+context("first-derivative-only caches") {
+  test_that("first-order caches agree with full caches without storing second derivatives") {
+    vector<double> theta {{0.2, -0.1, 0.3, 0.1, -0.2, 0.15}};
+    auto first = derivatives_nonspatial<double>(theta, 3, "us", false);
+    auto full = derivatives_nonspatial<double>(theta, 3, "us", true);
+    matrix<double> dist(0, 0);
+    std::vector<std::vector<int>> patterns {{0, 1, 2}, {0, 1}, {0, 2}, {2}};
+    expect_false(first.second_order);
+    expect_true(first.sigmad2_cache.empty());
+    for (auto visits : patterns) {
+      expect_equal_matrix(first.get_sigma_derivative1(visits, dist), full.get_sigma_derivative1(visits, dist));
+      expect_equal_matrix(first.get_inverse_derivative(visits, dist), full.get_inverse_derivative(visits, dist));
+      // Repeat access to exercise the missing-pattern caches.
+      expect_equal_matrix(first.get_sigma_derivative1(visits, dist), full.get_sigma_derivative1(visits, dist));
+      expect_equal_matrix(first.get_inverse_derivative(visits, dist), full.get_inverse_derivative(visits, dist));
+      expect_true(first.sigmad2_cache.empty());
+    }
+    auto result = derivatives<double>(3, "us", theta, false);
+    expect_true(result.count("derivative2") == 0);
+    expect_equal_matrix(result.at("derivative1"), full.get_sigma_derivative1(patterns[0], dist));
+    auto grouped = derivatives_cache<double>(theta, 2, false, "ar1h", 2, false);
+    for (int group = 0; group < 2; group++) {
+      auto cache = std::dynamic_pointer_cast<derivatives_nonspatial<double>>(grouped.cache[group]);
+      expect_false(cache->second_order);
+      expect_true(cache->sigmad2_cache.empty());
+      expect_true(cache->sigmad1_cache.size() == 1);
+    }
   }
 }
