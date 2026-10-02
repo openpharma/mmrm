@@ -4,7 +4,7 @@
 \alias{h_var_adj}
 \title{Obtain the Adjusted Covariance Matrix}
 \usage{
-h_var_adj(v, w, p, q, r, linear = FALSE)
+h_var_adj(v, w, p, q, r, linear = FALSE, s_q = NULL)
 }
 \arguments{
 \item{v}{(\code{matrix})\cr unadjusted covariance matrix.}
@@ -13,12 +13,16 @@ h_var_adj(v, w, p, q, r, linear = FALSE)
 
 \item{p}{(\code{matrix})\cr P matrix from \code{\link[=h_get_kr_comp]{h_get_kr_comp()}}.}
 
-\item{q}{(\code{matrix})\cr Q matrix from \code{\link[=h_get_kr_comp]{h_get_kr_comp()}}.}
+\item{q}{(\code{matrix} or \code{NULL})\cr Q matrix from \code{\link[=h_get_kr_comp]{h_get_kr_comp()}}.
+May be \code{NULL} when \code{s_q} is supplied.}
 
 \item{r}{(\code{matrix} or \code{NULL})\cr R matrix from \code{\link[=h_get_kr_comp]{h_get_kr_comp()}}.
 May be \code{NULL} for the linear approximation.}
 
 \item{linear}{(\code{flag})\cr whether to use linear Kenward-Roger approximation.}
+
+\item{s_q}{(\code{matrix} or \code{NULL})\cr precontracted sum of Q components.
+When supplied for linear KR, \code{q} and \code{r} are unused.}
 }
 \value{
 The matrix of adjusted covariance matrix.

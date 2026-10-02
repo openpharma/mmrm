@@ -253,6 +253,78 @@ Separate tests compare scalar KR with the Satterthwaite Jacobian-based df
 using unadjusted covariance. Existing SAS comparisons and snapshots pass.
 Both updated theory vignettes render successfully.
 
+### Step 3: contracted linear covariance backend (2026-10-02)
+
+The fitted KR-linear path now contracts $Q$ in C++ using **all covariance
+uncertainty directions**, for every covariance structure. It stores the
+original-coordinate $P_h$ matrices and a single $p\times p$ matrix $S_Q$;
+`kr_comp$Q` and `kr_comp$R` are `NULL`. Non-spatial covariance, inverse
+first derivatives, and inverse covariance directions are cached by group and
+observed-visit pattern. Spatial products are calculated per subject because
+distances can vary. Known observation weights enter through
+$\widetilde X_i=G_i^{1/2}X_i$.
+
+Only the diagonal group blocks of $W$ are needed for $S_Q$, since cross-group
+$Q_{hj}$ are zero. Each block is factored by Cholesky when positive definite,
+with a signed symmetric eigenfactorization otherwise. Every eigenvalue is
+retained, including negative eigenvalues; no clipping or rank truncation is
+applied. This preserves the algebraic contraction for the supplied $W$.
+For $S_P$, `h_var_adj()` flattens $P_h$, multiplies once by the **full** $W$,
+and sums $k$ matrix products instead of traversing $k^2$ pairs. Cross-group
+$W$ contributions remain in this contraction and in degrees of freedom.
+The two outer multiplications by $\Phi$ are performed once. Fitting coordinates,
+optimizer, coefficient estimates, and the linear KR formulas are unchanged.
+Full KR retains its existing second-order backend. The original pairwise
+backend remains available internally by omitting `w` from `h_get_kr_comp()`
+and `s_q` from `h_var_adj()`, providing an independent regression reference.
+
+The same `benchmark_kr_steps()` helper gives another incremental comparison:
+**100 subjects, six visits, 473 observations, 21 covariance parameters, and
+18 fixed-effect coefficients**, with monotone dropout after visits 4–6.
+Times are medians of three complete fits with garbage collection before each
+fit; they exclude loading/compilation, summaries, and contrast inference.
+
+| Implementation | Satterthwaite, full fit | KR-linear, full fit |
+|:--|--:|--:|
+| After step 2 / before step 3 (`31cc46592`) | 0.309 s | 1.253 s |
+| After step 3 | 0.320 s | 0.338 s |
+
+KR-linear took about **73% less time (3.71 times faster)** than the preceding
+implementation on this case. The Satterthwaite difference is within timing
+noise. Individual times were 0.309/0.369/0.308 s and 1.215/1.253/1.257 s
+before, and 0.320/0.375/0.306 s and 0.338/0.344/0.330 s after, for
+Satterthwaite and KR-linear respectively. Relative to the 2.235 s pre-step-1
+median above, the current 0.338 s median is about **6.61 times faster**;
+that comparison spans separate timing sessions.
+
+Both step-3 timing sessions used the same local `pkgload` **debug build**
+(`-O0`), Apple clang 21.0.0, R 4.6.1, TMB 1.9.25, and default R BLAS on the
+MacBook Pro described above. Neither timing session overlapped tests or
+vignette rendering. These small-case measurements should be compared with
+the incremental debug timings, not with the installed-package or prototype
+measurements. To reproduce, run the same commands given for step 1 in each
+checkout, using `benchmark_kr_steps(n = 100L, m = 6L, repetitions = 3L)`.
+
+Validation: the full R/C++ test suite passes **3,471 expectations with zero
+failures or warnings**, with two existing skips (an empty C++ test and a
+multicore test). Focused `covr::function_coverage()` instrumentation reports
+**100% line coverage of both `h_get_kr_comp()` and `h_var_adj()`**. New tests
+compare the directional $S_Q$ against an explicit parameter-pair contraction
+and compare adjusted covariance against the retained pairwise backend, using
+relative and absolute tolerances. They cover all 11 covariance structures,
+grouped covariance with nonzero cross-group $W$, complete visits, explicit
+monotone dropout (including single-visit subjects), intermittent missingness,
+and unequal weights. Integrated KR-linear regressions also cover equal
+weights, standard errors, t and F statistics, scalar and multi-dimensional
+degrees of freedom, F scaling, and p-values. Tests deliberately zero
+cross-group $W$ entries and verify that this changes adjusted covariance.
+Additional R/C++ checks cover zero, semidefinite, indefinite, and poorly
+conditioned supplied covariance matrices, retention of all directions,
+first-derivative-only pattern products, one coefficient and one covariance
+parameter, and invalid contraction inputs. Existing full-KR snapshots and
+SAS comparisons pass. Both theory vignettes were updated and rendered
+successfully.
+
 ## Question 1: exact optimizations
 
 ### Where the current implementation spends work
@@ -487,8 +559,9 @@ covariance (maximum absolute difference $2.15\times10^{-16}$).
    comparison above.
 2. **Implemented (2026-10-02):** Contrast-space degrees of freedom, including
    the scalar shortcut. See the post-fit incremental timings above.
-3. Implement a contracted covariance backend, using full-rank directions or
-   the sparse unstructured basis. Preserve cross-group $W$ contributions.
+3. **Implemented (2026-10-02):** Contracted linear covariance backend using
+   full-rank directions for $S_Q$ and the full $W$ for $S_P$, preserving
+   cross-group contributions. See the incremental full-fit timings above.
 4. Benchmark the integrated path and verify coefficient covariance, standard
    errors, scalar and multi-dimensional degrees of freedom, F scaling, and
    p-values against the existing implementation. Include complete data,

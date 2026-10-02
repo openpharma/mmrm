@@ -1,9 +1,73 @@
-#include "derivatives.h"
+#include "kr_comp.h"
 
 using namespace Rcpp;
 using std::string;
-// Obtain P,Q,R element from a mmrm fit, given theta.
-List get_pqr(List mmrm_fit, NumericVector theta, bool linear) {
+// Linear KR contracts Q before storing, retaining P in the fitting coordinates.
+List get_pqr_contracted(List mmrm_fit, NumericVector theta, NumericMatrix w) {
+  matrix<double> x = as_num_matrix_tmb(as<NumericMatrix>(mmrm_fit["x_matrix"]));
+  matrix<double> coords = as_num_matrix_tmb(as<NumericMatrix>(mmrm_fit["coordinates"]));
+  vector<double> weights = as_num_vector_tmb(sqrt(as<NumericVector>(mmrm_fit["weights_vector"])));
+  vector<double> theta_v = as_num_vector_tmb(theta);
+  IntegerVector starts = mmrm_fit["subject_zero_inds"];
+  IntegerVector sizes = mmrm_fit["subject_n_visits"];
+  IntegerVector groups = mmrm_fit["subject_groups"];
+  int n_groups = mmrm_fit["n_groups"];
+  int n_visits = mmrm_fit["n_visits"];
+  bool spatial = as<int>(mmrm_fit["is_spatial_int"]) == 1;
+  std::string cov_type = as<std::string>(mmrm_fit["cov_type"]);
+  int k = theta.size() / n_groups;
+  int p = x.cols();
+  matrix<double> W = as_num_matrix_tmb(w);
+  matrix<double> P = matrix<double>::Zero(p * theta.size(), p);
+  matrix<double> Q_sum = matrix<double>::Zero(p, p);
+  auto derivatives = derivatives_cache<double>(theta_v, n_groups, spatial, cov_type, n_visits, false);
+  std::vector<kr_directions> directions;
+  std::vector<std::map<std::vector<int>, kr_pattern>> patterns(n_groups);
+  for (int g = 0; g < n_groups; ++g) {
+    // Only same-group Q blocks are nonzero. Cross-group W is retained in S_P
+    // downstream, using the original full W and the original-coordinate P.
+    directions.emplace_back(matrix<double>(W.block(g * k, g * k, k, k)));
+  }
+  for (int i = 0; i < starts.size(); ++i) {
+    int start = starts[i], m = sizes[i], g = groups[i] - 1;
+    std::vector<int> visits(m);
+    matrix<double> dist(0, 0);
+    if (spatial) {
+      dist = euclidean(matrix<double>(coords.block(start, 0, m, coords.cols())));
+    } else {
+      for (int j = 0; j < m; ++j) visits[j] = int(coords(start + j, 0));
+    }
+    auto accumulate = [&](const kr_pattern& pattern) {
+      matrix<double> Xi = weights.segment(start, m).matrix().asDiagonal() * x.block(start, 0, m, p);
+      for (int h = 0; h < k; ++h) {
+        P.block((g * k + h) * p, 0, p, p) +=
+          Xi.transpose() * pattern.inverse_d1.block(h * m, 0, m, m) * Xi;
+        matrix<double> Z = pattern.inverse_directions.block(h * m, 0, m, m) * Xi;
+        Q_sum += directions[g].signs(h) * Z.transpose() * pattern.sigma * Z;
+      }
+    };
+    if (spatial) {
+      // Spatial distances vary by subject; do not key them by visit indices.
+      accumulate(kr_pattern(derivatives.cache[g].get(), visits, dist, directions[g].B));
+    } else {
+      auto found = patterns[g].find(visits);
+      if (found == patterns[g].end()) {
+        found = patterns[g].emplace(visits,
+          kr_pattern(derivatives.cache[g].get(), visits, dist, directions[g].B)).first;
+      }
+      accumulate(found->second);
+    }
+  }
+  return List::create(Named("P") = as_num_matrix_rcpp(P),
+                      Named("Q") = R_NilValue, Named("R") = R_NilValue,
+                      Named("S_Q") = as_num_matrix_rcpp(Q_sum));
+}
+
+// Obtain P,Q,R elements, or contracted linear components when W is supplied.
+List get_pqr(List mmrm_fit, NumericVector theta, bool linear, Nullable<NumericMatrix> w) {
+  if (w.isNotNull()) {
+    return get_pqr_contracted(mmrm_fit, theta, NumericMatrix(w));
+  }
   NumericMatrix x = mmrm_fit["x_matrix"];
   matrix<double> x_matrix = as_num_matrix_tmb(x);
   IntegerVector subject_zero_inds = mmrm_fit["subject_zero_inds"];

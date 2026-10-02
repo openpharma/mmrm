@@ -265,12 +265,67 @@ only first derivatives of the subject covariance matrices and their inverses.
 For non-spatial covariance structures, automatic differentiation is applied
 once to the Cholesky factor; the nested differentiation for second derivatives
 is skipped. Missing-visit patterns cache only the required first derivatives.
-The $P$ and $Q$ components are unchanged, while $R$ is neither calculated nor
-allocated (`kr_comp$R` is `NULL`). The covariance adjustment omits the $R$ term
-directly. Full Kenward-Roger still computes second derivatives and $R$.
 Spatial covariance derivatives are evaluated analytically on demand, and the
-linear path likewise skips their second derivatives. The degrees-of-freedom
-formulas are unchanged.
+linear path likewise skips their second derivatives. Full Kenward-Roger
+still computes the parameter-pair $Q$ and $R$ components.
+
+### Contracted linear covariance adjustment
+
+For all covariance structures, the fitted KR-linear path stores $P_h$ in the
+original fitting coordinates and calculates only the contracted matrix
+
+\[
+  S_Q = \sum_{h,j} W_{hj}Q_{hj}, \qquad
+  S_P = \sum_{h,j} W_{hj}P_h\hat\Phi P_j, \qquad
+  \hat\Phi_A = \hat\Phi + 2\hat\Phi(S_Q-S_P)\hat\Phi.
+\]
+
+It does not allocate the parameter-pair $Q$ or $R$ arrays: `kr_comp$Q` and
+`kr_comp$R` are `NULL`, and `kr_comp$S_Q` is a single $p\times p$ matrix.
+The outer multiplications by $\hat\Phi$ are performed once after contraction.
+This is exactly the existing linear KR formula, up to floating-point error.
+
+For a covariance group $g$, factor the corresponding diagonal block of the
+covariance parameter covariance as $W_{gg}=B_gB_g^\top$. For subject $i$ in
+that group, define $\widetilde X_i=G_i^{1/2}X_i$ (the square roots of the
+observation weights) and the inverse covariance directions
+
+\[
+  M_{i\ell} = \sum_{h\in g}(B_g)_{h\ell}
+      \frac{\partial\Sigma_i^{-1}}{\partial\theta_h}, \qquad
+  Z_{i\ell}=M_{i\ell}\widetilde X_i.
+\]
+
+Expanding $B_gB_g^\top$ gives
+
+\[
+  S_Q=\sum_{i,\ell}Z_{i\ell}^\top\Sigma_i Z_{i\ell}.
+\]
+
+Every direction is retained; this introduces no rank approximation. The C++
+backend caches $\Sigma_i$, its inverse derivatives, and $M_{i\ell}$ by group
+and observed-visit pattern for non-spatial covariance. Spatial products are
+computed for each subject because distances can differ. Cholesky is used
+when the supplied block is positive definite. Otherwise a signed symmetric
+eigenfactorization $W_{gg}=B_g\operatorname{diag}(s_\ell)B_g^\top$ retains
+all eigenvalues, including negative ones, and inserts $s_\ell$ in the sum.
+Eigenvalues are neither clipped nor truncated.
+
+For $S_P$, flatten each $P_h$ into a column of a $p^2\times k$ matrix
+$\mathcal P$ and multiply once by the **full** $W$. If $\overline P_h$ is
+column $h$ of $\mathcal P W$ reshaped to $p\times p$, then
+
+\[
+  S_P=\sum_h P_h\hat\Phi\overline P_h.
+\]
+
+Although $Q_{hj}=0$ for parameters from different covariance groups,
+$P_h\hat\Phi P_j$ need not vanish. REML couples the groups through the fixed
+effects, so cross-group entries of $W$ are retained in $S_P$ and in the
+subsequent degrees-of-freedom calculation. The original-coordinate $P_h$
+matrices and $W$ remain available for inference. Full KR keeps its existing
+second-order covariance adjustment; the contracted backend applies to
+`vcov = "Kenward-Roger-Linear"`.
 
 ## Inference
 

@@ -601,7 +601,7 @@ test_that("df_md works as expected for Kenward-Roger", {
 
 # First-derivative-only preparation ----
 
-test_that("h_get_kr_comp with linear = TRUE preserves P, Q and inference while omitting R", {
+test_that("contracted linear KR preserves P and inference while omitting Q and R", {
   formulas <- list(
     FEV1 ~ ARMCD * AVISIT + us(AVISIT | USUBJID),
     FEV1 ~ ARMCD * AVISIT + us(AVISIT | SEX / USUBJID),
@@ -618,7 +618,10 @@ test_that("h_get_kr_comp with linear = TRUE preserves P, Q and inference while o
       full <- h_get_kr_comp(fit$tmb_data, fit$theta_est)
       expect_null(fit$kr_comp$R, info = info)
       expect_equal(fit$kr_comp$P, full$P, tolerance = 1e-12, info = info)
-      expect_equal(fit$kr_comp$Q, full$Q, tolerance = 1e-12, info = info)
+      expect_null(fit$kr_comp$Q, info = info)
+      legacy_linear <- h_get_kr_comp(fit$tmb_data, fit$theta_est, linear = TRUE)
+      expect_equal(legacy_linear$P, full$P, tolerance = 1e-12, info = info)
+      expect_equal(legacy_linear$Q, full$Q, tolerance = 1e-12, info = info)
       # The previous implementation discarded R by replacing it with zeros.
       reference <- fit
       reference$kr_comp <- full
@@ -787,4 +790,98 @@ test_that("scalar KR df equals Satterthwaite based on unadjusted covariance", {
       expect_identical(kr$lambda, 1)
     }
   }
+})
+
+# Contracted covariance preparation ----
+
+test_that("contracted covariance agrees across all covariance structures and missing patterns", {
+  skip_on_cran()
+  complete_ids <- names(which(table(fev_data$USUBJID) == nlevels(fev_data$AVISIT)))
+  complete <- droplevels(fev_data[fev_data$USUBJID %in% complete_ids, ])
+  # Explicit monotone and intermittent patterns, including single-visit subjects.
+  subject <- as.integer(complete$USUBJID)
+  visit <- as.integer(complete$AVISIT)
+  monotone <- droplevels(complete[visit <= (subject %% 4L + 1L), ])
+  intermittent <- droplevels(complete[visit != (subject %% 4L + 1L), ])
+  structures <- c("us", "ad", "adh", "ar1", "ar1h", "cs", "csh", "toep", "toeph", "sp_exp", "sp_gau")
+  for (structure in structures) {
+    spatial <- startsWith(structure, "sp_")
+    visits <- if (spatial) "VISITN, VISITN2" else "AVISIT"
+    formula <- as.formula(paste0("FEV1 ~ ARMCD * AVISIT + FEV1_BL + ", structure,
+      "(", visits, " | SEX / USUBJID)"))
+    for (dat in list(complete, monotone, intermittent)) {
+      # Fit once with Satterthwaite, then compare post-fit backends on identical inputs.
+      fit <- mmrm(formula, dat, weights = seq(0.5, 2, length.out = nrow(dat)))
+      w <- component(fit, "theta_vcov")
+      legacy <- h_get_kr_comp(fit$tmb_data, fit$theta_est, linear = TRUE)
+      actual <- h_get_kr_comp(fit$tmb_data, fit$theta_est, linear = TRUE, w = w)
+      info <- paste(structure, nrow(dat))
+      expect_null(actual$Q, info = info)
+      expect_null(actual$R, info = info)
+      expect_equal(actual$P, legacy$P, tolerance = 1e-10, info = info)
+      expected_q <- h_kr_q_sum(legacy$Q, w, fit$tmb_data$n_groups)
+      expect_equal(actual$S_Q, expected_q, tolerance = 1e-10, info = info)
+      expected <- h_var_adj(fit$beta_vcov, w, legacy$P, legacy$Q, NULL, linear = TRUE)
+      covariance <- h_var_adj(fit$beta_vcov, w, actual$P, NULL, NULL, linear = TRUE, s_q = actual$S_Q)
+      expect_equal(covariance, expected, tolerance = 1e-10, info = info)
+      expect_equal(covariance, t(covariance), tolerance = 1e-12, info = info)
+      # Absolute checks supplement all.equal's relative-scale comparisons.
+      expect_lt(max(abs(actual$S_Q - expected_q)), 1e-8, label = info)
+      expect_lt(max(abs(covariance - expected)), 1e-10, label = info)
+      group <- rep(seq_len(fit$tmb_data$n_groups), each = ncol(w) / fit$tmb_data$n_groups)
+      block_w <- w
+      block_w[outer(group, group, "!=")] <- 0
+      without_cross <- h_var_adj(fit$beta_vcov, block_w, actual$P, NULL, NULL,
+        linear = TRUE, s_q = actual$S_Q)
+      expect_gt(max(abs(w - block_w)), 1e-8, label = info)
+      expect_gt(max(abs(covariance - without_cross)), 1e-9, label = info)
+    }
+  }
+})
+
+test_that("contracted covariance retains signed and small directions on poorly conditioned inputs", {
+  fit <- mmrm(FEV1 ~ ARMCD + us(AVISIT | USUBJID), fev_data)
+  legacy <- h_get_kr_comp(fit$tmb_data, fit$theta_est, linear = TRUE)
+  k <- length(fit$theta_est)
+  rotation <- diag(k) + matrix(seq_len(k^2) / k^3, k)
+  for (last in c(0, -0.1, 1e-12, 1)) {
+    w <- rotation %*% diag(c(rep(0.1, k - 1L), last)) %*% t(rotation)
+    actual <- h_get_kr_comp(fit$tmb_data, fit$theta_est, linear = TRUE, w = w)
+    expected_q <- h_kr_q_sum(legacy$Q, w, 1L)
+    expect_equal(actual$S_Q, expected_q, tolerance = 1e-10)
+    v <- diag(c(1e-6, 10))
+    expect_equal(h_var_adj(v, w, actual$P, NULL, NULL, linear = TRUE, s_q = actual$S_Q),
+      h_var_adj(v, w, legacy$P, legacy$Q, NULL, linear = TRUE), tolerance = 1e-10)
+  }
+  w <- matrix(0, k, k)
+  actual <- h_get_kr_comp(fit$tmb_data, fit$theta_est, linear = TRUE, w = w)
+  expect_equal(actual$S_Q, matrix(0, 2, 2))
+})
+
+test_that("contracted covariance supports one coefficient and one covariance parameter", {
+  dat <- droplevels(fev_data[fev_data$AVISIT == levels(fev_data$AVISIT)[1L], ])
+  fit <- mmrm(FEV1 ~ 1 + us(AVISIT | USUBJID), dat,
+    method = "Kenward-Roger", vcov = "Kenward-Roger-Linear")
+  w <- component(fit, "theta_vcov")
+  legacy <- h_get_kr_comp(fit$tmb_data, fit$theta_est, linear = TRUE)
+  expect_equal(fit$beta_vcov_adj,
+    h_var_adj(fit$beta_vcov, w, legacy$P, legacy$Q, NULL, linear = TRUE), tolerance = 1e-12)
+  expect_equal(dim(fit$kr_comp$P), c(1L, 1L))
+  expect_equal(dim(fit$kr_comp$S_Q), c(1L, 1L))
+})
+
+test_that("contracted covariance validates W and rejects full KR requests", {
+  fit <- get_mmrm_kr()
+  k <- length(fit$theta_est)
+  expect_error(h_get_kr_comp(fit$tmb_data, fit$theta_est, w = diag(k)), "TRUE")
+  expect_error(h_get_kr_comp(fit$tmb_data, fit$theta_est, linear = TRUE, w = diag(k + 1L)), "rows")
+  w <- diag(k)
+  w[1, 2] <- 0.1
+  expect_error(h_get_kr_comp(fit$tmb_data, fit$theta_est, linear = TRUE, w = w), "TRUE")
+  w[1, 2] <- Inf
+  expect_error(h_get_kr_comp(fit$tmb_data, fit$theta_est, linear = TRUE, w = w), "TRUE")
+  w[1, 2] <- NA_real_
+  expect_error(h_get_kr_comp(fit$tmb_data, fit$theta_est, linear = TRUE, w = w), "missing")
+  expect_error(h_var_adj(diag(2), diag(1), diag(2), NULL, NULL, s_q = diag(2)), "TRUE")
+  expect_error(h_var_adj(diag(2), diag(1), diag(2), NULL, NULL, linear = TRUE, s_q = diag(3)), "rows")
 })

@@ -583,7 +583,8 @@ mmrm <- function(
   if (control$vcov %in% c("Kenward-Roger", "Kenward-Roger-Linear")) {
     fit$kr_comp <- h_get_kr_comp(
       fit$tmb_data, fit$theta_est,
-      linear = (control$vcov == "Kenward-Roger-Linear")
+      linear = (control$vcov == "Kenward-Roger-Linear"),
+      w = if (control$vcov == "Kenward-Roger-Linear") component(fit, "theta_vcov") else NULL
     )
     fit$beta_vcov_adj <- h_var_adj(
       v = fit$beta_vcov,
@@ -591,7 +592,8 @@ mmrm <- function(
       p = fit$kr_comp$P,
       q = fit$kr_comp$Q,
       r = fit$kr_comp$R,
-      linear = (control$vcov == "Kenward-Roger-Linear")
+      linear = (control$vcov == "Kenward-Roger-Linear"),
+      s_q = fit$kr_comp$S_Q
     )
   } else if (
     control$vcov %in%

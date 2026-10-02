@@ -3,6 +3,7 @@
 ### Miscellaneous
 
 - Satterthwaite, empirical and linear Kenward-Roger covariance preparation now skip unused second derivatives. Linear Kenward-Roger also omits the `R` component and its allocation.
+- Linear Kenward-Roger covariance preparation now contracts `Q` using all uncertainty directions and contracts `P` with the full covariance parameter covariance, preserving cross-group contributions without allocating parameter-pair `Q` blocks.
 - Kenward-Roger degrees of freedom now use contrast-space matrix contractions and a direct scalar shortcut, preserving the existing formulas while reducing contrast inference time.
 - For one-dimensional Kenward-Roger contrasts whose variance does not depend on the covariance parameters (zero moment), the degrees of freedom are now `Inf` with F scaling `1`, which is the limit of the formulas, instead of `NaN`.
 

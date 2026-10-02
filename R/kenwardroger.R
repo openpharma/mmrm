@@ -6,6 +6,8 @@
 #' @param tmb_data (`mmrm_tmb_data`)\cr produced by [h_mmrm_tmb_data()].
 #' @param theta (`numeric`)\cr theta estimate.
 #' @param linear (`flag`)\cr whether to omit second derivatives and the R component.
+#' @param w (`matrix` or `NULL`)\cr covariance of the covariance parameters.
+#'   Supply with `linear = TRUE` to contract Q without constructing its blocks.
 #'
 #' @details the function returns a named list, \eqn{P}, \eqn{Q} and \eqn{R}, which corresponds to the
 #' paper in 1997. The matrices are stacked in columns so that \eqn{P}, \eqn{Q} and \eqn{R} has the same
@@ -14,19 +16,27 @@
 #' For \eqn{P} matrix, it is stacked sequentially. For \eqn{Q} and \eqn{R} matrix, it is stacked so
 #' that the \eqn{Q_{ij}} and \eqn{R_{ij}} is stacked from \eqn{j} then to \eqn{i}, i.e. \eqn{R_{i1}}, \eqn{R_{i2}}, etc.
 #' \eqn{Q} and \eqn{R} only contains intra-group results and inter-group results should be all zero matrices
-#' so they are not stacked in the result.
+#' so they are not stacked in the result. Supplying `w` for linear KR instead
+#' retains `P` and contracts Q into the single matrix `S_Q`, without storing Q blocks.
 #'
 #' @return Named list with elements:
 #' - `P`: `matrix` of \eqn{P} component.
 #' - `Q`: `matrix` of \eqn{Q} component.
 #' - `R`: `matrix` of \eqn{R} component, or `NULL` when `linear = TRUE`.
+#' - `S_Q`: contracted Q sum when `w` is supplied; `Q` and `R` are then `NULL`.
 #'
 #' @keywords internal
-h_get_kr_comp <- function(tmb_data, theta, linear = FALSE) {
+h_get_kr_comp <- function(tmb_data, theta, linear = FALSE, w = NULL) {
   assert_class(tmb_data, "mmrm_tmb_data")
   assert_class(theta, "numeric")
   assert_flag(linear)
-  .Call(`_mmrm_get_pqr`, PACKAGE = "mmrm", tmb_data, theta, linear)
+  if (!is.null(w)) {
+    assert_true(linear)
+    assert_matrix(w, mode = "numeric", nrows = length(theta), ncols = length(theta), any.missing = FALSE)
+    assert_true(all(is.finite(w)))
+    assert_true(isSymmetric(w, tol = 1e-8, tol1 = 1e-8))
+  }
+  .Call(`_mmrm_get_pqr`, PACKAGE = "mmrm", tmb_data, theta, linear, w)
 }
 
 #' Calculation of Kenward-Roger Degrees of Freedom for Multi-Dimensional Contrast
@@ -160,20 +170,40 @@ h_kr_df <- function(v0, l, w, p) {
 #' @param v (`matrix`)\cr unadjusted covariance matrix.
 #' @param w (`matrix`)\cr covariance matrix of the estimated covariance parameters.
 #' @param p (`matrix`)\cr P matrix from [h_get_kr_comp()].
-#' @param q (`matrix`)\cr Q matrix from [h_get_kr_comp()].
+#' @param q (`matrix` or `NULL`)\cr Q matrix from [h_get_kr_comp()].
+#'   May be `NULL` when `s_q` is supplied.
 #' @param r (`matrix` or `NULL`)\cr R matrix from [h_get_kr_comp()].
 #'   May be `NULL` for the linear approximation.
 #' @param linear (`flag`)\cr whether to use linear Kenward-Roger approximation.
+#' @param s_q (`matrix` or `NULL`)\cr precontracted sum of Q components.
+#'   When supplied for linear KR, `q` and `r` are unused.
 #'
 #' @return The matrix of adjusted covariance matrix.
 #'
 #' @keywords internal
-h_var_adj <- function(v, w, p, q, r, linear = FALSE) {
+h_var_adj <- function(v, w, p, q, r, linear = FALSE, s_q = NULL) {
   assert_flag(linear)
   n_beta <- ncol(v)
   assert_matrix(v, nrows = n_beta)
   n_theta <- ncol(w)
   assert_matrix(w, nrows = n_theta)
+  if (!is.null(s_q)) {
+    assert_true(linear)
+    assert_matrix(p, ncols = n_beta, nrows = n_beta * n_theta)
+    assert_matrix(s_q, nrows = n_beta, ncols = n_beta)
+    # Flatten each P_h into a column and contract once with the full W.
+    # Cross-group W entries contribute here even though Q has no such blocks.
+    p_flat <- matrix(vapply(seq_len(n_theta), function(h) {
+      rows <- (h - 1L) * n_beta + seq_len(n_beta)
+      as.vector(p[rows, , drop = FALSE])
+    }, numeric(n_beta * n_beta)), nrow = n_beta * n_beta)
+    pw <- p_flat %*% w
+    s_p <- matrix(0, n_beta, n_beta)
+    for (h in seq_len(n_theta)) {
+      s_p <- s_p + matrix(p_flat[, h], n_beta) %*% v %*% matrix(pw[, h], n_beta)
+    }
+    return(v + 2 * v %*% (s_q - s_p) %*% v)
+  }
   n_visits <- ncol(p)
   theta_per_group <- nrow(q) / nrow(p)
   n_groups <- n_theta / theta_per_group

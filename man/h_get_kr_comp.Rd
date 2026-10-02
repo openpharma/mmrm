@@ -4,7 +4,7 @@
 \alias{h_get_kr_comp}
 \title{Obtain Kenward-Roger Adjustment Components}
 \usage{
-h_get_kr_comp(tmb_data, theta, linear = FALSE)
+h_get_kr_comp(tmb_data, theta, linear = FALSE, w = NULL)
 }
 \arguments{
 \item{tmb_data}{(\code{mmrm_tmb_data})\cr produced by \code{\link[=h_mmrm_tmb_data]{h_mmrm_tmb_data()}}.}
@@ -12,6 +12,9 @@ h_get_kr_comp(tmb_data, theta, linear = FALSE)
 \item{theta}{(\code{numeric})\cr theta estimate.}
 
 \item{linear}{(\code{flag})\cr whether to omit second derivatives and the R component.}
+
+\item{w}{(\code{matrix} or \code{NULL})\cr covariance of the covariance parameters.
+Supply with \code{linear = TRUE} to contract Q without constructing its blocks.}
 }
 \value{
 Named list with elements:
@@ -19,6 +22,7 @@ Named list with elements:
 \item \code{P}: \code{matrix} of \eqn{P} component.
 \item \code{Q}: \code{matrix} of \eqn{Q} component.
 \item \code{R}: \code{matrix} of \eqn{R} component, or \code{NULL} when \code{linear = TRUE}.
+\item \code{S_Q}: contracted Q sum when \code{w} is supplied; \code{Q} and \code{R} are then \code{NULL}.
 }
 }
 \description{
@@ -33,6 +37,7 @@ the total number of theta and number of groups, if the fit is a grouped mmrm.
 For \eqn{P} matrix, it is stacked sequentially. For \eqn{Q} and \eqn{R} matrix, it is stacked so
 that the \eqn{Q_{ij}} and \eqn{R_{ij}} is stacked from \eqn{j} then to \eqn{i}, i.e. \eqn{R_{i1}}, \eqn{R_{i2}}, etc.
 \eqn{Q} and \eqn{R} only contains intra-group results and inter-group results should be all zero matrices
-so they are not stacked in the result.
+so they are not stacked in the result. Supplying \code{w} for linear KR instead
+retains \code{P} and contracts Q into the single matrix \code{S_Q}, without storing Q blocks.
 }
 \keyword{internal}

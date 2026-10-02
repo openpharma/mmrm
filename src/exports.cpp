@@ -8,15 +8,15 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-List get_pqr(List mmrm_fit, NumericVector theta, bool linear);
-RcppExport SEXP _mmrm_get_pqr(SEXP mmrm_fit_SEXP, SEXP theta_SEXP, SEXP linear_SEXP) {
+List get_pqr(List mmrm_fit, NumericVector theta, bool linear, Nullable<NumericMatrix> w);
+RcppExport SEXP _mmrm_get_pqr(SEXP mmrm_fit_SEXP, SEXP theta_SEXP, SEXP linear_SEXP, SEXP w_SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< List >::type mmrm_fit(mmrm_fit_SEXP);
     Rcpp::traits::input_parameter< NumericVector >::type theta(theta_SEXP);
     Rcpp::traits::input_parameter< bool >::type linear(linear_SEXP);
-    rcpp_result_gen = Rcpp::wrap(get_pqr(mmrm_fit, theta, linear));
+    rcpp_result_gen = Rcpp::wrap(get_pqr(mmrm_fit, theta, linear, Nullable<NumericMatrix>(w_SEXP)));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -67,7 +67,7 @@ END_RCPP
 RcppExport SEXP run_testthat_tests(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_mmrm_get_pqr", (DL_FUNC) &_mmrm_get_pqr, 3},
+    {"_mmrm_get_pqr", (DL_FUNC) &_mmrm_get_pqr, 4},
     {"_mmrm_get_jacobian", (DL_FUNC) &_mmrm_get_jacobian, 3},
     {"_mmrm_get_empirical", (DL_FUNC) &_mmrm_get_empirical, 5},
     {"_mmrm_predict", (DL_FUNC) &_mmrm_predict, 4},
