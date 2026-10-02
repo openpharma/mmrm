@@ -71,11 +71,9 @@ submatrix in step 2.
 
 Using `fev_data` to create our example, we have
 
-``` r
-
-library(mmrm)
-fit <- mmrm(FEV1 ~ ARMCD + RACE + ARMCD * RACE + ar1(AVISIT | USUBJID), data = fev_data)
-```
+\
+[`library`](https://rdrr.io/r/base/library.html)`(`[`mmrm`](https://openpharma.github.io/mmrm/)`)`\
+`fit`` ``<-`` `[`mmrm`](https://openpharma.github.io/mmrm/reference/mmrm.md)`(``FEV1`` ``~`` ``ARMCD`` ``+`` ``RACE`` ``+`` ``ARMCD`` ``*`` ``RACE`` ``+`` ``ar1``(``AVISIT`` ``|`` ``USUBJID``)``, data ``=`` ``fev_data``)`
 
 For this given example, we would like to test the effect of `RACE`,
 \\E\_{RACE}\\. We initialize the contrast matrix with
@@ -96,16 +94,14 @@ corresponding submatrix
 In the last step, for the last 2 columns, we fill the values with the
 calculated result.
 
-``` r
-
-x <- component(fit, "x_matrix")
-x0 <- x[, c(1, 2)]
-x1 <- x[, c(3, 4)]
-x2 <- x[, c(5, 6)]
-m <- diag(rep(1, nrow(x))) - x0 %*% solve(t(x0) %*% x0) %*% t(x0) # solve is used because the matrix is inversible
-sub_mat <- solve(t(x1) %*% m %*% x1) %*% t(x1) %*% m %*% x2
-sub_mat
-```
+\
+`x`` ``<-`` `[`component`](https://openpharma.github.io/mmrm/reference/component.md)`(``fit``, ``"x_matrix"``)`\
+`x0`` ``<-`` ``x``[``, `[`c`](https://rdrr.io/r/base/c.html)`(``1``, ``2``)``]`\
+`x1`` ``<-`` ``x``[``, `[`c`](https://rdrr.io/r/base/c.html)`(``3``, ``4``)``]`\
+`x2`` ``<-`` ``x``[``, `[`c`](https://rdrr.io/r/base/c.html)`(``5``, ``6``)``]`\
+`m`` ``<-`` `[`diag`](https://rdrr.io/r/base/diag.html)`(`[`rep`](https://rdrr.io/r/base/rep.html)`(``1``, `[`nrow`](https://rdrr.io/r/base/nrow.html)`(``x``)``)``)`` ``-`` ``x0`` `[`%*%`](https://rdrr.io/r/base/matmult.html)` `[`solve`](https://rdrr.io/r/base/solve.html)`(`[`t`](https://rdrr.io/r/base/t.html)`(``x0``)`` `[`%*%`](https://rdrr.io/r/base/matmult.html)` ``x0``)`` `[`%*%`](https://rdrr.io/r/base/matmult.html)` `[`t`](https://rdrr.io/r/base/t.html)`(``x0``)`` ``# solve is used because the matrix is inversible`\
+`sub_mat`` ``<-`` `[`solve`](https://rdrr.io/r/base/solve.html)`(`[`t`](https://rdrr.io/r/base/t.html)`(``x1``)`` `[`%*%`](https://rdrr.io/r/base/matmult.html)` ``m`` `[`%*%`](https://rdrr.io/r/base/matmult.html)` ``x1``)`` `[`%*%`](https://rdrr.io/r/base/matmult.html)` `[`t`](https://rdrr.io/r/base/t.html)`(``x1``)`` `[`%*%`](https://rdrr.io/r/base/matmult.html)` ``m`` `[`%*%`](https://rdrr.io/r/base/matmult.html)` ``x2`\
+`sub_mat`
 
     ##                               ARMCDTRT:RACEBlack or African American
     ## RACEBlack or African American                             0.42618692
@@ -200,11 +196,9 @@ Assume in SAS we have the following model
 
 And in R we have the following model
 
-``` r
-
-fit <- mmrm(FEV1 ~ ARMCD + AVISIT + ARMCD * AVISIT + ar1(AVISIT | USUBJID), data = fev_data)
-Anova(fit)
-```
+\
+`fit`` ``<-`` `[`mmrm`](https://openpharma.github.io/mmrm/reference/mmrm.md)`(``FEV1`` ``~`` ``ARMCD`` ``+`` ``AVISIT`` ``+`` ``ARMCD`` ``*`` ``AVISIT`` ``+`` ``ar1``(``AVISIT`` ``|`` ``USUBJID``)``, data ``=`` ``fev_data``)`\
+`Anova``(``fit``)`
 
 Note that for `AVISIT` there are 4 levels, `VIS1`, `VIS2`, `VIS3` and
 `VIS4`. In SAS `VIS4` is the reference, while in R `VIS1` is the

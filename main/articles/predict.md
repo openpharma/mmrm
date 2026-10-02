@@ -208,7 +208,7 @@ and explain how they relate to each other.
 In `SAS`, from `proc mixed`, we are able to generate predictions using
 the `outp` argument in the `model` statement. For example:
 
-``` sas
+```
 PROC MIXED DATA = fev_data method=reml;
   CLASS RACE(ref = 'Asian') AVISIT(ref = 'VIS4') SEX(ref = 'Male') ARMCD(ref = 'PBO') USUBJID;
   MODEL FEV1 = ARMCD / ddfm=Satterthewaite solution chisq outp=pred;
