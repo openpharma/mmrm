@@ -616,7 +616,7 @@ h_dataset_sort_all <- function(data) {
 #' 1. `FALSE` is returned early if the first dataset has a column not in the
 #' second dataset.
 #'
-#' 1. The columns in common are sorted and compared using [all.equal()] with
+#' 1. The columns in common are sorted and compared using [base::all.equal()] with
 #' `check.attributes = FALSE`.
 #'
 #' @param data_basic,data_augmented (`data.frame`)\cr data frames to be
@@ -665,7 +665,7 @@ h_check_columns_nested <- function(data_basic, data_augmented) {
 #' dataset.
 #'
 #' 1. The columns in common among adjacent datasets are sorted and compared
-#' using [all.equal()] with `check.attributes = FALSE`.
+#' using [base::all.equal()] with `check.attributes = FALSE`.
 #'
 #' This function is more efficient than running [h_check_columns_nested()] on
 #' all adjacent pairs and supplying the results to [all()].

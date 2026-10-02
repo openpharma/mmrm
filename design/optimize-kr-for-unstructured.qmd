@@ -186,7 +186,10 @@ for degrees of freedom, while standard errors and test statistics continue
 to use the KR-adjusted covariance. Numerically singular multi-dimensional
 hypotheses are still rejected: a reciprocal-condition check retains the
 previous `solve()` threshold because Cholesky alone can accept a singular
-matrix after roundoff.
+matrix after roundoff. A contrast covariance that is not positive definite,
+or a scalar contrast without positive variance, now raises an informative
+error. For a scalar contrast with zero moment, the limit $m = \infty$,
+$\lambda = 1$ is returned instead of the previous `NaN`.
 
 The new `benchmark_kr_df_steps()` helper uses the **same 100-subject,
 six-visit dataset as the step-1 benchmark**: 473 observations, 21 covariance
@@ -243,7 +246,9 @@ exponential/spatial Gaussian covariance, grouped covariance with nonzero
 cross-group $W$, dense nonorthogonal contrasts of ranks 1, 2, 3, and $p$,
 invertible contrast transformations, a single coefficient or covariance
 parameter, an ill-conditioned positive-definite covariance, rescaling,
-scalar boundary moments, incompatible dimensions, and singular hypotheses.
+scalar boundary moments, incompatible dimensions, singular and non-positive-definite
+hypotheses, and one fit with `vcov = "Kenward-Roger-Linear"`. These tests are in
+`test-kenwardroger.R`; the tests fitting models are skipped on CRAN.
 Separate tests compare scalar KR with the Satterthwaite Jacobian-based df
 using unadjusted covariance. Existing SAS comparisons and snapshots pass.
 Both updated theory vignettes render successfully.

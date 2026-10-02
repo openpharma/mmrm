@@ -337,8 +337,8 @@ Cholesky factor, and set
   Z = T^{-1}C\Phi, \qquad F_h = ZP_hZ^\top.
 \]
 
-Triangular solves obtain $Z$ without explicitly inverting $H$. Numerically
-singular hypotheses are rejected, as in the previous inverse-based calculation. Each $F_h$
+Triangular solves obtain $Z$ without explicitly inverting $H$. Hypotheses
+whose $H$ is numerically singular or not positive definite are rejected. Each $F_h$
 is a symmetric $c\times c$ matrix. Cyclic invariance of trace gives
 
 \[
@@ -370,8 +370,10 @@ Then $A_1 = A_2 = a^\top Wa$, and the formulas simplify to
 \]
 
 The implementation uses this shortcut directly, avoiding Cholesky
-normalization and the general moment formulas. It applies to any nonzero
-scalar contrast, including a combination of coefficients. Since
+normalization and the general moment formulas. It applies to any scalar
+contrast with positive variance $l^\top\Phi l$, including a combination of
+coefficients; other contrasts are rejected. If $a^\top Wa = 0$, the limit
+$m = \infty$ is returned. Since
 $\partial\Phi/\partial\theta_h = -\Phi P_h\Phi$, this is exactly the
 [scalar Satterthwaite degrees of freedom](satterthwaite.html#one-dimensional-contrast)
 based on the **unadjusted** variance $l^\top\Phi l$. The standard error and

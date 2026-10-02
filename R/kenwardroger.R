@@ -107,6 +107,9 @@ h_kr_df <- function(v0, l, w, p) {
   if (nl == 1L) {
     # A1 = A2 = a' W a: scalar Satterthwaite based on unadjusted variance.
     variance <- sum(lv0 * l)
+    if (!isTRUE(variance > 0)) {
+      stop("contrast variance must be positive")
+    }
     a <- vapply(seq_len(n_theta), function(h) {
       rows <- (h - 1L) * n_beta + seq_len(n_beta)
       sum(lv0 * (lv0 %*% p[rows, , drop = FALSE])) / variance
@@ -116,13 +119,17 @@ h_kr_df <- function(v0, l, w, p) {
 
   # Normalize in contrast space: H = T T', Z = T^{-1} L Phi.
   # See vignettes/kenward.Rmd, "Degrees of freedom in contrast space".
-  h <- tcrossprod(lv0, l)
-  # Cholesky alone can accept a singular hypothesis after roundoff. Retain
-  # the numerical-singularity check used by the previous solve(H) path.
-  if (rcond(h) < .Machine$double.eps) {
+  contrast_vcov <- tcrossprod(lv0, l)
+  # Cholesky alone can accept a singular hypothesis after roundoff, so check
+  # the reciprocal condition number with the same threshold as solve().
+  if (rcond(contrast_vcov) < .Machine$double.eps) {
     stop("contrast covariance is numerically singular")
   }
-  z <- forwardsolve(t(chol(h)), lv0)
+  contrast_chol <- tryCatch(
+    chol(contrast_vcov),
+    error = function(e) stop("contrast covariance is not positive definite", call. = FALSE)
+  )
+  z <- forwardsolve(t(contrast_chol), lv0)
   f <- vapply(seq_len(n_theta), function(h) {
     rows <- (h - 1L) * n_beta + seq_len(n_beta)
     as.vector(tcrossprod(z %*% p[rows, , drop = FALSE], z))
@@ -151,7 +158,7 @@ h_kr_df <- function(v0, l, w, p) {
 #' Used in [mmrm()] fitting if method is "Kenward-Roger" or "Kenward-Roger-Linear".
 #'
 #' @param v (`matrix`)\cr unadjusted covariance matrix.
-#' @param w (`matrix`)\cr hessian matrix.
+#' @param w (`matrix`)\cr covariance matrix of the estimated covariance parameters.
 #' @param p (`matrix`)\cr P matrix from [h_get_kr_comp()].
 #' @param q (`matrix`)\cr Q matrix from [h_get_kr_comp()].
 #' @param r (`matrix` or `NULL`)\cr R matrix from [h_get_kr_comp()].

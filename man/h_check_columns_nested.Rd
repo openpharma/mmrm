@@ -26,7 +26,7 @@ For efficiency, the inspection takes place in this order:
 rows.
 \item \code{FALSE} is returned early if the first dataset has a column not in the
 second dataset.
-\item The columns in common are sorted and compared using \code{\link[=all.equal]{all.equal()}} with
+\item The columns in common are sorted and compared using \code{\link[base:all.equal]{base::all.equal()}} with
 \code{check.attributes = FALSE}.
 }
 }

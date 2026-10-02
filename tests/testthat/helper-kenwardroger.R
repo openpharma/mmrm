@@ -1,4 +1,4 @@
-# Frozen pre-step-2 implementation: independent coefficient-space regression oracle.
+# Frozen coefficient-space implementation of h_kr_df(): independent regression oracle.
 h_kr_df_coefficient_space <- function(v0, l, w, p) {
   n_beta <- ncol(v0)
   assert_matrix(v0, ncols = n_beta, nrows = n_beta)

@@ -28,7 +28,7 @@ rows.
 \item \code{FALSE} is returned early if a dataset has a column not in the next
 dataset.
 \item The columns in common among adjacent datasets are sorted and compared
-using \code{\link[=all.equal]{all.equal()}} with \code{check.attributes = FALSE}.
+using \code{\link[base:all.equal]{base::all.equal()}} with \code{check.attributes = FALSE}.
 }
 
 This function is more efficient than running \code{\link[=h_check_columns_nested]{h_check_columns_nested()}} on
