@@ -111,6 +111,68 @@ check_kr_contractions()
 sessionInfo()
 ```
 
+## Incremental implementation timings
+
+### Step 1: first-derivative-only caches (2026-10-02)
+
+Implemented the derivative-order flag through the KR R/C++ interface.
+KR-linear now initializes only first derivatives, skips the second-derivative
+missing-pattern caches, and returns `R = NULL` without allocating or computing
+$R$. `h_var_adj(linear = TRUE)` omits the $R$ term directly. Satterthwaite's
+Jacobian also requests only first derivatives; it continues to construct
+neither $Q$ nor $R$. Spatial second derivatives are evaluated on demand and
+are skipped in the linear path. Full KR retains the existing second-order
+calculation. Analytic unstructured derivatives, contracted $Q$, and
+contrast-space degrees of freedom are left for subsequent steps.
+
+For a quick incremental comparison, `benchmark_kr_steps()` in the companion
+script uses the same model and seed as the larger example, with **100 subjects,
+six visits, dropout after visits 4–6, 473 observations, 21 covariance parameters,
+and 18 fixed-effect coefficients**. The table reports median elapsed time of
+three complete fits per method, with garbage collection before each fit.
+It excludes package loading/compilation, summaries, and contrast inference.
+
+| Implementation | Satterthwaite, full fit | KR-linear, full fit |
+|:--|--:|--:|
+| Before step 1 (`fc9cc2336cfe99ed685912277d8e95406a552be8`) | 0.331 s | 2.235 s |
+| After step 1 | 0.321 s | 1.268 s |
+
+KR-linear took about **43% less time (1.76 times faster)** on this small case.
+The 0.010 s Satterthwaite difference is too small to distinguish reliably from
+measurement noise. Individual measurements were 0.331/0.394/0.319 s and
+2.234/2.255/2.235 s before, and 0.321/0.393/0.313 s and
+1.265/1.284/1.268 s after, for Satterthwaite and KR-linear respectively.
+Both checkouts were built locally with the same `pkgload` **debug build**
+(`-O0`), Apple clang 21.0.0, R 4.6.1, TMB 1.9.25, and default R BLAS on the
+MacBook Pro described above. These small-case debug timings should be compared
+within this table; they are not comparable to the installed-package timings
+or the prototype-only column above. Later steps can append rows using this
+same benchmark and build settings.
+
+To reproduce, run each checkout in a separate R session, sourcing the same
+updated benchmark helper in both sessions:
+
+```r
+pkgload::load_all("/path/to/checkout", recompile = TRUE,
+                  debug = TRUE, helpers = FALSE)
+source("/path/to/updated/checkout/design/optimize-kr-for-unstructured.R")
+times <- benchmark_kr_steps(n = 100L, m = 6L, repetitions = 3L)
+sessionInfo()
+```
+
+Validation: the full R/C++ test suite passes (2,799 expectations, zero failures
+or warnings; 15 existing skips for optional dependencies, a multicore check,
+and an empty test). New C++ checks verify that full and subset first derivatives
+and inverse derivatives agree with the full cache while second-derivative
+storage stays empty, including repeated cache access and grouped initialization.
+New R checks compare $P$, $Q$, adjusted covariance, scalar and multi-dimensional
+inference against the previous zero-$R$ calculation for unstructured, AR(1),
+spatial exponential, and spatial Gaussian structures, including grouped
+covariance, missing visits, and unequal weights. They independently check the
+Satterthwaite Jacobian identity $-\Phi P_h\Phi$ and rejection of an absent $R$
+for full KR. Existing SAS comparisons and full-KR component snapshots continue
+to pass. Both theory vignettes were updated and rendered successfully.
+
 ## Question 1: exact optimizations
 
 ### Where the current implementation spends work
@@ -340,8 +402,9 @@ covariance (maximum absolute difference $2.15\times10^{-16}$).
 
 **Recommended implementation order:**
 
-1. Introduce first-derivative-only caches and skip $R$ for KR-linear and
-   Satterthwaite. This is a small, independently reviewable change.
+1. **Implemented (2026-10-02):** Introduce first-derivative-only caches and
+   skip $R$ for KR-linear and Satterthwaite. See the incremental timing
+   comparison below.
 2. Implement contrast-space degrees of freedom, including the scalar shortcut.
 3. Implement a contracted covariance backend, using full-rank directions or
    the sparse unstructured basis. Preserve cross-group $W$ contributions.

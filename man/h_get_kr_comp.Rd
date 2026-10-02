@@ -4,19 +4,21 @@
 \alias{h_get_kr_comp}
 \title{Obtain Kenward-Roger Adjustment Components}
 \usage{
-h_get_kr_comp(tmb_data, theta)
+h_get_kr_comp(tmb_data, theta, linear = FALSE)
 }
 \arguments{
 \item{tmb_data}{(\code{mmrm_tmb_data})\cr produced by \code{\link[=h_mmrm_tmb_data]{h_mmrm_tmb_data()}}.}
 
 \item{theta}{(\code{numeric})\cr theta estimate.}
+
+\item{linear}{(\code{flag})\cr whether to omit second derivatives and the R component.}
 }
 \value{
 Named list with elements:
 \itemize{
 \item \code{P}: \code{matrix} of \eqn{P} component.
 \item \code{Q}: \code{matrix} of \eqn{Q} component.
-\item \code{R}: \code{matrix} of \eqn{R} component.
+\item \code{R}: \code{matrix} of \eqn{R} component, or \code{NULL} when \code{linear = TRUE}.
 }
 }
 \description{

@@ -134,6 +134,18 @@ where $\Omega(\hat\theta)$ replaces $\Omega(\theta)$ in the right-hand side.
 
 Please note that, if we ignore $R_{hj}$, the second-order derivatives, we will get a different estimate of adjusted covariance matrix, and we call this the linear Kenward-Roger approximation.
 
+For `vcov = "Kenward-Roger-Linear"`, the implementation calculates and caches
+only first derivatives of the subject covariance matrices and their inverses.
+For non-spatial covariance structures, automatic differentiation is applied
+once to the Cholesky factor; the nested differentiation for second derivatives
+is skipped. Missing-visit patterns cache only the required first derivatives.
+The $P$ and $Q$ components are unchanged, while $R$ is neither calculated nor
+allocated (`kr_comp$R` is `NULL`). The covariance adjustment omits the $R$ term
+directly. Full Kenward-Roger still computes second derivatives and $R$.
+Spatial covariance derivatives are evaluated analytically on demand, and the
+linear path likewise skips their second derivatives. The degrees-of-freedom
+formulas are unchanged.
+
 ### Special Considerations for mmrm models
 
 In mmrm models, $\Omega$ is a block-diagonal matrix, hence we can calculate  $P$, $Q$ and $R$ for each subject and add them up.

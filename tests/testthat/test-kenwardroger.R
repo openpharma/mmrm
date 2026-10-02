@@ -598,3 +598,44 @@ test_that("df_md works as expected for Kenward-Roger", {
     tolerance = 1e-4
   )
 })
+
+# First-derivative-only preparation ----
+test_that("linear preparation preserves P, Q and inference with no R allocation", {
+  formulas <- list(
+    FEV1 ~ ARMCD * AVISIT + us(AVISIT | USUBJID),
+    FEV1 ~ ARMCD * AVISIT + us(AVISIT | SEX / USUBJID),
+    FEV1 ~ ARMCD * AVISIT + ar1(AVISIT | USUBJID),
+    FEV1 ~ ARMCD * AVISIT + sp_exp(VISITN, VISITN2 | USUBJID),
+    FEV1 ~ ARMCD * AVISIT + sp_gau(VISITN, VISITN2 | SEX / USUBJID)
+  )
+  for (formula in formulas) {
+    for (weighted in c(FALSE, TRUE)) {
+      weights <- if (weighted) seq(0.5, 2, length.out = nrow(fev_data)) else rep(1, nrow(fev_data))
+      fit <- mmrm(formula, fev_data, weights = weights,
+        control = mmrm_control(method = "Kenward-Roger", vcov = "Kenward-Roger-Linear"))
+      full <- h_get_kr_comp(fit$tmb_data, fit$theta_est)
+      expect_null(fit$kr_comp$R)
+      expect_equal(fit$kr_comp$P, full$P, tolerance = 1e-12)
+      expect_equal(fit$kr_comp$Q, full$Q, tolerance = 1e-12)
+      # The previous implementation discarded R by replacing it with zeros.
+      reference <- fit
+      reference$kr_comp <- full
+      reference$beta_vcov_adj <- h_var_adj(fit$beta_vcov, component(fit, "theta_vcov"),
+        full$P, full$Q, matrix(0, nrow(full$R), ncol(full$R)))
+      expect_equal(fit$beta_vcov_adj, reference$beta_vcov_adj, tolerance = 1e-12)
+      p <- length(coef(fit))
+      expect_equal(df_1d(fit, diag(p)[p, ]), df_1d(reference, diag(p)[p, ]), tolerance = 1e-10)
+      expect_equal(df_md(fit, diag(p)[(p - 1):p, ]), df_md(reference, diag(p)[(p - 1):p, ]),
+        tolerance = 1e-10)
+      # Satterthwaite's first-order Jacobian is -Phi P_h Phi.
+      jac <- h_jac_list(fit$tmb_data, fit$theta_est, fit$beta_vcov)
+      expected <- lapply(seq_along(fit$theta_est), function(h) {
+        rows <- (h - 1) * p + seq_len(p)
+        -fit$beta_vcov %*% full$P[rows, ] %*% fit$beta_vcov
+      })
+      expect_equal(unname(jac), lapply(expected, unname), tolerance = 1e-10)
+      expect_error(h_var_adj(fit$beta_vcov, component(fit, "theta_vcov"),
+        full$P, full$Q, NULL), "matrix")
+    }
+  }
+})

@@ -35,16 +35,22 @@ struct chol_jacobian {
 // Basically this is calculating the derivatives for the sigma
 // from the derivatives for the cholesky factor.
 template <class Type>
-std::map<std::string, matrix<Type>> derivatives(int n_visits, std::string cov_type, vector<Type> theta) {
+std::map<std::string, matrix<Type>> derivatives(int n_visits, std::string cov_type, vector<Type> theta, bool second_order = true) {
   std::map<std::string, matrix<Type>> ret;
   chol chol_obj(n_visits, cov_type);
   chol_jacobian chol_jac_obj(n_visits, cov_type);
   matrix<Type> l = chol_obj(theta).matrix();
   l.resize(n_visits, n_visits);
   vector<Type> chol_d1_vec = autodiff::jacobian(chol_obj, theta).vec(); // chol_d1_vec is (dim * dim * l_theta)
-  vector<Type> chol_d2_vec = autodiff::jacobian(chol_jac_obj, theta).vec(); // chol_d2_vec is (dim * dim * l_theta * l_theta)
+  vector<Type> chol_d2_vec;
+  if (second_order) {
+    chol_d2_vec = autodiff::jacobian(chol_jac_obj, theta).vec();
+  }
   matrix<Type> ret_d1 = matrix<Type>(n_visits * theta.size(), n_visits);
-  matrix<Type> ret_d2 = matrix<Type>(n_visits * theta.size() * theta.size(), n_visits);
+  matrix<Type> ret_d2;
+  if (second_order) {
+    ret_d2.resize(n_visits * theta.size() * theta.size(), n_visits);
+  }
   int n_visits_sq = n_visits * n_visits;
   for (int i = 0; i < theta.size(); i++) {
     matrix<Type> ld1 = chol_d1_vec.segment(i * n_visits_sq, n_visits_sq).matrix();
@@ -52,6 +58,9 @@ std::map<std::string, matrix<Type>> derivatives(int n_visits, std::string cov_ty
     matrix<Type> ld1_lt = ld1 * l.transpose();
     auto sigma_d1_i = ld1_lt + ld1_lt.transpose();
     ret_d1.block(i * n_visits, 0, n_visits, n_visits) = sigma_d1_i;
+    if (!second_order) {
+      continue;
+    }
     for (int j = 0; j < theta.size(); j++) {
       matrix<Type> ld2 = chol_d2_vec.segment( (j * theta.size() + i) * n_visits_sq, n_visits_sq).matrix();
       matrix<Type> ld1_j = chol_d1_vec.segment(j * n_visits_sq, n_visits_sq).matrix();
@@ -64,7 +73,9 @@ std::map<std::string, matrix<Type>> derivatives(int n_visits, std::string cov_ty
     }
   }
   ret["derivative1"] = ret_d1;
-  ret["derivative2"] = ret_d2;
+  if (second_order) {
+    ret["derivative2"] = ret_d2;
+  }
   return ret;
 }
 // Base class of spatial and non-spatial derivatives.
@@ -92,12 +103,13 @@ struct derivatives_nonspatial: public lower_chol_nonspatial<Type>, virtual deriv
     // This default constructor is needed because the use of `[]` in map.
   }
   // Constructor from theta, n_visits and cov_type, and cache full_visits values.
-  derivatives_nonspatial(vector<Type> theta, int n_visits, std::string cov_type): lower_chol_nonspatial<Type>(theta, n_visits, cov_type) {
-    std::map<std::string, tmbutils::matrix<Type>> allret = derivatives<Type>(this->n_visits, this->cov_type, this->theta);
+  derivatives_nonspatial(vector<Type> theta, int n_visits, std::string cov_type, bool second_order = true): lower_chol_nonspatial<Type>(theta, n_visits, cov_type) {
+    std::map<std::string, tmbutils::matrix<Type>> allret = derivatives<Type>(this->n_visits, this->cov_type, this->theta, second_order);
     matrix<Type> sigma_d1 = allret["derivative1"];
-    matrix<Type> sigma_d2 = allret["derivative2"];
     this->sigmad1_cache[this->full_visit] = sigma_d1;
-    this->sigmad2_cache[this->full_visit] = sigma_d2;
+    if (second_order) {
+      this->sigmad2_cache[this->full_visit] = allret.at("derivative2");
+    }
   }
   // Cache and return the first order derivatives using select matrix.
   matrix<Type> get_sigma_derivative1(std::vector<int> visits, matrix<Type> dist) override {
@@ -116,6 +128,9 @@ struct derivatives_nonspatial: public lower_chol_nonspatial<Type>, virtual deriv
   }
   // Cache and return the second order derivatives using select matrix.
   matrix<Type> get_sigma_derivative2(std::vector<int> visits, matrix<Type> dist) override {
+    if (this->sigmad2_cache.empty()) {
+      Rf_error("Second derivatives were not initialized in this cache.");
+    }
     auto target = this->sigmad2_cache.find(visits);
      if (target != this->sigmad2_cache.end()) {
       return target->second;
@@ -267,7 +282,7 @@ struct derivatives_cache {
   int n_groups;
   bool is_spatial;
   int n_visits;
-  derivatives_cache(vector<Type> theta, int n_groups, bool is_spatial, std::string cov_type, int n_visits): n_groups(n_groups), is_spatial(is_spatial), n_visits(n_visits) {
+  derivatives_cache(vector<Type> theta, int n_groups, bool is_spatial, std::string cov_type, int n_visits, bool second_order = true): n_groups(n_groups), is_spatial(is_spatial), n_visits(n_visits) {
     int theta_one_group_size = theta.size() / n_groups;
     for (int r = 0; r < n_groups; r++) {
       vector<Type> theta_r = theta.segment(r * theta_one_group_size, theta_one_group_size);
@@ -280,7 +295,7 @@ struct derivatives_cache {
           Rf_error("%s", ("Unknown spatial covariance type '" + cov_type + "'.").c_str());
         }
       } else {
-        this->cache[r] = std::make_shared<derivatives_nonspatial<Type>>(theta_r, n_visits, cov_type);
+        this->cache[r] = std::make_shared<derivatives_nonspatial<Type>>(theta_r, n_visits, cov_type, second_order);
       }
     }
   }

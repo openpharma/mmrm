@@ -15,7 +15,8 @@ h_var_adj(v, w, p, q, r, linear = FALSE)
 
 \item{q}{(\code{matrix})\cr Q matrix from \code{\link[=h_get_kr_comp]{h_get_kr_comp()}}.}
 
-\item{r}{(\code{matrix})\cr R matrix from \code{\link[=h_get_kr_comp]{h_get_kr_comp()}}.}
+\item{r}{(\code{matrix} or \code{NULL})\cr R matrix from \code{\link[=h_get_kr_comp]{h_get_kr_comp()}}.
+May be \code{NULL} for the linear approximation.}
 
 \item{linear}{(\code{flag})\cr whether to use linear Kenward-Roger approximation.}
 }
