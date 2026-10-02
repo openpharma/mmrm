@@ -18,6 +18,7 @@ actually estimated coefficients.}
 List with \code{num_df}, \code{denom_df}, \code{f_stat} and \code{p_val} (2-sided p-value).
 }
 \description{
-Used in \code{\link[=df_md]{df_md()}} if method is "Kenward-Roger" or "Kenward-Roger-Linear".
+Used in \code{\link[=df_md]{df_md()}} if method is "Kenward-Roger", i.e. for both
+"Kenward-Roger" and "Kenward-Roger-Linear" vcov.
 }
 \keyword{internal}

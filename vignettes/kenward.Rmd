@@ -265,12 +265,140 @@ only first derivatives of the subject covariance matrices and their inverses.
 For non-spatial covariance structures, automatic differentiation is applied
 once to the Cholesky factor; the nested differentiation for second derivatives
 is skipped. Missing-visit patterns cache only the required first derivatives.
-The $P$ and $Q$ components are unchanged, while $R$ is neither calculated nor
-allocated (`kr_comp$R` is `NULL`). The covariance adjustment omits the $R$ term
-directly. Full Kenward-Roger still computes second derivatives and $R$.
 Spatial covariance derivatives are evaluated analytically on demand, and the
-linear path likewise skips their second derivatives. The degrees-of-freedom
-formulas are unchanged.
+linear path likewise skips their second derivatives. Full Kenward-Roger
+still computes the parameter-pair $Q$ and $R$ components.
+
+### Contracted linear covariance adjustment
+
+For `vcov = "Kenward-Roger-Linear"` the $R_{hj}$ terms are omitted, and the
+adjusted covariance matrix above only requires two $p\times p$ sums:
+
+\[
+  S_Q = \sum_{h=1}^k\sum_{j=1}^k W_{hj}Q_{hj}, \qquad
+  S_P = \sum_{h=1}^k\sum_{j=1}^k W_{hj}P_h\hat\Phi P_j, \qquad
+  \hat\Phi_A = \hat\Phi + 2\hat\Phi(S_Q-S_P)\hat\Phi.
+\]
+
+This is the linear Kenward-Roger formula with the outer multiplications by
+$\hat\Phi$ moved outside the sums. Instead of storing all $Q_{hj}$ matrices,
+`h_get_kr_comp()` returns the $P_h$ matrices together with $S_Q$ (so
+`kr_comp$Q` and `kr_comp$R` are `NULL` and `kr_comp$S_Q` is a $p\times p$
+matrix), and `h_var_adj_contracted()` calculates $S_P$ and $\hat\Phi_A$.
+The result is the same as the pairwise calculation up to floating-point
+error. Full Kenward-Roger continues to use the pairwise $Q_{hj}$ and $R_{hj}$.
+
+#### Subject contributions with weights
+
+As in the [weighted model](#scenario-under-weighted-mmrm), write the subject
+covariance matrix as $\Sigma_i = G_i^{-1/2}\bar\Sigma_iG_i^{-1/2}$, where
+$\bar\Sigma_i = S_i^\top\Sigma_{g(i)}S_i$ is the unweighted covariance matrix
+of the observed visits of subject $i$ in group $g(i)$. For spatial covariance
+structures, $\bar\Sigma_i$ is instead calculated from the distances between
+the subject's observations. Let
+
+\[
+  \widetilde X_i = G_i^{1/2}X_i, \qquad
+  D_{ih} = \frac{\partial\bar\Sigma_i^{-1}}{\partial\theta_h}
+         = -\bar\Sigma_i^{-1}\frac{\partial\bar\Sigma_i}{\partial\theta_h}\bar\Sigma_i^{-1}.
+\]
+
+The weights do not depend on $\theta$, so
+$\partial\Sigma_i^{-1}/\partial\theta_h = G_i^{1/2}D_{ih}G_i^{1/2}$.
+Inserting this into the [subject contributions](#special-considerations-for-mmrm-models)
+cancels the inner weight factors in $Q_{ihj}$, and the weights enter exactly
+once through $\widetilde X_i$:
+
+\[
+  P_{ih} = \widetilde X_i^\top D_{ih}\widetilde X_i, \qquad
+  Q_{ihj} = \widetilde X_i^\top D_{ih}\bar\Sigma_i D_{ij}\widetilde X_i.
+\]
+
+#### Contraction of $Q$
+
+Let $\mathcal G_b$ denote the indices of the covariance parameters of group
+$b$, so that $\theta_h$ with $h \notin \mathcal G_{g(i)}$ does not affect
+$\bar\Sigma_i$ and $D_{ih} = 0$. Hence only the diagonal blocks
+$W^{(b)} = (W_{hj})_{h,j\in\mathcal G_b}$ enter $S_Q$:
+
+\[
+  S_Q = \sum_{i=1}^{n}\sum_{h,j\in\mathcal G_{g(i)}} W_{hj}\,
+    \widetilde X_i^\top D_{ih}\bar\Sigma_i D_{ij}\widetilde X_i.
+\]
+
+Each block is factored as
+
+\[
+  W^{(b)} = U_b\operatorname{diag}(s_b)U_b^\top, \qquad
+  \text{i.e.} \quad W_{hj} = \sum_{\ell}s_{b\ell}(U_b)_{h\ell}(U_b)_{j\ell}
+  \quad\text{for } h,j\in\mathcal G_b.
+\]
+
+If $W^{(b)}$ is positive definite, $U_b$ is its lower Cholesky factor and all
+$s_{b\ell} = 1$. Otherwise, with the eigendecomposition
+$W^{(b)} = V\operatorname{diag}(\lambda)V^\top$, the columns are
+$(U_b)_{\cdot\ell} = \sqrt{|\lambda_\ell|}\,V_{\cdot\ell}$ and
+$s_{b\ell} = \operatorname{sign}(\lambda_\ell)$, with $s_{b\ell} = 1$ for
+$\lambda_\ell = 0$. Every term is retained, including negative eigenvalues, so
+this is an exact rearrangement and not a low-rank approximation.
+
+Substituting the factorization for subject $i$ in group $b = g(i)$ and
+regrouping the double sum gives
+
+\[
+  \sum_{h,j\in\mathcal G_b} W_{hj}D_{ih}\bar\Sigma_iD_{ij}
+  = \sum_\ell s_{b\ell}
+    \Big(\sum_{h\in\mathcal G_b}(U_b)_{h\ell}D_{ih}\Big)\bar\Sigma_i
+    \Big(\sum_{j\in\mathcal G_b}(U_b)_{j\ell}D_{ij}\Big)
+  = \sum_\ell s_{b\ell}\,\Delta_{i\ell}\bar\Sigma_i\Delta_{i\ell},
+\]
+
+where the derivative combinations
+
+\[
+  \Delta_{i\ell} = \sum_{h\in\mathcal G_{g(i)}}(U_{g(i)})_{h\ell}D_{ih}
+\]
+
+are symmetric because each $D_{ih}$ is symmetric. Therefore
+
+\[
+  S_Q = \sum_{i=1}^{n}\sum_\ell s_{g(i)\ell}\,
+    (\Delta_{i\ell}\widetilde X_i)^\top\,\bar\Sigma_i\,(\Delta_{i\ell}\widetilde X_i).
+\]
+
+For a group with $|\mathcal G_b|$ covariance parameters, each subject now
+needs $|\mathcal G_b|$ such products instead of $|\mathcal G_b|^2$. For
+non-spatial covariance structures, $\bar\Sigma_i$, $D_{ih}$ and
+$\Delta_{i\ell}$ only depend on the group and the observed visits, so they are
+calculated once per group and visit pattern. For spatial covariance structures
+they are calculated for each subject, because the distances can differ between
+subjects.
+
+$W$ is the inverse of the Hessian matrix and therefore symmetric up to
+rounding errors. The factorization uses the symmetric part
+$(W^{(b)} + W^{(b)\top})/2$, which yields the symmetric part of the pairwise
+sum because $Q_{jh} = Q_{hj}^\top$. If $W$ contains non-finite values, which
+`mmrm()` reports as a convergence problem, $S_Q$ and hence $\hat\Phi_A$ are
+non-finite, as with the pairwise calculation.
+
+#### Contraction of $P$
+
+In contrast to $Q_{hj}$, the product $P_h\hat\Phi P_j$ is in general not zero
+for parameters $h$ and $j$ from different groups. In addition, $W$ is in
+general not block diagonal, because the restricted likelihood couples the
+groups through the common coefficients $\beta$. Therefore $S_P$ uses the full
+$W$, including the cross-group entries:
+
+\[
+  S_P = \sum_{h=1}^k P_h\hat\Phi\overline P_h, \qquad
+  \overline P_h = \sum_{j=1}^k W_{hj}P_j.
+\]
+
+All $\overline P_h$ are obtained with one matrix product: if the $h$th column
+of the $p^2\times k$ matrix $\mathcal P$ is $\operatorname{vec}(P_h)$, then the
+$h$th column of $\mathcal P W^\top$ is $\operatorname{vec}(\overline P_h)$. The
+$P_h$ and $W$ are also used unchanged for the
+[degrees of freedom](#inference).
 
 ## Inference
 

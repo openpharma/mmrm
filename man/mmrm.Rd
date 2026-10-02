@@ -91,7 +91,9 @@ Additional contents depend on \code{vcov} (see \code{\link[=mmrm_control]{mmrm_c
 \itemize{
 \item If Kenward-Roger covariance matrix is used, \code{kr_comp} contains necessary
 components and \code{beta_vcov_adj} includes the adjusted coefficients covariance
-matrix.
+matrix. For \code{"Kenward-Roger"} these components are \code{P}, \code{Q} and \code{R}. For
+\code{"Kenward-Roger-Linear"} they are \code{P} and the contracted matrix \code{S_Q}, while
+\code{Q} and \code{R} are \code{NULL}.
 \item If Empirical covariance matrix is used, \code{beta_vcov_adj} contains the
 corresponding coefficients covariance matrix estimate. In addition,
 \code{empirical_g_mat} contains the empirical g matrix, which is used to calculate

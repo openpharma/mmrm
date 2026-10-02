@@ -17,7 +17,7 @@ actually estimated coefficients.}
 List with \code{est}, \code{se}, \code{df}, \code{t_stat} and \code{p_val}.
 }
 \description{
-Used in \code{\link[=df_1d]{df_1d()}} if method is
-"Kenward-Roger" or "Kenward-Roger-Linear".
+Used in \code{\link[=df_1d]{df_1d()}} if method is "Kenward-Roger", i.e. for both
+"Kenward-Roger" and "Kenward-Roger-Linear" vcov.
 }
 \keyword{internal}

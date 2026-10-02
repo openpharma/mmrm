@@ -62,10 +62,12 @@ ddots
 de
 det
 df
+diag
 doi
 dotsb
 dotsc
 eigen
+eigendecomposition
 emmeans
 facto
 factorizations
@@ -75,6 +77,8 @@ gau
 getXlevels
 hZ
 hj
+iD
+iG
 ih
 ihj
 ij
@@ -103,10 +107,12 @@ ne
 newcommand
 nlminb
 nonidentifiability
+notin
 num
 odot
 onLoad
 operatorname
+overline
 pearson
 pkgdown
 plc
@@ -138,3 +144,4 @@ vcov
 vdots
 vec
 widehat
+widetilde

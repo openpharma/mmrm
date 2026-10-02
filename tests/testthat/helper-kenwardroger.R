@@ -43,3 +43,19 @@ h_kr_df_coefficient_space <- function(v0, l, w, p) {
   lambda <- m / (e_star * (m - 2))
   list(m = m, lambda = lambda)
 }
+
+# Explicit group/parameter-pair contraction, independent of the new directions.
+h_kr_q_sum <- function(q, w, n_groups) {
+  p <- ncol(q)
+  k <- ncol(w) / n_groups
+  result <- matrix(0, p, p)
+  for (g in seq_len(n_groups)) {
+    for (h in seq_len(k)) {
+      for (j in seq_len(k)) {
+        rows <- ((g - 1L) * k^2 + (h - 1L) * k + j - 1L) * p + seq_len(p)
+        result <- result + w[(g - 1L) * k + h, (g - 1L) * k + j] * q[rows, , drop = FALSE]
+      }
+    }
+  }
+  result
+}
