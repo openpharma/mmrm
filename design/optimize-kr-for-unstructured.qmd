@@ -34,10 +34,10 @@ floating-point error; KR itself remains a small-sample approximation.
 The [companion R script](optimize-kr-for-unstructured.R) contains a research
 prototype and numerical checks. It does not change the package implementation.
 
-**Integrated result (2026-10-02):** Steps 1–4 are implemented and verified.
-On matched release builds, full KR-linear fits went from **83.12 to 5.274 s**
-at 15 visits and **238.56 to 10.058 s** at 18 visits. A larger 18-visit case
-went from **11.45 minutes to 26.66 s**. These are complete package fits,
+**Integrated result (2026-10-03):** Steps 1–4 are implemented and verified.
+On matched release builds, full KR-linear fits went from **42.53 to 2.642 s**
+at 15 visits and **122.15 to 5.013 s** at 18 visits. A larger 18-visit case
+went from **5.74 minutes to 13.46 s**. These are complete package fits,
 including optimization and Hessian/covariance preparation. See
 [step 4](#step-4-integrated-validation-and-end-to-end-benchmarks-2026-10-02)
 for the paired timings, inference checks, and numerical limitations.
@@ -348,6 +348,8 @@ successfully.
 
 ### Step 4: integrated validation and end-to-end benchmarks (2026-10-02)
 
+Timings in this section were remeasured on 2026-10-03.
+
 The integrated regressions in
 [`test-kr-integrated.R`](../tests/testthat/test-kr-integrated.R) fit
 `mmrm(method = "Kenward-Roger", vcov = "Kenward-Roger-Linear")` and compare
@@ -436,53 +438,55 @@ and p-values, including log tails. All fitting, Hessian, and covariance
 preparation work is included in the full-fit timing; no prototype-only
 calculation is substituted for a complete fit.
 
-The baseline is `fc9cc2336` (before step 1), and the integrated code is
-`168cda8b4` (after step 3; step 4 adds tests and benchmark helpers). Both
-were installed into separate temporary libraries with `R CMD INSTALL
---preclean`, using the same production C++ **release flags (`-O2`)**, Apple
-clang 21.0.0, R 4.6.1, TMB 1.9.25, and default R BLAS on the same M5 MacBook
-Pro. These final measurements were sequential, with no overlapping test,
-coverage, compilation, or other benchmark jobs. `caffeinate -is` kept the
-machine awake; full-fit elapsed and CPU times in the three large examples
-agree to within about 2%. A preliminary
-18-visit timing series contained a large elapsed-time outlier and was
-discarded in full, then rerun in isolation. Each expensive baseline is one
-measurement; optimized full-fit times are medians of three measurements,
-with garbage collection before every fit. Summary times are single calls.
+The baseline is `fc9cc2336` (before step 1), and the integrated code is the
+step-4 working tree on top of `498a7e701`; its package code differs from
+`168cda8b4` (after step 3) only by removing an unused variable. Both were
+installed into separate temporary libraries with `R CMD INSTALL` from clean
+source trees, using R's default **release flags (`-O2 -DNDEBUG`**, plus R's
+default `-g`, which only adds debug symbols), Apple clang 21.0.0, R 4.6.1,
+TMB 1.9.25, and default R BLAS on the same M5 MacBook Pro. The measurements
+ran sequentially on AC power with macOS Low Power Mode disabled, with no
+overlapping jobs, and `caffeinate -is` kept the machine awake. Each expensive
+baseline is one measurement; optimized full-fit times are medians of three
+measurements, with garbage collection before every fit. Summary times are
+single calls.
 
 | Subjects | Visits | Observations | Old KR-linear, full fit | Integrated KR-linear, full fit | Reduction | Speedup | Integrated Satterthwaite, full fit |
 |--:|--:|--:|--:|--:|--:|--:|--:|
-| 300 | 15 | 3,798 | 83.120 s | **5.274 s** | 93.7% | 15.8 times | 5.246 s |
-| 300 | 18 | 4,244 | 238.560 s | **10.058 s** | 95.8% | 23.7 times | 9.739 s |
-| 900 | 18 | 12,679 | **686.799 s (11.45 min)** | **26.660 s** | 96.1% | 25.8 times | 25.774 s |
+| 300 | 15 | 3,798 | 42.534 s | **2.642 s** | 93.8% | 16.1 times | 2.568 s |
+| 300 | 18 | 4,244 | 122.146 s | **5.013 s** | 95.9% | 24.4 times | 4.833 s |
+| 900 | 18 | 12,679 | **344.441 s (5.74 min)** | **13.460 s** | 96.1% | 25.6 times | 13.326 s |
 
 The 15-visit model has 45 coefficients and 120 covariance parameters;
 both 18-visit models have 54 coefficients and 171 covariance parameters.
 The larger case changes only the subject count in the same seeded generator.
-The optimized KR-linear fits are now within about 0.5–3.5% of Satterthwaite's
+The optimized KR-linear fits are now within about 1–4% of Satterthwaite's
 fit time on these examples. Fit optimization and the Hessian therefore account
 for most of the remaining runtime.
 
 These paired measurements answer the end-to-end question that the earlier
-prototype-only column could not answer. Absolute baseline times differ from
-the original **installed-package** 42.521/121.550 s measurements; compare
-before/after values **within this matched-build table**, rather than mixing
-timing sessions or comparing post-fit prototype time with a full fit.
+prototype-only column could not answer. The baseline build reproduces the
+original **installed-package** measurements (42.521/121.550 s): in the same
+session, the installed CRAN binary of `mmrm` 0.3.18 took 127.676 s for the
+18-visit KR-linear fit and 5.204 s for Satterthwaite. An earlier version of
+this comparison reported roughly twice these times for all builds, because it
+was measured on battery in Low Power Mode, which slows down the performance
+cores; those numbers are superseded by the table above.
 
 Inference savings also matter when the user asks for a coefficient summary:
 
 | Subjects | Visits | Old `summary()` | Integrated `summary()` | Old fit + summary | Integrated fit + summary | Combined speedup |
 |--:|--:|--:|--:|--:|--:|--:|
-| 300 | 15 | 44.581 s | 0.055 s | 127.701 s | **5.329 s** | 24.0 times |
-| 300 | 18 | 160.599 s | 0.105 s | 399.159 s | **10.163 s** | 39.3 times |
-| 900 | 18 | 164.903 s | 0.105 s | **851.702 s (14.20 min)** | **26.765 s** | 31.8 times |
+| 300 | 15 | 22.256 s | 0.026 s | 64.790 s | **2.668 s** | 24.3 times |
+| 300 | 18 | 83.014 s | 0.054 s | 205.160 s | **5.067 s** | 40.5 times |
+| 900 | 18 | 81.032 s | 0.051 s | **425.473 s (7.09 min)** | **13.511 s** | 31.5 times |
 
 For all three large examples, coefficient and covariance-parameter estimates
 were **identical** across builds. The maximum absolute covariance error was
-$3.06\times10^{-15}$, the maximum relative coefficient SE error was
-$9.52\times10^{-14}$, the maximum absolute contrast df error was
-$9.75\times10^{-11}$, the maximum absolute F-scaling error was
-$2.34\times10^{-15}$, and the maximum absolute log p-value error was
+$3.05\times10^{-15}$, the maximum relative coefficient SE error was
+$9.51\times10^{-14}$, the maximum absolute contrast df error was
+$9.74\times10^{-11}$, the maximum absolute F-scaling error was
+$2.33\times10^{-15}$, and the maximum absolute log p-value error was
 $1.04\times10^{-12}$. All complete snapshots pass the $10^{-8}$ comparison,
 including coefficient summaries and all four contrast ranks.
 
@@ -490,7 +494,7 @@ including coefficient summaries and all four contrast ranks.
 three missingness patterns described above, one/two covariance groups, and equal/unequal
 weights, plus four poorly conditioned scenarios. All 16 small-case snapshots
 also agree at their stated tolerances. Their single full-fit timings range
-from 0.041–0.090 s before to 0.025–0.066 s after (about 1.36–1.72 times faster);
+from 0.022–0.046 s before to 0.013–0.037 s after (about 1.24–1.85 times faster);
 these short measurements establish scenario coverage, not precise speedup
 estimates. The [recorded comparisons](optimize-kr-for-unstructured-integrated.csv)
 contain all **19 scenarios**, including CPU times, summary and contrast
