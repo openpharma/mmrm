@@ -67,10 +67,12 @@ h_df_md_kr <- function(object, contrast) {
   if (component(object, "reml") != 1) {
     stop("Kenward-Roger is only for REML")
   }
-  kr_comp <- object$kr_comp
-  w <- component(object, "theta_vcov")
-  v_adj <- object$beta_vcov_adj
-  df <- h_kr_df(v0 = object$beta_vcov, l = contrast, w = w, p = kr_comp$P)
+  df <- h_kr_df(
+    v0 = object$beta_vcov,
+    l = contrast,
+    w = component(object, "theta_vcov"),
+    p = object$kr_comp$P
+  )
 
   h_test_md(object, contrast, df = df$m, f_stat_factor = df$lambda)
 }
@@ -87,7 +89,7 @@ h_df_1d_kr <- function(object, contrast) {
   assert_class(object, "mmrm")
   assert_numeric(contrast, len = length(component(object, "beta_est")))
   if (component(object, "reml") != 1) {
-    stop("Kenward-Roger is only for REML!")
+    stop("Kenward-Roger is only for REML")
   }
 
   df <- h_kr_df(

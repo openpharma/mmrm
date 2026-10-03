@@ -124,6 +124,14 @@ check_kr_contractions <- function() {
   do.call(rbind, results)
 }
 
+# Last visit of each of n subjects, uniformly from first:m. Unlike
+# sample(first:m, ...), this does not sample from 1:m when first == m, and it
+# gives the same random numbers otherwise.
+sample_last_visit <- function(first, m, n) {
+  stopifnot(first <= m)
+  first - 1L + sample.int(m - first + 1L, n, replace = TRUE)
+}
+
 # End-to-end benchmark. Run explicitly; sourcing this file only defines helpers.
 benchmark_kr <- function(n = 300L, m = 18L) {
   stopifnot(n %% 2L == 0L, m >= 10L)
@@ -135,7 +143,7 @@ benchmark_kr <- function(n = 300L, m = 18L) {
   sigma <- 0.5^abs(outer(seq_len(m), seq_len(m), '-'))
   e <- matrix(rnorm(n * m), n, m) %*% chol(sigma)
   dat$y <- 0.3 * dat$baseline + 0.2 * (dat$trt == 'B') + as.vector(t(e))
-  last <- sample(10:m, n, replace = TRUE)
+  last <- sample_last_visit(10L, m, n)
   dat <- dat[dat$visit <= rep(last, each = m), ]
   dat$visit <- factor(dat$visit)
   f <- y ~ (baseline + trt) * visit + us(visit | id)
@@ -171,7 +179,7 @@ kr_steps_data <- function(n = 100L, m = 6L) {
   sigma <- 0.5^abs(outer(seq_len(m), seq_len(m), "-"))
   e <- matrix(rnorm(n * m), n, m) %*% chol(sigma)
   dat$y <- 0.3 * dat$baseline + 0.2 * (dat$trt == "B") + as.vector(t(e))
-  last <- sample(seq.int(ceiling(0.6 * m), m), n, replace = TRUE)
+  last <- sample_last_visit(ceiling(0.6 * m), m, n)
   dat <- dat[dat$visit <= rep(last, each = m), ]
   dat$visit <- factor(dat$visit)
   dat
@@ -246,15 +254,15 @@ benchmark_kr_integrated <- function(n = 300L, m = 18L, repetitions = 3L) {
   sigma <- 0.5^abs(outer(seq_len(m), seq_len(m), "-"))
   e <- matrix(rnorm(n * m), n, m) %*% chol(sigma)
   dat$y <- 0.3 * dat$baseline + 0.2 * (dat$trt == "B") + as.vector(t(e))
-  last <- sample(10:m, n, replace = TRUE)
+  last <- sample_last_visit(10L, m, n)
   dat <- dat[dat$visit <= rep(last, each = m), ]
   dat$visit <- factor(dat$visit)
   formula <- y ~ (baseline + trt) * visit + us(visit | id)
   benchmark_kr_fit(formula, dat, repetitions = repetitions)
 }
 
-# Common timing/snapshot engine, also used for the complete/weighted/grouped
-# validation scenarios below. Run each implementation in its own R session.
+# Common timing/snapshot engine, also used for the small validation scenarios
+# below. Run each implementation in its own R session.
 benchmark_kr_fit <- function(formula, dat, weights = NULL, repetitions = 1L) {
   stopifnot(repetitions >= 1L)
   times <- matrix(NA_real_, repetitions, 2L,
@@ -300,15 +308,18 @@ benchmark_kr_fit <- function(formula, dat, weights = NULL, repetitions = 1L) {
   print(apply(times, 2L, median))
   cat("Summary:", summary_time, "s\n")
   invisible(list(
-    dimensions = c(subjects = fit$tmb_data$n_subjects, visits = fit$tmb_data$n_visits, observations = nrow(dat),
-      coefficients = p, covariance_parameters = length(fit$theta_est)),
-    times = times, cpu_times = cpu_times, median_fit = apply(times, 2L, median), summary_time = summary_time,
+    dimensions = c(subjects = fit$tmb_data$n_subjects, visits = fit$tmb_data$n_visits,
+      observations = length(fit$tmb_data$y_vector), coefficients = p,
+      covariance_parameters = length(fit$theta_est)),
+    repetitions = repetitions,
+    times = times, cpu_times = cpu_times, median_fit = apply(times, 2L, median),
+    median_fit_cpu = apply(cpu_times, 2L, median), summary_time = summary_time,
     summary_cpu = sum(summary_timing[c("user.self", "sys.self")]),
     snapshot = list(beta = coef(fit), theta = fit$theta_est,
       unadjusted_covariance = fit$beta_vcov, covariance = fit$beta_vcov_adj,
       coefficients = coefficient_table, scalar = scalar,
       contrasts = lapply(inference, function(x) x[c("rank", "result", "moments", "se")])),
-    contrast_times = vapply(inference, function(x) x$elapsed, numeric(1L)),
+    contrast_times = setNames(vapply(inference, function(x) x$elapsed, numeric(1L)), ranks),
     session = sessionInfo()
   ))
 }
@@ -316,15 +327,16 @@ benchmark_kr_fit <- function(formula, dat, weights = NULL, repetitions = 1L) {
 # Small end-to-end comparisons across the same scenario matrix as the tests.
 # The expensive 15/18-visit runs remain separate, so no long job runs on source().
 benchmark_kr_cases <- function(repetitions = 1L) {
+  # As in tests/testthat/test-kr-integrated.R: fev_data already misses 263 of
+  # its 800 FEV1 values; the monotone and intermittent patterns remove further
+  # rows on top of this.
   dat <- mmrm::fev_data
-  complete_ids <- names(which(table(dat$USUBJID) == nlevels(dat$AVISIT)))
-  complete <- droplevels(dat[dat$USUBJID %in% complete_ids, ])
-  subject <- as.integer(complete$USUBJID)
-  visit <- as.integer(complete$AVISIT)
+  subject <- as.integer(dat$USUBJID)
+  visit <- as.integer(dat$AVISIT)
   patterns <- list(
-    complete = complete,
-    monotone = droplevels(complete[visit <= subject %% 4L + 1L, ]),
-    intermittent = droplevels(complete[visit != subject %% 4L + 1L, ])
+    original = dat,
+    monotone = droplevels(dat[visit <= subject %% 4L + 1L, ]),
+    intermittent = droplevels(dat[visit != subject %% 4L + 1L, ])
   )
   results <- list()
   for (pattern in names(patterns)) for (grouped in c(FALSE, TRUE)) for (weighted in c(FALSE, TRUE)) {
@@ -359,6 +371,19 @@ benchmark_kr_cases <- function(repetitions = 1L) {
   invisible(results)
 }
 
+# All 19 scenarios of the step-4 comparison: the three large examples, then the
+# small cases. Run once per build, each in a fresh R session, and save the result.
+benchmark_kr_all <- function(large_repetitions = 1L, small_repetitions = 1L) {
+  c(
+    list(
+      "300-15" = benchmark_kr_integrated(300L, 15L, large_repetitions),
+      "300-18" = benchmark_kr_integrated(300L, 18L, large_repetitions),
+      "900-18" = benchmark_kr_integrated(900L, 18L, large_repetitions)
+    ),
+    benchmark_kr_cases(small_repetitions)
+  )
+}
+
 # Compare completed benchmark snapshots, not prototype-only quantities.
 # Relative comparisons are supplemented by an absolute covariance bound in
 # standardized coordinates, which is also appropriate for poorly scaled fits.
@@ -374,23 +399,63 @@ check_kr_integrated <- function(before, after, tolerance = 1e-8) {
   new_log_p <- c(log(after$snapshot$coefficients[, 5L]),
     vapply(after$snapshot$contrasts, function(x) log(x$result$p_val), numeric(1L)))
   stopifnot(isTRUE(all.equal(old_log_p, new_log_p, tolerance = tolerance)))
+  moment_error <- function(name) {
+    max(vapply(seq_along(before$snapshot$contrasts), function(i) {
+      abs(before$snapshot$contrasts[[i]]$moments[[name]] - after$snapshot$contrasts[[i]]$moments[[name]])
+    }, numeric(1L)))
+  }
+  # Contrast timings by rank; the full rank is the number of coefficients.
+  p <- before$dimensions[["coefficients"]]
+  rank_names <- c(rank1 = "1", rank2 = "2", rank3 = "3", fullrank = as.character(p))
+  rank_times <- function(result) {
+    setNames(as.list(unname(result$contrast_times[rank_names])), names(rank_names))
+  }
+  before_fit <- before$median_fit[["KR-linear"]]
+  after_fit <- after$median_fit[["KR-linear"]]
   data.frame(
-    subjects = before$dimensions[["subjects"]], visits = before$dimensions[["visits"]],
-    observations = before$dimensions[["observations"]],
-    coefficients = before$dimensions[["coefficients"]],
-    covariance_parameters = before$dimensions[["covariance_parameters"]],
-    before_seconds = before$median_fit[["KR-linear"]],
-    after_seconds = after$median_fit[["KR-linear"]],
-    speedup = before$median_fit[["KR-linear"]] / after$median_fit[["KR-linear"]],
-    max_covariance_error = max(abs(old - new)), standardized_covariance_error = scaled_error,
+    as.list(before$dimensions),
+    tolerance = tolerance,
+    before_seconds = before_fit,
+    after_seconds = after_fit,
+    speedup = before_fit / after_fit,
+    before_satterthwaite_seconds = before$median_fit[["Satterthwaite"]],
+    after_satterthwaite_seconds = after$median_fit[["Satterthwaite"]],
+    before_fit_cpu_seconds = before$median_fit_cpu[["KR-linear"]],
+    after_fit_cpu_seconds = after$median_fit_cpu[["KR-linear"]],
+    before_repetitions = before$repetitions,
+    after_repetitions = after$repetitions,
+    before_summary_seconds = before$summary_time,
+    after_summary_seconds = after$summary_time,
+    before_fit_and_summary = before_fit + before$summary_time,
+    after_fit_and_summary = after_fit + after$summary_time,
+    fit_and_summary_speedup = (before_fit + before$summary_time) / (after_fit + after$summary_time),
+    before = rank_times(before),
+    after = rank_times(after),
+    max_covariance_error = max(abs(old - new)),
+    standardized_covariance_error = scaled_error,
     max_relative_se_error = max(abs(sqrt(diag(new) / diag(old)) - 1)),
-    max_df_error = max(vapply(seq_along(before$snapshot$contrasts), function(i) {
-      abs(before$snapshot$contrasts[[i]]$moments$m - after$snapshot$contrasts[[i]]$moments$m)
-    }, numeric(1L))),
-    max_scale_error = max(vapply(seq_along(before$snapshot$contrasts), function(i) {
-      abs(before$snapshot$contrasts[[i]]$moments$lambda - after$snapshot$contrasts[[i]]$moments$lambda)
-    }, numeric(1L))),
+    max_df_error = moment_error("m"),
+    max_scale_error = moment_error("lambda"),
     max_coefficient_table_error = max(abs(before$snapshot$coefficients - after$snapshot$coefficients)),
     max_log_p_error = max(abs(old_log_p[is.finite(old_log_p)] - new_log_p[is.finite(old_log_p)]))
   )
+}
+
+# Comparison tolerances that differ from the default 1e-8, matching
+# tests/testthat/test-kr-integrated.R and the documented numerical limits.
+kr_integrated_tolerances <- c(collinear_design = 1e-7, extreme_design = 1e-3)
+
+# Combine saved benchmark_kr_all() results of both builds into the recorded
+# table, optionally writing it to a CSV file.
+kr_integrated_table <- function(before, after, file = NULL) {
+  stopifnot(identical(names(before), names(after)))
+  rows <- lapply(names(before), function(name) {
+    tolerance <- if (name %in% names(kr_integrated_tolerances)) kr_integrated_tolerances[[name]] else 1e-8
+    cbind(scenario = name, check_kr_integrated(before[[name]], after[[name]], tolerance))
+  })
+  table <- do.call(rbind, rows)
+  if (!is.null(file)) {
+    utils::write.csv(table, file, row.names = FALSE)
+  }
+  table
 }

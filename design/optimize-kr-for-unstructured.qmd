@@ -355,15 +355,27 @@ the public results against **both retained old formulas**: the pairwise
 covariance backend plus `h_var_adj(linear = TRUE)`, and the frozen
 coefficient-space degrees-of-freedom calculation. Comparing two fits through
 the new `h_kr_df()` alone would not independently validate the df optimization.
+The reference $P_h$ and $Q_{hj}$ come from `h_get_kr_comp()` for full KR. That
+path still uses the original second-order derivative caches and the original
+pairwise loop, so it performs the same arithmetic as the baseline `fc9cc2336`
+and does not share the new first-derivative-only caches or contracted backend.
 
-The tests cross complete data, explicit monotone dropout (including subjects
-with only one visit), and intermittent gaps with equal/unequal weights and
-one/two covariance groups. They check coefficient covariance, every
+The tests cross three missingness patterns with equal/unequal weights and
+one/two covariance groups. The first pattern is `fev_data` itself, which
+already misses 263 of its 800 FEV1 values: of the 197 subjects in the fit, 39
+have all four visits and 21 only one. The other two patterns remove further
+rows: keeping only visits 1 to $(\text{subject} \bmod 4) + 1$ (336
+observations, 74 subjects with only one visit), or removing exactly that visit
+(394 observations, no subject with all visits). Complete data are not needed
+here, because the large benchmark examples below cover subjects with up to
+all visits observed. They check coefficient covariance, every
 coefficient's summary (standard error, scalar df, t statistic, and p-value),
 and dense nonorthogonal contrasts of ranks 1, 2, 3, and the full coefficient
 dimension. They also compare F scaling, F statistics, and multi-dimensional
-df and p-values. Log p-values are checked to avoid hiding differences in
-tiny tail probabilities behind an absolute tolerance. Separate Satterthwaite
+df and p-values. Summary tables are compared column by column, so that large
+df values cannot mask relative differences in standard errors or p-values. Log
+p-values are checked to avoid hiding differences in tiny tail probabilities
+behind an absolute tolerance. Separate Satterthwaite
 fits verify that coefficient estimates, covariance-parameter estimates, and
 unadjusted covariance are unchanged. Single-visit fits, zero/empty contrasts,
 singular hypotheses, and the non-REML guards are covered.
@@ -377,21 +389,29 @@ $10^{-8}$); a scaled baseline and nearly collinear baselines produce
 coefficient covariance condition numbers of about $2.4\times10^6$ and
 $1.6\times10^7$ (tested at $10^{-7}$). These fits converge and have positive
 definite unadjusted coefficient and covariance-parameter covariance matrices.
+For the nearly collinear case, the retained pairwise and integrated
+calculations differ by up to $8.96\times10^{-10}$ in standardized covariance,
+$2.39\times10^{-11}$ in relative coefficient standard errors,
+$1.61\times10^{-9}$ in relative contrast df, $4.38\times10^{-11}$ in absolute
+F scaling, $6.35\times10^{-9}$ in relative F statistics, and
+$8.29\times10^{-8}$ in absolute log p-values. The last one is closest to its
+$10^{-7}$ tolerance; the test compares log p-values relative to their size,
+which leaves a larger margin.
 
 There is a measured numerical limit: an even more collinear, converged fit
 has a coefficient covariance condition number of about $1.4\times10^{10}$.
 For that case, the retained pairwise and integrated calculations differ by
-up to $3.85\times10^{-5}$ in standardized covariance, $4.51\times10^{-6}$
+up to $3.85\times10^{-5}$ in standardized covariance, $4.50\times10^{-6}$
 in relative coefficient standard errors, $1.67\times10^{-5}$ in relative
-contrast df, $1.06\times10^{-6}$ in absolute F scaling, and
-$5.78\times10^{-5}$ in relative F statistics. The largest absolute log
+contrast df, $1.05\times10^{-6}$ in absolute F scaling, and
+$5.77\times10^{-5}$ in relative F statistics. The largest absolute log
 p-value difference across the four dense contrast ranks is
-$9.88\times10^{-5}$. That edge case is retained with an explicitly looser
+$9.87\times10^{-5}$. That edge case is retained with an explicitly looser
 $10^{-3}$ comparison tolerance. Algebraic equivalence does not guarantee
 ordinary floating-point tolerances near numerical singularity; no fitting
 algorithm or statistical approximation was changed to conceal this limit.
 
-Final validation: the full R/C++ suite passes with **4,119 passing
+Final validation at commit `498a7e701`: the full R/C++ suite passes with **4,119 passing
 expectations, zero failures or warnings**, and one existing multicore skip.
 `covr::environment_coverage()` over the package namespace while running the
 entire suite reports **97.76% overall R line coverage**, **100% of
@@ -406,7 +426,11 @@ SAS comparisons, and the all-covariance-structure component checks pass.
 cases**. It records full-fit elapsed and CPU times, times `summary()`
 separately, and evaluates dense contrasts of ranks 1, 2, 3, and $p$ plus a
 scalar t-test. It saves a compact numerical snapshot, so separate baseline
-and optimized R sessions can be checked with `check_kr_integrated()`. The
+and optimized R sessions can be checked with `check_kr_integrated()`.
+`benchmark_kr_all()` runs all 19 scenarios in one session, and
+`kr_integrated_table()` compares the saved results of both builds with the
+scenario-specific tolerances and writes the
+[recorded comparisons](optimize-kr-for-unstructured-integrated.csv). The
 comparison includes covariance, standard errors, df, F scaling, statistics,
 and p-values, including log tails. All fitting, Hessian, and covariance
 preparation work is included in the full-fit timing; no prototype-only
@@ -463,7 +487,7 @@ $1.04\times10^{-12}$. All complete snapshots pass the $10^{-8}$ comparison,
 including coefficient summaries and all four contrast ranks.
 
 `benchmark_kr_cases()` additionally times the **12 combinations** of the
-three missingness patterns, one/two covariance groups, and equal/unequal
+three missingness patterns described above, one/two covariance groups, and equal/unequal
 weights, plus four poorly conditioned scenarios. All 16 small-case snapshots
 also agree at their stated tolerances. Their single full-fit timings range
 from 0.041–0.090 s before to 0.025–0.066 s after (about 1.36–1.72 times faster);
@@ -472,27 +496,37 @@ estimates. The [recorded comparisons](optimize-kr-for-unstructured-integrated.cs
 contain all **19 scenarios**, including CPU times, summary and contrast
 timings, covariance/SE/df/F-scaling/log-tail errors, and repetition counts.
 
-To reproduce, build the two revisions into separate libraries with identical
-flags and run in separate R sessions, sourcing this updated helper in both:
+To reproduce, install the two revisions into separate libraries with the
+default release flags, e.g. `R CMD INSTALL --library=lib-baseline mmrm-fc9cc2336`
+(the source tree from `git archive fc9cc2336`), and similarly for the
+integrated revision. Run on AC power with macOS Low Power Mode disabled, which
+otherwise roughly halves the performance-core speed. Then run each build in
+its own fresh R session from the repository root:
 
 ```r
-# Start R under: caffeinate -is Rscript benchmark.R
-.libPaths(c("/path/to/baseline-or-integrated-library", .libPaths()))
+# Start under: caffeinate -is Rscript benchmark-baseline.R
+.libPaths(c("lib-baseline", .libPaths()))
 library(mmrm)
-source("/path/to/updated/checkout/design/optimize-kr-for-unstructured.R")
-b15 <- benchmark_kr_integrated(n = 300L, m = 15L, repetitions = 1L)
-b18 <- benchmark_kr_integrated(n = 300L, m = 18L, repetitions = 1L)
-big <- benchmark_kr_integrated(n = 900L, m = 18L, repetitions = 1L)
-cases <- benchmark_kr_cases()
-saveRDS(list(b15 = b15, b18 = b18, big = big, cases = cases), "before-results.rds")
-# Use "after-results.rds" in the integrated session.
-# Use repetitions = 3L for the optimized measurements above.
-# Later, read both sessions' saved results:
-before <- readRDS("before-results.rds")
-after <- readRDS("after-results.rds")
-check_kr_integrated(before$b18, after$b18)
-# For the extreme_design scenario, explicitly use tolerance = 1e-3;
-# for collinear_design use 1e-7, matching the tests and documented limits.
+source("design/optimize-kr-for-unstructured.R")
+saveRDS(benchmark_kr_all(), "before-results.rds")
+```
+
+```r
+# Start under: caffeinate -is Rscript benchmark-integrated.R
+.libPaths(c("lib-integrated", .libPaths()))
+library(mmrm)
+source("design/optimize-kr-for-unstructured.R")
+saveRDS(benchmark_kr_all(large_repetitions = 3L), "after-results.rds")
+```
+
+Finally, compare both results and write the recorded table:
+
+```r
+source("design/optimize-kr-for-unstructured.R")
+kr_integrated_table(
+  readRDS("before-results.rds"), readRDS("after-results.rds"),
+  file = "design/optimize-kr-for-unstructured-integrated.csv"
+)
 ```
 
 ## Question 1: exact optimizations

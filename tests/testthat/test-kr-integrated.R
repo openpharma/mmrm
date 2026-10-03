@@ -2,7 +2,10 @@
 # Reusing df_1d()/df_md() on a reference fit would reuse the new df algorithm.
 expect_kr_linear_reference <- function(fit, tolerance = 1e-9) {
   w <- component(fit, "theta_vcov")
-  legacy <- h_get_kr_comp(fit$tmb_data, fit$theta_est, linear = TRUE)
+  # The full KR path still uses the original second-order derivative caches and
+  # pairwise loop, so its P and Q are computed exactly as before the
+  # optimization. R is not needed for the linear reference.
+  legacy <- h_get_kr_comp(fit$tmb_data, fit$theta_est)
   covariance <- h_var_adj(fit$beta_vcov, w, legacy$P, legacy$Q, NULL, linear = TRUE)
   reference <- fit
   reference$beta_vcov_adj <- covariance
@@ -12,8 +15,7 @@ expect_kr_linear_reference <- function(fit, tolerance = 1e-9) {
   expect_null(fit$kr_comp$R)
   expect_equal(fit$kr_comp$P, legacy$P, tolerance = tolerance)
   expect_equal(vcov(fit), covariance, tolerance = tolerance, ignore_attr = TRUE)
-  expect_equal(sqrt(diag(vcov(fit))), sqrt(diag(covariance)),
-    tolerance = tolerance, ignore_attr = TRUE)
+  expect_lt(max(abs(sqrt(diag(vcov(fit)) / diag(covariance)) - 1)), tolerance)
   # An absolute bound in standardized coordinates remains meaningful when
   # a poorly scaled design produces coefficient variances of very different sizes.
   scale <- sqrt(outer(diag(covariance), diag(covariance)))
@@ -44,26 +46,32 @@ expect_kr_linear_reference <- function(fit, tolerance = 1e-9) {
 
   # Every coefficient's public summary includes its adjusted SE, scalar df,
   # t statistic, and p-value; this also exercises the integrated summary path.
-  expected <- t(vapply(seq_len(p), function(j) {
+  expected <- unname(t(vapply(seq_len(p), function(j) {
     contrast <- diag(p)[j, , drop = FALSE]
     df <- h_kr_df_coefficient_space(fit$beta_vcov, contrast, w, legacy$P)$m
     unlist(h_test_1d(reference, as.vector(contrast), df))
-  }, numeric(5L)))
-  expect_equal(unname(summary(fit)$coefficients), unname(expected), tolerance = tolerance)
-  expect_equal(log(summary(fit)$coefficients[, 5L]), log(expected[, 5L]),
-    tolerance = tolerance, ignore_attr = TRUE)
+  }, numeric(5L))))
+  actual <- unname(summary(fit)$coefficients)
+  # Compare column by column, so that large df values cannot mask relative
+  # differences in the much smaller standard errors or p-values.
+  for (j in seq_len(ncol(expected))) {
+    expect_equal(actual[, j], expected[, j], tolerance = tolerance)
+  }
+  expect_equal(log(actual[, 5L]), log(expected[, 5L]), tolerance = tolerance)
 }
 
 test_that("integrated KR-linear inference matches the old formulas across data patterns", {
   skip_on_cran()
-  complete_ids <- names(which(table(fev_data$USUBJID) == nlevels(fev_data$AVISIT)))
-  complete <- droplevels(fev_data[fev_data$USUBJID %in% complete_ids, ])
-  subject <- as.integer(complete$USUBJID)
-  visit <- as.integer(complete$AVISIT)
+  # fev_data already misses 263 of its 800 FEV1 values: of the 197 subjects in
+  # the fit, 39 have all 4 visits and 21 only one. The two additional patterns
+  # remove rows on top of this, keeping visits 1 to (subject %% 4 + 1), or all
+  # visits but that one. The latter leaves no subject with all visits observed.
+  subject <- as.integer(fev_data$USUBJID)
+  visit <- as.integer(fev_data$AVISIT)
   patterns <- list(
-    complete = complete,
-    monotone = droplevels(complete[visit <= subject %% 4L + 1L, ]),
-    intermittent = droplevels(complete[visit != subject %% 4L + 1L, ])
+    original = fev_data,
+    monotone = droplevels(fev_data[visit <= subject %% 4L + 1L, ]),
+    intermittent = droplevels(fev_data[visit != subject %% 4L + 1L, ])
   )
   expect_true(any(table(patterns$monotone$USUBJID) == 1L))
   expect_true(any(vapply(split(as.integer(patterns$intermittent$AVISIT),
