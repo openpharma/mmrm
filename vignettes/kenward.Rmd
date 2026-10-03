@@ -52,7 +52,7 @@ appropriately by
 where the subsetting matrix $S_i \in \{0, 1\}^{m \times m_i}$ contains
 in each of its $m_i$ columns a single 1 indicating which overall time point
 is matching the $h$-th observed time point $t_{ih}$ of subject $i$.
-$G_i \in \mathbb{R}_{\gt 0}^{m_i \times m_i}$ is the diagonal weight matrix.
+$G_i \in \mathbb{R}^{m_i \times m_i}$ is a diagonal matrix with strictly positive weights on its diagonal.
 
 Conditional on the design matrices $X_i$, the coefficient vector $\beta$ and the
 covariance matrix $\Sigma$ we assume that the observations are independent between
@@ -181,7 +181,7 @@ The derivatives of $\Sigma^{-1}$ can be calculated through
 
 ### Subjects with missed visits
 
-If a subject does not have all visits, the corresponding covariance matrix can be represented as
+For unit weights, if a subject does not have all visits, the corresponding covariance matrix can be represented as
 \[
   \Sigma_i = S_i^\top \Sigma S_i
 \]
@@ -201,7 +201,7 @@ using the above.
 
 ### Scenario under group specific covariance estimates
 
-When fitting grouped `mmrm` models, the covariance matrix for subject $i$ of group $g(i)$ can be written as
+For unit weights in grouped `mmrm` models, the covariance matrix for subject $i$ of group $g(i)$ can be written as
 \[
   \Sigma_i = S_i^\top \Sigma_{g(i)} S_i.
 \]
@@ -235,9 +235,24 @@ Under a weighted mmrm model, the covariance matrix for subject $i$ can be repres
   \Sigma_i = G_i^{-1/2} S_i^\top \Sigma S_i G_i^{-1/2}
 \]
 
-where $G_i$ is a diagonal matrix of the weights. Then, when deriving $P$, $Q$ and $R$,
-there are no mathematical differences as the weights are constant, and having $G_i$ in addition to $S_i$
-does not change the algorithms and we can simply multiply the formulas with $G_i^{-1/2}$, similarly as above for the subsetting matrix.
+where $G_i$ is a diagonal matrix of fixed weights. Write
+$\bar\Sigma_i = S_i^\top\Sigma S_i$ (or use $\Sigma_{g(i)}$ for grouped models).
+Since the weights do not depend on $\theta$, the covariance derivatives are
+\[
+  \frac{\partial\Sigma_i}{\partial\theta_h}
+  = G_i^{-1/2}\frac{\partial\bar\Sigma_i}{\partial\theta_h}G_i^{-1/2},
+  \qquad
+  \frac{\partial^2\Sigma_i}{\partial\theta_h\partial\theta_j}
+  = G_i^{-1/2}\frac{\partial^2\bar\Sigma_i}{\partial\theta_h\partial\theta_j}G_i^{-1/2}.
+\]
+The inverse covariance instead satisfies
+$\Sigma_i^{-1} = G_i^{1/2}\bar\Sigma_i^{-1}G_i^{1/2}$, so
+\[
+  \frac{\partial\Sigma_i^{-1}}{\partial\theta_h}
+  = G_i^{1/2}\frac{\partial\bar\Sigma_i^{-1}}{\partial\theta_h}G_i^{1/2}.
+\]
+These weighted matrices are inserted into the same definitions of $P_h$,
+$Q_{hj}$ and $R_{hj}$.
 See [subject contributions with weights](#subject-contributions-with-weights) below for how the weights
 then enter the subject contributions to $P_h$ and $Q_{hj}$.
 
@@ -299,7 +314,8 @@ $W^{(b)} = (W_{hj})_{h,j\in\mathcal G_b}$ enter $S_Q$:
     \widetilde X_i^\top D_{ih}\bar\Sigma_i D_{ij}\widetilde X_i.
 \]
 
-Each block is factored as
+Each block is factored as follows, with the rows of $U_b$ indexed by
+the parameter labels in $\mathcal G_b$:
 
 \[
   W^{(b)} = U_b\operatorname{diag}(s_b)U_b^\top, \qquad
@@ -375,33 +391,34 @@ $P_h$ and $W$ are also used unchanged for the
 
 ## Inference
 
-Suppose we are testing the linear combination of $\beta$, $C\beta$ with a
-full row rank contrast matrix $C \in \mathbb{R}^{c\times p}$. We use the following F-statistic
+Suppose we are testing $C\beta = C\beta_0$, where $\beta_0$ specifies
+the null hypothesis and $C \in \mathbb{R}^{c\times p}$ has full row rank.
+We use the following F-statistic
 \[
-  F = \frac{1}{c} (C(\hat\beta - \beta))^\top (C \Phi_A C^\top)^{-1} C(\hat\beta - \beta)
+  F = \frac{1}{c} (C(\hat\beta - \beta_0))^\top (C \Phi_A C^\top)^{-1} C(\hat\beta - \beta_0)
 \]
 and
 \[
   F^* = \lambda F
 \]
-is approximated by an $F_{c,m}$ distribution.
+is approximated by an $F_{c,\nu}$ distribution.
 
-$\lambda$ and $m$ can be calculated through
+$\lambda$ and $\nu$ can be calculated through
 
 \[
   M = C^\top (C \Phi C^\top)^{-1} C
 \]
 
 \[
-  A_1 = \sum_{h=1}^k{\sum_{j=1}^k{W_{hj} tr(M \Phi P_h \Phi) tr(M \Phi P_j \Phi)}}
+  A_1 = \sum_{h=1}^k{\sum_{j=1}^k{W_{hj} \operatorname{tr}(M \Phi P_h \Phi) \operatorname{tr}(M \Phi P_j \Phi)}}
 \]
 
 \[
-  A_2 = \sum_{h=1}^k{\sum_{j=1}^k{W_{hj} tr(M \Phi P_h \Phi M \Phi P_j \Phi)}}
+  A_2 = \sum_{h=1}^k{\sum_{j=1}^k{W_{hj} \operatorname{tr}(M \Phi P_h \Phi M \Phi P_j \Phi)}}
 \]
 
 \[
-  B = \frac{1}{2c}(A_1 + 6A_2)
+  \mathcal B = \frac{1}{2c}(A_1 + 6A_2)
 \]
 
 \[
@@ -420,26 +437,26 @@ $\lambda$ and $m$ can be calculated through
   c_3 = \frac{c+2-g}{3c+2(1-g)}
 \]
 \[E^*={\left\{1-\frac{A_2}{c}\right\}}^{-1}\]
-\[V^*=\frac{2}{c}{\left\{\frac{1+c_1 B}{(1-c_2 B)^2(1-c_3 B)}\right\}}\]
+\[V^*=\frac{2}{c}{\left\{\frac{1+c_1 \mathcal B}{(1-c_2 \mathcal B)^2(1-c_3 \mathcal B)}\right\}}\]
 
-\[\rho = \frac{V^{*}}{2(E^*)^2}\]
+\[\eta = \frac{V^{*}}{2(E^*)^2}\]
 
-\[m = 4 + \frac{c+2}{c\rho - 1}\]
-\[\lambda = \frac{m}{E^*(m-2)}\]
+\[\nu = 4 + \frac{c+2}{c\eta - 1}\]
+\[\lambda = \frac{\nu}{E^*(\nu-2)}\]
 
 ### Degrees of freedom in contrast space
 
 `h_kr_df()` evaluates the same $A_1$ and $A_2$ in the smaller contrast
 space, for both full and linear Kenward-Roger and all covariance structures.
-Let $H = C\Phi C^\top = TT^\top$, where $T$ is the lower triangular
+Let $H_C = C\Phi C^\top = TT^\top$, where $T$ is the lower triangular
 Cholesky factor, and set
 
 \[
   Z = T^{-1}C\Phi, \qquad K_h = ZP_hZ^\top.
 \]
 
-Triangular solves obtain $Z$ without explicitly inverting $H$. Hypotheses
-whose $H$ is numerically singular or not positive definite are rejected. Each $K_h$
+Triangular solves obtain $Z$ without explicitly inverting $H_C$. Hypotheses
+whose $H_C$ is numerically singular or not positive definite are rejected. Each $K_h$
 is a symmetric $c\times c$ matrix. Cyclic invariance of trace gives
 
 \[
@@ -458,7 +475,7 @@ models.
 
 ### One-dimensional shortcut
 
-For a single row contrast $C = l^\top$, define
+For a single row contrast $C = l^\top$ with $l \in \mathbb{R}^p$, define
 
 \[
   a_h = \frac{l^\top\Phi P_h\Phi l}{l^\top\Phi l}.
@@ -467,14 +484,14 @@ For a single row contrast $C = l^\top$, define
 Then $A_1 = A_2 = a^\top Wa$, and the formulas simplify to
 
 \[
-  m = \frac{2}{a^\top Wa}, \qquad \lambda = 1.
+  \nu = \frac{2}{a^\top Wa}, \qquad \lambda = 1.
 \]
 
 The implementation uses this shortcut directly, avoiding Cholesky
 normalization and the general moment formulas. It applies to any scalar
 contrast with positive variance $l^\top\Phi l$, including a combination of
 coefficients; other contrasts are rejected. If $a^\top Wa = 0$, the limit
-$m = \infty$ is returned. Since
+$\nu = \infty$ is returned. Since
 $\partial\Phi/\partial\theta_h = -\Phi P_h\Phi$, this is exactly the
 [scalar Satterthwaite degrees of freedom](satterthwaite.html#one-dimensional-contrast)
 based on the **unadjusted** variance $l^\top\Phi l$. The standard error and
@@ -487,7 +504,7 @@ degrees of freedom and F scaling.
 
 While the Kenward-Roger adjusted covariance matrix is adopting a Taylor series to approximate the true value, the choices
 of parameterization can change the result. In a simple example of unstructured covariance structure, in our current approach,
-where the parameters are elements of the Cholesky factor of $\Sigma$ (see [parameterization](covariance.html)), the second-order derivatives
+where the parameters are log diagonal entries and scaled off-diagonal entries of the Cholesky factor of $\Sigma$ (see [parameterization](algorithm.html#covariance-matrix-model)), the second-order derivatives
 of $\Sigma$ over our parameters, are non-zero matrices. However, if we use the elements of $\Sigma$ as our parameters, then the second-order
 derivatives are zero matrices. However, the differences are usually small.
 If you would like to match SAS results for the unstructured covariance model, you can use the linear Kenward-Roger approximation.
@@ -508,9 +525,11 @@ second derivatives and the parameter-pair $Q_{hj}$ and $R_{hj}$ components.
 
 ### Spatial Exponential Derivatives
 
-For spatial exponential covariance structure, we have
+For spatial exponential covariance, $\sigma$ denotes a variance
+(the diagonal of $\Sigma$), and $\rho$ is the correlation at unit distance.
+For one covariance group, we have
 
-\[\theta = (\theta_1,\theta_2)\]
+\[\theta = (\theta_1,\theta_2)^\top\]
 \[\sigma = e^{\theta_1}\]
 \[\rho = \frac{e^{\theta_2}}{1 + e^{\theta_2}}\]
 
@@ -560,7 +579,7 @@ Second-order derivatives can be written as:
 For spatial Gaussian covariance structure, we use the same parameterization as
 spatial exponential, with the squared distance in the exponent:
 
-\[\theta = (\theta_1,\theta_2)\]
+\[\theta = (\theta_1,\theta_2)^\top\]
 \[\sigma = e^{\theta_1}\]
 \[\rho = \frac{e^{\theta_2}}{1 + e^{\theta_2}}\]
 

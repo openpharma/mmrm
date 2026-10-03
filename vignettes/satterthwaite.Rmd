@@ -37,13 +37,14 @@ model definition is the same as in [Details of the model fitting in
 
 We are also using the same notation as in the [Details of the
 Kenward-Roger calculations](kenward.html). In particular, we assume we
-have a contrast matrix $C \in \mathbb{R}^{c\times p}$ with which we want
+have a full row rank contrast matrix $C \in \mathbb{R}^{c\times p}$ with which we want
 to test the linear hypothesis $C\beta = 0$. Further, $W(\hat\theta)$ is
 the covariance estimate of $\hat\theta$: the inverse observed information,
 obtained by inverting the Hessian of the negative log-likelihood evaluated
 at $\hat\theta$ (the restricted likelihood for REML fits).
 $\Phi(\theta) = \left\{X^\top \Omega(\theta)^{-1} X\right\} ^{-1}$ is
-the asymptotic covariance matrix of $\hat\beta$.
+the asymptotic covariance matrix of $\hat\beta$, and $k$ is the number
+of covariance parameters in $\theta$.
 
 ### One-dimensional contrast
 
@@ -110,7 +111,8 @@ and degrees-of-freedom formulas remain unchanged.
 
 For a REML fit, the [Kenward-Roger implementation](kenward.html#one-dimensional-shortcut)
 can obtain the same scalar degrees of freedom directly from its cached $P_h$
-matrices. Write $C = l^\top$. The Jacobian identity
+matrices. Write $C = l^\top$, with $l \in \mathbb{R}^p$, and evaluate
+all quantities at $\hat\theta$, omitting this argument below. The Jacobian identity
 
 \[
   \frac{\partial\Phi}{\partial\theta_h} = -\Phi P_h\Phi
@@ -147,14 +149,21 @@ null hypothesis. In general, it is an approximation.
 The calculations are described in detail in @Christensen2018, and we don't repeat
 them here in detail. The implementation is in `h_df_md_sat()` and starts with an
 eigen-decomposition of the asymptotic variance-covariance matrix of the contrast estimate,
-i.e. $C \Phi(\hat\theta) C^\top$. The F-statistic can be rewritten as a sum
-of $t^2$ statistics based on these eigen-values. The corresponding random variables
-are independent (by design because they are derived from the orthogonal eigen-vectors) and
-essentially have one degree of freedom each. Hence, each of the $t$ statistics is
-treated as above in the one-dimensional contrast case, i.e. the denominator degree
-of freedom is calculated for each of them. Finally, using properties of the F
-distribution's expectation, the denominator degree of freedom for the whole F statistic
-is derived.
+i.e. $C \Phi(\hat\theta) C^\top$. This rewrites $cF$ as a sum of
+squared standardized contrasts. Under the null hypothesis, each
+standardized contrast is approximated by a
+$t_{\nu_a}$ distribution, and its square by an $F_{1,\nu_a}$ distribution,
+where $\nu_a$ is calculated using the one-dimensional Satterthwaite
+formula, for $a = 1, \dotsc, c$. The eigen-decomposition diagonalizes the
+estimated contrast covariance; it does not guarantee independence of the
+studentized statistics, whose denominators are estimated from the data.
+When the component degrees of freedom exceed two, matching the
+approximate expectation of the sum to that of $cF_{c,\nu}$
+gives the overall denominator degrees of freedom. This expectation
+calculation uses linearity of expectation and does not require independence.
+Numerically equal component degrees of freedom are returned directly.
+For unequal components, the implementation returns two denominator
+degrees of freedom if any component has at most two.
 
 ## Satterthwaite degrees of freedom for empirical covariance
 
@@ -165,15 +174,25 @@ In @bell2002bias the Satterthwaite degrees of freedom in combination with a sand
 For one-dimensional contrast, following the same notation in [Details of the model fitting in `mmrm`](algorithm.html)
 and [Details of the Kenward-Roger calculations](kenward.html), we have the following derivation.
 Let $C = l^\top$ be the contrast, with a column vector $l \in \mathbb{R}^p$.
-For an estimator of variance with the following term
+First consider ordinary least squares. Distinguish the model errors
+$\epsilon = Y - X\beta$ from the fitted residuals
+$e = Y - X\hat\beta = (I-H)\epsilon$, where
+\[
+  H = X(X^\top X)^{-1}X^\top.
+\]
+Write $e_i$ for the residuals of subject $i$. The sandwich estimator of
+the variance of $l^\top\hat\beta$ is
 
 \[
-  v = s l^\top(X^\top X)^{-1}\sum_{i}{X_i^\top A_i \epsilon_i \epsilon_i^\top A_i X_i} (X^\top X)^{-1} l
+  v = s l^\top(X^\top X)^{-1}\sum_{i}{X_i^\top A_i e_i e_i^\top A_i X_i} (X^\top X)^{-1} l
 \]
 
 where $s$ takes the value of $\frac{n}{n-1}$, $1$ or $\frac{n-1}{n}$, and $A_i$ takes $I_i$, $(I_i - H_{ii})^{-\frac{1}{2}}$, or $(I_i - H_{ii})^{-1}$
-respectively (as in the [empirical covariance with weighted least squares](empirical_wls.html)),
-then $v$ can be decomposed into a weighted sum of independent $\chi_1^2$ distributions, where the weights are
+respectively (as in the [empirical covariance with weighted least squares](empirical_wls.html)).
+Here $I_i$ is the $m_i\times m_i$ identity and $H_{ii}$ is the subject's
+diagonal block of $H$. Under a working normal model for $\epsilon$, with
+the design and adjustment matrices treated as fixed, $v$ has the
+distribution of a weighted sum of independent $\chi_1^2$ variables. The weights are
 the eigenvalues of the $n\times n$ matrix $\Gamma$ with elements
 \[
   \Gamma_{ij} = \gamma_i^\top V \gamma_j
@@ -184,12 +203,12 @@ where
 \[
   \gamma_i = s^{\frac{1}{2}} (I - H)_i^\top A_i X_i (X^\top X)^{-1} l
 \]
-\[
-  H = X(X^\top X)^{-1}X^\top
-\]
 
 $(I - H)_i$ corresponds to the rows of subject $i$, so that $\gamma_i \in \mathbb{R}^N$ with $N = \sum_i m_i$ observations in total.
-$V \in \mathbb{R}^{N \times N}$ is the assumed covariance matrix of the residuals.
+$V = \operatorname{Var}(\epsilon) \in \mathbb{R}^{N \times N}$ is the
+working covariance matrix of the model errors. The fitted residuals have
+covariance $(I-H)V(I-H)^\top$; their projection is already included in
+$\gamma_i$. In particular, $v = \sum_i(\gamma_i^\top\epsilon)^2$.
 
 So the degrees of freedom can be represented as
 \[
@@ -199,8 +218,17 @@ So the degrees of freedom can be represented as
 where $\omega_i, i = 1, \dotsc, n$ are the eigenvalues of $\Gamma$.
 @bell2002bias also suggests that $V$ can be chosen as identity matrix, so $\Gamma_{ij} = \gamma_i^\top \gamma_j$.
 
-Following [Weighted Least Square Estimator](algorithm.html#weighted-least-squares-estimator), we can transform
-the original $X$ into $\widetilde X$ to use the above equations.
+For generalized least squares, apply these equations to the transformed
+response and design from the
+[weighted least squares estimator](algorithm.html#weighted-least-squares-estimator).
+Specifically, factor $\hat\Omega = L_\Omega L_\Omega^\top$ and use
+$Y^\dagger = L_\Omega^{-1}Y$, $X^\dagger = L_\Omega^{-1}X$, and
+$\epsilon^\dagger = L_\Omega^{-1}\epsilon$.
+The hat matrix and fitted residuals are then computed in these transformed
+coordinates. With the fitted covariance as the working model, the
+transformed errors have working covariance $V = I$; the transformation
+is treated as fixed for this approximation. Below, $X$ and $H$ refer to
+these transformed coordinates when applying the formulas to `mmrm`.
 
 To avoid repeated computation of matrix $A_i$, $H$ etc for different contrasts, we calculate and cache the following
 
@@ -216,32 +244,45 @@ to obtain an $N \times 1$ matrix, and $\Gamma$ can be computed with the $\gamma_
 To obtain the degrees of freedom, and to avoid eigen computation on a large matrix, we can use the following equation
 
 \[
-  \nu = \frac{(\sum_{i}\omega_i)^2}{\sum_{i}{\omega_i^2}} = \frac{tr(\Gamma)^2}{\sum_{i}{\sum_{j}{\Gamma_{ij}^2}}}
+  \nu = \frac{(\sum_{i}\omega_i)^2}{\sum_{i}{\omega_i^2}} = \frac{\operatorname{tr}(\Gamma)^2}{\sum_{i}{\sum_{j}{\Gamma_{ij}^2}}}
 \]
 
-The scale parameter is not used throughout the package.
+The common factor $s$ cancels from this degrees-of-freedom ratio, so it
+need not be included in the calculation. The trace identities used here
+are proved in the [appendix](#appendix-trace-identities).
 
-The proof is as follows.
+### Multi-dimensional contrast
 
-1. Proof of
+For multiple contrasts, we apply the same eigen-decomposition and
+expectation-matching technique as for asymptotic covariance, using the
+empirical covariance matrix and the empirical scalar degrees of freedom
+for each component.
+
+## Appendix: Trace identities
+
+### Cyclic invariance of trace
+
+We first show
 \[
-  tr(AB) = tr(BA)
+  \operatorname{tr}(AB) = \operatorname{tr}(BA)
 \]
 
 Let $A$ have dimension $r\times q$, $B$ have dimension $q\times r$
 \[
-  tr(AB) = \sum_{i=1}^{r}{(AB)_{ii}} = \sum_{i=1}^{r}{\sum_{j=1}^{q}{A_{ij}B_{ji}}}
+  \operatorname{tr}(AB) = \sum_{i=1}^{r}{(AB)_{ii}} = \sum_{i=1}^{r}{\sum_{j=1}^{q}{A_{ij}B_{ji}}}
 \]
 
 \[
-  tr(BA) = \sum_{i=1}^{q}{(BA)_{ii}} = \sum_{i=1}^{q}{\sum_{j=1}^{r}{B_{ij}A_{ji}}}
+  \operatorname{tr}(BA) = \sum_{i=1}^{q}{(BA)_{ii}} = \sum_{i=1}^{q}{\sum_{j=1}^{r}{B_{ij}A_{ji}}}
 \]
 
-so $tr(AB) = tr(BA)$
+so $\operatorname{tr}(AB) = \operatorname{tr}(BA)$
 
-2. Proof of
+### Trace and squared eigenvalues
+
+We next show
 \[
-  tr(\Gamma) = \sum_{i}(\omega_i)
+  \operatorname{tr}(\Gamma) = \sum_{i}(\omega_i)
 \]
 and
 \[
@@ -255,24 +296,20 @@ Following eigen decomposition, we have
 \]
 where $\operatorname{diag}(\omega)$ is the diagonal matrix of the eigenvalues, and $U$ is an orthogonal matrix.
 
-Using the previous formula that $tr(AB) = tr(BA)$, we have
+Using the previous formula that $\operatorname{tr}(AB) = \operatorname{tr}(BA)$, we have
 
 \[
-  tr(\Gamma) = tr(U \operatorname{diag}(\omega) U^\top) = tr(\operatorname{diag}(\omega) U^\top U) = tr(\operatorname{diag}(\omega)) = \sum_{i}(\omega_i)
+  \operatorname{tr}(\Gamma) = \operatorname{tr}(U \operatorname{diag}(\omega) U^\top) = \operatorname{tr}(\operatorname{diag}(\omega) U^\top U) = \operatorname{tr}(\operatorname{diag}(\omega)) = \sum_{i}(\omega_i)
 \]
 
 \[
-  tr(\Gamma^\top \Gamma) = tr(U \operatorname{diag}(\omega) U^\top U \operatorname{diag}(\omega) U^\top) = tr(\operatorname{diag}(\omega)^2 U^\top U) = tr(\operatorname{diag}(\omega)^2) = \sum_{i}(\omega_i^2)
+  \operatorname{tr}(\Gamma^\top \Gamma) = \operatorname{tr}(U \operatorname{diag}(\omega) U^\top U \operatorname{diag}(\omega) U^\top) = \operatorname{tr}(\operatorname{diag}(\omega)^2 U^\top U) = \operatorname{tr}(\operatorname{diag}(\omega)^2) = \sum_{i}(\omega_i^2)
 \]
 
-and $tr(\Gamma^\top \Gamma)$ can be further expressed as
+and $\operatorname{tr}(\Gamma^\top \Gamma)$ can be further expressed as
 
 \[
-  tr(\Gamma^\top \Gamma) = \sum_{i}{(\Gamma^\top \Gamma)_{ii}} = \sum_{i}{\sum_{j}{\Gamma^\top_{ij}\Gamma_{ji}}} = \sum_{i}{\sum_{j}{\Gamma_{ij}^2}}
+  \operatorname{tr}(\Gamma^\top \Gamma) = \sum_{i}{(\Gamma^\top \Gamma)_{ii}} = \sum_{i}{\sum_{j}{\Gamma^\top_{ij}\Gamma_{ji}}} = \sum_{i}{\sum_{j}{\Gamma_{ij}^2}}
 \]
-
-### Multi-dimensional contrast
-
-For multi-dimensional contrast we use the same technique for multi-dimensional contrast for asymptotic covariance.
 
 # References
