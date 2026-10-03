@@ -13,6 +13,7 @@ DPD
 DeclareMathOperator
 Dohme
 FEV
+GLS
 GmbH
 Gower
 Hoffmann
@@ -50,6 +51,7 @@ ast
 biostatistics
 blockdiag
 boldsymbol
+cF
 cdot
 cdots
 cli
@@ -63,6 +65,7 @@ de
 det
 df
 diag
+diagonalizes
 doi
 dotsb
 dotsc
@@ -82,18 +85,16 @@ iG
 ih
 ihj
 ij
-ijk
-ik
 im
 indexible
 infty
 intra
+ir
 jh
 ji
 jj
 langle
 ldots
-leq
 lintr
 mathbb
 mathbf
@@ -104,6 +105,7 @@ misspecification
 na
 nabla
 ne
+neq
 newcommand
 nlminb
 nonidentifiability
@@ -135,6 +137,7 @@ tj
 tji
 toep
 toeph
+ungrouped
 unreproducible
 untracked
 vairance
@@ -144,4 +147,3 @@ vcov
 vdots
 vec
 widehat
-widetilde
