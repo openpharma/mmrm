@@ -285,7 +285,7 @@ structures, $\bar\Sigma_i$ is instead calculated from the distances between
 the subject's observations. Let
 
 \[
-  \widetilde X_i = G_i^{1/2}X_i, \qquad
+  X_i^\ast = G_i^{1/2}X_i, \qquad
   D_{ih} = \frac{\partial\bar\Sigma_i^{-1}}{\partial\theta_h}
          = -\bar\Sigma_i^{-1}\frac{\partial\bar\Sigma_i}{\partial\theta_h}\bar\Sigma_i^{-1}.
 \]
@@ -294,11 +294,11 @@ The weights do not depend on $\theta$, so
 $\partial\Sigma_i^{-1}/\partial\theta_h = G_i^{1/2}D_{ih}G_i^{1/2}$.
 Inserting this into the [subject contributions](#special-considerations-for-mmrm-models)
 cancels the inner weight factors in $Q_{ihj}$, and the weights enter exactly
-once through $\widetilde X_i$:
+once through $X_i^\ast$:
 
 \[
-  P_{ih} = \widetilde X_i^\top D_{ih}\widetilde X_i, \qquad
-  Q_{ihj} = \widetilde X_i^\top D_{ih}\bar\Sigma_i D_{ij}\widetilde X_i.
+  P_{ih} = (X_i^\ast)^\top D_{ih}X_i^\ast, \qquad
+  Q_{ihj} = (X_i^\ast)^\top D_{ih}\bar\Sigma_i D_{ij}X_i^\ast.
 \]
 
 #### Contraction of $Q$
@@ -311,7 +311,7 @@ $W^{(b)} = (W_{hj})_{h,j\in\mathcal G_b}$ enter $S_Q$:
 
 \[
   S_Q = \sum_{i=1}^{n}\sum_{h,j\in\mathcal G_{g(i)}} W_{hj}\,
-    \widetilde X_i^\top D_{ih}\bar\Sigma_i D_{ij}\widetilde X_i.
+    (X_i^\ast)^\top D_{ih}\bar\Sigma_i D_{ij}X_i^\ast.
 \]
 
 Each block is factored as follows, with the rows of $U_b$ indexed by
@@ -352,7 +352,7 @@ are symmetric because each $D_{ih}$ is symmetric. Therefore
 
 \[
   S_Q = \sum_{i=1}^{n}\sum_\ell s_{g(i)\ell}\,
-    (\Delta_{i\ell}\widetilde X_i)^\top\,\bar\Sigma_i\,(\Delta_{i\ell}\widetilde X_i).
+    (\Delta_{i\ell}X_i^\ast)^\top\,\bar\Sigma_i\,(\Delta_{i\ell}X_i^\ast).
 \]
 
 For a group with $|\mathcal G_b|$ covariance parameters, each subject now
