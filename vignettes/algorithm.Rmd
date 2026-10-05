@@ -162,9 +162,9 @@ For example, for an unstructured covariance matrix, $\theta$ has $k = B m(m+1)/2
 #### Spatial covariance matrix
 
 A spatial covariance structure can model individual-specific visit times or
-locations. Let $\boldsymbol{c}_{ij}$ be the coordinate vector of observation
+locations. Let $c_{ij}$ be the coordinate vector of observation
 $j = 1, \dotsc, m_i$ for subject $i$, and define the Euclidean distance
-$d_{i,jr} = \|\boldsymbol{c}_{ij} - \boldsymbol{c}_{ir}\|_2$ between
+$d_{i,jr} = \|c_{ij} - c_{ir}\|_2$ between
 observations $j$ and $r$, with $j,r \in \{1, \dotsc, m_i\}$.
 For one covariance group, the unweighted subject covariance matrix has entries
 \[
