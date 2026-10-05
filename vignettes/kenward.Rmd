@@ -509,7 +509,7 @@ of $\Sigma$ over our parameters, are non-zero matrices. However, if we use the e
 derivatives are zero matrices. However, the differences are usually small.
 If you would like to match SAS results for the unstructured covariance model, you can use the linear Kenward-Roger approximation.
 
-## Implementations in `mmrm`
+## Implementation in `mmrm`
 
 In package `mmrm`, we have implemented Kenward-Roger calculations based on the previous sections.
 For non-spatial covariance structures, the first-order and second-order derivatives are obtained by
