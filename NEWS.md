@@ -1,5 +1,9 @@
 # mmrm 0.3.18.9000
 
+### Bug Fixes
+
+- `emmeans()` now uses the fitted fixed-effect terms to construct its coefficient basis. This fixes incorrect marginal means and uncertainty estimates for models where the visit variable appears only in interactions, such as treatment-by-visit models without a visit main effect.
+
 ### Miscellaneous
 
 - Satterthwaite, empirical and linear Kenward-Roger covariance preparation now skip unused second derivatives. Linear Kenward-Roger also omits the `R` component and its allocation.

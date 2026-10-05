@@ -106,6 +106,13 @@ emm_basis.mmrm <- function(
   grid,
   ...
 ) {
+  # Recovered terms include covariance variables for the reference grid.
+  # Use the fitted fixed-effect terms to preserve the coefficient basis.
+  trms <- stats::delete.response(stats::terms(object))
+  # Be careful with the factor levels:
+  # We only need those that are in the fitted terms.
+  xlev_subset <- intersect(names(xlev), rownames(attr(trms, "factors")))
+  xlev <- xlev[xlev_subset]
   model_frame <- stats::model.frame(
     trms,
     grid,
