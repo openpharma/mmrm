@@ -71,7 +71,16 @@ S_i = \begin{pmatrix}
 \]
 $G_i \in \mathbb{R}^{m_i \times m_i}$ is a diagonal matrix with fixed,
 strictly positive weights on its diagonal. It is the identity matrix if no
-weights are specified.
+weights are specified. The `weights` argument to `mmrm()` is a vector with
+one value $w_{ij}$ per observation; $G_i = \operatorname{diag}(w_{i1},
+\dotsc, w_{im_i})$ collects the entries for subject $i$. Thus weights act
+on the variance scale: the marginal residual variance for observation $j$
+is $(S_i^\top \Sigma S_i)_{jj}/w_{ij}$, while covariance between observations
+$j$ and $k$ is divided by $\sqrt{w_{ij}w_{ik}}$. Equivalently, residual
+standard deviations are divided by $\sqrt{w_{ij}}$. For example, weights
+$(2, 1)$ for two observations correspond to $G_i = \operatorname{diag}(2, 1)$;
+the first variance is halved relative to its unweighted value. No normalization
+to a sum of one or to a treatment-group sample size is required.
 Note that this follows from the well known property of the multivariate normal
 distribution that linear combinations of the random vector again have a
 multivariate normal distribution with the correspondingly modified mean
@@ -195,6 +204,10 @@ weighted least squares estimator $\hat{\beta}$ solving the estimating equation
 \[
 (X^\top \Omega^{-1} X) \hat{\beta} = X^\top \Omega^{-1} Y.
 \]
+Here $\Omega^{-1}$ is the full inverse residual covariance matrix used by
+weighted least squares (sometimes denoted $W$). It is derived from the
+covariance model and the observation-weight vector through the $G_i$ matrices;
+it is not the vector supplied as `weights`.
 Plugging in $\hat{\beta}$ into the likelihood above gives then the value of the
 function we want to maximize with regards to the variance parameters $\theta$.
 Practically this will be done on the negative log scale:
