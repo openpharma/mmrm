@@ -464,10 +464,11 @@ is a symmetric $c\times c$ matrix. Cyclic invariance of trace gives
   A_2 = \sum_{h,j} W_{hj}\langle K_h,K_j\rangle_F,
 \]
 
-where $\langle\cdot,\cdot\rangle_F$ is the Frobenius inner product.
+where $\langle\cdot,\cdot\rangle_F$ is the [Frobenius inner product](https://en.wikipedia.org/wiki/Frobenius_inner_product).
 With $\mathcal{K}$ containing $\operatorname{vec}(K_h)$ as its $h$th
 column, the implementation calculates
-$A_2 = \operatorname{sum}((\mathcal{K}W)\odot\mathcal{K})$.
+$A_2 = \operatorname{sum}((\mathcal{K}W)\odot\mathcal{K})$, 
+where $\cdot \odot \cdot$ is the [Hadamard product](https://en.wikipedia.org/wiki/Hadamard_product_(matrices)).
 This replaces the pairwise products of $p\times p$ matrices by a dense
 contraction with $c^2$ rows. The remaining scalar formulas above are unchanged.
 The full covariance $W$ is retained, including cross-group entries in grouped
@@ -630,7 +631,7 @@ the inverse-logit reparameterization of $\rho$ produces non-zero second-order
 derivatives where SAS's natural $(0, 1)$-scaled parameterization would give
 zero. The likelihood, $\beta$ estimates and KR-Linear adjusted standard errors
 all match SAS to numerical precision; small (typically sub-percent) differences
-remain on the default Kenward-Roger standard error. To reproduce SAS exactly,
-use the linear Kenward-Roger approximation.
+remain on the default Kenward-Roger standard error. The closest results to SAS are again
+obtain when using the linear Kenward-Roger method in `mmrm`.
 
 # References
