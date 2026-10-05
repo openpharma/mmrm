@@ -36,8 +36,20 @@ the subsetting matrix is \\ S_i = \begin{pmatrix} 1 & 0 & 0 \\ 0 & 0 & 0
 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \\ 0 & 0 & 0 \end{pmatrix}. \\ \\G_i \in
 \mathbb{R}^{m_i \times m_i}\\ is a diagonal matrix with fixed, strictly
 positive weights on its diagonal. It is the identity matrix if no
-weights are specified. Note that this follows from the well known
-property of the multivariate normal distribution that linear
+weights are specified. The `weights` argument to
+[`mmrm()`](https://openpharma.github.io/mmrm/reference/mmrm.md) is a
+vector with one value \\w\_{ij}\\ per observation; \\G_i =
+\operatorname{diag}(w\_{i1}, \dotsc, w\_{im_i})\\ collects the entries
+for subject \\i\\. Thus weights act on the variance scale: the marginal
+residual variance for observation \\j\\ is \\(S_i^\top \Sigma
+S_i)\_{jj}/w\_{ij}\\, while covariance between observations \\j\\ and
+\\k\\ is divided by \\\sqrt{w\_{ij}w\_{ik}}\\. Equivalently, residual
+standard deviations are divided by \\\sqrt{w\_{ij}}\\. For example,
+weights \\(2, 1)\\ for two observations correspond to \\G_i =
+\operatorname{diag}(2, 1)\\; the first variance is halved relative to
+its unweighted value. No normalization to a sum of one or to a
+treatment-group sample size is required. Note that this follows from the
+well known property of the multivariate normal distribution that linear
 combinations of the random vector again have a multivariate normal
 distribution with the correspondingly modified mean vector and
 covariance matrix.
@@ -115,18 +127,18 @@ entries.
 #### Spatial covariance matrix
 
 A spatial covariance structure can model individual-specific visit times
-or locations. Let \\\boldsymbol{c}\_{ij}\\ be the coordinate vector of
-observation \\j = 1, \dotsc, m_i\\ for subject \\i\\, and define the
-Euclidean distance \\d\_{i,jr} = \\\boldsymbol{c}\_{ij} -
-\boldsymbol{c}\_{ir}\\\_2\\ between observations \\j\\ and \\r\\, with
-\\j,r \in \\1, \dotsc, m_i\\\\. For one covariance group, the unweighted
-subject covariance matrix has entries \\ (\bar\Sigma_i)\_{jr} = \sigma
-f(d\_{i,jr}), \\ where \\\sigma \> 0\\ is the constant variance and
-\\f\\ is the spatial correlation function. Both spatial exponential,
-\\f(d) = \rho^d\\, and spatial Gaussian, \\f(d) = \rho^{d^2}\\,
-covariance structures are implemented, with \\0 \< \rho \< 1\\. For
-coordinates with multiple dimensions, the Euclidean distance is
-calculated from the supplied coordinates without transformations.
+or locations. Let \\c\_{ij}\\ be the coordinate vector of observation
+\\j = 1, \dotsc, m_i\\ for subject \\i\\, and define the Euclidean
+distance \\d\_{i,jr} = \\c\_{ij} - c\_{ir}\\\_2\\ between observations
+\\j\\ and \\r\\, with \\j,r \in \\1, \dotsc, m_i\\\\. For one covariance
+group, the unweighted subject covariance matrix has entries \\
+(\bar\Sigma_i)\_{jr} = \sigma f(d\_{i,jr}), \\ where \\\sigma \> 0\\ is
+the constant variance and \\f\\ is the spatial correlation function.
+Both spatial exponential, \\f(d) = \rho^d\\, and spatial Gaussian,
+\\f(d) = \rho^{d^2}\\, covariance structures are implemented, with \\0
+\< \rho \< 1\\. For coordinates with multiple dimensions, the Euclidean
+distance is calculated from the supplied coordinates without
+transformations.
 
 With observation weights, \\\Sigma_i =
 G_i^{-1/2}\bar\Sigma_iG_i^{-1/2}\\; for unit weights, \\\Sigma_i =
@@ -141,7 +153,11 @@ know that the likelihood for \\\beta\\ is \\ L(\beta; Y) = (2\pi)^{-N/2}
 \Omega^{-1} (Y - X\beta) \right\\ \\ and we also know that the maximum
 likelihood (ML) estimate of \\\beta\\ is the weighted least squares
 estimator \\\hat{\beta}\\ solving the estimating equation \\ (X^\top
-\Omega^{-1} X) \hat{\beta} = X^\top \Omega^{-1} Y. \\ Plugging in
+\Omega^{-1} X) \hat{\beta} = X^\top \Omega^{-1} Y. \\ Here
+\\\Omega^{-1}\\ is the full inverse residual covariance matrix used by
+weighted least squares (sometimes denoted \\W\\). It is derived from the
+covariance model and the observation-weight vector through the \\G_i\\
+matrices; it is not the vector supplied as `weights`. Plugging in
 \\\hat{\beta}\\ into the likelihood above gives then the value of the
 function we want to maximize with regards to the variance parameters
 \\\theta\\. Practically this will be done on the negative log scale: \\

@@ -395,8 +395,17 @@ structures, the time variable must be coded as a factor.
 
 ### Weighting
 
-Users can perform weighted MMRM by specifying a numeric vector `weights`
-with positive values.
+Users can perform weighted MMRM by specifying one strictly positive
+numeric weight per observation (row of `data`). These are
+inverse-variance weights: holding the fitted covariance structure fixed,
+an observation with weight 2 has half the residual variance of an
+otherwise comparable observation with weight 1 (and its residual
+standard deviation is divided by \\\sqrt{2}\\). The weights are fixed
+inputs, not weights on the outcome itself. They do not need to sum to
+one or to any treatment-group sample size; the default is 1 for every
+observation. The [algorithm
+vignette](https://openpharma.github.io/mmrm/articles/algorithm.html#linear-model)
+shows how the vector changes the subject covariance matrices.
 
 \
 `fit_wt`` ``<-`` `[`mmrm`](https://openpharma.github.io/mmrm/reference/mmrm.md)`(`\
@@ -429,6 +438,12 @@ with positive values.
 `#> `\
 `#> Model Inference Optimization:`\
 `#> Converged with code 0 and message: convergence: rel_reduction_of_f <= factr*epsmch`
+
+Here `fev_data$WEIGHT` supplies varying observation weights. For a
+simple two-level illustration, the same call could use
+`weights = ifelse(fev_data$AVISIT == "VIS1", 2, 1)`. At `VIS1`, this
+halves the model-implied residual variance relative to an otherwise
+identical observation with weight 1.
 
 ### Grouped Covariance Structure
 

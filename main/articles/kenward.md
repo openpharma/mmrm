@@ -419,14 +419,17 @@ Cyclic invariance of trace gives
 \\ A_1 = t^\top Wt, \qquad t_h = \operatorname{tr}(K_h), \qquad A_2 =
 \sum\_{h,j} W\_{hj}\langle K_h,K_j\rangle_F, \\
 
-where \\\langle\cdot,\cdot\rangle_F\\ is the Frobenius inner product.
-With \\\mathcal{K}\\ containing \\\operatorname{vec}(K_h)\\ as its
-\\h\\th column, the implementation calculates \\A_2 =
-\operatorname{sum}((\mathcal{K}W)\odot\mathcal{K})\\. This replaces the
-pairwise products of \\p\times p\\ matrices by a dense contraction with
-\\c^2\\ rows. The remaining scalar formulas above are unchanged. The
-full covariance \\W\\ is retained, including cross-group entries in
-grouped models.
+where \\\langle\cdot,\cdot\rangle_F\\ is the [Frobenius inner
+product](https://en.wikipedia.org/wiki/Frobenius_inner_product). With
+\\\mathcal{K}\\ containing \\\operatorname{vec}(K_h)\\ as its \\h\\th
+column, the implementation calculates \\A_2 =
+\operatorname{sum}((\mathcal{K}W)\odot\mathcal{K})\\, where \\\cdot
+\odot \cdot\\ is the [Hadamard
+product](https://en.wikipedia.org/wiki/Hadamard_product_(matrices)).
+This replaces the pairwise products of \\p\times p\\ matrices by a dense
+contraction with \\c^2\\ rows. The remaining scalar formulas above are
+unchanged. The full covariance \\W\\ is retained, including cross-group
+entries in grouped models.
 
 #### One-dimensional shortcut
 
@@ -469,7 +472,7 @@ However, the differences are usually small. If you would like to match
 SAS results for the unstructured covariance model, you can use the
 linear Kenward-Roger approximation.
 
-### Implementations in `mmrm`
+### Implementation in `mmrm`
 
 In package `mmrm`, we have implemented Kenward-Roger calculations based
 on the previous sections. For non-spatial covariance structures, the
@@ -576,8 +579,8 @@ second-order derivatives where SAS’s natural \\(0, 1)\\-scaled
 parameterization would give zero. The likelihood, \\\beta\\ estimates
 and KR-Linear adjusted standard errors all match SAS to numerical
 precision; small (typically sub-percent) differences remain on the
-default Kenward-Roger standard error. To reproduce SAS exactly, use the
-linear Kenward-Roger approximation.
+default Kenward-Roger standard error. The closest results to SAS are
+again obtain when using the linear Kenward-Roger method in `mmrm`.
 
 ## References
 
