@@ -366,6 +366,39 @@ test_that("emmeans also works when the visit variable is contained only in an in
   )
 })
 
+test_that("emmeans agrees for equivalent models with and without a visit main effect", {
+  skip_if_not_installed("emmeans", minimum_version = "1.6")
+
+  fit1 <- mmrm(
+    FEV1 ~ RACE + SEX + FEV1_BL + AVISIT + ARMCD:AVISIT + FEV1_BL:AVISIT + us(AVISIT | USUBJID),
+    data = fev_data
+  )
+  fit2 <- mmrm(
+    FEV1 ~ RACE + SEX + FEV1_BL + ARMCD:AVISIT + FEV1_BL:AVISIT + us(AVISIT | USUBJID),
+    data = fev_data
+  )
+
+  # The fits represent the same model, but use different coefficient bases.
+  expect_equal(fitted(fit1), fitted(fit2), tolerance = 1e-6)
+  em1 <- emmeans::emmeans(fit1, ~ ARMCD | AVISIT)
+  em2 <- emmeans::emmeans(fit2, ~ ARMCD | AVISIT)
+  result1 <- as.data.frame(em1)
+  result2 <- as.data.frame(em2)
+
+  expect_equal(result1[c("ARMCD", "AVISIT")], result2[c("ARMCD", "AVISIT")])
+  expect_equal(result1$emmean, result2$emmean, tolerance = 1e-6)
+  expect_equal(result1$SE, result2$SE, tolerance = 1e-6)
+  expect_equal(result1$df, result2$df, tolerance = 1e-6)
+
+  # Build the full design matrix, including aliased columns, from the fitted terms.
+  model_mat <- stats::model.matrix(
+    stats::delete.response(stats::terms(fit2)),
+    stats::model.frame(fit2),
+    contrasts.arg = component(fit2, "contrasts")
+  )
+  expect_identical(colnames(em2@linfct), colnames(model_mat))
+})
+
 test_that("emmeans also works when the visit variable is not part of the covariates", {
   skip_if_not_installed("emmeans", minimum_version = "1.6")
 
