@@ -1,0 +1,305 @@
+# Model Fitting Algorithm
+
+Here we describe the exact model definition as well as the estimation
+algorithms in detail. After reading through this vignette, you can
+follow the implementation of the algorithm in `mmrm.cpp` and the
+covariance structures in `covariance.h` in the `src` directory of this
+package.
+
+## Model definition
+
+The mixed model for repeated measures (MMRM) definition we are using in
+this package is the following. Let \\i = 1, \dotsc, n\\ denote the
+subjects from which we observe multiple observations \\j = 1, \dotsc,
+m_i\\ from total \\m_i\\ time points \\t\_{ij} \in \\t_1, \dotsc,
+t_m\\\\. Note that the number of time points for a specific subject,
+\\m_i\\, can be smaller than \\m\\, when only a subset of the possible
+\\m\\ time points have been observed.
+
+### Linear model
+
+For each subject \\i\\ we observe a vector \\ Y_i = (y\_{i1}, \dotsc,
+y\_{im_i})^\top \in \mathbb{R}^{m_i} \\ and given a design matrix \\ X_i
+\in \mathbb{R}^{m_i \times p} \\ and a corresponding coefficient vector
+\\\beta \in \mathbb{R}^{p}\\ we assume that the observations are
+multivariate normal distributed: \\ Y_i \sim N(X_i\beta, \Sigma_i) \\
+where the covariance matrix \\\Sigma_i \in \mathbb{R}^{m_i \times m_i}\\
+is derived by subsetting the overall covariance matrix \\\Sigma \in
+\mathbb{R}^{m \times m}\\ appropriately by \\ \Sigma_i = G_i^{-1/2}
+S_i^\top \Sigma S_i G_i^{-1/2} \\ where the subsetting matrix \\S_i \in
+\\0, 1\\^{m \times m_i}\\ contains in each of its \\m_i\\ columns
+contains a single 1 indicating which overall time point is matching
+\\t\_{ij}\\. Each row contains at most a single 1 but can also contain
+only 0 if this time point was not observed. For example, assume a
+subject was observed on time points \\1, 3, 4\\ out of total \\5\\ then
+the subsetting matrix is \\ S_i = \begin{pmatrix} 1 & 0 & 0 \\ 0 & 0 & 0
+\\ 0 & 1 & 0 \\ 0 & 0 & 1 \\ 0 & 0 & 0 \end{pmatrix}. \\ \\G_i \in
+\mathbb{R}^{m_i \times m_i}\\ is a diagonal matrix with fixed, strictly
+positive weights on its diagonal. It is the identity matrix if no
+weights are specified. The `weights` argument to
+[`mmrm()`](https://openpharma.github.io/mmrm/reference/mmrm.md) is a
+vector with one value \\w\_{ij}\\ per observation; \\G_i =
+\operatorname{diag}(w\_{i1}, \dotsc, w\_{im_i})\\ collects the entries
+for subject \\i\\. Thus weights act on the variance scale: the marginal
+residual variance for observation \\j\\ is \\(S_i^\top \Sigma
+S_i)\_{jj}/w\_{ij}\\, while covariance between observations \\j\\ and
+\\k\\ is divided by \\\sqrt{w\_{ij}w\_{ik}}\\. Equivalently, residual
+standard deviations are divided by \\\sqrt{w\_{ij}}\\. For example,
+weights \\(2, 1)\\ for two observations correspond to \\G_i =
+\operatorname{diag}(2, 1)\\; the first variance is halved relative to
+its unweighted value. No normalization to a sum of one or to a
+treatment-group sample size is required. Note that this follows from the
+well known property of the multivariate normal distribution that linear
+combinations of the random vector again have a multivariate normal
+distribution with the correspondingly modified mean vector and
+covariance matrix.
+
+Conditional on the design matrices \\X_i\\, the coefficient vector
+\\\beta\\ and the covariance matrix \\\Sigma\\ we assume that the
+observations are independent between the subjects.
+
+We can write the linear model for all subjects together as \\ Y =
+X\beta + \epsilon \\ where \\Y \in \mathbb{R}^N\\ combines all subject
+specific observations vectors \\Y_i\\ such that we have in total \\N =
+\sum\_{i = 1}^{n}{m_i}\\ observations, \\X \in \mathbb{R}^{N \times p}\\
+combines all subject specific design matrices and \\\epsilon \in
+\mathbb{R}^N\\ has a multivariate normal distribution \\ \epsilon \sim
+N(0, \Omega) \\ where \\\Omega \in \mathbb{R}^{N \times N}\\ is
+block-diagonal containing the subject specific \\\Sigma_i\\ covariance
+matrices on the diagonal and 0 in the remaining entries.
+
+### Covariance matrix model
+
+The symmetric and positive definite covariance matrix \\ \Sigma =
+\begin{pmatrix} \sigma_1^2 & \sigma\_{12} & \dots & \dots & \sigma\_{1m}
+\\ \sigma\_{21} & \sigma_2^2 & \sigma\_{23} & \dots & \sigma\_{2m}\\
+\vdots & & \ddots & & \vdots \\ \vdots & & & \ddots & \vdots \\
+\sigma\_{m1} & \dots & \dots & \sigma\_{m,m-1} & \sigma_m^2
+\end{pmatrix} \\ is parametrized by a vector of variance parameters
+\\\theta = (\theta_1, \dotsc, \theta_k)^\top\\. There are many different
+choices for how to model the covariance matrix and correspondingly
+\\\theta\\ has different interpretations. Since any covariance matrix
+has a unique Cholesky factorization \\\Sigma = LL^\top\\ where \\L\\ is
+the lower triangular Cholesky factor, we are going to use this below.
+
+#### Unstructured covariance matrix
+
+The most general model uses a saturated parametrization, i.e. any
+covariance matrix could be represented in this form. Here we use \\ L =
+D\tilde{L} \\ where \\D = \operatorname{diag}(d_1, \dotsc, d_m)\\
+contains the strictly positive diagonal entries \\d_i = L\_{ii}\\ of the
+Cholesky factor, and \\\tilde{L}\\ is a unit diagonal lower triangular
+matrix. The \\d_i\\ are related to the marginal standard deviations
+\\\sigma_i\\ by \\\sigma_i^2 = d_i^2(1 + \sum\_{j\<i} l\_{ij}^2)\\,
+where \\l\_{ij}\\ are the below-diagonal entries of \\\tilde{L}\\. Hence
+we start \\\theta\\ with the natural logarithms of the \\d_i\\, followed
+by the row-wise filled below-diagonal entries of \\\tilde{L}\\: \\
+\theta = ( \log(d_1), \dotsc, \log(d_m), l\_{21}, l\_{31}, l\_{32},
+\dotsc, l\_{m,m-1} )^\top \\ Here \\\theta\\ has \\k = m(m+1)/2\\
+entries. For example for \\m = 4\\ time points we need \\k = 10\\
+variance parameters to model the unstructured covariance matrix.
+
+Other covariance matrix choices are explained in the [covariance
+structures
+vignette](https://openpharma.github.io/mmrm/articles/covariance.md).
+
+#### Grouped covariance matrix
+
+In some cases, we would like to estimate unique covariance matrices
+across groups, while keeping the covariance structure (unstructured,
+ante-dependence, Toeplitz, etc.) consistent across groups. Following the
+notations in the previous section, for subject \\i\\ in group \\g(i)\\,
+we have
+
+\\ \Sigma_i = G_i^{-1/2} S_i^\top \Sigma\_{g(i)} S_i G_i^{-1/2} \\
+
+where \\g(i)\\ is the group of subject \\i\\ and \\\Sigma\_{g(i)}\\ is
+the covariance matrix of group \\g(i)\\. For unit weights, this reduces
+to \\\Sigma_i = S_i^\top\Sigma\_{g(i)}S_i\\.
+
+The parametrization of \\\theta\\ is similar to other non-grouped
+\\\theta\\. Assume that there are total number of \\B\\ groups, the
+length of \\\theta\\ is multiplied by \\B\\, and for each part,
+\\\theta\\ is parametrized in the same fashion. For example, for an
+unstructured covariance matrix, \\\theta\\ has \\k = B m(m+1)/2\\
+entries.
+
+#### Spatial covariance matrix
+
+A spatial covariance structure can model individual-specific visit times
+or locations. Let \\c\_{ij}\\ be the coordinate vector of observation
+\\j = 1, \dotsc, m_i\\ for subject \\i\\, and define the Euclidean
+distance \\d\_{i,jr} = \\c\_{ij} - c\_{ir}\\\_2\\ between observations
+\\j\\ and \\r\\, with \\j,r \in \\1, \dotsc, m_i\\\\. For one covariance
+group, the unweighted subject covariance matrix has entries \\
+(\bar\Sigma_i)\_{jr} = \sigma f(d\_{i,jr}), \\ where \\\sigma \> 0\\ is
+the constant variance and \\f\\ is the spatial correlation function.
+Both spatial exponential, \\f(d) = \rho^d\\, and spatial Gaussian,
+\\f(d) = \rho^{d^2}\\, covariance structures are implemented, with \\0
+\< \rho \< 1\\. For coordinates with multiple dimensions, the Euclidean
+distance is calculated from the supplied coordinates without
+transformations.
+
+With observation weights, \\\Sigma_i =
+G_i^{-1/2}\bar\Sigma_iG_i^{-1/2}\\; for unit weights, \\\Sigma_i =
+\bar\Sigma_i\\. In grouped models, the spatial covariance parameters are
+specific to group \\g(i)\\.
+
+## Maximum Likelihood Estimation
+
+Given the general linear model above, and conditional on \\\theta\\, we
+know that the likelihood for \\\beta\\ is \\ L(\beta; Y) = (2\pi)^{-N/2}
+\det(\Omega)^{-1/2} \exp\left\\ - \frac{1}{2}(Y - X\beta)^\top
+\Omega^{-1} (Y - X\beta) \right\\ \\ and we also know that the maximum
+likelihood (ML) estimate of \\\beta\\ is the weighted least squares
+estimator \\\hat{\beta}\\ solving the estimating equation \\ (X^\top
+\Omega^{-1} X) \hat{\beta} = X^\top \Omega^{-1} Y. \\ Here
+\\\Omega^{-1}\\ is the full inverse residual covariance matrix used by
+weighted least squares (sometimes denoted \\W\\). It is derived from the
+covariance model and the observation-weight vector through the \\G_i\\
+matrices; it is not the vector supplied as `weights`. Plugging in
+\\\hat{\beta}\\ into the likelihood above gives then the value of the
+function we want to maximize with regards to the variance parameters
+\\\theta\\. Practically this will be done on the negative log scale: \\
+f(\theta; \hat{\beta}) = - \log L(\hat{\beta}; Y) = \frac{N}{2}
+\log(2\pi) + \frac{1}{2}\log\det(\Omega) + \frac{1}{2} (Y -
+X\hat{\beta})^\top \Omega^{-1} (Y - X\hat{\beta}) \\ The objective
+function \\f(\theta; \hat{\beta})\\ is then minimized with numerical
+optimizers utilizing quasi-Newton-Raphson algorithms based on the
+gradient (or additionally with Hessian, see
+[optimizer](https://openpharma.github.io/mmrm/articles/introduction.html#optimizer)).
+Here the use of the Template Model Builder package `TMB` is helpful
+because
+
+1.  `TMB` allows to perform the calculations in C++, which maximizes the
+    speed.
+2.  `TMB` performs automatic differentiation of the objective function
+    with regards to the variance parameters \\\theta\\, so that gradient
+    and Hessian do not have to be approximated numerically or coded
+    explicitly.
+
+### Weighted least squares estimator
+
+Let’s have a look at the details of calculating the log likelihood
+above, including in particular the weighted least squares (WLS)
+estimator \\\hat{\beta}\\.
+
+Starting point is the linear equation above and the observation that
+both the left and right hand sides can be decomposed into
+subject-specific terms given the block-diagonal structure of \\\Omega\\
+and therefore its inverse, \\\Omega^{-1}\\: \\ X^\top \Omega^{-1} X =
+\sum\_{i=1}^{n} X_i^\top \Sigma_i^{-1} X_i \\ and similarly \\ X^\top
+\Omega^{-1} Y = \sum\_{i=1}^{n} X_i^\top \Sigma_i^{-1} Y_i \\ where
+\\\Sigma_i^{-1}\\ is the precision matrix for subject \\i\\.
+
+Instead of calculating this inverse explicitly, it is always better
+numerically to work with the Cholesky factorization and solve linear
+equations instead. Here we calculate the factorization \\\Sigma_i = L_i
+L_i^\top\\. For a non-spatial model with unit weights and all visits
+observed in the common order (\\S_i = I\\), \\\Sigma_i = \Sigma\\ and
+\\L_i = L\\, so the factorization can be reused. In grouped models, use
+the corresponding group covariance and its factor instead. With missing
+visits, we factor the unweighted observed-visit covariance
+\\\bar\Sigma_i = S_i^\top\Sigma\_{g(i)}S_i = \bar L_i\bar L_i^\top\\
+(using \\\Sigma\\ for an ungrouped model). Its Cholesky factor is
+generally not obtained by simply subsetting the full Cholesky factor.
+With observation weights, the subject factor is \\L_i = G_i^{-1/2}\bar
+L_i\\. For spatial models, \\\bar\Sigma_i\\ is constructed from the
+subject’s coordinates before factorization. Given \\L_i\\, we solve \\
+L_i \tilde{X}\_i = X_i \\ for \\\tilde{X}\_i\\ with an efficient
+forward-solve, and similarly we solve \\ L_i \tilde{Y}\_i = Y_i \\ for
+\\\tilde{Y}\_i\\. Therefore we have \\ X_i^\top \Sigma_i^{-1} X_i =
+\tilde{X}\_i^\top \tilde{X}\_i \\ and \\ X_i^\top \Sigma_i^{-1} Y_i =
+\tilde{X}\_i^\top \tilde{Y}\_i \\ and we can thereby calculate the left
+and right hand sides for the WLS estimating equation. We solve this
+equation with a robust Cholesky decomposition with pivoting. The
+advantage is that we can reuse this decomposition for calculating the
+covariance matrix of the GLS estimator for fixed \\\theta\\, i.e.
+\\\Phi(\theta) = (X^\top\Omega(\theta)^{-1}X)^{-1}\\, by supplying the
+identity matrix as alternative right hand side. This is the same
+\\\Phi\\ used in the Satterthwaite and Kenward-Roger vignettes; we
+suppress its \\\theta\\ argument below.
+
+### Determinant and quadratic form
+
+For the objective function we also need the log determinant of
+\\\Omega\\: \\\begin{align} \frac{1}{2}\log\det(\Omega) &=
+\frac{1}{2}\log\det\\\text{blockdiag} \Sigma_1, \dotsc, \Sigma_n\\ \\ &=
+\frac{1}{2}\log\prod\_{i=1}^{n}\det{\Sigma_i} \\ &=
+\frac{1}{2}\sum\_{i=1}^{n}\log\det{L_i L_i^\top} \\ &=
+\sum\_{i=1}^{n}\log\det{L_i} \\ &=
+\sum\_{i=1}^{n}\sum\_{j=1}^{m_i}\log(l\_{i, jj}) \end{align}\\ where
+\\l\_{i,jj}\\ are the diagonal entries of the factor \\L_i\\ and we have
+used that
+
+- the determinant of a block diagonal matrix is the product of the
+  determinants of the blocks,
+- the determinant of the product of matrices is the product of the
+  determinants,
+- the determinant of the transposed matrix is the same as the original
+  one,
+- the determinant of a triangular matrix is the product of the diagonal.
+
+And finally, for the quadratic form we can reuse the weighted response
+vector and design matrix: \\ (Y - X\hat{\beta})^\top \Omega^{-1} (Y -
+X\hat{\beta}) = \sum\_{i=1}^{n} (Y_i - X_i\hat{\beta})^\top
+\Sigma_i^{-1} (Y_i - X_i\hat{\beta}) = \sum\_{i=1}^{n} (\tilde{Y}\_i -
+\tilde{X}\_i\hat{\beta})^\top (\tilde{Y}\_i - \tilde{X}\_i\hat{\beta})
+\\
+
+## Restricted Maximum Likelihood Estimation
+
+Under the restricted ML estimation (REML) paradigm we first obtain the
+marginal likelihood of the variance parameters \\\theta\\ by integrating
+out the remaining parameters \\\beta\\ from the likelihood. Here we
+have: \\ L(\theta; Y) = \int\_{\mathbb{R}^p} L(\beta; Y) d\beta =
+(2\pi)^{-N/2} \det(\Omega)^{-1/2} \int\_{\mathbb{R}^p} \exp\left\\ -
+\frac{1}{2}(Y - X\beta)^\top \Omega^{-1} (Y - X\beta) \right\\ d\beta \\
+where we note that \\\det(\Omega)\\ depends on \\\theta\\ but not on
+\\\beta\\ and can therefore be pulled out of the integral.
+
+### Completing the square
+
+Let’s focus now on the quadratic form in the exponential function and
+complete the square with regards to \\\beta\\ to obtain the kernel of a
+multivariate normal distribution: \\\begin{align} (Y - X\beta)^\top
+\Omega^{-1} (Y - X\beta) &= Y^\top \Omega^{-1} Y + \beta^\top X^\top
+\Omega^{-1} X \beta - 2 \beta^\top X^\top \Omega^{-1} Y \\ &= Y^\top
+\Omega^{-1} Y + \beta^\top \Phi^{-1} \beta - 2 \beta^\top \Phi^{-1} \Phi
+X^\top \Omega^{-1} Y \\ &= Y^\top \Omega^{-1} Y + \beta^\top \Phi^{-1}
+\beta - 2 \beta^\top \Phi^{-1} \hat{\beta} \\ &= Y^\top \Omega^{-1} Y +
+\beta^\top \Phi^{-1} \beta - 2 \beta^\top \Phi^{-1} \hat{\beta} +
+\hat{\beta}^\top \Phi^{-1} \hat{\beta} - \hat{\beta}^\top \Phi^{-1}
+\hat{\beta} \\ &= Y^\top \Omega^{-1} Y - \hat{\beta}^\top \Phi^{-1}
+\hat{\beta} + (\beta - \hat{\beta})^\top \Phi^{-1} (\beta - \hat{\beta})
+\end{align}\\ where we used \\\Phi = (X^\top \Omega^{-1} X)^{-1}\\ and
+could early on identify \\\Phi\\ as the covariance matrix of the kernel
+of the multivariate normal of \\\beta\\ and then later \\\hat{\beta}\\
+as the mean vector.
+
+With this, we know that the integral of the multivariate normal kernel
+is the inverse of the normalizing constants, and thus \\
+\int\_{\mathbb{R}^p} \exp\left\\ - \frac{1}{2}(Y - X\beta)^\top
+\Omega^{-1} (Y - X\beta) \right\\ d\beta = \exp\left\\ -\frac{1}{2}
+Y^\top \Omega^{-1} Y + \frac{1}{2} \hat{\beta}^\top \Phi^{-1}
+\hat{\beta} \right\\ (2\pi)^{p/2} \det{\Phi}^{1/2} \\ such that the
+integrated likelihood is \\ L(\theta; Y) = (2\pi)^{-(N-p)/2}
+\det(\Omega)^{-1/2} \det{\Phi}^{1/2} \exp\left\\ -\frac{1}{2} Y^\top
+\Omega^{-1} Y + \frac{1}{2} \hat{\beta}^\top \Phi^{-1} \hat{\beta}
+\right\\. \\
+
+### Objective function
+
+As objective function which we want to minimize with regards to the
+variance parameters \\\theta\\ we again take the negative natural
+logarithm \\ f(\theta) = -\log L(\theta;Y) = \frac{N-p}{2} \log(2\pi) +
+\frac{1}{2}\log\det(\Omega) - \frac{1}{2}\log\det(\Phi) + \frac{1}{2}
+\tilde{Y}^\top \tilde{Y} - \frac{1}{2} \hat{\beta}^\top \tilde{X}^\top
+\tilde{X} \hat{\beta} \\ It is interesting to see that computation of
+the REML objective function is only requiring a few additional
+calculations compared to the ML objective function. In particular, since
+we already have the matrix decomposition of \\\Phi^{-1}\\, it is very
+easy to obtain the determinant of it.
+
+Also here we use numeric optimization of \\f(\theta)\\ and the `TMB`
+library supports this efficiently through automatic differentiation.
