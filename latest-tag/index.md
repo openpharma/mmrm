@@ -70,22 +70,18 @@ means estimates by using `emmeans`.
 
 You can install the current release version from *CRAN* with:
 
-``` r
-
-install.packages("mmrm")
-```
+\
+[`install.packages`](https://rdrr.io/r/utils/install.packages.html)`(``"mmrm"``)`
 
 ### Development
 
 You can install the current development version from *R-Universe* with:
 
-``` r
-
-install.packages(
-  "mmrm",
-  repos = c("https://openpharma.r-universe.dev", "https://cloud.r-project.org")
-)
-```
+\
+[`install.packages`](https://rdrr.io/r/utils/install.packages.html)`(`\
+`  ``"mmrm"``,`\
+`  repos ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``"https://openpharma.r-universe.dev"``, ``"https://cloud.r-project.org"``)`\
+`)`
 
 This is preferred, because for Windows and MacOS systems you can install
 pre-compiled binary versions of the packages, avoiding the need for
@@ -94,13 +90,11 @@ compilation.
 Alternatively, you can install the current development version from
 *GitHub* with:
 
-``` r
-
-if (!require("remotes")) {
-  install.packages("remotes")
-}
-remotes::install_github("openpharma/mmrm")
-```
+\
+`if`` ``(``!`[`require`](https://rdrr.io/r/base/library.html)`(`[`"remotes"`](https://remotes.r-lib.org)`)``)`` ``{`\
+`  `[`install.packages`](https://rdrr.io/r/utils/install.packages.html)`(``"remotes"``)`\
+`}`\
+`remotes``::`[`install_github`](https://remotes.r-lib.org/reference/install_github.html)`(``"openpharma/mmrm"``)`
 
 Note that this installation from source can take a substantial amount of
 time, because compilation of the `C++` sources is required.
@@ -111,14 +105,12 @@ See also the [introductory
 vignette](https://openpharma.github.io/mmrm/main/articles/introduction.html)
 or get started by trying out the example:
 
-``` r
-
-library(mmrm)
-fit <- mmrm(
-  formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
-  data = fev_data
-)
-```
+\
+[`library`](https://rdrr.io/r/base/library.html)`(`[`mmrm`](https://openpharma.github.io/mmrm/)`)`\
+`fit`` ``<-`` `[`mmrm`](https://openpharma.github.io/mmrm/reference/mmrm.md)`(`\
+`  formula ``=`` ``FEV1`` ``~`` ``RACE`` ``+`` ``SEX`` ``+`` ``ARMCD`` ``*`` ``AVISIT`` ``+`` ``us``(``AVISIT`` ``|`` ``USUBJID``)``,`\
+`  data ``=`` ``fev_data`\
+`)`
 
 The code specifies an MMRM with the given covariates and an unstructured
 covariance matrix for the timepoints (also called visits in the clinical
@@ -139,92 +131,88 @@ method, and model deviance achieved. Additionally the user is provided a
 printout of the estimated coefficients and the model convergence
 information:
 
-``` r
-
-fit
-#> mmrm fit
-#> 
-#> Formula:     FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
-#> Data:        fev_data (used 537 observations from 197 subjects with maximum 4 
-#> timepoints)
-#> Covariance:  unstructured (10 variance parameters)
-#> Inference:   REML
-#> Deviance:    3386.45
-#> 
-#> Coefficients: 
-#>                   (Intercept) RACEBlack or African American 
-#>                   30.77747548                    1.53049977 
-#>                     RACEWhite                     SEXFemale 
-#>                    5.64356535                    0.32606192 
-#>                      ARMCDTRT                    AVISITVIS2 
-#>                    3.77423004                    4.83958845 
-#>                    AVISITVIS3                    AVISITVIS4 
-#>                   10.34211288                   15.05389826 
-#>           ARMCDTRT:AVISITVIS2           ARMCDTRT:AVISITVIS3 
-#>                   -0.04192625                   -0.69368537 
-#>           ARMCDTRT:AVISITVIS4 
-#>                    0.62422703 
-#> 
-#> Model Inference Optimization:
-#> Converged with code 0 and message: convergence: rel_reduction_of_f <= factr*epsmch
-```
+\
+`fit`\
+`#> mmrm fit`\
+`#> `\
+`#> Formula:     FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)`\
+`#> Data:        fev_data (used 537 observations from 197 subjects with maximum 4 `\
+`#> timepoints)`\
+`#> Covariance:  unstructured (10 variance parameters)`\
+`#> Inference:   REML`\
+`#> Deviance:    3386.45`\
+`#> `\
+`#> Coefficients: `\
+`#>                   (Intercept) RACEBlack or African American `\
+`#>                   30.77747548                    1.53049977 `\
+`#>                     RACEWhite                     SEXFemale `\
+`#>                    5.64356535                    0.32606192 `\
+`#>                      ARMCDTRT                    AVISITVIS2 `\
+`#>                    3.77423004                    4.83958845 `\
+`#>                    AVISITVIS3                    AVISITVIS4 `\
+`#>                   10.34211288                   15.05389826 `\
+`#>           ARMCDTRT:AVISITVIS2           ARMCDTRT:AVISITVIS3 `\
+`#>                   -0.04192625                   -0.69368537 `\
+`#>           ARMCDTRT:AVISITVIS4 `\
+`#>                    0.62422703 `\
+`#> `\
+`#> Model Inference Optimization:`\
+`#> Converged with code 0 and message: convergence: rel_reduction_of_f <= factr*epsmch`
 
 The [`summary()`](https://rdrr.io/r/base/summary.html) method then
 provides the coefficients table with Satterthwaite degrees of freedom as
 well as the covariance matrix estimate:
 
-``` r
-
-summary(fit)
-#> mmrm fit
-#> 
-#> Formula:     FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
-#> Data:        fev_data (used 537 observations from 197 subjects with maximum 4 
-#> timepoints)
-#> Covariance:  unstructured (10 variance parameters)
-#> Method:      Satterthwaite
-#> Vcov Method: Asymptotic
-#> Inference:   REML
-#> 
-#> Model selection criteria:
-#>      AIC      BIC   logLik deviance 
-#>   3406.4   3439.3  -1693.2   3386.4 
-#> 
-#> Coefficients: 
-#>                                Estimate Std. Error        df t value Pr(>|t|)
-#> (Intercept)                    30.77748    0.88656 218.80000  34.715  < 2e-16
-#> RACEBlack or African American   1.53050    0.62448 168.67000   2.451 0.015272
-#> RACEWhite                       5.64357    0.66561 157.14000   8.479 1.56e-14
-#> SEXFemale                       0.32606    0.53195 166.13000   0.613 0.540744
-#> ARMCDTRT                        3.77423    1.07415 145.55000   3.514 0.000589
-#> AVISITVIS2                      4.83959    0.80172 143.88000   6.037 1.27e-08
-#> AVISITVIS3                     10.34211    0.82269 155.56000  12.571  < 2e-16
-#> AVISITVIS4                     15.05390    1.31281 138.47000  11.467  < 2e-16
-#> ARMCDTRT:AVISITVIS2            -0.04193    1.12932 138.56000  -0.037 0.970439
-#> ARMCDTRT:AVISITVIS3            -0.69369    1.18765 158.17000  -0.584 0.559996
-#> ARMCDTRT:AVISITVIS4             0.62423    1.85085 129.72000   0.337 0.736463
-#>                                  
-#> (Intercept)                   ***
-#> RACEBlack or African American *  
-#> RACEWhite                     ***
-#> SEXFemale                        
-#> ARMCDTRT                      ***
-#> AVISITVIS2                    ***
-#> AVISITVIS3                    ***
-#> AVISITVIS4                    ***
-#> ARMCDTRT:AVISITVIS2              
-#> ARMCDTRT:AVISITVIS3              
-#> ARMCDTRT:AVISITVIS4              
-#> ---
-#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-#> 
-#> Covariance estimate:
-#>         VIS1    VIS2    VIS3    VIS4
-#> VIS1 40.5537 14.3960  4.9747 13.3867
-#> VIS2 14.3960 26.5715  2.7855  7.4745
-#> VIS3  4.9747  2.7855 14.8979  0.9082
-#> VIS4 13.3867  7.4745  0.9082 95.5568
-```
+\
+[`summary`](https://rdrr.io/r/base/summary.html)`(``fit``)`\
+`#> mmrm fit`\
+`#> `\
+`#> Formula:     FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)`\
+`#> Data:        fev_data (used 537 observations from 197 subjects with maximum 4 `\
+`#> timepoints)`\
+`#> Covariance:  unstructured (10 variance parameters)`\
+`#> Method:      Satterthwaite`\
+`#> Vcov Method: Asymptotic`\
+`#> Inference:   REML`\
+`#> `\
+`#> Model selection criteria:`\
+`#>      AIC      BIC   logLik deviance `\
+`#>   3406.4   3439.3  -1693.2   3386.4 `\
+`#> `\
+`#> Coefficients: `\
+`#>                                Estimate Std. Error        df t value Pr(>|t|)`\
+`#> (Intercept)                    30.77748    0.88656 218.80000  34.715  < 2e-16`\
+`#> RACEBlack or African American   1.53050    0.62448 168.67000   2.451 0.015272`\
+`#> RACEWhite                       5.64357    0.66561 157.14000   8.479 1.56e-14`\
+`#> SEXFemale                       0.32606    0.53195 166.13000   0.613 0.540744`\
+`#> ARMCDTRT                        3.77423    1.07415 145.55000   3.514 0.000589`\
+`#> AVISITVIS2                      4.83959    0.80172 143.88000   6.037 1.27e-08`\
+`#> AVISITVIS3                     10.34211    0.82269 155.56000  12.571  < 2e-16`\
+`#> AVISITVIS4                     15.05390    1.31281 138.47000  11.467  < 2e-16`\
+`#> ARMCDTRT:AVISITVIS2            -0.04193    1.12932 138.56000  -0.037 0.970439`\
+`#> ARMCDTRT:AVISITVIS3            -0.69369    1.18765 158.17000  -0.584 0.559996`\
+`#> ARMCDTRT:AVISITVIS4             0.62423    1.85085 129.72000   0.337 0.736463`\
+`#>                                  `\
+`#> (Intercept)                   ***`\
+`#> RACEBlack or African American *  `\
+`#> RACEWhite                     ***`\
+`#> SEXFemale                        `\
+`#> ARMCDTRT                      ***`\
+`#> AVISITVIS2                    ***`\
+`#> AVISITVIS3                    ***`\
+`#> AVISITVIS4                    ***`\
+`#> ARMCDTRT:AVISITVIS2              `\
+`#> ARMCDTRT:AVISITVIS3              `\
+`#> ARMCDTRT:AVISITVIS4              `\
+`#> ---`\
+`#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1`\
+`#> `\
+`#> Covariance estimate:`\
+`#>         VIS1    VIS2    VIS3    VIS4`\
+`#> VIS1 40.5537 14.3960  4.9747 13.3867`\
+`#> VIS2 14.3960 26.5715  2.7855  7.4745`\
+`#> VIS3  4.9747  2.7855 14.8979  0.9082`\
+`#> VIS4 13.3867  7.4745  0.9082 95.5568`
 
 ## Citing `mmrm`
 

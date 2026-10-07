@@ -35,7 +35,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.18</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.19</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -89,6 +89,7 @@
     <div class="dropdown-menu" aria-labelledby="dropdown-versions">
     <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
+<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.19">v0.3.19</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.18">v0.3.18</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.17">v0.3.17</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.16">v0.3.16</a>
@@ -124,9 +125,32 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.18/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.19/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.3.19" id="mmrm-0319">mmrm 0.3.19<a class="anchor" aria-label="anchor" href="#mmrm-0319"></a>
+</h2>
+<p class="text-muted">CRAN release: 2026-10-06</p>
+<div class="section level4">
+<h4 id="bug-fixes-0-3-19">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-3-19"></a>
+</h4>
+<ul>
+<li>
+<code><a href="https://rvlenth.github.io/emmeans/reference/emmeans.html" class="external-link">emmeans()</a></code> now uses the fitted fixed-effect terms to construct its coefficient basis. This fixes incorrect marginal means and uncertainty estimates for models where the visit variable appears only in interactions, such as treatment-by-visit models without a visit main effect.</li>
+</ul>
+</div>
+<div class="section level4">
+<h4 id="miscellaneous-0-3-19">Miscellaneous<a class="anchor" aria-label="anchor" href="#miscellaneous-0-3-19"></a>
+</h4>
+<ul>
+<li>Satterthwaite, empirical and linear Kenward-Roger covariance preparation now skip unused second derivatives. Linear Kenward-Roger also omits the <code>R</code> component and its allocation.</li>
+<li>Linear Kenward-Roger (<code>vcov = "Kenward-Roger-Linear"</code>) now calculates the adjusted coefficient covariance from contracted sums instead of looping over all pairs of covariance parameters. This is substantially faster for models with many covariance parameters, e.g. unstructured covariance with many visits, and gives the same results up to floating-point error. Consequently, the <code>kr_comp</code> element of such fits now contains <code>P</code> and the contracted matrix <code>S_Q</code>, while <code>Q</code> and <code>R</code> are <code>NULL</code>. Full Kenward-Roger fits are unchanged.</li>
+<li>Kenward-Roger degrees of freedom now use contrast-space matrix contractions and a direct scalar shortcut, preserving the existing formulas while reducing contrast inference time.</li>
+<li>For one-dimensional Kenward-Roger contrasts whose variance does not depend on the covariance parameters (zero moment), the degrees of freedom are now <code>Inf</code> with F scaling <code>1</code>, which is the limit of the formulas, instead of <code>NaN</code>.</li>
+</ul>
+</div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.18" id="mmrm-0318">mmrm 0.3.18<a class="anchor" aria-label="anchor" href="#mmrm-0318"></a>
 </h2>
@@ -460,7 +484,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

@@ -55,63 +55,61 @@ potential “levels” of parameters (Gałecki and Burzykowski (2013)):
 Let’s look at a concrete example and what the “between-within” degrees
 of freedom method gives as results:
 
-``` r
-
-fit <- mmrm(
-  formula = FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID),
-  data = fev_data,
-  control = mmrm_control(method = "Between-Within")
-)
-summary(fit)
-#> mmrm fit
-#> 
-#> Formula:     FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)
-#> Data:        fev_data (used 537 observations from 197 subjects with maximum 4 
-#> timepoints)
-#> Covariance:  unstructured (10 variance parameters)
-#> Method:      Between-Within
-#> Vcov Method: Asymptotic
-#> Inference:   REML
-#> 
-#> Model selection criteria:
-#>      AIC      BIC   logLik deviance 
-#>   3406.4   3439.3  -1693.2   3386.4 
-#> 
-#> Coefficients: 
-#>                                Estimate Std. Error        df t value Pr(>|t|)
-#> (Intercept)                    30.77748    0.88656 334.00000  34.715  < 2e-16
-#> RACEBlack or African American   1.53050    0.62448 192.00000   2.451 0.015147
-#> RACEWhite                       5.64357    0.66561 192.00000   8.479 5.98e-15
-#> SEXFemale                       0.32606    0.53195 192.00000   0.613 0.540631
-#> ARMCDTRT                        3.77423    1.07415 192.00000   3.514 0.000551
-#> AVISITVIS2                      4.83959    0.80172 334.00000   6.037 4.19e-09
-#> AVISITVIS3                     10.34211    0.82269 334.00000  12.571  < 2e-16
-#> AVISITVIS4                     15.05390    1.31281 334.00000  11.467  < 2e-16
-#> ARMCDTRT:AVISITVIS2            -0.04193    1.12932 334.00000  -0.037 0.970407
-#> ARMCDTRT:AVISITVIS3            -0.69369    1.18765 334.00000  -0.584 0.559558
-#> ARMCDTRT:AVISITVIS4             0.62423    1.85085 334.00000   0.337 0.736129
-#>                                  
-#> (Intercept)                   ***
-#> RACEBlack or African American *  
-#> RACEWhite                     ***
-#> SEXFemale                        
-#> ARMCDTRT                      ***
-#> AVISITVIS2                    ***
-#> AVISITVIS3                    ***
-#> AVISITVIS4                    ***
-#> ARMCDTRT:AVISITVIS2              
-#> ARMCDTRT:AVISITVIS3              
-#> ARMCDTRT:AVISITVIS4              
-#> ---
-#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-#> 
-#> Covariance estimate:
-#>         VIS1    VIS2    VIS3    VIS4
-#> VIS1 40.5537 14.3960  4.9747 13.3867
-#> VIS2 14.3960 26.5715  2.7855  7.4745
-#> VIS3  4.9747  2.7855 14.8979  0.9082
-#> VIS4 13.3867  7.4745  0.9082 95.5568
-```
+\
+`fit`` ``<-`` `[`mmrm`](https://openpharma.github.io/mmrm/reference/mmrm.md)`(`\
+`  formula ``=`` ``FEV1`` ``~`` ``RACE`` ``+`` ``SEX`` ``+`` ``ARMCD`` ``*`` ``AVISIT`` ``+`` ``us``(``AVISIT`` ``|`` ``USUBJID``)``,`\
+`  data ``=`` ``fev_data``,`\
+`  control ``=`` `[`mmrm_control`](https://openpharma.github.io/mmrm/reference/mmrm_control.md)`(``method ``=`` ``"Between-Within"``)`\
+`)`\
+[`summary`](https://rdrr.io/r/base/summary.html)`(``fit``)`\
+`#> mmrm fit`\
+`#> `\
+`#> Formula:     FEV1 ~ RACE + SEX + ARMCD * AVISIT + us(AVISIT | USUBJID)`\
+`#> Data:        fev_data (used 537 observations from 197 subjects with maximum 4 `\
+`#> timepoints)`\
+`#> Covariance:  unstructured (10 variance parameters)`\
+`#> Method:      Between-Within`\
+`#> Vcov Method: Asymptotic`\
+`#> Inference:   REML`\
+`#> `\
+`#> Model selection criteria:`\
+`#>      AIC      BIC   logLik deviance `\
+`#>   3406.4   3439.3  -1693.2   3386.4 `\
+`#> `\
+`#> Coefficients: `\
+`#>                                Estimate Std. Error        df t value Pr(>|t|)`\
+`#> (Intercept)                    30.77748    0.88656 334.00000  34.715  < 2e-16`\
+`#> RACEBlack or African American   1.53050    0.62448 192.00000   2.451 0.015147`\
+`#> RACEWhite                       5.64357    0.66561 192.00000   8.479 5.98e-15`\
+`#> SEXFemale                       0.32606    0.53195 192.00000   0.613 0.540631`\
+`#> ARMCDTRT                        3.77423    1.07415 192.00000   3.514 0.000551`\
+`#> AVISITVIS2                      4.83959    0.80172 334.00000   6.037 4.19e-09`\
+`#> AVISITVIS3                     10.34211    0.82269 334.00000  12.571  < 2e-16`\
+`#> AVISITVIS4                     15.05390    1.31281 334.00000  11.467  < 2e-16`\
+`#> ARMCDTRT:AVISITVIS2            -0.04193    1.12932 334.00000  -0.037 0.970407`\
+`#> ARMCDTRT:AVISITVIS3            -0.69369    1.18765 334.00000  -0.584 0.559558`\
+`#> ARMCDTRT:AVISITVIS4             0.62423    1.85085 334.00000   0.337 0.736129`\
+`#>                                  `\
+`#> (Intercept)                   ***`\
+`#> RACEBlack or African American *  `\
+`#> RACEWhite                     ***`\
+`#> SEXFemale                        `\
+`#> ARMCDTRT                      ***`\
+`#> AVISITVIS2                    ***`\
+`#> AVISITVIS3                    ***`\
+`#> AVISITVIS4                    ***`\
+`#> ARMCDTRT:AVISITVIS2              `\
+`#> ARMCDTRT:AVISITVIS3              `\
+`#> ARMCDTRT:AVISITVIS4              `\
+`#> ---`\
+`#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1`\
+`#> `\
+`#> Covariance estimate:`\
+`#>         VIS1    VIS2    VIS3    VIS4`\
+`#> VIS1 40.5537 14.3960  4.9747 13.3867`\
+`#> VIS2 14.3960 26.5715  2.7855  7.4745`\
+`#> VIS3  4.9747  2.7855 14.8979  0.9082`\
+`#> VIS4 13.3867  7.4745  0.9082 95.5568`
 
 Let’s try to calculate the degrees of freedom manually now.
 
@@ -127,16 +125,14 @@ And we note that \\N_0 = 1\\ because we use an intercept term.
 
 Now let’s look at the design matrix:
 
-``` r
-
-head(model.matrix(fit), 1)
-#>   (Intercept) RACEBlack or African American RACEWhite SEXFemale ARMCDTRT
-#> 2           1                             1         0         1        1
-#>   AVISITVIS2 AVISITVIS3 AVISITVIS4 ARMCDTRT:AVISITVIS2 ARMCDTRT:AVISITVIS3
-#> 2          1          0          0                   1                   0
-#>   ARMCDTRT:AVISITVIS4
-#> 2                   0
-```
+\
+[`head`](https://rdrr.io/r/utils/head.html)`(`[`model.matrix`](https://rdrr.io/r/stats/model.matrix.html)`(``fit``)``, ``1``)`\
+`#>   (Intercept) RACEBlack or African American RACEWhite SEXFemale ARMCDTRT`\
+`#> 2           1                             1         0         1        1`\
+`#>   AVISITVIS2 AVISITVIS3 AVISITVIS4 ARMCDTRT:AVISITVIS2 ARMCDTRT:AVISITVIS3`\
+`#> 2          1          0          0                   1                   0`\
+`#>   ARMCDTRT:AVISITVIS4`\
+`#> 2                   0`
 
 Leaving the intercept term aside, we therefore have the following number
 of parameters for the corresponding effects:

@@ -76,10 +76,8 @@ the `data` with rows for every subject and timepoint can produce
 
 Using
 
-``` r
-
-emmeans(fit, ~TRTP | AVISIT, weights = "proportional", data = data)
-```
+\
+[`emmeans`](https://rvlenth.github.io/emmeans/reference/emmeans.html)`(``fit``, ``~``TRTP`` ``|`` ``AVISIT``, weights ``=`` ``"proportional"``, data ``=`` ``data``)`
 
 the `emmeans` function will create a linear combination matrix
 \\L^{\text{global}}\\. For example, the row \\k=(t-1)J + j\\ of this

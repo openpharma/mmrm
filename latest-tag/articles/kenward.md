@@ -22,10 +22,11 @@ where the covariance matrix \\\Sigma_i \in \mathbb{R}^{m_i \times m_i}\\
 is derived by subsetting the overall covariance matrix \\\Sigma \in
 \mathbb{R}^{m \times m}\\ appropriately by \\ \Sigma_i = G_i^{-1/2}
 S_i^\top \Sigma S_i G_i^{-1/2} \\ where the subsetting matrix \\S_i \in
-\\0, 1\\^{m \times m_i}\\ contains in each of its \\m_i\\ columns
-contains a single 1 indicating which overall time point is matching
-\\t\_{ih}\\. \\G_i \in \mathbb{R}\_{\gt 0}^{m_i \times m_i}\\ is the
-diagonal weight matrix.
+\\0, 1\\^{m \times m_i}\\ contains in each of its \\m_i\\ columns a
+single 1 indicating which overall time point is matching the \\h\\-th
+observed time point \\t\_{ih}\\ of subject \\i\\. \\G_i \in
+\mathbb{R}^{m_i \times m_i}\\ is a diagonal matrix with strictly
+positive weights on its diagonal.
 
 Conditional on the design matrices \\X_i\\, the coefficient vector
 \\\beta\\ and the covariance matrix \\\Sigma\\ we assume that the
@@ -56,7 +57,7 @@ covariance matrix parameters \\\theta = (\theta_1, \dotsc,
 \left\\X^\top \Omega(\theta)^{-1} X\right\\ ^{-1}\\ is the asymptotic
 covariance matrix of \\\hat\beta\\. However, Kackar and Harville (1984)
 suggests that although the \\\hat\beta\\ is unbiased for \\\beta\\, the
-covariance matrix, \\\hat\Phi = \left\\X^\top \hat\Omega
+covariance matrix, \\\hat\Phi = \left\\X^\top \hat\Omega^{-1}
 X\right\\^{-1}\\ can be biased. They showed that the variability of
 \\\hat\beta\\ can be partitioned into two components,
 
@@ -77,10 +78,10 @@ approximated by
 \frac{\partial{\Omega^{-1}}}{\partial \theta_h} \Omega
 \frac{\partial{\Omega^{-1}}}{\partial \theta_j} X \\
 
-\\W\\ is the inverse of the Hessian matrix of the log-likelihood
-function of \\\theta\\ evaluated at the estimate \\\hat\theta\\,
-i.e. the observed Fisher Information matrix as a consistent estimator of
-the variance-covariance matrix of \\\hat\theta\\.
+\\W\\ is the variance-covariance matrix of \\\hat\theta\\. It is
+estimated by the inverse of the observed information, i.e. the inverse
+of the Hessian matrix of the negative restricted log-likelihood function
+of \\\theta\\, evaluated at the estimate \\\hat\theta\\.
 
 Again, based on a Taylor series expansion about \\\theta\\, Kenward and
 Roger (1997) show that \\ \hat\Phi \simeq \Phi +
@@ -98,15 +99,17 @@ where \\ R\_{hj} =
 X^\top\Omega^{-1}\frac{\partial^2\Omega}{\partial{\theta_h}\partial{\theta_j}}
 \Omega^{-1} X \\
 
-substituting \\\Phi\\ and \\\Lambda\\ back to the \\\hat\Phi_A\\, we
-have
+Combining this with \\\Phi_A = \Phi + \Lambda\\, we obtain the adjusted
+estimate
 
 \\ \hat\Phi_A = \hat\Phi + 2\hat\Phi
 \left\\\sum\_{h=1}^k{\sum\_{j=1}^k{W\_{hj}(Q\_{hj} - P_h \hat\Phi P_j -
 \frac{1}{4}R\_{hj})} }\right\\ \hat\Phi \\
 
 where \\\Omega(\hat\theta)\\ replaces \\\Omega(\theta)\\ in the
-right-hand side.
+right-hand side. In the remainder of this vignette, all of \\\Phi\\,
+\\\Phi_A\\, \\P_h\\, \\Q\_{hj}\\, \\R\_{hj}\\ and \\W\\ are evaluated at
+\\\hat\theta\\, and we drop the hats for brevity.
 
 Please note that, if we ignore \\R\_{hj}\\, the second-order
 derivatives, we will get a different estimate of adjusted covariance
@@ -115,17 +118,18 @@ matrix, and we call this the linear Kenward-Roger approximation.
 #### Special Considerations for mmrm models
 
 In mmrm models, \\\Omega\\ is a block-diagonal matrix, hence we can
-calculate \\P\\, \\Q\\ and \\R\\ for each subject and add them up.
+calculate \\P\\, \\Q\\ and \\R\\ for each of the \\n\\ subjects and add
+them up.
 
-\\ P_h = \sum\_{i=1}^{N}{P\_{ih}} = \sum\_{i=1}^{N}{X_i^\top
+\\ P_h = \sum\_{i=1}^{n}{P\_{ih}} = \sum\_{i=1}^{n}{X_i^\top
 \frac{\partial{\Sigma_i^{-1}}}{\partial \theta_h} X_i} \\
 
-\\ Q\_{hj} = \sum\_{i=1}^{N}{Q\_{ihj}} = \sum\_{i=1}^{N}{X_i^\top
+\\ Q\_{hj} = \sum\_{i=1}^{n}{Q\_{ihj}} = \sum\_{i=1}^{n}{X_i^\top
 \frac{\partial{\Sigma_i^{-1}}}{\partial \theta_h} \Sigma_i
 \frac{\partial{\Sigma_i^{-1}}}{\partial \theta_j} X_i} \\
 
-\\ R\_{hj} = \sum\_{i=1}^{N}{R\_{ihj}} =
-\sum\_{i=1}^{N}{X_i^\top\Sigma_i^{-1}\frac{\partial^2\Sigma_i}{\partial{\theta_h}\partial{\theta_j}}
+\\ R\_{hj} = \sum\_{i=1}^{n}{R\_{ihj}} =
+\sum\_{i=1}^{n}{X_i^\top\Sigma_i^{-1}\frac{\partial^2\Sigma_i}{\partial{\theta_h}\partial{\theta_j}}
 \Sigma_i^{-1} X_i} \\
 
 #### Derivative of the overall covariance matrix \\\Sigma\\
@@ -143,7 +147,7 @@ L\frac{\partial{L^\top}}{\partial{\theta_h}} \\
 \\ \frac{\partial^2{\Sigma}}{\partial{\theta_h}\partial{\theta_j}} =
 \frac{\partial^2{L}}{\partial{\theta_h}\partial{\theta_j}}L^\top +
 L\frac{\partial^2{L^\top}}{\partial{\theta_h}\partial{\theta_j}} +
-\frac{\partial{L}}{\partial{\theta_h}}\frac{\partial{L^T}}{\partial{\theta_j}} +
+\frac{\partial{L}}{\partial{\theta_h}}\frac{\partial{L^\top}}{\partial{\theta_j}} +
 \frac{\partial{L}}{\partial{\theta_j}}\frac{\partial{L^\top}}{\partial{\theta_h}}
 \\
 
@@ -159,8 +163,9 @@ The derivatives of \\\Sigma^{-1}\\ can be calculated through
 
 #### Subjects with missed visits
 
-If a subject do not have all visits, the corresponding covariance matrix
-can be represented as \\ \Sigma_i = S_i^\top \Sigma S_i \\
+For unit weights, if a subject does not have all visits, the
+corresponding covariance matrix can be represented as \\ \Sigma_i =
+S_i^\top \Sigma S_i \\
 
 and the derivatives can be obtained through
 
@@ -178,76 +183,207 @@ through \\\Sigma_i^{-1}\\ and
 
 #### Scenario under group specific covariance estimates
 
-When fitting grouped `mmrm` models, the covariance matrix for subject i
-of group \\g(i)\\, can be written as \\ \Sigma_i = S_i^\top
-\Sigma\_{g(i)} S_i\$. \\ Assume there are \\B\\ groups, the number of
-parameters is increased by \\B\\ times. With the fact that for each
-group, the corresponding \\\theta\\ will not affect other parts, we will
-have block-diagonal \\P\\, \\Q\\ and \\R\\ matrices, where the blocks
-are given by:
-
-\\ P_h = \begin{pmatrix} P\_{h, 1} & \dots & P\_{h, B} \\ \end{pmatrix}
-\\
-
-\\ Q\_{hj} = \begin{pmatrix} Q\_{hj, 1} & 0 & \dots & \dots & 0 \\ 0 &
-Q\_{hj, 2} & 0 & \dots & 0\\ \vdots & & \ddots & & \vdots \\ \vdots & &
-& \ddots & \vdots \\ 0 & \dots & \dots & 0 & Q\_{hj, B} \end{pmatrix} \\
-
-\\ R\_{hj} = \begin{pmatrix} R\_{hj, 1} & 0 & \dots & \dots & 0 \\ 0 &
-R\_{hj, 2} & 0 & \dots & 0\\ \vdots & & \ddots & & \vdots \\ \vdots & &
-& \ddots & \vdots \\ 0 & \dots & \dots & 0 & R\_{hj, B} \end{pmatrix} \\
-
-Use \\P\_{j, b}\\ to denote the block diagonal part for group \\b\\, we
-have \\ P\_{h,b} = \sum\_{g(i) = b}{P\_{ih}} = \sum\_{g(i) = b}{X_i^\top
-\frac{\partial{\Sigma_i^{-1}}}{\partial \theta_h} X_i} \\
-
-\\ Q\_{hj,b} = \sum\_{g(i) = b}{Q\_{ihj}} = \sum\_{g(i) = b}{X_i^\top
+For unit weights in grouped `mmrm` models, the covariance matrix for
+subject \\i\\ of group \\g(i)\\ can be written as \\ \Sigma_i = S_i^\top
+\Sigma\_{g(i)} S_i. \\ Assume there are \\B\\ groups. Each group \\b\\
+has its own covariance matrix \\\Sigma_b\\ with its own parameters, so
+the number of covariance parameters is multiplied by \\B\\. Let
+\\\mathcal G_b\\ denote the indices of the covariance parameters of
+group \\b\\. A parameter \\\theta_h\\ with \\h \in \mathcal G_b\\ only
+affects \\\Sigma_b\\, hence \\\partial\Sigma_i/\partial\theta_h = 0\\
+and \\\partial\Sigma_i^{-1}/\partial\theta_h = 0\\ for all subjects
+\\i\\ with \\g(i) \neq b\\. Therefore, for \\h \in \mathcal G_b\\, only
+the subjects of group \\b\\ contribute: \\ P_h = \sum\_{g(i) =
+b}{P\_{ih}} = \sum\_{g(i) = b}{X_i^\top
+\frac{\partial{\Sigma_i^{-1}}}{\partial \theta_h} X_i}. \\ Each \\P_h\\
+is a \\p \times p\\ matrix as before. For \\Q\_{hj}\\ and \\R\_{hj}\\
+both parameters need to affect the same subject, so they are zero
+matrices if \\\theta_h\\ and \\\theta_j\\ belong to different groups.
+For \\h, j \in \mathcal G_b\\ we have \\ Q\_{hj} = \sum\_{g(i) =
+b}{Q\_{ihj}} = \sum\_{g(i) = b}{X_i^\top
 \frac{\partial{\Sigma_i^{-1}}}{\partial \theta_h} \Sigma_i
-\frac{\partial{\Sigma_i^{-1}}}{\partial \theta_j} X_i} \\
-
-\\ R\_{hj,b} = \sum\_{g(i) = b}{R\_{ihj}} = \sum\_{g(i) =
+\frac{\partial{\Sigma_i^{-1}}}{\partial \theta_j} X_i} \\ \\ R\_{hj} =
+\sum\_{g(i) = b}{R\_{ihj}} = \sum\_{g(i) =
 b}{X_i^\top\Sigma_i^{-1}\frac{\partial^2\Sigma_i}{\partial{\theta_h}\partial{\theta_j}}
-\Sigma_i^{-1} X_i} \\
-
-Similarly for \\R\\.
+\Sigma_i^{-1} X_i}. \\ Hence only the \\Q\_{hj}\\ and \\R\_{hj}\\ within
+each group need to be calculated and stored. Note that this does not
+hold for the products \\P_h \Phi P_j\\, which are in general not zero
+for parameters from different groups. Therefore the cross-group terms
+\\W\_{hj} P_h \Phi P_j\\ still contribute to the adjusted covariance
+matrix \\\Phi_A\\.
 
 #### Scenario under weighted mmrm
 
-Under weights mmrm model, the covariance matrix for subject \\i\\, can
+Under a weighted mmrm model, the covariance matrix for subject \\i\\ can
 be represented as
 
 \\ \Sigma_i = G_i^{-1/2} S_i^\top \Sigma S_i G_i^{-1/2} \\
 
-Where \\G_i\\ is a diagonal matrix of the weights. Then, when deriving
-\\P\\, \\Q\\ and \\R\\, there are no mathematical differences as they
-are constant, and having \\G_i\\ in addition to \\S_i\\ does not change
-the algorithms and we can simply multiply the formulas with
-\\G_i^{-1/2}\\, similarly as above for the subsetting matrix.
+where \\G_i\\ is a diagonal matrix of fixed weights. Write
+\\\bar\Sigma_i = S_i^\top\Sigma S_i\\ (or use \\\Sigma\_{g(i)}\\ for
+grouped models). Since the weights do not depend on \\\theta\\, the
+covariance derivatives are \\ \frac{\partial\Sigma_i}{\partial\theta_h}
+= G_i^{-1/2}\frac{\partial\bar\Sigma_i}{\partial\theta_h}G_i^{-1/2},
+\qquad \frac{\partial^2\Sigma_i}{\partial\theta_h\partial\theta_j} =
+G_i^{-1/2}\frac{\partial^2\bar\Sigma_i}{\partial\theta_h\partial\theta_j}G_i^{-1/2}.
+\\ The inverse covariance instead satisfies \\\Sigma_i^{-1} =
+G_i^{1/2}\bar\Sigma_i^{-1}G_i^{1/2}\\, so \\
+\frac{\partial\Sigma_i^{-1}}{\partial\theta_h} =
+G_i^{1/2}\frac{\partial\bar\Sigma_i^{-1}}{\partial\theta_h}G_i^{1/2}. \\
+These weighted matrices are inserted into the same definitions of
+\\P_h\\, \\Q\_{hj}\\ and \\R\_{hj}\\. See [subject contributions with
+weights](#subject-contributions-with-weights) below for how the weights
+then enter the subject contributions to \\P_h\\ and \\Q\_{hj}\\.
+
+#### Contracted linear covariance adjustment
+
+For `vcov = "Kenward-Roger-Linear"` the \\R\_{hj}\\ terms are omitted,
+and the adjusted covariance matrix above only requires two \\p\times p\\
+sums:
+
+\\ S_Q = \sum\_{h=1}^k\sum\_{j=1}^k W\_{hj}Q\_{hj}, \qquad S_P =
+\sum\_{h=1}^k\sum\_{j=1}^k W\_{hj}P_h\Phi P_j, \qquad \Phi_A = \Phi +
+2\Phi(S_Q-S_P)\Phi. \\
+
+This is the linear Kenward-Roger formula with the outer multiplications
+by \\\Phi\\ moved outside the sums. Instead of storing all \\Q\_{hj}\\
+matrices,
+[`h_get_kr_comp()`](https://openpharma.github.io/mmrm/reference/h_get_kr_comp.md)
+returns the \\P_h\\ matrices together with \\S_Q\\ (so `kr_comp$Q` and
+`kr_comp$R` are `NULL` and `kr_comp$S_Q` is a \\p\times p\\ matrix), and
+[`h_var_adj_contracted()`](https://openpharma.github.io/mmrm/reference/h_var_adj_contracted.md)
+calculates \\S_P\\ and \\\Phi_A\\. The result is the same as the
+pairwise calculation up to floating-point error. Full Kenward-Roger
+continues to use the pairwise \\Q\_{hj}\\ and \\R\_{hj}\\.
+
+##### Subject contributions with weights
+
+As in the [weighted model](#scenario-under-weighted-mmrm), write the
+subject covariance matrix as \\\Sigma_i =
+G_i^{-1/2}\bar\Sigma_iG_i^{-1/2}\\, where \\\bar\Sigma_i =
+S_i^\top\Sigma\_{g(i)}S_i\\ is the unweighted covariance matrix of the
+observed visits of subject \\i\\ in group \\g(i)\\. For spatial
+covariance structures, \\\bar\Sigma_i\\ is instead calculated from the
+distances between the subject’s observations. Let
+
+\\ X_i^\ast = G_i^{1/2}X_i, \qquad D\_{ih} =
+\frac{\partial\bar\Sigma_i^{-1}}{\partial\theta_h} =
+-\bar\Sigma_i^{-1}\frac{\partial\bar\Sigma_i}{\partial\theta_h}\bar\Sigma_i^{-1}.
+\\
+
+The weights do not depend on \\\theta\\, so
+\\\partial\Sigma_i^{-1}/\partial\theta_h = G_i^{1/2}D\_{ih}G_i^{1/2}\\.
+Inserting this into the [subject
+contributions](#special-considerations-for-mmrm-models) cancels the
+inner weight factors in \\Q\_{ihj}\\, and the weights enter exactly once
+through \\X_i^\ast\\:
+
+\\ P\_{ih} = (X_i^\ast)^\top D\_{ih}X_i^\ast, \qquad Q\_{ihj} =
+(X_i^\ast)^\top D\_{ih}\bar\Sigma_i D\_{ij}X_i^\ast. \\
+
+##### Contraction of \\Q\\
+
+As in the [grouped
+model](#scenario-under-group-specific-covariance-estimates), \\\mathcal
+G_b\\ denotes the indices of the covariance parameters of group \\b\\,
+so that \\\theta_h\\ with \\h \notin \mathcal G\_{g(i)}\\ does not
+affect \\\bar\Sigma_i\\ and \\D\_{ih} = 0\\. Hence only the diagonal
+blocks \\W^{(b)} = (W\_{hj})\_{h,j\in\mathcal G_b}\\ enter \\S_Q\\:
+
+\\ S_Q = \sum\_{i=1}^{n}\sum\_{h,j\in\mathcal G\_{g(i)}} W\_{hj}\\
+(X_i^\ast)^\top D\_{ih}\bar\Sigma_i D\_{ij}X_i^\ast. \\
+
+Each block is factored as follows, with the rows of \\U_b\\ indexed by
+the parameter labels in \\\mathcal G_b\\:
+
+\\ W^{(b)} = U_b\operatorname{diag}(s_b)U_b^\top, \qquad \text{i.e.}
+\quad W\_{hj} = \sum\_{\ell}s\_{b\ell}(U_b)\_{h\ell}(U_b)\_{j\ell}
+\quad\text{for } h,j\in\mathcal G_b. \\
+
+If \\W^{(b)}\\ is positive definite, \\U_b\\ is its lower Cholesky
+factor and all \\s\_{b\ell} = 1\\. Otherwise, with the
+eigendecomposition \\W^{(b)} = V\operatorname{diag}(\omega)V^\top\\, the
+columns are \\(U_b)\_{\cdot\ell} =
+\sqrt{\|\omega\_\ell\|}\\V\_{\cdot\ell}\\ and \\s\_{b\ell} =
+\operatorname{sign}(\omega\_\ell)\\, with \\s\_{b\ell} = 1\\ for
+\\\omega\_\ell = 0\\. Every term is retained, including negative
+eigenvalues, so this is an exact rearrangement and not a low-rank
+approximation.
+
+Substituting the factorization for subject \\i\\ in group \\b = g(i)\\
+and regrouping the double sum gives
+
+\\ \sum\_{h,j\in\mathcal G_b} W\_{hj}D\_{ih}\bar\Sigma_iD\_{ij} =
+\sum\_\ell s\_{b\ell} \Big(\sum\_{h\in\mathcal
+G_b}(U_b)\_{h\ell}D\_{ih}\Big)\bar\Sigma_i \Big(\sum\_{j\in\mathcal
+G_b}(U_b)\_{j\ell}D\_{ij}\Big) = \sum\_\ell
+s\_{b\ell}\\\Delta\_{i\ell}\bar\Sigma_i\Delta\_{i\ell}, \\
+
+where the derivative combinations
+
+\\ \Delta\_{i\ell} = \sum\_{h\in\mathcal
+G\_{g(i)}}(U\_{g(i)})\_{h\ell}D\_{ih} \\
+
+are symmetric because each \\D\_{ih}\\ is symmetric. Therefore
+
+\\ S_Q = \sum\_{i=1}^{n}\sum\_\ell s\_{g(i)\ell}\\
+(\Delta\_{i\ell}X_i^\ast)^\top\\\bar\Sigma_i\\(\Delta\_{i\ell}X_i^\ast).
+\\
+
+For a group with \\\|\mathcal G_b\|\\ covariance parameters, each
+subject now needs \\\|\mathcal G_b\|\\ such products instead of
+\\\|\mathcal G_b\|^2\\. For non-spatial covariance structures,
+\\\bar\Sigma_i\\, \\D\_{ih}\\ and \\\Delta\_{i\ell}\\ only depend on the
+group and the observed visits, so they are calculated once per group and
+visit pattern. For spatial covariance structures they are calculated for
+each subject, because the distances can differ between subjects.
+
+\\W\\ is the inverse of the Hessian matrix and therefore symmetric up to
+rounding errors. The factorization uses the symmetric part \\(W^{(b)} +
+W^{(b)\top})/2\\, which yields the symmetric part of the pairwise sum
+because \\Q\_{jh} = Q\_{hj}^\top\\. If \\W\\ contains non-finite values,
+which [`mmrm()`](https://openpharma.github.io/mmrm/reference/mmrm.md)
+reports as a convergence problem, \\S_Q\\ and hence \\\Phi_A\\ are
+non-finite, as with the pairwise calculation.
+
+##### Contraction of \\P\\
+
+In contrast to \\Q\_{hj}\\, the product \\P_h\Phi P_j\\ is in general
+not zero for parameters \\h\\ and \\j\\ from different groups. In
+addition, \\W\\ is in general not block diagonal, because the restricted
+likelihood couples the groups through the common coefficients \\\beta\\.
+Therefore \\S_P\\ uses the full \\W\\, including the cross-group
+entries:
+
+\\ S_P = \sum\_{h=1}^k P_h\Phi\overline P_h, \qquad \overline P_h =
+\sum\_{j=1}^k W\_{hj}P_j. \\
+
+All \\\overline P_h\\ are obtained with one matrix product: if the
+\\h\\th column of the \\p^2\times k\\ matrix \\\mathcal P\\ is
+\\\operatorname{vec}(P_h)\\, then the \\h\\th column of \\\mathcal P
+W^\top\\ is \\\operatorname{vec}(\overline P_h)\\. The \\P_h\\ and \\W\\
+are also used unchanged for the [degrees of freedom](#inference).
 
 ### Inference
 
-Suppose we are testing the linear combination of \\\beta\\, \\C\beta\\
-with \\C \in \mathbb{R}^{c\times p}\\, we can use the following
-F-statistic \\ F = \frac{1}{c} (\hat\beta - \beta)^\top C (C^\top
-\hat\Phi_A C)^{-1} C^\top (\hat\beta - \beta) \\ and \\ F^\* = \lambda F
-\\ follows exact \\F\_{c,m}\\ distribution.
+Suppose we are testing \\C\beta = C\beta_0\\, where \\\beta_0\\
+specifies the null hypothesis and \\C \in \mathbb{R}^{c\times p}\\ has
+full row rank. We use the following F-statistic \\ F = \frac{1}{c}
+(C(\hat\beta - \beta_0))^\top (C \Phi_A C^\top)^{-1} C(\hat\beta -
+\beta_0) \\ and \\ F^\* = \lambda F \\ is approximated by an
+\\F\_{c,\nu}\\ distribution.
 
-When we have only one coefficient to test, then \\C\\ is a column vector
-containing a single \\1\\ inside. We can still follow the same
-calculations as for the multi-dimensional case. This recovers the
-degrees of freedom results of the Satterthwaite method.
+\\\lambda\\ and \\\nu\\ can be calculated through
 
-\\\lambda\\ and \\m\\ can be calculated through
+\\ M = C^\top (C \Phi C^\top)^{-1} C \\
 
-\\ M = C (C^\top \Phi C)^{-1} C^\top \\
+\\ A_1 = \sum\_{h=1}^k{\sum\_{j=1}^k{W\_{hj} \operatorname{tr}(M \Phi
+P_h \Phi) \operatorname{tr}(M \Phi P_j \Phi)}} \\
 
-\\ A_1 = \sum\_{h=1}^k{\sum\_{j=1}^k{W\_{hj} tr(M \Phi P_h \Phi) tr(M
-\Phi P_j \Phi)}} \\
+\\ A_2 = \sum\_{h=1}^k{\sum\_{j=1}^k{W\_{hj} \operatorname{tr}(M \Phi
+P_h \Phi M \Phi P_j \Phi)}} \\
 
-\\ A_2 = \sum\_{h=1}^k{\sum\_{j=1}^k{W\_{hj} tr(M \Phi P_h \Phi M \Phi
-P_j \Phi)}} \\
-
-\\ B = \frac{1}{2c}(A_1 + 6A_2) \\
+\\ \mathcal B = \frac{1}{2c}(A_1 + 6A_2) \\
 
 \\ g = \frac{(c+1)A_1 - (c+4)A_2}{(c+2)A_2} \\
 
@@ -257,41 +393,111 @@ P_j \Phi)}} \\
 
 \\ c_3 = \frac{c+2-g}{3c+2(1-g)} \\
 \\E^\*={\left\\1-\frac{A_2}{c}\right\\}^{-1}\\
-\\V^\*=\frac{2}{c}{\left\\\frac{1+c_1 B}{(1-c_2 B)^2(1-c_3
-B)}\right\\}\\
+\\V^\*=\frac{2}{c}{\left\\\frac{1+c_1 \mathcal B}{(1-c_2 \mathcal
+B)^2(1-c_3 \mathcal B)}\right\\}\\
 
-\\\rho = \frac{V^{\*}}{2(E^\*)^2}\\
+\\\eta = \frac{V^{\*}}{2(E^\*)^2}\\
 
-\\m = 4 + \frac{c+2}{c\rho - 1}\\ \\\lambda = \frac{m}{E^\*(m-2)}\\
+\\\nu = 4 + \frac{c+2}{c\eta - 1}\\ \\\lambda =
+\frac{\nu}{E^\*(\nu-2)}\\
+
+#### Degrees of freedom in contrast space
+
+[`h_kr_df()`](https://openpharma.github.io/mmrm/reference/h_kr_df.md)
+evaluates the same \\A_1\\ and \\A_2\\ in the smaller contrast space,
+for both full and linear Kenward-Roger and all covariance structures.
+Let \\H_C = C\Phi C^\top = TT^\top\\, where \\T\\ is the lower
+triangular Cholesky factor, and set
+
+\\ Z = T^{-1}C\Phi, \qquad K_h = ZP_hZ^\top. \\
+
+Triangular solves obtain \\Z\\ without explicitly inverting \\H_C\\.
+Hypotheses whose \\H_C\\ is numerically singular or not positive
+definite are rejected. Each \\K_h\\ is a symmetric \\c\times c\\ matrix.
+Cyclic invariance of trace gives
+
+\\ A_1 = t^\top Wt, \qquad t_h = \operatorname{tr}(K_h), \qquad A_2 =
+\sum\_{h,j} W\_{hj}\langle K_h,K_j\rangle_F, \\
+
+where \\\langle\cdot,\cdot\rangle_F\\ is the [Frobenius inner
+product](https://en.wikipedia.org/wiki/Frobenius_inner_product). With
+\\\mathcal{K}\\ containing \\\operatorname{vec}(K_h)\\ as its \\h\\th
+column, the implementation calculates \\A_2 =
+\operatorname{sum}((\mathcal{K}W)\odot\mathcal{K})\\, where \\\cdot
+\odot \cdot\\ is the [Hadamard
+product](https://en.wikipedia.org/wiki/Hadamard_product_(matrices)).
+This replaces the pairwise products of \\p\times p\\ matrices by a dense
+contraction with \\c^2\\ rows. The remaining scalar formulas above are
+unchanged. The full covariance \\W\\ is retained, including cross-group
+entries in grouped models.
+
+#### One-dimensional shortcut
+
+For a single row contrast \\C = l^\top\\ with \\l \in \mathbb{R}^p\\,
+define
+
+\\ a_h = \frac{l^\top\Phi P_h\Phi l}{l^\top\Phi l}. \\
+
+Then \\A_1 = A_2 = a^\top Wa\\, and the formulas simplify to
+
+\\ \nu = \frac{2}{a^\top Wa}, \qquad \lambda = 1. \\
+
+The implementation uses this shortcut directly, avoiding Cholesky
+normalization and the general moment formulas. It applies to any scalar
+contrast with positive variance \\l^\top\Phi l\\, including a
+combination of coefficients; other contrasts are rejected. If \\a^\top
+Wa = 0\\, the limit \\\nu = \infty\\ is returned. Since
+\\\partial\Phi/\partial\theta_h = -\Phi P_h\Phi\\, this is exactly the
+[scalar Satterthwaite degrees of
+freedom](https://openpharma.github.io/mmrm/articles/satterthwaite.html#one-dimensional-contrast)
+based on the **unadjusted** variance \\l^\top\Phi l\\. The standard
+error and test statistic still use \\\Phi_A\\ for both full and linear
+KR. Consequently, their tests and confidence intervals can differ from
+Satterthwaite even when their scalar degrees of freedom agree.
+Multi-dimensional KR retains its own degrees of freedom and F scaling.
 
 ### Parameterization methods and Kenward-Roger
 
 While the Kenward-Roger adjusted covariance matrix is adopting a Taylor
 series to approximate the true value, the choices of parameterization
 can change the result. In a simple example of unstructured covariance
-structure, in our current approach, where the parameters are elements of
-the Cholesky factor of \\\Sigma\\ (see
-[parameterization](https://openpharma.github.io/mmrm/articles/covariance.md)),
+structure, in our current approach, where the parameters are log
+diagonal entries and scaled off-diagonal entries of the Cholesky factor
+of \\\Sigma\\ (see
+[parameterization](https://openpharma.github.io/mmrm/articles/algorithm.html#covariance-matrix-model)),
 the second-order derivatives of \\\Sigma\\ over our parameters, are
 non-zero matrices. However, if we use the elements of \\\Sigma\\ as our
 parameters, then the second-order derivatives are zero matrices.
-However, the differences can be small and will not affect the inference.
-If you would like to match SAS results for the unstructured covariance
-model, you can use the linear Kenward-Roger approximation.
+However, the differences are usually small. If you would like to match
+SAS results for the unstructured covariance model, you can use the
+linear Kenward-Roger approximation.
 
-### Implementations in `mmrm`
+### Implementation in `mmrm`
 
 In package `mmrm`, we have implemented Kenward-Roger calculations based
-on the previous sections. Specially, for the first-order and
-second-order derivatives, we use automatic differentiation to obtain the
-results easily for non-spatial covariance structure. For spatial
-covariance structure, we derive the exact results.
+on the previous sections. For non-spatial covariance structures, the
+first-order and second-order derivatives are obtained by automatic
+differentiation of the Cholesky factor. For spatial covariance
+structures, we derive the exact results below and evaluate them
+analytically on demand.
+
+For `vcov = "Kenward-Roger-Linear"`, only the first derivatives of the
+subject covariance matrices and their inverses are calculated and
+cached. For non-spatial covariance structures, automatic differentiation
+is applied once to the Cholesky factor, and the nested differentiation
+for the second derivatives is skipped. Missing-visit patterns cache only
+the required first derivatives, and for spatial covariance structures
+the second derivatives are not evaluated either. Full Kenward-Roger
+still computes the second derivatives and the parameter-pair \\Q\_{hj}\\
+and \\R\_{hj}\\ components.
 
 #### Spatial Exponential Derivatives
 
-For spatial exponential covariance structure, we have
+For spatial exponential covariance, \\\sigma\\ denotes a variance (the
+diagonal of \\\Sigma\\), and \\\rho\\ is the correlation at unit
+distance. For one covariance group, we have
 
-\\\theta = (\theta_1,\theta_2)\\ \\\sigma = e^{\theta_1}\\ \\\rho =
+\\\theta = (\theta_1,\theta_2)^\top\\ \\\sigma = e^{\theta_1}\\ \\\rho =
 \frac{e^{\theta_2}}{1 + e^{\theta_2}}\\
 
 \\\Sigma\_{ij} = \sigma \rho^{d\_{ij}}\\ where \\d\_{ij}\\ is the
@@ -330,7 +536,7 @@ For spatial Gaussian covariance structure, we use the same
 parameterization as spatial exponential, with the squared distance in
 the exponent:
 
-\\\theta = (\theta_1,\theta_2)\\ \\\sigma = e^{\theta_1}\\ \\\rho =
+\\\theta = (\theta_1,\theta_2)^\top\\ \\\sigma = e^{\theta_1}\\ \\\rho =
 \frac{e^{\theta_2}}{1 + e^{\theta_2}}\\
 
 \\\Sigma\_{ij} = \sigma \rho^{d\_{ij}^2}\\ where \\d\_{ij}\\ is the
@@ -373,8 +579,8 @@ second-order derivatives where SAS’s natural \\(0, 1)\\-scaled
 parameterization would give zero. The likelihood, \\\beta\\ estimates
 and KR-Linear adjusted standard errors all match SAS to numerical
 precision; small (typically sub-percent) differences remain on the
-default Kenward-Roger standard error. To reproduce SAS exactly, use the
-linear Kenward-Roger approximation.
+default Kenward-Roger standard error. The closest results to SAS are
+again obtain when using the linear Kenward-Roger method in `mmrm`.
 
 ## References
 

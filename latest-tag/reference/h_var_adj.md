@@ -3,7 +3,7 @@
 Obtains the Kenward-Roger adjusted covariance matrix for the coefficient
 estimates. Used in
 [`mmrm()`](https://openpharma.github.io/mmrm/reference/mmrm.md) fitting
-if method is "Kenward-Roger" or "Kenward-Roger-Linear".
+if vcov is "Kenward-Roger".
 
 ## Usage
 
@@ -21,7 +21,7 @@ h_var_adj(v, w, p, q, r, linear = FALSE)
 - w:
 
   (`matrix`)\
-  hessian matrix.
+  covariance matrix of the estimated covariance parameters.
 
 - p:
 
@@ -37,9 +37,10 @@ h_var_adj(v, w, p, q, r, linear = FALSE)
 
 - r:
 
-  (`matrix`)\
+  (`matrix` or `NULL`)\
   R matrix from
   [`h_get_kr_comp()`](https://openpharma.github.io/mmrm/reference/h_get_kr_comp.md).
+  May be `NULL` for the linear approximation.
 
 - linear:
 
@@ -49,3 +50,11 @@ h_var_adj(v, w, p, q, r, linear = FALSE)
 ## Value
 
 The matrix of adjusted covariance matrix.
+
+## Details
+
+[`mmrm()`](https://openpharma.github.io/mmrm/reference/mmrm.md) uses
+this function for full Kenward-Roger only, and
+[`h_var_adj_contracted()`](https://openpharma.github.io/mmrm/reference/h_var_adj_contracted.md)
+for the linear approximation. The pairwise linear path is kept as an
+independent reference for tests.

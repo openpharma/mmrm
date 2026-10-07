@@ -41,7 +41,7 @@ the next (i.e, columns are nested).">
 
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.18</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.19</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -95,6 +95,7 @@ the next (i.e, columns are nested).">
     <div class="dropdown-menu" aria-labelledby="dropdown-versions">
     <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
+<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.19">v0.3.19</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.18">v0.3.18</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.17">v0.3.17</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.16">v0.3.16</a>
@@ -130,7 +131,7 @@ the next (i.e, columns are nested).">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Predicate Indicating Whether <code>mmrm</code> Fits' Datasets Contain the Same Observations</h1>
-      <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.18/R/utils.R" class="external-link"><code>R/utils.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.19/R/utils.R" class="external-link"><code>R/utils.R</code></a></small>
       <div class="d-none name"><code>h_check_fits_all_data_same.Rd</code></div>
     </div>
 
@@ -175,7 +176,7 @@ rows.</p></li>
 <li><p><code>FALSE</code> is returned early if a dataset has a column not in the next
 dataset.</p></li>
 <li><p>The columns in common among adjacent datasets are sorted and compared
-using <code><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal()</a></code> with <code>check.attributes = FALSE</code>.</p></li>
+using <code><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">base::all.equal()</a></code> with <code>check.attributes = FALSE</code>.</p></li>
 </ol>
 <p>This function is more efficient than running <code><a href="h_check_columns_nested.html">h_check_columns_nested()</a></code> on
 all adjacent pairs and supplying the results to <code><a href="https://rdrr.io/r/base/all.html" class="external-link">all()</a></code>.</p>
@@ -197,7 +198,7 @@ sets.</p></div>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

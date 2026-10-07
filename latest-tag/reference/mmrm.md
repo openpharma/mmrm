@@ -126,7 +126,9 @@ Additional contents depend on `vcov` (see
 
 - If Kenward-Roger covariance matrix is used, `kr_comp` contains
   necessary components and `beta_vcov_adj` includes the adjusted
-  coefficients covariance matrix.
+  coefficients covariance matrix. For `"Kenward-Roger"` these components
+  are `P`, `Q` and `R`. For `"Kenward-Roger-Linear"` they are `P` and
+  the contracted matrix `S_Q`, while `Q` and `R` are `NULL`.
 
 - If Empirical covariance matrix is used, `beta_vcov_adj` contains the
   corresponding coefficients covariance matrix estimate. In addition,

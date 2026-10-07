@@ -27,7 +27,7 @@ h_kr_df(v0, l, w, p)
 - w:
 
   (`matrix`)\
-  hessian matrix.
+  covariance matrix of the estimated covariance parameters.
 
 - p:
 

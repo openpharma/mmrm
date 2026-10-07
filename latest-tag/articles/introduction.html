@@ -34,7 +34,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.18</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.19</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -88,6 +88,7 @@
     <div class="dropdown-menu" aria-labelledby="dropdown-versions">
     <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
+<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.19">v0.3.19</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.18">v0.3.18</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.17">v0.3.17</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.16">v0.3.16</a>
@@ -129,7 +130,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Package Introduction</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.18/vignettes/introduction.Rmd" class="external-link"><code>vignettes/introduction.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.19/vignettes/introduction.Rmd" class="external-link"><code>vignettes/introduction.Rmd</code></a></small>
       <div class="d-none name"><code>introduction.Rmd</code></div>
     </div>
 
@@ -514,8 +515,16 @@ structures, the time variable must be coded as a factor.</p>
 <div class="section level3">
 <h3 id="weighting">Weighting<a class="anchor" aria-label="anchor" href="#weighting"></a>
 </h3>
-<p>Users can perform weighted MMRM by specifying a numeric vector
-<code>weights</code> with positive values.</p>
+<p>Users can perform weighted MMRM by specifying one strictly positive
+numeric weight per observation (row of <code>data</code>). These are
+inverse-variance weights: holding the fitted covariance structure fixed,
+an observation with weight 2 has half the residual variance of an
+otherwise comparable observation with weight 1 (and its residual
+standard deviation is divided by <span class="math inline">\(\sqrt{2}\)</span>). The weights are fixed inputs,
+not weights on the outcome itself. They do not need to sum to one or to
+any treatment-group sample size; the default is 1 for every observation.
+The <a href="algorithm.html#linear-model">algorithm vignette</a> shows
+how the vector changes the subject covariance matrices.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit_wt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mmrm.html">mmrm</a></span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="va">FEV1</span> <span class="op">~</span> <span class="va">RACE</span> <span class="op">+</span> <span class="va">ARMCD</span> <span class="op">*</span> <span class="va">AVISIT</span> <span class="op">+</span> <span class="fu">us</span><span class="op">(</span><span class="va">AVISIT</span> <span class="op">|</span> <span class="va">USUBJID</span><span class="op">)</span>,</span>
@@ -547,6 +556,11 @@ structures, the time variable must be coded as a factor.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Model Inference Optimization:</span></span>
 <span><span class="co">#&gt; Converged with code 0 and message: convergence: rel_reduction_of_f &lt;= factr*epsmch</span></span></code></pre></div>
+<p>Here <code>fev_data$WEIGHT</code> supplies varying observation
+weights. For a simple two-level illustration, the same call could use
+<code>weights = ifelse(fev_data$AVISIT == "VIS1", 2, 1)</code>. At
+<code>VIS1</code>, this halves the model-implied residual variance
+relative to an otherwise identical observation with weight 1.</p>
 </div>
 <div class="section level3">
 <h3 id="grouped-covariance-structure">Grouped Covariance Structure<a class="anchor" aria-label="anchor" href="#grouped-covariance-structure"></a>
@@ -2581,7 +2595,7 @@ Also Ben helped us significantly with an example showing how to use
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

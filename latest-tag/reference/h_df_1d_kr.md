@@ -2,7 +2,8 @@
 
 Used in
 [`df_1d()`](https://openpharma.github.io/mmrm/reference/df_1d.md) if
-method is "Kenward-Roger" or "Kenward-Roger-Linear".
+method is "Kenward-Roger", i.e. for both "Kenward-Roger" and
+"Kenward-Roger-Linear" vcov.
 
 ## Usage
 

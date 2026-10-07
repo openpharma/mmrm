@@ -39,7 +39,7 @@ Used in mmrm() fitting if method is "Kenward-Roger".'>
 
     <a class="navbar-brand me-2" href="../index.html">mmrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.18</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.19</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -93,6 +93,7 @@ Used in mmrm() fitting if method is "Kenward-Roger".'>
     <div class="dropdown-menu" aria-labelledby="dropdown-versions">
     <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/main">main</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/latest-tag">latest-tag</a>
+<a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.19">v0.3.19</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.18">v0.3.18</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.17">v0.3.17</a>
 <a class="dropdown-item" data-toggle="tooltip" title="" href="https://openpharma.github.io/mmrm/v0.3.16">v0.3.16</a>
@@ -128,7 +129,7 @@ Used in mmrm() fitting if method is "Kenward-Roger".'>
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Obtain Kenward-Roger Adjustment Components</h1>
-      <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.18/R/kenwardroger.R" class="external-link"><code>R/kenwardroger.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/openpharma/mmrm/blob/v0.3.19/R/kenwardroger.R" class="external-link"><code>R/kenwardroger.R</code></a></small>
       <div class="d-none name"><code>h_get_kr_comp.Rd</code></div>
     </div>
 
@@ -140,7 +141,7 @@ Used in <code><a href="mmrm.html">mmrm()</a></code> fitting if method is "Kenwar
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a>
 </h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">h_get_kr_comp</span><span class="op">(</span><span class="va">tmb_data</span>, <span class="va">theta</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">h_get_kr_comp</span><span class="op">(</span><span class="va">tmb_data</span>, <span class="va">theta</span>, linear <span class="op">=</span> <span class="cn">FALSE</span>, w <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -158,6 +159,17 @@ Used in <code><a href="mmrm.html">mmrm()</a></code> fitting if method is "Kenwar
 </dt>
 <dd><p>(<code>numeric</code>)<br> theta estimate.</p></dd>
 
+
+<dt id="arg-linear">linear<a class="anchor" aria-label="anchor" href="#arg-linear"></a>
+</dt>
+<dd><p>(<code>flag</code>)<br> whether to omit second derivatives and the R component.</p></dd>
+
+
+<dt id="arg-w">w<a class="anchor" aria-label="anchor" href="#arg-w"></a>
+</dt>
+<dd><p>(<code>matrix</code> or <code>NULL</code>)<br> covariance of the covariance parameters.
+Supply with <code>linear = TRUE</code> to contract Q without constructing its blocks.</p></dd>
+
 </dl>
 </div>
     <div class="section level2">
@@ -167,7 +179,8 @@ Used in <code><a href="mmrm.html">mmrm()</a></code> fitting if method is "Kenwar
 <ul>
 <li><p><code>P</code>: <code>matrix</code> of \(P\) component.</p></li>
 <li><p><code>Q</code>: <code>matrix</code> of \(Q\) component.</p></li>
-<li><p><code>R</code>: <code>matrix</code> of \(R\) component.</p></li>
+<li><p><code>R</code>: <code>matrix</code> of \(R\) component, or <code>NULL</code> when <code>linear = TRUE</code>.</p></li>
+<li><p><code>S_Q</code>: contracted Q sum when <code>w</code> is supplied; <code>Q</code> and <code>R</code> are then <code>NULL</code>.</p></li>
 </ul>
 </div>
     <div class="section level2">
@@ -181,6 +194,12 @@ For \(P\) matrix, it is stacked sequentially. For \(Q\) and \(R\) matrix, it is 
 that the \(Q_{ij}\) and \(R_{ij}\) is stacked from \(j\) then to \(i\), i.e. \(R_{i1}\), \(R_{i2}\), etc.
 \(Q\) and \(R\) only contains intra-group results and inter-group results should be all zero matrices
 so they are not stacked in the result.</p>
+<p>Supplying <code>w</code> for linear KR instead retains <code>P</code> and contracts Q into the single
+matrix <code>S_Q</code>, without storing Q blocks, see the section "Contracted linear covariance
+adjustment" in <code><a href="../articles/kenward.html">vignette("kenward", package = "mmrm")</a></code>. The symmetric part of <code>w</code> is
+used, and non-finite entries in <code>w</code> give a non-finite <code>S_Q</code>.
+<code><a href="mmrm.html">mmrm()</a></code> always supplies <code>w</code> for linear KR. Calling with <code>linear = TRUE</code> but without <code>w</code>
+gives the pairwise <code>P</code> and <code>Q</code> blocks, which tests use as an independent reference.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -193,7 +212,7 @@ so they are not stacked in the result.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>
