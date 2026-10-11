@@ -1,3 +1,9 @@
+# mmrm 0.3.19.9000
+
+### Miscellaneous
+
+- Satterthwaite degrees of freedom with sandwich (empirical) covariance now avoid densifying the sparse per-subject contrast matrix, substantially speeding up `emmeans()`/`df_md()` calls on models with many subjects and coefficients, such as g-computation/IMMRM fits.
+
 # mmrm 0.3.19
 
 ### Bug Fixes
