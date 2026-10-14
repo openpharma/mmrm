@@ -103,8 +103,8 @@ h_gradient <- function(jac_list, contrast) {
 #' matrix is used.
 #'
 #' @param object (`mmrm`)\cr the MMRM fit.
-#' @param contrast_matrix (`matrix`)\cr contrast matrix with number of subjects times
-#' number of coefficients as the number of columns.
+#' @param contrast_matrix (`matrix` or `Matrix`)\cr contrast matrix with number of subjects times
+#' number of coefficients as the number of columns. May be a sparse `Matrix` for efficiency.
 #'
 #' @return Adjusted degrees of freedom value.
 #' @keywords internal
@@ -113,6 +113,11 @@ h_df_1d_sat_empirical <- function(object, contrast_matrix) {
   # The contrast matrix is block-diagonal with one block per subject, so it is
   # passed in as a sparse Matrix; densifying it is both slow and unnecessary.
   assert_multi_class(contrast_matrix, c("matrix", "Matrix"))
+  if (is.matrix(contrast_matrix)) {
+    assert_numeric(contrast_matrix)
+  } else {
+    assert_true(is(contrast_matrix, "dMatrix"))
+  }
   assert_false(anyNA(contrast_matrix))
   g_matrix <- if (
     is.null(object$empirical_g_mat) && !is.null(object$empirical_df_mat)
@@ -129,7 +134,8 @@ h_df_1d_sat_empirical <- function(object, contrast_matrix) {
       object$empirical_g_mat,
       contrast_matrix
     )
-    as.matrix(Matrix::crossprod(g_times_contrast_transposed))
+    crossprod_sparse <- Matrix::crossprod(g_times_contrast_transposed)
+    as.matrix(crossprod_sparse)
   } else {
     stop(
       "neither empirical_df_mat nor empirical_g_mat are available in mmrm fit object"
