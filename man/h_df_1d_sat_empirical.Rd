@@ -9,8 +9,8 @@ h_df_1d_sat_empirical(object, contrast_matrix)
 \arguments{
 \item{object}{(\code{mmrm})\cr the MMRM fit.}
 
-\item{contrast_matrix}{(\code{matrix})\cr contrast matrix with number of subjects times
-number of coefficients as the number of columns.}
+\item{contrast_matrix}{(\code{matrix} or \code{Matrix})\cr contrast matrix with number of subjects times
+number of coefficients as the number of columns. May be a sparse \code{Matrix} for efficiency.}
 }
 \value{
 Adjusted degrees of freedom value.

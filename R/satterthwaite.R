@@ -103,18 +103,22 @@ h_gradient <- function(jac_list, contrast) {
 #' matrix is used.
 #'
 #' @param object (`mmrm`)\cr the MMRM fit.
-#' @param contrast_matrix (`matrix`)\cr contrast matrix with number of subjects times
-#' number of coefficients as the number of columns.
+#' @param contrast_matrix (`matrix` or `Matrix`)\cr contrast matrix with number of subjects times
+#' number of coefficients as the number of columns. May be a sparse `Matrix` for efficiency.
 #'
 #' @return Adjusted degrees of freedom value.
 #' @keywords internal
 h_df_1d_sat_empirical <- function(object, contrast_matrix) {
   assert_class(object, "mmrm")
-  assert_matrix(
-    contrast_matrix,
-    mode = "numeric",
-    any.missing = FALSE
-  )
+  # The contrast matrix is block-diagonal with one block per subject, so it is
+  # passed in as a sparse Matrix; densifying it is both slow and unnecessary.
+  assert_multi_class(contrast_matrix, c("matrix", "Matrix"))
+  if (is.matrix(contrast_matrix)) {
+    assert_numeric(contrast_matrix)
+  } else {
+    assert_true(is(contrast_matrix, "dMatrix"))
+  }
+  assert_false(anyNA(contrast_matrix))
   g_matrix <- if (
     is.null(object$empirical_g_mat) && !is.null(object$empirical_df_mat)
   ) {
@@ -122,13 +126,16 @@ h_df_1d_sat_empirical <- function(object, contrast_matrix) {
       "mmrm fit was obtained with package version < 0.3.15, ",
       "using deprecated calculation of d.f., consider refitting the model"
     )
-    h_quad_form_mat(contrast_matrix, object$empirical_df_mat)
+    h_quad_form_mat(as.matrix(contrast_matrix), object$empirical_df_mat)
   } else if (!is.null(object$empirical_g_mat)) {
-    g_times_contrast_transposed <- tcrossprod(
+    # Keeping the contrast matrix sparse here avoids forming an
+    # n_subjects x (p * n_subjects) dense matrix for every contrast.
+    g_times_contrast_transposed <- Matrix::tcrossprod(
       object$empirical_g_mat,
       contrast_matrix
     )
-    crossprod(g_times_contrast_transposed)
+    crossprod_sparse <- Matrix::crossprod(g_times_contrast_transposed)
+    as.matrix(crossprod_sparse)
   } else {
     stop(
       "neither empirical_df_mat nor empirical_g_mat are available in mmrm fit object"
@@ -167,7 +174,6 @@ h_df_1d_sat <- function(object, contrast) {
       list(matrix(contrast, nrow = 1)),
       component(object, "n_subjects")
     ))
-    contrast_matrix <- as.matrix(contrast_matrix)
     h_df_1d_sat_empirical(object, contrast_matrix)
   }
 
@@ -312,7 +318,6 @@ h_df_md_sat <- function(object, contrast) {
             component(object, "n_subjects")
           )
         )
-        contrast_matrix <- as.matrix(contrast_matrix)
         h_df_1d_sat_empirical(object, contrast_matrix)
       },
       FUN.VALUE = 0
