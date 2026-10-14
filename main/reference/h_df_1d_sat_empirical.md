@@ -21,9 +21,9 @@ h_df_1d_sat_empirical(object, contrast_matrix)
 
 - contrast_matrix:
 
-  (`matrix`)\
+  (`matrix` or `Matrix`)\
   contrast matrix with number of subjects times number of coefficients
-  as the number of columns.
+  as the number of columns. May be a sparse `Matrix` for efficiency.
 
 ## Value
 

@@ -1,5 +1,17 @@
 # Changelog
 
+## mmrm 0.3.19.9000
+
+#### Miscellaneous
+
+- Satterthwaite degrees of freedom with empirical (sandwich) covariance
+  now keep the per-subject contrast matrix sparse instead of converting
+  it to a dense matrix, substantially speeding up
+  [`emmeans()`](https://rvlenth.github.io/emmeans/reference/emmeans.html)
+  and [`df_md()`](https://openpharma.github.io/mmrm/reference/df_md.md)
+  calls on models with many subjects and coefficients, such as
+  G-computation fits.
+
 ## mmrm 0.3.19
 
 CRAN release: 2026-10-06
