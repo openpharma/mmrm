@@ -28,6 +28,7 @@ articles:
     navbar: Introduction
     contents:
       - introduction
+      - application
       - methodological_introduction
       - mmrm_review_methods
   - title: Covariance Structures

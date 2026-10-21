@@ -4,9 +4,11 @@ BCVA
 Benchmarking
 Boehringer
 Bolker
+Bonferroni
 Bove
 COPD
 Cnaan
+Coffman
 Crossproduct
 DF
 DPD
@@ -22,8 +24,11 @@ Indexible
 Ingelheim
 Kenward
 LDL
+Liu
 Lukas
+MCAR
 MMRMs
+MNAR
 MacOS
 Mallinckrodt
 Mancuso
@@ -46,12 +51,14 @@ WLS
 Wa
 ZP
 adh
+al
 ansi
 ar
 ast
 biostatistics
 blockdiag
 cF
+cLDA
 cdot
 cdots
 cli
@@ -72,6 +79,7 @@ dotsc
 eigen
 eigendecomposition
 emmeans
+et
 facto
 factorizations
 frac
@@ -82,6 +90,7 @@ hZ
 hj
 iD
 iG
+ignorable
 ih
 ihj
 ij
@@ -89,6 +98,7 @@ ik
 im
 indexible
 infty
+intercurrent
 intra
 ir
 jh
