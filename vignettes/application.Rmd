@@ -1,0 +1,383 @@
+---
+title: "From baseline to planned treatment contrasts"
+package: mmrm
+output:
+  rmarkdown::html_vignette:
+    toc: true
+vignette: |
+  %\VignetteIndexEntry{From baseline to planned treatment contrasts}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", error = FALSE, cache = FALSE)
+```
+
+# The question and the analysis
+
+How can we estimate treatment differences at a final visit and across several
+visits, while accounting for baseline measurements and incomplete follow-up?
+This example uses the artificial `fev_data` shipped with `mmrm` to illustrate a
+hypothetical two-arm randomized trial. It is an analysis recipe, not evidence
+about a real treatment. Familiarity with the [package introduction](introduction.html)
+is assumed.
+
+We treat `FEV1_BL` as a measurement collected before treatment and `VIS1` to
+`VIS4` as categorical follow-up visits. The response is `FEV1`; differences
+are expressed on its original scale. The participant is the independent
+sampling unit. For the randomized population represented by these artificial
+data, our two illustrative targets are:
+
+- the treatment minus placebo mean difference at `VIS4`;
+- the equally weighted average of the treatment minus placebo differences at
+  `VIS3` and `VIS4`.
+
+The second target gives each visit weight one half, irrespective of how many
+responses are observed there. These contrasts should be specified before
+looking at results. A real trial also needs an explicit strategy for
+intercurrent events, such as treatment discontinuation, which these data do
+not provide.
+
+We compare two Gaussian models fitted by restricted maximum likelihood (REML),
+with an unstructured within-participant covariance and Satterthwaite degrees
+of freedom:
+
+1. A **baseline-adjusted MMRM** models follow-up responses conditional on baseline,
+   with a separate baseline slope at each visit and a common slope across arms.
+2. A **constrained longitudinal data analysis (cLDA)** includes baseline in the
+   response vector and constrains its population mean to be the same in both
+   arms. Follow-up means remain separate for each arm and visit.
+
+Randomization motivates the common population baseline mean; it does not make
+the observed baseline means identical. This constraint is not automatically
+appropriate for an observational comparison. The joint cLDA model also models
+the distribution of baseline, whereas the baseline-adjusted model conditions
+on its observed value. See [Liu et al. (2009)](https://doi.org/10.1002/sim.3639),
+[Lu (2010)](https://doi.org/10.1111/j.1541-0420.2009.01332.x), and
+[Coffman et al. (2016)](https://doi.org/10.1136/bmjopen-2016-013096).
+
+# Prepare one baseline record per participant
+
+```{r data, message = FALSE}
+library(mmrm)
+library(emmeans)
+
+post <- fev_data
+subjects <- unique(post[c("USUBJID", "ARMCD", "FEV1_BL")])
+stopifnot(
+  !anyDuplicated(subjects$USUBJID),
+  !anyDuplicated(post[c("USUBJID", "AVISIT")]),
+  !anyNA(subjects)
+)
+```
+
+`FEV1_BL` is repeated across follow-up records. Taking distinct participant,
+arm, and baseline combinations checks that those copies agree. The helper
+below creates exactly one baseline response per participant, including those
+whose first follow-up response is missing. It deliberately keeps the baseline
+covariate out of the cLDA data: baseline enters that model only as a response.
+
+```{r prepare-long}
+make_long <- function(data) {
+  baseline <- unique(data[c("USUBJID", "ARMCD", "FEV1_BL")])
+  stopifnot(
+    !anyDuplicated(baseline$USUBJID),
+    !anyDuplicated(data[c("USUBJID", "AVISIT")])
+  )
+  baseline$FEV1 <- baseline$FEV1_BL
+  baseline$AVISIT <- "VIS0"
+  columns <- c("USUBJID", "ARMCD", "AVISIT", "FEV1")
+  long <- rbind(baseline[columns], data[columns])
+  long$AVISIT <- factor(long$AVISIT, levels = paste0("VIS", 0:4))
+  cell_levels <- c(
+    "Baseline",
+    paste(rep(c("PBO", "TRT"), each = 4), paste0("VIS", 1:4), sep = "_")
+  )
+  long$CELL <- factor(
+    ifelse(long$AVISIT == "VIS0", "Baseline", paste(long$ARMCD, long$AVISIT, sep = "_")),
+    levels = cell_levels
+  )
+  long[order(long$USUBJID, long$AVISIT), ]
+}
+
+long <- make_long(post)
+with(long, table(AVISIT, observed = !is.na(FEV1)))
+```
+
+The helper is specific to this two-arm, four-follow-up example. For another
+study, adapt and validate the visit and treatment levels before using it.
+Missing responses remain missing; no imputation has been performed.
+
+# Encode and check the common baseline mean
+
+`CELL` has one shared baseline level and eight arm-by-follow-up levels.
+With no intercept, its nine coefficients are exactly the nine model means.
+`AVISIT` remains a factor and specifies the covariance structure.
+
+```{r design}
+design <- model.matrix(~ 0 + CELL, data = long)
+baseline_design <- design[long$AVISIT == "VIS0", , drop = FALSE]
+stopifnot(
+  ncol(design) == 9L,
+  qr(design)$rank == 9L,
+  nrow(unique(baseline_design)) == 1L
+)
+unique(data.frame(long[c("AVISIT", "ARMCD", "CELL")], row.names = NULL))
+```
+
+Inspecting the design matrix matters. Simply omitting an `ARMCD` main effect
+from `AVISIT + AVISIT:ARMCD` does not impose the desired baseline constraint
+when visit is a factor. Replacing visit by a numeric variable would instead
+restrict the time trend. The cell-means construction avoids both problems.
+
+```{r fit}
+fit_clda <- mmrm(
+  FEV1 ~ 0 + CELL + us(AVISIT | USUBJID),
+  data = long, reml = TRUE, method = "Satterthwaite"
+)
+fit_adjusted <- mmrm(
+  FEV1 ~ ARMCD * AVISIT + FEV1_BL * AVISIT + us(AVISIT | USUBJID),
+  data = post, reml = TRUE, method = "Satterthwaite"
+)
+stopifnot(
+  component(fit_clda, "convergence") == 0L,
+  component(fit_adjusted, "convergence") == 0L
+)
+```
+
+The `FEV1_BL * AVISIT` term allows baseline adjustment to differ by visit.
+Using only a common baseline slope would add a restriction absent from the
+unstructured joint cLDA model. The latter estimates a five-by-five covariance
+matrix, including baseline; the conditional model estimates a four-by-four
+covariance matrix for follow-up. Sparse data can make either difficult to
+estimate. Convergence alone does not validate the mean or covariance model.
+
+# Obtain the planned contrasts with `emmeans`
+
+`CELL` already defines the allowable means. We request those means directly
+and set `nesting = NULL` to disable automatic nesting detection. Although
+`AVISIT` determines the covariance, no additional averaging over it changes
+the mean associated with a given cell.
+
+```{r contrasts}
+cell_means <- emmeans(fit_clda, ~CELL, nesting = NULL)
+cell_table <- as.data.frame(cell_means)
+
+planned_weights <- function(cells) {
+  list(
+    final_visit = as.numeric(cells == "TRT_VIS4") - as.numeric(cells == "PBO_VIS4"),
+    average_last_two = (
+      as.numeric(cells %in% c("TRT_VIS3", "TRT_VIS4")) -
+        as.numeric(cells %in% c("PBO_VIS3", "PBO_VIS4"))
+    ) / 2
+  )
+}
+
+weights <- planned_weights(as.character(cell_table$CELL))
+knitr::kable(data.frame(CELL = cell_table$CELL, weights), row.names = FALSE)
+planned <- contrast(cell_means, method = weights)
+results <- as.data.frame(summary(planned, infer = c(TRUE, TRUE), adjust = "none"))
+display_results <- results
+display_results$p.value <- format.pval(results$p.value, digits = 3, eps = 0.001)
+knitr::kable(display_results, digits = 3, row.names = FALSE)
+```
+
+Weights are matched by cell labels, rather than assumed row positions. For
+the average, `emmeans` propagates the covariance between the two visit-specific
+differences; averaging their standard errors would be incorrect. Positive
+estimates indicate higher mean `FEV1` on treatment. Whether that difference
+is clinically important requires context absent from this artificial example.
+
+These are individual 95% confidence intervals. If both contrasts form one
+confirmatory family, an analysis plan must address multiplicity. For example,
+Bonferroni-adjusted intervals and tests for this two-contrast family are:
+
+```{r multiplicity}
+summary(planned, infer = c(TRUE, TRUE), adjust = "bonferroni", by = NULL)
+```
+
+This adjustment is across the two requested contrasts, not across separate
+visit groups. It does not correct for additional analyses selected after
+examining the data.
+
+# What changes when baseline is missing?
+
+For illustration, we remove baseline for 40 participants selected at random.
+This imposed baseline missingness is missing completely at random (MCAR).
+It says nothing about the mechanism behind the missing follow-up values
+already present in `fev_data`. We overwrite **all** copies of each selected
+participant's baseline before constructing the long data.
+
+```{r missing-baseline}
+set.seed(448)
+missing_ids <- sample(as.character(subjects$USUBJID), size = 40L)
+missing_post <- post
+missing_post$FEV1_BL[missing_post$USUBJID %in% missing_ids] <- NA_real_
+missing_long <- make_long(missing_post)
+
+fit_clda_missing <- mmrm(
+  FEV1 ~ 0 + CELL + us(AVISIT | USUBJID),
+  data = missing_long, reml = TRUE, method = "Satterthwaite"
+)
+fit_adjusted_missing <- mmrm(
+  FEV1 ~ ARMCD * AVISIT + FEV1_BL * AVISIT + us(AVISIT | USUBJID),
+  data = missing_post, reml = TRUE, method = "Satterthwaite"
+)
+
+adjusted_rows <- complete.cases(missing_post[c("FEV1", "FEV1_BL", "ARMCD", "AVISIT", "USUBJID")])
+common_ids <- unique(missing_post$USUBJID[adjusted_rows])
+fit_clda_common <- mmrm(
+  FEV1 ~ 0 + CELL + us(AVISIT | USUBJID),
+  data = missing_long[missing_long$USUBJID %in% common_ids, ],
+  reml = TRUE, method = "Satterthwaite"
+)
+
+fits <- list(
+  "Original cLDA" = fit_clda,
+  "Original adjusted MMRM" = fit_adjusted,
+  "Missing baseline: cLDA" = fit_clda_missing,
+  "Missing baseline: adjusted MMRM" = fit_adjusted_missing,
+  "Missing baseline: cLDA, common participants" = fit_clda_common
+)
+stopifnot(all(vapply(fits, function(fit) component(fit, "convergence") == 0L, logical(1))))
+populations <- data.frame(
+  analysis = names(fits),
+  participants = vapply(fits, function(fit) component(fit, "n_subjects"), numeric(1)),
+  observed_responses = vapply(fits, function(fit) component(fit, "n_obs"), numeric(1))
+)
+knitr::kable(populations, row.names = FALSE)
+```
+
+The response counts include baseline for cLDA and only follow-up for the
+adjusted model. Even before the imposed deletions, three participants have
+baseline but no observed follow-up; only cLDA uses their data. After deletion,
+the adjusted model also excludes every participant with missing baseline,
+whereas cLDA can use their observed follow-up responses. A participant with
+no observed response at any visit contributes to neither model.
+
+To compare estimates as well as counts, we use the same weights for each
+model. In the adjusted model, arm differences do not depend on the baseline
+value used by the reference grid because there is no arm-by-baseline
+interaction.
+
+```{r compare}
+contrast_results <- function(fit, joint) {
+  if (joint) {
+    means <- emmeans(fit, ~CELL, nesting = NULL)
+    cells <- as.character(as.data.frame(means)$CELL)
+  } else {
+    means <- emmeans(fit, ~ ARMCD * AVISIT)
+    grid <- as.data.frame(means)
+    cells <- paste(grid$ARMCD, grid$AVISIT, sep = "_")
+  }
+  as.data.frame(summary(
+    contrast(means, method = planned_weights(cells)),
+    infer = c(TRUE, TRUE), adjust = "none"
+  ))
+}
+
+comparison <- do.call(rbind, lapply(seq_along(fits), function(i) {
+  cbind(analysis = names(fits)[i], contrast_results(fits[[i]], joint = i %in% c(1, 3, 5)))
+}))
+knitr::kable(
+  comparison[c("analysis", "contrast", "estimate", "SE", "lower.CL", "upper.CL")],
+  digits = 3, row.names = FALSE
+)
+```
+
+The cLDA analysis on the common participants helps separate differences in
+who is analyzed from differences between the fitted models. It is a
+diagnostic comparison, not an alternative primary analysis chosen for its
+result. We do not expect exact agreement between these REML fits with
+incomplete data, and this one example does not establish bias, coverage,
+power, or superiority of either method.
+
+```{r plot, fig.width = 7, fig.height = 5, fig.alt = "Treatment minus placebo estimates with individual 95 percent confidence intervals for each model and analysis population, separately for the final visit and the average of the last two visits."}
+library(ggplot2)
+comparison$analysis <- factor(comparison$analysis, levels = rev(names(fits)))
+ggplot(comparison, aes(x = estimate, y = analysis)) +
+  geom_vline(xintercept = 0, linetype = 2, color = "grey60") +
+  geom_segment(aes(x = lower.CL, xend = upper.CL, yend = analysis)) +
+  geom_point() +
+  facet_wrap(~contrast, ncol = 1, labeller = as_labeller(c(
+    final_visit = "Final visit", average_last_two = "Average of the last two visits"
+  ))) +
+  labs(x = "Treatment minus placebo (FEV1 scale; individual 95% CI)", y = NULL) +
+  theme_bw(base_size = 10)
+```
+
+# Check the numerical calculation
+
+For these cell means, build the contrast matrix explicitly in coefficient
+order. Estimates and standard errors must agree with $L\hat\beta$ and
+$\sqrt{\operatorname{diag}(L\widehat{\operatorname{Var}}(\hat\beta)L^T)}$.
+This checks the contrast mapping, not the statistical assumptions.
+
+```{r matrix-check}
+cell_design <- model.matrix(~ 0 + CELL, data = cell_table)
+cell_design <- cell_design[, names(coef(fit_clda)), drop = FALSE]
+contrast_matrix <- do.call(rbind, weights) %*% cell_design
+manual_estimate <- drop(contrast_matrix %*% coef(fit_clda))
+manual_se <- sqrt(diag(contrast_matrix %*% vcov(fit_clda) %*% t(contrast_matrix)))
+stopifnot(
+  max(abs(results$estimate - manual_estimate)) < 1e-10,
+  max(abs(results$SE - manual_se)) < 1e-10
+)
+```
+
+As an independent numerical reference, `nlme::gls()` can fit the same joint
+mean model and unstructured covariance. Integer visit indices encode the
+original visit positions, including gaps; observations must be ordered by
+participant and visit. `corSymm()` supplies unrestricted correlations and
+`varIdent()` allows a separate variance at each visit.
+
+```{r independent-check}
+long$VISIT_INDEX <- as.integer(long$AVISIT)
+fit_gls <- nlme::gls(
+  FEV1 ~ 0 + CELL,
+  data = long,
+  correlation = nlme::corSymm(form = ~ VISIT_INDEX | USUBJID),
+  weights = nlme::varIdent(form = ~ 1 | AVISIT),
+  na.action = na.omit, method = "REML",
+  control = nlme::glsControl(msMaxIter = 1000, tolerance = 1e-8)
+)
+gls_estimate <- drop(contrast_matrix %*% coef(fit_gls))
+gls_se <- sqrt(diag(contrast_matrix %*% vcov(fit_gls) %*% t(contrast_matrix)))
+agreement <- data.frame(
+  quantity = c(
+    "Mean coefficients", "Model-based standard errors", "REML log-likelihood",
+    "Planned contrasts", "Contrast standard errors"
+  ),
+  max_absolute_difference = c(
+    max(abs(coef(fit_clda) - coef(fit_gls))),
+    max(abs(sqrt(diag(vcov(fit_clda))) - sqrt(diag(vcov(fit_gls))))),
+    abs(as.numeric(logLik(fit_clda)) - as.numeric(logLik(fit_gls))),
+    max(abs(results$estimate - gls_estimate)),
+    max(abs(results$SE - gls_se))
+  )
+)
+stopifnot(all(agreement$max_absolute_difference < c(1e-4, 1e-4, 1e-5, 1e-4, 1e-4)))
+knitr::kable(agreement, digits = 7, row.names = FALSE)
+```
+
+This agreement validates the mean and contrast estimates, model-based standard
+errors, and likelihood calculation to numerical tolerance. It does **not** independently
+validate the Satterthwaite degrees of freedom or confidence-interval coverage.
+
+# Assumptions and interpretation
+
+Likelihood-based inference with incomplete responses requires an appropriate
+mean and covariance model and an ignorable missingness mechanism, typically
+missing at random (MAR) with distinct model and missingness parameters. MAR
+allows missingness to depend on observed information; it cannot be established
+from the observed responses alone. Including baseline as a response does not
+solve missing not at random (MNAR) missingness.
+
+In a real analysis, examine missingness patterns by arm and visit, residuals,
+covariance estimates, and convergence diagnostics. Pre-specify sensitivity
+analyses for plausible departures from the missingness assumptions. An
+unstructured covariance is flexible but can be unstable with many visits
+and limited information. Decisions about the model and population should
+follow the scientific question, design, and assumptions, rather than which
+analysis produces a smaller p-value.

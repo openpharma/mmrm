@@ -2,6 +2,8 @@
 
 ### Miscellaneous
 
+- Added an application vignette comparing baseline-adjusted MMRM with constrained longitudinal data analysis, including planned `emmeans` contrasts and an example with missing baseline measurements.
+
 - Satterthwaite degrees of freedom with empirical (sandwich) covariance now keep the per-subject contrast matrix sparse instead of converting it to a dense matrix, substantially speeding up `emmeans()` and `df_md()` calls on models with many subjects and coefficients, such as G-computation fits.
 
 # mmrm 0.3.19
