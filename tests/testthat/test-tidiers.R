@@ -160,6 +160,85 @@ test_that("augment returns residuals normalized", {
   expect_equal(result_resid, expected)
 })
 
+test_that("augment ignores missing values in variables outside the model", {
+  model_vars <- c("FEV1", "RACE", "SEX", "ARMCD", "AVISIT", "USUBJID")
+  fitted_rows <- which(complete.cases(fev_data[, model_vars]))
+  for (missing_rows in list(fitted_rows[1L], seq_len(nrow(fev_data)))) {
+    input <- fev_data
+    input$unused <- 1
+    input$unused[missing_rows] <- NA_real_
+    object <- mmrm(.mmrm_formula, data = input)
+
+    for (type in c("response", "pearson", "normalized")) {
+      result <- expect_silent(augment(object, type.residuals = type))
+      expected_residuals <- residuals(object, type = type)
+      names(expected_residuals) <- rownames(model.frame(object))
+
+      expect_equal(result$.rownames, fitted_rows)
+      expect_equal(result$FEV1, input$FEV1[fitted_rows])
+      expect_equal(
+        result$.fitted,
+        unname(predict(object, newdata = input[fitted_rows, ]))
+      )
+      expect_equal(
+        result$.resid,
+        unname(expected_residuals[as.character(fitted_rows)])
+      )
+    }
+
+    result_newdata <- expect_silent(augment(object, newdata = input))
+    expect_equal(nrow(result_newdata), nrow(input))
+    expect_false(".resid" %in% names(result_newdata))
+  }
+})
+
+test_that("augment handles unrelated missingness when every model row is complete", {
+  input <- fev_data[complete.cases(fev_data), ]
+  rownames(input) <- NULL
+  input$unused <- NA_real_
+  object <- mmrm(.mmrm_formula, data = input)
+
+  result <- expect_silent(augment(object))
+
+  expect_equal(result$.rownames, seq_len(nrow(input)))
+  expect_equal(result$FEV1, input$FEV1)
+  expect_equal(result$.resid, input$FEV1 - result$.fitted)
+})
+
+test_that("augment aligns residuals for unsorted data and transformed terms", {
+  input <- fev_data[rev(seq_len(nrow(fev_data))), ]
+  rownames(input) <- NULL
+  object <- mmrm(
+    identity(FEV1) ~ log(FEV1_BL) + ARMCD * AVISIT + ar1(as.ordered(AVISIT) | USUBJID),
+    data = input
+  )
+  model_vars <- c("FEV1", "FEV1_BL", "ARMCD", "AVISIT", "USUBJID")
+  fitted_rows <- which(complete.cases(input[, model_vars]))
+
+  result <- expect_silent(augment(object))
+
+  expect_equal(result$.rownames, fitted_rows)
+  expect_equal(result$FEV1_BL, input$FEV1_BL[fitted_rows])
+  expect_equal(result$.fitted, unname(predict(object, newdata = input[fitted_rows, ])))
+  expect_equal(result$.resid, input$FEV1[fitted_rows] - result$.fitted)
+})
+
+test_that("augment preserves input order when evaluating order-dependent terms", {
+  input <- fev_data[rev(which(complete.cases(fev_data))), ]
+  rownames(input) <- NULL
+  object <- mmrm(
+    FEV1 ~ rank(FEV1_BL, ties.method = "first") + ARMCD * AVISIT + ar1(AVISIT | USUBJID),
+    data = input
+  )
+  expected_fitted <- fitted(object)
+  names(expected_fitted) <- rownames(model.frame(object))
+
+  result <- expect_silent(augment(object))
+
+  expect_equal(result$.fitted, unname(expected_fitted[as.character(seq_len(nrow(input)))]))
+  expect_equal(result$.resid, input$FEV1 - result$.fitted)
+})
+
 # h_tbl_confint_terms ----
 
 test_that("h_tbl_confint_terms works as expected", {
