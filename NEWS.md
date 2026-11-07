@@ -1,5 +1,9 @@
 # mmrm 0.3.19.9000
 
+### Bug Fixes
+
+- `augment()` now uses the observations retained in the fitted model, avoiding failures caused by missing values in unrelated variables and keeping residuals aligned when the input rows are not sorted. (#585)
+
 ### Miscellaneous
 
 - Satterthwaite degrees of freedom with empirical (sandwich) covariance now keep the per-subject contrast matrix sparse instead of converting it to a dense matrix, substantially speeding up `emmeans()` and `df_md()` calls on models with many subjects and coefficients, such as G-computation fits.

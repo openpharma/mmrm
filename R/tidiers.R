@@ -90,9 +90,11 @@ augment.mmrm <- function(
   type.residuals <- match.arg(type.residuals) # nolint
   resid_df <- NULL
   if (is.null(newdata)) {
-    newdata <- stats::get_all_vars(x, data = stats::na.omit(x$data))
+    model_rows <- rownames(stats::model.frame(x))
+    newdata <- stats::get_all_vars(x, data = x$data)
+    newdata <- newdata[rownames(newdata) %in% model_rows, , drop = FALSE]
     resid_df <- data.frame(
-      .rownames = rownames(newdata),
+      .rownames = model_rows,
       .resid = unname(residuals(x, type = type.residuals))
     )
   }
@@ -106,6 +108,7 @@ augment.mmrm <- function(
     ...
   )
   if (!is.null(resid_df)) {
+    tbl$.rownames <- rownames(newdata)
     tbl <- merge(tbl, resid_df, by = ".rownames")
     tbl$.rownames <- as.numeric(tbl$.rownames)
     tbl <- tbl[order(tbl$.rownames), , drop = FALSE]
