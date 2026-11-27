@@ -1,5 +1,9 @@
 # mmrm 0.3.19.9000
 
+### Bug Fixes
+
+- `anova.mmrm()` likelihood ratio tests for three or more models now use the degrees of freedom difference of each compared pair. Previously, the differences were recycled out of phase, so p-values were wrong when consecutive models differed by different numbers of parameters.
+
 ### Miscellaneous
 
 - Satterthwaite degrees of freedom with empirical (sandwich) covariance now keep the per-subject contrast matrix sparse instead of converting it to a dense matrix, substantially speeding up `emmeans()` and `df_md()` calls on models with many subjects and coefficients, such as G-computation fits.
