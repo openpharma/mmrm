@@ -1,6 +1,6 @@
 # Obtain Empirical/Jackknife/Bias-Reduced Covariance
 
-Obtain the empirical or Jackknife covariance for \\\beta\\. Used in
+Obtain the empirical or Jackknife covariance for \\(\beta\\). Used in
 `mmrm` fitting if method is "Empirical", "Empirical-Jackknife" or
 "Empirical-Bias-Reduced".
 

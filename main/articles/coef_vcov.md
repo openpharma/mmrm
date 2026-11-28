@@ -14,37 +14,37 @@ estimator](https://openpharma.github.io/mmrm/articles/algorithm.html#weighted-le
 
 ### Asymptotic Covariance
 
-Asymptotic covariance are derived based on the estimate of \\\beta\\.
+Asymptotic covariance are derived based on the estimate of \\(\beta\\).
 
 Following the definition in [details in model
 fitting](https://openpharma.github.io/mmrm/articles/algorithm.html#linear-model),
 we have
 
-\\ \hat\beta = (X^\top W X)^{-1} X^\top W Y \\
+\\\[\hat\beta = (X^\top W X)^{-1} X^\top W Y\\\]
 
-\\ cov(\hat\beta) = (X^\top W X)^{-1} X^\top W cov(\epsilon) W X (X^\top
-W X)^{-1} = (X^\top W X)^{-1} \\
+\\\[cov(\hat\beta) = (X^\top W X)^{-1} X^\top W cov(\epsilon) W X
+(X^\top W X)^{-1} = (X^\top W X)^{-1}\\\]
 
-Where \\W\\ is the block diagonal matrix of inverse of covariance matrix
-of \\\epsilon\\.
+Where \\(W\\) is the block diagonal matrix of inverse of covariance
+matrix of \\(\epsilon\\).
 
 ### Empirical Covariance
 
 Empirical covariance, also known as the robust sandwich estimator, or
-“CR0”, is derived by replacing the covariance matrix of \\\epsilon\\ by
-observed covariance matrix.
+“CR0”, is derived by replacing the covariance matrix of \\(\epsilon\\)
+by observed covariance matrix.
 
-\\ cov(\hat\beta) = (X^\top W X)^{-1}(\sum\_{i}{X_i^\top W_i
+\\\[cov(\hat\beta) = (X^\top W X)^{-1}(\sum\_{i}{X_i^\top W_i
 \hat\epsilon_i\hat\epsilon_i^\top W_i X_i})(X^\top W X)^{-1} = (X^\top W
 X)^{-1}(\sum\_{i}{X_i^\top L\_{i} L\_{i}^\top
 \hat\epsilon_i\hat\epsilon_i^\top L\_{i} L\_{i}^\top X_i})(X^\top W
-X)^{-1} \\
+X)^{-1}\\\]
 
-Where \\W_i\\ is the block diagonal part for subject \\i\\ of \\W\\
-matrix, \\\hat\epsilon_i\\ is the observed residuals for subject i,
-\\L_i\\ is the Cholesky factor of \\\Sigma_i^{-1}\\ (\\W_i = L_i
-L_i^\top\\). In the sandwich, the score \\X_i^\top W_i \hat\epsilon_i\\
-computed for subject \\i\\ can be accessed by
+Where \\(W_i\\) is the block diagonal part for subject \\(i\\) of
+\\(W\\) matrix, \\(\hat\epsilon_i\\) is the observed residuals for
+subject i, \\(L_i\\) is the Cholesky factor of \\(\Sigma_i^{-1}\\)
+(\\(W_i = L_i L_i^\top\\)). In the sandwich, the score \\(X_i^\top W_i
+\hat\epsilon_i\\) computed for subject \\(i\\) can be accessed by
 `component(mmrm_obj, name = "score_per_subject")`.
 
 See the detailed explanation of these formulas in the [Weighted Least
@@ -57,29 +57,29 @@ vignette.
 Jackknife method in `mmrm` is the “leave-one-cluster-out” method. It is
 also known as “CR3”. Following McCaffrey and Bell (2003), we have
 
-\\ cov(\hat\beta) = (X^\top W X)^{-1}(\sum\_{i}{X_i^\top L\_{i}
+\\\[cov(\hat\beta) = (X^\top W X)^{-1}(\sum\_{i}{X_i^\top L\_{i}
 (I\_{i} - H\_{ii})^{-1} L\_{i}^\top \hat\epsilon_i\hat\epsilon_i^\top
-L\_{i} (I\_{i} - H\_{ii})^{-1} L\_{i}^\top X_i})(X^\top W X)^{-1} \\
+L\_{i} (I\_{i} - H\_{ii})^{-1} L\_{i}^\top X_i})(X^\top W X)^{-1}\\\]
 
 where
 
-\\H\_{ii} = X_i(X^\top X)^{-1}X_i^\top\\
+\\\[H\_{ii} = X_i(X^\top X)^{-1}X_i^\top\\\]
 
 Please note that in the paper there is an additional scale parameter
-\\\frac{n-1}{n}\\ where \\n\\ is the number of subjects, here we do not
-include this parameter.
+\\(\frac{n-1}{n}\\) where \\(n\\) is the number of subjects, here we do
+not include this parameter.
 
 ### Bias-Reduced Covariance
 
 Bias-reduced method, also known as “CR2”, provides unbiased under
-correct working model. Following McCaffrey and Bell (2003), we have \\
-cov(\hat\beta) = (X^\top W X)^{-1}(\sum\_{i}{X_i^\top L\_{i} (I\_{i} -
-H\_{ii})^{-1/2} L\_{i}^\top \hat\epsilon_i\hat\epsilon_i^\top L\_{i}
-(I\_{i} - H\_{ii})^{-1} L\_{i}^\top X_i})(X^\top W X)^{-1} \\
+correct working model. Following McCaffrey and Bell (2003), we have
+\\\[cov(\hat\beta) = (X^\top W X)^{-1}(\sum\_{i}{X_i^\top L\_{i}
+(I\_{i} - H\_{ii})^{-1/2} L\_{i}^\top \hat\epsilon_i\hat\epsilon_i^\top
+L\_{i} (I\_{i} - H\_{ii})^{-1} L\_{i}^\top X_i})(X^\top W X)^{-1}\\\]
 
 where
 
-\\H\_{ii} = X_i(X^\top X)^{-1}X_i^\top\\
+\\\[H\_{ii} = X_i(X^\top X)^{-1}X_i^\top\\\]
 
 ### Kenward-Roger Covariance
 

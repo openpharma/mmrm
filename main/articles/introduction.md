@@ -160,12 +160,12 @@ starting value usually can make the optimization more efficient. In
 the other is `emp_start`. `std_start` will try to use the identity
 matrix as the covariance, however there are convergence problems for
 `ar1` and `ar1h` if the identity matrix is provided, thus for these two
-covariance structures we use \\\rho=0.5\\ instead. `emp_start` will try
-to use the empirical covariance matrix of the residuals of the ordinary
-least squares model as the starting value for unstructured covariance
-structure. If some timepoints are missing from data, identity matrix
-will be used for that submatrix. The correlation between existing and
-non-existing timepoints are set to 0.
+covariance structures we use \\(\rho=0.5\\) instead. `emp_start` will
+try to use the empirical covariance matrix of the residuals of the
+ordinary least squares model as the starting value for unstructured
+covariance structure. If some timepoints are missing from data, identity
+matrix will be used for that submatrix. The correlation between existing
+and non-existing timepoints are set to 0.
 
 As the starting values will affect the result, please be cautious on
 choosing the starting values.
@@ -400,7 +400,7 @@ numeric weight per observation (row of `data`). These are
 inverse-variance weights: holding the fitted covariance structure fixed,
 an observation with weight 2 has half the residual variance of an
 otherwise comparable observation with weight 1 (and its residual
-standard deviation is divided by \\\sqrt{2}\\). The weights are fixed
+standard deviation is divided by \\(\sqrt{2}\\)). The weights are fixed
 inputs, not weights on the outcome itself. They do not need to sum to
 one or to any treatment-group sample size; the default is 1 for every
 observation. The [algorithm
@@ -1318,23 +1318,23 @@ models, using either F-tests (default) or Chi-squared tests.
 
 #### Mathematical basis
 
-For each effect, the Chi-squared test statistic is calculated using: \\
-\chi^2=\[\mathbf{L}\cdot b\]^T\cdot
+For each effect, the Chi-squared test statistic is calculated using:
+\\\[\chi^2=\[\mathbf{L}\cdot b\]^T\cdot
 \[\mathbf{L}\cdot\mathbf{V}\cdot\mathbf{L}^T\]^{-1}\cdot\mathbf{L}\cdot
-b \\ where \\\mathbf{L}\\ is the desired contrast matrix, \\b\\ is a
-one-column matrix containing the coefficients of the non-aliased terms
-in the model, and \\\mathbf{V}\\ is the variance-covariance matrix of
+b\\\] where \\(\mathbf{L}\\) is the desired contrast matrix, \\(b\\) is
+a one-column matrix containing the coefficients of the non-aliased terms
+in the model, and \\(\mathbf{V}\\) is the variance-covariance matrix of
 the coefficients.
 
 The F-test statistic is calculated by dividing the Chi-squared test
-statistic by the numerator degrees of freedom \\\text{df}\_\text{num}\\,
-which is equal to the number of parameters associated with the effect
-and therefore the number of rows in the contrast matrix \\\mathbf{L}\\.
-It is also multiplied by a scaling factor \\\lambda\\ (e.g., when
-utilizing the adjusted Kenward-Roger degrees of freedom), which can be
-set to 1 if not needed:
+statistic by the numerator degrees of freedom
+\\(\text{df}\_\text{num}\\), which is equal to the number of parameters
+associated with the effect and therefore the number of rows in the
+contrast matrix \\(\mathbf{L}\\). It is also multiplied by a scaling
+factor \\(\lambda\\) (e.g., when utilizing the adjusted Kenward-Roger
+degrees of freedom), which can be set to 1 if not needed:
 
-\\ F = \lambda\frac{\chi^2}{\text{df}\_\text{num}} \\
+\\\[F = \lambda\frac{\chi^2}{\text{df}\_\text{num}}\\\]
 
 #### Examples
 

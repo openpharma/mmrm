@@ -216,8 +216,8 @@ anova(fit_sex_ar1, fit_sex_race_toeph, fit_interaction_us)
 #> 3     3 FALSE FALSE      10      8 18 3615.923 3675.021 -1789.961 2 vs 3
 #>   log_likelihood_ratio      p_value
 #> 1                   NA           NA
-#> 2            112.68862 1.046903e-46
-#> 3             20.27281 9.895512e-07
+#> 2            112.68862 4.761392e-45
+#> 3             20.27281 1.159004e-07
 #>                                                                                                           call
 #> 1          mmrm(formula = FEV1 ~ FEV1_BL + SEX + ARMCD + ar1(AVISIT | USUBJID), data = fev_data, reml = FALSE)
 #> 2 mmrm(formula = FEV1 ~ FEV1_BL + SEX + RACE + ARMCD + toeph(AVISIT | USUBJID), data = fev_data, reml = FALSE)
@@ -253,8 +253,8 @@ anova(fit_sex_ar1, fit_sex_race_toeph_sub, fit_interaction_us, refit = TRUE)
 #> 3     3  TRUE FALSE       6      8 14 2585.429 2631.034 -1278.714 2 vs 3
 #>   log_likelihood_ratio      p_value
 #> 1                   NA           NA
-#> 2             45.77211 1.020588e-19
-#> 3             10.74981 6.515941e-04
+#> 2             45.77211 3.183056e-18
+#> 3             10.74981 8.289395e-05
 #>                                                                                                             call
 #> 1              mmrm(formula = FEV1 ~ FEV1_BL + SEX + ARMCD + ar1(AVISIT | USUBJID), data = data.1, reml = FALSE)
 #> 2 mmrm(formula = FEV1 ~ FEV1_BL + SEX + RACE + ARMCD + toeph(AVISIT | USUBJID), data = fev_subset, reml = FALSE)

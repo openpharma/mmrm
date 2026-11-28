@@ -2,6 +2,14 @@
 
 ## mmrm 0.3.19.9000
 
+#### Bug Fixes
+
+- [`anova.mmrm()`](https://openpharma.github.io/mmrm/reference/stats_anova.md)
+  likelihood ratio tests for three or more models now use the degrees of
+  freedom difference of each compared pair. Previously, the differences
+  were recycled out of phase, so p-values were wrong when consecutive
+  models differed by different numbers of parameters.
+
 #### Miscellaneous
 
 - Satterthwaite degrees of freedom with empirical (sandwich) covariance

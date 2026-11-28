@@ -39,27 +39,27 @@ h_get_kr_comp(tmb_data, theta, linear = FALSE, w = NULL)
 
 Named list with elements:
 
-- `P`: `matrix` of \\P\\ component.
+- `P`: `matrix` of \\(P\\) component.
 
-- `Q`: `matrix` of \\Q\\ component.
+- `Q`: `matrix` of \\(Q\\) component.
 
-- `R`: `matrix` of \\R\\ component, or `NULL` when `linear = TRUE`.
+- `R`: `matrix` of \\(R\\) component, or `NULL` when `linear = TRUE`.
 
 - `S_Q`: contracted Q sum when `w` is supplied; `Q` and `R` are then
   `NULL`.
 
 ## Details
 
-the function returns a named list, \\P\\, \\Q\\ and \\R\\, which
+the function returns a named list, \\(P\\), \\(Q\\) and \\(R\\), which
 corresponds to the paper in 1997. The matrices are stacked in columns so
-that \\P\\, \\Q\\ and \\R\\ has the same column number(number of beta
-parameters). The number of rows, is dependent on the total number of
-theta and number of groups, if the fit is a grouped mmrm. For \\P\\
-matrix, it is stacked sequentially. For \\Q\\ and \\R\\ matrix, it is
-stacked so that the \\Q\_{ij}\\ and \\R\_{ij}\\ is stacked from \\j\\
-then to \\i\\, i.e. \\R\_{i1}\\, \\R\_{i2}\\, etc. \\Q\\ and \\R\\ only
-contains intra-group results and inter-group results should be all zero
-matrices so they are not stacked in the result.
+that \\(P\\), \\(Q\\) and \\(R\\) has the same column number(number of
+beta parameters). The number of rows, is dependent on the total number
+of theta and number of groups, if the fit is a grouped mmrm. For \\(P\\)
+matrix, it is stacked sequentially. For \\(Q\\) and \\(R\\) matrix, it
+is stacked so that the \\(Q\_{ij}\\) and \\(R\_{ij}\\) is stacked from
+\\(j\\) then to \\(i\\), i.e. \\(R\_{i1}\\), \\(R\_{i2}\\), etc. \\(Q\\)
+and \\(R\\) only contains intra-group results and inter-group results
+should be all zero matrices so they are not stacked in the result.
 
 Supplying `w` for linear KR instead retains `P` and contracts Q into the
 single matrix `S_Q`, without storing Q blocks, see the section

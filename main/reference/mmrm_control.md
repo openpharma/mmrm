@@ -218,7 +218,7 @@ mmrm_control(
 #>             gr1, con)
 #>     res
 #> }
-#> <bytecode: 0x559b9b52ed60>
+#> <bytecode: 0x5eb16e570f88>
 #> <environment: namespace:stats>
 #> attr(,"args")
 #> attr(,"args")$control
@@ -253,7 +253,7 @@ mmrm_control(
 #>   )
 #>   rep(start_value, n_groups)
 #> }
-#> <bytecode: 0x559b9ce731d0>
+#> <bytecode: 0x5eb17090d818>
 #> <environment: namespace:mmrm>
 #> 
 #> $accept_singular
