@@ -585,3 +585,32 @@ test_that("anova.mmrm() works for multiple models -- with refitting", {
     tolerance = 1e-3
   )
 })
+
+test_that("anova.mmrm() computes LRT p-values with matching df for three models", {
+  fit_1 <- mmrm(
+    FEV1 ~ FEV1_BL + SEX + ARMCD + ar1(AVISIT | USUBJID),
+    data = fev_data,
+    reml = FALSE
+  )
+  fit_2 <- mmrm(
+    FEV1 ~ FEV1_BL + SEX + RACE + ARMCD + toeph(AVISIT | USUBJID),
+    data = fev_data,
+    reml = FALSE
+  )
+  fit_3 <- mmrm(
+    FEV1 ~ FEV1_BL + SEX * RACE + ARMCD + us(AVISIT | USUBJID),
+    data = fev_data,
+    reml = FALSE
+  )
+  res <- anova(fit_1, fit_2, fit_3)
+  expect_identical(diff(res$df), c(7, 5))
+  expected_p <- c(
+    NA_real_,
+    stats::pchisq(
+      2 * abs(diff(res$logLik)),
+      df = abs(diff(res$df)),
+      lower.tail = FALSE
+    )
+  )
+  expect_equal(res$p_value, expected_p, tolerance = 1e-12)
+})

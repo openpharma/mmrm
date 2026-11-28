@@ -548,7 +548,7 @@ anova.mmrm <- function(object, ..., test = TRUE, refit = FALSE) {
       out$p_value <-
         stats::pchisq(
           2 * abs(out$log_likelihood_ratio),
-          df = abs(diff(out$df)),
+          df = c(NA, abs(diff(out$df))),
           lower.tail = FALSE
         )
     }
